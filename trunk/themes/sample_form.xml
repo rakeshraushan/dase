@@ -1,0 +1,87 @@
+﻿<?xml version="1.0"?>
+<page title="CSNet Page">
+  
+  <text>The form was not posted, so we display on the first pass</text>
+  
+  <form method="GET" action="/nathan/csg_dom_test.php" allow_uploads="yes">
+  
+    <label>User Edit</label>
+  
+    <field id="form_name" type="hidden">
+      <params no_update="1"/>
+      <value>user_edit</value>
+    </field>
+  
+    <field id="username" type="text">
+      <params max_length="8" size="20"/>
+      <label>Username</label>
+      <help>Enter your username</help>
+      <value>nej3289</value>
+    </field>
+  
+    <field id="password1" type="password">
+      <params max_length="20" size="20"/>
+      <label>Password</label>
+    </field>
+  
+    <field id="note_1" type="note">
+      <params no_update="1"/>
+      <value>A note, blah, blah, and blah</value>
+    </field>
+  
+    <button id="buttons[submit_button_1]" type="submit">
+      <value>Submit</value>
+    </button>
+  
+    <field id="role" type="radio_list">
+      <params table="ams_users"/>
+      <label>Role</label>
+      <value>faculty</value>
+      <option value="undergrad">Undergraduate</option>
+      <option value="grad">Graduate</option>
+      <option value="faculty" selected="yes">Faculty</option>
+      <option value="staff">Staff</option>
+    </field>
+  
+    <field id="notes" type="textbox">
+      <params rows="20"/>
+      <label>Background</label>
+      <value>No notes yet</value>
+    </field>
+  
+    <field id="user_id" type="hidden">
+      <params key="1" table="ams_users" no_update="1"/>
+      <value>1579</value>
+    </field>
+  
+    <field id="user" type="hidden">
+      <params key="1" no_update="1"/>
+      <value>1579</value>
+    </field>
+  
+    <field id="web_only" type="check">
+      <label>Web Only</label>
+      <value>yes</value>
+    </field>
+  
+    <field id="date_expire" type="date">
+      <label>Expire Date</label>
+      <help>The date this account expires</help>
+      <value>
+        <mon>05</mon>
+        <day>31</day>
+        <year>2004</year>
+      </value>
+    </field>
+  
+    <field id="resume" type="file">
+      <label>Resume</label>
+    </field>
+    
+    <button id="buttons[submit_button_2]" type="submit">
+      <value>Submit</value>
+    </button>
+  
+  </form>
+
+</page>

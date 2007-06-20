@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element name="itemResult" xmlns="http://relaxng.org/ns/structure/1.0">
+<element name="item">
+	<attribute name="serial_number"/>
+	<oneOrMore>
+	  <element name="value">
+		<attribute name="attribute_ascii_id"/>
+		<attribute name="attribute_id"/>
+		<text/>
+	  </element>
+	</oneOrMore>
+	<oneOrMore>
+	  <element name="media_file">
+		<attribute name="filename"/>
+		<attribute name="size"/>
+		<attribute name="mime_type"/>
+		<optional>
+		<attribute name="width"/>
+		</optional>
+		<optional>
+		<attribute name="height"/>
+		</optional>
+		<text/>
+	  </element>
+	</oneOrMore>
+</element>
+</element>
+
