@@ -1,0 +1,62 @@
+2006-12-21
+
+created abbr in vim that puts the current date in when I type d-n-o-t-e.
+
+2006-12-21
+
+dase thought: for multi-collection searches, simply return the first
+'hits' for each collection (ajaxily displayed).
+
+so...most dase operations can happen w/in a single collection
+thus, there are 3 modes:
+
+1. intro/all: search across all collection, see dase-wide docs, etc
+uri: dase.laits.utexas.edu/
+2. specific collection: all complex search/refine as well as browsing
+uri: dase.laits.utexas.edu/collection_ascii_id
+3. user-specific/tags
+uri: dase.laits.utexas.edu/username
+
+2006-12-21 22:19:32 
+
+need to keep working on the dase uri scheme (look at del.icio.us!!)
+
+2006-12-21 22:20:39 
+
+thought for today: probably not-so-simple to cache xml right to
+filesystem, since that'd mean apache writes to doc root 
+
+so 3 tiers: 
+
+1. no previous request & app generates xml, prints to browser AND data
+directory
+
+2. xml match in data dir -- retreive and sent to browser
+
+3. xml file on filesytem in doc root. had been copied there from data
+dir by a batch process
+
+2006-12-22 19:12:55 
+
+PunBB has a nice explanation in their plugin directory w/ advice about
+creatign plugins
+
+2006-12-23 00:27:45 
+
+Well, be careful of ajax calls/displays, since they break the back
+button.... Rule of thumb: can you hit reload and consider what coems up
+to be the "same" page??
+
+I think it'll work ok to just split off the personalization stuff form
+the content stuff.  Yes, both will need to be loaded, BUT the content
+will be asynchronous so you won't have to wait so long to start seeing
+stuff.  Besides, we can cache separately.
+
+2006-12-28 22:59:09 
+
+Lucene search is slower than the original dase approach.  As I read things now (and with the experience of implementing PHP/Lucene) I think that my original approach was the correct way to go for now.  I DO think that I will keep item-level xml docs in the dat_dir, though, and that I can do interesting xmlish stuff with those.  But the things that the RDBMS gives me (concurrent read/write, distributed instance) cannot be replaced with a filesystem on NFS. Keep looking at things like "Solr" though -- if we do 'plug-in' search, it'll need to be a web service, I think.
+
+2007-03-08 01:14:27 
+
+Need to get back on this and get it done.  Will it be performant?
+

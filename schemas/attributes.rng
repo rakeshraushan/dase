@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element name="attributeSet" xmlns="http://relaxng.org/ns/structure/1.0">
+<oneOrMore>
+<element name="attribute">
+	<attribute name="ascii_id"/>
+	<attribute name="attribute_name"/>
+	<optional>
+		<attribute name="id"/>
+	</optional>
+	<optional>
+		<attribute name="is_public"/>
+	</optional>
+	<optional>
+		<attribute name="sort_order"/>
+	</optional>
+</element>
+</oneOrMore>
+</element>
+

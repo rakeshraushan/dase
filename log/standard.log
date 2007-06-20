@@ -1,0 +1,10 @@
+2007-05-10T16:02:41-05:00 INFO (6): dispatch: Dase_UserHandler->loginForm
+2007-05-10T16:02:46-05:00 INFO (6): handler ok: Dase_UserHandler
+2007-05-10T16:02:46-05:00 INFO (6): try action: login
+2007-05-10T16:02:46-05:00 INFO (6): dispatch: Dase_UserHandler->login
+2007-05-10T16:02:46-05:00 INFO (6): handler ok: Dase_CollectionHandler
+2007-05-10T16:02:46-05:00 INFO (6): try action: 
+2007-05-10T16:02:46-05:00 INFO (6): dispatch: Dase_CollectionHandler->index
+2007-05-10T16:02:47-05:00 INFO (6): handler ok: Dase_AjaxHandler
+2007-05-10T16:02:47-05:00 INFO (6): try action: itemTallies
+2007-05-10T16:02:47-05:00 INFO (6): dispatch: Dase_AjaxHandler->itemTallies
