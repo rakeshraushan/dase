@@ -7,7 +7,7 @@
 <meta name="description" content="The Digital Archive Services project is a collaborative slideshow application created by the College of Liberal Arts at the University of Texas at Austin." />
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<base href="{$app_root}"/>
+<base href="{$app_root}/"/>
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" type="text/css" href="css/menu.css"/>
 
