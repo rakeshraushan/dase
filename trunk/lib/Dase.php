@@ -111,6 +111,7 @@ class Dase
 	}
 
 	public static function reload($path = '',$msg = '') {
+		$msg_qstring = '';
 		$msg = urlencode($msg);
 		Dase_Session::write();
 		if ($msg) {

@@ -109,11 +109,13 @@ strong {
 	/*background-color: #173561;*/
 	background-image: url(../images/daseBanner.png); 
 	color: #ccc;
-	font: normal 1.6em georgia,serif;
+	/*font: normal 1.6em georgia,serif*/;
+	font: normal 1.2em arial,helvetica,sans-serif;
 	/*padding:8px 8px 8px 15px;*/
 	padding: 0 12px;
 			 margin-top: -1px;
-	height: 74px;
+	/*height: 70px;*/
+	height: 66px;
 }
 
 .cbBanner p {
@@ -121,9 +123,13 @@ strong {
 	margin:0;
 	font-size: 2em;
 	padding:0;
-	padding-top: 5px;
+	padding-top: 11px;
 	padding-left: 12px;
-	letter-spacing: 0.9em;
+	/*letter-spacing: 0.1em;*/
+}
+
+.cbBanner abbr {
+	font-size: .85em;
 }
 
 .cbBanner p.label {
