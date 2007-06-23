@@ -11,7 +11,7 @@ DASE Collection Builder
 </div>
 {else}
 <div class="cbBanner">
-<p><strong>D</strong>igital <strong>A</strong>rchive <strong>Se</strong>rvices <abbr>(DASe)</abbr></p>
-<!--<p class="label"><strong>D</strong>igital <strong>A</strong>rchive <strong>Se</strong>rvices</p>--> 
+<!--<p><strong>D</strong>igital <strong>A</strong>rchive <strong>Se</strong>rvices <abbr>(DASe)</abbr></p>
+<p class="label"><strong>D</strong>igital <strong>A</strong>rchive <strong>Se</strong>rvices</p>--> 
 </div>
 {/if}
