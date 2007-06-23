@@ -107,7 +107,9 @@ strong {
 
 .cbBanner {
 	/*background-color: #173561;*/
-	background-image: url(../images/daseBanner.png); 
+	/*background-image: url(../images/daseBanner.png);*/ 
+	background-image: url(../images/daseBanner3.jpg); 
+	background-repeat: no-repeat;
 	color: #ccc;
 	/*font: normal 1.6em georgia,serif*/;
 	font: normal 1.2em arial,helvetica,sans-serif;
@@ -115,7 +117,7 @@ strong {
 	padding: 0 12px;
 			 margin-top: -1px;
 	/*height: 70px;*/
-	height: 66px;
+	height: 70px;
 }
 
 .cbBanner p {
