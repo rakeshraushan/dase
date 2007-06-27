@@ -28,7 +28,7 @@ class Dase_UserHandler
 			try {
 				$user = Dase_User::check_credentials($username,$password);
 				if ($user) {
-					$cookie = new Dase_AuthCookie($user->id);
+					$cookie = new Dase_AuthCookie($user->eid);
 					$cookie->set();
 					Dase::reload('/',"Hello $user->name");
 				} else {
