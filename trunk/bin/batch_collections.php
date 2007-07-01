@@ -8,8 +8,8 @@ Dase_DB_Collection::insertAttributes(0,$xml);
 $xml = new SimpleXMLElement($remote->getAll());
 foreach ($xml->collection as $collection) {
 	$ascii_id = $collection['ascii_id'];
-	if ('art_history_collection' == $ascii_id) {
-		print "working on Art History Collection\n";
+	if (1 || 'art_history_collection' == $ascii_id) {
+		print "working on " . $collection['collection_name'] . "\n";
 		$coll_xml = new SimpleXMLElement($remote->getCollectionInfo($ascii_id));
 		Dase_DB_Collection::insertCollection($coll_xml->collection->asXML());
 		try {
