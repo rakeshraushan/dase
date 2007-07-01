@@ -22,7 +22,6 @@ class Dase_AuthCookie {
 	public function __construct($userid = false) {
 		if ($userid) {
 			$this->userid = $userid;
-			return;
 		} else {
 			if (array_key_exists(self::$cookiename,$_COOKIE)) {
 				$buffer = $this->_unpackage($_COOKIE[self::$cookiename]);

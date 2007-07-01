@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project name="DASe" default="init" basedir=".">
+
+	<taskdef resource="svntask.properties"/>
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	<description>Digital Archive Services</description>
+
+	<target name="init">
+		<property name="sample" value="howdy, world"/>
+		<echo message="${sample}"/>
+	</target>
+
+	<target name="get">
+		<get src="http://dase.laits.utexas.edu/api/v1/collections" dest="dase_collections.xml" 
+			username="dase" 
+			password="api">
+		</get>
+	</target>
+
+	<target name="exec-checkout">
+		<exec executable="svn">
+			<arg line="co http://dase.googlecode.com/svn/trunk"/> 
+			<arg value="build"/> 
+		</exec>
+	</target>
+
+	<target name="deploy" depends="checkout">
+		<property name="prod" value="/var/www/littlehat.com/dase"/>
+		<property name="build" value="./build"/>
+		<exec executable="rsync">
+			<arg line="rsync -ar --delete --exclude='.svn' -e ssh ${build}/* ${prod}" />
+			<arg line="rsync -ar -e ssh ${build}/prod_htaccess ${prod}/.htaccess" />
+		</exec>
+	</target>
+
+	<target name="checkout">
+		<svn>
+			<checkout url="http://dase.googlecode.com/svn/trunk"
+				destPath="build"/> 
+		</svn>
+	</target>
+
+</project>
+
+
