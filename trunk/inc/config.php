@@ -1,10 +1,8 @@
 <?php
 
-//$conf = Dase_Config::getDbConfig();
-
 $conf['superusers'][] = 'pkeane';
-$conf['db_type'] = 'mysql';
-$conf['db_host'] = 'localhost';
-$conf['db_name'] = 'dase';
-$conf['db_user'] = 'username';
-$conf['db_pass'] = 'password';
+$conf['db_type'] = '@db_type';
+$conf['db_host'] = '@db_host';
+$conf['db_name'] = '@db_name';
+$conf['db_user'] = '@db_user';
+$conf['db_pass'] = '@db_pass';
