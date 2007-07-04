@@ -85,4 +85,43 @@ class Dase_DB {
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
+
+	public static function getMetadata($table) {
+		$db = self::get();
+		$sql = "SELECT column_name, data_type, character_maximum_length 
+			FROM information_schema.columns 
+			WHERE table_name = '$table'";
+		$sth = $db->prepare($sql);
+		$sth->execute();
+		return ($sth->fetchAll(PDO::FETCH_ASSOC));
+	}	
+
+	public static function getSchemaXml() {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('database');
+		$writer->writeAttribute('name',self::$name);
+		foreach (Dase_DB::listTables() as $table) {
+			$writer->startElement('table');
+			$writer->writeAttribute('name',$table);
+			foreach (Dase_DB::getMetadata($table) as $col) {
+				$writer->startElement('column');
+				$writer->writeAttribute('name',$col['column_name']);
+				$writer->writeAttribute('type',$col['data_type']);
+				if ('id' == $col['column_name']) {
+					$writer->writeAttribute('is_primary_key','true');
+				}
+				if ($col['character_maximum_length']) {
+					$writer->writeAttribute('max_length',$col['character_maximum_length']);
+				}
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}	
 }
