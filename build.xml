@@ -1,42 +1,46 @@
 <?xml version="1.0"?>
-<project name="DASe" default="init" basedir=".">
-
-	<taskdef resource="svntask.properties"/>
-	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+<project name="dase" default="deploy" basedir=".">
 	<description>Digital Archive Services</description>
 
-	<target name="init">
-		<property name="sample" value="howdy, world"/>
-		<echo message="${sample}"/>
-	</target>
+	<property file="build.properties"/>
 
-	<target name="get">
-		<get src="http://dase.laits.utexas.edu/api/v1/collections" dest="dase_collections.xml" 
-			username="dase" 
-			password="api">
-		</get>
-	</target>
-
-	<target name="exec-checkout">
-		<exec executable="svn">
-			<arg line="co http://dase.googlecode.com/svn/trunk"/> 
-			<arg value="build"/> 
-		</exec>
-	</target>
+	<!-- note that svnant task jars are in ~/.ant/lib -->
+	<taskdef resource="svntask.properties"/>
 
 	<target name="deploy" depends="checkout">
-		<property name="prod" value="/var/www/littlehat.com/dase"/>
-		<property name="build" value="./build"/>
-		<exec executable="rsync">
-			<arg line="rsync -ar --delete --exclude='.svn' -e ssh ${build}/* ${prod}" />
-			<arg line="rsync -ar -e ssh ${build}/prod_htaccess ${prod}/.htaccess" />
-		</exec>
+		<property name="head" value="${basedir}/svn_head" />
+		<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
+		<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
+		<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>
+		<replace file="${head}/inc/config.php" token="@db_user" value="${db.user}"/>
+		<replace file="${head}/inc/config.php" token="@db_pass" value="${db.pass}"/>
+		<replace file="${head}/prod_htaccess" token="@base" value="/${rewrite.base}"/>
+		<copy file="${head}/prod_htaccess" tofile="${head}/.htaccess"/>
+		<sync todir="${install.dir}" 
+			overwrite="true"
+			includeEmptyDirs="true"
+			>
+			<fileset dir="${head}" />
+		</sync>
+		<chmod dir="${install.dir}/log" 
+			perm="777" 
+			includes="*.log"
+			/>
+		<chmod file="${install.dir}/templates_c" 
+			perm="775"
+			type="dir"
+			/>
+		<chgrp file="${install.dir}/templates_c" 
+			group="${httpd.group}"
+			type="dir"
+			/>
 	</target>
 
 	<target name="checkout">
+		<delete dir="svn_head"/>
 		<svn>
-			<checkout url="http://dase.googlecode.com/svn/trunk"
-				destPath="build"/> 
+			<checkout url="${svn.url}"
+				destPath="svn_head"/> 
 		</svn>
 	</target>
 
