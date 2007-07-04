@@ -9,6 +9,7 @@
 
 	<target name="deploy" depends="checkout">
 		<property name="head" value="${basedir}/svn_head" />
+		<replace file="${head}/index.php" token="@path" value="${include.path}"/>
 		<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
 		<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
 		<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>
