@@ -102,7 +102,7 @@ class Dase_DB {
 		$writer->setIndent(true);
 		$writer->startDocument('1.0','UTF-8');
 		$writer->startElement('database');
-		$writer->writeAttribute('name',self::$name);
+		$writer->writeAttribute('name',Dase_DB::getDbName());
 		foreach (Dase_DB::listTables() as $table) {
 			$writer->startElement('table');
 			$writer->writeAttribute('name',$table);
