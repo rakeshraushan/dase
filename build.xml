@@ -9,20 +9,20 @@
 
 	<target name="deploy-local">
 		<property name="head" value="${basedir}" />
-		<replace file="${head}/index.php" token="@path" value="${include.path}"/>
-		<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
-		<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
-		<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>
-		<replace file="${head}/inc/config.php" token="@db_user" value="${db.user}"/>
-		<replace file="${head}/inc/config.php" token="@db_pass" value="${db.pass}"/>
-		<replace file="${head}/prod_htaccess" token="@base" value="/${rewrite.base}"/>
-		<copy file="${head}/prod_htaccess" tofile="${head}/.htaccess"/>
 		<sync todir="${install.dir}" 
 			overwrite="true"
 			includeEmptyDirs="true"
 			>
 			<fileset dir="${head}" />
 		</sync>
+		<copy file="${head}/prod_htaccess" tofile="${install.dir}/.htaccess"/>
+		<replace file="${install.dir}/index.php" token="@path" value="${include.path}"/>
+		<replace file="${install.dir}/inc/config.php" token="@db_type" value="${db.type}"/>
+		<replace file="${install.dir}/inc/config.php" token="@db_host" value="${db.host}"/>
+		<replace file="${install.dir}/inc/config.php" token="@db_name" value="${db.name}"/>
+		<replace file="${install.dir}/inc/config.php" token="@db_user" value="${db.user}"/>
+		<replace file="${install.dir}/inc/config.php" token="@db_pass" value="${db.pass}"/>
+		<replace file="${install.dir}/.htaccess" token="@base" value="/${rewrite.base}"/>
 		<chmod dir="${install.dir}/log" 
 			perm="777" 
 			includes="*.log"
