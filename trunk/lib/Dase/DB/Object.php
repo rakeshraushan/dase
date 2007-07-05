@@ -251,19 +251,4 @@ class Dase_DB_Object {
 		}
 		return $objects;
 	}
-
-	//from http://framework.zend.com/issues/secure/attachment/10145/db_explicit_bind.patch
-	protected function _getType($value)
-	{
-		if (is_bool($value)) {
-			$type = PDO::PARAM_BOOL;
-		} else if (is_null($value)) {
-			$type = PDO::PARAM_NULL;
-		} else if (is_integer($value)) {
-			$type = PDO::PARAM_INT;
-		} else {
-			$type = PDO::PARAM_STR;
-		}
-		return $type;
-	}
 }
