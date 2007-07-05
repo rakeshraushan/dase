@@ -2,7 +2,7 @@ DirectoryIndex index.php index.html
 AddType application/x-httpd-php .php
 Options FollowSymLinks
 RewriteEngine On
-RewriteBase /dase
+RewriteBase @base
 
 #force https
 #RewriteCond %{SERVER_PORT} 80 
