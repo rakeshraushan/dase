@@ -72,6 +72,7 @@ class Dase_DB_Object {
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
 		$sth->fetch();
+		return $this;
 	}
 
 	function insert($seq = '') { //postgres need id specified
