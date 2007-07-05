@@ -199,29 +199,18 @@ class Dase_DB_Object {
 		}
 	}
 
-	function update($assoc,$val = null) {
-		//will accept a key,val pair OR assciative array of keyvals
-		if (!is_array($assoc)) {
-			$col = $assoc;
-			$assoc = array($col => $val);
-		}
-		$db = Dase_DB::get();
-		$sets = array();
-		foreach( $assoc as $col => $val)
+	function update() {
+		$db = Spending_DB::get();
+		foreach( $this->fields as $key => $val)
 		{
-			$sets[] = "$col = :$col";
-			$bind[":$col"] = $val;
+				$fields[]= $key." = ?";
+				$values[]= $val;
 		}
-		$set = join( ", ", $sets );
-		$sql = 'UPDATE '.$this->table.' SET '.$set.
-			" WHERE id=:id";
+		$set = join( ",", $fields );
+		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
+		$values[] = $this->id;
 		$sth = $db->prepare( $sql );
-		foreach ($bind as $k => $v) {
-			$type = $this->_getType($v);
-			$sth->bindParam($k,$v,$type);
-		}
-		$sth->bindParam(':id',$this->id);
-		if (!$sth->execute()) {
+		if (!$sth->execute($values)) {
 			return $sth->errorInfo();
 		}
 	}
