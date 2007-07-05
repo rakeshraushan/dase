@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="">
+ <table name="admin_search_table">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="item_id" type="int"/>
+  <column name="collection_id" type="int"/>
+  <column name="value_text" type="varchar" max_length="20000"/>
+  <column name="status_id" type="int"/>
+  <column name="last_update" type="timestamp"/>
+ </table>
+ <table name="application_monitor">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="response_time" type="double"/>
+  <column name="timestamp" type="datetime"/>
+  <column name="dase_user_eid" type="varchar" max_length="40"/>
+  <column name="server_addr" type="varchar" max_length="40"/>
+  <column name="server_name" type="varchar" max_length="40"/>
+  <column name="request_uri" type="varchar" max_length="400"/>
+  <column name="remote_addr" type="varchar" max_length="40"/>
+ </table>
+ <table name="attribute">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="ascii_id" type="varchar" max_length="200"/>
+  <column name="collection_id" type="int"/>
+  <column name="attribute_name" type="varchar" max_length="200"/>
+  <column name="usage_notes" type="varchar" max_length="2000"/>
+  <column name="sort_order" type="int"/>
+  <column name="in_basic_search" type="tinyint"/>
+  <column name="is_on_list_display" type="tinyint"/>
+  <column name="is_public" type="tinyint"/>
+  <column name="html_input_type_id" type="int"/>
+  <column name="atom_element" type="varchar" max_length="20"/>
+  <column name="mapped_admin_att_id" type="int"/>
+ </table>
+ <table name="attribute_category">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="attribute_id" type="int"/>
+  <column name="category_id" type="int"/>
+  <column name="sort_order" type="int"/>
+ </table>
+ <table name="attribute_item_type">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="item_type_id" type="int"/>
+  <column name="attribute_id" type="int"/>
+ </table>
+ <table name="category">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="name" type="varchar" max_length="2000"/>
+  <column name="is_public" type="tinyint"/>
+  <column name="sort_order" type="int"/>
+  <column name="collection_id" type="int"/>
+  <column name="ascii_id" type="varchar" max_length="200"/>
+ </table>
+ <table name="collection">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="ascii_id" type="varchar" max_length="200"/>
+  <column name="collection_name" type="varchar" max_length="200"/>
+  <column name="path_to_media_files" type="varchar" max_length="200"/>
+  <column name="description" type="varchar" max_length="2000"/>
+  <column name="is_public" type="tinyint"/>
+  <column name="display_categories" type="tinyint"/>
+ </table>
+ <table name="collection_manager">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="collection_ascii_id" type="varchar" max_length="200"/>
+  <column name="dase_user_eid" type="varchar" max_length="20"/>
+  <column name="auth_level" type="varchar" max_length="20"/>
+ </table>
+ <table name="dase_user">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="eid" type="varchar" max_length="200"/>
+  <column name="name" type="varchar" max_length="200"/>
+  <column name="has_access_exception" type="tinyint"/>
+  <column name="cb" type="varchar" max_length="200"/>
+  <column name="last_cb_access" type="varchar" max_length="200"/>
+  <column name="display" type="varchar" max_length="20"/>
+  <column name="max_items" type="int"/>
+  <column name="last_item" type="varchar" max_length="2000"/>
+  <column name="last_action" type="varchar" max_length="2000"/>
+  <column name="current_search_cache_id" type="int"/>
+  <column name="current_collections" type="varchar" max_length="2000"/>
+  <column name="backtrack" type="varchar" max_length="2000"/>
+  <column name="template_composite" type="text" max_length="65535"/>
+ </table>
+ <table name="defined_value">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="attribute_id" type="int"/>
+  <column name="value_text" type="varchar" max_length="200"/>
+ </table>
+ <table name="html_input_type">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="name" type="varchar" max_length="200"/>
+ </table>
+ <table name="input_template">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="collection_manager_id" type="int"/>
+  <column name="attribute_id" type="int"/>
+ </table>
+ <table name="item">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="serial_number" type="varchar" max_length="200"/>
+  <column name="collection_id" type="int"/>
+  <column name="timestamp" type="timestamp"/>
+  <column name="status_id" type="int"/>
+  <column name="item_type_id" type="int"/>
+ </table>
+ <table name="item_status">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="status" type="varchar" max_length="20"/>
+ </table>
+ <table name="item_type">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="collection_id" type="int"/>
+  <column name="name" type="varchar" max_length="200"/>
+  <column name="ascii_id" type="varchar" max_length="200"/>
+  <column name="description" type="varchar" max_length="2000"/>
+ </table>
+ <table name="media_file">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="item_id" type="int"/>
+  <column name="filename" type="varchar" max_length="2000"/>
+  <column name="height" type="int"/>
+  <column name="width" type="int"/>
+  <column name="mime_type" type="varchar" max_length="200"/>
+  <column name="size" type="varchar" max_length="20"/>
+  <column name="p_serial_number" type="varchar" max_length="200"/>
+  <column name="p_collection_ascii_id" type="varchar" max_length="200"/>
+  <column name="file_size" type="int"/>
+ </table>
+ <table name="search_cache">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="query" type="varchar" max_length="2000"/>
+  <column name="timestamp" type="datetime"/>
+  <column name="dase_user_id" type="int"/>
+  <column name="attribute_id" type="int"/>
+  <column name="collection_id_string" type="varchar" max_length="2000"/>
+  <column name="refine" type="varchar" max_length="2000"/>
+  <column name="item_id_string" type="varchar" max_length="2000"/>
+  <column name="exact_search" type="int"/>
+  <column name="is_stale" type="tinyint"/>
+  <column name="sort_by" type="int"/>
+  <column name="cb_id" type="int"/>
+ </table>
+ <table name="search_table">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="item_id" type="int"/>
+  <column name="collection_id" type="int"/>
+  <column name="value_text" type="varchar" max_length="20000"/>
+  <column name="status_id" type="int"/>
+  <column name="last_update" type="timestamp"/>
+ </table>
+ <table name="subscription">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="dase_user_id" type="int"/>
+  <column name="tag_id" type="int"/>
+ </table>
+ <table name="tag">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="name" type="varchar" max_length="200"/>
+  <column name="description" type="varchar" max_length="200"/>
+  <column name="dase_user_id" type="int"/>
+  <column name="timestamp" type="datetime"/>
+  <column name="tag_type_id" type="int"/>
+  <column name="is_public" type="tinyint"/>
+  <column name="background" type="varchar" max_length="20"/>
+  <column name="admin_collection_id" type="int"/>
+  <column name="ascii_id" type="varchar" max_length="200"/>
+  <column name="master_item_id" type="int"/>
+ </table>
+ <table name="tag_item">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="tag_id" type="int"/>
+  <column name="item_id" type="int"/>
+  <column name="annotation" type="varchar" max_length="2000"/>
+  <column name="sort_order" type="int"/>
+  <column name="timestamp" type="datetime"/>
+  <column name="size" type="varchar" max_length="200"/>
+  <column name="p_serial_number" type="varchar" max_length="20"/>
+  <column name="p_collection_ascii_id" type="varchar" max_length="200"/>
+ </table>
+ <table name="tag_type">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="ascii_id" type="varchar" max_length="20"/>
+  <column name="name" type="varchar" max_length="20"/>
+ </table>
+ <table name="value">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="item_id" type="int"/>
+  <column name="attribute_id" type="int"/>
+  <column name="value_text" type="varchar" max_length="20000"/>
+ </table>
+ <table name="value_revision_history">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="dase_user_eid" type="varchar" max_length="20"/>
+  <column name="deleted_text" type="varchar" max_length="2000"/>
+  <column name="added_text" type="varchar" max_length="2000"/>
+  <column name="timestamp" type="datetime"/>
+  <column name="item_serial_number" type="varchar" max_length="200"/>
+  <column name="attribute_name" type="varchar" max_length="200"/>
+  <column name="collection_ascii_id" type="varchar" max_length="200"/>
+ </table>
+ <table name="web_service_user">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="name" type="varchar" max_length="40"/>
+  <column name="token" type="varchar" max_length="40"/>
+  <column name="auth_level" type="varchar" max_length="20"/>
+ </table>
+ <table name="xml_cache">
+  <column name="id" type="int" is_primary_key="true"/>
+  <column name="name" type="varchar" max_length="200"/>
+  <column name="other_ident" type="varchar" max_length="200"/>
+  <column name="collection_id" type="int"/>
+  <column name="is_stale" type="tinyint"/>
+  <column name="text" type="text" max_length="65535"/>
+  <column name="timestamp" type="timestamp"/>
+ </table>
+</database>
