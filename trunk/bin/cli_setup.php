@@ -13,6 +13,10 @@ function __autoload($class_name) {
 	}
 }
 
+if (isset($database)) {
+	Dase_DB::get($database);
+}
+
 if (isset($messages)) {
 	echo "using database -> "; 
 	termcolored(strtoupper(Dase_DB::getDbName()));

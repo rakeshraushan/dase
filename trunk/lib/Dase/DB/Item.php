@@ -4,6 +4,17 @@ require_once 'Dase/DB/Autogen/Item.php';
 
 class Dase_DB_Item extends Dase_DB_Autogen_Item 
 {
+
+	public $item_type;
+
+	public function getItemType() {
+		$itype = new Dase_DB_ItemType;
+		if ($itype->load($this->item_type_id)) {
+			$this->item_type = $itype;
+			return $itype;
+		}
+	}
+
 	public function buildSearchIndex($auto_delete = 1) {
 		$db = Dase_DB::get();
 		if ($auto_delete) {

@@ -9,6 +9,59 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $attribute_array;
 	public $category_array;
 
+	function xmlDump() {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('archive');
+		$writer->writeAttribute('name',$this->collection_name);
+		$writer->writeAttribute('ascii_id',$this->ascii_id);
+		$attribute = new Dase_DB_Attribute;
+		$attribute->collection_id = $this->id;
+		foreach($attribute->find() as $att) {
+			$writer->startElement('attribute');
+			$writer->writeAttribute('name',$att->attribute_name);
+			$writer->writeAttribute('ascii_id',$att->ascii_id);
+			$writer->endElement();
+		}
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		foreach($item->find() as $it) {
+			$writer->startElement('item');
+			$writer->writeAttribute('serial_number',$it->serial_number);
+			$it->getItemType();
+			if (isset($it->item_type->name)) {
+				$writer->writeAttribute('item_type',$it->item_type->name);
+			}
+			$value = new Dase_DB_Value;
+			$value->item_id = $it->id;
+			foreach($value->find() as $val) {
+				$writer->startElement('metadata');
+				$val->getAttribute();
+				$writer->writeAttribute('attribute_ascii_id',$val->attribute->ascii_id);
+				$writer->text($val->value_text);
+				$writer->endElement();
+			}
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $it->id;
+			foreach($media_file->find() as $mf) {
+				$writer->startElement('media_file');
+				$writer->writeAttribute('filename',$mf->filename);
+				$writer->writeAttribute('size',$mf->size);
+				$writer->writeAttribute('mime_type',$mf->mime_type);
+				$writer->writeAttribute('width',$mf->width);
+				$writer->writeAttribute('height',$mf->height);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
+
 	function asXml() {
 		$dom = new DOMDocument('1.0');
 		$coll = $dom->appendChild($dom->createElement('collection'));
