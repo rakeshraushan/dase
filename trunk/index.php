@@ -1,5 +1,5 @@
 <?php
-ini_set('include_path','.:lib:plugins:@path');
+ini_set('include_path','.:lib:plugins:/usr/local/dase/lib:/usr/local/dase/lib/Smarty');
 
 ini_set('display_errors',1);
 error_reporting(E_ALL);
