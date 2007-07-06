@@ -16,7 +16,6 @@
 			<fileset dir="${head}" />
 		</sync>
 		<copy file="${head}/prod_htaccess" tofile="${install.dir}/.htaccess"/>
-		<replace file="${install.dir}/index.php" token="@path" value="${include.path}"/>
 		<replace file="${install.dir}/inc/config.php" token="@db_type" value="${db.type}"/>
 		<replace file="${install.dir}/inc/config.php" token="@db_host" value="${db.host}"/>
 		<replace file="${install.dir}/inc/config.php" token="@db_name" value="${db.name}"/>
@@ -39,7 +38,6 @@
 
 	<target name="deploy" depends="checkout">
 		<property name="head" value="${basedir}/svn_head" />
-		<replace file="${head}/index.php" token="@path" value="${include.path}"/>
 		<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
 		<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
 		<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>

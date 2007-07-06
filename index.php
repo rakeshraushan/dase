@@ -1,5 +1,5 @@
 <?php
-ini_set('include_path','.:lib:plugins:@path');
+ini_set('include_path','.:lib:plugins');
 
 ini_set('display_errors',1);
 error_reporting(E_ALL);
