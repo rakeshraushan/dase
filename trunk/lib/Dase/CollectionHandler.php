@@ -25,7 +25,7 @@ class Dase_CollectionHandler
 			$tpl->assign('content','collection');
 			Dase_Plugins::act($coll->ascii_id,'before_display');
 			$tpl->display('page.tpl');
-		//multi or no collection request
+			//multi or no collection request
 		} else {
 			$coll->orderBy('collection_name');
 			$collections = $coll->getAll();
@@ -41,6 +41,20 @@ class Dase_CollectionHandler
 			$tpl->assign('content','collections');
 			Dase_Plugins::act('dase','before_display');
 			$tpl->display('page.tpl');
+		}
+	}
+
+	public static function publicXml() {
+		//single collection request
+		if (isset($params[0])) {
+			if (isset($_GET['token']) && 'secret' == $_GET['token']) {
+				$tpl = new Dase_Xml_Template;
+				$coll = new Dase_DB_Collection;
+				$coll->ascii_id = $params[0];
+				$coll->find(1);
+				$tpl->setXml($coll->xmlDump());
+				$tpl->display();
+			}
 		}
 	}
 }

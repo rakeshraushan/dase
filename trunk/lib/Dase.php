@@ -23,8 +23,9 @@ class Dase
 	public function checkUser() {
 		$controller = Dase::instance();
 		//by convention, plugins needing to bypass user check 
-		//should include word 'login' in action
-		if (!strstr($controller->action,'login')) {
+		//should include word 'login'  or 'public' in action
+		if (!preg_match('/(login|public)/',$controller->action)
+			) {
 			if (empty( self::$user)) {
 				self::$user = new Dase_User();
 			}
