@@ -6,13 +6,16 @@ class Dase_Remote
 	private $url;
 
 	public function __construct($url,$user,$pass) {
-		$this->url = trim($url,/) . '/';
+		$this->url = trim($url,"/") . '/';
 		if ($user && $pass) {
-		$auth = base64_encode($user . ':' $password);
-		$header = array("Authorization: Basic $auth");
-		$opts = array( 'http' => array ('method'=>'GET',
-			'header'=>$header));
-		$this->ctx = stream_context_create($opts);
+			$auth = base64_encode("$user:$pass");
+			$header = "Authorization: Basic $auth";
+			$opts = array(
+				'http' => array (
+					'method'=>'GET',
+					'header'=>$header
+				));
+			$this->ctx = stream_context_create($opts);
 		}
 	}	
 
