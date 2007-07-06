@@ -124,6 +124,7 @@ class Dase
 
 	public function dispatchRequest() {
 		$c = Dase::instance();
+		//print_r($c);exit;
 		//check again in case getUser changed one or the other
 		if (method_exists( $c->handler,$c->action )) {
 			Dase_Log::write('dispatch: ' . $c->handler . '->' . $c->action);
