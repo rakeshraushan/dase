@@ -1,51 +1,48 @@
 <?php
 
-require_once 'Dase/Remote/Client.php';
-
 class Dase_Remote 
 {
+	private $ctx;
 	private $url;
-	private $user;
-	private $pass;
 
 	public function __construct($url,$user,$pass) {
-		$this->url = $url;
-		$this->user = $user;
-		$this->pass = $pass;
+		$this->url = trim($url,/) . '/';
+		if ($user && $pass) {
+		$auth = base64_encode($user . ':' $password);
+		$header = array("Authorization: Basic $auth");
+		$opts = array( 'http' => array ('method'=>'GET',
+			'header'=>$header));
+		$this->ctx = stream_context_create($opts);
+		}
 	}	
 
 	public function getCollectionInfo($ascii_id) {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("collection/$ascii_id");
-		return 	$remote->getXml();
+		$url = $this->url . 'collection/' . $ascii_id;
+		return file_get_contents($url,false,$this->ctx);
 	}
 
 	public function getAll() {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("collections");
-		return $remote->getXml();
+		$url = $this->url . 'collections';
+		return file_get_contents($url,false,$this->ctx);
 	}
 
 	public function getAdminAttributes() {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("admin_attributes");
-		return $remote->getXml();
+		$url = $this->url . 'admin_attributes';
+		return file_get_contents($url,false,$this->ctx);
 	}
 
 	public function getAttributes($ascii_id) {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("collection/$ascii_id/attributes");
-		return $remote->getXml();
+		$url = $this->url . "collection/$ascii_id/attributes";
+		return file_get_contents($url,false,$this->ctx);
 	}
 
 	public function getItem($ser_num,$ascii_id) {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("collection/$ascii_id/item/$ser_num");
-		return $remote->getXml();
+		$url = $this->url . "collection/$ascii_id/item/$ser_num";
+		return file_get_contents($url,false,$this->ctx);
 	}
+
 	public function getItemSerNums($ascii_id) {
-		$remote = new Dase_Remote_Client($this->url,$this->user,$this->pass);
-		$remote->setPath("collection/$ascii_id/items?ser_nums=1");
-		return $remote->getXml();
+		$url = $this->url . "collection/$ascii_id/items?ser_nums=1";
+		return file_get_contents($url,false,$this->ctx);
 	}
 }
