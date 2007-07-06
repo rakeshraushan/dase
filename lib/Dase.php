@@ -6,6 +6,7 @@ class Dase
 	public static $user;
 	public $base_url= '';       
 	private $stub= '';           
+	private $module= '';        
 	private $action= '';        
 	private $handler= null;    
 	private $url_params = array();    
@@ -20,14 +21,30 @@ class Dase
 		return self::$instance;
 	}
 
+	public static function basicHttpAuth() {
+		//from php cookbook 2nd ed. p 240
+		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+			if (('dase' == $_SERVER['PHP_AUTH_USER']) && ('api' == $_SERVER['PHP_AUTH_PW'])) {
+				return;
+			}
+		}
+		header('WWW-Authenticate: Basic realm="DASe"');
+		header('HTTP/1.0 401 Unauthorized');
+		echo "please enter a valid username and password";
+		exit;
+	}
+
 	public function checkUser() {
 		$controller = Dase::instance();
-		//by convention, plugins needing to bypass user check 
-		//should include word 'login'  or 'public' in action
-		if (!preg_match('/(login|public)/',$controller->action)
-			) {
-			if (empty( self::$user)) {
-				self::$user = new Dase_User();
+		if ('api' == $controller->module) {
+			Dase::basicHttpAuth();
+		} else {
+			//by convention, plugins needing to bypass user check 
+			//should include word 'login'  or 'public' in action
+			if (!preg_match('/(login|public)/',$controller->action)) {
+				if (empty( self::$user)) {
+					self::$user = new Dase_User();
+				}
 			}
 		}
 	}
@@ -85,8 +102,8 @@ class Dase
 			//never another action
 			$stub_array = array();
 		}
-		$module = Dase_Plugins::filter('dase','module',$module);
-		$handler = 'Dase_' . ucfirst($module) . 'Handler';
+		$this->module = Dase_Plugins::filter('dase','module',$module);
+		$handler = 'Dase_' . ucfirst($this->module) . 'Handler';
 		if (class_exists($handler)) {
 			Dase_Log::write('handler ok: ' . $handler );
 			if (isset($stub_array[0])) {
