@@ -46,6 +46,7 @@ class Dase_CollectionHandler
 
 	public static function publicXml() {
 		//single collection request
+		$params = func_get_args();
 		if (isset($params[0])) {
 			if (isset($_GET['token']) && 'secret' == $_GET['token']) {
 				$tpl = new Dase_Xml_Template;

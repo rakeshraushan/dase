@@ -3,6 +3,7 @@ AddType application/x-httpd-php .php
 Options FollowSymLinks
 RewriteEngine On
 RewriteBase @base
+#RewriteBase /dase
 
 #force https
 #RewriteCond %{SERVER_PORT} 80 
