@@ -1,1 +1,0 @@
-a:1:{s:10:"collection";a:3:{s:5:"class";s:16:"Views_Collection";s:7:"default";s:3:"all";s:5:"views";a:3:{s:4:"home";a:2:{i:0;s:16:"Views_Collection";i:1;s:4:"home";}s:4:"show";a:2:{i:0;s:16:"Views_Collection";i:1;s:4:"show";}s:3:"all";a:2:{i:0;s:16:"Views_Collection";i:1;s:3:"all";}}}}
