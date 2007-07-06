@@ -102,8 +102,8 @@ class Dase
 			//never another action
 			$stub_array = array();
 		}
-		$this->module = Dase_Plugins::filter('dase','module',$module);
-		$handler = 'Dase_' . ucfirst($this->module) . 'Handler';
+		$controller->module = Dase_Plugins::filter('dase','module',$module);
+		$handler = 'Dase_' . ucfirst($controller->module) . 'Handler';
 		if (class_exists($handler)) {
 			Dase_Log::write('handler ok: ' . $handler );
 			if (isset($stub_array[0])) {
