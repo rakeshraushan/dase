@@ -15,4 +15,11 @@ class Dase_ApiHandler
 			}
 		}
 	}
+
+	public static function collections() {
+		$tpl = new Dase_Xml_Template;
+		$coll = new Dase_DB_Collection;
+		$tpl->setXml($coll->getAllAsXml());
+		$tpl->display();
+	}
 }
