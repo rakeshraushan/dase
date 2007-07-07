@@ -45,7 +45,8 @@ class Dase_AdminHandler
 				header("HTTP/1.0 404 Not Found");
 				exit;
 			}
-			readfile(DASE_PATH . "/log/" . $file);
+			$logfile = file_get_contents(DASE_PATH . "/log/" . $file);
+			echo "<html><body><pre>$logfile</pre></body></html>";
 			exit;
 		}
 	}
