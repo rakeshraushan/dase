@@ -39,7 +39,7 @@ class Dase_AdminHandler
 				$file = 'remote.log';
 			default:
 				header("HTTP/1.0 404 Not Found");
-				exit:
+				exit;
 			}
 			readfile(DASE_PATH . "/log/" . $file);
 			exit;
