@@ -21,6 +21,30 @@ class Dase_AdminHandler
 		exit;
 	}
 
+	public static function viewLog() {
+		$params = func_get_args();
+		include (DASE_PATH . '/inc/config.php'); 
+		if (!in_array(Dase::getUser()->eid,$conf['superusers'])) {
+			Dase::reload('error','No dice...you need to be a superuser to go there.');
+		}
+		if (isset($params[0])) {
+			switch ($params[0]) {
+			case 'standard':
+				$file = 'standard.log';
+			case 'error':
+				$file = 'error.log';
+			case 'sql':
+				$file = 'sql.log';
+			case 'remote':
+				$file = 'remote.log';
+			default:
+				header("HTTP/1.0 404 Not Found");
+				exit:
+			}
+			readfile(DASE_PATH . "/log/" . $file);
+			exit;
+	}
+
 	public static function buildIndex() {
 		include (DASE_PATH . '/inc/config.php'); 
 		if (!in_array(Dase::getUser()->eid,$conf['superusers'])) {
