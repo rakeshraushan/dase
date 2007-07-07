@@ -9,5 +9,7 @@ print ($remote->get());
 
 $coll = new Dase_DB_Collection;
 foreach ($coll->getAll() as $c) {
-	print $c->xmlDump();
+	$filename = "/export/home/pkeane/dase_backup/" . $c->ascii_id . '.xml';
+	print "working on " . $c->collection_name . "\n";
+	file_put_contents($filename,$c->xmlDump());
 }
