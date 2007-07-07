@@ -2,7 +2,7 @@
 <project name="dase" default="deploy" basedir=".">
 	<description>Digital Archive Services</description>
 
-	<property file="build.properties"/>
+	<property file="../build.properties"/>
 
 	<!-- note that svnant task jars are in ~/.ant/lib -->
 	<taskdef resource="svntask.properties"/>
