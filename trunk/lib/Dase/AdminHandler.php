@@ -43,6 +43,7 @@ class Dase_AdminHandler
 			}
 			readfile(DASE_PATH . "/log/" . $file);
 			exit;
+		}
 	}
 
 	public static function buildIndex() {
