@@ -4,6 +4,7 @@ require_once 'Dase/DB/Autogen/Item.php';
 
 class Dase_DB_Item extends Dase_DB_Autogen_Item 
 {
+
 	public function buildSearchIndex() {
 		$db = Dase_DB::get();
 		$sql = "
