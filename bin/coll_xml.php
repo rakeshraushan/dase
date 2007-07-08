@@ -11,6 +11,8 @@ $coll = new Dase_DB_Collection;
 foreach ($coll->getAll() as $c) {
 	$filename = "/export/home/pkeane/dase_backup/{$c['ascii_id']}.xml";
 	$mem = memory_get_usage(true);
-	print "working on " . $c->collection_name . " ($mem)\n";
-	file_put_contents($filename,$c->xmlDump());
+	print "working on {$c['collection_name']} ($mem)\n";
+	$collection = new Dase_DB_Collection;
+	$collection->load($c['id']);
+	file_put_contents($filename,$collection->xmlDump());
 }
