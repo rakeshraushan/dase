@@ -32,8 +32,8 @@
 <h4>Select Attribute Group:</h4>
 <a href="{$collection->ascii_id}?cat_id=all" class="{if $display_cat->id == 'all'}spill{else}catLink{/if}" id="catLink_0">Collection Attributes</a>
 {foreach item=cat from=$collection->category_array }
-{if $cat['id']}
-<a href="{$collection->ascii_id}?cat_id={$cat['id']}" class="{if $display_cat['id'] == $cat['id']}spill{else}catLink{/if}" id="catLink_{$cat['id']}">{$cat['name']} <span class="tally">({$cat['att_count']})</span></a>
+{if $cat.id}
+<a href="{$collection->ascii_id}?cat_id={$cat.id}" class="{if $display_cat.id == $cat.id}spill{else}catLink{/if}" id="catLink_{$cat.id}">{$cat.name} <span class="tally">({$cat.att_count})</span></a>
 {/if}
 {/foreach}
 <a href="{$collection->ascii_id}?cat_id=admin" class="{if $display_cat->id eq 'admin'}spill{else}catLink{/if}" id="catLink_admin">Admin Attributes</a>
@@ -45,12 +45,12 @@
 <h4>Select {$display_cat->name} Attribute:</h4>
 <ul id="attList">
 {foreach item=att from=$collection->attribute_array}
-<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att['id']}" class="{if $attribute->id == $att['id']}spill{else}attLink{/if}">
-{$att['attribute_name']|escape:"html"}</a></li>
+<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att.id}" class="{if $attribute->id == $att.id}spill{else}attLink{/if}">
+{$att.attribute_name|escape:"html"}</a></li>
 {/foreach}
 {foreach item=att from=$collection->admin_attribute_array}
-<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att['id']}" class="{if $attribute->id == $att['id']}spill{else}attLink{/if}">
-{$att['attribute_name']|escape:"html"}</a></li>
+<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att.id}" class="{if $attribute->id == $att.id}spill{else}attLink{/if}">
+{$att.attribute_name|escape:"html"}</a></li>
 {/foreach}
 </div>
 
