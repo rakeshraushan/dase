@@ -137,20 +137,57 @@ class Dase_DB_Object {
 		return $class->getMethods();
 	}
 
-	function find($get_one = false) {
+	function findOne() {
 		//finds matches based on set fields (omitting 'id')
 		$db = Dase_DB::get();
 		$class = get_class($this);
 		$objects = array();
 		$sets = array();
 		$bind = array();
+		foreach( array_keys( $this->fields ) as $field ) {
+			if (isset($this->fields[ $field ]) 
+				&& ('id' != $field)) {
+					$sets []= "$field = :$field";
+					$bind[":$field"] = $this->fields[ $field ];
+				}
+		}
+		if (isset($this->qualifiers)) {
+			//work on this
+			foreach ($this->qualifiers as $qual) {
+				$f = $qual['field'];
+				$op = $qual['operator'];
+				$v = $db->quote($qual['value']);
+				$sets [] = "$f $op $v";
+			}
+		}
+		$where = join( " AND ", $sets );
+		$sql = "SELECT * FROM ".$this->table. " WHERE ".$where;
+		if (isset($this->order_by)) {
+			$sql .= " ORDER BY $this->order_by";
+		}
+		$sql .= " LIMIT 1";
+		$sth = $db->prepare( $sql );
+		if (defined('DEBUG')) {
+			Dase_Log::sql($sql . ' /// ' . join(',',$bind));
+		}
+		$sth->setFetchMode(PDO::FETCH_INTO, $this);
+		$sth->execute($bind);
+		$sth->fetch();
+		return $this;
+	}
+
+	function findAll() {
+		//finds matches based on set fields (omitting 'id')
+		$db = Dase_DB::get();
+		$sets = array();
+		$bind = array();
 		$limit = '';
 		foreach( array_keys( $this->fields ) as $field ) {
 			if (isset($this->fields[ $field ]) 
-					&& ('id' != $field)) {
-				$sets []= "$field = :$field";
-				$bind[":$field"] = $this->fields[ $field ];
-			}
+				&& ('id' != $field)) {
+					$sets []= "$field = :$field";
+					$bind[":$field"] = $this->fields[ $field ];
+				}
 		}
 		if (isset($this->qualifiers)) {
 			//work on this
@@ -175,28 +212,7 @@ class Dase_DB_Object {
 		}
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute($bind);
-		while ($row = $sth->fetch()){
-			$obj = new $class($row);
-			$obj->fields['id'] = $obj->id;
-			$objects[] = $obj;
-		}
-		if (count($objects)) {
-			if ($get_one) {
-				$found = $objects[0];
-				$this->id = $found->id;
-				$this->fields['id'] = $found->id; //do we need this????
-				foreach( array_keys( $found->fields ) as $field ) {
-					if (isset($found->fields[ $field ])) {
-						$this->$field = $found->$field;
-					}
-				}
-				return $found;
-			} else {
-				return $objects;
-			}
-		} else {
-			return $objects; //empty array, should evaluate to false
-		}
+		return $sth->fetchAll();
 	}
 
 	function update() {
@@ -232,8 +248,6 @@ class Dase_DB_Object {
 
 	function getAll() {
 		$db = Dase_DB::get();
-		$class = get_class($this);
-		$objects = array();
 		$sql = "SELECT * FROM ".$this->table;
 		if (isset($this->order_by)) {
 			$sql .= " ORDER BY $this->order_by";
@@ -244,11 +258,6 @@ class Dase_DB_Object {
 		$sth = $db->prepare( $sql );
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute();
-		while ($row = $sth->fetch()){
-			$obj = new $class($row);
-			$obj->fields['id'] = $obj->id;
-			$objects[] = $obj;
-		}
-		return $objects;
+		return $sth->fetchAll();
 	}
 }
