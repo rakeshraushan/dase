@@ -32,7 +32,7 @@ class Dase_CollectionHandler
 			$current_collections = Dase::getCurrentCollections();
 			if (!$current_collections) {
 				foreach ($collections as $coll) {
-					$current_collections[] = $coll->id;
+					$current_collections[] = $coll['id'];
 				}
 			}
 			$tpl->assign('last_search',Dase_Session::get('last_search'));
