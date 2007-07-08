@@ -27,8 +27,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		}
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
-		//NOTE 2000 item limit!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		$item->setLimit(2000);
+		//$item->setLimit(2000);
 		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
 			$writer->writeAttribute('serial_number',$it['serial_number']);
