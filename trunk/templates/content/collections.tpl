@@ -23,23 +23,23 @@
 <ul class="pageList multicheck">
 
 {foreach item=coll from=$collections}
-{if $coll->is_public eq 1}
-<li><input type="checkbox" name="cols[]" value="{$coll->id}" {if in_array($coll->id,$current_collections)}checked="checked"{/if} />
-<a href="{$coll->ascii_id}" id="col_link{$coll->id}" name="collectionLink"
-{if in_array($coll->id,$current_collections)}class="checkedCollection"{/if}>{$coll->collection_name}</a>
-<span class="tally" id="tally-{$coll->id}"></span>
+{if $coll.is_public eq 1}
+<li><input type="checkbox" name="cols[]" value="{$coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
+<a href="{$coll.ascii_id}" id="col_link{$coll.id}" name="collectionLink"
+{if in_array($coll.id,$current_collections)}class="checkedCollection"{/if}>{$coll.collection_name}</a>
+<span class="tally" id="tally-{$coll.id}"></span>
 </li>
 {/if}
 {/foreach}
-<!--</ul>-->
+<!--</ul>-.
 <h3>Special Access Collections</h3>
-<!--<ul class="pageList">-->
+<!--<ul class="pageList">-.
 {foreach item=np_coll from=$collections}
-{if $np_coll->is_public ne 1}
-<li><input type="checkbox" name="cols[]" value="{$np_coll->id}" {if in_array($coll->id,$current_collections)}checked="checked"{/if} />
-<a href="{$np_coll->ascii_id}" id="col_link{$np_coll->id}" name="collectionLink"
-{if in_array($np_coll->id,$current_collections)}class="checkedCollection"{/if}>{$np_coll->collection_name}</a>
-<span class="tally" id="tally-{$np_coll->id}"></span>
+{if $np_coll.is_public ne 1}
+<li><input type="checkbox" name="cols[]" value="{$np_coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
+<a href="{$np_coll.ascii_id}" id="col_link{$np_coll.id}" name="collectionLink"
+{if in_array($np_coll.id,$current_collections)}class="checkedCollection"{/if}>{$np_coll.collection_name}</a>
+<span class="tally" id="tally-{$np_coll.id}"></span>
 </li>
 {/if}
 {/foreach}
