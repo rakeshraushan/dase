@@ -39,6 +39,9 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
 				$writer->startElement('metadata');
+				//could use Dase_DB_Attribute::getArray, but I would STILL need
+				//to pass in 'attribute' due to php5 weirdness
+				//see http://socket7.net/article/php-5-static-and-inheritance
 				$att = Dase_DB_Object::getArray('attribute',$val['attribute_id']);
 				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
 				$writer->text($val['value_text']);
