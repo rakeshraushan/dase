@@ -6,6 +6,11 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 {
 	public $display_values = array();
 
+	public static function get($id) {
+		$db = Dase_DB::get();
+		return $db->query("SELECT * FROM attribute WHERE id = $id")->fetch();
+	}
+
 	function getValueCount() {
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
