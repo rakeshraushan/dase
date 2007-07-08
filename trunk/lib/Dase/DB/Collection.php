@@ -43,7 +43,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				$writer->startElement('metadata');
 				$att = new Dase_DB_Attribute;
 				$writer->writeAttribute('attribute_ascii_id',$att->load($val['attribute_id'])->ascii_id);
-				$writer->text($val->value_text);
+				$writer->text($val['value_text']);
 				$writer->endElement();
 			}
 			$media_file = new Dase_DB_MediaFile;
