@@ -40,8 +40,8 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
 				$writer->startElement('metadata');
-				$att = new Dase_DB_Attribute;
-				$writer->writeAttribute('attribute_ascii_id',$att->load($val['attribute_id'])->ascii_id);
+				$att = new Dase_DB_Attribute::get($val['attribute_id']);
+				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
 				$writer->text($val['value_text']);
 				$writer->endElement();
 			}
