@@ -146,7 +146,7 @@ EOF;
 		if (is_array($attribute_array)) {
 			foreach ($attribute_array as $attribute) {
 				$html .=<<<EOF
-			<li><a href="#" class="$link_class $attribute['id'] $collection_id" id="att_link_{$attribute['id']}">$attribute['attribute_name'] <span class="tally" id="tally-{$attribute['id']}"></span></a></li>
+			<li><a href="#" class="$link_class {$attribute['id']} $collection_id" id="att_link_{$attribute['id']}">{$attribute['attribute_name']} <span class="tally" id="tally-{$attribute['id']}"></span></a></li>
 EOF;
 			}
 		}
