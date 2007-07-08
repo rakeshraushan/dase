@@ -31,9 +31,9 @@
 </li>
 {/if}
 {/foreach}
-<!--</ul>-.
+<!--</ul>-->
 <h3>Special Access Collections</h3>
-<!--<ul class="pageList">-.
+<!--<ul class="pageList">-->
 {foreach item=np_coll from=$collections}
 {if $np_coll.is_public ne 1}
 <li><input type="checkbox" name="cols[]" value="{$np_coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
