@@ -9,7 +9,7 @@ class Dase_ApiHandler
 			$tpl = new Dase_Xml_Template;
 			$coll = new Dase_DB_Collection;
 			$coll->ascii_id = $params[0];
-			if ($coll->find(1)) {
+			if ($coll->findOne()) {
 				$tpl->setXml($coll->xmlDump());
 				$tpl->display();
 			}

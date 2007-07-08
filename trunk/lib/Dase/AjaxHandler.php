@@ -75,7 +75,7 @@ class Dase_AjaxHandler
 				$attribute->is_public = 1;
 			}
 			$attribute->orderBy('sort_order');
-			$attribute_array = $attribute->find();
+			$attribute_array = $attribute->findAll();
 		}
 
 		$html = "<div id=\"getTallies\">";
@@ -85,7 +85,7 @@ class Dase_AjaxHandler
 		if (is_array($attribute_array)) {
 			foreach ($attribute_array as $attribute) {
 				$html .=<<<EOF
-			<li><a href="#" class="$link_class $attribute->id" id="att_link_$attribute->id">$attribute->attribute_name <span class="tally" id="tally-$attribute->id"></span></a></li>
+			<li><a href="#" class="$link_class $attribute['id']" id="att_link_{$attribute['id']}">$attribute['attribute_name'] <span class="tally" id="tally-{$attribute['id']}"></span></a></li>
 EOF;
 			}
 		}
@@ -137,7 +137,7 @@ EOF;
 		$token = Dase_Utils::filterGet('token');
 		$attribute = new Dase_DB_Attribute;
 		$attribute->collection_id = 0;
-		$attribute_array = $attribute->find();
+		$attribute_array = $attribute->findAll();
 
 		$html = "<div class=\"adminAtts\" id=\"getTallies\">";
 		$html .="<h4>Select Admin Attribute:</h4>";
@@ -146,7 +146,7 @@ EOF;
 		if (is_array($attribute_array)) {
 			foreach ($attribute_array as $attribute) {
 				$html .=<<<EOF
-			<li><a href="#" class="$link_class $attribute->id $collection_id" id="att_link_$attribute->id">$attribute->attribute_name <span class="tally" id="tally-$attribute->id"></span></a></li>
+			<li><a href="#" class="$link_class $attribute['id'] $collection_id" id="att_link_{$attribute['id']}">$attribute['attribute_name'] <span class="tally" id="tally-{$attribute['id']}"></span></a></li>
 EOF;
 			}
 		}

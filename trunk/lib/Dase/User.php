@@ -12,7 +12,7 @@ class Dase_User
 			if ($user_id) {
 				$db_user = new Dase_DB_DaseUser;
 				$db_user->eid = $user_id;
-				$db_user->find(1);
+				$db_user->findOne();
 				$this->db_user = $db_user;
 			}
 		}
@@ -35,7 +35,7 @@ class Dase_User
 		if ('pass' == $password) {
 			$user = new Dase_DB_DaseUser();
 			$user->eid = $username;
-			if ($user->find(1)) {
+			if ($user->findOne()) {
 				return $user;
 			}
 		}
