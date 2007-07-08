@@ -9,7 +9,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $attribute_array;
 	public $category_array;
 
-	function xmlDump() {
+	function xmlDump($limit = 10000000) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
@@ -27,7 +27,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		}
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
-		//$item->setLimit(2000);
+		$item->setLimit($limit);
 		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
 			$writer->writeAttribute('serial_number',$it['serial_number']);
