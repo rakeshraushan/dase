@@ -14,7 +14,7 @@
 <select name="collection_ascii_id">
 <option value="">select a collection</option>
 {foreach item=collection from=$collections}
-<option value="{$collection->ascii_id}">{$collection->collection_name}</option>
+<option value="{$collection['ascii_id']}">{$collection['collection_name']}</option>
 {/foreach}
 </select>
 </p>
