@@ -59,6 +59,15 @@ class Dase_DB_Object {
 		return $out;
 	}
 
+	//to conserve memory, static method to get array
+	public static function getArray($table,$id) {
+		$db = Dase_DB::get();
+		$sth = $db->prepare("SELECT * from $table WHERE id = ?");
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($id));
+		return $sth->fetch();
+	}
+
 	function load( $id ) {
 		$this->id = $id;
 		$db = Dase_DB::get();

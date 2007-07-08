@@ -32,7 +32,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
 			$writer->writeAttribute('serial_number',$it['serial_number']);
-			$item_type = Dase_DB_ItemType::get($it['item_type_id']);
+			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
 			if (isset($item_type['name'])) {
 				$writer->writeAttribute('item_type',$item_type['name']);
 			}
@@ -40,7 +40,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
 				$writer->startElement('metadata');
-				$att = Dase_DB_Attribute::get($val['attribute_id']);
+				$att = Dase_DB_Object::getArray('attribute',$val['attribute_id']);
 				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
 				$writer->text($val['value_text']);
 				$writer->endElement();
