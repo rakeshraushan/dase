@@ -19,41 +19,42 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$writer->writeAttribute('ascii_id',$this->ascii_id);
 		$attribute = new Dase_DB_Attribute;
 		$attribute->collection_id = $this->id;
-		foreach($attribute->find() as $att) {
+		foreach($attribute->findAll() as $att) {
 			$writer->startElement('attribute');
-			$writer->writeAttribute('name',$att->attribute_name);
-			$writer->writeAttribute('ascii_id',$att->ascii_id);
+			$writer->writeAttribute('name',$att['attribute_name']);
+			$writer->writeAttribute('ascii_id',$att['ascii_id']);
 			$writer->endElement();
 		}
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
 		//NOTE 2000 item limit!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		$item->setLimit(2000);
-		foreach($item->find() as $it) {
+		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
-			$writer->writeAttribute('serial_number',$it->serial_number);
-			$it->getItemType();
-			if (isset($it->item_type->name)) {
-				$writer->writeAttribute('item_type',$it->item_type->name);
+			$writer->writeAttribute('serial_number',$it['serial_number']);
+			$item_type = new Dase_DB_ItemType;
+			$item_type->load($it['item_type_id']);
+			if (isset($item_type->name)) {
+				$writer->writeAttribute('item_type',$item_type->name);
 			}
 			$value = new Dase_DB_Value;
-			$value->item_id = $it->id;
-			foreach($value->find() as $val) {
+			$value->item_id = $it['id'];
+			foreach($value->findAll() as $val) {
 				$writer->startElement('metadata');
-				$val->getAttribute();
-				$writer->writeAttribute('attribute_ascii_id',$val->attribute->ascii_id);
+				$att = new Dase_DB_Attribute;
+				$writer->writeAttribute('attribute_ascii_id',$att->load($val['attribute_id'])->ascii_id);
 				$writer->text($val->value_text);
 				$writer->endElement();
 			}
 			$media_file = new Dase_DB_MediaFile;
-			$media_file->item_id = $it->id;
-			foreach($media_file->find() as $mf) {
+			$media_file->item_id = $it['id'];
+			foreach($media_file->findAll() as $mf) {
 				$writer->startElement('media_file');
-				$writer->writeAttribute('filename',$mf->filename);
-				$writer->writeAttribute('size',$mf->size);
-				$writer->writeAttribute('mime_type',$mf->mime_type);
-				$writer->writeAttribute('width',$mf->width);
-				$writer->writeAttribute('height',$mf->height);
+				$writer->writeAttribute('filename',$mf['filename']);
+				$writer->writeAttribute('size',$mf['size']);
+				$writer->writeAttribute('mime_type',$mf['mime_type']);
+				$writer->writeAttribute('width',$mf['width']);
+				$writer->writeAttribute('height',$mf['height']);
 				$writer->endElement();
 			}
 			$writer->endElement();
@@ -78,7 +79,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public static function get($ascii_id) {
 		$c = new Dase_DB_Collection;
 		$c->ascii_id = $ascii_id;
-		return($c->find(1));
+		return($c->findOne());
 	}
 
 	static function getAllAsXml() {
@@ -89,7 +90,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$coll = $coll_res->appendChild($dom->createElement('collection'));
 			$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public','display_categories');
 			foreach ($fields as $field) {
-				$coll->setAttribute($field,$c->$field);	
+				$coll->setAttribute($field,$c[$field]);	
 			}
 		}
 		$dom->formatOutput = true;
@@ -100,7 +101,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = $this->id;
 		$att->orderBy('sort_order');
-		$this->attribute_array = $att->find();
+		$this->attribute_array = $att->findAll();
 		return $this->attribute_array;
 	}
 
@@ -108,14 +109,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
-		$this->admin_attribute_array = $att->find();
+		$this->admin_attribute_array = $att->findAll();
 	}
 
 	function getCategories() {
 		$cat = new Dase_DB_Category;
 		$cat->collection_id = $this->id;
 		$cat->orderBy('sort_order');
-		$this->category_array = $cat->find();
+		$this->category_array = $cat->findAll();
 	}
 
 	function getItemCount() {
@@ -159,7 +160,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		if ($ascii_id) { //allow ascii_id = 0 to be used for admin_atts
 			$coll = new Dase_DB_Collection;
 			$coll->ascii_id = $ascii_id;
-			if (!$coll->find(1)) {
+			if (!$coll->findOne()) {
 				throw new Exception('no such collection');
 			}
 		}
@@ -177,7 +178,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				if (strstr($att->ascii_id,'admin_')) {
 					$att->collection_id = 0;
 				}
-				if (!$att->find(1)) {
+				if (!$att->findOne()) {
 					$att->sort_order = $att_node->getAttribute('sort_order');
 					$att->attribute_name = $att_node->getAttribute('attribute_name');
 					$att->is_public = $att_node->getAttribute('is_public');
@@ -198,7 +199,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		require_once 'Dase/DB/Value.php';
 		$coll = new Dase_DB_Collection;
 		$coll->ascii_id = $ascii_id;
-		if (!$coll->find(1)) {
+		if (!$coll->findOne()) {
 			throw new Exception('no such collection');
 		}
 		$dom = new DOMDocument;
@@ -221,7 +222,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				} else {
 					$a->collection_id = $coll->id;
 				}
-				$a->find(1);
+				$a->findOne();
 				$val->attribute_id = $a->id;
 				$val->value_text = $val_node->nodeValue;
 				$val->item_id = $item_id;
@@ -250,8 +251,43 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$db->query("DELETE FROM admin_search_table WHERE collection_id = $this->id");
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
-		foreach ($item->find() as $it) {
-			$it->buildSearchIndex(0);
+		foreach ($item->findAll() as $it) {
+			//search table
+			$composite_value_text = '';
+			$sql = "
+				SELECT value_text
+				FROM value
+				WHERE item_id = ?
+				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = 1)
+				";
+			$st = $db->prepare($sql);
+			$st->execute($it['id']);
+			while ($value_text = $st->fetchColumn()) {
+				$composite_value_text .= $value_text . " ";
+			}
+			$search_table = new Dase_DB_SearchTable;
+			$search_table->value_text = $composite_value_text;
+			$search_table->item_id = $it['id'];
+			$search_table->collection_id = $this->id;
+			$search_table->insert();
+
+			//admin search table
+			$composite_value_text = '';
+			$sql = "
+				SELECT value_text
+				FROM value
+				WHERE item_id = ?
+				";
+			$st = $db->prepare($sql);
+			$st->execute($it['id']);
+			while ($value_text = $st->fetchColumn()) {
+				$composite_value_text .= $value_text . " ";
+			}
+			$search_table = new Dase_DB_AdminSearchTable;
+			$search_table->value_text = $composite_value_text;
+			$search_table->item_id = $it['id'];
+			$search_table->collection_id = $this->id;
+			$search_table->insert();
 		}
 		return true;
 	}

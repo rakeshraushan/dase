@@ -10,7 +10,7 @@ class Dase_DB_XmlCache extends Dase_DB_Autogen_XmlCache
 		$cache->name = $name;
 		$cache->collection_id = $collection_id;
 		$cache->other_ident = $other_ident;
-		if ($cache->find(1)) {
+		if ($cache->findOne()) {
 			return $cache->text;
 		} else {
 			return false;
@@ -22,7 +22,7 @@ class Dase_DB_XmlCache extends Dase_DB_Autogen_XmlCache
 		$cache->name = $name;
 		$cache->collection_id = $collection_id;
 		$cache->other_ident = $other_ident;
-		if ($cache->find(1)) {
+		if ($cache->findOne()) {
 			$cache->text = $xml;
 			$cache->update();
 		} else {
