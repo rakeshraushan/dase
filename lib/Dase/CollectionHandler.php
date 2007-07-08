@@ -16,7 +16,7 @@ class Dase_CollectionHandler
 				$tpl->assign('attribute',$att);
 			}
 			$coll->ascii_id = $params[0];
-			$coll->find(1);
+			$coll->findOne();
 			$coll->getAdminAttributes();
 			$coll->getAttributes();
 			$coll->getCategories();
@@ -52,7 +52,7 @@ class Dase_CollectionHandler
 				$tpl = new Dase_Xml_Template;
 				$coll = new Dase_DB_Collection;
 				$coll->ascii_id = $params[0];
-				$coll->find(1);
+				$coll->findOne();
 				$tpl->setXml($coll->xmlDump());
 				$tpl->display();
 			}

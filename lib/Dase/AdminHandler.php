@@ -58,7 +58,7 @@ class Dase_AdminHandler
 		}
 		$coll = new Dase_DB_Collection;
 		$coll->ascii_id = Dase_Utils::filterGet('collection_ascii_id');
-		$coll->find(1);
+		$coll->findOne();
 		$coll->buildSearchIndex();
 		Dase::reload('admin',"rebuilt indexes for $coll->collection_name");
 	}
