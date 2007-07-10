@@ -225,7 +225,7 @@ class Dase_DB_Object {
 	}
 
 	function update() {
-		$db = Spending_DB::get();
+		$db = Dase_DB::get();
 		foreach( $this->fields as $key => $val)
 		{
 				$fields[]= $key." = ?";
