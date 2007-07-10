@@ -13,6 +13,8 @@ class Dase_ApiHandler
 				$tpl->setXml($coll->xmlDump());
 				$tpl->display();
 			}
+		} else {
+			Dase_ApiHandler::collections();
 		}
 	}
 
