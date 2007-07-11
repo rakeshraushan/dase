@@ -8,7 +8,8 @@ class Dase_ApiHandler
 		if (isset($params[0])) {
 			$limit = Dase_Utils::filterGet('limit');
 			if (!$limit) {
-				$limit = 0;
+				//so you need to conciously try to crash firefox
+				$limit = 1;
 			}
 			$tpl = new Dase_Xml_Template;
 			$coll = new Dase_DB_Collection;
