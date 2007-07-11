@@ -98,9 +98,13 @@ class Dase_DB_Object {
 		$inserts = array($id);
 		foreach( array_keys( $this->fields ) as $field )
 		{
-			$fields []= $field;
-			$inserts []= ":$field";
-			$bind[":$field"] = $this->fields[ $field ];
+			//NOTE!! always let 
+			//db set time stamp
+			if ('timestamp' != $field) {
+				$fields []= $field;
+				$inserts []= ":$field";
+				$bind[":$field"] = $this->fields[ $field ];
+			}
 		}
 		$field_set = join( ", ", $fields );
 		$insert = join( ", ", $inserts );
