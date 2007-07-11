@@ -9,7 +9,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $attribute_array;
 	public $category_array;
 
-	function xmlDump($limit = 10000000) {
+	function xmlDump($limit = 100000) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
@@ -27,26 +27,48 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		}
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
-		$item->setLimit($limit);
+		if ($limit) { //0 means no limit
+			$item->setLimit($limit);
+		}
 		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
+			print "{$it['serial_number']}\n";
 			$writer->writeAttribute('serial_number',$it['serial_number']);
 			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
 			if (isset($item_type['name'])) {
 				$writer->writeAttribute('item_type',$item_type['name']);
 			}
+			//straight db for 
+			//metadata, took 2:40 
+			//for 18K records
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT value_text,ascii_id 
+				FROM value, attribute
+				WHERE attribute.id = value.attribute_id
+				AND value.item_id = {$it['id']}
+				";
+			$st = $db->query($sql);
+			foreach ($st->fetchAll() as $row) {
+				$writer->startElement('metadata');
+				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+				$writer->text($row['value_text']);
+				$writer->endElement();
+			}
+			//db_object get too 
+			//4:40 for 18K 
+			//records
+			/*
 			$value = new Dase_DB_Value;
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
 				$writer->startElement('metadata');
-				//could use Dase_DB_Attribute::getArray, but I would STILL need
-				//to pass in 'attribute' due to php5 weirdness
-				//see http://socket7.net/article/php-5-static-and-inheritance
 				$att = Dase_DB_Object::getArray('attribute',$val['attribute_id']);
 				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
 				$writer->text($val['value_text']);
 				$writer->endElement();
 			}
+			 */
 			$media_file = new Dase_DB_MediaFile;
 			$media_file->item_id = $it['id'];
 			foreach($media_file->findAll() as $mf) {
