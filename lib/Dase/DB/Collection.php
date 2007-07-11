@@ -32,7 +32,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		}
 		foreach($item->findAll() as $it) {
 			$writer->startElement('item');
-			print "{$it['serial_number']}\n";
 			$writer->writeAttribute('serial_number',$it['serial_number']);
 			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
 			if (isset($item_type['name'])) {
