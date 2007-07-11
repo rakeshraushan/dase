@@ -22,6 +22,12 @@ class Dase_DB_XmlCache extends Dase_DB_Autogen_XmlCache
 		$cache->name = $name;
 		$cache->collection_id = $collection_id;
 		$cache->other_ident = $other_ident;
+		if (strlen($xml) > 65000) {
+			$strlen = strlen($xml);
+			Dase_Log::write("tried to write an xmlcache greater than 65000 characters");
+			Dase_Log::write("$name $collection_id $other_ident is $strlen characters long");
+			return;
+		}
 		if ($cache->findOne()) {
 			$cache->text = $xml;
 			$cache->update();
