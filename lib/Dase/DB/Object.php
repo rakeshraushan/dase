@@ -181,8 +181,13 @@ class Dase_DB_Object {
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute($bind);
-		$sth->fetch();
-		return $this;
+		if ($sth->fetch()) {
+			if ($sth->columnCount()) {
+				return $this;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	function findAll() {
