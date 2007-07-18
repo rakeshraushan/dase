@@ -1,6 +1,7 @@
 <?php
 define("BIN_PATH", dirname(__FILE__));
 define("DASE_PATH",BIN_PATH . '/..');
+define("DASE_CONFIG", '../daseconf.php');
 ini_set('include_path',ini_get('include_path').':'. DASE_PATH .'/lib:'); 
 
 function __autoload($class_name) {

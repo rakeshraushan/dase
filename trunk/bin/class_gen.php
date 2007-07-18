@@ -1,9 +1,5 @@
-#!/usr/local/bin/php
 <?php
-define("DASE_PATH",'..');
-ini_set('include_path','.:../lib:/usr/local/dase/lib');
-include 'Dase/DB.php';
-include 'Dase/Config.php';
+include 'cli_setup.php';
 
 $class_dir = '../lib/Dase';
 if (!file_exists($class_dir)) {

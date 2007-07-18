@@ -5,7 +5,7 @@ require_once 'Dase/DB/Object.php';
 class Dase_DB_Autogen_Tag extends Dase_DB_Object 
 {
 	function __construct($assoc = false) {
-		parent::__construct( 'tag',  array('name','description','dase_user_id','timestamp','tag_type_id','is_public','background','admin_collection_id','ascii_id','master_item_id'));
+		parent::__construct( 'tag',  array('admin_collection_id','ascii_id','background','dase_user_id','description','is_public','master_item_id','name','tag_type_id','timestamp'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;
