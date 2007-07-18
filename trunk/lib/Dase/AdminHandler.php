@@ -3,7 +3,7 @@
 class Dase_AdminHandler 
 {
 	public static function index() {
-		include (DASE_PATH . '/inc/config.php'); 
+		include (DASE_PATH . '/' . DASE_CONFIG); 
 		if (!in_array(Dase::getUser()->eid,$conf['superusers'])) {
 			Dase::reload('error','No dice...you need to be a superuser to go there.');
 		}

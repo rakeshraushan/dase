@@ -13,7 +13,7 @@ class Dase_DB {
 	public static function get($dbname = null) {
 		// Connect if not already connected
 		if (is_null(self::$db)) {
-			include (DASE_PATH . '/inc/config.php'); 
+			include (DASE_PATH . '/' . DASE_CONFIG); 
 			self::$type = $conf['db_type'];
 			if ($dbname) {
 				self::$name = $dbname;
