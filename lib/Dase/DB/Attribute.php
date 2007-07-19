@@ -5,6 +5,7 @@ require_once 'Dase/DB/Autogen/Attribute.php';
 class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute 
 {
 	public $display_values = array();
+	public $cardinality;
 
 	function getValueCount() {
 		if (!$this->id) {
