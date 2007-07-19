@@ -13,6 +13,7 @@ class Dase_DB_ItemType extends Dase_DB_Autogen_ItemType
 		foreach($att_it->findAll() as $res) {
 			$att = new Dase_DB_Attribute;
 			$att->load($res['attribute_id']);
+			$att->cardinality = $res['cardinality']; 
 			$attributes[] = $att;
 		}
 		$this->attributes = $attributes;

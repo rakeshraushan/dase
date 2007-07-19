@@ -40,14 +40,15 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$parent = new Dase_DB_ItemType;
 			$parent->load($t['parent_item_type_id']);
 			$writer->writeAttribute('parent_item_type',$parent->ascii_id);
-			$rel_att = new Dase_DB_Attribute;
-			$rel_att->load($t['relation_attribute_id']);
-			$writer->writeAttribute('relation_attribute_id',$rel_att->ascii_id);
+			$id_att = new Dase_DB_Attribute;
+			$id_att->load($t['ident_attribute_id']);
+			$writer->writeAttribute('ident_attribute',$id_att->ascii_id);
 			$it_obj = new Dase_DB_ItemType;
 			$it_obj->load($t['id']);
 			foreach ($it_obj->getAttributes() as $a) {
 				$writer->startElement('attribute');
 				$writer->writeAttribute('ascii_id',$a->ascii_id);
+				$writer->writeAttribute('cardinality',$a->cardinality);
 				$writer->endElement();
 			}
 			$writer->endElement();
