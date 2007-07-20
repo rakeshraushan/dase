@@ -98,10 +98,30 @@
 	  </fileset>
 
 	  <createDatabase failonerror="false"/>
+	  <writeSchemaToDatabase/> 
+	</ddlToDatabase>
+  </target>
+
+  <target name="mysql-setup"
+	description="Creates the database structure and inserts data into the database">
+	<taskdef name="ddlToDatabase"
+	  classname="org.apache.ddlutils.task.DdlToDatabaseTask">
+	  <classpath refid="runtime-classpath"/>
+	</taskdef>
+
+	<ddlToDatabase>
+	  <database url="jdbc:mysql://mysql.laits.utexas.edu/pkeane_dase"
+		driverClassName="com.mysql.jdbc.Driver"
+		username="${db.mysql.user}"
+		password="${db.mysql.pass}"/>
+	  <fileset dir=".">
+		<include name="project-schema.xml"/>
+	  </fileset>
 
 	  <writeSchemaToDatabase/> 
 	</ddlToDatabase>
   </target>
+
   <target name="database-dump" description="Dumps the database structure">
 	<taskdef name="databaseToDdl"
 	  classname="org.apache.ddlutils.task.DatabaseToDdlTask">
