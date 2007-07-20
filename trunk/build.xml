@@ -1,77 +1,125 @@
 <?xml version="1.0"?>
 <project name="dase" default="deploy-local" basedir=".">
-	<description>Digital Archive Services</description>
+  <description>Digital Archive Services</description>
 
-	<property file="../build.properties"/>
+  <property file="../build.properties"/>
 
-	<!-- note that svnant task jars are in ~/.ant/lib -->
-	<taskdef resource="svntask.properties"/>
+  <!-- note that svnant task jars are in ~/.ant/lib -->
+  <taskdef resource="svntask.properties"/>
 
-	<target name="deploy-local">
-		<property name="head" value="${basedir}" />
-		<sync todir="${install.dir}" 
-			overwrite="true"
-			includeEmptyDirs="true"
-			>
-			<fileset dir="${head}" />
-		</sync>
-		<copy file="${head}/prod_htaccess" tofile="${install.dir}/.htaccess"/>
-		<replace file="${install.dir}/inc/config.php" token="@db_type" value="${db.type}"/>
-		<replace file="${install.dir}/inc/config.php" token="@db_host" value="${db.host}"/>
-		<replace file="${install.dir}/inc/config.php" token="@db_name" value="${db.name}"/>
-		<replace file="${install.dir}/inc/config.php" token="@db_user" value="${db.user}"/>
-		<replace file="${install.dir}/inc/config.php" token="@db_pass" value="${db.pass}"/>
-		<replace file="${install.dir}/.htaccess" token="@base" value="/${rewrite.base}"/>
-		<chmod dir="${install.dir}/log" 
-			perm="777" 
-			includes="*.log"
-			/>
-		<chmod file="${install.dir}/templates_c" 
-			perm="775"
-			type="dir"
-			/>
-		<chgrp file="${install.dir}/templates_c" 
-			group="${httpd.group}"
-			type="dir"
-			/>
-	</target>
+  <target name="deploy-local">
+	<property name="head" value="${basedir}" />
+	<sync todir="${install.dir}" 
+	  overwrite="true"
+	  includeEmptyDirs="true"
+	  >
+	  <fileset dir="${head}" />
+	</sync>
+	<copy file="${head}/prod_htaccess" tofile="${install.dir}/.htaccess"/>
+	<replace file="${install.dir}/inc/config.php" token="@db_type" value="${db.type}"/>
+	<replace file="${install.dir}/inc/config.php" token="@db_host" value="${db.host}"/>
+	<replace file="${install.dir}/inc/config.php" token="@db_name" value="${db.name}"/>
+	<replace file="${install.dir}/inc/config.php" token="@db_user" value="${db.user}"/>
+	<replace file="${install.dir}/inc/config.php" token="@db_pass" value="${db.pass}"/>
+	<replace file="${install.dir}/.htaccess" token="@base" value="/${rewrite.base}"/>
+	<chmod dir="${install.dir}/log" 
+	  perm="777" 
+	  includes="*.log"
+	  />
+	<chmod file="${install.dir}/templates_c" 
+	  perm="775"
+	  type="dir"
+	  />
+	<chgrp file="${install.dir}/templates_c" 
+	  group="${httpd.group}"
+	  type="dir"
+	  />
+  </target>
 
-	<target name="deploy" depends="checkout">
-		<property name="head" value="${basedir}/svn_head" />
-		<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
-		<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
-		<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>
-		<replace file="${head}/inc/config.php" token="@db_user" value="${db.user}"/>
-		<replace file="${head}/inc/config.php" token="@db_pass" value="${db.pass}"/>
-		<replace file="${head}/prod_htaccess" token="@base" value="/${rewrite.base}"/>
-		<copy file="${head}/prod_htaccess" tofile="${head}/.htaccess"/>
-		<sync todir="${install.dir}" 
-			overwrite="true"
-			includeEmptyDirs="true"
-			>
-			<fileset dir="${head}" />
-		</sync>
-		<chmod dir="${install.dir}/log" 
-			perm="777" 
-			includes="*.log"
-			/>
-		<chmod file="${install.dir}/templates_c" 
-			perm="775"
-			type="dir"
-			/>
-		<chgrp file="${install.dir}/templates_c" 
-			group="${httpd.group}"
-			type="dir"
-			/>
-	</target>
+  <target name="deploy" depends="checkout">
+	<property name="head" value="${basedir}/svn_head" />
+	<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
+	<replace file="${head}/inc/config.php" token="@db_host" value="${db.host}"/>
+	<replace file="${head}/inc/config.php" token="@db_name" value="${db.name}"/>
+	<replace file="${head}/inc/config.php" token="@db_user" value="${db.user}"/>
+	<replace file="${head}/inc/config.php" token="@db_pass" value="${db.pass}"/>
+	<replace file="${head}/prod_htaccess" token="@base" value="/${rewrite.base}"/>
+	<copy file="${head}/prod_htaccess" tofile="${head}/.htaccess"/>
+	<sync todir="${install.dir}" 
+	  overwrite="true"
+	  includeEmptyDirs="true"
+	  >
+	  <fileset dir="${head}" />
+	</sync>
+	<chmod dir="${install.dir}/log" 
+	  perm="777" 
+	  includes="*.log"
+	  />
+	<chmod file="${install.dir}/templates_c" 
+	  perm="775"
+	  type="dir"
+	  />
+	<chgrp file="${install.dir}/templates_c" 
+	  group="${httpd.group}"
+	  type="dir"
+	  />
+  </target>
 
-	<target name="checkout">
-		<delete dir="svn_head"/>
-		<svn>
-			<checkout url="${svn.url}"
-				destPath="svn_head"/> 
-		</svn>
-	</target>
+  <target name="checkout">
+	<delete dir="svn_head"/>
+	<svn>
+	  <checkout url="${svn.url}"
+		destPath="svn_head"/> 
+	</svn>
+  </target>
+
+  <path id="runtime-classpath">
+	<fileset dir="lib">
+	  <include name="**/*.jar"/>
+
+	  <include name="**/*.zip"/>
+	</fileset>
+  </path>
+
+  <target name="database-setup"
+	description="Creates the database structure and inserts data into the database">
+	<taskdef name="ddlToDatabase"
+	  classname="org.apache.ddlutils.task.DdlToDatabaseTask">
+	  <classpath refid="runtime-classpath"/>
+	</taskdef>
+
+	<ddlToDatabase>
+	  <database url="jdbc:postgresql://postgres.laits.utexas.edu/dase_pk"
+		driverClassName="org.postgresql.Driver"
+		username="${db.user}"
+		password="${db.pass}"/>
+	  <fileset dir=".">
+		<include name="project-schema.xml"/>
+	  </fileset>
+
+	  <createDatabase failonerror="false"/>
+
+	  <writeSchemaToDatabase/> 
+	</ddlToDatabase>
+  </target>
+  <target name="database-dump" description="Dumps the database structure">
+	<taskdef name="databaseToDdl"
+	  classname="org.apache.ddlutils.task.DatabaseToDdlTask">
+	  <classpath refid="runtime-classpath"/>
+
+	</taskdef>
+	<databaseToDdl modelName="MyModel">
+	  <database url="jdbc:postgresql://postgres.laits.utexas.edu/dase_dev"
+		driverClassName="org.postgresql.Driver"
+		username="${db.user}"
+		password="${db.pass}"/>
+
+	  <writeSchemaToFile outputFile="project-schema.xml"/>
+	</databaseToDdl>
+
+  </target>
+
+
 
 </project>
 
