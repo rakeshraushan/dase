@@ -6,7 +6,7 @@
 
 <h1>Please Login to Dase:</h1>
 
-<form id="login" action="user/login" method="post">
+<form id="login" action="login" method="post">
 <p>
 <label for="username">username:</label>
 <input type="text" name="username">

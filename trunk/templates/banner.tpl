@@ -1,6 +1,6 @@
 {if $user}
 <div class="login controls">
-{$user->name} is logged in. (<a href="user/logoff" class="logoff">logoff</a>)
+{$user->name} is logged in. (<a href="logoff" class="logoff">logoff</a>)
 </div>
 {/if}
 <a href="http://www.utexas.edu"><img src="images/UTwordmark_02.jpg" alt="ut logo"></a>

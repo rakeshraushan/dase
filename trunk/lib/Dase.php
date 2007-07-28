@@ -52,6 +52,9 @@ class Dase
 	public static function getUser() {
 		if (self::$user) {
 			return self::$user;
+		} else {
+			self::$user = new Dase_User();
+			return self::$user;
 		}
 	}
 
@@ -64,11 +67,10 @@ class Dase
 		}
 	}
 
-	static public function parseRequest() {
+	static public function run() {
 		$controller = Dase::instance();
 		// from habari code
-		// Start with the entire URL coming from web server... 
-		$start_url= ( isset($_SERVER['REQUEST_URI']) 
+		$request_url= ( isset($_SERVER['REQUEST_URI']) 
 			? $_SERVER['REQUEST_URI'] 
 			: $_SERVER['SCRIPT_NAME'] . 
 			( isset($_SERVER['PATH_INFO']) 
@@ -80,53 +82,73 @@ class Dase
 
 		/* Strip out the base URL from the requested URL */
 		if ('/' != APP_BASE) {
-			$start_url= str_replace(APP_BASE,'',$start_url);
+			$request_url= str_replace(APP_BASE,'',$request_url);
 		}
 
 		/* Trim off any leading or trailing slashes */
-		$start_url= trim($start_url, '/');
+		$request_url= trim($request_url, '/');
 
 		/* Remove the querystring from the URL */
-		if ( strpos($start_url, '?') !== FALSE )
-			list($start_url, )= explode('?', $start_url);
+		if ( strpos($request_url, '?') !== FALSE ) {
+			list($request_url, )= explode('?', $request_url);
+		}
 
-		$controller->stub = $start_url;
-		$stub_array = explode('/',$start_url);
-		if (strstr($stub_array[0],'_collection')) {
-			array_unshift($stub_array,'collection');
-		}
-		$module = Dase_Utils::camelCaseString(array_shift($stub_array));
-		if (!$module) { 
-			//this is the case of the app root being requested
-			$module = 'collection'; 
-			//never another action
-			$stub_array = array();
-		}
-		$controller->module = Dase_Plugins::filter('dase','module',$module);
-		$handler = 'Dase_' . ucfirst($controller->module) . 'Handler';
-		if (class_exists($handler)) {
-			Dase_Log::write('handler ok: ' . $handler );
-			if (isset($stub_array[0])) {
-				$action = Dase_Utils::camelCaseString($stub_array[0]);
-			} else {
-				$action = '';
+		$matches = array();
+		$params = array();
+
+		//$controller->module = Dase_Plugins::filter('dase','request_url',$request_url);
+		//get routes
+
+
+//come up w/ way for plugin to hook into routes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+		include (DASE_CONFIG); 
+		foreach ($routes as $route => $regex_array) {
+			foreach ($regex_array as $regex) {
+				if (preg_match("!$regex!",$request_url,$matches)) {
+					if(file_exists(DASE_PATH . '/actions/' . $route . '.php')) {
+						if ($matches[1]) {
+							array_shift($matches);
+							$params = $matches;
+						}
+						include(DASE_PATH . '/actions/' . $route . '.php');
+						exit;
+					}
+				} 
 			}
-			Dase_Log::write('try action: ' . $action );
-			if (method_exists( $handler,$action )) {
-				array_shift($stub_array);
-				$controller->handler = $handler; 
-				$controller->action = $action; 
-				$controller->url_params = $stub_array;
-			} else {
-				$controller->handler = $handler; 
-				$controller->action = 'index'; 
-				$controller->url_params = $stub_array;
-			}
-		} else {
-			Dase_Log::error('no such class: ' . $handler );
-			Dase::reload('error','Sorry, there was an error');
 		}
+		//no routes match, so use default:
+		include(DASE_PATH . '/actions/list_collections.php');
+		exit;
 	}
+
+	static public function listCollections() {
+		Dase::checkUser();
+		$coll = new Dase_DB_Collection;
+		$tpl = Dase_Template::instance();
+		$coll->orderBy('collection_name');
+		$collections = $coll->getAll();
+		$current_collections = Dase::getCurrentCollections();
+		if (!$current_collections) {
+			foreach ($collections as $coll) {
+				$current_collections[] = $coll['id'];
+			}
+		}
+		$tpl->assign('last_search',Dase_Session::get('last_search'));
+		$tpl->assign('current_collections',$current_collections);
+		$tpl->assign('collections',$collections);
+		$tpl->assign('content','collections');
+		Dase_Plugins::act('dase','before_display');
+		$tpl->display('page.tpl');
+	}
+
+	static public function browseCollection() {
+		echo "greetings from dase\n";
+		exit;
+	}
+
 
 	public static function reload($path = '',$msg = '') {
 		$msg_qstring = '';
@@ -137,18 +159,5 @@ class Dase
 		}
 		header( "Location:". trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring);
 		exit;
-	}
-
-	public function dispatchRequest() {
-		$c = Dase::instance();
-		//print_r($c);exit;
-		//check again in case getUser changed one or the other
-		if (method_exists( $c->handler,$c->action )) {
-			Dase_Log::write('dispatch: ' . $c->handler . '->' . $c->action);
-			call_user_func_array(array($c->handler,$c->action),$c->url_params); //retrieve $_GET and $_POST w/in action
-		} else {
-			Dase_Log::error('no such class->method: ' . $c->handler . '->' . $c->action);
-			Dase::reload('error','Sorry, there was an error');
-		}
 	}
 }
