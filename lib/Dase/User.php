@@ -17,7 +17,7 @@ class Dase_User
 			}
 		}
 		catch (AuthException $e) {
-			Dase::reload('user/login_form');
+			Dase::reload('login_form');
 		}
 	}
 

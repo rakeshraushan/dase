@@ -15,7 +15,7 @@ define('APP_HTTP_ROOT','http://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_
 define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('DASE_PATH', dirname(__FILE__));
-define('DASE_CONFIG', 'inc/config.php');
+define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('MEDIA_ROOT', '/usr/local/dase/media');
 
 function __autoload($class_name) {
@@ -37,6 +37,3 @@ Dase_Session::read();
 Dase_Plugins::load();
 
 Dase::run();
-//Dase::parseRequest();
-//Dase::checkUser();
-//Dase::dispatchRequest();
