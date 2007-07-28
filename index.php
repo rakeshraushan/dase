@@ -36,6 +36,7 @@ Dase_Timer::start();
 Dase_Session::read();
 Dase_Plugins::load();
 
-Dase::parseRequest();
-Dase::checkUser();
-Dase::dispatchRequest();
+Dase::run();
+//Dase::parseRequest();
+//Dase::checkUser();
+//Dase::dispatchRequest();
