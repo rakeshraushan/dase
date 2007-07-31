@@ -1,10 +1,1 @@
-2007-06-24T01:34:46-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 1
-2007-06-24T01:34:50-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 2
-2007-06-24T01:34:50-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 3
-2007-06-24T01:34:51-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 4
-2007-06-24T01:34:51-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 5
-2007-06-24T01:42:54-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 1
-2007-06-24T01:42:57-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 2
-2007-06-24T01:42:57-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 3
-2007-06-24T01:42:58-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 4
-2007-06-24T01:42:59-05:00 INFO (6): SELECT * FROM item WHERE collection_id = :collection_id /// 5
+---- log file ---

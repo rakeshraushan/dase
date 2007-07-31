@@ -28,7 +28,7 @@ function __autoload($class_name) {
 	try {
 		include "$class_file";
 	} catch (Exception $e) {
-		Dase_Log::error("could not autoload $class_file");
+		Dase::log('error',"could not autoload $class_file");
 	}
 }
 

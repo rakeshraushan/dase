@@ -69,7 +69,7 @@ Dase.getAttributes = function(cat_id,collection_id,public_only) {
 	jQuery("#catColumn/a[@class=spill]").attr("class","catLink");
 	jQuery("#catLink_"+cat_id).attr("class","spill");
 	jQuery("#attColumn").html("<div class='loading'>Loading Attributes...</div>");
-	jQuery.get("ajax/attributes_by_category",params,function(data) {
+	jQuery.get("ajax/attributes",params,function(data) {
 			jQuery("#attColumn").html(data);
 			Dase.bindGetValues(collection_id);
 			});

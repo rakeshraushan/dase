@@ -13,14 +13,9 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$writer->openMemory();
 		$writer->setIndent(true);
 		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement($this->xml_root_element);
+		$writer->startElement('archive');
 		$writer->writeAttribute('name',$this->collection_name);
 		$writer->writeAttribute('ascii_id',$this->ascii_id);
-		if ($this->default_item_type_id) {
-			$it = new Dase_DB_ItemType;
-			$it->load($this->default_item_type_id);
-			$writer->writeAttribute('default_item_type',$it->ascii_id);
-		}
 		$attribute = new Dase_DB_Attribute;
 		$attribute->collection_id = $this->id;
 		foreach($attribute->findAll() as $att) {
@@ -36,12 +31,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$writer->writeAttribute('name',$t['name']);
 			$writer->writeAttribute('ascii_id',$t['ascii_id']);
 			$writer->writeAttribute('description',$t['description']);
-			$parent = new Dase_DB_ItemType;
-			$parent->load($t['parent_item_type_id']);
-			$writer->writeAttribute('parent_item_type',$parent->ascii_id);
-			$id_att = new Dase_DB_Attribute;
-			$id_att->load($t['ident_attribute_id']);
-			$writer->writeAttribute('ident_attribute',$id_att->ascii_id);
 			$it_obj = new Dase_DB_ItemType;
 			$it_obj->load($t['id']);
 			foreach ($it_obj->getAttributes() as $a) {
