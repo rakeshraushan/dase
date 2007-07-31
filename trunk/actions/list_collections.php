@@ -1,6 +1,5 @@
 <?php
 
-Dase::checkUser();
 $coll = new Dase_DB_Collection;
 $tpl = Dase_Template::instance();
 $coll->orderBy('collection_name');

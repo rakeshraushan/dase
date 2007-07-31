@@ -52,9 +52,6 @@ class Dase
 	public static function getUser() {
 		if (self::$user) {
 			return self::$user;
-		} else {
-			self::$user = new Dase_User();
-			return self::$user;
 		}
 	}
 
@@ -67,8 +64,49 @@ class Dase
 		}
 	}
 
+	static public function compileRoutes() {
+		$sx = simplexml_load_file(DASE_PATH . '/inc/routes.xml');
+		foreach ($sx->route as $route) {
+			if (!$route->match) {
+				$regex = "^" . (string) $route['name'];
+				if (isset($route['params'])) {
+					for ($i=0;$i<(int) $route['params'];$i++) {
+						$regex .= "/([^/]*)";
+					}
+				}
+				$regex .= "$";
+				$conf[$regex]['action'] = (string) $route['name'];
+				if (isset($route['auth'])) {
+					$conf[$regex]['auth'] = (string) $route['auth'];
+				}
+			}
+			foreach ($route->match as $match) {
+				$regex = "^" . (string) $match;
+				if (isset($match['params'])) {
+					$params = (int) $match['params'];
+				} else {
+					$params = (int) $route['params'];
+				}
+				if ($params) {
+					for ($i=0;$i<$params;$i++) {
+						$regex .= "/([^/]*)";
+					}
+				}
+				$regex .= "$";
+				$conf[$regex]['action'] = (string) $route['name'];
+				if (isset($match['auth'])) {
+					$conf[$regex]['auth'] = (string) $match['auth'];
+				} else {
+					$conf[$regex]['auth'] = (string) $route['auth'];
+				}
+			}
+		}
+		return $conf;
+	}
+
 	static public function run() {
 		$controller = Dase::instance();
+		$routes = Dase::compileRoutes();
 		// from habari code
 		$request_url= ( isset($_SERVER['REQUEST_URI']) 
 			? $_SERVER['REQUEST_URI'] 
@@ -100,22 +138,23 @@ class Dase
 		//get routes
 
 
-//come up w/ way for plugin to hook into routes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//come up w/ way for plugin to hook into routes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
 		include (DASE_CONFIG); 
-		foreach ($routes as $route => $regex_array) {
-			foreach ($regex_array as $regex) {
-				if (preg_match("!$regex!",$request_url,$matches)) {
-					if(file_exists(DASE_PATH . '/actions/' . $route . '.php')) {
-						if ($matches[1]) {
-							array_shift($matches);
-							$params = $matches;
-						}
-						include(DASE_PATH . '/actions/' . $route . '.php');
-						exit;
+		foreach ($routes as $regex => $conf_array) {
+			if (preg_match("!$regex!",$request_url,$matches)) {
+				if ($conf_array['auth']) {
+					Dase::checkUser();
+				}
+				if(file_exists(DASE_PATH . '/actions/' . $conf_array['action'] . '.php')) {
+					if (isset($matches[1])) {
+						array_shift($matches);
+						$params = $matches;
 					}
+					include(DASE_PATH . '/actions/' . $conf_array['action'] . '.php');
+					exit;
 				} 
 			}
 		}
@@ -123,32 +162,6 @@ class Dase
 		include(DASE_PATH . '/actions/list_collections.php');
 		exit;
 	}
-
-	static public function listCollections() {
-		Dase::checkUser();
-		$coll = new Dase_DB_Collection;
-		$tpl = Dase_Template::instance();
-		$coll->orderBy('collection_name');
-		$collections = $coll->getAll();
-		$current_collections = Dase::getCurrentCollections();
-		if (!$current_collections) {
-			foreach ($collections as $coll) {
-				$current_collections[] = $coll['id'];
-			}
-		}
-		$tpl->assign('last_search',Dase_Session::get('last_search'));
-		$tpl->assign('current_collections',$current_collections);
-		$tpl->assign('collections',$collections);
-		$tpl->assign('content','collections');
-		Dase_Plugins::act('dase','before_display');
-		$tpl->display('page.tpl');
-	}
-
-	static public function browseCollection() {
-		echo "greetings from dase\n";
-		exit;
-	}
-
 
 	public static function reload($path = '',$msg = '') {
 		$msg_qstring = '';
