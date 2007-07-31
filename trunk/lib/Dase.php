@@ -200,6 +200,9 @@ class Dase
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
 					Dase::checkUser($conf_array['auth']);
+				} else {
+					//default auth is user!!!!!!!!!!!!!
+					Dase::checkUser('user');
 				}
 				Dase::log('standard',$conf_array['action']);
 				if(file_exists(DASE_PATH . '/actions/' . $conf_array['action'] . '.php')) {

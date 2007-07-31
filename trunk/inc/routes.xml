@@ -46,8 +46,9 @@
 	<match>ajax/values_by_attribute</match>
   </route>
 
-  <route name="login_form" params="0"/>
-  <route name="login" params="0"/>
+  <route name="error" params="0"/>
+  <route name="login_form" auth="none" params="0"/>
+  <route name="login" auth="none" params="0"/>
   <route name="logoff" auth="user" params="0"/>
   <route name="view_log" auth="admin" params="1">
 	<match params="1">log</match>
