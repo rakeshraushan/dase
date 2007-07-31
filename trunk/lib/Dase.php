@@ -21,6 +21,24 @@ class Dase
 		return self::$instance;
 	}
 
+	public static function getConf($key) {
+		$conf = array();
+		include(DASE_CONFIG);
+		if (isset($conf[$key])) {
+			return $conf[$key];
+		} else {
+			throw new Exception('no such configuration key');
+		}
+	}
+
+	public static function log($logfile,$msg) {
+		$date = date(DATE_W3C);
+		$msg = "$date : $msg\n";
+		if(file_exists(DASE_PATH . "/log/{$logfile}.log")) {
+			file_put_contents(DASE_PATH ."/log/{$logfile}.log",$msg,FILE_APPEND);
+		}
+	}
+
 	public static function basicHttpAuth() {
 		//from php cookbook 2nd ed. p 240
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
@@ -34,18 +52,38 @@ class Dase
 		exit;
 	}
 
-	public function checkUser() {
-		$controller = Dase::instance();
-		if ('api' == $controller->module) {
-			Dase::basicHttpAuth();
-		} else {
-			//by convention, plugins needing to bypass user check 
-			//should include word 'login'  or 'public' in action
-			if (!preg_match('/(login|public)/',$controller->action)) {
-				if (empty( self::$user)) {
-					self::$user = new Dase_User();
-				}
+	public function checkUser($auth = 'user') {
+		switch ($auth) {
+		case 'user':
+			self::$user = new Dase_User();
+			break;
+		case 'manager':
+			break;
+		case 'superuser':
+			break;
+		case 'admin':
+			self::$user = new Dase_User();
+			if (!in_array(self::$user->eid,Dase::getConf('admin'))) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "unauthorized";
+				exit;
 			}
+			break;
+		case 'http':
+			Dase::basicHttpAuth();
+			break;
+		case 'token':
+			if (!in_array(Dase::filterGet('token'),Dase::getConf('token'))) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "unauthorized";
+				exit;
+			}
+			break;
+		case 'none':
+			break;
+		default:
+			header("HTTP/1.0 404 Not Found");
+			exit;
 		}
 	}
 
@@ -60,6 +98,26 @@ class Dase
 			$current_collections = self::$user->current_collections;
 			if ($current_collections) {
 				return explode(',',$current_collections);
+			}
+		}
+	}
+
+	public static function filterGet($key) {
+		if (Dase_Utils::getVersion() >= 520) {
+			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
+		} else {
+			if (isset($_GET[$key])) {
+				return strip_tags($_GET[$key]);
+			}
+		}
+	}
+
+	public static function filterPost($key) {
+		if (Dase_Utils::getVersion() >= 520) {
+			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
+		} else {
+			if (isset($_POST[$key])) {
+				return strip_tags($_POST[$key]);
 			}
 		}
 	}
@@ -135,19 +193,15 @@ class Dase
 		$params = array();
 
 		//$controller->module = Dase_Plugins::filter('dase','request_url',$request_url);
-		//get routes
-
-
 		//come up w/ way for plugin to hook into routes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
 
 		include (DASE_CONFIG); 
 		foreach ($routes as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
-				if ($conf_array['auth']) {
-					Dase::checkUser();
+				if (isset($conf_array['auth']) && $conf_array['auth']) {
+					Dase::checkUser($conf_array['auth']);
 				}
+				Dase::log('standard',$conf_array['action']);
 				if(file_exists(DASE_PATH . '/actions/' . $conf_array['action'] . '.php')) {
 					if (isset($matches[1])) {
 						array_shift($matches);

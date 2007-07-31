@@ -1,8 +1,8 @@
 <?php
 
 Dase_Plugins::act('dase','before_login');
-$username = Dase_Utils::filterPost('username');
-$password = Dase_Utils::filterPost('password');
+$username = Dase::filterPost('username');
+$password = Dase::filterPost('password');
 $tpl = Dase_Template::instance();
 $msg = '';
 //largely from Advanced PHP Programming p. 338

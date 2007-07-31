@@ -181,7 +181,7 @@ class Dase_DB_Object {
 		$sql .= " LIMIT 1";
 		$sth = $db->prepare( $sql );
 		if (defined('DEBUG')) {
-			Dase_Log::sql($sql . ' /// ' . join(',',$bind));
+			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute($bind);
@@ -226,7 +226,7 @@ class Dase_DB_Object {
 		}
 		$sth = $db->prepare( $sql );
 		if (defined('DEBUG')) {
-			Dase_Log::sql($sql . ' /// ' . join(',',$bind));
+			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
 		}
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute($bind);
