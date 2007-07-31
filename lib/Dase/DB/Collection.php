@@ -121,19 +121,19 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	}
 
 	static function getAllAsXml() {
-		//add item_tally
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT collection.id, collection.ascii_id,count(item.id) as item_tally,
 				collection.collection_name,collection.path_to_media_files, collection.description,
-				collection.is_public, collection	
+				collection.is_public	
 				FROM	
 				collection, item
 				WHERE collection.id = item.collection_id
 				AND item.status_id = 0
 				GROUP BY collection.id, collection.ascii_id,collection.collection_name,
 				collection.path_to_media_files,collection.description,
-				collection.is_public,collection
+				collection.is_public
+				ORDER BY collection.collection_name
 				";
 		$st = $db->prepare($sql);
 		$st->execute();
