@@ -209,7 +209,7 @@ ul.pageList li a{
 }
 
 li.checkedCollection .tally {
-	color: #333;
+	color: #888;
 }	
 li.checkedCollection a {
 	color: #700c0c;
@@ -367,7 +367,7 @@ background-color:#c9c8ad;
 .tally {
 	font-weight: normal;
 	font-size: .94em;
-color: #888;
+color: #999;
 }
 
 dl {

@@ -17,15 +17,20 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($limit = 10) {
+	function getDisplayValues($limit = 10,$collection_id = 0) {
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
 		$db = Dase_DB::get();
+		//presence od collection_id says it is an admin att
+		if ($collection_id) {
+			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id = $collection_id)";
+		}
 		$sql = "
 			SELECT value_text,count(value_text)
 			FROM value
 			WHERE attribute_id = ?
+			$admin_sql
 			GROUP BY value_text
 			";
 		$st = $db->prepare($sql);
