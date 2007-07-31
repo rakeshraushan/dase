@@ -213,7 +213,7 @@ class Dase
 			}
 		}
 		//no routes match, so use default:
-		include(DASE_PATH . '/actions/list_collections.php');
+		header("HTTP/1.0 404 Not Found");
 		exit;
 	}
 

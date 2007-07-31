@@ -9,16 +9,21 @@
 	<match params="1">collection</match>
 	<match params="2">collection</match>
 	<match>(.*_collection)</match>
-	<match params="3">^(.*_archive)</match>
-	<match auth="">^(.*_catalog)</match>
+	<match params="3">(.*_archive)</match>
+	<match auth="">(.*_catalog)</match>
   </route>
 
-  <route name="collection_xml_dump" auth="token" params="1">
+  <route name="collection_xml" auth="token" params="1">
 	<match>xml</match>
+	<match params="0" auth="none">xml</match>
   </route>
 
   <route name="item_xml_dump" auth="token" params="1">
 	<match>xml/item</match>
+  </route>
+
+  <route name="routes" auth="admin" params="0">
+	<match>routes</match>
   </route>
 
   <route name="ajax_attributes" auth="none" params="0">
@@ -31,6 +36,14 @@
 
   <route name="ajax_attribute_tallies" auth="none" params="0">
 	<match>ajax/attribute_tallies</match>
+  </route>
+
+  <route name="ajax_item_tallies" auth="none" params="0">
+	<match>ajax/item_tallies</match>
+  </route>
+
+  <route name="ajax_values_by_attribute" auth="none" params="0">
+	<match>ajax/values_by_attribute</match>
   </route>
 
   <route name="login_form" params="0"/>

@@ -141,7 +141,12 @@ Dase.getAttributeTallies = function(coll_id) {
 		}
 		jQuery.get("ajax/attribute_tallies",params,function(data) {
 				jQuery("attribute",data).each(function() {
+					if (0 == jQuery(this).attr('val_tally')) {
+					//this makes attributes that have 0 values disappear!!!!
+					jQuery('#att_link_'+jQuery(this).attr("id")).hide();
+					} else {
 					jQuery('#tally-'+jQuery(this).attr("id")).text("(" + jQuery(this).attr('val_tally') + ")");
+					}
 					});
 
 				});
