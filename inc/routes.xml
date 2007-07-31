@@ -1,0 +1,22 @@
+<routes>
+
+  <route name="list_collections" auth="user" params="0">
+	<match>collections</match>
+	<match></match>
+  </route>
+
+  <route name="browse_collection" auth="user" params="0">
+	<match params="1">collection</match>
+	<match params="2">collection</match>
+	<match>(.*_collection)</match>
+	<match params="3">^(.*_archive)</match>
+	<match auth="">^(.*_catalog)</match>
+  </route>
+
+  <route name="login_form" params="0"/>
+  <route name="login" params="0"/>
+  <route name="logoff" auth="user" params="0"/>
+  <route name="view_log" auth="admin" params="1"/>
+  <route name="build_index" auth="admin" params="1"/>
+
+</routes>
