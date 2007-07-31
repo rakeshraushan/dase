@@ -7,7 +7,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $item_count;
 	public $admin_attribute_array;
 	public $attribute_array;
-	public $category_array;
 
 	function xmlDump($limit = 100000) {
 		$writer = new XMLWriter();
@@ -118,7 +117,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	function asXml() {
 		$dom = new DOMDocument('1.0');
 		$coll = $dom->appendChild($dom->createElement('collection'));
-		$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public','display_categories');
+		$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public');
 		foreach ($fields as $field) {
 			$coll->setAttribute($field,$this->$field);	
 		}
@@ -138,14 +137,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$sql = "
 			SELECT collection.id, collection.ascii_id,count(item.id) as item_tally,
 				collection.collection_name,collection.path_to_media_files, collection.description,
-				collection.is_public, collection.display_categories	
+				collection.is_public, collection	
 				FROM	
 				collection, item
 				WHERE collection.id = item.collection_id
 				AND item.status_id = 0
 				GROUP BY collection.id, collection.ascii_id,collection.collection_name,
 				collection.path_to_media_files,collection.description,
-				collection.is_public,collection.display_categories
+				collection.is_public,collection
 				";
 		$st = $db->prepare($sql);
 		$st->execute();
@@ -153,7 +152,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$root = $dom->appendChild($dom->createElement('collections'));
 		foreach ($st->fetchAll() as $row) {
 			$coll = $root->appendChild($dom->createElement('collection'));
-			$fields = array('ascii_id','collection_name','item_tally','path_to_media_files','description','is_public','display_categories');
+			$fields = array('ascii_id','collection_name','item_tally','path_to_media_files','description','is_public');
 			foreach ($fields as $field) {
 				$coll->setAttribute($field,$row[$field]);	
 			}
@@ -166,7 +165,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$collection = new Dase_DB_Collection;
 		foreach ($collection->getAll() as $c) {
 			$coll = $coll_res->appendChild($dom->createElement('collection'));
-			$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public','display_categories');
+			$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public');
 			foreach ($fields as $field) {
 				$coll->setAttribute($field,$c[$field]);	
 			}
@@ -189,13 +188,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
 		$this->admin_attribute_array = $att->findAll();
-	}
-
-	function getCategories() {
-		$cat = new Dase_DB_Category;
-		$cat->collection_id = $this->id;
-		$cat->orderBy('sort_order');
-		$this->category_array = $cat->findAll();
 	}
 
 	function getItemCount() {
