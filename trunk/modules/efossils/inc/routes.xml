@@ -1,0 +1,9 @@
+<routes>
+
+  <route action="home" auth="user">
+	<match>home</match>
+	<match params="msg"></match>
+	<match></match>
+  </route>
+
+</routes>
