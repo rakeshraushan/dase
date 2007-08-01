@@ -34,6 +34,5 @@ function __autoload($class_name) {
 
 Dase_Timer::start();
 Dase_Session::read();
-Dase_Plugins::load();
 
 Dase::run();

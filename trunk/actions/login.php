@@ -1,6 +1,7 @@
 <?php
 
-Dase_Plugins::act('dase','before_login');
+//add a hook here to redirect to alternative login?
+
 $username = Dase::filterPost('username');
 $password = Dase::filterPost('password');
 $tpl = Dase_Template::instance();

@@ -25,12 +25,12 @@ class Dase_Template
 		self::$template->assign($key,$value);
 	}
 
-	public function assign_plugin_template( $pt_path ) {
+	public function assign_module_template( $pt_path ) {
 		if (strstr($pt_path,'..')) {
 			return;
 		}
-		$full_path = DASE_PATH . '/plugins/' . $pt_path;
-		self::$template->assign('plugin_template',$full_path);
+		$full_path = DASE_PATH . '/modules/' . $pt_path;
+		self::$template->assign('module_template',$full_path);
 	}
 
 	public function display( $template = 'page.tpl' ) {

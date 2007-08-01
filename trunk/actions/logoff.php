@@ -1,6 +1,7 @@
 <?php
 
-Dase_Plugins::act('dase','before_logoff');
+//add a hook here?
+
 $user = Dase::getUser();
 $cookie = new Dase_AuthCookie($user->id);
 $cookie->logout();

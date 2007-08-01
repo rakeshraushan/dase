@@ -1,8 +1,0 @@
-DirectoryIndex index.php index.html
-AddType application/x-httpd-php .php
-
-<Files target.php>
-SetEnvIf request_uri "." enable_eid
-SetEnvIf X-Roles 0(EMA|EMP|STA|STF|BDA|VSA|AFA|XIA|XSA|RTA|LGA|FFA) let_me_in
-Allow from env=let_me_in
-</Files>
