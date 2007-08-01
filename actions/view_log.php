@@ -1,6 +1,6 @@
 <?php
-if (isset($params[0])) {
-	switch ($params[0]) {
+if (isset($params['log_name'])) {
+	switch ($params['log_name']) {
 	case 'standard':
 		$file = 'standard.log';
 		break;

@@ -1,58 +1,51 @@
 <routes>
 
-  <route name="list_collections" auth="user" params="0">
+  <route name="list_collections" auth="user">
 	<match>collections</match>
 	<match></match>
   </route>
 
-  <route name="browse_collection" auth="user" params="0">
-	<match params="1">collection</match>
-	<match params="2">collection</match>
-	<match>(.*_collection)</match>
-	<match params="3">(.*_archive)</match>
-	<match auth="">(.*_catalog)</match>
+  <route name="browse_collection" auth="user">
+	<match params="collection_ascii_id">collection</match>
   </route>
 
-  <route name="collection_xml" auth="token" params="1">
-	<match>xml</match>
-	<match params="0" auth="none">xml</match>
+  <route name="collection_xml" auth="token">
+	<match params="collection_ascii_id">xml</match>
+	<match auth="none">xml</match>
   </route>
 
-  <route name="item_xml_dump" auth="token" params="1">
-	<match>xml/item</match>
+  <route name="item_xml_dump" auth="token">
+	<match params="serial_number">xml/item</match>
   </route>
 
-  <route name="routes" auth="admin" params="0">
-	<match>routes</match>
-  </route>
+  <route name="routes" auth="admin"/>
 
-  <route name="ajax_attributes" auth="none" params="0">
+  <route name="ajax_attributes" auth="none">
 	<match>ajax/attributes</match>
   </route>
 
-  <route name="ajax_admin_attributes" auth="none" params="0">
+  <route name="ajax_admin_attributes" auth="none">
 	<match>ajax/admin_attributes</match>
   </route>
 
-  <route name="ajax_attribute_tallies" auth="none" params="0">
+  <route name="ajax_attribute_tallies" auth="none">
 	<match>ajax/attribute_tallies</match>
   </route>
 
-  <route name="ajax_item_tallies" auth="none" params="0">
+  <route name="ajax_item_tallies" auth="none">
 	<match>ajax/item_tallies</match>
   </route>
 
-  <route name="ajax_values_by_attribute" auth="none" params="0">
+  <route name="ajax_values_by_attribute" auth="none">
 	<match>ajax/values_by_attribute</match>
   </route>
 
-  <route name="error" params="0"/>
-  <route name="login_form" auth="none" params="0"/>
-  <route name="login" auth="none" params="0"/>
-  <route name="logoff" auth="user" params="0"/>
-  <route name="view_log" auth="admin" params="1">
-	<match params="1">log</match>
-  </route>
-  <route name="build_index" auth="admin" params="1"/>
+  <route name="error"/>
+  <route name="login_form" auth="none" />
+  <route name="login" auth="none" />
+  <route name="logoff" auth="user" />
+  <route name="view_log" auth="admin" params="log_name"/>
+
+  <route name="build_index" auth="admin" params="collection_ascii_id"/>
 
 </routes>
