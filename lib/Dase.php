@@ -123,27 +123,44 @@ class Dase
 	}
 
 	static public function compileRoutes() {
-		$sx = simplexml_load_file(DASE_PATH . '/inc/routes.xml');
+		$routes = Dase::_compileRoutes();
+		$routes = Dase::_compileModuleRoutes($routes);
+		return $routes;
+	}
+
+	static private function _compileRoutes($prefix = '',$routes = null) {
+		$path = DASE_PATH . $prefix . '/inc/routes.xml';
+		$sx = simplexml_load_file($path);
 		foreach ($sx->route as $route) {
 			if (!$route->match) {
-				$regex = "^" . (string) $route['name'];
+				$regex = (string) $route['action'];
+				if ($prefix) {
+					$regex = trim($prefix,'/') . '/' . $regex;
+				}
 				if (isset($route['params'])) {
 					$params = (string) $route['params'];
 					foreach (explode('/',$params) as $p) {
 						$regex .= "/([^/]*)";
 					}
 				}
-				$regex .= "$";
+				$regex = '^' . $regex . '$';
 				if ($params) {
-					$conf[$regex]['params'] = $params;
+					$routes[$regex]['params'] = $params;
 				}
-				$conf[$regex]['action'] = (string) $route['name'];
+				$routes[$regex]['action'] = (string) $route['action'];
 				if (isset($route['auth'])) {
-					$conf[$regex]['auth'] = (string) $route['auth'];
+					$routes[$regex]['auth'] = (string) $route['auth'];
+				}
+				if ($prefix) {
+					$routes[$regex]['prefix'] = $prefix;
 				}
 			}
 			foreach ($route->match as $match) {
-				$regex = "^" . (string) $match;
+				$regex = (string) $match;
+				if ($prefix) {
+					$regex = trim($prefix,'/') . '/' . $regex;
+					$regex = trim($regex,'/'); //in case there had been no original regex
+				}
 				if (isset($match['params'])) {
 					$params = (string) $match['params'];
 				} else {
@@ -154,19 +171,43 @@ class Dase
 						$regex .= "/([^/]*)";
 					}
 				}
-				$regex .= "$";
+				$regex = '^' . $regex . '$';
 				if ($params) {
-					$conf[$regex]['params'] = $params;
+					$routes[$regex]['params'] = $params;
 				}
-				$conf[$regex]['action'] = (string) $route['name'];
+				$routes[$regex]['action'] = (string) $route['action'];
+				if (isset($match['caps'])) {
+					$routes[$regex]['caps'] = (string) $match['caps'];
+				}
 				if (isset($match['auth'])) {
-					$conf[$regex]['auth'] = (string) $match['auth'];
+					$routes[$regex]['auth'] = (string) $match['auth'];
 				} else {
-					$conf[$regex]['auth'] = (string) $route['auth'];
+					$routes[$regex]['auth'] = (string) $route['auth'];
+				}
+				if ($prefix) {
+					$routes[$regex]['prefix'] = $prefix;
 				}
 			}
 		}
-		return $conf;
+		return $routes;
+	}
+
+	static private function _compileModuleRoutes($routes) {
+		include(DASE_CONFIG);
+		$dir = (DASE_PATH . "/modules");
+		foreach (new DirectoryIterator($dir) as $pfile) {
+			if ($pfile->isDir() && !$pfile->isDot()) {
+				$module = $pfile->getFilename();
+				if (is_file("$dir/$module/inc/routes.xml") &&
+					//note that module needs to be registered in DASE_CONFIG
+					in_array($module,$conf['modules'])
+					) {
+					$path = "$dir/$module/inc/routes.xml";
+					$routes = Dase::_compileRoutes("/modules/$module",$routes);
+				}
+			}
+		}
+		return $routes;
 	}
 
 	static public function run() {
@@ -199,10 +240,6 @@ class Dase
 		$matches = array();
 		$params = array();
 
-		//$controller->module = Dase_Plugins::filter('dase','request_url',$request_url);
-		//come up w/ way for plugin to hook into routes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-		include (DASE_CONFIG); 
 		foreach ($routes as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
@@ -212,16 +249,25 @@ class Dase
 					Dase::checkUser('user');
 				}
 				Dase::log('standard',$conf_array['action']);
+				$caps = array();
+				if (isset($conf_array['caps'])) {
+					$caps = explode('/',$conf_array['caps']);
+				}
 				$params = array();
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
 				}
-				if(file_exists(DASE_PATH . '/actions/' . $conf_array['action'] . '.php')) {
+				$params = $caps + $params;
+				$action_prefix = '';
+				if (isset($conf_array['prefix'])) {
+					$action_prefix = $conf_array['prefix'];
+				}
+				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
 					if (isset($matches[1])) {
 						array_shift($matches);
 						$params = array_combine($params,$matches);
 					}
-					include(DASE_PATH . '/actions/' . $conf_array['action'] . '.php');
+					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
 				} 
 			}

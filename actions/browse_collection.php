@@ -10,7 +10,6 @@ if (isset($params['collection_ascii_id'])) {
 	$coll->getItemCount();
 	$tpl->assign('collection',$coll);
 	$tpl->assign('content','collection');
-	Dase_Plugins::act($coll->ascii_id,'before_display');
 	$tpl->display('page.tpl');
 	exit;
 }

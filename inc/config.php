@@ -1,5 +1,6 @@
 <?php
 
+$conf['modules'][] = 'efossils';
 $conf['admin'][] = 'pkeane';
 $conf['token'][] = 'secret';
 $conf['db_type'] = '@db_type';
