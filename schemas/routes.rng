@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="routes">
+      <oneOrMore>
+        <element name="route">
+          <attribute name="action">
+            <data type="NCName"/>
+          </attribute>
+          <optional>
+            <attribute name="auth">
+              <data type="NCName"/>
+            </attribute>
+          </optional>
+          <optional>
+            <attribute name="params">
+              <data type="NCName"/>
+            </attribute>
+          </optional>
+          <zeroOrMore>
+            <element name="match">
+              <optional>
+                <attribute name="auth">
+                  <data type="NCName"/>
+                </attribute>
+              </optional>
+              <optional>
+                <attribute name="caps">
+                  <data type="NCName"/>
+                </attribute>
+              </optional>
+              <optional>
+                <attribute name="params">
+                  <data type="NCName"/>
+                </attribute>
+              </optional>
+              <text/>
+            </element>
+          </zeroOrMore>
+        </element>
+      </oneOrMore>
+    </element>
+  </start>
+</grammar>
