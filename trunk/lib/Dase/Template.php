@@ -7,9 +7,12 @@ class Dase_Template
 	private function __construct() {}
 
 	//singleton
-	public static function instance() {
+	public static function instance($module = null) {
 		if (empty(self::$template)) {
 			self::$template = new Smarty;
+			if ($module) {
+				self::$template->template_dir = "modules/$module/templates";
+			}
 			self::$template->assign('app_root',APP_ROOT);
 			self::$template->assign('app_http_root',APP_HTTP_ROOT);
 			self::$template->assign('app_https_root',APP_HTTPS_ROOT);
@@ -23,14 +26,6 @@ class Dase_Template
 
 	public function assign( $key, $value) {
 		self::$template->assign($key,$value);
-	}
-
-	public function assign_module_template( $pt_path ) {
-		if (strstr($pt_path,'..')) {
-			return;
-		}
-		$full_path = DASE_PATH . '/modules/' . $pt_path;
-		self::$template->assign('module_template',$full_path);
 	}
 
 	public function display( $template = 'page.tpl' ) {

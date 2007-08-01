@@ -1,8 +1,7 @@
 <?php
 
-if (isset($params['msg'])) {
-	echo "welcome to efossils home! ({$params['msg']})";
-} else {
-	echo "welcome to efossils home!";
-}
+$tpl = Dase_Template::instance('efossils');
+$tpl->assign('msg','hello world');
+$tpl->display('hello.tpl');
+exit;
 
