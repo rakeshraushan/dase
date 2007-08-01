@@ -1,0 +1,17 @@
+DirectoryIndex index.php index.html
+AddType application/x-httpd-php .php
+Options FollowSymLinks
+RewriteEngine On
+RewriteBase @base
+#RewriteBase /dase
+
+#force https
+#RewriteCond %{SERVER_PORT} 80 
+#RewriteRule ^(.*)$ https://dase.lib.utexas.edu/$1 [R=permanent,L]
+
+php_flag magic_quotes_gpc off
+
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php [PT] 
+

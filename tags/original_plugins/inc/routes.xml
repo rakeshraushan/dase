@@ -1,0 +1,51 @@
+<routes>
+
+  <route name="list_collections" auth="user">
+	<match>collections</match>
+	<match></match>
+  </route>
+
+  <route name="browse_collection" auth="user">
+	<match params="collection_ascii_id">collection</match>
+  </route>
+
+  <route name="collection_xml" auth="token">
+	<match params="collection_ascii_id">xml</match>
+	<match auth="none">xml</match>
+  </route>
+
+  <route name="item_xml_dump" auth="token">
+	<match params="serial_number">xml/item</match>
+  </route>
+
+  <route name="routes" auth="admin"/>
+
+  <route name="ajax_attributes" auth="none">
+	<match>ajax/attributes</match>
+  </route>
+
+  <route name="ajax_admin_attributes" auth="none">
+	<match>ajax/admin_attributes</match>
+  </route>
+
+  <route name="ajax_attribute_tallies" auth="none">
+	<match>ajax/attribute_tallies</match>
+  </route>
+
+  <route name="ajax_item_tallies" auth="none">
+	<match>ajax/item_tallies</match>
+  </route>
+
+  <route name="ajax_values_by_attribute" auth="none">
+	<match>ajax/values_by_attribute</match>
+  </route>
+
+  <route name="error"/>
+  <route name="login_form" auth="none" />
+  <route name="login" auth="none" />
+  <route name="logoff" auth="user" />
+  <route name="view_log" auth="admin" params="log_name"/>
+
+  <route name="build_index" auth="admin" params="collection_ascii_id"/>
+
+</routes>

@@ -1,0 +1,392 @@
+/* reset:http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+	background: transparent;
+}
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+html {
+	/* force scroll bar */
+	overflow-y: scroll;
+	/*height: 100%;
+	margin-bottom: 1px;
+	*/
+}
+
+body {
+	line-height: 1;
+	color: black;
+	background: white;
+}
+ol, ul {
+	list-style: none;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+caption, th, td {
+	text-align: left;
+	font-weight: normal;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+
+/* end reset */
+
+body {  
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: x-small;
+	color: #000000; 
+   }
+
+   a {
+	   color: #444444;
+	   font-weight: bold;
+	   text-decoration: none;  
+  }
+
+  a:hover,a:active {
+	  color: #000000;
+  }  
+
+h1,h2,h3,h4,h5,h6 {
+	  font-family: arial,sans;
+	  font-weight: bold;
+	  color: #333;
+}
+
+  h1 {
+	  font-size: 2em;
+	  margin: 0.5em 0;
+}
+
+  h2 {
+	  font-size: 1.7em;
+	  margin: 0.4em 0;
+}
+
+  h3 {
+	  font-size: 1.3em;
+	  margin: 0.3em 0;
+}
+
+  h4 {
+	  font-size: 1.2em;
+	  margin: 0.2em 0;
+}
+
+strong {
+	font-weight: bold;
+}
+
+
+.cbBanner {
+	/*background-color: #173561;*/
+	/*background-image: url(../images/daseBanner.png);*/ 
+	background-image: url(../images/daseBanner3.jpg); 
+	background-repeat: no-repeat;
+	color: #ccc;
+	/*font: normal 1.6em georgia,serif*/;
+	font: normal 1.2em arial,helvetica,sans-serif;
+	/*padding:8px 8px 8px 15px;*/
+	padding: 0 12px;
+			 margin-top: -1px;
+	/*height: 70px;*/
+	height: 70px;
+}
+
+.cbBanner p {
+	color: #fff;
+	margin:0;
+	font-size: 2em;
+	padding:0;
+	padding-top: 11px;
+	padding-left: 12px;
+	/*letter-spacing: 0.1em;*/
+}
+
+.cbBanner abbr {
+	font-size: .85em;
+}
+
+.cbBanner p.label {
+ 
+position: absolute;
+top:90px;
+left: 12px;
+	  font-size: 11px;
+	  font-family: arial, sans-serif;
+color: #fff;
+	letter-spacing: 0.2em;
+}
+.cbBanner a {
+	color: #666;
+}
+
+
+/* CONTENT PAGES */
+
+/* IE peek-a-boo fix */
+html .content { 
+	height: 1%;
+ }
+
+ div.content {
+	 padding: 15px;
+	 margin-left: 17%;
+  }	
+
+ div.content h3 {
+	 margin: 10px 0;
+  }	
+
+  div.list {
+	  padding-left: 100px;
+}
+
+div.full {
+	padding-left: 20px;
+}
+
+div.browse {
+	padding-left: 50px;
+}
+
+.spacer {
+	clear:both;
+}
+
+.footer {
+	margin: 5px 0px 0px 17%;
+	background-color: #ffffff;
+	color: #666666;
+  } 
+
+  .hide,.tempHide {
+	  display: none;
+}
+
+a.skipnav {
+	position: absolute;
+	left: -1000em;
+	width: 20em;
+}
+
+
+ul.pageList {
+	margin:15px 0px 15px 0px;
+}
+
+ul.pageList li {
+}
+
+ul.pageList li a{
+}
+
+li.checkedCollection .tally {
+	color: #888;
+}	
+li.checkedCollection a {
+	color: #700c0c;
+}	
+li.checkedCollection a:hover {
+	color: #000000;
+}
+
+form.styled {
+	padding: 1em;
+	border: 1px solid #aaa;
+	width: 40%;
+	background-color: #e6d4b8;
+}
+
+form.styled p {
+	margin: 1em 0;
+}
+
+form#login {
+	padding: 0.5em;
+	border: 1px solid #aaa;
+	width: 40%;
+	background-color: #e6d4b8;
+}
+
+form#login p {
+	margin:  1em;
+}
+
+form#login label {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #333;
+}
+
+form#login label[for] {
+	float: left;
+	width: 40%;
+}
+
+form#login input[type="submit"] {
+	margin-left: 40%;
+}
+
+div.login {
+	padding-top: 23px;
+}
+
+div.controls {
+	float:right;
+	margin-right: 20px;
+}
+
+a.logoff {
+	color: red;
+}
+
+div.alert {
+	font-size: 1.5em;
+	font-weight:bold;
+	color: red;
+	margin: 10px 0;
+}
+
+.alert {
+	color: red;
+}
+
+div.searchBoxLabel {
+	color: #333;
+	font-weight: bold;
+}
+
+
+/* BROWSE STYLES */
+
+div#browse {
+	background-color:#f2dfc1;
+}
+
+div#browseColumns {
+margin: 10px 0 10px 0;
+}
+
+div#browseColumns a {
+	line-height: 1.8em;
+}
+
+div#browseColumns h4 { 
+	margin-bottom: 12px;
+	color: #173561;
+}
+
+a.catLink {
+	line-height:1.5em;
+display: block;
+}
+a.attLink {
+	line-height:1.5em;
+}
+a.valLink {
+	line-height:1.5em;
+display: block;
+}
+a.spill {
+display:block;
+		margin-right:-10px;
+		margin-left: -4px;
+		padding-left: 4px;
+}
+#catColumn {
+float:left;
+width:16%;
+background-color:#d9c8ad;
+padding:10px;
+}
+
+#catColumn a.spill {
+background-color:#ffebcc;
+}
+
+#attColumn {
+float:left;
+width:25%;
+background-color:#ffebcc;
+padding:10px;
+margin-right: 1px;
+}
+#attColumn a {
+}
+#attColumn a.spill {
+background-color:#fff0d9;
+border-top: 1px solid #f2dfc1;
+border-bottom: 1px solid #f2dfc1;
+border-left: 1px solid #f2dfc1;
+margin-right: -11px;
+}
+
+#valColumn {
+padding:10px;
+float:left;
+width:45%;
+background-color:#fff0d9;
+}
+#valColumn.empty{
+background-color: #f2dfc1;
+}
+#valColumn a {
+}
+#valColumn a.anchor {
+background-color:#c9c8ad;
+}
+
+.tally {
+	font-weight: normal;
+	font-size: .94em;
+color: #999;
+}
+
+dl {
+width: 40%;
+margin-top:10px;
+	   font-size: 1.2em;
+	   line-height: 1.4em;
+border-bottom:1px solid #999;
+padding-bottom: 8px;
+}
+dt {
+color: #009;
+float: left;
+	   font-weight:bold;
+	   margin-right:20px;
+	  text-align: right;
+width:80px;
+}
+
+a.chk,a.unchk {
+line-height:3em;
+}

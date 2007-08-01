@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<css>
+#sidebar
+{
+width: 16%;
+	   background-color: #ffffff;
+margin: 0px 3px 0px 0px;
+float:left;
+}
+
+ul#menu li > a {
+display:block;
+padding: 6px;
+margin: 2px 0px;
+}
+ul#menu > li > ul {
+	margin-left:18px;
+}
+ul#menu  li ul li ul {
+padding:6px;
+		background-color: #eee;
+}
+ul#menu  input {
+margin: 2px 0;
+}
+ul#menu li ul li a{
+padding:6px;
+margin: 0px;
+		border-bottom: 2px solid #fff;
+
+}
+</css>
