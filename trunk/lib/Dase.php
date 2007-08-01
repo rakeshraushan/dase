@@ -128,11 +128,15 @@ class Dase
 			if (!$route->match) {
 				$regex = "^" . (string) $route['name'];
 				if (isset($route['params'])) {
-					for ($i=0;$i<(int) $route['params'];$i++) {
+					$params = (string) $route['params'];
+					foreach (explode('/',$params) as $p) {
 						$regex .= "/([^/]*)";
 					}
 				}
 				$regex .= "$";
+				if ($params) {
+					$conf[$regex]['params'] = $params;
+				}
 				$conf[$regex]['action'] = (string) $route['name'];
 				if (isset($route['auth'])) {
 					$conf[$regex]['auth'] = (string) $route['auth'];
@@ -141,16 +145,19 @@ class Dase
 			foreach ($route->match as $match) {
 				$regex = "^" . (string) $match;
 				if (isset($match['params'])) {
-					$params = (int) $match['params'];
+					$params = (string) $match['params'];
 				} else {
-					$params = (int) $route['params'];
+					$params = (string) $route['params'];
 				}
 				if ($params) {
-					for ($i=0;$i<$params;$i++) {
+					foreach (explode('/',$params) as $p) {
 						$regex .= "/([^/]*)";
 					}
 				}
 				$regex .= "$";
+				if ($params) {
+					$conf[$regex]['params'] = $params;
+				}
 				$conf[$regex]['action'] = (string) $route['name'];
 				if (isset($match['auth'])) {
 					$conf[$regex]['auth'] = (string) $match['auth'];
@@ -205,10 +212,14 @@ class Dase
 					Dase::checkUser('user');
 				}
 				Dase::log('standard',$conf_array['action']);
+				$params = array();
+				if (isset($conf_array['params'])) {
+					$params = explode('/',$conf_array['params']);
+				}
 				if(file_exists(DASE_PATH . '/actions/' . $conf_array['action'] . '.php')) {
 					if (isset($matches[1])) {
 						array_shift($matches);
-						$params = $matches;
+						$params = array_combine($params,$matches);
 					}
 					include(DASE_PATH . '/actions/' . $conf_array['action'] . '.php');
 					exit;

@@ -126,25 +126,6 @@ class Dase_DB_Object {
 		}
 	}
 
-	function query($sql,$params) {
-		$db = Dase_DB::get();
-		$class = get_class($this);
-		$objects = array();
-		$sth = $db->prepare( $sql );
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute($params);
-		while ($row = $sth->fetch()){
-			$obj = new $class($row);
-			$obj->fields['id'] = $obj->id;
-			$objects[] = $obj;
-		}
-		if (count($objects)) {
-			return $objects;
-		} else {
-			return false;
-		}
-	}
-
 	function getMethods() {
 		$class = new ReflectionClass(get_class($this));
 		return $class->getMethods();
@@ -273,7 +254,7 @@ class Dase_DB_Object {
 		if (isset($this->limit)) {
 			$sql .= " LIMIT $this->limit";
 		}
-		$sth = $db->prepare( $sql );
+	   	$sth = $db->prepare( $sql );
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute();
 		return $sth->fetchAll();

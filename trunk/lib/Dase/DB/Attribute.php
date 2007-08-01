@@ -33,6 +33,7 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 			WHERE attribute_id = ?
 			$admin_sql
 			GROUP BY value_text
+			ORDER BY value_text
 			";
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));

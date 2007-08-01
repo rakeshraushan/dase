@@ -1,9 +1,9 @@
 <?php
 
-//NOTE: if param[0] is set, get individual coll dump
+//NOTE: if params[i'collection_ascii_id'] is set, get individual coll dump
 // otherwise xml of collections
 
-if (isset($params[0])) {
+if (isset($params['collection_ascii_id'])) {
 	$token = Dase::filterGet('token');
 	if ('secret' == $token) {
 		$limit = Dase::filterGet('limit');
@@ -13,7 +13,7 @@ if (isset($params[0])) {
 		}
 		$tpl = new Dase_Xml_Template;
 		$coll = new Dase_DB_Collection;
-		$coll->ascii_id = $params[0] . "_collection";
+		$coll->ascii_id = $params['collection_ascii_id'];
 		if ($coll->findOne()) {
 			//check cache
 			$cached_xml = Dase_DB_XmlCache::getXml('collection_xmldump',$coll->id,$limit);
