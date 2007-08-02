@@ -102,6 +102,17 @@ class Dase
 		}
 	}
 
+	public static function filterArray($ar) {
+		if (Dase_Utils::getVersion() >= 520) {
+			return filter_var_array($ar, FILTER_SANITIZE_STRING);
+		} else {
+			foreach ($ar as $k => $v) {
+				$ar[$k] = strip_tags($v);
+			}
+			return $ar;
+		}
+	}
+
 	public static function filterGet($key) {
 		if (Dase_Utils::getVersion() >= 520) {
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
@@ -123,9 +134,7 @@ class Dase
 	}
 
 	static public function compileRoutes() {
-		$routes = Dase::_compileRoutes();
-		$routes = Dase::_compileModuleRoutes($routes);
-		return $routes;
+		return Dase::_compileModuleRoutes(Dase::_compileRoutes());
 	}
 
 	static private function _compileRoutes($prefix = '',$routes = null) {
@@ -265,7 +274,8 @@ class Dase
 				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
 					if (isset($matches[1])) {
 						array_shift($matches);
-						$params = array_combine($params,$matches);
+						$clean_matches = Dase::filterArray($matches);
+						$params = array_combine($params,$clean_matches);
 					}
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
