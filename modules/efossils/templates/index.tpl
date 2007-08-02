@@ -2,8 +2,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>The Efossils Project</title>
-<style type="text/css"> img { behavior:	url("pngbehavior.htc"); }</style>
-<link rel="stylesheet" type="text/css" href="splashstyle.css">
+{literal}
+<style type="text/css"> img { behavior:	url("scripts/pngbehavior.htc"); }</style>
+{/literal}
+<link rel="stylesheet" type="text/css" href="{$module_root}/css/splashstyle.css">
 </head>
 <body><div class="container">
 <div class="branding">
