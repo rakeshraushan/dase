@@ -2,7 +2,6 @@
 
 class Dase_User 
 {
-
 	public $db_user = null;
 
 	public function __construct() {

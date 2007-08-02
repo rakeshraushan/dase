@@ -322,7 +322,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = 1)
 				";
 			$st = $db->prepare($sql);
-			$st->execute($it['id']);
+			$st->execute(array($it['id']));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
@@ -340,7 +340,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				WHERE item_id = ?
 				";
 			$st = $db->prepare($sql);
-			$st->execute($it['id']);
+			$st->execute(array($it['id']));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}

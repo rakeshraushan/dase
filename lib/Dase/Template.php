@@ -12,6 +12,7 @@ class Dase_Template
 			self::$template = new Smarty;
 			if ($module) {
 				self::$template->template_dir = "modules/$module/templates";
+				self::$template->assign('module_root',APP_ROOT . "/modules/$module");
 			}
 			self::$template->assign('app_root',APP_ROOT);
 			self::$template->assign('app_http_root',APP_HTTP_ROOT);
