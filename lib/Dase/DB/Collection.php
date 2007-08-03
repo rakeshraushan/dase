@@ -192,6 +192,32 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $this->item_count;
 	}
 
+	function getItemTypes() {
+		$it = new Dase_DB_ItemType;
+		$it->collection_id = $this->id;
+		foreach ($it->findAll() as $row) {
+			$item_type = new Dase_DB_ItemType($row);
+			$it_array[] = $item_type;
+		}
+		$this->item_type_array = $it_array;
+		return $it_array;
+	}
+
+	function getItemsByType($type_ascii_id) {
+		$it = new Dase_DB_ItemType;
+		$it->collection_id = $this->id;
+		$it->ascii_id = $type_ascii_id;
+		$it->findOne();
+		$ite = new Dase_DB_Item;
+		$ite->item_type_id = $it->id;
+		print_r($ite);exit;
+		foreach ($ite->findAll() as $row) {
+			$item = new Dase_DB_ItemType($row);
+			$item_array[] = $item;
+		}
+		return $item_array;
+	}
+
 	public static function insertCollection($xml) {
 		$dom = new DOMDocument;
 		$dom->loadXML($xml);

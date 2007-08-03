@@ -79,6 +79,7 @@ class Dase_DB {
 			$sql = "SELECT attname FROM pg_class, pg_attribute WHERE 
 				pg_class.relname = '$table' AND pg_class.oid = pg_attribute.attrelid AND 
 				pg_attribute.attnum > 0  
+				AND attname NOT LIKE '....%'
 				ORDER BY attname";
 		}
 		$sth = $db->prepare($sql);

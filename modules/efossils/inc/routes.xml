@@ -1,16 +1,13 @@
 <routes>
 
-<!--
-urls for site:
-<site_name>/<section>/<level>?img=<image_id>
-resources/activity/<activity_name>
-<site_name>/boneviewer/<element>/<view>?
-	  -->
-
-  <route action="home" auth="user">
+  <route action="home" auth="none">
 	<match>home</match>
 	<match params="msg"></match>
 	<match></match>
+  </route>
+
+  <route action="site" auth="none">
+	<match caps="site/section/level">([^/]*)/(b|i|a)/([^/]*)</match>
   </route>
 
 </routes>
