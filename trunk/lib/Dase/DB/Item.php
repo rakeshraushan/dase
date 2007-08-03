@@ -57,8 +57,5 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
 		$search_table->insert();
-		if (defined('CLI_BATCH')) {
-			print "building search index for item $this->id\n";
-		}
 	}
 }
