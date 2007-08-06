@@ -7,9 +7,10 @@ define('DEBUG',true);
 
 $result = array();
 
-$sx = simplexml_load_file($argv[1]);
-$orig = $sx->orig;
-foreach ($orig->query as $query) {
+$sx = simplexml_load_file('search.xml');
+
+
+foreach ($sx->query as $query) {
 	if (isset($query['attribute'])) {
 		print "{$query['attribute']} : $query\n";
 	} else {

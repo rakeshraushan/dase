@@ -10,6 +10,23 @@
 	<match caps="collection_ascii_id">(.*_collection)</match>
   </route>
 
+  <route action="attributes" auth="user">
+	<match caps="collection_ascii_id">(.*_collection)/attributes</match>
+  </route>
+
+  <route action="search" auth="user">
+	<match>search</match>
+	<match caps="collection_ascii_id">(.*_collection)/search</match>
+  </route>
+
+  <route action="search_form">
+	<match>search/form</match>
+  </route>
+
+  <route action="coll_search_form">
+	<match caps="collection_ascii_id">(.*_collection)/search/form</match>
+  </route>
+
   <route action="collection_xml" auth="token">
 	<match params="collection_ascii_id">xml</match>
 	<match auth="none">xml</match>

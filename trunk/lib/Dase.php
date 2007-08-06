@@ -113,6 +113,23 @@ class Dase
 		}
 	}
 
+	public static function filterGetArray() {
+		if (Dase_Utils::getVersion() >= 520) {
+			return filter_input_array(INPUT_GET);
+		} else {
+			$ar = array();
+			foreach ($_GET as $k => $v) {
+				if (is_array($v)) {
+					$v = Dase::filterArray($v);
+					$ar[$k] = $v;
+				} else {
+					$ar[$k] = strip_tags($v);
+				}
+			}
+			return $ar;
+		}
+	}
+
 	public static function filterGet($key) {
 		if (Dase_Utils::getVersion() >= 520) {
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
