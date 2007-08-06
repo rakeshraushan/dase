@@ -1,9 +1,6 @@
 <search>
-  <orig>
 	<query>red</query>
 	<query>blue</query>
 	<query>yellow</query>
 	<query attribute="title">dog</query>
-  </orig>
 </search>
-
