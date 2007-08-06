@@ -24,52 +24,63 @@ foreach ($get_arrays['q'] as $query) {
 //for substring att searches
 foreach ($get_arrays as $k => $val_array) {
 	if (('q' != $k) && strpos($k,'::')){
-		$set = array();
-		list($set['coll'],$set['att']) = explode('::',$k);
-		if (isset($set['coll']) && isset($set['att'])) {
+		$coll = null;
+		$att = null;
+		$tokens = array();
+		list($coll,$att) = explode('::',$k);
+		if ($coll && $att) {
 			foreach ($val_array as $v) {
 				foreach (tokenizeQuoted($v) as $t) {
 					$tokens[] = $t;
 				}
-				$set['find'] = array();
-				$set['omit'] = array();
-				$set['or'] = array();
 				foreach ($tokens as $tok) {
 					if ('-' == substr($tok,0,1)) {
-						$set['omit'][] = substr($tok,1);
+						$search['attribute'][$coll][$att]['omit'][] = substr($tok,1);
 					} else {
-						$set['find'][] = $tok;
+						$search['attribute'][$coll][$att]['find'][] = $tok;
 					}
 				}
 			}
-			$or_keys = array_keys($set['find'],'or');
+			$or_keys = array_keys($search['attribute'][$coll][$att]['find'],'or');
+			if (!isset($search['attribute'][$coll][$att]['or'])) {
+				$search['attribute'][$coll][$att]['or'] = array();
+			}
 			foreach ($or_keys as $or_key) {
 				foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
-					if (array_key_exists($k,$set['find'])) {
-						//first assign to 'or' array (use hash to get rid of duplicates)
-						$set['or'][$set['find'][$k]] = 1;
+					if (array_key_exists($k,$search['attribute'][$coll][$att]['find'])) {
+						if (!array_search($search['attribute'][$coll][$att]['find'][$k],$search['attribute'][$coll][$att]['or'])) {
+							$search['attribute'][$coll][$att]['or'][] = $search['attribute'][$coll][$att]['find'][$k];
+						}
 					}
 				}
 			}
 			//purge the find array of all tokens in the or array
-			foreach ($set['or'] as $k => $v) {
-				while (false !== array_search($k,$set['find'])) {
-					$remove_key = array_search($k,$set['find']);
-					unset($set['find'][$remove_key]);
+			if (isset($search['attribute'][$coll][$att]['or'])) {
+				foreach ($search['attribute'][$coll][$att]['or'] as $k => $v) {
+					while (false !== array_search($v,$search['attribute'][$coll][$att]['find'])) {
+						$remove_key = array_search($v,$search['attribute'][$coll][$att]['find']);
+						unset($search['attribute'][$coll][$att]['find'][$remove_key]);
+					}
 				}
 			}
-			unset($set['or']['or']);
-			$search['attribute'][] = $set;
+			if (isset($search['attribute'][$coll][$att]['or'])) {
+				while (false !== array_search('or',$search['attribute'][$coll][$att]['or'])) {
+					$remove_key = array_search('or',$search['attribute'][$coll][$att]['or']);
+					unset($search['attribute'][$coll][$att]['or'][$remove_key]);
+				}
+			}
 		}
 	}
 }
 
-foreach ($get_arrays as $k => $v) {
+foreach ($get_arrays as $k => $val) {
+	$coll = null;
+	$att = null;
 	if (('q' != $k) && strpos($k,':') && (!strpos($k,'::'))){
-		$set = array();
-		list($set['coll'],$set['att']) = explode(':',$k);
-		$set['value_text'] = $v;
-		$search['attribute'][] = $set;
+		list($coll,$att) = explode(':',$k);
+		foreach ($val as $v) {
+			$search['attribute'][$coll][$att]['value_text'][] = $v;
+		}
 	}
 }
 
@@ -78,21 +89,24 @@ $or_keys = array_keys($search['find'],'or');
 foreach ($or_keys as $or_key) {
 	foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
 		if (array_key_exists($k,$search['find'])) {
-			//first assign to 'or' array (use hash to get rid of duplicates)
-			$search['or'][$search['find'][$k]] = 1;
+			if (!array_search($search['find'][$k],$search['or'])) {
+				$search['or'][] = $search['find'][$k];
+			}
 		}
 	}
 }
 
 foreach ($search['or'] as $k => $v) {
-	while (false !== array_search($k,$search['find'])) {
-		$remove_key = array_search($k,$search['find']);
+	while (false !== array_search($v,$search['find'])) {
+		$remove_key = array_search($v,$search['find']);
 		unset($search['find'][$remove_key]);
 	}
 }
 
-unset($search['or']['or']);
-
+while (false !== array_search('or',$search['or'])) {
+	$remove_key = array_search('or',$search['or']);
+	unset($search['or'][$remove_key]);
+}
 
 print("<pre>");
 print_r($search);
@@ -113,21 +127,3 @@ function tokenizeQuoted($string) {
 
 
 exit;
-
-//look for
-//1. sets of "OR'ed" words or phrases
-//2. "NOT" words or phrases
-//exact searches
-//2. individual 'not' terms (preceded by '-')
-//3. sets of 'OR' terms
-//4
-//create a search stack?????????????
-//id first new search
-//use a refine box??  OR echo search in an input box....
-//
-//daseql 
-//
-//dase/{collectionAsciiId?}/search?q[]={searchTerms}&{collectionAsciiId}:{attributeAsciiId}?}={exactSearchPhrase}
-//
-//
-
