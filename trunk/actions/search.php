@@ -2,27 +2,22 @@
 $get_arrays = Dase::filterGetArray();
 $tokens = array();
 
-if (!is_array($get_arrays['q'])) {
-	throw new Exception('q is not an array');
-}
-
 $search['att'] = array();
 $search['find'] = array();
 $search['omit'] = array();
 $search['or'] = array();
 
 //populate general find and omit array
-foreach ($get_arrays['q'] as $query) {
-	foreach (tokenizeQuoted($query) as $t) {
-		if ('-' == substr($t,0,1)) {
-			$search['omit'][] = substr($t,1);
-		} else {
-			$search['find'][] = $t;
+if (testArray($get_arrays,'q')) {
+	foreach ($get_arrays['q'] as $query) {
+		foreach (tokenizeQuoted($query) as $t) {
+			if ('-' == substr($t,0,1)) {
+				$search['omit'][] = substr($t,1);
+			} else {
+				$search['find'][] = $t;
+			}
 		}
 	}
-	//unique-ify both arrays
-	$search['find'] = array_unique($search['find']);
-	$search['omit'] = array_unique($search['omit']);
 }
 
 //for substring att searches
@@ -33,7 +28,10 @@ foreach ($get_arrays as $k => $val_array) {
 		$tokens = array();
 		list($coll,$att) = explode('::',$k);
 		if ($coll && $att) {
-			foreach ($val_array as $v) {
+			$search['att'][$coll][$att]['find'] = array();
+			$search['att'][$coll][$att]['omit'] = array();
+			$search['att'][$coll][$att]['or'] = array();
+			foreach ($val_array as $k => $v) {
 				foreach (tokenizeQuoted($v) as $t) {
 					$tokens[] = $t;
 				}
@@ -46,9 +44,6 @@ foreach ($get_arrays as $k => $val_array) {
 				}
 			}
 			$or_keys = array_keys($search['att'][$coll][$att]['find'],'or');
-			if (!isset($search['att'][$coll][$att]['or'])) {
-				$search['att'][$coll][$att]['or'] = array();
-			}
 			foreach ($or_keys as $or_key) {
 				foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
 					if (array_key_exists($k,$search['att'][$coll][$att]['find'])) {
@@ -84,20 +79,21 @@ foreach ($get_arrays as $k => $val_array) {
 	}
 }
 
+//for attr exact value searches
 foreach ($get_arrays as $k => $val) {
 	$coll = null;
 	$att = null;
 	if (('q' != $k) && strpos($k,':') && (!strpos($k,'::'))){
 		list($coll,$att) = explode(':',$k);
+		$search['att'][$coll][$att]['value_text_md5'] = array();
 		foreach ($val as $v) {
-			$search['att'][$coll][$att]['value_text'][] = $v;
+			$search['att'][$coll][$att]['value_text_md5'][] = $v;
 		}
-		$search['att'][$coll][$att]['value_text'] = array_unique($search['att'][$coll][$att]['value_text']);
+		$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
 	}
 }
 
 $or_keys = array_keys($search['find'],'or');
-
 foreach ($or_keys as $or_key) {
 	foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
 		if (array_key_exists($k,$search['find'])) {
@@ -108,6 +104,11 @@ foreach ($or_keys as $or_key) {
 	}
 	$search['or'] = array_unique($search['or']);
 }
+
+//unique-ify arrays
+$search['find'] = array_unique($search['find']);
+$search['omit'] = array_unique($search['omit']);
+
 
 foreach ($search['or'] as $k => $v) {
 	while (false !== array_search($v,$search['find'])) {
@@ -136,6 +137,14 @@ function tokenizeQuoted($string) {
 	return $tokens;
 }
 
+function testArray($a,$key) {
+	if ( isset($a[$key]) && is_array($a[$key]) && count($a[$key]) && isset($a[$key][0]) && $a[$key][0]) {
+		return true;
+	}
+	return false;
+}
+
+
 function normalizeSearch($search) {
 	$search_string = '';
 	foreach(array('find','omit','or') as $key) {
@@ -153,7 +162,7 @@ function normalizeSearch($search) {
 		$att_names_array = array_keys($att_array[$coll_name]);
 		asort($att_names_array);
 		foreach ($att_names_array as $att_name) {
-			foreach(array('find','omit','or','value_text') as $key) {
+			foreach(array('find','omit','or','value_text_md5') as $key) {
 				$set = array();
 				if (isset($att_array[$coll_name][$att_name][$key])) {
 					$set = $att_array[$coll_name][$att_name][$key];
@@ -188,51 +197,70 @@ function createSql($search) {
 		}
 		$search_table_sets[] = "(" . join(' OR ',$search['or']) . ")";
 	}
-	$search_table_sql = "SELECT item_id FROM search_table WHERE " . join(' AND ', $search_table_sets);
+	$search_table_sql = "
+		SELECT item_id 
+		FROM search_table 
+		WHERE " . join(' AND ', $search_table_sets);
 
 	$value_table_search_sets = array();
 	foreach ($search['att'] as $coll => $att_arrays) {
 		foreach ($search['att'][$coll] as $att => $ar) {
-			if (isset($ar['find']) && count($ar['find'])) {
+			$ar_table_sets = array();
+			if (testArray($ar,'find')) {
 				foreach ($ar['find'] as $k => $term) {
 					$ar['find'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = join(' AND ',$ar['find']);
 			}
-			if (isset($ar['omit']) && count($ar['omit'])) {
+			if (testArray($ar,'omit')) {
 				foreach ($ar['omit'] as $k => $term) {
 					$ar['omit'][$k] = "lower(value_text) NOT LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = join(' AND ',$ar['omit']);
 			}
-			if (isset($ar['or']) && count($ar['or'])) {
+			if (testArray($ar,'or')) {
 				foreach ($ar['or'] as $k => $term) {
 					$ar['or'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = "(" . join(' OR ',$ar['or']) . ")";
 			}
-			if (isset($ar['value_text']) && count($ar['value_text'])) {
-				foreach ($ar['value_text'] as $k => $term) {
-					$ar['value_text'][$k] = "lower(value_text) = '". strtolower($term) . "'";
+			if (testArray($ar,'value_text_md5')) {
+				foreach ($ar['value_text_md5'] as $k => $term) {
+					$ar['value_text_md5'][$k] = "value_text_md5 = '$term'";
 				}
-				$ar_table_sets[] = join(' AND ',$ar['value_text']);
+				$ar_table_sets[] = join(' AND ',$ar['value_text_md5']);
 			}
-			$coll_ascii_id = $coll . "_collection";
-			$value_table_search_sets[] = "
-				id IN (
-					SELECT v.item_id FROM value v,collection c,attribute a
-					WHERE c.ascii_id = '$coll_ascii_id'
-					AND a.ascii_id = '$att'
-					AND a.collection_id = c.id
-					AND value.attribute_id = a.id
-					AND " . join(' AND ', $ar_table_sets)
-					. ")";
+			if (count($ar_table_sets)) {
+				$value_table_search_sets[] = "
+					id IN (
+						SELECT v.item_id FROM value v,collection c,attribute a
+						WHERE c.ascii_id = '$coll'
+						AND a.ascii_id = '$att'
+						AND a.collection_id = c.id
+						AND value.attribute_id = a.id
+						AND " . join(' AND ', $ar_table_sets)
+						. ")";
+			}
 		}
+		unset($ar_table_sets);
 	}
-	$sql = "
-		SELECT id FROM item
-		WHERE id IN ($search_table_sql)
-		AND " . join(' AND ',$value_table_search_sets);
+	if ($search_table_sql && count($value_table_search_sets)) {
+		$sql = "
+			SELECT id FROM item
+			WHERE id IN ($search_table_sql)
+			AND " . join(' AND ',$value_table_search_sets);
+	} elseif ($search_table_sql) {
+		$sql = "
+			SELECT id FROM item
+			WHERE id IN ($search_table_sql)";
+	} elseif (count($value_table_search_sets)) {
+		$sql = "
+			SELECT id FROM item
+			WHERE " . join(' AND ',$value_table_search_sets);
+	} else {
+		$sql = 'no query';
+	}
+
 	return $sql;
 }
 
