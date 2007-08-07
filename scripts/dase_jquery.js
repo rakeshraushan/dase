@@ -4,7 +4,8 @@ jQuery(function(){
 		Dase.listMenu();
 		Dase.multicheck("checkedCollection");
 		Dase.getItemTallies();
-		Dase.prepareBrowse();
+		Dase.initBrowse();
+		Dase.initDynamicSearchForm();
 		}); 
 
 Dase.listMenu = function() { 
@@ -36,7 +37,7 @@ Dase.getItemTallies = function() {
 	}
 }
 
-Dase.prepareBrowse = function() {
+Dase.initBrowse = function() {
 	if(jQuery("#browseColumns").size()) {
 		var params = jQuery("#browseColumns").attr("class").split(" ");
 		var collection_id = params[0];
@@ -151,4 +152,10 @@ Dase.getAttributeTallies = function(coll_id) {
 
 				});
 	}
+}
+
+Dase.initDynamicSearchForm = function() {
+	jQuery("p.dynamic_search_form").find("select").change(function() {
+			jQuery(this).parent().find("input[@type=text]").attr("name",jQuery("option:selected",this).attr("value"));
+			});
 }

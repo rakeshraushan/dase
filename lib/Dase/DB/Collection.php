@@ -164,10 +164,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
  */
 	}
 
-	function getAttributes() {
+	function getAttributes($sort = null) {
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = $this->id;
-		$att->orderBy('sort_order');
+		if ($sort) {
+			$att->orderBy($sort);
+		} else {
+			$att->orderBy('sort_order');
+		}
 		$this->attribute_array = $att->findAll();
 		return $this->attribute_array;
 	}

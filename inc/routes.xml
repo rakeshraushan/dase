@@ -19,11 +19,15 @@
 	<match caps="collection_ascii_id">(.*_collection)/search</match>
   </route>
 
+  <route action="search_test">
+	<match>search/test</match>
+  </route>
+
   <route action="search_form">
 	<match>search/form</match>
   </route>
 
-  <route action="coll_search_form">
+  <route action="collection/search_form">
 	<match caps="collection_ascii_id">(.*_collection)/search/form</match>
   </route>
 
