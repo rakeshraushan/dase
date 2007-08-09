@@ -15,12 +15,8 @@
   </route>
 
   <route action="search" auth="user">
-	<match>search</match>
 	<match caps="collection_ascii_id">(.*_collection)/search</match>
-  </route>
-
-  <route action="search_test">
-	<match>search/test</match>
+	<match>search</match>
   </route>
 
   <route action="search_form">
@@ -69,5 +65,10 @@
   <route action="view_log" auth="admin" params="log_action"/>
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
+
+  <route action="media" auth="none">
+	<match params="collection/size/filename">media</match>
+  </route>
+
 
 </routes>

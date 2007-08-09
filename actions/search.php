@@ -1,11 +1,27 @@
 <?php
 $get_arrays = Dase::filterGetArray();
-$tokens = array();
 
+$search['type'] = null;
+$search['collections'] = array();
 $search['att'] = array();
 $search['find'] = array();
 $search['omit'] = array();
 $search['or'] = array();
+
+//for item_type filter
+if (isset($get_arrays['coll'])) {
+	foreach ($get_arrays['coll'] as $val) {
+		$search['collections'][] = $val;
+	}
+	$search['collections'] = array_unique($search['collections']);
+}
+
+//coll as param TRUMPS coll in get array
+if (isset($params['collection_ascii_id'])) {
+	$search['collections'] = array();
+	$search['collections'][] = $params['collection_ascii_id'];
+	$coll_ascii_id = $params['collection_ascii_id'];
+}
 
 //populate general find and omit array
 if (testArray($get_arrays,'q')) {
@@ -93,6 +109,15 @@ foreach ($get_arrays as $k => $val) {
 	}
 }
 
+//for item_type filter
+foreach ($get_arrays as $k => $val) {
+	if ('type' == $k){
+		list($coll,$type) = explode(':',$val);
+		$search['type']['coll'] = $coll;
+		$search['type']['name'] = $type;
+	}
+}
+
 $or_keys = array_keys($search['find'],'or');
 foreach ($or_keys as $or_key) {
 	foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
@@ -122,10 +147,6 @@ while (false !== array_search('or',$search['or'])) {
 	unset($search['or'][$remove_key]);
 }
 
-print("<pre>");
-print_r($search);
-print("</pre>");
-
 //from php.net:
 function tokenizeQuoted($string) {
 	for($tokens=array(), $nextToken=strtok($string, ' '); $nextToken!==false; $nextToken=strtok(' ')) {
@@ -143,6 +164,7 @@ function testArray($a,$key) {
 	}
 	return false;
 }
+
 
 
 function normalizeSearch($search) {
@@ -174,6 +196,14 @@ function normalizeSearch($search) {
 			}
 		}
 	}
+	if (isset($search['collection'])) {
+		$c_array = $search['collection'];
+		asort($c_array);
+		$search_string .= "collections:" .  join(',',$c_array) . ";";
+	}
+	if (isset($search['type'])) {
+		$search_string .= $search['type'];
+	}
 	return $search_string;
 }
 
@@ -197,10 +227,12 @@ function createSql($search) {
 		}
 		$search_table_sets[] = "(" . join(' OR ',$search['or']) . ")";
 	}
-	$search_table_sql = "
-		SELECT item_id 
-		FROM search_table 
-		WHERE " . join(' AND ', $search_table_sets);
+	if (count($search_table_sets)) {
+		$search_table_sql = "
+			SELECT item_id 
+			FROM search_table 
+			WHERE " . join(' AND ', $search_table_sets);
+	}
 
 	$value_table_search_sets = array();
 	foreach ($search['att'] as $coll => $att_arrays) {
@@ -208,25 +240,25 @@ function createSql($search) {
 			$ar_table_sets = array();
 			if (testArray($ar,'find')) {
 				foreach ($ar['find'] as $k => $term) {
-					$ar['find'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
+					$ar['find'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = join(' AND ',$ar['find']);
 			}
 			if (testArray($ar,'omit')) {
 				foreach ($ar['omit'] as $k => $term) {
-					$ar['omit'][$k] = "lower(value_text) NOT LIKE '%". strtolower($term) . "%'";
+					$ar['omit'][$k] = "lower(v.value_text) NOT LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = join(' AND ',$ar['omit']);
 			}
 			if (testArray($ar,'or')) {
 				foreach ($ar['or'] as $k => $term) {
-					$ar['or'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
+					$ar['or'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
 				}
 				$ar_table_sets[] = "(" . join(' OR ',$ar['or']) . ")";
 			}
 			if (testArray($ar,'value_text_md5')) {
 				foreach ($ar['value_text_md5'] as $k => $term) {
-					$ar['value_text_md5'][$k] = "value_text_md5 = '$term'";
+					$ar['value_text_md5'][$k] = "v.value_text_md5 = '$term'";
 				}
 				$ar_table_sets[] = join(' AND ',$ar['value_text_md5']);
 			}
@@ -237,19 +269,26 @@ function createSql($search) {
 						WHERE c.ascii_id = '$coll'
 						AND a.ascii_id = '$att'
 						AND a.collection_id = c.id
-						AND value.attribute_id = a.id
+						AND v.attribute_id = a.id
 						AND " . join(' AND ', $ar_table_sets)
 						. ")";
 			}
 		}
 		unset($ar_table_sets);
 	}
-	if ($search_table_sql && count($value_table_search_sets)) {
+	if (isset($search['collections']) && isset($search_table_sql)) {
+		foreach ($search['collections'] as $sc) {
+			$quoted[] = "'$sc'";
+		}
+		$or_set = join(" OR ascii_id = ",$quoted);
+		$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id = $or_set)";
+	}
+	if (isset($search_table_sql) && count($value_table_search_sets)) {
 		$sql = "
 			SELECT id FROM item
 			WHERE id IN ($search_table_sql)
 			AND " . join(' AND ',$value_table_search_sets);
-	} elseif ($search_table_sql) {
+	} elseif (isset($search_table_sql)) {
 		$sql = "
 			SELECT id FROM item
 			WHERE id IN ($search_table_sql)";
@@ -258,14 +297,50 @@ function createSql($search) {
 			SELECT id FROM item
 			WHERE " . join(' AND ',$value_table_search_sets);
 	} else {
-		$sql = 'no query';
+		return 'no query';
+	}
+
+	if (isset($search['type'])) {
+		$sql .=" 
+			AND WHERE item_type_id IN
+			(SELECT id FROM item_type
+			WHERE ascii_id = '{$search['type']['name']}'
+			AND collection_id IN (SELECT id
+			FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
+			";
 	}
 
 	return $sql;
 }
-
-//print md5(normalizeSearch($search));
-
+/*
+print('<pre>');
+print_r($search);
+print('</pre>');
+print md5(normalizeSearch($search));
 print createSql($search);
-
 exit;
+ */
+$db = Dase_DB::get();
+$st = $db->prepare(createSql($search));	
+$st->execute();
+$items = array();
+while ($row = $st->fetch()) {
+	$item = new Dase_DB_Item;
+	$item->load($row['id']);
+	$item->getValues();
+	$item->getThumbnail();
+	$items[] = $item;
+}
+
+$tpl = Dase_Template::instance();
+if ($coll_ascii_id) {
+	$c = Dase_DB_Collection::get($coll_ascii_id);
+	$c->getItemTypes();
+	$c->getAttributes();
+	$tpl->assign('collection',$c);
+}
+if (count($items)) {
+	$tpl->assign('items',$items);
+}
+$tpl->assign('content','search');
+$tpl->display('page.tpl');
