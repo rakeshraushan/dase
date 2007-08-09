@@ -7,6 +7,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $item_count;
 	public $admin_attribute_array;
 	public $attribute_array;
+	public $item_type_array;
 
 	function xmlDump($limit = 100000) {
 		$writer = new XMLWriter();
@@ -197,14 +198,11 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	}
 
 	function getItemTypes() {
-		$it = new Dase_DB_ItemType;
-		$it->collection_id = $this->id;
-		foreach ($it->findAll() as $row) {
-			$item_type = new Dase_DB_ItemType($row);
-			$it_array[] = $item_type;
-		}
-		$this->item_type_array = $it_array;
-		return $it_array;
+		$type = new Dase_DB_ItemType;
+		$type->collection_id = $this->id;
+		$type->orderBy('name');
+		$this->item_type_array = $type->findAll();
+		return $this->item_type_array;
 	}
 
 	function getItemsByType($type_ascii_id) {
@@ -214,7 +212,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$it->findOne();
 		$ite = new Dase_DB_Item;
 		$ite->item_type_id = $it->id;
-		print_r($ite);exit;
 		foreach ($ite->findAll() as $row) {
 			$item = new Dase_DB_ItemType($row);
 			$item_array[] = $item;

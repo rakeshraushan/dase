@@ -5,6 +5,10 @@ require_once 'Dase/DB/Autogen/Item.php';
 class Dase_DB_Item extends Dase_DB_Autogen_Item 
 {
 
+	public $values;
+	public $thumbnail;
+	public $thumbnail_url;
+
 	public function buildSearchIndex() {
 		$db = Dase_DB::get();
 		$sql = "
@@ -57,5 +61,27 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
 		$search_table->insert();
+	}
+
+	public function getValues() {
+		$val = new Dase_DB_Value;
+		$val->item_id = $this->id;
+		foreach ($val->findAll() as $row) {
+			$v = new Dase_DB_Value($row);
+			$v->getAttributeName();
+			$this->values[] = $v;
+		}
+		return $this->values;
+	}
+
+	public function getThumbnail() {
+		$m = new Dase_DB_MediaFile;
+		$m->item_id = $this->id;
+		$m->size = 'thumbnail';
+		$this->thumbnail = $m->findOne();
+		$coll = new Dase_DB_Collection;
+		$coll->load($this->collection_id);
+		$this->thumbnail_url = APP_ROOT . "/media/$coll->ascii_id/thumbnail/$m->filename";
+		return $this->thumbnail;
 	}
 }
