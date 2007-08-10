@@ -25,7 +25,7 @@
 </form>
 <div id="autocomplete"></div>
 
-<div id="browseColumns" class="{$collection->id} {if $cb}0{else}1{/if}">
+<div id="browseColumns" class="{$collection->ascii_id} {if $cb}0{else}1{/if}">
 <h3>Browse:</h3>
 
 <div id="catColumn">

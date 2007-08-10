@@ -1,11 +1,12 @@
 <?php
 $link_class = Dase::filterGet('link_class');
-$collection_id = Dase::filterGet('collection_id');
+$coll = Dase::filterGet('coll');
 $public_only = Dase::filterGet('public_only');
 $token = Dase::filterGet('token');
 
 $attribute = new Dase_DB_Attribute;
-$attribute->collection_id = $collection_id;
+$c = Dase_DB_Collection::get($coll);
+$attribute->collection_id = $c->id;
 if ($public_only) {
 	$attribute->is_public = 1;
 }

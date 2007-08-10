@@ -5,10 +5,7 @@ class Dase
 	private static $instance;
 	public static $user;
 	public $base_url= '';       
-	private $stub= '';           
 	private $module= '';        
-	private $action= '';        
-	private $handler= null;    
 	private $url_params = array();    
 
 	public function __construct() {}
@@ -52,7 +49,7 @@ class Dase
 		exit;
 	}
 
-	public function checkUser($auth = 'user') {
+	public function checkUser($auth = 'user',$collection_ascii_id = '') {
 		switch ($auth) {
 		case 'user':
 			self::$user = new Dase_User();
@@ -227,7 +224,7 @@ class Dase
 				if (is_file("$dir/$module/inc/routes.xml") &&
 					//note that module needs to be registered in DASE_CONFIG
 					in_array($module,$conf['modules'])
-					) {
+				) {
 					$path = "$dir/$module/inc/routes.xml";
 					$routes = Dase::_compileRoutes("/modules/$module",$routes);
 				}
@@ -268,13 +265,7 @@ class Dase
 
 		foreach ($routes as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
-				if (isset($conf_array['auth']) && $conf_array['auth']) {
-					Dase::checkUser($conf_array['auth']);
-				} else {
-					//default auth is user!!!!!!!!!!!!!
-					Dase::checkUser('user');
-				}
-				Dase::log('standard',$conf_array['action']);
+				Dase::log('standard',$regex . " => " . $conf_array['action']);
 				$caps = array();
 				if (isset($conf_array['caps'])) {
 					$caps = explode('/',$conf_array['caps']);
@@ -283,17 +274,34 @@ class Dase
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
 				}
-				$params = $caps + $params;
+				$params = array_merge($caps,$params);
 				$action_prefix = '';
 				if (isset($conf_array['prefix'])) {
 					$action_prefix = $conf_array['prefix'];
 				}
-				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
-					if (isset($matches[1])) {
-						array_shift($matches);
-						$clean_matches = Dase::filterArray($matches);
+				if (isset($matches[1])) {
+					array_shift($matches);
+					$clean_matches = Dase::filterArray($matches);
+					if (count($params) == count($clean_matches)) {
 						$params = array_combine($params,$clean_matches);
+					} else {
+						print_r($params);
+						print_r($clean_matches);
+						die ("routes error");
 					}
+				}
+				if (isset($conf_array['auth']) && $conf_array['auth']) {
+					if (isset($params['collection_ascii_id'])) {
+						$collection_ascii_id = $params['collection_ascii_id'];
+					} else {
+						$collection_ascii_id = '';
+					}	
+					Dase::checkUser($conf_array['auth'],$collection_ascii_id);
+				} else {
+					//default auth is user!!!!!!!!!!!!!
+					Dase::checkUser('user');
+				}
+				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
 				} 

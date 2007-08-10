@@ -19,6 +19,10 @@
 	<match>search</match>
   </route>
 
+  <route action="item" auth="user">
+	<match caps="collection_ascii_id" params="serial_number">(.*_collection)</match>
+  </route>
+
   <route action="search_form">
 	<match>search/form</match>
   </route>
@@ -62,7 +66,7 @@
   <route action="login_form" auth="none" />
   <route action="login" auth="none" />
   <route action="logoff" auth="user" />
-  <route action="view_log" auth="admin" params="log_action"/>
+  <route action="view_log" auth="admin" params="log_name"/>
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
 

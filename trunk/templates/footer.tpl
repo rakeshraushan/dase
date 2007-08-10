@@ -5,5 +5,5 @@
 | <a href="copyright">Copyright/Usage Statement</a> 
 | <a href="palette.html">palette</a> 
 | {$timer} seconds 
-| 
+| {$regex} 
 </div><!--closes footer-->

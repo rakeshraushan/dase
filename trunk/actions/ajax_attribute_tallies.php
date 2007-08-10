@@ -1,7 +1,9 @@
 <?php
 $cb = Dase::filterGet('cb');
 $admin = Dase::filterGet('admin');
-$collection_id = Dase::filterGet('coll_id');
+$coll = Dase::filterGet('coll');
+$c = Dase_DB_Collection::get($coll);
+$collection_id = $c->id;
 $cached_xml = Dase_DB_XmlCache::getXml('attribute_tallies',$collection_id,$admin);
 if ($cached_xml) {
 	$tpl = new Dase_Xml_Template;
