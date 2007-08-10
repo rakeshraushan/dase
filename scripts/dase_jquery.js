@@ -40,18 +40,18 @@ Dase.getItemTallies = function() {
 Dase.initBrowse = function() {
 	if(jQuery("#browseColumns").size()) {
 		var params = jQuery("#browseColumns").attr("class").split(" ");
-		var collection_id = params[0];
+		var coll = params[0];
 		var public_only = params[1];
-		Dase.getAttributes(0,collection_id,public_only);
+		Dase.getAttributes(0,coll,public_only);
 		jQuery("#catColumn").find("a").each(function() {
 				var category_id = jQuery(this).attr("id").split('_').pop(); //creates closure for click event
 				jQuery(this).click(function() {
 					jQuery("#attColumn").removeClass();
 					jQuery('#valColumn').html(" ").attr("class","empty");
 					if ('admin' == category_id) {
-					Dase.getAdminAttributes(collection_id);
+					Dase.getAdminAttributes(coll);
 					} else {
-					Dase.getAttributes(category_id,collection_id,public_only);
+					Dase.getAttributes(category_id,coll,public_only);
 					}
 					return false;
 					});
@@ -59,11 +59,11 @@ Dase.initBrowse = function() {
 	}
 }
 
-Dase.getAttributes = function(cat_id,collection_id,public_only) {
+Dase.getAttributes = function(cat_id,coll,public_only) {
 	var params = {
 	   token: new Date().getTime(),
 	   link_class: "att_link",
-	   collection_id: collection_id,
+	   coll: coll,
 	   cat_id: cat_id,
 	   public_only: public_only
 	};	   
@@ -72,7 +72,7 @@ Dase.getAttributes = function(cat_id,collection_id,public_only) {
 	jQuery("#attColumn").html("<div class='loading'>Loading Attributes...</div>");
 	jQuery.get("ajax/attributes",params,function(data) {
 			jQuery("#attColumn").html(data);
-			Dase.bindGetValues(collection_id);
+			Dase.bindGetValues(coll);
 			});
 	if (jQuery("#attColumn").attr("class")) {
 		//meaning there is an attr_id embedded in the className of attColumn
@@ -83,18 +83,18 @@ Dase.getAttributes = function(cat_id,collection_id,public_only) {
 	jQuery('#autocomplete').html(" ");
 }
 
-Dase.getAdminAttributes = function(collection_id) {
+Dase.getAdminAttributes = function(coll) {
 	var params = {
 	   token: new Date().getTime(),
 	   link_class: "att_link",
-	   collection_id: collection_id
+	   coll: coll
 	};	   
 	jQuery("#catColumn/a[@class=spill]").attr("class","catLink");
 	jQuery("#catLink_admin").attr("class","spill");
 	jQuery("#attColumn").html("<div class='loading'>Loading Admin Attributes...</div>");
 	jQuery.get("ajax/admin_attributes",params,function(data) {
 			jQuery("#attColumn").html(data);
-			Dase.bindGetValues(collection_id);
+			Dase.bindGetValues(coll);
 			});
 	if (jQuery("#attColumn").attr("class")) {
 		//meaning there is an attr_id embedded in the className of attColumn
@@ -105,14 +105,14 @@ Dase.getAdminAttributes = function(collection_id) {
 	jQuery('#autocomplete').html(" ");
 }
 
-Dase.bindGetValues = function(collection_id) {
+Dase.bindGetValues = function(coll) {
 	jQuery("#attColumn").find('a').each(function() {
 			var attribute_id = jQuery(this).attr("class").split(" ").pop(); //creates closure for click event
 			jQuery(this).click(function() {
 				var params = {
 					token: new Date().getTime(),
 					attribute_id: attribute_id,
-					collection_id: collection_id
+					coll: coll
 					};	   
 					jQuery("#attColumn//a[@class=spill]").attr("class","att_link");
 					jQuery("#att_link_"+attribute_id).attr("class","spill");
@@ -125,14 +125,14 @@ Dase.bindGetValues = function(collection_id) {
 					return false;
 					});
 			});
-	Dase.getAttributeTallies(collection_id);
+	Dase.getAttributeTallies(coll);
 }
 
-Dase.getAttributeTallies = function(coll_id) {
+Dase.getAttributeTallies = function(coll) {
 	if (jQuery("#getTallies").size()) {
 		var params = {
          token: new Date().getTime(),
-		 coll_id: coll_id
+		 coll: coll
 		};	   
 		if ('adminAtts' == jQuery('#getTallies').attr("class")) { 
 			params.admin = 1;
@@ -155,7 +155,7 @@ Dase.getAttributeTallies = function(coll_id) {
 }
 
 Dase.initDynamicSearchForm = function() {
-	jQuery("p.dynamic_search_form").find("select").change(function() {
+	jQuery("select.dynamic").change(function() {
 			jQuery(this).parent().find("input[@type=text]").attr("name",jQuery("option:selected",this).attr("value"));
 			});
 }

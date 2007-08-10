@@ -100,6 +100,10 @@ h1,h2,h3,h4,h5,h6 {
 	  margin: 0.2em 0;
 }
 
+h4.collName {
+color: #666;
+}
+
 strong {
 	font-weight: bold;
 }
@@ -389,4 +393,18 @@ width:80px;
 
 a.chk,a.unchk {
 line-height:3em;
+}
+
+div.gridItem {
+	text-align: center;
+	width: 140px;
+	height: 140px;
+	padding: 15px;
+	margin: 1px;
+	float:left;
+	border: 1px solid #d9c8ad;
+}
+
+div.itemGrid {
+	margin: 20px 0;
 }

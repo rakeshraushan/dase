@@ -12,7 +12,7 @@
 
 <form id="searchCollections" method="get" action="search">
 <div class="searchBoxLabel">Search selected collection(s):</div> 
-<input type="text" name="query" size="30"/>
+<input type="text" name="q[]" size="30"/>
 <input type="hidden" name="from_home_page" value="1"/>
 <input type="submit" value="Search" class="button"/>
 {if $user->recent_search}
@@ -25,7 +25,7 @@
 {foreach item=coll from=$collections}
 {if $coll.is_public eq 1}
 <li><input type="checkbox" name="cols[]" value="{$coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
-<a href="collection/{$coll.ascii_id}" id="col_link{$coll.id}" name="collectionLink"
+<a href="{$coll.ascii_id}" id="col_link{$coll.id}" name="collectionLink"
 {if in_array($coll.id,$current_collections)}class="checkedCollection"{/if}>{$coll.collection_name}</a>
 <span class="tally" id="tally-{$coll.id}"></span>
 </li>
@@ -37,7 +37,7 @@
 {foreach item=np_coll from=$collections}
 {if $np_coll.is_public ne 1}
 <li><input type="checkbox" name="cols[]" value="{$np_coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
-<a href="collection/{$np_coll.ascii_id}" id="col_link{$np_coll.id}" name="collectionLink"
+<a href="{$np_coll.ascii_id}" id="col_link{$np_coll.id}" name="collectionLink"
 {if in_array($np_coll.id,$current_collections)}class="checkedCollection"{/if}>{$np_coll.collection_name}</a>
 <span class="tally" id="tally-{$np_coll.id}"></span>
 </li>

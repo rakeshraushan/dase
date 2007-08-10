@@ -8,7 +8,6 @@ $search['find'] = array();
 $search['omit'] = array();
 $search['or'] = array();
 
-//for item_type filter
 if (isset($get_arrays['coll'])) {
 	foreach ($get_arrays['coll'] as $val) {
 		$search['collections'][] = $val;
@@ -38,7 +37,7 @@ if (testArray($get_arrays,'q')) {
 
 //for substring att searches
 foreach ($get_arrays as $k => $val_array) {
-	if (('q' != $k) && strpos($k,'::')){
+	if (('q' != $k) && ('type' != $k) && strpos($k,'::')){
 		$coll = null;
 		$att = null;
 		$tokens = array();
@@ -111,7 +110,7 @@ foreach ($get_arrays as $k => $val) {
 
 //for item_type filter
 foreach ($get_arrays as $k => $val) {
-	if ('type' == $k){
+	if (('type' == $k) && $val) {
 		list($coll,$type) = explode(':',$val);
 		$search['type']['coll'] = $coll;
 		$search['type']['name'] = $type;
@@ -300,7 +299,7 @@ function createSql($search) {
 		return 'no query';
 	}
 
-	if (isset($search['type'])) {
+	if (isset($search['type']['coll']) && isset($search['type']['name'])) {
 		$sql .=" 
 			AND WHERE item_type_id IN
 			(SELECT id FROM item_type
@@ -323,14 +322,28 @@ exit;
 $db = Dase_DB::get();
 $st = $db->prepare(createSql($search));	
 $st->execute();
-$items = array();
+$item_ids = array();;
 while ($row = $st->fetch()) {
-	$item = new Dase_DB_Item;
-	$item->load($row['id']);
-	$item->getValues();
-	$item->getThumbnail();
-	$items[] = $item;
+	$item_ids[] = $row['id'];
 }
+
+$items = array();
+$start = 0;
+$max_items = 50;
+if (count($item_ids)) {
+	$sc = new Dase_DB_SearchCache;
+	$sc->item_id_string = join(',',$item_ids);
+	$sc->search_md5 = md5(normalizeSearch($search));
+	$sc->insert();
+	foreach (array_slice($item_ids,$start,$max_items) as $id) {
+		$item = new Dase_DB_Item;
+		$item->load($id);
+		$item->getValues();
+		$item->getThumbnail();
+		$items[] = $item;
+	}
+}
+
 
 $tpl = Dase_Template::instance();
 if ($coll_ascii_id) {

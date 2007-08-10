@@ -1,6 +1,5 @@
 <?php
 $link_class = Dase::filterGet('link_class');
-$collection_id = Dase::filterGet('collection_id');
 $token = Dase::filterGet('token');
 $attribute = new Dase_DB_Attribute;
 $attribute->collection_id = 0;
