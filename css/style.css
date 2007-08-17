@@ -373,7 +373,7 @@ background-color:#c9c8ad;
 	font-size: .94em;
 color: #999;
 }
-
+/*
 dl {
 width: 40%;
 margin-top:10px;
@@ -390,7 +390,7 @@ float: left;
 	  text-align: right;
 width:80px;
 }
-
+*/
 a.chk,a.unchk {
 line-height:3em;
 }
@@ -408,3 +408,35 @@ div.gridItem {
 div.itemGrid {
 	margin: 20px 0;
 }
+
+div.itemDisplay {
+	margin: 20px 0;
+}
+
+div.itemDisplay div.viewitem {
+	float: left;
+	height: 500px;
+	margin: 0 20px 0 0;
+}
+
+div.itemDisplay div.metadata {
+	margin: 0;
+	padding: 10px;
+	background-color: white;
+}
+
+
+dl {
+margin-top:4px 4px;
+	   line-height: 1.4em;
+font-weight: bold;
+padding : 10px;
+}
+dt {
+color: #009;
+	   font-weight:bold;
+}
+dd {
+margin-left: 15px;
+}
+

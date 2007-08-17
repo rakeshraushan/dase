@@ -7,7 +7,7 @@
   </route>
 
   <route action="site" auth="none">
-	<match caps="site/section/level">([^/]*)/(b|i|a)/([^/]*)</match>
+	<match caps="site/section/level">(ata|zho|old|had|mid)/(intro|hom|arch|fauna|geo|paleo)/(beg|int|adv)</match>
   </route>
 
 </routes>
