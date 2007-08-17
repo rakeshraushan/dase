@@ -1,9 +1,13 @@
 DirectoryIndex index.php index.html
 AddType application/x-httpd-php .php
 Options FollowSymLinks
+
 RewriteEngine On
 RewriteBase @base
-#RewriteBase /dase
+
+# required for load-balancer keepalive (ladd)
+RewriteCond %{REMOTE_ADDR} 10.0.0.250
+RewriteRule .*             - [L]
 
 #force https
 #RewriteCond %{SERVER_PORT} 80 
