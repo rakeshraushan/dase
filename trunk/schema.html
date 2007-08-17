@@ -1,0 +1,2043 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Torque Database Schema - MyModel</title>
+<style>
+   body {
+     font-family: verdana,MS Sans Serif,arial,helvetica;  
+     font-size: 80%;	
+     background-color: #FFFFFF; 
+     color: #003399;
+   }
+   A:link, A:visited { 
+     color:blue; 
+     text-decoration:underline; 
+   }
+   A:hover { 
+     color:#003399; 
+     text-decoration:underline; 
+   }
+   table {
+     font-family: verdana,MS Sans Serif,arial,helvetica;  
+     padding: 1 1 1 1;
+     margin: 1 1 1 1;
+     font-size: 95%;
+     width: 500px;
+   }
+   .rowTableName  { background-color: #003366; color: white; font-weight: bolder; text-align: center;}
+   .colAttrName { background-color: #003366; color: white; width:20%; text-align: left;}
+   .colAttrVal { background-color: #FFFFFF; color: black; width:80%; text-align: left;}
+   .rowColumns { background-color: #C4E1FF; color: #003366; font-weight: bolder;}
+   .rowAttrNorm { background-color: #EEEEEE; color: black;}
+   .rowAttrReq { background-color: #EEEEEE; color: navy;}
+   .rowAttrPK { background-color: #EEEEEE; color: red;}
+   .rowFK { background-color: #888888; color: white; font-weight: bolder; text-align: center;}
+   .rowFKItems { background-color: #FCFCFC; color: black;}
+   .rowIX { background-color: #888888; color: white; font-weight: bolder; text-align: center;}
+   .rowIXItems { background-color: #FCFCFC; color: black;}
+  </style>
+</head>
+<body>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="admin_search_table">admin_search_table</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>value_text</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>status_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>last_update</td>
+<td>TIME</td>
+<td>12,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="application_monitor">application_monitor</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>response_time</td>
+<td>DOUBLE</td>
+<td>8 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_eid</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>server_addr</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>server_name</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>request_uri</td>
+<td>VARCHAR</td>
+<td>400 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>remote_addr</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="attribute">attribute</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>usage_notes</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>sort_order</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>1 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>in_basic_search</td>
+<td>BIT</td>
+<td>1 </td>
+<td>true </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_on_list_display</td>
+<td>BIT</td>
+<td>1 </td>
+<td>true </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_public</td>
+<td>BIT</td>
+<td>1 </td>
+<td>true </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>html_input_type_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>5 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>atom_element</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>mapped_admin_att_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody>
+<tr class="rowIXItems"><td>
+<b>aid_idx</b>(
+   ascii_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>in_basic_idx</b>(
+   in_basic_search, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>thumb_idx</b>(
+   is_on_list_display, 
+)
+	</td></tr>
+</tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="attribute_item_type">attribute_item_type</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>item_type_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>attribute_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>cardinality</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td>0:m </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="collection">collection</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>path_to_media_files</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>description</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_public</td>
+<td>BIT</td>
+<td>1 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody><tr class="rowIXItems"><td>
+<b>collid_idx</b>(
+   id, 
+)
+	</td></tr></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="collection_manager">collection_manager</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_eid</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>auth_level</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="dase_user">dase_user</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>eid</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>has_access_exception</td>
+<td>BIT</td>
+<td>1 </td>
+<td>false </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>cb</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>last_cb_access</td>
+<td>BIGINT</td>
+<td>8 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>display</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>max_items</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>last_item</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>last_action</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>current_search_cache_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>current_collections</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>backtrack</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>template_composite</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="defined_value">defined_value</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>value_text</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="html_input_type">html_input_type</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="input_template">input_template</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_manager_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="item">item</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>serial_number</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>status_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>item_type_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody>
+<tr class="rowIXItems"><td>
+<b>coll_id_idx</b>(
+   collection_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>itid_idx</b>(
+   id, 
+)
+	</td></tr>
+</tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="item_status">item_status</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>status</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="item_type">item_type</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>description</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="media_file">media_file</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>filename</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>height</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>width</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>mime_type</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>size</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>p_serial_number</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>p_collection_ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>file_size</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody><tr class="rowIXItems"><td>
+<b>item_id_size_idx</b>(
+   item_id, 
+
+   size, 
+)
+	</td></tr></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="message_queue">message_queue</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_eid</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>text</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_active</td>
+<td>BIT</td>
+<td>1 </td>
+<td>true </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="search_cache">search_cache</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>query</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_id_string</td>
+<td>LONGVARCHAR</td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>refine</td>
+<td>LONGVARCHAR</td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_id_string</td>
+<td>VARCHAR</td>
+<td>2000000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>exact_search</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_stale</td>
+<td>BIT</td>
+<td>1 </td>
+<td>false </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>sort_by</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>cb_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody><tr class="rowIXItems"><td>
+<b>q_ts_idx</b>(
+   query, 
+
+   timestamp, 
+)
+	</td></tr></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="search_table">search_table</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrReq">
+<td>*</td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>value_text</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>status_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>last_update</td>
+<td>TIME</td>
+<td>12,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody><tr class="rowIXItems"><td>
+<b>coll_id</b>(
+   collection_id, 
+)
+	</td></tr></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="subscription">subscription</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>tag_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="tag">tag</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>description</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>tag_type_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_public</td>
+<td>BIT</td>
+<td>1 </td>
+<td>false </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>background</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td>white </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>admin_collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>master_item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="tag_item">tag_item</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>tag_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>annotation</td>
+<td>VARCHAR</td>
+<td>2000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>sort_order</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>size</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>p_serial_number</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>p_collection_ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td>0 </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody>
+<tr class="rowIXItems"><td>
+<b>t_and_i_id_idx</b>(
+   tag_id, 
+
+   item_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>ti_id_idx</b>(
+   id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>ti_tag_id_idx</b>(
+   tag_id, 
+)
+	</td></tr>
+</tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="tag_type">tag_type</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>ascii_id</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="value">value</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>value_text</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody>
+<tr class="rowIXItems"><td>
+<b>value_text_idx</b>(
+   value_text, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>it_att_idx</b>(
+   attribute_id, 
+
+   item_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>val_att_idx</b>(
+   value_text, 
+
+   attribute_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>vatt_idx</b>(
+   attribute_id, 
+)
+	</td></tr>
+<tr class="rowIXItems"><td>
+<b>vitid_idx</b>(
+   item_id, 
+)
+	</td></tr>
+</tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="value_revision_history">value_revision_history</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>dase_user_eid</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>deleted_text</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>added_text</td>
+<td>VARCHAR</td>
+<td>20000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>item_serial_number</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>attribute_name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_ascii_id</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="web_service_user">web_service_user</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>token</td>
+<td>VARCHAR</td>
+<td>40 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>auth_level</td>
+<td>VARCHAR</td>
+<td>20 </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+<hr>
+<table border="1" cellpadding="0" cellspacing="0" cols="2" align="center">
+<tr class="rowTableName"><td colspan="2">
+<a name="xml_cache">xml_cache</a> /null,/</td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1" cols="6">
+<thead><tr class="rowColumns">
+<td width="10px">Opt.</td>
+<td width="*">Column</td>
+<td width="100px">Type</td>
+<td width="30px">Size</td>
+<td width="30px">Default</td>
+<td width="100px">JavaType</td>
+</tr></thead>
+<tbody>
+<tr class="rowAttrPK">
+<td>PK</td>
+<td>id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>name</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>other_ident</td>
+<td>VARCHAR</td>
+<td>200 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>collection_id</td>
+<td>INTEGER</td>
+<td>4 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>is_stale</td>
+<td>BIT</td>
+<td>1 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>text</td>
+<td>VARCHAR</td>
+<td>65000 </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr class="rowAttrNorm">
+<td> </td>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>8,6 </td>
+<td>('now'::text)::timestamp(6) with time zone </td>
+<td> </td>
+</tr>
+</tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowFK"><td colspan="3">Foreign keys</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+<tr><td colspan="2"><table border="1" cellpadding="1" cellspacing="1">
+<thead><tr class="rowIX"><td>Indexes</td></tr></thead>
+<tbody></tbody>
+</table></td></tr>
+</table>
+<p></p>
+</body>
+</html>
