@@ -1,629 +1,128 @@
-html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+div.sites {
+	border-top: 1px solid black;
 
-img { border:0; }
-ol,ul { list-style:none; }
-h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
-
-
-body{
-font-family: arial,sans-serif;
-font-size: small;
-color: black;
-background-color: #766e57;
-}
-
-div.header {
-	   padding-left:10px;
-background-image: url(images/header_grade.jpg);
-background-repeat: repeat-y;
-border: 2px solid black;
-}
-
-div.header img {
-		  
-position: relative;
-top:-15px;
-left:-24px;
-	 margin-bottom:-18px;
-width:260px;
-height:59px;
-	 
-
-}
-
-div.header_controls {
-float: right;
-	   margin-right: 20px;
-	   margin-top: 12px;
-}
-
-div.header_controls form {
-float: left;
-	   margin-left: 10px;
-}
-
-div.container{
-	width:960px;
-	margin:0 auto;
-}
-
-div.branding {
-
-	   text-align:right;
-color: #d9cfb4;
-}
-
-div.branding a {
-color: #d9cfb4;
-	   text-decoration: none;
-}
-
-div.spacer {
-clear: both;
-}
-
-div.timeline {
-border-left: 2px solid black;
-border-right: 2px solid black;
-background-color: #F7EED1;
-}
-
-
-
-
-
-
-
-/* Site Selector begins above time line */
-
-	div.sites {
-		position:relative;
-		top:0px;
-		left:0px;
-		border-top: 1px solid black;
-		border-left:1px solid black;
-		border-right:1px solid black;
-		background-color: #C7CEE0;
-		height:60px;
-		width:954px;	
-	}
-
-
-	div.sites ul {	
-		list-style:none;					
-	}
-
-
-	div.sites ul li a{
-		font-size: .8em;
-		font-family: trebuchet ms, arial;
-		font-weight: bold;
-
-	}
+	border-left:1px solid black;
+	border-right:1px solid black;
 	
-
-	div.sites ul li.middleawash{
-		position:absolute;
-		top:25%;
-		left:74.41%;
-		width:18.3%;	
-		background-color: transparent;
-		text-align:center;
-		border-bottom: 8px solid black;
+	background-color: #C7CEE0;
+	height:70px;
+	width:948px;
+	position:relative;
 	
-	}
+	
+}
+
+div.sites ul li img {
+height:21px;
+width:21px;
+border: 3px solid #ffb400;
+position:absolute;
+}
+
+div.sites ul li.zho img{
+	top:5px;
+	left:-30px;
+}
+div.sites ul li.ata img{
+	top:2px;
+	left:-30px;
+}
+div.sites ul li.old img{
+	top:-10px;
+	left:24px;
+}
+div.sites ul li.mid img{
+	top:-10px;
+	left:12px;
+	
+}
+div.sites ul li.had img{
+	top:-10px;
+	left:-2px;
+}
 
 
-	div.sites ul li.middleawash:hover {	
-		border-bottom: 8px solid #ffb400;					
-	}
 
 
-	div.sites ul li.hadar{
-		position:absolute;
-		top:25%;
-		left:47.74%;		
-		width:10%;					
-		background-color: transparent;
-		text-align:center;
-		border-bottom: 8px solid black;
-	}
 
-
-	div.sites ul li.hadar:hover {	
-		border-bottom: 8px solid #ffb400;
+div.sites ul {	
+	list-style:none;
+	font-size: .9em;
+	font-family: trebuchet ms;
+	font-weight: bold;
 					
-	}
+}
 
-
-	div.sites ul li.olduvai{
-		position:absolute;
-		top:25%;
-		left:17.74%;	
-		width:16.2%;						
-		background-color:transparent;
-		text-align:center;
-		border-bottom: 8px solid black;
-	}
-
-
-	div.sites ul li.olduvai:hover {	
-		border-bottom: 8px solid #ffb400;					
-	}
-
-
-	div.sites ul li.zhoukoudian{
-		position:absolute;
-		top:40%;
-		left:7.74%;	
-		width:6%;						
-		background-color: transparent;
-		text-align:center;
-		border-bottom: 8px solid black;
-	}
-
-
-	div.sites ul li.zhoukoudian:hover {	
-		border-bottom: 8px solid #ffb400;					
-	}
-
-
-	div.sites ul li.atapuerca{
-		position:absolute;
-		top:0%;
-		left:6.07%;	
-		width:3.3%;						
-		background-color: transparent;
-		text-align:center;
-		border-bottom: 8px solid black;
-	}
-
-
-	div.sites ul li.atapuerca:hover {	
-		border-bottom: 8px solid #ffb400;					
-	}
-
-
-/* Site Selector ends */
-
-
-
-
-
-
-/* Time Line (yellow background with scale and indentions) */
-
-
-
-	div.scale{
-		position:relative;
-		top:58px;
-		left:10px;
-		height:4px;
-		background-color:black;
-		width:934px;
-	}
-
-
-	div.years {
-		position:absolute;
-		top:10px;
-		left:0px;
-		background-color: transparent;		
-		width:934px;
+div.sites ul li.mid{
+	position:absolute;
+	top:25%;
+	left:74.41%;
+	width:18.3%;	
+	background-color: transparent;
+	text-align:center;
+	border-bottom: 10px solid black;
 	
-	}
+}
+div.sites ul li.mid:hover {	
+	border-bottom: 10px solid #ffb400;
+					
+}
+
+
+
+div.sites ul li.had{
+	position:absolute;
+	top:25%;
+	left:47.74%;		
+	width:10%;					
+	background-color: transparent;
+	text-align:center;
+	border-bottom: 10px solid black;
+}
+div.sites ul li.had:hover {	
+	border-bottom: 10px solid #ffb400;
+					
+}
+
+div.sites ul li.old{
+	position:absolute;
+	top:25%;
+	left:17.74%;	
+	width:16.6%;						
+	background-color:transparent;
+	text-align:center;
+	border-bottom: 10px solid black;
+}
+div.sites ul li.old:hover {	
+	border-bottom: 10px solid #ffb400;
+					
+}
+
+div.sites ul li.zho{
+	position:absolute;
+	top:40%;
+	left:7.74%;	
+	width:6%;						
+	background-color: transparent;
+	text-align:center;
+	border-bottom: 10px solid black;
+}
+div.sites ul li.zho:hover {	
+	border-bottom: 10px solid #ffb400;
+					
+}
+
+div.sites ul li.ata{
+	position:absolute;
+	top:0%;
+	left:6.07%;	
+	width:3.3%;						
+	background-color: transparent;
+	text-align:center;
+	border-bottom: 10px solid black;
+}
+div.sites ul li.ata:hover {	
+	border-bottom: 10px solid #ffb400;
+					
+}
 
-
-	div.years ul a{
-	  	 font-size: 1.3em;
-	}
-
-
-	div.years ul li.first{
-		position:relative;
-		top:-16px;
-		left:0px;		
-		width:16.2%;
-		float:left; 
-		height: 16px;	
-		text-align:left; 
-		background-color: transparent;
-		border-left: 4px solid black;
-	}
-
-
-	div.years ul li.first a{
-		position:relative;
-		top:14px;
-		left:0px;
-	}
-
-
-	div.years ul li.middle{	
-		position:relative;
-		top:-16px;
-		left:0px;
-		width: 16.2%;
-		float:left;
-		height: 16px;
-		text-align:left;
-		border-left: 4px solid black;
-		background-color:transparent;
-	}
-
-
-	div.years ul li.middle a{
-		position:relative;
-		top:14px;
-		left:-15px;
-	}
-
-
-	div.years ul li.last{
-		position:absolute;
-		top:-16px;
-		left:930px;
-		float:left;
-		height:16px;		
-		text-align:left;	
-		background-color: transparent;
-		border-left: 4px solid black;
- 
-	}
-
-
-	div.years ul li.last a{
-		position:relative;
-		top:14px;
-		left:-17px;
-	}
-
-
-	div.bar {
-		height:22px;
-		background-color:#ffb400;
-		border-left:1px solid black;
-		border-right:1px solid black;
-	}
-
-
-/* end of Time line */
-
-
-/* conatiner for attributes (maybe unnecessary) */
-
-	div.mainsiteattributes {
-		text-align: center;
-		text-decoration: none;	 
-	}
-
-
-/* end of container */
-
-
-/* links for site specific attributes */
-
-
-	div.Attributes {
-		height:25px;
-		background-color: transparent;
-		border-left:1px solid black;
-		border-right:1px solid black;
-		border-top:3px solid black;
- 		border-bottom:3px solid black;
-		font-size: 1.2em;
-		font-weight:bold;
-		font-family: trebuchet ms;
-		background-color: #582F1D;
-	}
-	div.Attributes a{
- 		text-decoration: none;
-		color: black;
-	}
-
-
-	div.Attributes ul li.Introduction{
-		height:25px;
-		float:left;
-		width: 16.5%;		
-		background-color: black;
-		text-align:center;
-	}
-	div.Attributes ul li.Introduction a{
-		position:relative;
-		top:1px;
-		color:#F7EED1;
-	}
-	div.Attributes ul li.Introduction:hover a{
-		color: white;
-	}
-
-
-	div.Attributes ul li.Archaeology{
-		height:25px;
-		float:left;
-		width: 16.5%;		
-		background-color: #98431A;
-		text-align:center;
-		border-left:2px solid black;
-	}
-	div.Attributes ul li.Archaeology a{
-		position:relative;
-		top:1px;	
-	}
-	div.Attributes ul li.Archaeology:hover a{
-		color: #C08863;
-
-	}
-
-
-	div.Attributes ul li.Fauna{
-		height:25px;
-		float:left;
-		width: 16.5%;			
-		background-color: #546F04;
-		text-align:center;
-		border-left:2px solid black;
-	}
-	div.Attributes ul li.Fauna a{
-		position:relative;
-		top:1px;
-	
-	}
-	div.Attributes ul li.Fauna:hover a{
-		color:#98A867;
-	}
-
-
-	div.Attributes ul li.Geology{
-		height:25px;
-		float:left;
-		width: 16.5%;		
-		background-color: #1E5D64;
-		text-align:center;
-		border-left:2px solid black;
-	}
-	div.Attributes ul li.Geology a{
-		position:relative;
-		top:1px;	
-	}
-	div.Attributes ul li.Geology:hover a{
-		color:#759892;
-	}
-
-
-	div.Attributes ul li.Hominins{
-		height:25px;
-		float:left;
-		width: 16.56%;		
-		background-color: #821500;
-		text-align:center;	
-	}
-	div.Attributes ul li.Hominins a{
-		position:relative;
-		top:1px;	
-	}
-	div.Attributes ul li.Hominins:hover a{
-		color:#B46C54;
-	}
-
-
-	div.Attributes ul li.Paleoecology{
-		height:25px;
-		float:left;
-		width: 16.6%;	
-		background-color: #582F1D;
-		text-align:center;
-		border-left:2px solid black;
-	}
-	div.Attributes ul li.Paleoecology a{
-		position:relative;
-		top:1px;	
-	}
-	div.Attributes ul li.Paleoecology:hover a{
-	color:#977D66;
-	}
-
-/* end of attributes */
-
-
-
-
-
-
-/* border of Site specific content and containers for content */
-
-	div.primaryouter {	
-		border-left: 2px solid black;
-		border-right:2px solid black;
-	}
-
-
-	div.primary {
-		padding-bottom:15px;
-		background-color: #F7EFD1;
-		border-left: 1px solid black;
-		border-right: 1px solid black;
-		border-bottom: 1px solid black;
-	}
-
-
-	div.primary a{
-		text-decoration:none;
-		font-weight:bold;
-		font-style: trebuchet ms;
-		color:black;
-	}
-
-/* end of containers */
-
-
-/* last conatiner for pictures and info */
-
-	div.mainsite {
-		height:auto;
-		padding-bottom:15px;
-	}
-
-
-	div.mainsite h2{
-		text-align: center;
-		font-size: 1.7em;
-		font-weight:bold;
-		text-decoration: none;
-	}
-
-/* end of mainsite conatiner */
-
-
-
-/* featured site picture set to 400px */
-
-	div.feature {
-		float:left;
-		width:45%;
-		background-color: transparent;
-		margin-left: 20px;
-		padding-top:5px;
-		padding-right:15px;
-		padding-bottom:20px;
-	}
-
-
-	div.feature img{
-		position:relative;
-		width:400px;
-		border: 15px solid #ffb400;
-		padding:2px;
-		background-color: white;
-	}
-
-
-/* end of featured picture */
-
-
-
-/* accompanying information for specific attribute of specified site */
-
-	div.info {
-		margin-top:5px;
-		margin-left: 20px;
-		border:1px solid black;
-		float:left;
-		width:400px;
-		padding:5px;
-		background-color:white;
-		text-decoration:none;
-	}
-
-
-	div.info p{
-		font-family: trebuchet ms;
-		font-size: 1.1em;
-		text-align: center;
-		background-color: transparent;
-	}
-
-
-	div.info h3 {
-		font-weight: bold;
-		padding-top:5px;
-		font-size: 1.1em;
-		width:auto;
-		float:left;
-		padding-left:12%;
-		font-family:trebuchet ms;
-	}
-
-
-	div.info h4 {
-		font-weight: bold;
-		padding-top:5px;
-		font-size: 1.1em;
-		width:auto;
-		float:left;
-		padding-left:10px;
-		font-family:trebuchet ms;
-	}
-
-
-	div.info a {
-		text-decoration:none;
-		float:left;
-		width:auto;
-		
-	}
-
-
-	div.info img{
-		float:left;
-		padding:5px;
-	}
-
-
-/* end of info */
-
-
-
-	div.foot {
-		float:left;
-		background-color: white;
-		height:50px;
-		border-bottom: 3px solid black;
-		border-top: 2px solid black;
-		border-left:3px solid black;
-	}
-
-
-	div.foot ul{
-		list-style: none;
-	}
-
-
-	div.foot li {
-		border-right: 2px solid black;
-		background-color: #A69C81;
-		float:left;
-		width: 189.2px;
-		height: 40px;
-		text-align: center;
-		padding-top:10px;
-	}
-
-
-	div.foot ul li.lastone {
-		border-right: 3px solid black;
-		background-color:  #A69C81;
-		float:left;
-		width: 189.2px;
-		height: 40px;
-		text-align: center;
-		padding-top:10px;
-
-	}
-
-
-	div.foot li a{
-		position:relative;
-		top:6px;
-
-	}
-
-
-	div.foot li:hover a{
-		color: #F7EED1;
-	
-	}
-
-
-	div.foot a {
-		 text-decoration: none;
-		 font-weight: bold;
-		color: black;
-	}
-
-
-	div.foot a:first-letter{
-		font-size:1.3em;
-	}

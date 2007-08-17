@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<base href="{$app_root}/modules/efossils/"/>
 <title>The Efossils Project</title>
 {literal}
 <style type="text/css"> img { behavior:	url("scripts/pngbehavior.htc"); }</style>
@@ -15,14 +16,11 @@
 <div class="timeline">
 <div class="sites">
 <ul>
-{foreach item=s from=$site_array}
-<li class="{$s.ascii_id}"><a>{$site.name|upper}</a></li>
-{/foreach}
-<li class="middleawash"><a>MIDDLE AWASH</a></li>
-<li class="hadar"><a>HADAR</a></li>
-<li class="olduvai"><a>OLDUVAI</a></li>
-<li class="zhoukoudian"><a>ZHOUKOUDIAN</a></li>
-<li class="atapuerca"><a>ATAPUERCA</a></li>
+<li class="middleawash"><a href="middleawash/intro/begin">MIDDLE AWASH</a></li>
+<li class="hadar"><a href="hadar/intro/begin">HADAR</a></li>
+<li class="olduvai"><a href="olduvai/intro/begin">OLDUVAI</a></li>
+<li class="zhoukoudian"><a href="zhoukoudian/intro/begin">ZHOUKOUDIAN</a></li>
+<li class="atapuerca"><a href="atapuerca/intro/begin">ATAPUERCA</a></li>
 </ul>
 <div class="scale"><div class="years"><ul>
 <li class="first"><a>0ma</a></li>
@@ -39,19 +37,19 @@
 <li class="Introduction"><a href="Introduction">INTRODUCTION</a></li>
 <li class="Hominins"><a href="Hominins">HOMININS</a></li>
 <li class="Archaeology"><a href="Archaeology">ARCHAEOLOGY</a></li>
-<li class="Fauna"><a href="Fauna">FAUNA</a></li>
+<li class="Fauna"><a href="{$page.site}/fauna">FAUNA</a></li>
 <li class="Geology"><a href="Geology">GEOLOGY</a></li>
 <li class="Paleoecology"><a href="Paleoecology">PALEOECOLOGY</a></li>
 </ul></div></div>
 </div>
 <div class="primaryouter"><div class="primary">
 <div class="mainsite">
-<h2>{$site.name}</h2>
+<h2>{$page.site|upper}</h2>
 <div class="feature"><img src="images/zhoukoudianskull.jpg"></div>
 <div class="info">
 <img src="images/zmap.jpg"><h2>{$site.name}</h2>
 <p>
-{$site.text.basic}
+{$page.text.basic}
 </p>
 <h3><a href="intermediate">Intermediate Reading</a></h3>
 <h4> | </h4>

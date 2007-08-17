@@ -7,7 +7,8 @@ if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 	$item->serial_number = $params['serial_number'];
 	$item->findOne();
 	$item->collection = $c;
-	$item->getThumbnail();
+	$item->getValues();
+	$item->getViewitem();
 	$tpl = Dase_Template::instance();
 	$tpl->assign('collection',$c);
 	$tpl->assign('item',$item);

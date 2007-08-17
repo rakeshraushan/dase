@@ -49,8 +49,7 @@ $site['text']['basic'] = "
 
 
 $tpl = Dase_Template::instance('efossils');
-$tpl->assign('msg','hello world');
 $tpl->assign('site',$site);
-$tpl->display('index.tpl');
+$tpl->display('home.tpl');
 exit;
 

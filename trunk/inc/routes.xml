@@ -5,12 +5,12 @@
 	<match></match>
   </route>
 
-  <route action="browse_collection" auth="user">
+  <route action="collection/browse" auth="user">
 	<match params="collection_ascii_id">collection</match>
 	<match caps="collection_ascii_id">(.*_collection)</match>
   </route>
 
-  <route action="attributes" auth="user">
+  <route action="json_attributes" auth="user">
 	<match caps="collection_ascii_id">(.*_collection)/attributes</match>
   </route>
 
@@ -70,7 +70,7 @@
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
 
-  <route action="media" auth="none">
+  <route action="media/media" auth="none">
 	<match params="collection/size/filename">media</match>
   </route>
 
