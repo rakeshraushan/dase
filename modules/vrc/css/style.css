@@ -1,0 +1,75 @@
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+table { border-collapse:collapse; border-spacing:0; }
+img { border:0; }
+ol,ul { list-style:none; }
+h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
+
+
+h1 {
+	font-size: 1.8em;
+	color: #333;
+}
+
+h1 span {
+	font-size: .9em;
+	color: #66c;
+}
+
+h2 {
+	font-size: 1.6em;
+	margin: 10px 0;
+}
+
+h3 {
+	font-size: 1.4em;
+	color: #666;
+	margin: 10px 0;
+}
+
+.alert {
+	color: red;
+}
+
+body{
+font-family: arial,sans-serif;
+font-size: small;
+}
+
+div.header {
+	   padding-left:10px;
+border: 2px solid black;
+}
+
+
+div#container{
+width:700px;
+margin:20px auto;
+margin-bottom: 2px;
+border: 1px solid #339;
+padding: 20px;
+background-color: #f6f6f6;
+}
+
+
+div#footer {
+width:700px;
+margin:0 auto;
+border: 1px solid #339;
+padding: 5px 20px;
+}
+
+form#criteria {
+	margin: 20px 0;
+}
+
+div.spacer {
+	clear: both;
+}
+
+span.imageFile {
+	font-size: 1.1em;
+	color: #009;
+	background-color: #ffa;
+	line-height: 1.5em;
+	padding: 1px;
+}

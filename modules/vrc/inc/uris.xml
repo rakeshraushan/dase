@@ -1,0 +1,27 @@
+<uris>
+
+  <uri>
+	<element name="site"/>
+	<element name="site_section"/>
+	<element name="text_level"/>
+  </uri>
+
+  <uri>
+	<element name="site"/>
+	<element name="boneviewer" type="static"/>
+	<element name="element_name"/>
+	<element name="view"/>
+  </uri>
+
+  <uri>
+	<element name="resource" type="static"/>
+	<element name="activity" type="static"/>
+	<element name="activity_name"/>
+  </uri>
+
+  <uri>
+	<element name="glossary" type="static"/>
+  </uri>
+
+</uris>
+
