@@ -1,55 +1,13 @@
 <?php
 
+$coll = Dase_DB_Collection::get('efossils_collection');
+	//$sx = new SimpleXMLElement($i->getXml());
 
-$site['name'] = "Hadar";
 
-$site['text']['basic'] = "
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	Whole lot of text aimed at beginning users.
-	";
+print_r($coll->getItemsByAttVal('resource_uri','/home'));
 
+exit;
 
 $tpl = Dase_Template::instance('efossils');
-$tpl->assign('site',$site);
 $tpl->display('home.tpl');
-exit;
 

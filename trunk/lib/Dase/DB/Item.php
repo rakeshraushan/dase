@@ -101,4 +101,44 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$this->viewitem->url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
 		return $this->viewitem;
 	}
+
+	public function getXml() {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('item');
+		$writer->writeAttribute('serial_number',$this->serial_number);
+		$type = new Dase_DB_ItemType;
+		$type->load($this->item_type_id);
+		$writer->writeAttribute('item_type',$type->ascii_id);
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT value_text,ascii_id 
+			FROM value, attribute
+			WHERE attribute.id = value.attribute_id
+			AND value.item_id = $this->id
+			";
+		$st = $db->query($sql);
+		foreach ($st->fetchAll() as $row) {
+			$writer->startElement('metadata');
+			$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+			$writer->text($row['value_text']);
+			$writer->endElement();
+		}
+		$media_file = new Dase_DB_MediaFile;
+		$media_file->item_id = $this->id;
+		foreach($media_file->findAll() as $mf) {
+			$writer->startElement('media_file');
+			$writer->writeAttribute('filename',$mf['filename']);
+			$writer->writeAttribute('size',$mf['size']);
+			$writer->writeAttribute('mime_type',$mf['mime_type']);
+			$writer->writeAttribute('width',$mf['width']);
+			$writer->writeAttribute('height',$mf['height']);
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
 }
