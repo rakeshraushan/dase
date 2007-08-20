@@ -103,6 +103,64 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
+	function getItemsByAttVal($att_ascii_id,$value_text) {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('items');
+		$writer->writeAttribute('collection',$this->collection_name);
+		$writer->writeAttribute($att_ascii_id,$value_text);
+
+		$a = new Dase_DB_Attribute;
+		$a->ascii_id = $att_ascii_id;
+		$a->collection_id = $this->id;
+		$a->findOne();
+
+		$v = new Dase_DB_Value;
+		$v->attribute_id = $a->id;
+		$v->value_text = $value_text;
+		foreach ($v->findAll() as $vrow) {
+			$it = new Dase_DB_Item;
+			$it->load($vrow['item_id']);
+			$writer->startElement('item');
+			$writer->writeAttribute('serial_number',$it->serial_number);
+			$type = new Dase_DB_ItemType;
+			$type->load($vrow['item_id']);
+			if (isset($type->name)) {
+				$writer->writeAttribute('item_type',$type->name);
+			}
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT value_text,ascii_id 
+				FROM value, attribute
+				WHERE attribute.id = value.attribute_id
+				AND value.item_id = $it->id
+				";
+			$st = $db->query($sql);
+			foreach ($st->fetchAll() as $row) {
+				$writer->startElement('metadata');
+				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+				$writer->text($row['value_text']);
+				$writer->endElement();
+			}
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $it->id;
+			foreach($media_file->findAll() as $mf) {
+				$writer->startElement('media_file');
+				$writer->writeAttribute('filename',$mf['filename']);
+				$writer->writeAttribute('size',$mf['size']);
+				$writer->writeAttribute('mime_type',$mf['mime_type']);
+				$writer->writeAttribute('width',$mf['width']);
+				$writer->writeAttribute('height',$mf['height']);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
 
 	function asXml() {
 		$dom = new DOMDocument('1.0');
