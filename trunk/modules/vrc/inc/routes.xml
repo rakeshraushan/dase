@@ -1,0 +1,26 @@
+<routes>
+
+  <route action="index" auth="none">
+	<match>index</match>
+	<match></match>
+  </route>
+
+  <route action="build" auth="none">
+	<match params="sernum">build</match>
+	<match params="sernum">rebuild</match>
+  </route>
+
+  <route action="list" auth="none">
+	<match>list</match>
+  </route>
+
+  <route action="get_image" auth="none">
+	<match params="filename">image</match>
+  </route>
+
+  <route action="vrc_get_data" auth="none">
+	<match params="sernum"></match>
+  </route>
+
+
+</routes>
