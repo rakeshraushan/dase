@@ -15,8 +15,6 @@ foreach ($dir as $file) {
 	}
 }
 
-//include 'images.php';
-
 if ($params['filename']) {
 	$key = $params['filename'];
 	if (($images[$key]) && file_exists($images[$key])) {

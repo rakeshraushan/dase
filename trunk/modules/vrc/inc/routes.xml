@@ -1,7 +1,8 @@
 <routes>
 
-  <route action="index" auth="none">
+  <route action="list" auth="none">
 	<match>index</match>
+	<match>list</match>
 	<match></match>
   </route>
 
@@ -10,15 +11,16 @@
 	<match params="sernum">rebuild</match>
   </route>
 
-  <route action="list" auth="none">
-	<match>list</match>
-  </route>
-
   <route action="get_image" auth="none">
 	<match params="filename">image</match>
   </route>
 
-  <route action="vrc_get_data" auth="none">
+  <route action="build_dataset" auth="none">
+	<match>builddata</match>
+  </route>
+
+  <!-- THIS ONE NEEDS TO BE LAST!-->
+  <route action="vrc_metadata" auth="none">
 	<match params="sernum"></match>
   </route>
 

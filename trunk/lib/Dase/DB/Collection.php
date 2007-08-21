@@ -400,11 +400,12 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		foreach ($item->findAll() as $it) {
 			//search table
 			$composite_value_text = '';
+			//NOTE: '= true' works for mysql AND postgres!
 			$sql = "
 				SELECT value_text
 				FROM value
 				WHERE item_id = ?
-				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = 1)
+				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
 				";
 			$st = $db->prepare($sql);
 			$st->execute(array($it['id']));
