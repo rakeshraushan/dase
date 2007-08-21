@@ -94,7 +94,9 @@ class Dase_DB_Object {
 	function insert($seq = '') { //postgres need id specified
 		if ('pgsql' == Dase_DB::getDbType()) {
 			if (!$seq) {
-				$seq = $this->table . '_id_seq';
+				//beware!!! fix this after no longer using DB_DataObject
+				//$seq = $this->table . '_id_seq';
+				$seq = $this->table . '_seq';
 			}
 			$id = "nextval('$seq'::text)";
 		} else {

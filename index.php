@@ -16,7 +16,7 @@ define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname(
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('DASE_PATH', dirname(__FILE__));
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
-define('MEDIA_ROOT', '/usr/local/dase/media');
+define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
 function __autoload($class_name) {
 	$class_name = preg_replace('/_/','/',$class_name);

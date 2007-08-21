@@ -32,7 +32,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			SELECT value_text
 			FROM value
 			WHERE item_id = $this->id
-			AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = 1)
+			AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
 			";
 		$st = $db->prepare($sql);
 		$st->execute();
@@ -140,5 +140,15 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$writer->endElement();
 		$writer->endDocument();
 		return $writer->flush(true);
+	}
+
+	function getMediaCount() {
+		$mf = new Dase_DB_MediaFile;
+		$mf->item_id = $this->id;
+		$i = 0;
+		foreach ($mf->findAll() as $m) {
+			$i++;
+		}
+		return $i;
 	}
 }

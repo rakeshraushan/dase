@@ -1,5 +1,6 @@
 <?php
 
+$database = 'dase_prod';
 include 'cli_setup.php';
 
 Dase_Timer::start();

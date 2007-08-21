@@ -1,42 +1,50 @@
 <?php
 
-$days = $_GET['days'] ? $_GET['days'] : 3;
-$pattern = trim($_GET['q']);
+$days = Dase::filterGet('days');
+$q = Dase::filterGet('q');
 $where = '';
-if ($pattern) {
-	$where = "AND acc_digital_num LIKE '$pattern%'";
+if ($q) {
+	$where = "AND acc_digital_num LIKE '$q%'";
 } 
 
 $IMAGE_REPOS = "/mnt/dar/favrc/for-dase";
 if (!file_exists($IMAGE_REPOS)) {
 	die ("cannot find $IMAGE_REPOS");
 }
-$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
 $images = array();
+$media_count = array();
+
+$coll = Dase_DB_Collection::get('vrc_collection');
+
+$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
 foreach ($dir as $file) {
 	if (!strpos($file,'/.')) {
 		if (strpos($file,'.jpg') || strpos($file,'.tif')) {
-			$images[basename($file)]= $file->getPathname();
+			$images[basename($file)] = $file->getPathname();
 		}
 	}
 }
 
-$tpl = Dase_Template::instance('vrc');
+$db = Dase_DB::get();
+$query = "
+	SELECT count(m.item_id), i.serial_number
+	FROM media_file m , item i
+	WHERE
+	m.item_id = i.id
+	AND
+	i.collection_id = $coll->id
+	GROUP BY m.item_id, i.serial_number
+	ORDER BY count DESC
+	";
 
-//$images = array();
-//include 'images.php';
-
-function daseInfo($ser_num) {
-	$url = "http://dase.laits.utexas.edu/xml/vrc_collection/$ser_num";
-	$sxe = new SimpleXMLElement($url, NULL, TRUE);
-	if ("no such item" == $sxe) {
-		return false;
-	} else {
-		return count($sxe->item->media_file) . " media files in DASe";
-	}
+$sth = $db->prepare($query);
+$sth->setFetchMode(PDO::FETCH_ASSOC);
+$sth->execute();
+while ($row = $sth->fetch()) {
+	$media_count[$row['serial_number']] = $row['count'];
 }
 
-
+$tpl = Dase_Template::instance('vrc');
 $host = "SQL01.austin.utexas.edu:1036";
 $name = "vrc_live";
 $user = "dasevrc";
@@ -63,22 +71,17 @@ $items = array();
 while ($row = $st->fetch()) {
 	$df = $row['acc_digital_num'];
 	if (isset($images[$df])) {
-		$di = daseInfo($row['acc_num_PK']);
-		if ($di) {
-			$msg = "$di (<a href=\"http://dase.laits.utexas.edu/vrc_collection/{$row['acc_num_PK']}\">VIEW</a>) ";
-			$link = "<a href=\"rebuild/{$row['acc_num_PK']}?days=$days&pattern=$pattern\">rebuild item</a>";
-		} else {
-			$msg = "no DASe item";
-			$link = "<a href=\"build/{$row['acc_num_PK']}?days=$days&pattern=$pattern\">create DASe item</a>";
-		}
+		$count = $media_count[$row['acc_num_PK']];
 		$items[] = "
 			<li>
 			<span class=\"imageFile\">$df</span> 
 			modified {$row['acc_modified']}. 
-			DASe status: $msg ($link)</li>
+			$count media files in DASe. 
+			<a href=\"build/{$row['acc_num_PK']}?days=$days&q=$q\">re/build</a>
+			</li>
 			";
 	}
-	if (count($items) > 100) {
+	if (count($items) > 500) {
 		$msg = "Maximum item limit was reached. Please refine your search";
 		$tpl->assign('msg',$msg);
 		break;
@@ -86,5 +89,5 @@ while ($row = $st->fetch()) {
 }
 $tpl->assign('items',$items);
 $tpl->assign('days',$days);
-$tpl->assign('pattern',$pattern);
+$tpl->assign('q',$q);
 $tpl->display('index.tpl');

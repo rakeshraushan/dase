@@ -1,68 +1,119 @@
+#!/usr/bin/php
 <?php
+$days = 400;
+$database = 'dase_prod';
+include 'cli_setup.php';
+define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
+define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
-$coll = Dase_DB_Collection::get('vrc_collection');
-$sernum = $params['sernum'];
-$days = Dase::filterGet('days');
-$q = Dase::filterGet('q');
+$coll = new Dase_DB_Collection;
+$coll->ascii_id = 'vrc_collection';
+$coll->findOne();
 
-//get the vrc metadata via web service
-$url = APP_ROOT . "/modules/vrc/$sernum";
-$sxe = new SimpleXMLElement($url, NULL, TRUE);
-
-$item = new Dase_DB_Item;
-$item->serial_number = $sernum;
-$item->collection_id = $coll->id;
-if (!$item->findOne()) {
-	$item->item_type_id = 0;
-	$item->status_id = 0;
-	$item->insert();
+$IMAGE_REPOS = "/mnt/dar/favrc/for-dase";
+if (!file_exists($IMAGE_REPOS)) {
+	die ("cannot find $IMAGE_REPOS");
+}
+$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
+$images = array();
+foreach ($dir as $file) {
+	if (!strpos($file,'/.')) {
+		if (strpos($file,'.jpg') || strpos($file,'.tif')) {
+			$images[basename($file)]= $file->getPathname();
+		}
+	}
 }
 
-//shoould be in class
-$val = new Dase_DB_Value;
-$val->item_id = $item->id;
-foreach ($val->findAll() as $row) {
-	$dv = new Dase_DB_Value($row);
-	$dv->delete();
+$host = "SQL01.austin.utexas.edu:1036";
+$name = "vrc_live";
+$user = "dasevrc";
+$pass = "d453vrc";
+
+$pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
+$sql = "
+SELECT  
+acc_digital_num, 
+acc_num_PK,
+acc_modified,
+DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) as age 
+FROM tblAccession 
+WHERE acc_digital_num != ''
+AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < $days 
+ORDER BY age,acc_digital_num
+";
+
+$st = $pdo->prepare($sql);
+$st->setFetchMode(PDO::FETCH_ASSOC);
+$st->execute();
+while ($row = $st->fetch()) {
+	$df = $row['acc_digital_num'];
+	if (isset($images[$df])) {
+		build($row['acc_num_PK'],$coll);
+	}
 }
 
-//shoould be in class
-$mf = new Dase_DB_MediaFile;
-$mf->item_id = $item->id;
-foreach ($mf->findAll() as $row) {
-	$m = new Dase_DB_MediaFile($row);
-	$m->delete();
+function build($sernum,$coll) {
+	$url = APP_ROOT . "/modules/vrc/$sernum";
+	$sxe = new SimpleXMLElement($url, NULL, TRUE);
+	$item = new Dase_DB_Item;
+	$item->serial_number = $sernum;
+	$item->collection_id = $coll->id;
+	if (!$item->findOne()) {
+		$item->item_type_id = 0;
+		$item->status_id = 0;
+		$item->insert();
+	} else {
+		if (6 == $item->getMediaCount()) {
+			//print "\n$item->serial_number already exists and has 6 media items!\n";
+			return;
+		}
+	}
+
+	print "\nWORKING ON $item->serial_number\n";
+
+	//shoould be in class
+	$val = new Dase_DB_Value;
+	$val->item_id = $item->id;
+	foreach ($val->findAll() as $row) {
+		$dv = new Dase_DB_Value($row);
+		$dv->delete();
+	}
+
+	//shoould be in class
+	$mf = new Dase_DB_MediaFile;
+	$mf->item_id = $item->id;
+	foreach ($mf->findAll() as $row) {
+		$m = new Dase_DB_MediaFile($row);
+		$m->delete();
+	}
+
+	foreach ($sxe->item[0]->metadata as $m) {
+		$a = new Dase_DB_Attribute;
+		$a->collection_id = $coll->id;
+		$a->ascii_id = $m['attribute_ascii_id'];
+		$a->findOne();
+		$v = new Dase_DB_Value;
+		$v->item_id = $item->id;
+		$v->attribute_id = $a->id;
+		$v->value_text = $m;
+		$v->value_text_md5 = md5($m);
+		$v->insert();
+		print "inserted $m\n";
+	}
+
+	$file = $sxe->item[0]['digital_file'];
+	$img = file_get_contents("http://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file");
+	file_put_contents("/tmp/$file",$img);
+
+	makeThumbnail("/tmp/$file",$item,$coll);
+	makeViewitem("/tmp/$file",$item,$coll);
+	makeSizes("/tmp/$file",$item,$coll);
+	unlink("/tmp/$file");
+
+	print "building search index......";
+	$item->buildSearchIndex();
+	print "done.";
 }
-
-foreach ($sxe->item[0]->metadata as $m) {
-	$a = new Dase_DB_Attribute;
-	$a->collection_id = $coll->id;
-	$a->ascii_id = $m['attribute_ascii_id'];
-	$a->findOne();
-	$v = new Dase_DB_Value;
-	$v->item_id = $item->id;
-	$v->attribute_id = $a->id;
-	$v->value_text = $m;
-	$v->value_text_md5 = md5($m);
-	$v->insert();
-}
-
-$file = $sxe->item[0]['digital_file'];
-
-// get the tif by way of web service
-$img = file_get_contents("http://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file");
-file_put_contents("/tmp/$file",$img);
-
-makeThumbnail("/tmp/$file",$item,$coll);
-makeViewitem("/tmp/$file",$item,$coll);
-makeSizes("/tmp/$file",$item,$coll);
-unlink("/tmp/$file");
-
-$item->buildSearchIndex();
-
-Dase::reload("modules/vrc/list?days=$days&q=$q");
-exit;
-
 
 function makeThumbnail($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
@@ -84,6 +135,7 @@ function makeThumbnail($filename,$item,$coll) {
 	$media_file->p_collection_ascii_id = $coll->ascii_id;
 	$media_file->p_serial_number = $item->serial_number;
 	$media_file->insert();
+	print "created $media_file->filename\n";
 }
 
 function makeViewitem($filename,$item,$coll) {
@@ -106,6 +158,7 @@ function makeViewitem($filename,$item,$coll) {
 	$media_file->p_collection_ascii_id = $coll->ascii_id;
 	$media_file->p_serial_number = $item->serial_number;
 	$media_file->insert();
+	print "created $media_file->filename\n";
 }
 
 function makeSizes($filename,$item,$coll) {
@@ -131,8 +184,8 @@ function makeSizes($filename,$item,$coll) {
 			'size_tag'        => '_3600'
 		),
 	);
-	$last_width = '';
-	$last_height = '';
+	$last_height = 0;
+	$last_width = 0;
 	foreach ($image_properties as $size => $size_info) {
 		$base = basename($filename,'.tif');
 		$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $filename");
@@ -161,5 +214,6 @@ function makeSizes($filename,$item,$coll) {
 		$media_file->p_collection_ascii_id = $coll->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
+		print "created $media_file->filename\n";
 	}
 }

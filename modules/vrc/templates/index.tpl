@@ -31,7 +31,7 @@ select records modified within last
 </select>
 days
 with image filename beginning
-<input type="text" size="5" name="q" value="{$pattern}"/>
+<input type="text" size="8" name="q" value="{$q}"/>
 <input type="submit" value="retrieve"/>
 </form>
 
@@ -39,7 +39,6 @@ with image filename beginning
 {foreach item=item from=$items}
 <ul>{$item}</ul>
 {/foreach}
-
 
 <div class="spacer"></div>
 </div>

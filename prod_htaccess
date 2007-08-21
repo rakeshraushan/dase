@@ -6,8 +6,8 @@ RewriteEngine On
 RewriteBase @base
 
 # required for load-balancer keepalive (ladd)
-RewriteCond %{REMOTE_ADDR} 10.0.0.250
-RewriteRule .*             - [L]
+#RewriteCond %{REMOTE_ADDR} 10.0.0.250
+#RewriteRule .*             - [L]
 
 #force https
 #RewriteCond %{SERVER_PORT} 80 
