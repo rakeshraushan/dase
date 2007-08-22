@@ -40,4 +40,27 @@ class Dase_User
 		}
 		return false;
 	}
+
+	function check_auth($collection_ascii_id = null,$auth_level) {
+		if (!$collection_ascii_id) {
+			return false;
+		}
+		$cm = new Dase_DB_CollectionManager; 
+		$cm->collection_ascii_id = $collection_ascii_id;
+		$cm->dase_user_eid = $this->db_user->eid;
+		$cm->findOne();
+		if ($cm->auth_level) {
+			if ('read' == $auth_level) {
+				return true;
+			} elseif ('write' == $auth_level && in_array($cm->auth_level,array('write','admin','manager','superuser'))) {
+				return true;
+			} elseif ('admin' == $auth_level && in_array($cm->auth_level,array('admin','manager','superuser'))) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 }

@@ -1,5 +1,6 @@
 <?php
 
+$ser = Dase::filterGet('ser');
 $days = Dase::filterGet('days');
 $q = Dase::filterGet('q');
 $where = '';
@@ -64,6 +65,32 @@ $sql = "
 	ORDER BY age,acc_digital_num
 	";
 
+if ('none' == $days) {
+	$sql = "
+		SELECT  
+		acc_digital_num, 
+		acc_num_PK,
+		acc_modified
+		FROM tblAccession 
+		WHERE acc_digital_num != ''
+		AND acc_modified = ''
+		$where
+		ORDER BY acc_digital_num
+		";
+}
+
+if ($ser) {
+	$sql = "
+		SELECT 
+		acc_digital_num, 
+		acc_num_PK,
+		acc_modified,
+		DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) as age 
+		FROM tblAccession 
+		WHERE acc_num_PK = '$ser'
+		";
+}
+
 $st = $pdo->prepare($sql);
 $st->setFetchMode(PDO::FETCH_ASSOC);
 $st->execute();
@@ -71,7 +98,11 @@ $items = array();
 while ($row = $st->fetch()) {
 	$df = $row['acc_digital_num'];
 	if (isset($images[$df])) {
-		$count = $media_count[$row['acc_num_PK']];
+		if (isset($media_count[$row['acc_num_PK']])) {
+			$count = $media_count[$row['acc_num_PK']];
+		} else {
+			$count = 0;
+		}
 		$items[] = "
 			<li>
 			<span class=\"imageFile\">$df</span> 
@@ -88,6 +119,7 @@ while ($row = $st->fetch()) {
 	}
 }
 $tpl->assign('items',$items);
+$tpl->assign('ser',$ser);
 $tpl->assign('days',$days);
 $tpl->assign('q',$q);
 $tpl->display('index.tpl');

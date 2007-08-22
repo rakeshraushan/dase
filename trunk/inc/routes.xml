@@ -40,7 +40,6 @@
 	<match params="serial_number">xml/item</match>
   </route>
 
-  <route action="routes" auth="admin"/>
 
   <route action="ajax_attributes" auth="none">
 	<match>ajax/attributes</match>
@@ -66,7 +65,6 @@
   <route action="login_form" auth="none" />
   <route action="login" auth="none" />
   <route action="logoff" auth="user" />
-  <route action="view_log" auth="admin" params="log_name"/>
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
 
@@ -74,5 +72,18 @@
 	<match params="collection/size/filename">media</match>
   </route>
 
+  <!-- manage routes -->
+
+  <route action="manage/view_log" auth="superuser">
+	<match params="log_name">manage/log</match>
+  </route>
+
+  <route action="manage/index" auth="superuser">
+	<match>manage</match>
+  </route>
+
+  <route action="manage/modules" auth="superuser"/>
+
+  <route action="manage/routes" auth="superuser"/>
 
 </routes>

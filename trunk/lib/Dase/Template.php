@@ -17,7 +17,13 @@ class Dase_Template
 			self::$template->assign('app_root',APP_ROOT);
 			self::$template->assign('app_http_root',APP_HTTP_ROOT);
 			self::$template->assign('app_https_root',APP_HTTPS_ROOT);
-			self::$template->assign('user',Dase::getUser());
+			$user = Dase::getUser();
+			if ($user) {
+				self::$template->assign('user',$user);
+				if (in_array($user->eid,Dase::getConf('superuser'))) {
+					self::$template->assign('superuser',1);
+				}
+			}
 			self::$template->assign('title','Digital Archive Services');
 			self::$template->assign('msg',Dase::filterGet('msg'));
 			self::$instance = new Dase_Template();
