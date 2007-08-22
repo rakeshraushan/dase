@@ -28,6 +28,10 @@ select records modified within last
 <option {if $days == 80}selected="selected"{/if}>80</option>
 <option {if $days == 100}selected="selected"{/if}>100</option>
 <option {if $days == 120}selected="selected"{/if}>120</option>
+<option {if $days == 200}selected="selected"{/if}>200</option>
+<option {if $days == 400}selected="selected"{/if}>400</option>
+<option {if $days == 1000}selected="selected"{/if}>1000</option>
+<option {if $days == 'none'}selected="selected"{/if} value="none">no modified date</option>
 </select>
 days
 with image filename beginning

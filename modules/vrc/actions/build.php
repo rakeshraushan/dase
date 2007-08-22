@@ -60,7 +60,7 @@ unlink("/tmp/$file");
 
 $item->buildSearchIndex();
 
-Dase::reload("modules/vrc/list?days=$days&q=$q");
+Dase::reload("modules/vrc/list?days=$days&q=$q&sernum=$sernum");
 exit;
 
 

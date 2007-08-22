@@ -14,6 +14,9 @@ $IMAGE_REPOS = "/mnt/dar/favrc/for-dase";
 if (!file_exists($IMAGE_REPOS)) {
 	die ("cannot find $IMAGE_REPOS");
 }
+
+/******* CREATE HASH OF IMAGES IN DAR ***********************************/
+
 $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
 $images = array();
 foreach ($dir as $file) {
@@ -24,6 +27,28 @@ foreach ($dir as $file) {
 	}
 }
 
+/************ CREATE HASH OF serial_number to media_file count *****************/
+
+$media_count = array();
+$db = Dase_DB::get();
+$query = "
+	SELECT count(m.item_id), i.serial_number
+	FROM media_file m , item i
+	WHERE
+	m.item_id = i.id
+	AND
+	i.collection_id = $coll->id
+	GROUP BY m.item_id, i.serial_number
+	ORDER BY count DESC
+	";
+
+$sth = $db->prepare($query);
+$sth->setFetchMode(PDO::FETCH_ASSOC);
+$sth->execute();
+while ($row = $sth->fetch()) {
+	$media_count[$row['serial_number']] = $row['count'];
+}
+
 $host = "SQL01.austin.utexas.edu:1036";
 $name = "vrc_live";
 $user = "dasevrc";
@@ -31,28 +56,42 @@ $pass = "d453vrc";
 
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
 $sql = "
-SELECT  
-acc_digital_num, 
-acc_num_PK,
-acc_modified,
-DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) as age 
-FROM tblAccession 
-WHERE acc_digital_num != ''
-AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < $days 
-ORDER BY age,acc_digital_num
-";
+	SELECT  
+	acc_digital_num, 
+	acc_num_PK,
+	acc_modified,
+	DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) as age 
+	FROM tblAccession 
+	WHERE acc_digital_num != ''
+	AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < $days 
+	ORDER BY age,acc_digital_num
+	";
+
+$sql = "
+	SELECT  
+	acc_digital_num, 
+	acc_num_PK
+	FROM tblAccession 
+	WHERE acc_digital_num != ''
+	";
 
 $st = $pdo->prepare($sql);
 $st->setFetchMode(PDO::FETCH_ASSOC);
 $st->execute();
 while ($row = $st->fetch()) {
 	$df = $row['acc_digital_num'];
+	//we'll only perform operations on items for which we have a file
 	if (isset($images[$df])) {
-		build($row['acc_num_PK'],$coll);
+		//skip items that already have 6 media_files
+		if (6 == $media_count[$row['acc_num_PK']]) {
+			print "{$row['acc_num_PK']} already exists and has 6 media items!\n";
+		} else {
+			build($row['acc_num_PK'],$coll,$media_count);
+		}
 	}
 }
 
-function build($sernum,$coll) {
+function build($sernum,$coll,$media_count) {
 	$url = APP_ROOT . "/modules/vrc/$sernum";
 	$sxe = new SimpleXMLElement($url, NULL, TRUE);
 	$item = new Dase_DB_Item;
@@ -63,8 +102,10 @@ function build($sernum,$coll) {
 		$item->status_id = 0;
 		$item->insert();
 	} else {
-		if (6 == $item->getMediaCount()) {
-			//print "\n$item->serial_number already exists and has 6 media items!\n";
+		if (isset($media_count[$sernum])) {
+			print "$item->serial_number already exists , but has {$media_count[$sernum]} items!\n";
+		} else {
+			print "problem!!!!!! (DASe has item, but we don't have image)\n";
 			return;
 		}
 	}
@@ -98,7 +139,7 @@ function build($sernum,$coll) {
 		$v->value_text = $m;
 		$v->value_text_md5 = md5($m);
 		$v->insert();
-		print "inserted $m\n";
+		print "inserted $a->attribute_name : $m\n";
 	}
 
 	$file = $sxe->item[0]['digital_file'];
@@ -112,7 +153,7 @@ function build($sernum,$coll) {
 
 	print "building search index......";
 	$item->buildSearchIndex();
-	print "done.";
+	print "done.\n\n";
 }
 
 function makeThumbnail($filename,$item,$coll) {

@@ -1,9 +1,13 @@
 <?php
 
-$conf['modules'][] = 'vrc';
-$conf['modules'][] = 'efossils';
-$conf['modules'][] = 'search';
-$conf['admin'][] = 'pkeane';
+$conf['modules']['vrc'] = 'vrc_collection';
+$conf['modules']['efossils'] = 'efossils_collection';
+$conf['modules']['elucy'] = 'efossils_collection';
+$conf['modules']['search'] = 1;
+$conf['modules']['eid_auth'] = 0;
+
+$conf['superuser'][] = 'pkeane';
+
 $conf['token'][] = 'secret';
 
 $conf['db_type'] = '@db_type';

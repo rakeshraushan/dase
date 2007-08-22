@@ -54,13 +54,33 @@ class Dase
 		case 'user':
 			self::$user = new Dase_User();
 			break;
-		case 'manager':
-			break;
 		case 'superuser':
+			self::$user = new Dase_User();
+			if (!in_array(self::$user->eid,Dase::getConf('superuser'))) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "unauthorized";
+				exit;
+			}
 			break;
 		case 'admin':
 			self::$user = new Dase_User();
-			if (!in_array(self::$user->eid,Dase::getConf('admin'))) {
+			if (!self::$user->checkAuth($collection_ascii_id,'admin')) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "unauthorized";
+				exit;
+			}
+			break;
+		case 'write':
+			self::$user = new Dase_User();
+			if (!self::$user->checkAuth($collection_ascii_id,'write')) {
+				header('HTTP/1.0 401 Unauthorized');
+				echo "unauthorized";
+				exit;
+			}
+			break;
+		case 'read':
+			self::$user = new Dase_User();
+			if (!self::$user->checkAuth($collection_ascii_id,'read')) {
 				header('HTTP/1.0 401 Unauthorized');
 				echo "unauthorized";
 				exit;
@@ -151,7 +171,7 @@ class Dase
 		return Dase::_compileModuleRoutes(Dase::_compileRoutes());
 	}
 
-	static private function _compileRoutes($prefix = '',$routes = null) {
+	static private function _compileRoutes($prefix = '',$collection = null,$routes = null) {
 		$path = DASE_PATH . $prefix . '/inc/routes.xml';
 		$sx = simplexml_load_file($path);
 		foreach ($sx->route as $route) {
@@ -210,6 +230,9 @@ class Dase
 				if ($prefix) {
 					$routes[$regex]['prefix'] = $prefix;
 				}
+				if ($collection) {
+					$routes[$regex]['collection'] = $collection;
+				}
 			}
 		}
 		return $routes;
@@ -218,15 +241,21 @@ class Dase
 	static private function _compileModuleRoutes($routes) {
 		include(DASE_CONFIG);
 		$dir = (DASE_PATH . "/modules");
-		foreach (new DirectoryIterator($dir) as $pfile) {
-			if ($pfile->isDir() && !$pfile->isDot()) {
-				$module = $pfile->getFilename();
-				if (is_file("$dir/$module/inc/routes.xml") &&
+		foreach (new DirectoryIterator($dir) as $file) {
+			if ($file->isDir() && !$file->isDot()) {
+				$module = $file->getFilename();
+				if (
+					is_file("$dir/$module/inc/routes.xml") &&
 					//note that module needs to be registered in DASE_CONFIG
-					in_array($module,$conf['modules'])
+					isset($conf['modules'][$module]) &&
+					$conf['modules'][$module]
 				) {
+					$collection = $conf['modules'][$module];
+					if (!is_string($collection)) {
+						$collection = null;
+					}
 					$path = "$dir/$module/inc/routes.xml";
-					$routes = Dase::_compileRoutes("/modules/$module",$routes);
+					$routes = Dase::_compileRoutes("/modules/$module",$collection,$routes);
 				}
 			}
 		}
@@ -291,7 +320,13 @@ class Dase
 					}
 				}
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
-					if (isset($params['collection_ascii_id'])) {
+					//conf_array['collection'] originates in configuration file config.php
+					//this is collection authorization for modules
+					if (isset($conf_array['collection'])) {
+						$collection_ascii_id = $conf_array['collection'];
+					//params['collection_ascii_id'] originates in routes.xml
+					//this is collection authorization for collection admin
+					} elseif (isset($params['collection_ascii_id'])) {
 						$collection_ascii_id = $params['collection_ascii_id'];
 					} else {
 						$collection_ascii_id = '';
