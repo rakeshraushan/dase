@@ -151,4 +151,54 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		}
 		return $i;
 	}
+
+	function setType($type_ascii_id) {
+		$type = new Dase_DB_ItemType;
+		$type->ascii_id = $type_ascii_id;
+		$type->collection_id = $this->collection_id;
+		if ($type->findOne()) {
+			$this->item_type_id = $type->id;
+			$this->update();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function setValue($att_ascii_id,$value_text) {
+		$att = new Dase_DB_Attribute;
+		$att->ascii_id = $att_ascii_id;
+		$att->collection_id = $this->collection_id;
+		if ($att->findOne()) {
+			$v = new Dase_DB_Value;
+			$v->item_id = $this->id;
+			$v->attribute_id = $att->id;
+			$v->value_text = $value_text;
+			return($v->insert());
+		} else {
+			return false;
+		}
+	}
+
+	function deleteValues() {
+		//should snaity check and archive values
+		$v = new Dase_DB_Value;
+		$v->item_id = $this->id;
+		foreach ($v->findAll() as $row) {
+			$doomed = new Dase_DB_Value($row);
+			$doomed->delete();
+		}
+		$st = new Dase_DB_SearchTable;
+		$st->item_id = $this->id;
+		foreach ($st->findAll() as $row) {
+			$doomed = new Dase_DB_SearchTable($row);;
+			$doomed->delete();
+		}
+		$ast = new Dase_DB_AdminSearchTable;
+		$ast->item_id = $this->id;
+		foreach ($ast->findAll() as $row) {
+			$doomed = new Dase_DB_SearchTable($row);;
+			$doomed->delete();
+		}
+	}
 }

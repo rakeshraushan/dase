@@ -1,7 +1,11 @@
 <?php
 ini_set('include_path','.:lib:lib/Smarty:plugins');
 
-ini_set('display_errors',1);
+define('DASE_PATH', dirname(__FILE__));
+
+ini_set('display_errors','off');
+ini_set('log_errors','on');
+ini_set('error_log',DASE_PATH . '/log/error.log');
 error_reporting(E_ALL);
 
 if (isset($_SERVER['HTTPS'])) {
@@ -14,7 +18,6 @@ define('APP_ROOT',trim($protocol . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_
 define('APP_HTTP_ROOT','http://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
-define('DASE_PATH', dirname(__FILE__));
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 

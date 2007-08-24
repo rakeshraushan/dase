@@ -98,7 +98,8 @@ class Dase_DB_Object {
 				//$seq = $this->table . '_id_seq';
 				$seq = $this->table . '_seq';
 			}
-			$id = "nextval('$seq'::text)";
+			//$id = "nextval('$seq'::text)";
+			$id = "nextval(('public.$seq'::text)::regclass)"; 	
 		} else {
 			$id = 0;
 		}
@@ -128,6 +129,9 @@ class Dase_DB_Object {
 		if ($sth->execute($bind)) {
 			$last_id = $db->lastInsertId($seq);
 			$this->id = $last_id;
+			if (defined('DEBUG')) {
+				Dase::log('sql',"$sql /// last insert id = $last_id");
+			}
 			return $last_id;
 		} else { 
 			$msg_array = $sth->errorInfo();
@@ -227,13 +231,18 @@ class Dase_DB_Object {
 		$db = Dase_DB::get();
 		foreach( $this->fields as $key => $val)
 		{
+			if (('timestamp' != $key) || $val) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
 				$values[]= $val;
+			}
 		}
 		$set = join( ",", $fields );
 		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
 		$values[] = $this->id;
 		$sth = $db->prepare( $sql );
+		if (defined('DEBUG')) {
+			Dase::log('sql',$sql . ' /// ' . join(',',$values));
+		}
 		if (!$sth->execute($values)) {
 			return $sth->errorInfo();
 		}
@@ -244,14 +253,11 @@ class Dase_DB_Object {
 		$sth = $db->prepare(
 				'DELETE FROM '.$this->table.' WHERE id=:id'
 				);
+		if (defined('DEBUG')) {
+			Dase::log('sql',"deleting id $this->id from $this->table table");
+		}
 		$sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
-	}
-
-	function deleteAll() {
-		$db = Dase_DB::get();
-		$sth = $db->prepare( 'DELETE FROM '.$this->table );
-		$sth->execute();
 	}
 
 	function getAll() {

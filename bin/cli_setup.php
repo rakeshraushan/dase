@@ -1,5 +1,6 @@
 <?php
 define("BIN_PATH", dirname(__FILE__));
+define("DEBUG",1);
 define("DASE_PATH",BIN_PATH . '/..');
 define("DASE_CONFIG", DASE_PATH . '/../daseconf.php');
 ini_set('include_path',ini_get('include_path').':'. DASE_PATH .'/lib:'); 
