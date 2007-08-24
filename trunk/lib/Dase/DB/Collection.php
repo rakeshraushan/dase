@@ -162,6 +162,58 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
+	function getItemsXmlByType($type_ascii_id) {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('items');
+		$writer->writeAttribute('collection',$this->collection_name);
+
+		$type = new Dase_DB_ItemType;
+		$type->ascii_id = $type_ascii_id;
+		$type->collection_id = $this->id;
+		$type->findOne();
+
+		$item = new Dase_DB_Item;
+		$item->item_type_id = $type->id;
+		foreach($item->findAll() as $row) {
+
+			$it = new Dase_DB_Item($row);
+			$writer->startElement('item');
+			$writer->writeAttribute('serial_number',$it->serial_number);
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT value_text,ascii_id 
+				FROM value, attribute
+				WHERE attribute.id = value.attribute_id
+				AND value.item_id = $it->id
+				";
+			$st = $db->query($sql);
+			foreach ($st->fetchAll() as $row) {
+				$writer->startElement('metadata');
+				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+				$writer->text($row['value_text']);
+				$writer->endElement();
+			}
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $it->id;
+			foreach($media_file->findAll() as $mf) {
+				$writer->startElement('media_file');
+				$writer->writeAttribute('filename',$mf['filename']);
+				$writer->writeAttribute('size',$mf['size']);
+				$writer->writeAttribute('mime_type',$mf['mime_type']);
+				$writer->writeAttribute('width',$mf['width']);
+				$writer->writeAttribute('height',$mf['height']);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
 	function asXml() {
 		$dom = new DOMDocument('1.0');
 		$coll = $dom->appendChild($dom->createElement('collection'));
@@ -437,5 +489,16 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$search_table->insert();
 		}
 		return true;
+	}
+
+	function createNewItem() {
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		$item->status_id = 0;
+		$item->insert();
+		$item->serial_number = sprintf("%09d",$item->id);
+		$item->item_type_id = 0;
+		$item->update();
+		return $item;
 	}
 }

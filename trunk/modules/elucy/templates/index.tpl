@@ -1,70 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<base href="{$app_root}/modules/efossils/"/>
-<title>The Efossils Project</title>
+<base href="{$app_root}/modules/elucy/"/>
+<title>eLucy</title>
+<!-- the following allows the transparent png logo to display properly in IE -->
 {literal}
-<style type="text/css"> img { behavior:	url("scripts/pngbehavior.htc"); }</style>
+<style type="text/css"> img { behavior:	url("pngbehavior.htc"); }</style>
 {/literal}
-<link rel="stylesheet" type="text/css" href="{$module_root}/css/splashstyle.css">
+
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<!--
+<link rel="stylesheet" type="text/css" href="http://dev.laits.utexas.edu/efossils/elucy2/splashstyle.css">
+-->
+	<script type="text/javascript" src="scripts/jquery.js"></script> 
+ 		<script type="text/javascript" src="scripts/elucy_jquery.js"></script>
+
+
 </head>
-<body><div class="container">
-<div class="branding">
-<a href="http://www.utexas.edu/its/">Liberal Arts Instructional Technology Services</a> | <a href="http://www.utexas.edu">THE UNIVERSITY OF TEXAS AT AUSTIN</a>
-</div>
-<div class="header"><a href="http://www.efossils.org"><img src="images/logo.png" alt="eFossils"></a></div>
-<div class="timeline">
-<div class="sites">
-<ul>
-<li class="middleawash"><a href="middleawash/intro/begin">MIDDLE AWASH</a></li>
-<li class="hadar"><a href="hadar/intro/begin">HADAR</a></li>
-<li class="olduvai"><a href="olduvai/intro/begin">OLDUVAI</a></li>
-<li class="zhoukoudian"><a href="zhoukoudian/intro/begin">ZHOUKOUDIAN</a></li>
-<li class="atapuerca"><a href="atapuerca/intro/begin">ATAPUERCA</a></li>
-</ul>
-<div class="scale"><div class="years"><ul>
-<li class="first"><a>0ma</a></li>
-<li class="middle"><a>1ma</a></li>
-<li class="middle"><a>2ma</a></li>
-<li class="middle"><a>3ma</a></li>
-<li class="middle"><a>4ma</a></li>
-<li class="middle"><a>5ma</a></li>
-<li class="last"><a>6ma</a></li>
-</ul></div></div>
-</div>
-<div class="bar"></div>
-<div class="mainsiteattributes"><div class="Attributes"><ul>
-<li class="Introduction"><a href="Introduction">INTRODUCTION</a></li>
-<li class="Hominins"><a href="Hominins">HOMININS</a></li>
-<li class="Archaeology"><a href="Archaeology">ARCHAEOLOGY</a></li>
-<li class="Fauna"><a href="{$page.site}/fauna">FAUNA</a></li>
-<li class="Geology"><a href="Geology">GEOLOGY</a></li>
-<li class="Paleoecology"><a href="Paleoecology">PALEOECOLOGY</a></li>
-</ul></div></div>
-</div>
-<div class="primaryouter"><div class="primary">
+<body>
+
+<div class="container">
+
+	<div class="branding">
+				<a href="http://www.laits.utexas.edu/its/"><b>Liberal Arts</b><img src="images/its.bmp"/> Instructional Technology Services</a> | <a href="credits.html">LAITS Production Credits</a> | <a   href="http://www.utexas.edu"><img class="ut" src="images/utlogo.bmp"/></a> 
+
+			</div> <!-- close branding -->
+
+<div class="header">
+		
+	<a href=""><img src="images/logoLucy.png" alt="eFossils"/></a>
+</div> <!-- close header -->
+
+
+
+
+
+
+<div class="primaryouter">
+<div class="primary">
+
 <div class="mainsite">
-<h2>{$page.site|upper}</h2>
-<div class="feature"><img src="images/zhoukoudianskull.jpg"></div>
-<div class="info">
-<img src="images/zmap.jpg"><h2>{$site.name}</h2>
-<p>
-{$page.text.basic}
-</p>
-<h3><a href="intermediate">Intermediate Reading</a></h3>
-<h4> | </h4>
-<h4><a href="advanced">Advanced Reading</a></h4>
-</div>
+
+
+	<div class="feature">
+		
+		<h2>meet</h2>  <h4>Lucy</h4>
+		<div class="spacer"></div>
+		
+		<h3>The eLucy site is coming soon</h3>
+		<p>eLucy is part of the eFossils project. All eLucy activities can be found on eFossils and through the colored side tabs.</p>
+		<br><br>
+		<p><font size="5">L</font>ucy is a 3.2 million year old fossil hominid, a close relative of humans. Her species, Australopithecus afarensis, is now extinct. Lucy's official museum number is AL 288-1.  She was found in 1974 by a team of French and American anthropologists at the Hadar Site in Ethiopia. While today this site is a desert, three million years ago it was a large lake surrounded by trees. 40% of Lucy's skeleton was recovered, an astonishing feat for a fossil so old.The bones of recovered of Lucy include pieces of the skull, lower jaw, ribs, vertebrae, arm and leg bones, and hip bones. We know Lucy is a female because the shape of her hip bones resembles that of modern human females.</p> 
+		<img src="images/lucy2.crushed.png">
+	
+
+
+	</div> <!-- close feature -->
+
+	
+	
+		
+		<a href="teacher"><div class="activities">
+
+			<div class="teacher">
+				<h2>TEACHERS > Lessons</h2>
+			</div> <!-- close teacher -->
+
+						
+			<p>{$teacher_text}</p>
+	
+		</div></a>
+		
+		<a href="student"><div class="activities2">
+
+			<div class="student">
+			<h2>STUDENTS > Activities</h2>
+
+			</div> <!-- close student -->
+
+			<p>{$student_text}</p>
+			
+		</div></a>
+
+		
+		<a href="comparison"><div class="activities3">
+			<div class="comparison">
+				<h2>COMPARISON PHOTOS</h2>
+
+			</div> <!-- close comparison -->
+			
+			<p>{$comp_text}</p>
+
+		</div></a>
+
+
+
+
+
+</div> <!-- close mainsite -->
+
 <div class="spacer"></div>
-</div>
-<div class="spacer"></div>
-</div></div>
-<div class="foot"><ul>
-<li><a>FIRST TIME USERS</a></li>
-<li><a>INFORMATION</a></li>
-<li><a href="http://www.eskeletons.org/project_info.cfm">THE PROJECTS</a></li>
-<li><a>RESOURCES</a></li>
+<!-- <a href="viewer.html" onClick="return popup(this, 'notes')">Bone Viewer</a> bone viewer -->
+
+
+
+</div> <!-- close primary -->
+</div> <!-- close primaryouter -->
+
+
+
+
+
+<div class="foot">
+<ul>
+<li><a href="ftu/index.html">FIRST TIME USERS</a></li>
+<li><a href="www.efossils.org">eFOSSILS</a></li>
+<li><a href="tp/index.html">THE PROJECTS</a></li>
+<li><a href="resources/index.html">RESOURCES</a></li>
 <li class="lastone"><a href="http://www.eskeletons.org">eSKELETONS</a></li>
-</ul></div>
-</div></body>
+</ul>
+</div> <!--close foot-->
+	</div> <!--close container-->
+
+
+
+</body>
 </html>
+

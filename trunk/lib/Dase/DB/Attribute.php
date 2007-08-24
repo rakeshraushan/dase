@@ -49,4 +49,12 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		$this->display_values = $display_values_array;
 		return $display_values_array;
 	}
+
+	public static function get($collection_ascii_id,$ascii_id) {
+		$a = new Dase_DB_Attribute;
+		$a->ascii_id = $ascii_id;
+		$a->collection_id = Dase_DB_Collection::get($collection_ascii_id)->id;
+		return($a->findOne());
+	}
+
 }
