@@ -36,6 +36,15 @@
 	  />
   </target>
 
+  <target name="deploy-lucy" depends="deploy-local">
+	<sync todir="${install.dir}/modules/elucy" 
+	  overwrite="true"
+	  includeEmptyDirs="true"
+	  >
+	  <fileset dir="/mnt/projects/efossils/elucy_dase_module" />
+	</sync>
+  </target>
+
   <target name="deploy" depends="checkout">
 	<property name="head" value="${basedir}/svn_head" />
 	<replace file="${head}/inc/config.php" token="@db_type" value="${db.type}"/>
