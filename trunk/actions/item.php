@@ -6,6 +6,8 @@ if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 	$item->collection_id = $c->id;
 	$item->serial_number = $params['serial_number'];
 	$item->findOne();
+	print($item->getXml());
+	exit;
 	$item->collection = $c;
 	$item->getValues();
 	$item->getViewitem();

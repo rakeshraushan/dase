@@ -164,8 +164,6 @@ function testArray($a,$key) {
 	return false;
 }
 
-
-
 function normalizeSearch($search) {
 	$search_string = '';
 	foreach(array('find','omit','or') as $key) {
@@ -311,12 +309,13 @@ function createSql($search) {
 
 	return $sql;
 }
+print createSql($search);
+exit;
 /*
 print('<pre>');
 print_r($search);
 print('</pre>');
 print md5(normalizeSearch($search));
-print createSql($search);
 exit;
  */
 $db = Dase_DB::get();

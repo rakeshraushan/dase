@@ -31,14 +31,17 @@
 <div class="center">
 
 {if $routes}
+{foreach from=$routes key=method item=sroutes}
+<h3>{$method} method</h3>
 <dl class="routes">
-{foreach from=$routes key=k item=v}
+{foreach from=$sroutes key=k item=v}
 <dt>/{$k}/</dt>
 {foreach from=$v key=name item=value}
 <dd>[{$name}] {$value}</dd>
 {/foreach}
 {/foreach}
 </dl>
+{/foreach}
 {/if}
 {if 'standard' == $log_name}
 <ul><li>{$log|nl2br}</li></ul>

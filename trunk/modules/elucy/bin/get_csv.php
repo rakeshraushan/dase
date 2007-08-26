@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
-//$database = 'dase_prod';
-$coll_ascii_id = 'test_collection';
+$database = 'dase_prod';
+$coll_ascii_id = 'efossils_collection';
 include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
@@ -28,7 +28,8 @@ if ($coll->findOne()) {
 
 
 	$row = 1;
-	$handle = fopen("GLOSSARY.csv", "r");
+	//$handle = fopen("GLOSSARY.csv", "r");
+	$handle = fopen("FAQ.csv", "r");
 	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 		$term = trim(mb_convert_encoding($data[0], "UTF-8", "cp1252"));
 		$def = trim(mb_convert_encoding($data[1], "UTF-8", "cp1252"));
@@ -44,11 +45,15 @@ if ($coll->findOne()) {
 			} else {
 				print "creating " . $v->value_text . "\n";;
 				$item = $coll->createNewItem();
-				if ($item->setType('glossary')) {
-					$item->setValue('glossary_term',$term);
-					$item->setValue('glossary_definition',$def);
+				//if ($item->setType('glossary')) {
+				//	$item->setValue('glossary_term',$term);
+				//	$item->setValue('glossary_definition',$def);
+				if ($item->setType('faq')) {
+					$item->setValue('faq_question',$term);
+					$item->setValue('faq_answer',$def);
 					$uri_term = strtolower(str_replace(' ','_',$term));
-					$item->setValue('resource_uri',"/resources/glossary/$uri_term");
+					$uri_term = str_replace('?','',$uri_term);
+					$item->setValue('resource_uri',"/resources/faq/$uri_term");
 				}
 				$item->buildSearchIndex();
 				print "created $item->serial_number\n";

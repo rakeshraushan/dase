@@ -114,7 +114,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$writer->writeAttribute('item_type',$type->ascii_id);
 		$db = Dase_DB::get();
 		$sql = "
-			SELECT value_text,ascii_id 
+			SELECT value.value_text,value.value_text_md5,attribute.ascii_id,attribute.attribute_name 
 			FROM value, attribute
 			WHERE attribute.id = value.attribute_id
 			AND value.item_id = $this->id
@@ -122,8 +122,14 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$st = $db->query($sql);
 		foreach ($st->fetchAll() as $row) {
 			$writer->startElement('metadata');
-			$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+			$writer->startElement('attribute');
+			$writer->writeAttribute('ascii_id',$row['ascii_id']);
+			$writer->text($row['attribute_name']);
+			$writer->endElement();
+			$writer->startElement('value');
+			$writer->writeAttribute('md5',$row['value_text_md5']);
 			$writer->text($row['value_text']);
+			$writer->endElement();
 			$writer->endElement();
 		}
 		$media_file = new Dase_DB_MediaFile;

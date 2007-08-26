@@ -109,20 +109,9 @@
 </div> <!-- close primary -->
 </div> <!-- close primaryouter -->
 
+{include file="footer.tpl"}
 
-
-
-
-<div class="foot">
-<ul>
-<li><a href="ftu/index.html">FIRST TIME USERS</a></li>
-<li><a href="www.efossils.org">eFOSSILS</a></li>
-<li><a href="tp/index.html">THE PROJECTS</a></li>
-<li><a href="resources/index.html">RESOURCES</a></li>
-<li class="lastone"><a href="http://www.eskeletons.org">eSKELETONS</a></li>
-</ul>
-</div> <!--close foot-->
-	</div> <!--close container-->
+</div> <!--close container-->
 
 
 

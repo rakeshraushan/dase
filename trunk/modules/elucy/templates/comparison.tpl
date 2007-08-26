@@ -3,7 +3,7 @@
 <html>
 <head>
 <base href="{$app_root}/modules/elucy/"/>
-<title>eLucy Glossary</title>
+<title>eLucy {$page_title}</title>
 <!-- the following allows the transparent png logo to display properly in IE -->
 {literal}
 <style type="text/css"> img { behavior:	url("pngbehavior.htc"); }</style>
@@ -31,52 +31,21 @@
 <div class="primarylucy">
 <div class="mainsite">
 
-<div class="topbarp">
-<h2>Glossary</h2></div> <!-- close topbars -->
-<div class="bottombarp">			
+<div class="topbar{$page_name|substr:0:1}">
+<h2>{$page_title}</h2></div> <!-- close topbars -->
+<div class="bottombar{$page_name|substr:0:1}">			
 </div> <!-- close bottombars -->
 
-<div class="glossary_container">
+<div class="list1">
+<h3><a href="">Puzzle</a></h3>
+<div><a href="">puzzle1</a><br>
+<a href="">puzzle2</a></div>
 
-<div class="letters">
-<a href="glossary#A">A</a> | 
-<a href="glossary#B">B</a> | 
-<a href="glossary#C">C</a> | 
-<a href="glossary#D">D</a> | 
-<a href="glossary#E">E</a> | 
-<a href="glossary#F">F</a> | 
-<a href="glossary#G">G</a> | 
-<a href="glossary#H">H</a> | 
-<a href="glossary#I">I</a> | 
-<a href="glossary#J">J</a> | 
-<a href="glossary#K">K</a> | 
-<a href="glossary#L">L</a> | 
-<a href="glossary#M">M</a> | 
-<a href="glossary#N">N</a> | 
-<a href="glossary#O">O</a> | 
-<a href="glossary#P">P</a> | 
-<a href="glossary#Q">Q</a> | 
-<a href="glossary#R">R</a> | 
-<a href="glossary#S">S</a> | 
-<a href="glossary#T">T</a> | 
-<a href="glossary#U">U</a> | 
-<a href="glossary#V">V</a> | 
-<a href="glossary#W">W</a> | 
-<a href="glossary#X">X</a> | 
-<a href="glossary#Y">Y</a> | 
-<a href="glossary#Z">Z</a>
-</div>
-
-<dl class="glossary">
-{foreach key=term item=def from=$definitions}
-<a name="{$term|substr:0:1|strtoupper}">&nbsp;</a>
-<dt>{$term}</dt>
-<dd>{$def}</dd>
-{/foreach}
-</dl>
-
-</div>
-
+<h3><a href="">lessons</a></h3>
+<div><a href="">lesson1</a>
+<br>
+<a href="">lesson2</a>	</div>
+</div> <!-- close list -->
 </div> <!-- close mainsite -->
 <div class="spacer"></div>
 <!-- <a href="viewer.html" onClick="return popup(this, 'notes')">Bone Viewer</a> bone viewer -->

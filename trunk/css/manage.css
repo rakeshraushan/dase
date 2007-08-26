@@ -63,7 +63,7 @@ div.sidebar {
 
 div.topbar {
 	background-color: #666666;
-	background-color: #900;
+	background-color: #700c0c;
 	font-weight: bold;
 	margin: 0;
 	padding: 5px 30px;
@@ -86,6 +86,11 @@ h3 {
 }
 
 dl.routes dt {
-	color: #900;
+	margin-top: 15px;
+	color: #700c0c;
 	font-weight: bold;
+}
+
+dl.routes dd {
+	margin-left: 20px;
 }

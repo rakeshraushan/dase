@@ -176,7 +176,13 @@ class Dase
 		$sx = simplexml_load_file($path);
 		foreach ($sx->route as $route) {
 			if (!$route->match) {
+				//THESE ARE SINGLE LINE (NO MATCH) ROUTES
 				$regex = (string) $route['action'];
+				if (isset($route['method'])) {
+					$method = (string) $route['method'];
+				} else {
+					$method = 'get';
+				}
 				if ($prefix) {
 					$regex = trim($prefix,'/') . '/' . $regex;
 				}
@@ -188,18 +194,25 @@ class Dase
 				}
 				$regex = '^' . $regex . '$';
 				if ($params) {
-					$routes[$regex]['params'] = $params;
+					$routes[$method][$regex]['params'] = $params;
 				}
-				$routes[$regex]['action'] = (string) $route['action'];
+				$routes[$method][$regex]['action'] = (string) $route['action'];
 				if (isset($route['auth'])) {
-					$routes[$regex]['auth'] = (string) $route['auth'];
+					$routes[$method][$regex]['auth'] = (string) $route['auth'];
 				}
 				if ($prefix) {
-					$routes[$regex]['prefix'] = $prefix;
+					$routes[$method][$regex]['prefix'] = $prefix;
 				}
 			}
 			foreach ($route->match as $match) {
 				$regex = (string) $match;
+				if (isset($match['method'])) {
+					$method = (string) $match['method'];
+				} elseif (isset($route['method'])) {
+					$method = (string) $route['method'];
+				} else {
+					$method = 'get';
+				}	
 				if ($prefix) {
 					$regex = trim($prefix,'/') . '/' . $regex;
 					$regex = trim($regex,'/'); //in case there had been no original regex
@@ -216,22 +229,22 @@ class Dase
 				}
 				$regex = '^' . $regex . '$';
 				if ($params) {
-					$routes[$regex]['params'] = $params;
+					$routes[$method][$regex]['params'] = $params;
 				}
-				$routes[$regex]['action'] = (string) $route['action'];
+				$routes[$method][$regex]['action'] = (string) $route['action'];
 				if (isset($match['caps'])) {
-					$routes[$regex]['caps'] = (string) $match['caps'];
+					$routes[$method][$regex]['caps'] = (string) $match['caps'];
 				}
 				if (isset($match['auth'])) {
-					$routes[$regex]['auth'] = (string) $match['auth'];
+					$routes[$method][$regex]['auth'] = (string) $match['auth'];
 				} else {
-					$routes[$regex]['auth'] = (string) $route['auth'];
+					$routes[$method][$regex]['auth'] = (string) $route['auth'];
 				}
 				if ($prefix) {
-					$routes[$regex]['prefix'] = $prefix;
+					$routes[$method][$regex]['prefix'] = $prefix;
 				}
 				if ($collection) {
-					$routes[$regex]['collection'] = $collection;
+					$routes[$method][$regex]['collection'] = $collection;
 				}
 			}
 		}
@@ -292,7 +305,11 @@ class Dase
 		$matches = array();
 		$params = array();
 
-		foreach ($routes as $regex => $conf_array) {
+		//note: there is only ONE method on a request
+		//so that is the only route map we need to traverse
+		$method = strtolower($_SERVER['REQUEST_METHOD']);
+
+		foreach ($routes[$method] as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				Dase::log('standard',$regex . " => " . $conf_array['action']);
 				$caps = array();
@@ -324,8 +341,8 @@ class Dase
 					//this is collection authorization for modules
 					if (isset($conf_array['collection'])) {
 						$collection_ascii_id = $conf_array['collection'];
-					//params['collection_ascii_id'] originates in routes.xml
-					//this is collection authorization for collection admin
+						//params['collection_ascii_id'] originates in routes.xml
+						//this is collection authorization for collection admin
 					} elseif (isset($params['collection_ascii_id'])) {
 						$collection_ascii_id = $params['collection_ascii_id'];
 					} else {
@@ -337,6 +354,11 @@ class Dase
 					Dase::checkUser('user');
 				}
 				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
+					if (Dase::filterGet('debug_route')) {
+						//use this to make a handy debug bookmarklet!
+						echo "$regex => {$conf_array['action']}";
+						exit;
+					}
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
 				} 

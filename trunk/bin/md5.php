@@ -1,9 +1,7 @@
 #!/usr/bin/php
 <?php
-//$database = 'dase_prod';
+$database = 'dase_prod';
 include 'cli_setup.php';
-
-define('DEBUG',true);
 
 $i = 0;
 

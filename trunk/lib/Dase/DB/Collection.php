@@ -177,6 +177,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 
 		$item = new Dase_DB_Item;
 		$item->item_type_id = $type->id;
+		$item->status_id = 0;
 		foreach($item->findAll() as $row) {
 
 			$it = new Dase_DB_Item($row);
