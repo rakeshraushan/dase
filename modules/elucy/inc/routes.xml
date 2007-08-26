@@ -5,13 +5,29 @@
 	<match></match>
   </route>
 
+  <route action="pdf" auth="none"/>
+
   <route action="glossary" auth="none">
 	<match>glossary</match>
 	<match params="term">glossary</match>
   </route>
 
-  <route action="second" auth="none">
-	<match params="page_name"></match>
+  <route action="faq" auth="none">
+	<match>faq</match>
+	<match params="question">faq</match>
   </route>
+
+  <route action="teacher" auth="none">
+	<match>teacher</match>
+  </route>
+
+  <route action="student" auth="none">
+	<match>student</match>
+  </route>
+
+  <route action="comparison" auth="none">
+	<match>comparison</match>
+  </route>
+
 
 </routes>

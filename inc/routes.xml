@@ -41,29 +41,34 @@
   </route>
 
 
-  <route action="ajax_attributes" auth="none">
+  <route action="ajax/attributes" auth="none">
 	<match>ajax/attributes</match>
   </route>
 
-  <route action="ajax_admin_attributes" auth="none">
+  <route action="ajax/admin_attributes" auth="none">
 	<match>ajax/admin_attributes</match>
   </route>
 
-  <route action="ajax_attribute_tallies" auth="none">
+  <route action="ajax/attribute_tallies" auth="none">
 	<match>ajax/attribute_tallies</match>
   </route>
 
-  <route action="ajax_item_tallies" auth="none">
+  <route action="ajax/item_tallies" auth="none">
 	<match>ajax/item_tallies</match>
   </route>
 
-  <route action="ajax_values_by_attribute" auth="none">
+  <route action="ajax/values_by_attribute" auth="none">
 	<match>ajax/values_by_attribute</match>
   </route>
 
   <route action="error"/>
-  <route action="login_form" auth="none" />
-  <route action="login" auth="none" />
+
+  <route action="login_form" auth="none">
+	<match>login/form</match>
+  </route>
+
+  <route action="login" auth="none" method="post"/>
+
   <route action="logoff" auth="user" />
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
@@ -85,5 +90,7 @@
   <route action="manage/modules" auth="superuser"/>
 
   <route action="manage/routes" auth="superuser"/>
+
+  <route action="manage/phpinfo" auth="superuser"/>
 
 </routes>
