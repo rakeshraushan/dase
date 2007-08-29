@@ -11,6 +11,9 @@ class Dase_Template
 		if (empty(self::$template)) {
 			self::$template = new Smarty;
 			if ($module) {
+				//to prevent template files with same names from trouncing 
+				//each other in shared compile dir:
+				self::$template->compile_id = $module;
 				self::$template->template_dir = "modules/$module/templates";
 				self::$template->assign('module_root',APP_ROOT . "/modules/$module");
 			}
