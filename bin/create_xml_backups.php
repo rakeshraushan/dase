@@ -1,6 +1,8 @@
 <?php
-$database = <database>;
-$backup_dir = <backup_dir>;
+$database = 'dase_prod'; 
+$backup_dir = '.';
+//$database = <database>;
+//$backup_dir = <backup_dir>;
 
 require_once 'cli_setup.php';
 
@@ -12,7 +14,9 @@ print ($remote->get());
 
 
 $coll = new Dase_DB_Collection;
-foreach ($coll->getAll() as $c) {
+$coll->ascii_id = 'efossils_collection';
+//foreach ($coll->getAll() as $c) {
+foreach ($coll->findAll() as $c) {
 	$filename = "$backup_dir/{$c['ascii_id']}.xml";
 	$mem = memory_get_usage(true);
 	print "working on {$c['collection_name']} ($mem)\n";
