@@ -103,7 +103,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
-	function getItemsByAttVal($att_ascii_id,$value_text) {
+	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
@@ -119,7 +119,11 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 
 		$v = new Dase_DB_Value;
 		$v->attribute_id = $a->id;
-		$v->value_text = $value_text;
+		if ($substr) {
+			$v->addWhere('value_text',"%$value_text%",'like');
+		} else {
+			$v->value_text = $value_text;
+		}
 		foreach ($v->findAll() as $vrow) {
 			$it = new Dase_DB_Item;
 			$it->load($vrow['item_id']);
