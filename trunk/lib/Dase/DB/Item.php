@@ -43,6 +43,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
+		$search_table->last_update = time();
 		$search_table->insert();
 
 		//admin search table
@@ -61,6 +62,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
+		$search_table->last_update = time();
 		$search_table->insert();
 	}
 
