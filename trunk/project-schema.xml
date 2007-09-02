@@ -180,9 +180,9 @@
       <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="dase_user_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="attribute_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="collection_id_string" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
-      <column name="refine" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
-      <column name="item_id_string" primaryKey="false" required="false" type="VARCHAR" size="2000000" autoIncrement="false"/>
+      <column name="collection_id_string" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
+      <column name="refine" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
+      <column name="item_id_string" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="exact_search" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="is_stale" primaryKey="false" required="false" type="BIT" size="1" default="false" autoIncrement="false"/>
       <column name="sort_by" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
