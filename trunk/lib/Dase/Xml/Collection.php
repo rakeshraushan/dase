@@ -30,7 +30,7 @@ class Dase_Xml_Collection
 			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'item') {
 				$item = $doc->importNode($r->expand(),true);
 				$r->moveToAttribute('item_type');
-				if ($type_ascii_id = $r->value) {
+				if ($type_ascii_id == $r->value) {
 					$root->appendChild($item);
 				}
 			}
@@ -55,7 +55,7 @@ class Dase_Xml_Collection
 				$r->read();
 				$vt = $r->value;
 				$r->moveToAttribute('attribute_ascii_id');
-				if ($att_ascii_id = $r->value) {
+				if ($att_ascii_id == $r->value) {
 					if ($substr) {
 						if (false !== strpos($vt,$value_text)) {
 							$root->appendChild($item);
