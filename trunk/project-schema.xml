@@ -254,13 +254,6 @@
         <index-column name="attribute_id"/>
         <index-column name="item_id"/>
       </index>
-      <index name="val_att_idx">
-        <index-column name="value_text"/>
-        <index-column name="attribute_id"/>
-      </index>
-      <index name="value_text_idx">
-        <index-column name="value_text"/>
-      </index>
       <index name="vatt_idx">
         <index-column name="attribute_id"/>
       </index>
