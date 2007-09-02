@@ -51,8 +51,8 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$writer->startElement('item');
 			$writer->writeAttribute('serial_number',$it['serial_number']);
 			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
-			if (isset($item_type['name'])) {
-				$writer->writeAttribute('item_type',$item_type['name']);
+			if (isset($item_type['ascii_id'])) {
+				$writer->writeAttribute('item_type',$item_type['ascii_id']);
 			}
 			//straight db for 
 			//metadata, took 2:40 

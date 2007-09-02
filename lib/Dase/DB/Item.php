@@ -64,6 +64,8 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->collection_id = $this->collection_id;
 		$search_table->last_update = time();
 		$search_table->insert();
+		$this->last_update = time();
+		$this->update();
 	}
 
 	public function getValues() {

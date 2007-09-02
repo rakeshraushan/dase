@@ -1,0 +1,74 @@
+<?php
+class Dase_Xml_Collection 
+{
+	public $xml_file;
+	public function __construct($ascii_id) {
+		$xml_file = DASE_PATH . '/xml/' . $ascii_id . '.xml'; 
+		if (file_exists($xml_file)) { 
+			$this->xml_file = $xml_file;
+		} else {
+			throw new Exception('no xml file');
+		}
+	}
+
+	public static function create($ascii_id) {
+		$c = Dase_DB_Collection::get($ascii_id);
+		if ($c->id) {
+			file_put_contents(DASE_PATH . '/xml/' . $ascii_id . '.xml',$c->xmlDump());
+		} else {
+			throw new Exception('no such archive');
+		}
+	}
+
+	function getItemsXmlByType($type_ascii_id) {
+		$r = new XMLReader();
+		$r->open($this->xml_file);
+		$doc = new DOMDocument('1.0');
+		$root = $doc->createElement('result');
+		$doc->appendChild($root);
+		while ($r->read()) {
+			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'item') {
+				$item = $doc->importNode($r->expand(),true);
+				$r->moveToAttribute('item_type');
+				if ($type_ascii_id = $r->value) {
+					$root->appendChild($item);
+				}
+			}
+		}
+		$doc->formatOutput = true;
+		return $doc->saveXML();
+	}
+
+	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
+		$r = new XMLReader();
+		$r->open($this->xml_file);
+		$doc = new DOMDocument('1.0');
+		$root = $doc->createElement('result');
+		$doc->appendChild($root);
+		while ($r->read()) {
+			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'item') {
+				$item = $doc->importNode($r->expand(),true);
+				$r->moveToAttribute('serial_number');
+				$sernum = $r->value;
+			}
+			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'metadata') {
+				$r->read();
+				$vt = $r->value;
+				$r->moveToAttribute('attribute_ascii_id');
+				if ($att_ascii_id = $r->value) {
+					if ($substr) {
+						if (false !== strpos($vt,$value_text)) {
+							$root->appendChild($item);
+						}
+					} else {
+						if ($vt == $value_text) {
+							$root->appendChild($item);
+						}
+					}
+				}
+			}
+		}
+		$doc->formatOutput = true;
+		return $doc->saveXML();
+	}
+}
