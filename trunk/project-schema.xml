@@ -5,19 +5,19 @@
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="item_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="collection_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="value_text" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
+      <column name="value_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="status_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="last_update" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="application_monitor">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="response_time" primaryKey="false" required="false" type="DOUBLE" size="8" autoIncrement="false"/>
-      <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="dase_user_eid" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
       <column name="server_addr" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
       <column name="server_name" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
       <column name="request_uri" primaryKey="false" required="false" type="VARCHAR" size="400" autoIncrement="false"/>
       <column name="remote_addr" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
+      <column name="timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="attribute">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
@@ -85,8 +85,8 @@
       <column name="last_cb_access" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
       <column name="display" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false"/>
       <column name="max_items" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="last_item" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
-      <column name="last_action" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
+      <column name="last_item" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
+      <column name="last_action" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
       <column name="current_search_cache_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="current_collections" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
       <column name="backtrack" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
@@ -167,7 +167,7 @@
     <table name="message_queue">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="dase_user_eid" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false"/>
-      <column name="text" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
+      <column name="text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="is_active" primaryKey="false" required="false" type="BIT" size="1" default="true" autoIncrement="false"/>
       <column name="created" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
       <unique name="message_queue_id_key">
@@ -177,7 +177,6 @@
     <table name="search_cache">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="query" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
-      <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="dase_user_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="attribute_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="collection_id_string" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
@@ -188,16 +187,13 @@
       <column name="sort_by" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="cb_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="search_md5" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
-      <index name="q_ts_idx">
-        <index-column name="query"/>
-        <index-column name="timestamp"/>
-      </index>
+      <column name="timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="search_table">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="item_id" primaryKey="false" required="true" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="collection_id" primaryKey="false" required="true" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="value_text" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
+      <column name="value_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="status_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="last_update" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
@@ -211,13 +207,13 @@
       <column name="name" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="description" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="dase_user_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="tag_type_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="is_public" primaryKey="false" required="false" type="BIT" size="1" default="false" autoIncrement="false"/>
       <column name="background" primaryKey="false" required="false" type="VARCHAR" size="20" default="white" autoIncrement="false"/>
       <column name="admin_collection_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="ascii_id" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="master_item_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
+      <column name="created" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="tag_item">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
@@ -225,10 +221,10 @@
       <column name="item_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="annotation" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false"/>
       <column name="sort_order" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="size" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="p_serial_number" primaryKey="false" required="false" type="VARCHAR" size="20" default="0" autoIncrement="false"/>
       <column name="p_collection_ascii_id" primaryKey="false" required="false" type="VARCHAR" size="200" default="0" autoIncrement="false"/>
+      <column name="timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
       <index name="t_and_i_id_idx">
         <index-column name="tag_id"/>
         <index-column name="item_id"/>
@@ -249,14 +245,11 @@
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="item_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="attribute_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
-      <column name="value_text" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
+      <column name="value_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="value_text_md5" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false"/>
       <unique name="val_pk">
         <unique-column name="id"/>
       </unique>
-      <index name="value_text_idx">
-        <index-column name="value_text"/>
-      </index>
       <index name="it_att_idx">
         <index-column name="attribute_id"/>
         <index-column name="item_id"/>
@@ -264,6 +257,9 @@
       <index name="val_att_idx">
         <index-column name="value_text"/>
         <index-column name="attribute_id"/>
+      </index>
+      <index name="value_text_idx">
+        <index-column name="value_text"/>
       </index>
       <index name="vatt_idx">
         <index-column name="attribute_id"/>
@@ -275,12 +271,13 @@
     <table name="value_revision_history">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
       <column name="dase_user_eid" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false"/>
-      <column name="deleted_text" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
-      <column name="added_text" primaryKey="false" required="false" type="VARCHAR" size="20000" autoIncrement="false"/>
+      <column name="deleted_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
+      <column name="added_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="item_serial_number" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="attribute_name" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="collection_ascii_id" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
+      <column name="unix_timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="web_service_user">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
@@ -294,7 +291,7 @@
       <column name="other_ident" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="collection_id" primaryKey="false" required="false" type="INTEGER" size="4" autoIncrement="false"/>
       <column name="is_stale" primaryKey="false" required="false" type="BIT" size="1" autoIncrement="false"/>
-      <column name="text" primaryKey="false" required="false" type="VARCHAR" size="65000" autoIncrement="false"/>
+      <column name="text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
   </database>
