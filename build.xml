@@ -129,7 +129,7 @@
 
 	</taskdef>
 	<databaseToDdl modelName="MyModel">
-	  <database url="jdbc:postgresql://postgres.laits.utexas.edu/dase_dev"
+	  <database url="jdbc:postgresql://postgres.laits.utexas.edu/dase_prod"
 		driverClassName="org.postgresql.Driver"
 		username="${db.user}"
 		password="${db.pass}"/>
