@@ -23,9 +23,15 @@ class Dase_DB {
 			$host = $conf['db_host'];
 			$user = $conf['db_user'];
 			$pass = $conf['db_pass'];
-			$dsn = self::$type . ":host=$host;dbname=" . self::$name;
-			$driverOpts = array();
-			self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+
+			if ('sqlite' == self::$type) {
+				$dsn = "sqlite:" . DASE_PATH . '/sqlite/dase.db';
+				self::$db = new PDO($dsn);
+			} else {
+				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
+				$driverOpts = array();
+				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+			}
 		}
 		// Return the connection
 		return self::$db;
