@@ -6,5 +6,6 @@
 <a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 <a href="copyright">Copyright/Usage Statement</a>| 
 <a href="p.html">palette</a> | 
-{$timer} seconds 
+{$timer} seconds |
+<img src="images/dasepowered.png"/>
 </div><!--closes footer-->
