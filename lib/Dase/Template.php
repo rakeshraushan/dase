@@ -27,7 +27,7 @@ class Dase_Template
 					self::$template->assign('superuser',1);
 				}
 			}
-			self::$template->assign('title','Digital Archive Services');
+			self::$template->assign('title','DASe@' . $_SERVER['HTTP_HOST']);
 			self::$template->assign('msg',Dase::filterGet('msg'));
 			self::$instance = new Dase_Template();
 		}
