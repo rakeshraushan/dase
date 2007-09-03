@@ -11,7 +11,7 @@ if (/^(INSERT.+?)\(/) {
 	s/\\n/\n/g;
 	s/\),\(/\);\n$a\(/g;
 }
-' | sed 's/auto_increment//g' | sqlite3 output.db
+' | sed 's/auto_increment//g' | sqlite3 ../sqlite/dase.db
 
 
 
