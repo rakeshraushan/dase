@@ -18,22 +18,22 @@ $conf['db_pass'] = '@db_pass';
 
 //default lookup values
 
-$conf['item_status'][0] = 'public';
-$conf['item_status'][1] = 'admin_only';
-$conf['item_status'][2] = 'marked_for_delete';
-$conf['item_status'][3] = 'deep_storage';
-
-$conf['tag_type'][] = 'cart';
-$conf['tag_type'][] = 'user_collection';
-$conf['tag_type'][] = 'slideshow';
-$conf['tag_type'][] = 'user_metadata';
-$conf['tag_type'][] = 'admin_collection';
-
-$conf['html_input_type'][] = 'textbox';
-$conf['html_input_type'][] = 'textarea';
-$conf['html_input_type'][] = 'radio_buttons';
 $conf['html_input_type'][] = 'checkboxes';
-$conf['html_input_type'][] = 'select_menu';
 $conf['html_input_type'][] = 'list_box';
 $conf['html_input_type'][] = 'non_editable';
+$conf['html_input_type'][] = 'radio_buttons';
+$conf['html_input_type'][] = 'select_menu';
+$conf['html_input_type'][] = 'textarea';
+$conf['html_input_type'][] = 'textbox';
 $conf['html_input_type'][] = 'textbox_with_dynamic_menu';
+
+$conf['item_status'][] = 'public';
+$conf['item_status'][] = 'admin_only';
+$conf['item_status'][] = 'marked_for_delete';
+$conf['item_status'][] = 'deep_storage';
+
+$conf['tag_type'][] = 'admin_collection';
+$conf['tag_type'][] = 'cart';
+$conf['tag_type'][] = 'slideshow';
+$conf['tag_type'][] = 'user_collection';
+$conf['tag_type'][] = 'user_metadata';

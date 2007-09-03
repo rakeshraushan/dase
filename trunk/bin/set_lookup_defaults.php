@@ -28,7 +28,7 @@ foreach ($conf['superuser'] as $super_eid) {
 
 foreach ($conf['item_status'] as $status) {
 	$st = new Dase_DB_ItemStatus;
-	$st->status = $v;
+	$st->status = $status;
 	if (!$st->findOne()) {
 		$st->insert();
 	}
@@ -36,7 +36,7 @@ foreach ($conf['item_status'] as $status) {
 
 foreach ($conf['tag_type'] as $ascii) {
 	$tt = new Dase_DB_TagType;
-	$tt->ascii_id = $v;
+	$tt->ascii_id = $ascii;
 	if (!$tt->findOne()) {
 		$tt->name = trans($v,'display');
 		$tt->id = $k;
