@@ -3,7 +3,7 @@
 $q = trim($argv[1]);
 
 $r = new XMLReader();
-$r->open('efossils.xml');
+$r->open('../xml/vrc_collection.xml');
 $doc = new DOMDocument('1.0');
 $root = $doc->createElement('result');
 $doc->appendChild($root);
