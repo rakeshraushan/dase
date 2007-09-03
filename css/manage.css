@@ -64,6 +64,7 @@ div.sidebar {
 div.topbar {
 	background-color: #666666;
 	background-color: #700c0c;
+	background-color: #6480ae;
 	font-weight: bold;
 	margin: 0;
 	padding: 5px 30px;
@@ -71,11 +72,11 @@ div.topbar {
 }
 
 div.topbar a {
-	color: #ddd;
+	color: #fff;
 }
 
 div.topbar a:hover {
-	color: #fff;
+	color: #ddf;
 }
 
 h3 {
