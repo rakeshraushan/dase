@@ -22,5 +22,5 @@ if ($username && $password) {
 	}
 }
 $tpl->assign('msg',$msg); 
-$tpl->assign('content','login'); //set content template
+$tpl->assign('content','login_form'); //set content template
 $tpl->display();
