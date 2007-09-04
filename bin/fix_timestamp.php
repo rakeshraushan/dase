@@ -3,7 +3,7 @@ $database = 'dase_prod';
 require_once 'cli_setup.php';
 
 $db = Dase_DB::get();
-$sql = "select id, date_part('epoch',(date_trunc('minute',timestamp))) from value_revision_history";
+$sql = "select id, date_part('epoch',(date_trunc('minute',timestamp))) from value_revision_history where unix_timestamp is null";
 $st = $db->query($sql);
 $i = 0;
 while ($row = $st->fetch()) {
