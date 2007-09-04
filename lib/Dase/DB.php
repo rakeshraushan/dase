@@ -37,7 +37,7 @@ class Dase_DB {
 				$driverOpts = array();
 			}
 			try {
-			self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
 			} catch (PDOException $e) {
 				echo 'connect failed: ' . $e->getMessage();
 			}
@@ -108,7 +108,7 @@ class Dase_DB {
 			$sql = "PRAGMA table_info($table)";
 			$sth = $db->prepare($sql);
 			$sth->execute();
-			while ($row = $st->fetch()) {
+			while ($row = $sth->fetch()) {
 				$names[] = $row['name'];
 				//$type = $row['type'];
 			}
