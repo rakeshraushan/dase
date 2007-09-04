@@ -123,13 +123,16 @@ class Dase_DB {
 			$sth = $db->prepare($sql);
 			$sth->execute();
 			while ($row = $sth->fetch()) {
+				$col = array();
 				$col['column_name'] = $row['name'];
-				$col['data_type'] = $row['type'];
-				if (strpos('(',$row['type'])) {
-					$col['data_type'] = substr($row['type'],strpos('(',$row['type']));
-					$pattern = '/\((\d+)\)/';
-					preg_match($pattern,'',$col['data_type'],$matches);
-					$col['character_maximum_length'] = $matches[0];
+				if (strpos($row['type'],'(')) {
+					$col['data_type'] = substr($row['type'],0,strpos($row['type'],'('));
+					if ('varchar' == $col['data_type']) {
+						preg_match('/\d+/',$row['type'],$matches);
+						$col['character_maximum_length'] = $matches[0];
+					}
+				} else{
+					$col['data_type'] = $row['type'];
 				}
 				$result[] = $col;
 			}
