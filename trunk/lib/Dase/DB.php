@@ -123,8 +123,8 @@ class Dase_DB {
 			$sth = $db->prepare($sql);
 			$sth->execute();
 			while ($row = $sth->fetch()) {
-				$col['column_name'][] = $row['name'];
-				$col['data_type'][] = $row['type'];
+				$col['column_name'] = $row['name'];
+				$col['data_type'] = $row['type'];
 				$result[] = $col;
 			}
 			return $result;
