@@ -32,11 +32,14 @@ class Dase_DB {
 			//}
 			if ('sqlite' == self::$type) {
 				$dsn = "sqlite:" . DASE_PATH . '/sqlite/dase.db';
-				self::$db = new PDO($dsn);
 			} else {
 				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
 				$driverOpts = array();
-				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+			}
+			try {
+			self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+			} catch (PDOException $e) {
+				echo 'connect failed: ' . $e->getMessage();
 			}
 		}
 		// Return the connection
