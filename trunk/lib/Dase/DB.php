@@ -94,6 +94,7 @@ class Dase_DB {
 	}	
 
 	public static function getMetadata($table) {
+		//fix this so it works w/ sqlite
 		$db = self::get();
 		$sql = "SELECT column_name, data_type, character_maximum_length 
 			FROM information_schema.columns 

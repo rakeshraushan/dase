@@ -266,11 +266,10 @@
       <column name="dase_user_eid" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false"/>
       <column name="deleted_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
       <column name="added_text" primaryKey="false" required="false" type="LONGVARCHAR" autoIncrement="false"/>
-      <column name="timestamp" primaryKey="false" required="false" type="TIMESTAMP" size="8,6" default="(&apos;now&apos;::text)::timestamp(6) with time zone" autoIncrement="false"/>
       <column name="item_serial_number" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="attribute_name" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
       <column name="collection_ascii_id" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false"/>
-      <column name="unix_timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
+      <column name="timestamp" primaryKey="false" required="false" type="BIGINT" size="8" autoIncrement="false"/>
     </table>
     <table name="web_service_user">
       <column name="id" primaryKey="true" required="true" type="INTEGER" size="4" autoIncrement="true"/>
