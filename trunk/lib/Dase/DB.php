@@ -24,6 +24,12 @@ class Dase_DB {
 			$user = $conf['db_user'];
 			$pass = $conf['db_pass'];
 
+			//should put a try catch in each of these 
+			//try {
+			//$db = new PDO (...);
+			//} catch (PDOException $e) {
+			//echo 'connect failed: ' . $e->getMessage();
+			//}
 			if ('sqlite' == self::$type) {
 				$dsn = "sqlite:" . DASE_PATH . '/sqlite/dase.db';
 				self::$db = new PDO($dsn);
@@ -71,6 +77,13 @@ class Dase_DB {
 				. "AND NOT EXISTS (SELECT 1 FROM pg_user WHERE usesysid = c.relowner) "
 				. "AND c.relname !~ '^pg_'";
 		}
+		if ('sqlite' == self::$type) {
+			$sql = "
+				SELECT name FROM sqlite_master
+				WHERE type='table'
+				ORDER BY name
+				";
+		}
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
@@ -88,14 +101,34 @@ class Dase_DB {
 				AND attname NOT LIKE '....%'
 				ORDER BY attname";
 		}
+		if ('sqlite' == self::$type) {
+			$sql = "PRAGMA table_info($table)";
+			$sth = $db->prepare($sql);
+			$sth->execute();
+			while ($row = $st->fetch()) {
+				$names[] = $row['name'];
+				//$type = $row['type'];
+			}
+			return $names;
+		}
 		$sth = $db->prepare($sql);
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
 
 	public static function getMetadata($table) {
-		//fix this so it works w/ sqlite
 		$db = self::get();
+		if ('sqlite' == self::$type) {
+			$sql = "PRAGMA table_info($table)";
+			$sth = $db->prepare($sql);
+			$sth->execute();
+			while ($row = $st->fetch()) {
+				$result['column_name'][] = $row['name'];
+				$result['data_type'][] = $row['type'];
+				$result['is_primary_key'][] = $row['pk'];
+			}
+			return $result;
+		}
 		$sql = "SELECT column_name, data_type, character_maximum_length 
 			FROM information_schema.columns 
 			WHERE table_name = '$table'";
