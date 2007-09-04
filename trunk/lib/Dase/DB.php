@@ -23,6 +23,7 @@ class Dase_DB {
 			$host = $conf['db_host'];
 			$user = $conf['db_user'];
 			$pass = $conf['db_pass'];
+			$driverOpts = array();
 
 			//should put a try catch in each of these 
 			//try {
@@ -34,7 +35,6 @@ class Dase_DB {
 				$dsn = "sqlite:" . DASE_PATH . '/sqlite/dase.db';
 			} else {
 				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
-				$driverOpts = array();
 			}
 			try {
 				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
