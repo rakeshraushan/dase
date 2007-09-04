@@ -125,6 +125,11 @@ class Dase_DB {
 			while ($row = $sth->fetch()) {
 				$col['column_name'] = $row['name'];
 				$col['data_type'] = $row['type'];
+				if (strpos('(',$row['type']) {
+					$pattern = '/\((\d+)\)/';
+					preg_replace($pattern,'',$col['data_type']);
+					$col['character_maximum_length'] = $1;
+				}
 				$result[] = $col;
 			}
 			return $result;
