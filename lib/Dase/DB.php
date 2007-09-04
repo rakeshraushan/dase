@@ -122,7 +122,7 @@ class Dase_DB {
 			$sql = "PRAGMA table_info($table)";
 			$sth = $db->prepare($sql);
 			$sth->execute();
-			while ($row = $st->fetch()) {
+			while ($row = $sth->fetch()) {
 				$result['column_name'][] = $row['name'];
 				$result['data_type'][] = $row['type'];
 				$result['is_primary_key'][] = $row['pk'];
