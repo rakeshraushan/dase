@@ -11,6 +11,7 @@ $conf['superuser'][] = 'pkeane';
 $conf['token'][] = 'secret';
 
 $conf['db_type'] = '@db_type';
+$conf['db_path'] = '@db_path';  //sqlite only
 $conf['db_host'] = '@db_host';
 $conf['db_name'] = '@db_name';
 $conf['db_user'] = '@db_user';
