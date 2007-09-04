@@ -21,6 +21,7 @@ class Dase_DB {
 				self::$name = $conf['db_name'];
 			}
 			$host = $conf['db_host'];
+			$sqlite_path = $conf['db_path'];
 			$user = $conf['db_user'];
 			$pass = $conf['db_pass'];
 			$driverOpts = array();
@@ -32,7 +33,7 @@ class Dase_DB {
 			//echo 'connect failed: ' . $e->getMessage();
 			//}
 			if ('sqlite' == self::$type) {
-				$dsn = "sqlite:" . DASE_PATH . '/sqlite/dase.db';
+				$dsn = "sqlite:$sqlite_path";
 			} else {
 				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
 			}
