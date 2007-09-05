@@ -25,13 +25,6 @@ class Dase_DB {
 			$user = $conf['db_user'];
 			$pass = $conf['db_pass'];
 			$driverOpts = array();
-
-			//should put a try catch in each of these 
-			//try {
-			//$db = new PDO (...);
-			//} catch (PDOException $e) {
-			//echo 'connect failed: ' . $e->getMessage();
-			//}
 			if ('sqlite' == self::$type) {
 				$dsn = "sqlite:$sqlite_path";
 			} else {
