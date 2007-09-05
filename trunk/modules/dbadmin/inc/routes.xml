@@ -1,0 +1,12 @@
+<routes>
+
+  <route action="index" auth="none">
+	<match params="msg"></match>
+	<match></match>
+  </route>
+
+  <route action="site" auth="none">
+	<match caps="site/section/level">(ata|zho|old|had|mid)/(intro|hom|arch|fauna|geo|paleo)/(beg|int|adv)</match>
+  </route>
+
+</routes>
