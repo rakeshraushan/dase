@@ -83,7 +83,7 @@ class Dase_DB_Object {
 		$sth = $db->prepare($sql);
 		if (! $sth) {
 			$error = $db->errorInfo();
-			print "Load Problem ({$error[2]})";
+			print "DASE_DB_Object 'load()' Problem ({$error[2]})";
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
@@ -101,7 +101,7 @@ class Dase_DB_Object {
 			//$id = "nextval('$seq'::text)";
 			$id = "nextval(('public.$seq'::text)::regclass)"; 	
 		} elseif ('sqlite' == Dase_DB::getDbType()) {
-			$id = null;
+			$id = 'null';
 		} else {
 			$id = 0;
 		}
@@ -121,7 +121,7 @@ class Dase_DB_Object {
 		$sth = $db->prepare( $sql );
 		if (! $sth) {
 			$error = $db->errorInfo();
-			print "Problem ({$error[2]})";
+			print "Dase_DB_Object 'insert()' Problem ({$error[2]})";
 			exit;
 		}
 		if ($sth->execute($bind)) {
