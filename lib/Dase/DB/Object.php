@@ -100,6 +100,8 @@ class Dase_DB_Object {
 			}
 			//$id = "nextval('$seq'::text)";
 			$id = "nextval(('public.$seq'::text)::regclass)"; 	
+		} elseif ('sqlite' == Dase_DB::getDbType()) {
+			$id = null;
 		} else {
 			$id = 0;
 		}
@@ -108,13 +110,9 @@ class Dase_DB_Object {
 		$inserts = array($id);
 		foreach( array_keys( $this->fields ) as $field )
 		{
-			//NOTE!! always let 
-			//db set time stamp
-			if ('timestamp' != $field) {
-				$fields []= $field;
-				$inserts []= ":$field";
-				$bind[":$field"] = $this->fields[ $field ];
-			}
+			$fields []= $field;
+			$inserts []= ":$field";
+			$bind[":$field"] = $this->fields[ $field ];
 		}
 		$field_set = join( ", ", $fields );
 		$insert = join( ", ", $inserts );
