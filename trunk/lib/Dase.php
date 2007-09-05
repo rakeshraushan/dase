@@ -140,7 +140,7 @@ class Dase
 					$v = Dase::filterArray($v);
 					$ar[$k] = $v;
 				} else {
-					$ar[$k] = strip_tags($v);
+					$ar[$k] = trim(strip_tags($v));
 				}
 			}
 			return $ar;
@@ -152,7 +152,7 @@ class Dase
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($_GET[$key])) {
-				return strip_tags($_GET[$key]);
+				return trim(strip_tags($_GET[$key]));
 			}
 		}
 	}
