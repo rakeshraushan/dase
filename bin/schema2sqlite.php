@@ -35,6 +35,7 @@ if ('sqlite' == Dase_DB::getDbType()) {
 		unset($cols);
 		$sql = "CREATE TABLE {$table['name']} ( $col_statement )\n\n";
 		$db->exec($sql);
+		print "created {$table['name']}\n";
 	}
 } else {
 	print "sorry, this script is for sqlite ONLY\n";
