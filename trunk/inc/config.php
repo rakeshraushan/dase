@@ -18,6 +18,8 @@ $conf['db_name'] = 'dase';
 $conf['db_user'] = 'username';
 $conf['db_pass'] = 'password';
 
+include DASE_PATH . '/inc/local_config.php';
+
 //default lookup values
 
 $conf['html_input_type'][] = 'checkboxes';
