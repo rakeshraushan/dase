@@ -5,8 +5,8 @@ $working = dirname(__FILE__) . '/..';
 $target = '/var/www/html/dase/';
 $httpd_group = 'apache';
 
-echo "copying $working/* to $target";
-echo "...";
+print "copying $working/* to $target";
+print "...";
 
 system("rsync -ar --delete --exclude='.svn' -e ssh $working/* $target");
 system("rsync -ar  -e ssh $working/prod_htaccess $target/.htaccess");
@@ -18,7 +18,7 @@ apacheWrite("$working/log/sql.log", 'apache');
 apacheWrite("$working/log/remote.log", 'apache');
 apacheWrite("$working/log/standard.log", 'apache');
 
-echo "done!";
+print "done!\n";
 
 function apacheWrite($file,$httpd_group) {
 chmod($file, 0775);
