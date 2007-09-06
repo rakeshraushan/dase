@@ -11,12 +11,12 @@ $conf['superuser'][] = 'pkeane';
 
 $conf['token'][] = 'secret';
 
-$conf['db_type'] = '@db_type';
-$conf['db_path'] = '@db_path';  //sqlite only
-$conf['db_host'] = '@db_host';
-$conf['db_name'] = '@db_name';
-$conf['db_user'] = '@db_user';
-$conf['db_pass'] = '@db_pass';
+$conf['db_type'] = 'sqlite';
+$conf['db_path'] = '/var/www-data/dase/dase.db';  //sqlite only
+$conf['db_host'] = 'localhost';
+$conf['db_name'] = 'dase';
+$conf['db_user'] = 'username';
+$conf['db_pass'] = 'password';
 
 //default lookup values
 
