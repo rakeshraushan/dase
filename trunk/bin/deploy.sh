@@ -21,6 +21,6 @@ apacheWrite("$working/log/standard.log", 'apache');
 print "done!\n";
 
 function apacheWrite($file,$httpd_group) {
-chmod($file, 0775);
 chgrp($file, $httpd_group);
+chmod($file, 0775);
 }
