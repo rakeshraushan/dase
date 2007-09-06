@@ -172,6 +172,7 @@ class Dase
 	}
 
 	static private function _compileRoutes($prefix = '',$collection = null,$routes = null) {
+		$params = '';
 		$path = DASE_PATH . $prefix . '/inc/routes.xml';
 		$sx = simplexml_load_file($path);
 		foreach ($sx->route as $route) {
