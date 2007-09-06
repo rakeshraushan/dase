@@ -1,11 +1,26 @@
-#!/bin/sh
+#!/usr/bin/php
+<?php
 
-WORKING=$PWD
-PUBLIC_BETA=/var/www/html/dase
+$working = dirname(__FILE__) . '/..';
+$target = '/var/www/html/dase/';
+$httpd_group = 'apache';
 
-echo "copying $WORKING/* to $PUBLIC_BETA"
-rsync -ar --delete --exclude='.svn' -e /bin/ssh $WORKING/* $PUBLIC_BETA
-rsync -ar  -e /bin/ssh $WORKING/prod_htaccess $PUBLIC_BETA/.htaccess
+echo "copying $working/* to $target";
+echo "...";
 
-echo "dase hase been updated!"
+system("rsync -ar --delete --exclude='.svn' -e ssh $working/* $target");
+system("rsync -ar  -e ssh $working/prod_htaccess $target/.htaccess");
+system("rsync -ar  -e ssh $working/../dase_build_conf.php $target/inc/local_config.php");
 
+apacheWrite("$working/templates_c", 'apache');
+apacheWrite("$working/log/error.log", 'apache');
+apacheWrite("$working/log/sql.log", 'apache');
+apacheWrite("$working/log/remote.log", 'apache');
+apacheWrite("$working/log/standard.log", 'apache');
+
+echo "done!";
+
+function apacheWrite($file,$httpd_group) {
+chmod($file, 0775);
+chgrp($file, $httpd_group);
+}
