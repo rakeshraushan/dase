@@ -47,7 +47,7 @@ with image filename beginning
 <div class="spacer"></div>
 </div>
 <div id="footer">
-a <a href="http://dase.laits.utexas.edu">DASe</a> project
+<a href="http://dase.laits.utexas.edu"><img src="images/dasepowered.png"/></a>
 </div>
 </body>
 </html>
