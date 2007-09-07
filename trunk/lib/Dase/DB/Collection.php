@@ -9,6 +9,63 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 	public $attribute_array;
 	public $item_type_array;
 
+	function getAtom() {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('feed');
+		$writer->writeAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$ascii_id_array = explode('_',$this->ascii_id);
+		$prefix = $ascii_id_array[0];
+		$writer->writeAttribute("xmlns:$prefix", APP_HTTP_ROOT . "/{$this->ascii_id}/1.0");
+		$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		$item->setLimit(10);
+		foreach($item->findAll() as $it) {
+			$writer->startElement('entry');
+			$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
+			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
+			if (isset($item_type['ascii_id'])) {
+				$writer->startElement('category');
+				$writer->writeAttribute('scheme',APP_HTTP_ROOT . "/{$this->ascii_id}/item_type");
+				$writer->writeAttribute('term',$item_type['ascii_id']);
+				$writer->writeAttribute('label',$item_type['name']);
+				$writer->endElement();
+			}
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT value_text,ascii_id,atom_element 
+				FROM value, attribute
+				WHERE attribute.id = value.attribute_id
+				AND value.item_id = {$it['id']}
+			";
+			$st = $db->query($sql);
+			foreach ($st->fetchAll() as $row) {
+				if ($row['atom_element']) {
+					$writer->startElement($row['atom_element']);
+				} else {
+					$writer->startElement($prefix . ':' . $row['ascii_id']);
+				}
+				$writer->text($row['value_text']);
+				$writer->endElement();
+			}
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $it['id'];
+			foreach($media_file->findAll() as $mf) {
+				$writer->startElement('link');
+				$ascii_id = $this->ascii_id;
+				$writer->writeAttribute('href',APP_HTTP_ROOT . "/$ascii_id/media/{$mf['size']}/{$mf['filename']}");
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
 	function xmlDump($limit = 100000) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
