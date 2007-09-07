@@ -13,6 +13,11 @@
             </attribute>
           </optional>
           <optional>
+            <attribute name="method">
+              <data type="NCName"/>
+            </attribute>
+          </optional>
+          <optional>
             <attribute name="params">
               <data type="NCName"/>
             </attribute>
