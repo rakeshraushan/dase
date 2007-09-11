@@ -7,6 +7,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public $collection = null;
 	public $values = array();
+	public $admin = array();
 	public $thumbnail = null;
 	public $viewitem = null;
 
@@ -210,5 +211,33 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$doomed = new Dase_DB_SearchTable($row);;
 			$doomed->delete();
 		}
+	}
+
+	function getAdminMetadata($att_ascii_id = null) {
+		//admin is ONLY set once in the life of
+		//an item object.  user can specify which 
+		//one will be returned, otherwise array is returned
+		if (!count($this->admin)) {
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT a.ascii_id, v.value_text 
+				FROM attribute a, value v
+				WHERE a.id = v.attribute_id
+				AND v.item_id = $this->id
+				AND a.collection_id = 0
+				";
+			$st = $db->query($sql);
+			while ($row = $st->fetch()) {
+				$this->admin[$row['ascii_id']] = $row['value_text'];
+			}	
+		}
+		if ($att_ascii_id) {
+			if (isset($this->admin[$att_ascii_id])) {
+				return $this->admin[$att_ascii_id];
+			} else {
+				return false;
+			}
+		}
+		return $this->admin;
 	}
 }

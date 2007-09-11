@@ -79,6 +79,7 @@
 
   <route action="media/media" auth="none">
 	<match params="collection/size/filename">media</match>
+	<match caps="collection" params="size/filename">(.*_collection)/media</match>
   </route>
 
   <!-- manage routes -->
