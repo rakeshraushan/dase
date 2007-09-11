@@ -20,11 +20,32 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$prefix = $ascii_id_array[0];
 		$writer->writeAttribute("xmlns:$prefix", APP_HTTP_ROOT . "/{$this->ascii_id}/1.0");
 		$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
+		$writer->startElement('title');
+		$writer->text($this->collection_name);
+		$writer->endElement();
+		$writer->startElement('id');
+		$writer->text(APP_HTTP_ROOT . "/{$this->ascii_id}");
+		$writer->endElement();
+		$writer->startElement('author');
+		$writer->startElement('name');
+		$writer->text('john smith');
+		$writer->endElement();
+		$writer->endElement();
+		$writer->startElement('updated');
+		$writer->text($this->updated());
+		$writer->endElement();
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
 		$item->setLimit(10);
 		foreach($item->findAll() as $it) {
 			$writer->startElement('entry');
+			$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
+			$writer->startElement('id');
+			$writer->text(APP_ROOT . "/{$this->ascii_id}/{$it['serial_number']}");
+			$writer->endElement();
+			$writer->startElement('updated');
+			$writer->text(date('c',$it['last_update']));
+			$writer->endElement();
 			$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
 			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
 			if (isset($item_type['ascii_id'])) {
@@ -54,11 +75,28 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			$media_file = new Dase_DB_MediaFile;
 			$media_file->item_id = $it['id'];
 			foreach($media_file->findAll() as $mf) {
+				if ('thumbnail' == $mf['size']) {
+					$thumbnail_file = $mf['filename'];
+					$thumbnail_type = $mf['mime_type'];
+				}
 				$writer->startElement('link');
-				$ascii_id = $this->ascii_id;
-				$writer->writeAttribute('href',APP_HTTP_ROOT . "/$ascii_id/media/{$mf['size']}/{$mf['filename']}");
+				if (!$mf['file_size']) {
+					$h = get_headers(APP_ROOT . "/{$this->ascii_id}/media/{$mf['size']}/{$mf['filename']}",1);
+					$mf['file_size'] = $h['Content-Length'];
+				}
+				$writer->writeAttribute('length',$mf['file_size']);
+				$writer->writeAttribute('type',$mf['mime_type']);
+				$writer->writeAttribute('rel',APP_ROOT . "/media/{$mf['size']}");
+				$writer->writeAttribute('href',"/media/{$mf['size']}/{$mf['filename']}");
 				$writer->endElement();
 			}
+			$writer->startElement('content');
+			$writer->writeAttribute('src', APP_ROOT . "/{$this->ascii_id}/media/thumbnail/$thumbnail_file");
+			$writer->writeAttribute('type', $thumbnail_type);
+			$writer->endElement();
+			$writer->startElement('summary');
+			$writer->text('thumbnail image');
+			$writer->endElement();
 			$writer->endElement();
 		}
 		$writer->endElement();
@@ -369,6 +407,22 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $this->item_count;
 	}
 
+	function getItems() {
+		//beware -- this could fill exceed memory limitations!!!
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT *
+			FROM item
+			where collection_id = $this->id
+			";
+		$st = $db->query($sql);
+		$st->setFetchMode(PDO::FETCH_ASSOC);
+		while ($row = $st->fetch()) {
+			$items[] = new Dase_DB_Item($row);
+		}
+		return $items;
+	}
+
 	function getItemTypes() {
 		$type = new Dase_DB_ItemType;
 		$type->collection_id = $this->id;
@@ -562,5 +616,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$item->item_type_id = 0;
 		$item->update();
 		return $item;
+	}
+
+	function updated() {
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		$item->orderBy('last_update DESC');
+		$item->setLimit(1);
+		$item->findOne();
+		return date('c',$item->last_update);
 	}
 }

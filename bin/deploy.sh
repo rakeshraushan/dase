@@ -21,6 +21,10 @@ apacheWrite("$working/log/standard.log", 'apache');
 print "done!\n";
 
 function apacheWrite($file,$httpd_group) {
-chgrp($file, $httpd_group);
-chmod($file, 0775);
+if (chgrp($file, $httpd_group) && chmod($file, 0775)) {
+	return true;
+} else {
+print 'cannot set permissions';
+exit;
+}
 }

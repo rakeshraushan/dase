@@ -41,7 +41,7 @@ class Dase_User
 		return false;
 	}
 
-	function check_auth($collection_ascii_id = null,$auth_level) {
+	function checkAuth($collection_ascii_id = null,$auth_level) {
 		if (!$collection_ascii_id) {
 			return false;
 		}
