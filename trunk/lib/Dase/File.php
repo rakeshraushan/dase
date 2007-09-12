@@ -2,8 +2,8 @@
 
 class Dase_File
 {
-
 	private static $types_map = array(
+		//store in xml??
 		'image/jpeg' => array('size' => 'jpeg', 'ext' => '.jpg','class'=>'Dase_File_Image'),
 		'image/gif' => array('size' => 'gif', 'ext' => '.gif','class'=>'Dase_File_Image'),
 		'image/png' => array('size' => 'png', 'ext' => '.png','class'=>'Dase_File_Image'),
@@ -20,14 +20,37 @@ class Dase_File
 		'text/html' => array('size' => 'html', 'ext' => '.html','class'=>'Dase_File_Image'),
 		'text/plain' => array('size' => 'html', 'ext' => '.html','class'=>'Dase_File_Image')
 	);
-	public $metadata = array();
+
+	protected $metadata = array();
+	protected $filepath;
+	protected $mime_type;
 
 	public function __construct($file) {
+		$this->filepath = $file;
 	}
+
+	function getMetadata() {
+		$this->metadata['admin_checksum'] = md5($this->filepath);
+		$this->metadata['admin_file_size'] = filesize($this->filepath);
+		$this->metadata['admin_filename'] = basename($this->filepath);
+		$this->metadata['admin_last_modified_date_time'] = filemtime($this->filepath); 
+		$this->metadata['admin_mime_type'] = $this->mime_type;
+		$this->metadata['admin_filepath'] = $this->filepath;
+		return $this->metadata;
+	}	
 
 	static function newFile($file) {
 		$mime = Dase_File::getMimeType($file);
-		return new self::$types_map[$mime]['class']($file);
+		if ($mime) {
+			if (!isset(self::$types_map[$mime])) {
+				throw new Exception("do not know about $mime mime type");
+			}
+			$df = new self::$types_map[$mime]['class']($file);
+			$df->mime_type = $mime;
+			return $df;
+		} else {
+			throw new Exception("cannot determin mime type for $file");
+		}
 	}
 
 	static function newFileFromUrl($file) {
@@ -46,9 +69,9 @@ class Dase_File
 			}
 		} else {
 			$output = array();
-			exec("file -i -b $file",$output);
+			exec("file -i -b \"$file\"",$output);
 			$matches = array();
-			if (preg_match('@([a-zA-z/]*);@i',$output[0],$matches)) {
+			if (preg_match('@([a-zA-z/]*);?@i',$output[0],$matches)) {
 				return $matches[1];
 			}
 		}
@@ -83,6 +106,22 @@ class Dase_File
 		$ext = $types_map[$this->mime_type]['ext'];
 	}
 
+	function copyTo($location) {
+		if (copy($this->filepath,$location)) {
+			return true;
+		} else {
+			throw new Exception("could not copy $this->filepath to $location");
+		}
+	}
+
+	function moveTo($location) {
+		if (rename($this->filepath,$location)) {
+			return true;
+		} else {
+			throw new Exception("could not move $this->filepath to $location");
+		}
+	}
+
 	function validate() {
 		if ((!in_array($this->mime_type,$this->valid_types)) || (!is_uploaded_file($this->tmp_path))) {
 			$msg = "Sorry, but $this->original_name is not a valid file type.";
@@ -113,6 +152,108 @@ class Dase_File
 		return;
 	}
 
+	function makeThumbnail($filename,$item,$coll) {
+		$base = basename($filename,'.tif');
+		$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $filename");
+		$thumbnail = MEDIA_ROOT ."/vrc_collection/thumbnails/$item->serial_number" . '_100.jpg';  
+		$mogrified_file = "/tmp/$base.jpeg";
+		rename($mogrified_file,$thumbnail);
+		$thumb_file_info = getimagesize($thumbnail);
+
+		$media_file = new Dase_DB_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $item->serial_number . '_100.jpg';
+		if ($thumb_file_info) {
+			$media_file->width = $thumb_file_info[0];
+			$media_file->height = $thumb_file_info[1];
+		}
+		$media_file->mime_type = 'image/jpeg';
+		$media_file->size = 'thumbnail';
+		$media_file->p_collection_ascii_id = $coll->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
+		$media_file->insert();
+		print "created $media_file->filename\n";
+	}
+
+	function makeViewitem($filename,$item,$coll) {
+		$base = basename($filename,'.tif');
+		$results = exec("/usr/bin/mogrify -format jpeg -resize '400x400 >' -colorspace RGB $filename");
+		$viewitem = MEDIA_ROOT ."/vrc_collection/400/$item->serial_number" . '_400.jpg';  
+		$mogrified_file = "/tmp/$base.jpeg";
+		rename($mogrified_file,$viewitem);
+		$thumb_file_info = getimagesize($viewitem);
+
+		$media_file = new Dase_DB_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $item->serial_number . '_400.jpg';
+		if ($thumb_file_info) {
+			$media_file->width = $thumb_file_info[0];
+			$media_file->height = $thumb_file_info[1];
+		}
+		$media_file->mime_type = 'image/jpeg';
+		$media_file->size = 'viewitem';
+		$media_file->p_collection_ascii_id = $coll->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
+		$media_file->insert();
+		print "created $media_file->filename\n";
+	}
+
+	function makeSizes($filename,$item,$coll) {
+		$image_properties = array(
+			'small' => array(
+				'geometry'        => '640x480',
+				'max_height'      => '480',
+				'size_tag'        => '_640'
+			),
+			'medium' => array(
+				'geometry'        => '800x600',
+				'max_height'      => '600',
+				'size_tag'        => '_800'
+			),
+			'large' => array(
+				'geometry'        => '1024x768',
+				'max_height'      => '768',
+				'size_tag'        => '_1024'
+			),
+			'full' => array(
+				'geometry'        => '3600x2700',
+				'max_height'      => '2700',
+				'size_tag'        => '_3600'
+			),
+		);
+		$last_height = 0;
+		$last_width = 0;
+		foreach ($image_properties as $size => $size_info) {
+			$base = basename($filename,'.tif');
+			$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $filename");
+			$mogrified_file = "/tmp/$base.jpeg";
+			$newimage = MEDIA_ROOT ."/vrc_collection/$size/$item->serial_number$size_info[size_tag].jpg";  
+			rename($mogrified_file,$newimage);
+			$file_info = getimagesize($newimage);
+
+			//create the media_file entry
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $item->id;
+			$media_file->filename = "$item->serial_number$size_info[size_tag].jpg";
+			if ($file_info) {
+				$media_file->width = $file_info[0];
+				$media_file->height = $file_info[1];
+			}
+
+			if (($media_file->width <= $last_width) && ($media_file->height <= $last_height)) {
+				return;
+			}
+
+			$last_width = $media_file->width;
+			$last_height = $media_file->height;
+			$media_file->mime_type = 'image/jpeg';
+			$media_file->size = $size;
+			$media_file->p_collection_ascii_id = $coll->ascii_id;
+			$media_file->p_serial_number = $item->serial_number;
+			$media_file->insert();
+			print "created $media_file->filename\n";
+		}
+	}
 	function stuff() {
 		$admin_attributes = array( 
 			admin_audio_bitrate => 'Bitrate (kbps)',
@@ -203,115 +344,6 @@ class Dase_File
 		return $data_hash;
 	}
 
-	function makeThumbnail($media_path,$item_id,$make_new = 0) {
-		require_once 'DataObjects/Media_file.php';
-		if ($make_new) {
-			$this->tmp_path = "/tmp/$this->serial_number";
-			$results = exec("convert xc:#ffffff -resize 80X40! -gravity 'Center' -fill '#b2170f' -draw 'text 0,0 \"$this->serial_number\"' $this->tmp_path.jpeg");
-		} else {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $this->tmp_path");
-		}
-		$mogrified_file = "$this->tmp_path" . ".jpeg";
-		$thumbnail = "$media_path/thumbnails/$this->serial_number" . '_100.jpg';  
-		rename($mogrified_file,$thumbnail);
-		$thumb_file_info = getimagesize($thumbnail);
-
-		//create the media_file entry
-		$media_file = new DataObjects_Media_file;
-		$media_file->item_id = $item_id;
-		$media_file->filename = $this->serial_number . '_100.jpg';
-		if ($thumb_file_info) {
-			$media_file->width = $thumb_file_info[0];
-			$media_file->height = $thumb_file_info[1];
-		}
-		$media_file->mime_type = 'image/jpeg';
-		$media_file->size = 'thumbnail';
-		$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-		$media_file->p_serial_number = $this->serial_number;
-		$media_file->insert();
-	}
-
-	function makeViewitem($media_path,$item_id,$make_new = 0) {
-		require_once 'DataObjects/Media_file.php';
-		if ($make_new) {
-			$this->tmp_path = "/tmp/$this->serial_number";
-			$results = exec("convert xc:#ffffff -resize 80X40! -gravity 'Center' -fill '#b2170f' -draw 'text 0,0 \"$this->serial_number\"' $this->tmp_path.jpeg");
-		} else {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '400x400 >' -colorspace RGB $this->tmp_path");
-		}
-		$mogrified_file = "$this->tmp_path" . ".jpeg";
-		$viewitem = "$media_path/400/$this->serial_number" . '_400.jpg';  
-		rename($mogrified_file,$viewitem);
-		$file_info = getimagesize($viewitem);
-
-		//create the media_file entry
-		$media_file = new DataObjects_Media_file;
-		$media_file->item_id = $item_id;
-		$media_file->filename = $this->serial_number . '_400.jpg';
-		if ($file_info) {
-			$media_file->width = $file_info[0];
-			$media_file->height = $file_info[1];
-		}
-		$media_file->mime_type = 'image/jpeg';
-		$media_file->size = 'viewitem';
-		$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-		$media_file->p_serial_number = $this->serial_number;
-		$media_file->insert();
-	}
-
-	function makeSizes($media_path,$item_id) {
-		require_once 'DataObjects/Media_file.php';
-		$image_properties = array(
-			small => array(
-				geometry        => '640x480',
-				max_height      => '480',
-				size_tag        => '_640'
-			),
-			medium => array(
-				geometry        => '800x600',
-				max_height      => '600',
-				size_tag        => '_800'
-			),
-			large => array(
-				geometry        => '1024x768',
-				max_height      => '768',
-				size_tag        => '_1024'
-			),
-			full => array(
-				geometry        => '3600x2700',
-				max_height      => '2700',
-				size_tag        => '_3600'
-			),
-		);
-		foreach ($image_properties as $size => $size_info) {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $this->tmp_path");
-			$mogrified_file = "$this->tmp_path" . ".jpeg";
-			$newimage = "$media_path/$size/$this->serial_number$size_info[size_tag].jpg";  
-			rename($mogrified_file,$newimage);
-			$file_info = getimagesize($newimage);
-
-			//create the media_file entry
-			$media_file = new DataObjects_Media_file;
-			$media_file->item_id = $item_id;
-			$media_file->filename = "$this->serial_number$size_info[size_tag].jpg";
-			if ($file_info) {
-				$media_file->width = $file_info[0];
-				$media_file->height = $file_info[1];
-			}
-
-			if (($media_file->width <= $last_width) && ($media_file->height <= $last_height)) {
-				return;
-			}
-
-			$last_width = $media_file->width;
-			$last_height = $media_file->height;
-			$media_file->mime_type = 'image/jpeg';
-			$media_file->size = $size;
-			$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-			$media_file->p_serial_number = $this->serial_number;
-			$media_file->insert();
-		}
-	}
 
 	function moveRawAsset($media_path) {
 		$raw = "$media_path/raw/$this->serial_number";  

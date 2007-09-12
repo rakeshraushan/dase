@@ -87,7 +87,9 @@ class getid3
         }
 
         // Get include_path
-        $this->include_path = $include_path = dirname(__FILE__) . '/';
+		// NOTE: I changed this so getid3.php could live outside 
+		// dir w/ module --pk
+        $this->include_path = $include_path = dirname(__FILE__) . '/getid3/';
 
         // Check for presence of iconv() and make sure it works (simpel test only).
         if (function_exists('iconv') && @iconv('UTF-16LE', 'ISO-8859-1', @iconv('ISO-8859-1', 'UTF-16LE', getid3::ICONV_TEST_STRING)) == getid3::ICONV_TEST_STRING) {

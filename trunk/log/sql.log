@@ -8248,3 +8248,29 @@
 2007-09-09T21:14:35-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// bsls_collection
 2007-09-09T21:14:49-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// bsls_collection
 2007-09-09T21:15:15-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// bsls_collection
+2007-09-11T11:20:47-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T11:20:47-05:00 : INSERT INTO item ( id, collection_id, created, item_type_id, last_update, serial_number, status_id ) VALUES ( nextval(('public.item_seq'::text)::regclass), :collection_id, :created, :item_type_id, :last_update, :serial_number, :status_id ) /// last insert id = 439820
+2007-09-11T11:21:51-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T11:22:54-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T11:22:54-05:00 : INSERT INTO item ( id, collection_id, created, item_type_id, last_update, serial_number, status_id ) VALUES ( nextval(('public.item_seq'::text)::regclass), :collection_id, :created, :item_type_id, :last_update, :serial_number, :status_id ) /// last insert id = 439821
+2007-09-11T11:32:29-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T11:32:29-05:00 : INSERT INTO item ( id, collection_id, created, item_type_id, last_update, serial_number, status_id ) VALUES ( nextval(('public.item_seq'::text)::regclass), :collection_id, :created, :item_type_id, :last_update, :serial_number, :status_id ) /// last insert id = 439822
+2007-09-11T11:32:29-05:00 : UPDATE item SET collection_id = ?,created = ?,item_type_id = ?,last_update = ?,serial_number = ?,status_id = ? WHERE id=? /// 105,,0,,000439822,0,439822
+2007-09-11T12:15:38-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T12:15:38-05:00 : INSERT INTO item ( id, collection_id, created, item_type_id, last_update, serial_number, status_id ) VALUES ( nextval(('public.item_seq'::text)::regclass), :collection_id, :created, :item_type_id, :last_update, :serial_number, :status_id ) /// last insert id = 439823
+2007-09-11T12:15:38-05:00 : UPDATE item SET collection_id = ?,created = ?,item_type_id = ?,last_update = ?,serial_number = ?,status_id = ? WHERE id=? /// 105,,0,,000439823,0,439823
+2007-09-11T12:24:00-05:00 : SELECT * FROM collection WHERE ascii_id = :ascii_id LIMIT 1 /// test_collection
+2007-09-11T12:24:00-05:00 : SELECT * FROM item WHERE collection_id = :collection_id AND serial_number = :serial_number LIMIT 1 /// 105,sssssss
+2007-09-11T12:24:00-05:00 : INSERT INTO item ( id, collection_id, created, item_type_id, last_update, serial_number, status_id ) VALUES ( nextval(('public.item_seq'::text)::regclass), :collection_id, :created, :item_type_id, :last_update, :serial_number, :status_id ) /// last insert id = 439824
+2007-09-11T13:12:07-05:00 : SELECT * FROM media_file WHERE  /// 
+2007-09-11T13:13:20-05:00 : SELECT * FROM media_file WHERE  /// 
+2007-09-11T13:13:28-05:00 : SELECT * FROM media_file WHERE  /// 
+2007-09-11T13:13:49-05:00 : SELECT * FROM media_file WHERE  /// 
+2007-09-11T18:13:01-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:13:24-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:13:55-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:39:58-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:40:11-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:42:17-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:43:20-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
+2007-09-11T18:53:38-05:00 : SELECT * FROM attribute WHERE collection_id = :collection_id /// 0
