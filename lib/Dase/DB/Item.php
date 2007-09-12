@@ -11,6 +11,11 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	public $thumbnail = null;
 	public $viewitem = null;
 
+	public static function createNew($collection_ascii_id,$serial_number= null) {
+		$c = Dase_DB_Collection::get($collection_ascii_id);
+		return $c->createNewItem($serial_number);
+	}
+
 	public function buildSearchIndex() {
 		$db = Dase_DB::get();
 		$sql = "
@@ -179,7 +184,11 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	function setValue($att_ascii_id,$value_text) {
 		$att = new Dase_DB_Attribute;
 		$att->ascii_id = $att_ascii_id;
-		$att->collection_id = $this->collection_id;
+		//allows for admin metadata, att_ascii for which
+		//always begins 'admin_'
+		if (false === strpos($att_ascii_id,'admin_')) {
+			$att->collection_id = $this->collection_id;
+		}
 		if ($att->findOne()) {
 			$v = new Dase_DB_Value;
 			$v->item_id = $this->id;

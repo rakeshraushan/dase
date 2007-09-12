@@ -607,15 +607,27 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return true;
 	}
 
-	function createNewItem() {
+	function createNewItem($serial_number = null) {
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
-		$item->status_id = 0;
-		$item->insert();
-		$item->serial_number = sprintf("%09d",$item->id);
-		$item->item_type_id = 0;
-		$item->update();
-		return $item;
+		if ($serial_number) {
+			$item->serial_number = $serial_number;
+			if ($item->findOne()) {
+				throw new Exception('duplicate serial number!');
+				return;
+			}
+			$item->status_id = 0;
+			$item->item_type_id = 0;
+			$item->insert();
+			return $item;
+		} else {
+			$item->status_id = 0;
+			$item->item_type_id = 0;
+			$item->insert();
+			$item->serial_number = sprintf("%09d",$item->id);
+			$item->update();
+			return $item;
+		}
 	}
 
 	function updated() {
