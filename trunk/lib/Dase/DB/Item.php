@@ -11,9 +11,17 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	public $thumbnail = null;
 	public $viewitem = null;
 
-	public static function createNew($collection_ascii_id,$serial_number= null) {
+	public static function create($collection_ascii_id,$serial_number= null) {
 		$c = Dase_DB_Collection::get($collection_ascii_id);
 		return $c->createNewItem($serial_number);
+	}
+
+	public static function retrieve($collection_ascii_id,$serial_number) {
+		$c = Dase_DB_Collection::get($collection_ascii_id);
+		$item = new Dase_DB_Item;
+		$item->collection_id = $c->id;
+		$item->serial_number = $serial_number;
+		return $item->findOne();
 	}
 
 	public function buildSearchIndex() {
@@ -218,6 +226,15 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$ast->item_id = $this->id;
 		foreach ($ast->findAll() as $row) {
 			$doomed = new Dase_DB_SearchTable($row);;
+			$doomed->delete();
+		}
+	}
+
+	function deleteMedia() {
+		$mf = new Dase_DB_MediaFile;
+		$mf->item_id = $this->id;
+		foreach ($mf->findAll() as $row) {
+			$doomed = new Dase_DB_MediaFile($row);
 			$doomed->delete();
 		}
 	}

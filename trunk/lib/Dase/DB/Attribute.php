@@ -57,4 +57,11 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		return($a->findOne());
 	}
 
+	public static function getAdmin($ascii_id) {
+		$a = new Dase_DB_Attribute;
+		$a->ascii_id = $ascii_id;
+		$a->collection_id = 0;
+		return($a->findOne());
+	}
+
 }

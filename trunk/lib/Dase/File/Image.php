@@ -38,14 +38,16 @@ class Dase_File_Image extends Dase_File
 		$size = getimagesize ( $this->filepath, $info);       
 		if(is_array($info) && isset($info["APP13"])) {   
 			$iptc = iptcparse($info["APP13"]);
-			foreach (array_keys($iptc) as $k) {             
-				foreach($iptc[$k] as $val) {
-					if (isset($iptc_table[$k]) && $val) {
-						//NOTE THAT REPEAT FIELDS ARE OK!!!!!!!!!!!
-						$iptc_metadata[$iptc_table[$k]][]  = $val;
+			if (is_array($iptc)) {
+				foreach (array_keys($iptc) as $k) {             
+					foreach($iptc[$k] as $val) {
+						if (isset($iptc_table[$k]) && $val) {
+							//NOTE THAT REPEAT FIELDS ARE OK!!!!!!!!!!!
+							$iptc_metadata[$iptc_table[$k]][]  = $val;
+						}
 					}
-				}
-			}                 
+				}                 
+			}
 		}            
 		foreach($iptc_metadata as $k => $v) {
 			//collapse multiples into a csv
@@ -66,6 +68,13 @@ class Dase_File_Image extends Dase_File
 
 
 	function getExif() {
+
+		//exif_read_data only gooss w/ jpg & tif
+		if (strpos($this->mime_type,'jpg') ||
+			strpos($this->mime_type, 'tif') ||
+			strpos($this->mime_type, 'jpeg') ||
+			strpos($this->mime_type, 'tiff'))
+		{
 		/*
 		$exif_table['FileName'] = 'admin_exif_XXXX';
 		$exif_table['FileDateTime'] = 'admin_exif_XXXX';
@@ -98,111 +107,97 @@ class Dase_File_Image extends Dase_File
 		$exif_table['ImageNumber'] = 'admin_exif_XXXX';
 		$exif_table['OwnerName'] = 'admin_exif_XXXX';
 		 */
-		$exif_table['DateTime'] = 'admin_exif_datetime';
-		$exif_metadata = array();
-		$exif = exif_read_data($this->filepath);
-		foreach ($exif as $k => $val) {
-			if (isset($exif_table[$k]) && $val) {
-				$exif_metadata[$exif_table[$k]] = $val;
+			$exif_table['DateTime'] = 'admin_exif_datetime';
+			$exif_metadata = array();
+			$exif = exif_read_data($this->filepath);
+			if (is_array($exif)) {
+				foreach ($exif as $k => $val) {
+					if (isset($exif_table[$k]) && $val) {
+						$exif_metadata[$exif_table[$k]] = $val;
+					}
+				}
+				foreach ($exif_metadata as $k => $v) {
+					$this->metadata[$k] = $v;
+				}
+				return $exif_metadata;
 			}
 		}
-		foreach ($exif_metadata as $k => $v) {
-			$this->metadata[$k] = $v;
-		}
-		return $exif_metadata;
 	}
 
-	function makeThumbnail($media_path,$item_id,$make_new = 0) {
-		require_once 'DataObjects/Media_file.php';
-		if ($make_new) {
-			$this->tmp_path = "/tmp/$this->serial_number";
-			$results = exec("convert xc:#ffffff -resize 80X40! -gravity 'Center' -fill '#b2170f' -draw 'text 0,0 \"$this->serial_number\"' $this->tmp_path.jpeg");
-		} else {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $this->tmp_path");
-		}
-		$mogrified_file = "$this->tmp_path" . ".jpeg";
-		$thumbnail = "$media_path/thumbnails/$this->serial_number" . '_100.jpg';  
-		rename($mogrified_file,$thumbnail);
-		$thumb_file_info = getimagesize($thumbnail);
+	function makeThumbnail($item,$collection) {
+		$thumbnail = $collection->path_to_media_files . "/thumbnails/$item->serial_number" . '_100.jpg';  
+		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");
+		$file_info = getimagesize($thumbnail);
 
-		//create the media_file entry
-		$media_file = new DataObjects_Media_file;
-		$media_file->item_id = $item_id;
-		$media_file->filename = $this->serial_number . '_100.jpg';
-		if ($thumb_file_info) {
-			$media_file->width = $thumb_file_info[0];
-			$media_file->height = $thumb_file_info[1];
+		$media_file = new Dase_DB_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $item->serial_number . '_100.jpg';
+		if ($file_info) {
+			$media_file->width = $file_info[0];
+			$media_file->height = $file_info[1];
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'thumbnail';
-		$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-		$media_file->p_serial_number = $this->serial_number;
+		$media_file->p_collection_ascii_id = $collection->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
+		print "created $media_file->size $media_file->filename\n";
 	}
 
-	function makeViewitem($media_path,$item_id,$make_new = 0) {
-		require_once 'DataObjects/Media_file.php';
-		if ($make_new) {
-			$this->tmp_path = "/tmp/$this->serial_number";
-			$results = exec("convert xc:#ffffff -resize 80X40! -gravity 'Center' -fill '#b2170f' -draw 'text 0,0 \"$this->serial_number\"' $this->tmp_path.jpeg");
-		} else {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '400x400 >' -colorspace RGB $this->tmp_path");
-		}
-		$mogrified_file = "$this->tmp_path" . ".jpeg";
-		$viewitem = "$media_path/400/$this->serial_number" . '_400.jpg';  
-		rename($mogrified_file,$viewitem);
+	function makeViewitem($item,$collection) {
+		$viewitem = $collection->path_to_media_files . "/400/$item->serial_number" . '_400.jpg';  
+		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '400x400 >' -colorspace RGB $viewitem");
 		$file_info = getimagesize($viewitem);
 
-		//create the media_file entry
-		$media_file = new DataObjects_Media_file;
-		$media_file->item_id = $item_id;
-		$media_file->filename = $this->serial_number . '_400.jpg';
+		$media_file = new Dase_DB_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $item->serial_number . '_400.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
 			$media_file->height = $file_info[1];
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'viewitem';
-		$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-		$media_file->p_serial_number = $this->serial_number;
+		$media_file->p_collection_ascii_id = $collection->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
+		print "created $media_file->size $media_file->filename\n";
 	}
 
-	function makeSizes($media_path,$item_id) {
-		require_once 'DataObjects/Media_file.php';
+	function makeSizes($item,$collection) {
 		$image_properties = array(
-			small => array(
-				geometry        => '640x480',
-				max_height      => '480',
-				size_tag        => '_640'
+			'small' => array(
+				'geometry'        => '640x480',
+				'max_height'      => '480',
+				'size_tag'        => '_640'
 			),
-			medium => array(
-				geometry        => '800x600',
-				max_height      => '600',
-				size_tag        => '_800'
+			'medium' => array(
+				'geometry'        => '800x600',
+				'max_height'      => '600',
+				'size_tag'        => '_800'
 			),
-			large => array(
-				geometry        => '1024x768',
-				max_height      => '768',
-				size_tag        => '_1024'
+			'large' => array(
+				'geometry'        => '1024x768',
+				'max_height'      => '768',
+				'size_tag'        => '_1024'
 			),
-			full => array(
-				geometry        => '3600x2700',
-				max_height      => '2700',
-				size_tag        => '_3600'
+			'full' => array(
+				'geometry'        => '3600x2700',
+				'max_height'      => '2700',
+				'size_tag'        => '_3600'
 			),
 		);
+		$last_width = '';
+		$last_height = '';
 		foreach ($image_properties as $size => $size_info) {
-			$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $this->tmp_path");
-			$mogrified_file = "$this->tmp_path" . ".jpeg";
-			$newimage = "$media_path/$size/$this->serial_number$size_info[size_tag].jpg";  
-			rename($mogrified_file,$newimage);
+			$newimage = $collection->path_to_media_files . "/$size/$item->serial_number{$size_info['size_tag']}.jpg";  
+			$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $newimage");
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry
-			$media_file = new DataObjects_Media_file;
-			$media_file->item_id = $item_id;
-			$media_file->filename = "$this->serial_number$size_info[size_tag].jpg";
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $item->id;
+			$media_file->filename = "$item->serial_number{$size_info['size_tag']}.jpg";
 			if ($file_info) {
 				$media_file->width = $file_info[0];
 				$media_file->height = $file_info[1];
@@ -216,10 +211,11 @@ class Dase_File_Image extends Dase_File
 			$last_height = $media_file->height;
 			$media_file->mime_type = 'image/jpeg';
 			$media_file->size = $size;
-			$media_file->p_collection_ascii_id = $this->collection_ascii_id;
-			$media_file->p_serial_number = $this->serial_number;
+			$media_file->p_collection_ascii_id = $collection->ascii_id;
+			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
+			print "created $media_file->size $media_file->filename\n";
 		}
-	}
 
+	}
 }
