@@ -1,28 +1,39 @@
 <?php
 
+class Dase_Upload_Exception extends Exception {
+}
+
 class Dase_Upload
 {
 	//this class represents an instance of a file being added to an item
 
+	private $exception = null;
+	protected $collection;
 	protected $file;
 	protected $item;
-	protected $collection;
-	private $is_dup = false;
 	protected $metadata = array();
+	public $message = '';
 
-	public function __construct(Dase_File $file,$collection_ascii_id,$overwrite = false) {
+	public function __construct(Dase_File $file,Dase_DB_Collection $collection) {
 		$this->file = $file;
-		$this->collection = Dase_DB_Collection::get($collection_ascii_id);
-		if (!$this->isDuplicate()) {
-			if ($overwrite) {
-				//in theory, this'll get the existing item w/ proper sernum
-				//this should also be a safe no-side-effect way to check for dups
-				//note thaht the use case is after image color-correction, so it will NOT be a dup
-				$this->item = Dase_DB_Item::retrieve($collection_ascii_id,$this->file->getFilename());
-			} else {
-				$this->item = Dase_DB_Item::create($collection_ascii_id);
-			}
+		$this->collection = $collection;
+		if ($this->isDuplicate()) {
+			throw new Dase_Upload_Exception("Error: duplicate file found: " . $this->file->getFilepath());
 		}
+	}
+
+	function createItem() {
+		$this->item = Dase_DB_Item::create($this->collection->ascii_id);
+		return "CREATED " . $this->item->serial_number . "\n";
+	}
+
+	function retrieveItem() {
+		$this->item = Dase_DB_Item::retrieve($this->collection->ascii_id,$this->file->getFilename());
+		if ($this->item->id) {
+			return "RETRIEVED " . $this->item->serial_number . "\n";
+		} else {
+			return "NO ITEM RETRIEVED (" . $this->file->getFilename() . ")\n";
+		}	
 	}
 
 	function isDuplicate() {
@@ -34,31 +45,58 @@ class Dase_Upload
 			$it = new Dase_DB_Item;
 			$it->load($row['item_id']);
 			if ($it->collection_id == $this->collection->id) {
-				print "duplicate file found {$meta['admin_filepath']}\n";
-				$this->is_dup = true;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	function ingest() {
-		if (!$this->is_dup) {
-			$this->file->makeThumbnail($this->item,$this->collection);
-			$this->file->makeViewitem($this->item,$this->collection);
-			$this->file->makeSizes($this->item,$this->collection);
-
-			foreach ($this->getMetadata() as $ascii => $val) {
-				$this->item->setValue($ascii,$val);
-			}
+	function deleteItemMedia() {
+		$msg = '';
+		$mf = new Dase_DB_MediaFile;
+		$mf->item_id = $this->item->id;
+		foreach ($mf->findAll() as $row) {
+			$m = new Dase_DB_MediaFile($row);
+			$msg .= "DELETING {$row['size']} for " . $this->item->serial_number . "\n";
+			//$m->delete();
 		}
+		return $msg;
+	}
+
+	function moveFileTo($destdir) {
+		$dest = trim($destdir,'/') . '/' . $this->file->getBasename(); 
+		//try {
+		//$this->file->moveTo($dest);
+		//} catch (Exception $e){
+		//	throw new Dase_Upload_Exception("Error: could not move " . $this->file->getFilepath() . " to $dest\n");
+		//}
+		return "MOVED " . $this->file->getFilepath() . " to $dest\n";
+	}
+
+	function ingest() {
+		$msg = '';
+		$msg .= $this->file->makeThumbnail($this->item,$this->collection);
+		$msg .= $this->file->makeViewitem($this->item,$this->collection);
+		$msg .= $this->file->makeSizes($this->item,$this->collection);
+
+		foreach ($this->getMetadata() as $ascii => $val) {
+			$this->item->setValue($ascii,$val);
+		}
+		$msg .= "added admin metadata\n";
+		return $msg;
+	}
+
+	function buildSearchIndex() {
+		return $this->item->buildSearchIndex();
+	}
+
+	function deleteItemAdminMetadata() {
+		return $this->item->deleteAdminValues();
 	}
 
 	function setTitle() {
-		if (!$this->is_dup) {
-			$name = $this->file->getFilename();
-			$this->item->setValue('title',$name);
-		}
+		$name = $this->file->getFilename();
+		$this->item->setValue('title',$name);
 	}
 
 	function getMetadata() {
