@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:vrc="/mnt/projects/vrc_collection/1.0" xml:base="/mnt/projects/vrc_collection/">
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>STEEN, JAN</vrc:acc_mainentry>
+  <title>Dissolute Household.</title>
+  <vrc:acc_cat1>374</vrc:acc_cat1>
+  <vrc:acc_cat2>S814</vrc:acc_cat2>
+  <vrc:acc_box>DIGI-vr</vrc:acc_box>
+  <vrc:acc_cycle>326</vrc:acc_cycle>
+  <vrc:mat_desc>oil on canvas</vrc:mat_desc>
+  <vrc:med_name>Painting</vrc:med_name>
+  <vrc:req_desc>Franits, Wayne, Dutch Seventeenth-Century Genre Painting, 2004, flat scan</vrc:req_desc>
+  <vrc:acc_d>Jul 31 2007 09:42AM</vrc:acc_d>
+  <vrc:acc_dimension>80.5 x 89cm</vrc:acc_dimension>
+  <vrc:acc_other_mus>London, Apsley House, Wellington Museum. On loan from V&amp;A</vrc:acc_other_mus>
+  <vrc:acc_cty_name_fk>Netherlands</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>07-06646.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>VRCmd8/07</vrc:acc_dig_type>
+  <vrc:acc_num_PK>07-06646</vrc:acc_num_PK>
+  <vrc:acc_mainentry_d>c.1661-4</vrc:acc_mainentry_d>
+  <vrc:acc_item>p.207</vrc:acc_item>
+  <vrc:acc_modified>Aug 01 2007 03:01PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/07-06646_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/07-06646_400.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/07-06646_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/07-06646_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/07-06646_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/full/07-06646_3600.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>WEINER, LAWRENCE</vrc:acc_mainentry>
+  <title>Object Tossed from One Country to Another.</title>
+  <vrc:acc_cat1>912</vrc:acc_cat1>
+  <vrc:acc_cat2>W423</vrc:acc_cat2>
+  <vrc:acc_cat3>Ob1B</vrc:acc_cat3>
+  <vrc:acc_cycle>1</vrc:acc_cycle>
+  <vrc:med_name>Contemporary Archives</vrc:med_name>
+  <vrc:req_desc>Qualls, Weiner</vrc:req_desc>
+  <vrc:acc_d>Jul 07 2003 12:00AM</vrc:acc_d>
+  <vrc:acc_other_mus>New York City, John Weber Gall.ctsy</vrc:acc_other_mus>
+  <vrc:acc_cty_name_fk>United States</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-01420.tif</vrc:acc_digital_num>
+  <vrc:acc_num_PK>00-01420</vrc:acc_num_PK>
+  <vrc:acc_mainentry_d>1968</vrc:acc_mainentry_d>
+  <vrc:acc_item>1</vrc:acc_item>
+  <vrc:acc_modified>Aug 14 2007 04:24PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-01420_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-01420_400.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-01420_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-01420_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-01420_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/full/00-01420_3600.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>OCCULTISM</vrc:acc_mainentry>
+  <title>L' Exteriorisation de la Sensibilite. Layers Around Outside of Subject.</title>
+  <vrc:acc_cat1>907</vrc:acc_cat1>
+  <vrc:acc_cat2>O15</vrc:acc_cat2>
+  <vrc:acc_cat3>Ro1G1A</vrc:acc_cat3>
+  <vrc:acc_box>He-32</vrc:acc_box>
+  <vrc:acc_cycle>1</vrc:acc_cycle>
+  <vrc:med_name>Illustrative Material</vrc:med_name>
+  <vrc:req_desc>Clair, Jean. Duchamp et la photographie, Essai d'analyse d'un primat technique sur le developpement d'une oeuvre, 1977</vrc:req_desc>
+  <vrc:acc_d>May 16 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02823.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>VRCmd10/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02823</vrc:acc_num_PK>
+  <vrc:c_slide>ROCHAS D'AIGLUN, ALBERT DE</vrc:c_slide>
+  <vrc:acc_role_name_fk>author</vrc:acc_role_name_fk>
+  <vrc:acc_item>p.24</vrc:acc_item>
+  <vrc:acc_modified>Apr 17 2007 12:30PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02823_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02823_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02823_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02823_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02823_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02823_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>SPIRIT PHOTOGRAPHY</vrc:acc_mainentry>
+  <title>Les Rayons V article with image of Louis Darget in &quot;La Vie Mysterieuse&quot;.</title>
+  <vrc:acc_cat1>907</vrc:acc_cat1>
+  <vrc:acc_cat2>S759</vrc:acc_cat2>
+  <vrc:acc_cat3>DRa1</vrc:acc_cat3>
+  <vrc:acc_box>He-32</vrc:acc_box>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:med_name>Illustrative Material</vrc:med_name>
+  <vrc:req_desc>La Vie Mysterieuse, Journal Populaire Illustre des Seiences Psychiques et Occultes. Feb. 10, 1913, pg. 13. ( xerox )</vrc:req_desc>
+  <vrc:acc_d>May 20 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02824.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>DC7/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02824</vrc:acc_num_PK>
+  <vrc:acc_item>p.33</vrc:acc_item>
+  <vrc:acc_modified>Apr 17 2007 12:30PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02824_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02824_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02824_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02824_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02824_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02824_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>SCIENCE HISTORY</vrc:acc_mainentry>
+  <title>&quot;L' Evolution de la Matiere&quot;. Title Page.</title>
+  <vrc:acc_cat1>907</vrc:acc_cat1>
+  <vrc:acc_cat2>S416</vrc:acc_cat2>
+  <vrc:acc_cat3>Le1A</vrc:acc_cat3>
+  <vrc:acc_box>He-32</vrc:acc_box>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:med_name>Illustrative Material</vrc:med_name>
+  <vrc:req_desc>Le Bon, Gustave. L'evolution de la Matiere, 1905</vrc:req_desc>
+  <vrc:acc_d>May 20 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02825.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>VRCmd7/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02825</vrc:acc_num_PK>
+  <vrc:acc_mainentry_d>1905</vrc:acc_mainentry_d>
+  <vrc:c_slide>LE BON, GUSTAVE</vrc:c_slide>
+  <vrc:acc_role_name_fk>author</vrc:acc_role_name_fk>
+  <vrc:acc_item>title p</vrc:acc_item>
+  <vrc:acc_modified>Apr 17 2007 12:30PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02825_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02825_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02825_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02825_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02825_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02825_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>BYZANTINE</vrc:acc_mainentry>
+  <title>Icon: Archangel Michael</title>
+  <vrc:acc_box>Pe-16</vrc:acc_box>
+  <vrc:acc_cycle>2</vrc:acc_cycle>
+  <vrc:med_name>Painting</vrc:med_name>
+  <vrc:mus_name>Byzantine and Christian Museum</vrc:mus_name>
+  <vrc:mus_city>ATHENS</vrc:mus_city>
+  <vrc:acc_keyword>icons</vrc:acc_keyword>
+  <vrc:req_desc>Vokotoponlos, P.L.,  Byzantine Eikones, 1995</vrc:req_desc>
+  <vrc:acc_d>Mar 28 2003 12:00AM</vrc:acc_d>
+  <vrc:acc_slide_status>A</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02874.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>VRCjh12/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02874</vrc:acc_num_PK>
+  <vrc:acc_mainentry_d>c.1350-1375</vrc:acc_mainentry_d>
+  <vrc:acc_item>fig.95</vrc:acc_item>
+  <vrc:acc_modified>Dec 14 2006 10:00AM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02874_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02874_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02874_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02874_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02874_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02874_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>AUSTIN. UT</vrc:acc_mainentry>
+  <title>View of Campus from Tower to NW.</title>
+  <vrc:acc_cat1>182</vrc:acc_cat1>
+  <vrc:acc_cat2>A935B</vrc:acc_cat2>
+  <vrc:acc_cat3>1.1H1B1</vrc:acc_cat3>
+  <vrc:acc_title2>University of Texas</vrc:acc_title2>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:med_name>Architecture</vrc:med_name>
+  <vrc:req_desc>Hamilton, Brad, original photography</vrc:req_desc>
+  <vrc:acc_d>May 01 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_cty_name_fk>United States</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02895.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>DC7/07</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02895</vrc:acc_num_PK>
+  <vrc:acc_modified>Aug 03 2007 04:49PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02895_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02895_400.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02895_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02895_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02895_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02895_3600.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>AUSTIN. UT</vrc:acc_mainentry>
+  <title>Portrait Statue of Martin Luther King, Jr.</title>
+  <vrc:acc_cat1>182</vrc:acc_cat1>
+  <vrc:acc_cat2>A935B</vrc:acc_cat2>
+  <vrc:acc_cat3>1.7Ki1A</vrc:acc_cat3>
+  <vrc:acc_title2>University of Texas</vrc:acc_title2>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:mat_desc>bronze</vrc:mat_desc>
+  <vrc:med_name>Architecture</vrc:med_name>
+  <vrc:req_desc>Hamilton, Brad, original photography</vrc:req_desc>
+  <vrc:acc_d>May 01 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_cty_name_fk>United States</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02896.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>DC8/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02896</vrc:acc_num_PK>
+  <vrc:c_slide>VARILLA, JEFFREY &amp; ANA KOH</vrc:c_slide>
+  <vrc:acc_role_name_fk>sculptor</vrc:acc_role_name_fk>
+  <vrc:acc_modified>Sep 08 2006 01:30PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02896_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02896_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02896_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02896_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02896_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02896_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>AUSTIN. UT</vrc:acc_mainentry>
+  <title>Portrait Statue of Martin Luther King, Jr.</title>
+  <vrc:acc_cat1>182</vrc:acc_cat1>
+  <vrc:acc_cat2>A935B</vrc:acc_cat2>
+  <vrc:acc_cat3>1.7Ki1B1</vrc:acc_cat3>
+  <vrc:acc_title2>University of Texas</vrc:acc_title2>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:mat_desc>bronze</vrc:mat_desc>
+  <vrc:med_name>Architecture</vrc:med_name>
+  <vrc:req_desc>Hamilton, Brad, original photography</vrc:req_desc>
+  <vrc:acc_d>May 01 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_cty_name_fk>United States</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02897.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>DC8/06</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02897</vrc:acc_num_PK>
+  <vrc:c_slide>VARILLA, JEFFREY &amp; ANA KOH</vrc:c_slide>
+  <vrc:acc_role_name_fk>sculptor</vrc:acc_role_name_fk>
+  <vrc:acc_modified>Sep 08 2006 01:30PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02897_3600.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02897_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02897_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02897_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02897_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02897_400.jpg"/>
+ </entry>
+ <entry xml:base="/mnt/projects/vrc_collection/">
+  <vrc:acc_mainentry>AUSTIN. UT</vrc:acc_mainentry>
+  <title>Littlefield Fountain.</title>
+  <vrc:acc_cat1>182</vrc:acc_cat1>
+  <vrc:acc_cat2>A935B</vrc:acc_cat2>
+  <vrc:acc_cat3>1.6L1B1</vrc:acc_cat3>
+  <vrc:acc_title2>University of Texas</vrc:acc_title2>
+  <vrc:acc_cycle>3</vrc:acc_cycle>
+  <vrc:mat_desc>sculpture</vrc:mat_desc>
+  <vrc:med_name>Architecture</vrc:med_name>
+  <vrc:req_desc>Hamilton, Brad, original photography</vrc:req_desc>
+  <vrc:acc_d>May 01 2002 12:00AM</vrc:acc_d>
+  <vrc:acc_cty_name_fk>United States</vrc:acc_cty_name_fk>
+  <vrc:acc_slide_status>L</vrc:acc_slide_status>
+  <vrc:acc_digital_num>00-02901.tif</vrc:acc_digital_num>
+  <vrc:acc_dig_type>DC7/07</vrc:acc_dig_type>
+  <vrc:acc_num_PK>00-02901</vrc:acc_num_PK>
+  <vrc:acc_mainentry_d>1933</vrc:acc_mainentry_d>
+  <vrc:c_slide>COPPINI, POMPEO</vrc:c_slide>
+  <vrc:acc_role_name_fk>sculptor</vrc:acc_role_name_fk>
+  <vrc:acc_modified>Aug 03 2007 04:49PM</vrc:acc_modified>
+  <link href="/mnt/projects/vrc_collection/media/thumbnail/00-02901_100.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/viewitem/00-02901_400.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/small/00-02901_640.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/medium/00-02901_800.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/large/00-02901_1024.jpg"/>
+  <link href="/mnt/projects/vrc_collection/media/full/00-02901_3600.jpg"/>
+ </entry>
+</feed>

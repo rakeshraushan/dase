@@ -141,7 +141,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		print "created $media_file->size $media_file->filename\n";
+		return "created $media_file->size $media_file->filename\n";
 	}
 
 	function makeViewitem($item,$collection) {
@@ -161,10 +161,11 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		print "created $media_file->size $media_file->filename\n";
+		return "created $media_file->size $media_file->filename\n";
 	}
 
 	function makeSizes($item,$collection) {
+		$msg = '';
 		$image_properties = array(
 			'small' => array(
 				'geometry'        => '640x480',
@@ -214,8 +215,8 @@ class Dase_File_Image extends Dase_File
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
-			print "created $media_file->size $media_file->filename\n";
+			$msg .= "created $media_file->size $media_file->filename\n";
 		}
-
+		return $msg;
 	}
 }

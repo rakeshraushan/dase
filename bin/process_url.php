@@ -1,7 +1,25 @@
 <?php 
 
+/************ configuration *********************/
+
+//$database = 'dase_prod';
+$collection_ascii_id = 'test_collection';
+$root = "http://webspace.utexas.edu";
+$dir = "/keanepj/www/peter_keane/another_kind_of_blue";
+
+/******************************************/
+
 include 'cli_setup.php';
-function processUrl($url) {
+$collection = Dase_DB_Collection::get($collection_ascii_id);
+$rel_links = array();
+foreach(file($root . $dir) as $line) {
+	$matches = array();
+	if (preg_match('/href=([^>]*)>/i',$line,$matches)) {
+		processUrl($root . $matches[1],$collection);
+	}
+}
+
+function processUrl($url,$collection) {
 	$basename = basename($url);
 	$headers = get_headers($url);
 	foreach ($headers as $hdr) {
@@ -11,12 +29,14 @@ function processUrl($url) {
 					$token = time();
 					$tmp_filename = "/tmp/$token$basename";
 					file_put_contents($tmp_filename,file_get_contents($url));
-					$new_file = new Dase_File($tmp_filename);
-					$new_file->ingest();
-					//print filesize($tmp_filename);
-					//$output = array();
-					//exec("file -i -b $tmp_filename",$output);
-					//print " " . $output[0] . "\n";
+					try {
+						$u = new Dase_Upload(Dase_File::newFile($tmp_filename),$collection);
+						print $u->createItem();
+						print $u->ingest();
+						print $u->buildSearchIndex();
+					} catch(Exception $e) {
+						print $e->getMessage() . "\n";
+					}
 					unlink($tmp_filename);
 				}
 			}

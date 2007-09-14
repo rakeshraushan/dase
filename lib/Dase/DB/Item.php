@@ -80,6 +80,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$search_table->insert();
 		$this->last_update = time();
 		$this->update();
+		return "built indexes for " . $this->serial_number . "\n";
 	}
 
 	public function getValues() {
@@ -228,6 +229,21 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$doomed = new Dase_DB_SearchTable($row);;
 			$doomed->delete();
 		}
+	}
+
+	function deleteAdminValues() {
+		$a = new Dase_DB_Attribute;
+		$a->collection_id = 0;
+		foreach ($a->findAll() as $row) {
+			$v = new Dase_DB_Value;
+			$v->item_id = $this->id;
+			$v->attribute_id = $row['id'];
+			foreach ($v->findAll() as $row) {
+				$doomed = new Dase_DB_Value($row);
+				$doomed->delete();
+			}
+		}
+		return "deleted admin metadata for " . $this->serial_number . "\n";
 	}
 
 	function deleteMedia() {
