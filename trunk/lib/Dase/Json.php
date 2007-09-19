@@ -1,41 +1,41 @@
 <?php
 //from O'Reilly ShortCut Ajax with PHP5
-
-class Dase_Json { 
-	private static function PrintArray($data,$level) 
+class Dase_Json 
+{ 
+	private static function printArray($data,$level) 
 	{
 		echo "[";
 		foreach ( $data as $value ) { 
-			Dase_Json::PrintData($value,$level+1); 
+			Dase_Json::printData($value,$level+1); 
 			if ( (++$i) != count($data) ) echo ",";
 		}
 		echo "]"; 
 	} 
-	private static function PrintObject($data,$level) 
+	private static function printObject($data,$level) 
 	{
 		echo "{"; 
 		$i=0; 
 		foreach ( $data as $key => $value ) {
 			echo "\"$key\":"; 
-			Dase_Json::PrintData($value,$level+1); 
+			Dase_Json::printData($value,$level+1); 
 			if ( (++$i) != count($data) ) echo ",";
 		}
 		echo "}"; 
 	} 
-	public static function PrintData($data,$level) 
+	public static function printData($data,$level) 
 	{
 		if ( is_array($data) ) 
 		{ 
 			if ( is_numeric(implode(array_keys($data))) ) 
-				Dase_Json::PrintArray($data,$level); 
+				Dase_Json::printArray($data,$level); 
 			else 
-				Dase_Json::PrintObject($data,$level); 
+				Dase_Json::printObject($data,$level); 
 		} else { 
 			echo "\"".$data."\"";
 		} 
 	} 
-	public static function PrintFromArray( array $data ) 
+	public static function printFromArray( array $data ) 
 	{
-		Dase_Json::PrintData($data,1);
+		Dase_Json::printData($data,1);
 	}
 }
