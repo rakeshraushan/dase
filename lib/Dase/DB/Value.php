@@ -5,6 +5,7 @@ require_once 'Dase/DB/Autogen/Value.php';
 class Dase_DB_Value extends Dase_DB_Autogen_Value 
 {
 	public $attribute_name;
+	public $attribute_ascii_id;
 
 	//this might need renaming????????
 	function getAttributeName() {
