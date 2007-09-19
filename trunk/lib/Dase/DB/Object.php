@@ -5,7 +5,7 @@ require_once 'Dase/DB.php';
 class Dase_DB_Object {
 	public $id = 0;
 	private $table;
-	private $fields = array();
+	private $fields = array(); 
 	protected $limit;
 	protected $order_by;
 	protected $qualifiers = array();

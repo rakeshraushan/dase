@@ -198,6 +198,28 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
+	function getItemsByAV($att_ascii_id,$value_text,$substr = false) {
+		$a = new Dase_DB_Attribute;
+		$a->ascii_id = $att_ascii_id;
+		$a->collection_id = $this->id;
+		$a->findOne();
+
+		$v = new Dase_DB_Value;
+		$v->attribute_id = $a->id;
+		if ($substr) {
+			$v->addWhere('value_text',"%$value_text%",'like');
+		} else {
+			$v->value_text = $value_text;
+		}
+		$items = array();
+		foreach ($v->findAll() as $vrow) {
+			$it = new Dase_DB_Item;
+			$it->load($vrow['item_id']);
+			$items[] = $it;
+		}
+		return $items;
+	}
+
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
 		$writer = new XMLWriter();
 		$writer->openMemory();

@@ -1,9 +1,9 @@
 <?php
 
-$database = 'dase_prod';
+#$database = 'dase_prod';
 include 'cli_setup.php';
 
-$coll = 'ut_collection';
+$coll = 'bsls_collection';
 $c = Dase_DB_Collection::get($coll);
 
 $status = new Dase_DB_ItemStatus;

@@ -3,8 +3,10 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'ut_collection';
-$REPOS = "/mnt/dar/fa/utcp/";
+#$collection_ascii_id = 'ut_collection';
+#$REPOS = "/mnt/dar/fa/utcp/";
+$collection_ascii_id = 'bsls_collection';
+$REPOS = "/mnt/projects/bsls/DASE weekly upload/";
 
 /******************************************/
 
@@ -18,7 +20,7 @@ foreach ($dir as $file) {
 	if (false === strpos($file->getPathname(),'/.') && $file->isFile()
 		) {
 			try {
-				print $u = new Dase_Upload(Dase_File::newFile($file->getPathname()),$collection);
+				$u = new Dase_Upload(Dase_File::newFile($file->getPathname()),$collection);
 				print $u->createItem();
 				print $u->ingest();
 				print $u->setTitle();
