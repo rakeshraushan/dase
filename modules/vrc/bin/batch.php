@@ -23,6 +23,7 @@ foreach ($dir as $file) {
 	if (!strpos($file,'/.')) {
 		if (strpos($file,'.jpg') || strpos($file,'.tif')) {
 			$images[basename($file)]= $file->getPathname();
+			print $file->getFilename() . "\n";
 		}
 	}
 }
