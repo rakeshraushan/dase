@@ -152,4 +152,24 @@ class Dase_Xml_Collection
 		$doc->formatOutput = true;
 		return $doc->saveXML();
 	}
+
+	function getAttVals($att_ascii_id) {
+		$att_vals = array();
+		$r = new XMLReader();
+		$r->open($this->xml_file);
+		while ($r->read()) {
+			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'metadata') {
+				$r->moveToAttribute('value_text_md5');
+				$vt_md5 = $r->value;
+				$r->moveToAttribute('attribute_ascii_id');
+				$aa = $r->value;
+				$r->read();
+				$vt = $r->value;
+				if ($att_ascii_id == $aa) {
+					$att_vals[$vt_md5] = $vt;
+				}
+			}
+		}
+		return $att_vals;
+	}
 }

@@ -97,5 +97,6 @@
   <route action="manage/routes" auth="superuser"/>
 
   <route action="manage/phpinfo" auth="superuser"/>
+  <route action="manage/stats" auth="superuser"/>
 
 </routes>

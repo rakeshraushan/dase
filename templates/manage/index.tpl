@@ -23,12 +23,37 @@
 <li><a href="manage/log/sql">sql log</a></li>
 <li><a href="manage/log/error">error log</a></li>
 <li><a href="manage/modules">modules</a></li>
+<li><a href="manage/stats">stats</a></li>
 </ul>
 
 </div>
 
 
 <div class="center">
+
+{if $top_ten}
+<div class="topTen">
+<h1>Top Collections: most used* images</h1>
+<dl>
+{foreach from=$top_ten item=num key=name}
+<dt>{$name}</dt>
+<dd>{$num}</dd>
+{/foreach}
+</dl>
+<h5>*included in a cart, user collection, or slideshow</h5>
+</div>
+<br/>&nbsp;<br/>
+<div class="topTen">
+<h1>Top Collections: by size</h1>
+<dl>
+{foreach from=$by_size item=num key=name}
+<dt>{$name}</dt>
+<dd>{$num}</dd>
+{/foreach}
+</dl>
+</div>
+{/if}
+
 
 {if $routes}
 {foreach from=$routes key=method item=sroutes}

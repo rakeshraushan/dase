@@ -18,6 +18,29 @@ apacheWrite("$working/log/sql.log", 'apache');
 apacheWrite("$working/log/remote.log", 'apache');
 apacheWrite("$working/log/standard.log", 'apache');
 
+
+/************************************************************/
+
+/*
+$target = '/var/www/html/dase/modules/elucy';
+$group = 'eskeletons';
+print "...";
+print "resetting elucy privileges\n";
+chgrp($target,$group);
+$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($target));
+foreach($dir as $file) {
+chgrp($file->getPathname(),$group);
+}
+
+$dir = new RecursiveDirectoryIterator($target);
+foreach($dir as $file) {
+chgrp($file->getPathname(),$group);
+}
+
+*/
+/***********************************************************/
+
+
 print "done!\n";
 
 function apacheWrite($file,$httpd_group) {
