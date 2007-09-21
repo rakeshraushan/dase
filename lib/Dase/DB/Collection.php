@@ -199,7 +199,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
-	function getItemsByAV($att_ascii_id,$value_text,$substr = false) {
+	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
 		$a = new Dase_DB_Attribute;
 		$a->ascii_id = $att_ascii_id;
 		$a->collection_id = $this->id;
@@ -221,7 +221,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $items;
 	}
 
-	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
+	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
@@ -282,6 +282,20 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$writer->endElement();
 		$writer->endDocument();
 		return $writer->flush(true);
+	}
+
+	function getItemsByType($type_ascii_id) {
+		$it = new Dase_DB_ItemType;
+		$it->collection_id = $this->id;
+		$it->ascii_id = $type_ascii_id;
+		$it->findOne();
+		$ite = new Dase_DB_Item;
+		$ite->item_type_id = $it->id;
+		foreach ($ite->findAll() as $row) {
+			$item = new Dase_DB_ItemType($row);
+			$item_array[] = $item;
+		}
+		return $item_array;
 	}
 
 	function getItemsXmlByType($type_ascii_id) {
@@ -452,20 +466,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$type->orderBy('name');
 		$this->item_type_array = $type->findAll();
 		return $this->item_type_array;
-	}
-
-	function getItemsByType($type_ascii_id) {
-		$it = new Dase_DB_ItemType;
-		$it->collection_id = $this->id;
-		$it->ascii_id = $type_ascii_id;
-		$it->findOne();
-		$ite = new Dase_DB_Item;
-		$ite->item_type_id = $it->id;
-		foreach ($ite->findAll() as $row) {
-			$item = new Dase_DB_ItemType($row);
-			$item_array[] = $item;
-		}
-		return $item_array;
 	}
 
 	public static function insertCollection($xml) {
