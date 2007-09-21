@@ -4,7 +4,7 @@ $coll = Dase_DB_Collection::get('efossils_collection');
 	//$sx = new SimpleXMLElement($i->getXml());
 
 
-print_r($coll->getItemsByAttVal('resource_uri','/home'));
+print_r($coll->getItemsXmlByAttVal('resource_uri','/home'));
 
 exit;
 

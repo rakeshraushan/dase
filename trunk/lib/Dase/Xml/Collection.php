@@ -120,7 +120,7 @@ class Dase_Xml_Collection
 		return $doc->saveXML();
 	}
 
-	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
+	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false) {
 		$r = new XMLReader();
 		$r->open($this->xml_file);
 		$doc = new DOMDocument('1.0');
