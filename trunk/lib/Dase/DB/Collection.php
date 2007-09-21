@@ -154,7 +154,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			//for 18K records
 			$db = Dase_DB::get();
 			$sql = "
-				SELECT value_text,ascii_id 
+				SELECT value_text,ascii_id,value_text_md5 
 				FROM value, attribute
 				WHERE attribute.id = value.attribute_id
 				AND value.item_id = {$it['id']}
@@ -163,6 +163,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 			foreach ($st->fetchAll() as $row) {
 				$writer->startElement('metadata');
 				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+				$writer->writeAttribute('value_text_md5',$row['value_text_md5']);
 				$writer->text($row['value_text']);
 				$writer->endElement();
 			}

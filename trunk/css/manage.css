@@ -95,3 +95,16 @@ dl.routes dt {
 dl.routes dd {
 	margin-left: 20px;
 }
+
+.topTen h1 {
+	font-weight: bold;
+	font-size: 1.2em;
+	color: #333;
+	margin-bottom: 5px;
+}
+.topTen dl dt {
+	float: left;
+	font-weight: bold;
+	color: #700c0c;
+	margin-right: 20px;
+}
