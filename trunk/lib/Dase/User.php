@@ -21,7 +21,7 @@ class Dase_User
 	}
 
 	public function __get($prop) {
-		if (DEBUG) {
+		if (defined('DEBUG')) {
 			Dase::log('standard','__get from Dase_User prop: ' . $prop);
 		}
 		if ($this->db_user->$prop) {

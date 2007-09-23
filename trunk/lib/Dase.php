@@ -301,7 +301,9 @@ class Dase
 
 		foreach ($routes[$method] as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
-				Dase::log('standard',$regex . " => " . $conf_array['action']);
+				if (defined('DEBUG')) {
+					Dase::log('standard',$regex . " => " . $conf_array['action']);
+				}
 				$caps = array();
 				if (isset($conf_array['caps'])) {
 					$caps = explode('/',$conf_array['caps']);
