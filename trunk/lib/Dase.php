@@ -57,33 +57,25 @@ class Dase
 		case 'superuser':
 			self::$user = new Dase_User();
 			if (!in_array(self::$user->eid,Dase::getConf('superuser'))) {
-				header('HTTP/1.0 401 Unauthorized');
-				echo "unauthorized";
-				exit;
+				Dase::error(401);
 			}
 			break;
 		case 'admin':
 			self::$user = new Dase_User();
 			if (!self::$user->checkAuth($collection_ascii_id,'admin')) {
-				header('HTTP/1.0 401 Unauthorized');
-				echo "unauthorized";
-				exit;
+				Dase::error(401);
 			}
 			break;
 		case 'write':
 			self::$user = new Dase_User();
 			if (!self::$user->checkAuth($collection_ascii_id,'write')) {
-				header('HTTP/1.0 401 Unauthorized');
-				echo "unauthorized";
-				exit;
+				Dase::error(401);
 			}
 			break;
 		case 'read':
 			self::$user = new Dase_User();
 			if (!self::$user->checkAuth($collection_ascii_id,'read')) {
-				header('HTTP/1.0 401 Unauthorized');
-				echo "unauthorized";
-				exit;
+				Dase::error(401);
 			}
 			break;
 		case 'http':
@@ -91,16 +83,13 @@ class Dase
 			break;
 		case 'token':
 			if (!in_array(Dase::filterGet('token'),Dase::getConf('token'))) {
-				header('HTTP/1.0 401 Unauthorized');
-				echo "unauthorized";
-				exit;
+				Dase::error(401);
 			}
 			break;
 		case 'none':
 			break;
 		default:
-			header("HTTP/1.0 404 Not Found");
-			exit;
+			Dase::error(404);
 		}
 	}
 
@@ -295,13 +284,13 @@ class Dase
 			$request_url= str_replace(APP_BASE,'',$request_url);
 		}
 
-		/* Trim off any leading or trailing slashes */
-		$request_url= trim($request_url, '/');
-
 		/* Remove the querystring from the URL */
 		if ( strpos($request_url, '?') !== FALSE ) {
 			list($request_url, )= explode('?', $request_url);
 		}
+
+		/* Trim off any leading or trailing slashes */
+		$request_url= trim($request_url, '/');
 
 		$matches = array();
 		$params = array();
@@ -339,6 +328,7 @@ class Dase
 				}
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
 					//conf_array['collection'] originates in configuration file config.php
+					//modules can stipulate an associated collection
 					//this is collection authorization for modules
 					if (isset($conf_array['collection'])) {
 						$collection_ascii_id = $conf_array['collection'];
@@ -366,7 +356,22 @@ class Dase
 			}
 		}
 		//no routes match, so use default:
-		header("HTTP/1.0 404 Not Found");
+		Dase::error(404);
+		exit;
+	}
+
+	public static function error($code) {
+		$tpl = Dase_Template::instance();
+		if (404 == $code) {
+			header("HTTP/1.0 404 Not Found");
+			$tpl->assign('msg','not found');
+		}
+		if (401 == $code) {
+			header('HTTP/1.0 401 Unauthorized');
+			$tpl->assign('msg','Unauthorized');
+		}
+		$tpl->assign('code',$code);
+		$tpl->display('error/index.tpl');
 		exit;
 	}
 

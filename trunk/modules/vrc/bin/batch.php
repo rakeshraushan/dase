@@ -16,14 +16,18 @@ if (!file_exists($IMAGE_REPOS)) {
 }
 
 /******* CREATE HASH OF IMAGES IN DAR ***********************************/
-
+$i = 0;
 $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
 $images = array();
 foreach ($dir as $file) {
 	if (!strpos($file,'/.')) {
 		if (strpos($file,'.jpg') || strpos($file,'.tif')) {
+			$i++;
 			$images[basename($file)]= $file->getPathname();
-			print $file->getFilename() . "\n";
+			if (0 == $i%1000) {
+				print "hashed $i files\n";
+			}
+			//print $file->getFilename() . "\n";
 		}
 	}
 }
@@ -84,7 +88,7 @@ while ($row = $st->fetch()) {
 	//we'll only perform operations on items for which we have a file
 	if (isset($images[$df])) {
 		//skip items that already have 6 media_files
-		if (6 == $media_count[$row['acc_num_PK']]) {
+		if (isset($media_count[$row['acc_num_PK']]) && 6 == $media_count[$row['acc_num_PK']]) {
 			print "{$row['acc_num_PK']} already exists and has 6 media items!\n";
 		} else {
 			build($row['acc_num_PK'],$coll,$media_count);
@@ -159,6 +163,7 @@ function build($sernum,$coll,$media_count) {
 
 function makeThumbnail($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
+	$base = basename($base,'.jpg');
 	$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $filename");
 	$thumbnail = MEDIA_ROOT ."/vrc_collection/thumbnails/$item->serial_number" . '_100.jpg';  
 	$mogrified_file = "/tmp/$base.jpeg";
@@ -182,6 +187,7 @@ function makeThumbnail($filename,$item,$coll) {
 
 function makeViewitem($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
+	$base = basename($base,'.jpg');
 	$results = exec("/usr/bin/mogrify -format jpeg -resize '400x400 >' -colorspace RGB $filename");
 	$viewitem = MEDIA_ROOT ."/vrc_collection/400/$item->serial_number" . '_400.jpg';  
 	$mogrified_file = "/tmp/$base.jpeg";
@@ -230,6 +236,7 @@ function makeSizes($filename,$item,$coll) {
 	$last_width = 0;
 	foreach ($image_properties as $size => $size_info) {
 		$base = basename($filename,'.tif');
+		$base = basename($base,'.jpg');
 		$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $filename");
 		$mogrified_file = "/tmp/$base.jpeg";
 		$newimage = MEDIA_ROOT ."/vrc_collection/$size/$item->serial_number$size_info[size_tag].jpg";  
