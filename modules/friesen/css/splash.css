@@ -1,0 +1,101 @@
+body 
+	{ 
+	margin: 0px;
+	padding: 0px;
+	background-color: #D8CCB7;
+	color: #534D41;
+	font-family: arial, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	}
+	
+.container
+	{
+	position: relative;
+	margin: 60px 0px 0px 0px;
+	height: 475px;
+	width: 726px;
+	padding: 0px;
+	border: 2px solid #FFFFFF;
+	background-color: #cee9e5;
+	color: #534D41;
+	}
+	
+.cloud-small
+	{
+	position: absolute;
+	top: -15px;
+	left: 0px;
+	z-index: 1;
+	}
+	
+.cloud-large
+	{
+	position: absolute;
+	top: 175px;
+	left: 150px;
+	z-index: 1;
+	}
+	
+.building
+	{
+	position: absolute;
+	top: -40px;
+	right: -4px;
+	z-index: 3;
+	}
+	
+.road
+	{
+	position: absolute;
+	top: 510px;
+	right: 60px;
+	z-index: 3;
+	}	
+	
+.logon	
+	{
+	position: absolute;
+	top: 530px;
+	right: 174px;
+	z-index: 4;
+	}
+
+.logon a:link, .logon a:visited 
+	{
+	background-color: #fff;
+	color: #BA6024;
+	border: 1px solid #534D41;
+	padding: 4px;
+	}	
+		
+ .logon a:active, .logon a:hover
+	{
+	background-color: #BA6024;
+	color: #FFFFFF;
+	border: 1px solid #534D41;
+	padding: 4px;
+	text-decoration: none;
+	}	
+	
+.splash-text
+	{
+	float: left;
+	position: relative;
+	top: 80px;
+	left: 20px;
+	height: 390px;
+	width: 310px;
+	overflow: auto;
+	text-align: left;
+	z-index: 2;
+	font-variant: small-caps;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 20px;
+	}	
+
+.footer
+	{
+	text-align: left;
+	}

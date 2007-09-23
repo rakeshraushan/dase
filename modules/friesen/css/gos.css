@@ -1,0 +1,36 @@
+.container
+	{
+	margin: 0px;
+	padding: 0px;
+	border: 2px solid #FFFFFF;
+	background-color: #A84F27;
+	color: #FFFFFF;
+	}
+		
+.content-right
+	{
+	background-color: #F6AC84;
+	color: #000000;
+	width: 360px;
+	margin-left: 360px;
+	border-left: 2px solid #FFFFFF;
+	}	
+	
+.quote
+	{
+	background-color: #A84F27;
+	width: 275px;
+	margin-left: 445px;
+	border-left: 2px solid #FFFFFF;
+	}
+	
+ul.gospel-list	
+	{
+	margin: 20px 10px 10px 20px;
+	padding: 0px;
+	}
+	
+ul.gospel-list li
+	{
+	padding: 0px 0px 10px 0px;
+	}	

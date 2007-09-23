@@ -1,0 +1,49 @@
+.brochure
+	{
+	border-top: 2px solid #FFFFFF;
+	}
+	
+.brochure th
+	{
+	border-right: 2px solid #D8CCB7;
+	font-weight: normal;
+	}
+	
+.brochure td
+	{
+	color: #000000;
+	background-color: #FFFFFF;
+	border-right: 2px solid #D8CCB7;
+	}
+	
+.brochure a:link, .brochure a:visited, .brochure a:hover, .brochure a:active
+	{
+	color: #000000;
+	}
+	
+.method
+	{
+	border: 2px solid #FFFFFF;
+	}
+	
+.method th
+	{
+	color: #FFFFFF;
+	font-weight: normal;
+	}
+	
+.method td
+	{
+	color: #000000;
+	background-color: #FFFFFF;
+	padding: 10px;
+	}	
+	
+.close
+	{
+	text-transform: uppercase;
+	text-align: right;
+	padding: 5px;
+	}
+	
+	
