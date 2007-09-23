@@ -6,7 +6,7 @@ class Dase_Xml_Collection  implements Dase_CollectionInterface
 	public $ascii_id;
 
 	public function __construct($ascii_id) {
-		$xml_file = DASE_PATH . '/xml/' . $ascii_id . '.xml'; 
+		$xml_file = DASE_PATH . '/xmldocs/' . $ascii_id . '.xml'; 
 		if (file_exists($xml_file)) { 
 			$this->ascii_id = $ascii_id;
 			$this->xml_file = $xml_file;
@@ -26,14 +26,14 @@ class Dase_Xml_Collection  implements Dase_CollectionInterface
 	public static function create($ascii_id) {
 		$c = Dase_DB_Collection::get($ascii_id);
 		if ($c->id) {
-			file_put_contents(DASE_PATH . '/xml/' . $ascii_id . '.xml',$c->xmlDump());
+			file_put_contents(DASE_PATH . '/xmldocs/' . $ascii_id . '.xml',$c->xmlDump());
 		} else {
 			throw new Exception('no such archive');
 		}
 	}
 
 	function prepareIndex() {
-		$xml_index_file = DASE_PATH . '/xml/' . $this->ascii_id . '_index.xml'; 
+		$xml_index_file = DASE_PATH . '/xmldocs/' . $this->ascii_id . '_index.xml'; 
 		if (file_exists($xml_index_file)) {
 			$this->xml_index_file = $xml_index_file;
 		} else {
@@ -67,7 +67,7 @@ class Dase_Xml_Collection  implements Dase_CollectionInterface
 			}
 		}
 		$doc->formatOutput = true;
-		$this->xml_index_file = DASE_PATH . '/xml/' . $this->ascii_id . '_index.xml'; 
+		$this->xml_index_file = DASE_PATH . '/xmldocs/' . $this->ascii_id . '_index.xml'; 
 		return file_put_contents($this->xml_index_file,$doc->saveXML());
 	}
 

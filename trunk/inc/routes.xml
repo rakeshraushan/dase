@@ -5,7 +5,7 @@
 	<match></match>
   </route>
 
-  <route action="atom" auth="none">
+  <route action="atom/collection" auth="none">
 	<match params="collection_ascii_id">atom</match>
   </route>
 
@@ -18,7 +18,7 @@
 	<match caps="collection_ascii_id">(.*_collection)/attributes</match>
   </route>
 
-  <route action="search" auth="user">
+  <route action="search/search" auth="user">
 	<match caps="collection_ascii_id">([^/]*_collection)/search</match>
 	<match>search</match>
   </route>
@@ -27,7 +27,7 @@
 	<match caps="collection_ascii_id" params="serial_number">(.*_collection)</match>
   </route>
 
-  <route action="search_form">
+  <route action="search/form">
 	<match>search/form</match>
   </route>
 
@@ -35,13 +35,12 @@
 	<match caps="collection_ascii_id">([^/]*_collection)/search/form</match>
   </route>
 
-  <route action="xml/collection" auth="none">
-	<match caps="collection_ascii_id">xml/([^/]*_collection)</match>
+  <route action="xml/collection_list" auth="none">
+	<match>xml</match>
   </route>
 
-  <route action="collection_xml" auth="token">
+  <route action="xml/collection" auth="none">
 	<match params="collection_ascii_id">xml</match>
-	<match auth="none">xml</match>
   </route>
 
   <route action="item_xml_dump" auth="token">
@@ -71,13 +70,17 @@
 
   <route action="error"/>
 
-  <route action="login_form" auth="none">
+  <route action="login/form" auth="none">
 	<match>login/form</match>
   </route>
 
-  <route action="login" auth="none" method="post"/>
+  <route action="login/login" auth="none" method="post">
+	<match>login</match>
+  </route>
 
-  <route action="logoff" auth="user" />
+  <route action="login/logoff" auth="user">
+	<match>logoff</match>
+  </route>
 
   <route action="build_index" auth="admin" params="collection_ascii_id"/>
 
