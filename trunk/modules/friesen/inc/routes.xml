@@ -1,0 +1,16 @@
+<routes>
+
+  <route action="index" auth="none">
+	<match>index</match>
+	<match></match>
+  </route>
+
+  <route action="search" auth="none">
+	<match>search</match>
+  </route>
+
+  <route action="viewitem" auth="none">
+	<match params="serial_number">viewitem</match>
+  </route>
+
+</routes>

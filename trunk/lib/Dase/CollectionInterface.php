@@ -3,12 +3,12 @@ interface Dase_CollectionInterface
 {
 	static function get($ascii_id);
 	function getXml();
+	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
+	function getItemsXmlByType($type_ascii_id);
 	/*
 	function getXml($limit = 100000);
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false);
-	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
 	function getItemsByType($type_ascii_id);
-	function getItemsXmlByType($type_ascii_id);
 	function getSettingsXml();
 	function get($ascii_id);
 	function listAllAsXml();

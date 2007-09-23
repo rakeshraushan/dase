@@ -1,0 +1,26 @@
+.container
+	{
+	margin: 0px;
+	padding: 0px;
+	border: 2px solid #FFFFFF;
+	background-color: #577A38;
+	color: #FFFFFF;
+	}
+		
+.content-right
+	{
+	background-color: #ADC29A;
+	color: #000000;
+	width: 360px;
+	margin-left: 360px;
+	border-left: 2px solid #FFFFFF;
+	}	
+	
+.quote
+	{
+	background-color: #577A38;
+	width: 275px;
+	margin-left: 445px;
+	border-left: 2px solid #FFFFFF;
+	}
+		

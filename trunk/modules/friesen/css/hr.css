@@ -1,0 +1,36 @@
+.container
+	{
+	margin: 0px;
+	padding: 0px;
+	border: 2px solid #FFFFFF;
+	background-color: #9B4F54;
+	color: #FFFFFF;
+	}
+		
+.content-right
+	{
+	background-color: #E4A7AC;
+	color: #000000;
+	width: 360px;
+	margin-left: 360px;
+	border-left: 2px solid #FFFFFF;
+	}
+	
+.quote
+	{
+	background-color: #9B4F54;
+	width: 275px;
+	margin-left: 445px;
+	border-left: 2px solid #FFFFFF;
+	}
+
+/* for Internet Explorer */
+/*\*/
+* html .quote
+	{
+	background-color: #9B4F54;
+	width: 272px;
+	margin-left: 445px;
+	border-left: 2px solid #FFFFFF;
+	}
+/**/

@@ -109,6 +109,26 @@ class Dase_Xml_Collection  implements Dase_CollectionInterface
 		return $doc->saveXML();
 	}
 
+	function getItemXmlBySerialNumber($serial_number) {
+		//should just use xpath here !!!!!!!!!!!!
+		$r = new XMLReader();
+		$r->open($this->xml_file);
+		$doc = new DOMDocument('1.0');
+		$root = $doc->createElement('result');
+		$doc->appendChild($root);
+		while ($r->read()) {
+			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'item') {
+				$item = $doc->importNode($r->expand(),true);
+				$r->moveToAttribute('serial_number');
+				if ($r->value == $serial_number) {
+					$root->appendChild($item);
+				}
+			}
+		}
+		$doc->formatOutput = true;
+		return $doc->saveXML();
+	}
+
 	function getItemsXmlByType($type_ascii_id) {
 		$r = new XMLReader();
 		$r->open($this->xml_file);
@@ -141,12 +161,15 @@ class Dase_Xml_Collection  implements Dase_CollectionInterface
 				$sernum = $r->value;
 			}
 			if ($r->nodeType == XMLREADER::ELEMENT && $r->localName == 'metadata') {
+				$r->moveToAttribute('attribute_ascii_id');
+				$xml_att_ascii = $r->value;
+
 				$r->read();
 				$vt = $r->value;
-				$r->moveToAttribute('attribute_ascii_id');
-				if ($att_ascii_id == $r->value) {
+
+				if ($att_ascii_id == $xml_att_ascii) {
 					if ($substr) {
-						if (false !== strpos($vt,$value_text)) {
+						if (false !== strpos(strtolower($vt),strtolower($value_text))) {
 							$root->appendChild($item);
 						}
 					} else {
