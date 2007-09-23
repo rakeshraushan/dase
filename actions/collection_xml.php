@@ -42,7 +42,7 @@ if (isset($params['collection_ascii_id'])) {
 		$tpl->setXml($cached_xml);
 		$tpl->display();
 	}
-	$colls_xml = $coll->getAllAsXml();
+	$colls_xml = $coll->listAllAsXml();
 	$tpl->setXml($colls_xml);
 	Dase_DB_XmlCache::saveXml('collections_xml',$colls_xml);
 	$tpl->display();

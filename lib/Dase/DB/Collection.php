@@ -2,12 +2,133 @@
 
 require_once 'Dase/DB/Autogen/Collection.php';
 
-class Dase_DB_Collection extends Dase_DB_Autogen_Collection 
+class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_CollectionInterface
 {
 	public $item_count;
 	public $admin_attribute_array;
 	public $attribute_array;
 	public $item_type_array;
+
+	public static function get($ascii_id) {
+		$c = new Dase_DB_Collection;
+		$c->ascii_id = $ascii_id;
+		return($c->findOne());
+	}
+
+	function getXml($limit = 100000) {
+		$admin_atts = $this->getAdminAttributeAsciiIds();
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('archive');
+		$writer->writeAttribute('name',$this->collection_name);
+		$writer->writeAttribute('ascii_id',$this->ascii_id);
+		$writer->writeAttribute('description',$this->description);
+		$writer->writeAttribute('is_public',$this->is_public);
+		$writer->writeAttribute('updated',$this->getLastUpdated());
+		$attribute = new Dase_DB_Attribute;
+		$attribute->collection_id = $this->id;
+		foreach($attribute->findAll() as $att) {
+			$writer->startElement('attribute');
+			$writer->writeAttribute('name',$att['attribute_name']);
+			$writer->writeAttribute('ascii_id',$att['ascii_id']);
+			$writer->writeAttribute('sort_order',$att['sort_order']);
+			$writer->writeAttribute('is_public',$att['is_public']);
+			if ($att['atom_element']) {
+				$writer->writeAttribute('atom_element',$att['atom_element']);
+			}
+			if ($att['mapped_admin_att_id']) {
+				$writer->writeAttribute('mapped_admin_attribute',$admin_atts[$att['mapped_admin_att_id']]);
+			}
+			$writer->endElement();
+		}
+		$type = new Dase_DB_ItemType;
+		$type->collection_id = $this->id;
+		foreach($type->findAll() as $t) {
+			$writer->startElement('item_type');
+			$writer->writeAttribute('name',$t['name']);
+			$writer->writeAttribute('ascii_id',$t['ascii_id']);
+			$writer->writeAttribute('description',$t['description']);
+			$it_obj = new Dase_DB_ItemType;
+			$it_obj->load($t['id']);
+			foreach ($it_obj->getAttributes() as $a) {
+				$writer->startElement('attribute');
+				$writer->writeAttribute('ascii_id',$a->ascii_id);
+				$writer->writeAttribute('cardinality',$a->cardinality);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		if ($limit) { //0 means no limit
+			$item->setLimit($limit);
+		}
+		foreach($item->findAll() as $it) {
+			$writer->startElement('item');
+			$writer->writeAttribute('serial_number',$it['serial_number']);
+			$writer->writeAttribute('last_update',$it['last_update']);
+			$writer->writeAttribute('created',$it['created']);
+			$item_status = Dase_DB_Object::getArray('item_status',$it['status_id']);
+			if (isset($item_status['status'])) {
+				$writer->writeAttribute('status',$item_status['status']);
+			}
+			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
+			if (isset($item_type['ascii_id'])) {
+				$writer->writeAttribute('item_type',$item_type['ascii_id']);
+			}
+			//straight db for 
+			//metadata, took 2:40 
+			//for 18K records
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT value_text,ascii_id,value_text_md5 
+				FROM value, attribute
+				WHERE attribute.id = value.attribute_id
+				AND value.item_id = {$it['id']}
+			";
+			$st = $db->query($sql);
+			foreach ($st->fetchAll() as $row) {
+				$writer->startElement('metadata');
+				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
+				$writer->writeAttribute('value_text_md5',$row['value_text_md5']);
+				$writer->text($row['value_text']);
+				$writer->endElement();
+			}
+			//db_object get too 
+			//4:40 for 18K 
+			//records
+			/*
+			$value = new Dase_DB_Value;
+			$value->item_id = $it['id'];
+			foreach($value->findAll() as $val) {
+				$writer->startElement('metadata');
+				$att = Dase_DB_Object::getArray('attribute',$val['attribute_id']);
+				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
+				$writer->text($val['value_text']);
+				$writer->endElement();
+			}
+			 */
+			$media_file = new Dase_DB_MediaFile;
+			$media_file->item_id = $it['id'];
+			foreach($media_file->findAll() as $mf) {
+				$writer->startElement('media_file');
+				$writer->writeAttribute('filename',$mf['filename']);
+				$writer->writeAttribute('file_size',$mf['file_size']);
+				$writer->writeAttribute('size',$mf['size']);
+				$writer->writeAttribute('mime_type',$mf['mime_type']);
+				$writer->writeAttribute('width',$mf['width']);
+				$writer->writeAttribute('height',$mf['height']);
+				$writer->writeAttribute('id',$mf['id']);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
 
 	function getAtom() {
 		$writer = new XMLWriter();
@@ -32,7 +153,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$writer->endElement();
 		$writer->endElement();
 		$writer->startElement('updated');
-		$writer->text($this->updated());
+		$writer->text($this->getLastUpdated());
 		$writer->endElement();
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
@@ -91,107 +212,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 				$writer->endElement();
 			}
 			$writer->startElement('content');
-			$writer->writeAttribute('src', APP_ROOT . "/{$this->ascii_id}/media/thumbnail/$thumbnail_file");
-			$writer->writeAttribute('type', $thumbnail_type);
+			if (isset($thumbnail_file) && isset($thumbnail_type)) { 
+				$writer->writeAttribute('src', APP_ROOT . "/{$this->ascii_id}/media/thumbnail/$thumbnail_file");
+				$writer->writeAttribute('type', $thumbnail_type);
+			}
 			$writer->endElement();
 			$writer->startElement('summary');
 			$writer->text('thumbnail image');
 			$writer->endElement();
-			$writer->endElement();
-		}
-		$writer->endElement();
-		$writer->endDocument();
-		return $writer->flush(true);
-	}
-
-	function xmlDump($limit = 100000) {
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('archive');
-		$writer->writeAttribute('name',$this->collection_name);
-		$writer->writeAttribute('ascii_id',$this->ascii_id);
-		$attribute = new Dase_DB_Attribute;
-		$attribute->collection_id = $this->id;
-		foreach($attribute->findAll() as $att) {
-			$writer->startElement('attribute');
-			$writer->writeAttribute('name',$att['attribute_name']);
-			$writer->writeAttribute('ascii_id',$att['ascii_id']);
-			$writer->endElement();
-		}
-		$type = new Dase_DB_ItemType;
-		$type->collection_id = $this->id;
-		foreach($type->findAll() as $t) {
-			$writer->startElement('item_type');
-			$writer->writeAttribute('name',$t['name']);
-			$writer->writeAttribute('ascii_id',$t['ascii_id']);
-			$writer->writeAttribute('description',$t['description']);
-			$it_obj = new Dase_DB_ItemType;
-			$it_obj->load($t['id']);
-			foreach ($it_obj->getAttributes() as $a) {
-				$writer->startElement('attribute');
-				$writer->writeAttribute('ascii_id',$a->ascii_id);
-				$writer->writeAttribute('cardinality',$a->cardinality);
-				$writer->endElement();
-			}
-			$writer->endElement();
-		}
-		$item = new Dase_DB_Item;
-		$item->collection_id = $this->id;
-		if ($limit) { //0 means no limit
-			$item->setLimit($limit);
-		}
-		foreach($item->findAll() as $it) {
-			$writer->startElement('item');
-			$writer->writeAttribute('serial_number',$it['serial_number']);
-			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
-			if (isset($item_type['ascii_id'])) {
-				$writer->writeAttribute('item_type',$item_type['ascii_id']);
-			}
-			//straight db for 
-			//metadata, took 2:40 
-			//for 18K records
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT value_text,ascii_id,value_text_md5 
-				FROM value, attribute
-				WHERE attribute.id = value.attribute_id
-				AND value.item_id = {$it['id']}
-			";
-			$st = $db->query($sql);
-			foreach ($st->fetchAll() as $row) {
-				$writer->startElement('metadata');
-				$writer->writeAttribute('attribute_ascii_id',$row['ascii_id']);
-				$writer->writeAttribute('value_text_md5',$row['value_text_md5']);
-				$writer->text($row['value_text']);
-				$writer->endElement();
-			}
-			//db_object get too 
-			//4:40 for 18K 
-			//records
-			/*
-			$value = new Dase_DB_Value;
-			$value->item_id = $it['id'];
-			foreach($value->findAll() as $val) {
-				$writer->startElement('metadata');
-				$att = Dase_DB_Object::getArray('attribute',$val['attribute_id']);
-				$writer->writeAttribute('attribute_ascii_id',$att['ascii_id']);
-				$writer->text($val['value_text']);
-				$writer->endElement();
-			}
-			 */
-			$media_file = new Dase_DB_MediaFile;
-			$media_file->item_id = $it['id'];
-			foreach($media_file->findAll() as $mf) {
-				$writer->startElement('media_file');
-				$writer->writeAttribute('filename',$mf['filename']);
-				$writer->writeAttribute('size',$mf['size']);
-				$writer->writeAttribute('mime_type',$mf['mime_type']);
-				$writer->writeAttribute('width',$mf['width']);
-				$writer->writeAttribute('height',$mf['height']);
-				$writer->endElement();
-			}
 			$writer->endElement();
 		}
 		$writer->endElement();
@@ -351,7 +379,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $writer->flush(true);
 	}
 
-	function asXml() {
+	function getSettingsXml() {
 		$dom = new DOMDocument('1.0');
 		$coll = $dom->appendChild($dom->createElement('collection'));
 		$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public');
@@ -362,13 +390,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return $dom->saveXML();
 	}
 
-	public static function get($ascii_id) {
-		$c = new Dase_DB_Collection;
-		$c->ascii_id = $ascii_id;
-		return($c->findOne());
-	}
-
-	static function getAllAsXml() {
+	static function listAllAsXml() {
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT collection.id, collection.ascii_id,count(item.id) as item_tally,
@@ -428,7 +450,20 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
-		$this->admin_attribute_array = $att->findAll();
+		$admin_attribute_array = $att->findAll();
+		$this->admin_attribute_array = $admin_attribute_array;
+		return $admin_attribute_array;
+	}
+
+	function getAdminAttributeAsciiIds() {
+		$att = new Dase_DB_Attribute;
+		$att->collection_id = 0;
+		$att->orderBy('sort_order');
+		$admin_atts = array();
+		foreach ($att->findAll() as $row) {
+			$admin_atts[$row['id']] = $row['ascii_id'];
+		}
+		return $admin_atts;
 	}
 
 	function getItemCount() {
@@ -653,12 +688,13 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		}
 	}
 
-	function updated() {
+	function getLastUpdated() {
 		$item = new Dase_DB_Item;
 		$item->collection_id = $this->id;
 		$item->orderBy('last_update DESC');
 		$item->setLimit(1);
 		$item->findOne();
-		return date('c',$item->last_update);
+		//return date('c',$item->last_update);
+		return $item->last_update;
 	}
 }

@@ -21,6 +21,11 @@ $conf['db_name'] = 'dase';
 $conf['db_user'] = 'username';
 $conf['db_pass'] = 'password';
 
+$conf['remote']['laits']['url'] = 'http://dase.laits.utexas.edu/api/v1/';
+$conf['remote']['laits']['username'] = 'http://dase.laits.utexas.edu/api/v1/';
+$conf['remote']['laits']['password'] = 'http://dase.laits.utexas.edu/api/v1/';
+
+
 include DASE_PATH . '/inc/local_config.php';
 
 //default lookup values

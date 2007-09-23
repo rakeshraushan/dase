@@ -1,5 +1,5 @@
 <?php
-class Dase_Xml_Collection 
+class Dase_Xml_Collection  implements Dase_CollectionInterface
 {
 	public $xml_file;
 	public $xml_index_file;
@@ -13,6 +13,14 @@ class Dase_Xml_Collection
 		} else {
 			throw new Exception('no xml file');
 		}
+	}
+
+	public static function get($ascii_id) {
+		return new Dase_Xml_Collection($ascii_id);
+	}
+
+	function getXml() {
+		return file_get_contents($this->xml_file);
 	}
 
 	public static function create($ascii_id) {
