@@ -40,7 +40,9 @@ class Dase_Template
 
 	public function display( $template = 'page.tpl' ) {
 		//NOTE: code MUST use template class to guarantee session data will be saved
-		Dase_Session::write();
+		if (!defined('NO_SESSIONS')) {
+			Dase_Session::write();
+		}
 		self::$template->assign('timer',Dase_Timer::getElapsed());
 		self::$template->display( $template );
 		exit;

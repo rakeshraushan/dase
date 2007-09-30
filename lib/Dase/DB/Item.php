@@ -94,6 +94,17 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $this->values;
 	}
 
+	public function getAttVal($att_ascii_id) {
+		//NOTE: repeat attributes will only get ONE value!!!!
+		$values = array();
+		$this->collection || $this->getCollection();
+		$val = new Dase_DB_Value;
+		$val->item_id = $this->id;
+		$val->attribute_id = Dase_DB_Attribute::get($this->collection->ascii_id,$att_ascii_id)->id;
+		$val->findOne();
+		return $val->value_text;
+	}
+
 	public function getCollection() {
 		$c = new Dase_DB_Collection;
 		$c->load($this->collection_id);

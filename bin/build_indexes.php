@@ -6,7 +6,8 @@ include 'cli_setup.php';
 $colls = array(
 	'test_collection',
 	'texpol_image_collection',
-	'bsls_collection'
+	'bsls_collection',
+	'blanton_collection'
 );
 
 Dase_Timer::start();

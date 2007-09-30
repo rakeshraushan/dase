@@ -15,6 +15,10 @@
 	<match params="filename">image</match>
   </route>
 
+  <route action="get_blanton_image" auth="none">
+	<match params="filename">blantonimage</match>
+  </route>
+
   <route action="build_dataset" auth="none">
 	<match>builddata</match>
   </route>
