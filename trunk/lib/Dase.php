@@ -362,8 +362,12 @@ class Dase
 		exit;
 	}
 
-	public static function error($code) {
+	public static function error($code, $msg = '') {
 		$tpl = Dase_Template::instance();
+		if (400 == $code) {
+			header("HTTP/1.0 400 Bad Request");
+			$tpl->assign('msg',$msg);
+		}
 		if (404 == $code) {
 			header("HTTP/1.0 404 Not Found");
 			$tpl->assign('msg','not found');

@@ -10,15 +10,10 @@
 		<ul>
 			<li><form action="sss" method="post">
 			
-				<input type="checkbox" name="a"> pretty pictures</input><br>
-				<input type="checkbox" name="b"> a walk in the park</input><br>
-				<input type="checkbox" name="c"> paris: a trip that we took last year</input><br>
-				<input type="checkbox" name="d"> test collection</input><br>
-				<input type="checkbox" name="e"> five items</input><br>
-				<input type="checkbox" name="f"> lecture 2006-09-09</input><br>
-				<input type="checkbox" name="k"> coll k</input><br>
-				
-				<input type="submit" value="move items">
+			<div id="tagsSelect">
+			<!-- ajax fills in here -->
+			</div>
+			<input type="submit" value="move items">
 			</form>
 			</li>
 				</ul>
@@ -36,23 +31,23 @@
 			</li>
 			</ul>
 			</li>
-			<li><a href="">sub1</a></li>
-			<li><a href="">sub2</a></li>
-			<li><a href="">sub3</a></li>
+			<div id="user_collection">
+			<!-- ajax fills in here -->
+			</div>
 		</ul>
 		</li>
 		<li class="slideshow"><a href="">My Slideshows</a>
 		<ul>
-			<li><a href="">sub1</a></li>
-			<li><a href="">sub2</a></li>
-			<li><a href="">sub3</a></li>
+			<div id="slideshow">
+			<!-- ajax fills in here -->
+			</div>
 		</ul>
 		</li>
 		<li class="subscription"><a href="">My Subscriptions</a>
 		<ul>
-			<li><a href="http://www.lib.utexas.edu">sub1</a></li>
-			<li><a href="">sub2</a></li>
-			<li><a href="">sub3</a></li>
+			<div id="subscription">
+			<!-- ajax fills in here -->
+			</div>
 		</ul>
 		</li>
 	</ul>

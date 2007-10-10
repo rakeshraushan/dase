@@ -4,7 +4,7 @@ $database = 'dase_prod';
 include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
-$coll = 'blanton_collection';
+$coll = 'efossils_collection';
 $c = Dase_DB_Collection::get($coll);
 
 $status = new Dase_DB_ItemStatus;

@@ -3,48 +3,6 @@ if (!Dase) {
 	var Dase = {};
 }
 
-/*
-Dase.prepareToggle = function(source,target,close) {
-	var src = document.getElementById(source);
-	if (src) {
-		var tar = document.getElementById(target);
-		if (tar) {
-			src.onclick = function() {
-				if (tar.className == 'show') {
-					tar.className = 'hide';
-				} else {
-					tar.className = 'show';
-				}
-				if (src.className == 'show') {
-					src.className = 'hide';
-					Dase.prepareToggle(source,target);
-				}
-				else if (src.className == 'hide') {
-					src.className = 'show';
-				}
-				return false;
-			}
-		}
-	}
-	if (close) {
-		Dase.prepareToggle(close,target);
-	}
-	return true;
-}
-
-Dase.toggle = function(target) {
-	var tar = document.getElementById(target);
-	if (tar) {
-		if (tar.className == 'show') {
-			tar.className = 'hide';
-		} else {
-			tar.className = 'show';
-		}
-	}
-	return false;
-}
-*/
-
 Dase.prepareRemoteLaunch = function(id) {
 	var launcher = document.getElementById(id);
 	if (launcher) {
@@ -293,138 +251,6 @@ function getElementsByClassName(oElm, strTagName, strClassName){
 	}
 	return (arrReturnElements)
 }
-
-/************* laits_ajax.js ***************/
-/*
-function displayDebug(msg) {
-	var debug = document.getElementById('debug');
-	if (debug) {
-		var h3 = document.createElement('h3');
-		h3.appendChild(document.createTextNode(msg));
-		debug.appendChild(h3);
-	}
-}
-
-function toggleElem(li_node){
-	var id = li_node.getAttribute('id');
-	var sub = id + '-sub';
-	var subElement = document.getElementById(sub);
-	if (subElement){
-		if (subElement.className == 'show'){
-			subElement.className = 'hide';
-			return false;
-		}else{
-			subElement.className = 'show';
-			var subElement = li_node.getElementsByTagName("a")[0];
-			li_node.onclick = '';
-			var subt = document.getElementById(sub);
-			subElement.onclick = function() {
-				if (subt.className == 'show'){
-					subt.className = 'hide';
-					return false;
-				}else{
-					subt.className = 'show';
-				}
-				return false;
-			}
-			return false;
-		}
-	}
-	return true;
-}
-
-Dase.prepareMenuNav = function() {
-	if (!document.getElementsByTagName) return false;
-	if (!document.getElementById) return false;
-	if (!document.getElementById("menuNav")) return false;
-	var tree = document.getElementById("menuNav");
-	var lists = tree.getElementsByTagName("ul");
-	for ( var i=0; i < lists.length; i++) {
-		lists[i].className = 'hide';
-	}
-	var list_items = tree.getElementsByTagName("li");
-	for ( var i=0; i < list_items.length; i++) {
-		list_items[i].onclick = function() {
-			return toggleElem(this);
-		}
-		list_items[i].onkeypress = list_items[i].onclick;
-	}
-	return true;
-}
-
-Dase.toggleCollectionLink = function() {
-	var id = this.getAttribute('value');
-	var link_id = 'col_link' + id;
-	var link = document.getElementById(link_id);
-	if (this.checked == true) {
-		link.className = 'checkedCollection';
-	} else {
-		link.className = '';
-	}
-}
-
-Dase.prepareCheckboxLinks = function(id) {
-	if (!document.getElementsByTagName) return false;
-	if (!document.getElementById) return false;
-	var form = document.getElementById(id);
-	if (form) {
-		var inputs = form.getElementsByTagName("input");
-		for ( var i=0; i < inputs.length; i++) {
-			var inp = inputs[i];
-			var type = inp.getAttribute('type');
-			if (type == 'checkbox') {
-				inp.onclick = Dase.toggleCollectionLink;
-			}
-			inp.onkeypress = inp.onclick;
-		}
-	}
-	return true;
-}
-
-Dase.checkAll = function(formId) {
-	var form = document.getElementById(formId);
-	if (form) {
-		var fields = form.getElementsByTagName('input');
-		for (var i = 0; i < fields.length; i++)
-			fields[i].checked = true;
-
-		var links = document.getElementsByName('collectionLink');
-		if (links) {
-			for (var i = 0; i < links.length; i++)
-				links[i].className = 'checkedCollection';
-		}
-
-		var checkAllId = formId + 'CheckAll';
-		var checkAllElem = document.getElementById(checkAllId);
-		checkAllElem.className = 'hide';
-		var clearAllId = formId + 'ClearAll';
-		var clearAllElem = document.getElementById(clearAllId);
-		clearAllElem.className = '';
-	}
-}
-
-Dase.clearAll = function(formId) {
-	var form = document.getElementById(formId);
-	if (form) {
-		var fields = form.getElementsByTagName('input');
-		for (var i = 0; i < fields.length; i++)
-			fields[i].checked = false;
-
-		var links = document.getElementsByName('collectionLink');
-		if (links) {
-			for (var i = 0; i < links.length; i++)
-				links[i].className = '';
-		}
-
-		var clearAllId = formId + 'ClearAll';
-		var clearAllElem = document.getElementById(clearAllId);
-		clearAllElem.className = 'hide';
-		var checkAllId = formId + 'CheckAll';
-		var checkAllElem = document.getElementById(checkAllId);
-		checkAllElem.className = '';
-	}
-}
-*/
 
 Dase.prepareAddFileUpload = function() {
 	var addLink = document.getElementById('addFileInput');
@@ -1629,10 +1455,6 @@ addLoadEvent(function() {
 		Dase.prepareAddFileUpload();
 		Dase.prepareAttributeFlags();
 		Dase.prepareCartAdds(); 
-//		Dase.prepareCheckboxLinks('searchCollections'); 
-//		Dase.prepareClearCheck('addTagItems'); 
-//		Dase.prepareClearCheck('addTagItemsB'); 
-//		Dase.prepareClearCheck('searchCollections'); 
 		Dase.prepareDeletable(); 
 		Dase.prepareDeleteCommonValues();
 		Dase.prepareDownload('download');
@@ -1640,18 +1462,11 @@ addLoadEvent(function() {
 		Dase.prepareHelpPopup();
 		Dase.prepareLinkBack();
 		Dase.prepareMediaLinks();
-//		Dase.prepareMenuNav(); 
 		Dase.prepareMine();
 		Dase.prepareTagItems();
 		Dase.prepareUploadValidation();
 		Dase.setAutoReload();
 		Dase.prepareRemoteLaunch('slideshowLaunch');
-//		Dase.prepareToggle('adminMetadataSrc','adminMetadataTar','');
-//		Dase.prepareToggle('replaceThumbSrc','replaceThumbTar','');
-//		Dase.prepareToggle('replaceFullSrc','replaceFullTar','closeReplaceFull');
-//		Dase.prepareToggle('createInputTemplateSrc','createInputTemplateTar','closeCreateTemplate');
-//		Dase.prepareToggle('closeReplaceThumb','replaceThumbTar','');
-//		Dase.prepareToggle('typeFormSrc','typeFormTar','closeTypeForm');
 		Dase.initResize();
 		Dase.prepareAddMetadata('addMetadata');
 		Dase.prepareAddMetadata('addTagMetadata');

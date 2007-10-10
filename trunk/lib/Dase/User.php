@@ -20,6 +20,13 @@ class Dase_User
 		}
 	}
 
+	public static function get($eid) {
+		$user = new Dase_DB_DaseUser;
+		$user->eid = $eid;
+		return $user->findOne();
+	}
+
+
 	public function __get($prop) {
 		if (defined('DEBUG')) {
 			Dase::log('standard','__get from Dase_User prop: ' . $prop);

@@ -1,9 +1,11 @@
 DirectoryIndex index.php index.html
 AddType application/x-httpd-php .php
 Options FollowSymLinks
+FileETag none
 
 RewriteEngine On
-RewriteBase  /dase  
+#RewriteBase  /dase  
+RewriteBase  /dasetest  
 
 # required for load-balancer keepalive (ladd)
 #RewriteCond %{REMOTE_ADDR} 10.0.0.250

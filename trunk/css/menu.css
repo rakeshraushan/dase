@@ -13,7 +13,7 @@ padding: 6px;
 margin: 2px 0px;
 }
 ul#menu > li > ul {
-	margin-left:12px;
+	margin-left:18px;
 }
 ul#menu  li ul li ul {
 padding:6px;
@@ -25,13 +25,13 @@ margin: 2px 0;
 ul#menu li ul li a{
 padding:6px;
 margin: 0px;
-		border-bottom: 2px solid #fff;
+		border-bottom: 1px solid #fff;
 
 }
 
 ul#menu li.admin > a {
 border: 1px solid #000000; 
-border-left: 12px solid #000000;
+border-left: 18px solid #000000;
 background-color: #ffffff;
 }
 ul#menu li.admin > a:hover {
@@ -50,7 +50,7 @@ ul#menu li.admin ul a:hover {
 
 ul#menu li.slideshow > a {
 border: 1px solid #263b5e; 
-border-left: 12px solid #263b5e;
+border-left: 18px solid #263b5e;
 background-color: #ffffff;
 }
 ul#menu li.slideshow > a:hover {
@@ -69,7 +69,7 @@ ul#menu li.slideshow ul a:hover {
 
 ul#menu li.collection > a {
 border: 1px solid #283b1c; 
-border-left: 12px solid #283b1c;
+border-left: 18px solid #283b1c;
 background-color: #ffffff;
 }
 ul#menu li.collection > a:hover {
@@ -88,7 +88,7 @@ ul#menu li.collection ul a:hover {
 
 ul#menu li.cart > a {
 border: 1px solid #700c0c; 
-border-left: 12px solid #700c0c;
+border-left: 18px solid #700c0c;
 background-color: #ffffff;
 }
 ul#menu li.cart > a:hover {
@@ -107,7 +107,7 @@ ul#menu li.cart ul a:hover {
 
 ul#menu li.home > a {
 border: 1px solid #a25c25; 
-border-left: 12px solid #a25c25;
+border-left: 18px solid #a25c25;
 background-color: #ffffff;
 }
 ul#menu li.home > a:hover {
@@ -126,7 +126,7 @@ ul#menu li.home ul a:hover {
 
 ul#menu li.browse > a {
 border: 1px solid #a8721e; 
-border-left: 12px solid #a8721e;
+border-left: 18px solid #a8721e;
 background-color: #ffffff;
 }
 ul#menu li.browse > a:hover {
@@ -145,7 +145,7 @@ ul#menu li.browse ul a:hover {
 
 ul#menu li.subscription > a {
 border: 1px solid #5f5121; 
-border-left: 12px solid #5f5121;
+border-left: 18px solid #5f5121;
 background-color: #ffffff;
 }
 ul#menu li.subscription > a:hover {
