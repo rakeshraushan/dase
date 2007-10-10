@@ -27,7 +27,9 @@ $conf['remote']['laits']['password'] = 'http://dase.laits.utexas.edu/api/v1/';
 
 
 //local_config CAN OVERRIDE any of the above values
-include DASE_PATH . '/inc/local_config.php';
+if (file_exists( DASE_PATH . '/inc/local_config.php')) {
+	include DASE_PATH . '/inc/local_config.php';
+}
 
 //default lookup values
 
