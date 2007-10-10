@@ -3,11 +3,11 @@
 	<ul id="menu">
 		<li class="home"><a href="">Home/Search</a></li>
 		<li class="cart"><a href="">My Cart</a>
-		<ul>
+		<ul class="hide">
 			<li><a href="" class="create">view cart</a></li>
 			<li><a href="" class="create">empty cart</a></li>
 			<li><a href="" class="create" id="showCollForm">move cart items to...</a>
-		<ul>
+		<ul class="hide">
 			<li><form action="sss" method="post">
 			
 			<div id="tagsSelect">
@@ -21,9 +21,9 @@
 		</ul>
 		</li>
 		<li class="collection"><a href="">My Collections</a>
-		<ul>
+		<ul class="hide">
 			<li><a href="" class="create">new collection...</a>
-			<ul>
+			<ul class="hide">
 			<li><form action="sss" method="post">
 				<input type="text" size="18" name="coll_name"/>
 				<input type="submit" value="create collection">
@@ -37,14 +37,14 @@
 		</ul>
 		</li>
 		<li class="slideshow"><a href="">My Slideshows</a>
-		<ul>
+		<ul class="hide">
 			<div id="slideshow">
 			<!-- ajax fills in here -->
 			</div>
 		</ul>
 		</li>
 		<li class="subscription"><a href="">My Subscriptions</a>
-		<ul>
+		<ul class="hide">
 			<div id="subscription">
 			<!-- ajax fills in here -->
 			</div>

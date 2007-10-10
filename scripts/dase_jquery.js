@@ -1,22 +1,43 @@
 if (!Dase) { var Dase = {}; }
 jQuery(function(){ 
 		Dase.getUserTags();
-		Dase.listMenu();
+		Dase.initMenu();
 		Dase.multicheck("checkedCollection");
 		Dase.getItemTallies();
 		Dase.initBrowse();
 		Dase.initDynamicSearchForm();
 		}); 
 
-Dase.listMenu = function() { 
-	$("ul#menu").find("li > ul").hide().end().find("li:has(ul)").find("a:eq(0)").click(function() {
-			$(this).next().toggle();
-			return false;
-			});
+Dase.toggle = function(el) {
+	if ('hide' == el.className) {
+		el.className = 'show';
+	} else {
+		el.className = 'hide';
+	}
+}
+
+
+Dase.initMenu = function() { 
+	menu = document.getElementById('menu');
+	listItems = menu.getElementsByTagName('li');
+	for (var i=0;i<listItems.length;i++) {
+		var listItem = listItems[i];
+		var sub = listItem.getElementsByTagName('ul')[0];
+		if (sub) {
+			var listItemLink = listItem.getElementsByTagName('a')[0];
+			if (listItemLink) {
+				listItemLink.onclick = function() {
+					Dase.toggle(this.nextSibling.nextSibling);
+					return false;
+				}
+			}
+		}
+	}
 }
 
 Dase.multicheck = function(c) { 
 	var coll_list = document.getElementById('collectionList');
+	if (!coll_list) { return; }
 	var multi = document.createElement('a');
 	multi.setAttribute('href','');
 	multi.setAttribute('class','uncheck');
@@ -56,19 +77,19 @@ Dase.multicheck = function(c) {
 }
 
 Dase.getItemTallies = function() {
-	if ($("#collectionList").size()) {
-		$.get("ajax/item_tallies",function(data){
-				$("collection",data).each(function() {
-					$('#tally-'+$(this).attr("id")).text("(" + $(this).attr('item_tally') + ")");
+	if (jQuery("#collectionList").size()) {
+		jQuery.get("ajax/item_tallies",function(data){
+				jQuery("collection",data).each(function() {
+					jQuery('#tally-'+jQuery(this).attr("id")).text("(" + jQuery(this).attr('item_tally') + ")");
 					});
 				});
 	}
 }
 
 Dase.getUserTags = function() {
-	var eid = $("#userData").text();
+	var eid = jQuery("#userData").text();
 	if (eid) {
-		$.getJSON("json/" + eid + "/tags",function(json){
+		jQuery.getJSON("json/" + eid + "/tags",function(json){
 				var tags={};
 				tags['tagsSelect'] = document.getElementById('tagsSelect');
 				var jsonEid = json[eid];
@@ -86,14 +107,14 @@ Dase.getUserTags = function() {
 }
 
 Dase.initBrowse = function() {
-	if($("#browseColumns").size()) {
+	if(jQuery("#browseColumns").size()) {
 		Dase.getAttributes();
 		/*
-		   $("#catColumn").find("a").each(function() {
-		   var category_id = $(this).attr("id").split('_').pop(); //creates closure for click event
-		   $(this).click(function() {
-		   $("#attColumn").removeClass();
-		   $('#valColumn').html(" ").attr("class","empty");
+		   jQuery("#catColumn").find("a").each(function() {
+		   var category_id = jQuery(this).attr("id").split('_').pop(); //creates closure for click event
+		   jQuery(this).click(function() {
+		   jQuery("#attColumn").removeClass();
+		   jQuery('#valColumn').html(" ").attr("class","empty");
 		   if ('admin' == category_id) {
 		   Dase.getAdminAttributes(coll);
 		   } else {
@@ -110,19 +131,19 @@ Dase.getAttributes = function() {
 	/*
 	   Dase.getHtml('attColumn');
 	 */
-	$("#attColumn").html("<div class='loading'>Loading Attributes...</div>");
-	var url = $("#attColumn").attr("class");
-	$.get(url,function(data) {
-			$("#attColumn").html(data);
+	jQuery("#attColumn").html("<div class='loading'>Loading Attributes...</div>");
+	var url = jQuery("#attColumn").attr("class");
+	jQuery.get(url,function(data) {
+			jQuery("#attColumn").html(data);
 			Dase.bindGetValues(coll);
 			});
-	if ($("#attColumn").attr("class")) {
+	if (jQuery("#attColumn").attr("class")) {
 		//meaning there is an attr_id embedded in the className of attColumn
-		$("#valColumn").removeClass();
+		jQuery("#valColumn").removeClass();
 	} else {
-		$('#valColumn').html(" ").attr("class","empty");
+		jQuery('#valColumn').html(" ").attr("class","empty");
 	}
-	$('#autocomplete').html(" ");
+	jQuery('#autocomplete').html(" ");
 }
 
 Dase.getAdminAttributes = function(coll) {
@@ -131,38 +152,38 @@ token: new Date().getTime(),
 	   link_class: "att_link",
 	   coll: coll
 	};	   
-	$("#catColumn < a[class=spill]").attr("class","catLink");
-	$("#catLink_admin").attr("class","spill");
-	$("#attColumn").html("<div class='loading'>Loading Admin Attributes...</div>");
-	$.get("ajax/admin_attributes",params,function(data) {
-			$("#attColumn").html(data);
+	jQuery("#catColumn < a[class=spill]").attr("class","catLink");
+	jQuery("#catLink_admin").attr("class","spill");
+	jQuery("#attColumn").html("<div class='loading'>Loading Admin Attributes...</div>");
+	jQuery.get("ajax/admin_attributes",params,function(data) {
+			jQuery("#attColumn").html(data);
 			Dase.bindGetValues(coll);
 			});
-	if ($("#attColumn").attr("class")) {
+	if (jQuery("#attColumn").attr("class")) {
 		//meaning there is an attr_id embedded in the className of attColumn
-		$("#valColumn").removeClass();
+		jQuery("#valColumn").removeClass();
 	} else {
-		$('#valColumn').html(" ").attr("class","empty");
+		jQuery('#valColumn').html(" ").attr("class","empty");
 	}
-	$('#autocomplete').html(" ");
+	jQuery('#autocomplete').html(" ");
 }
 
 Dase.bindGetValues = function(coll) {
-	$("#attColumn").find('a').each(function() {
-			var attribute_id = $(this).attr("class").split(" ").pop(); //creates closure for click event
-			$(this).click(function() {
+	jQuery("#attColumn").find('a').each(function() {
+			var attribute_id = jQuery(this).attr("class").split(" ").pop(); //creates closure for click event
+			jQuery(this).click(function() {
 				var params = {
 token: new Date().getTime(),
 attribute_id: attribute_id,
 coll: coll
 };	   
-$("#attColumn//a[class=spill]").attr("class","att_link");
-$("#att_link_"+attribute_id).attr("class","spill");
-$("#valColumn").html("<div class='loading'>Loading Values...</div>");
-$.get("ajax/values_by_attribute",params,function(data) {
-	$("#valColumn").html(data).removeClass();
+jQuery("#attColumn//a[class=spill]").attr("class","att_link");
+jQuery("#att_link_"+attribute_id).attr("class","spill");
+jQuery("#valColumn").html("<div class='loading'>Loading Values...</div>");
+jQuery.get("ajax/values_by_attribute",params,function(data) {
+	jQuery("#valColumn").html(data).removeClass();
 	});
-$('#autocomplete').html(" ");
+jQuery('#autocomplete').html(" ");
 window.scroll(0,0);
 return false;
 });
@@ -171,24 +192,24 @@ Dase.getAttributeTallies(coll);
 }
 
 Dase.getAttributeTallies = function(coll) {
-	if ($("#getTallies").size()) {
+	if (jQuery("#getTallies").size()) {
 		var params = {
 token: new Date().getTime(),
 	   coll: coll
 		};	   
-		if ('adminAtts' == $('#getTallies').attr("class")) { 
+		if ('adminAtts' == jQuery('#getTallies').attr("class")) { 
 			params.admin = 1;
 		}
-		if ($('#currently_using_cb').size()) {
+		if (jQuery('#currently_using_cb').size()) {
 			params.cb=1;
 		}
-		$.get("ajax/attribute_tallies",params,function(data) {
-				$("attribute",data).each(function() {
-					if (0 == $(this).attr('val_tally')) {
+		jQuery.get("ajax/attribute_tallies",params,function(data) {
+				jQuery("attribute",data).each(function() {
+					if (0 == jQuery(this).attr('val_tally')) {
 					//this makes attributes that have 0 values disappear!!!!
-					$('#att_link_'+$(this).attr("id")).hide();
+					jQuery('#att_link_'+jQuery(this).attr("id")).hide();
 					} else {
-					$('#tally-'+$(this).attr("id")).text("(" + $(this).attr('val_tally') + ")");
+					jQuery('#tally-'+jQuery(this).attr("id")).text("(" + jQuery(this).attr('val_tally') + ")");
 					}
 					});
 
@@ -197,8 +218,8 @@ token: new Date().getTime(),
 }
 
 Dase.initDynamicSearchForm = function() {
-	$("select.dynamic").change(function() {
-			$(this).parent().find("input[type=text]").attr("name",$("option:selected",this).attr("value"));
+	jQuery("select.dynamic").change(function() {
+			jQuery(this).parent().find("input[type=text]").attr("name",jQuery("option:selected",this).attr("value"));
 			});
 }
 
