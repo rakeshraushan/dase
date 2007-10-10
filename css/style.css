@@ -209,6 +209,13 @@ li.checkedCollection a:hover {
 	color: #000000;
 }
 
+a.checkedCollection {
+	color: #700c0c;
+}	
+a.checkedCollection:hover {
+	color: #000000;
+}
+
 form.styled {
 	padding: 1em;
 	border: 1px solid #aaa;
