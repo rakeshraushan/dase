@@ -1,9 +1,6 @@
 <div class="content list" id="browse">
 <a id="content" name="content"></a>
 
-<noscript>
-<h1 class="alert">For the most satisfying DASE experience we recommend that Javascript be enabled.</h1>
-</noscript>
 {if $msg}
 <div class="alert">{$msg}</div>
 {/if}

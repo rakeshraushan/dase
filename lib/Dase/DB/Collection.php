@@ -139,6 +139,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$writer->writeAttribute('xmlns','http://www.w3.org/2005/Atom');
 		$ascii_id_array = explode('_',$this->ascii_id);
 		$prefix = $ascii_id_array[0];
+		$writer->writeAttribute("xmlns:dase", APP_HTTP_ROOT);
 		$writer->writeAttribute("xmlns:$prefix", APP_HTTP_ROOT . "/{$this->ascii_id}/1.0");
 		$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
 		$writer->startElement('title');
@@ -149,7 +150,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$writer->endElement();
 		$writer->startElement('author');
 		$writer->startElement('name');
-		$writer->text('john smith');
 		$writer->endElement();
 		$writer->endElement();
 		$writer->startElement('updated');
@@ -188,7 +188,11 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				if ($row['atom_element']) {
 					$writer->startElement($row['atom_element']);
 				} else {
-					$writer->startElement($prefix . ':' . $row['ascii_id']);
+					if ('admin' == substr($row['ascii_id'],0,5)) {
+						$writer->startElement('dase:' . $row['ascii_id']);
+					} else {
+						$writer->startElement($prefix . ':' . $row['ascii_id']);
+					}
 				}
 				$writer->text($row['value_text']);
 				$writer->endElement();

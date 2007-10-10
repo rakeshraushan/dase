@@ -1,5 +1,9 @@
 <routes>
 
+  <route action="ajax/error" auth="none">
+	<match>x/.*</match>
+  </route>
+
   <route action="list_collections" auth="user">
 	<match>collections</match>
 	<match></match>
@@ -14,8 +18,12 @@
 	<match caps="collection_ascii_id">([^/]*_collection)</match>
   </route>
 
-  <route action="json_attributes" auth="user">
-	<match caps="collection_ascii_id">(.*_collection)/attributes</match>
+  <route action="json/user_tags" auth="user">
+	<match caps="eid">json/([^/]*)/tags</match>
+  </route>
+
+  <route action="json/attributes" auth="user">
+	<match caps="collection_ascii_id">json/(.*_collection)/attributes</match>
   </route>
 
   <route action="search/search" auth="user">
@@ -49,7 +57,7 @@
 
 
   <route action="ajax/attributes" auth="none">
-	<match>ajax/attributes</match>
+	<match caps="collection_ascii_id/pub">ajax/([^/]*_collection)/attributes/(public|admin|all)</match>
   </route>
 
   <route action="ajax/admin_attributes" auth="none">

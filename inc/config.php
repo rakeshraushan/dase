@@ -26,6 +26,7 @@ $conf['remote']['laits']['username'] = 'http://dase.laits.utexas.edu/api/v1/';
 $conf['remote']['laits']['password'] = 'http://dase.laits.utexas.edu/api/v1/';
 
 
+//local_config CAN OVERRIDE any of the above values
 include DASE_PATH . '/inc/local_config.php';
 
 //default lookup values
@@ -44,8 +45,3 @@ $conf['item_status'][] = 'admin_only';
 $conf['item_status'][] = 'marked_for_delete';
 $conf['item_status'][] = 'deep_storage';
 
-$conf['tag_type'][] = 'admin_collection';
-$conf['tag_type'][] = 'cart';
-$conf['tag_type'][] = 'slideshow';
-$conf['tag_type'][] = 'user_collection';
-$conf['tag_type'][] = 'user_metadata';

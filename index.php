@@ -20,6 +20,9 @@ define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname(
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
+define('CART',1);
+define('USER_COLLECTION',2);
+define('SLIDESHOW',3);
 
 function __autoload($class_name) {
 	$class_name = preg_replace('/_/','/',$class_name);

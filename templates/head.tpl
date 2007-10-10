@@ -11,9 +11,10 @@
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" type="text/css" href="css/menu.css"/>
 
-<script type="text/javascript" src="scripts/dase.js"></script>
+<!--<script type="text/javascript" src="scripts/dase.js"></script>-->
 <script type="text/javascript" src="scripts/jquery.js"></script>
 <script type="text/javascript" src="scripts/dase_jquery.js"></script>
+
 <link rel="shortcut icon" href="{$app_root}/images/favicon.ico"/>
 
 <noscript>

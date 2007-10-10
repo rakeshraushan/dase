@@ -7,6 +7,7 @@ class Dase_Json
 	private function encodeArray($data,$level) 
 	{
 		$this->json .= "[";
+		$i=0; 
 		foreach ( $data as $value ) { 
 			Dase_Json::encodeData($value,$level+1); 
 			if ( (++$i) != count($data) ) $this->json .= ",";

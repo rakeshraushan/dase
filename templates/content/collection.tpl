@@ -25,52 +25,19 @@
 </form>
 <div id="autocomplete"></div>
 
-<div id="browseColumns" class="{$collection->ascii_id} {if $cb}0{else}1{/if}">
+<div id="browseColumns">
 <h3>Browse:</h3>
 
 <div id="catColumn">
 <h4>Select Attribute Group:</h4>
-<a href="{$collection->ascii_id}?cat_id=all" class="{if $display_cat->id == 'all'}spill{else}catLink{/if}" id="catLink_0">Collection Attributes</a>
-{foreach item=cat from=$collection->category_array }
-{if $cat.id}
-<a href="{$collection->ascii_id}?cat_id={$cat.id}" class="{if $display_cat.id == $cat.id}spill{else}catLink{/if}" id="catLink_{$cat.id}">{$cat.name} <span class="tally">({$cat.att_count})</span></a>
-{/if}
-{/foreach}
-<a href="{$collection->ascii_id}?cat_id=admin" class="{if $display_cat->id eq 'admin'}spill{else}catLink{/if}" id="catLink_admin">Admin Attributes</a>
+<a href="x/{$collection->ascii_id}/attributes/public" class="spill">Collection Attributes</a>
+<a href="x/{$collection->ascii_id}/attributes/admin">Admin Attributes</a>
 </div>
 
-<!-- what follows will ONLY be in effect if user has javascript disabled-->
+<div id="attColumn" class="ajax/{$collection->ascii_id}/attributes/public"></div>
 
-<div id="attColumn" {if $attribute->id}class="{$attribute->id}"{/if} >
-<h4>Select {$display_cat->name} Attribute:</h4>
-<ul id="attList">
-{foreach item=att from=$collection->attribute_array}
-<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att.id}" class="{if $attribute->id == $att.id}spill{else}attLink{/if}">
-{$att.attribute_name|escape:"html"}</a></li>
-{/foreach}
-{foreach item=att from=$collection->admin_attribute_array}
-<li><a href="{$collection->ascii_id}?cat_id={$display_cat->id}&browse_attribute_id={$att.id}" class="{if $attribute->id == $att.id}spill{else}attLink{/if}">
-{$att.attribute_name|escape:"html"}</a></li>
-{/foreach}
-</div>
+<div id="valColumn"></div>
 
-<!--<div id="valColumn" {if $attribute->total == 0}class="empty"{/if}>-->
-{if count($attribute->display_values) <= 0}
-<div id="valColumn" class="empty">
-{else}
-<div id="valColumn">
-{if count($attribute->display_values) == 1}
-<h4>There is 1 value for the attribute "{$attribute->attribute_name}."</h4>
-{else}
-<h4>There are {$attribute->display_values|@count} values for the attribute "{$attribute->attribute_name}."</h4>
-{/if}
-<ul id="attList">
-{foreach item=value from=$attribute->display_values }
-<li>
-<a href="index.php?action=search&query={$value.urlencoded_value_text}&attribute_id={$attribute->id}&collection_id={$collection->id}&cat_id={$display_cat->id}">{if $value.value_text|count_words < 3}{$value.value_text|truncate:50:'...':true}{else}{$value.value_text}{/if} <span class="tally">({$value.tally})</span></a></li>
-{/foreach}
-{/if}
-</div>
 
 </div> <!-- close browseColumns -->
 <div class="spacer"></div>

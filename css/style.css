@@ -26,9 +26,6 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 html {
 	/* force scroll bar */
 	overflow-y: scroll;
-	/*height: 100%;
-	margin-bottom: 1px;
-	*/
 }
 
 body {
@@ -109,37 +106,27 @@ strong {
 }
 
 
-.cbBanner {
-	/*background-color: #173561;*/
-	/*background-image: url(../images/daseBanner.png);*/ 
+.daseBanner {
 	background-image: url(../images/daseBanner3.jpg); 
-	background-repeat: no-repeat;
-	color: #ccc;
-	/*font: normal 1.6em georgia,serif*/;
-	font: normal 1.2em arial,helvetica,sans-serif;
-	/*padding:8px 8px 8px 15px;*/
 	padding: 0 12px;
-			 margin-top: -1px;
-	/*height: 70px;*/
+	margin-top: -1px;
 	height: 70px;
 }
 
-.cbBanner p {
+.adminBanner p {
 	color: #fff;
 	margin:0;
 	font-size: 2em;
 	padding:0;
 	padding-top: 11px;
 	padding-left: 12px;
-	/*letter-spacing: 0.1em;*/
 }
 
-.cbBanner abbr {
+.adminBanner abbr {
 	font-size: .85em;
 }
 
-.cbBanner p.label {
- 
+.adminBanner p.label {
 position: absolute;
 top:90px;
 left: 12px;
@@ -148,7 +135,7 @@ left: 12px;
 color: #fff;
 	letter-spacing: 0.2em;
 }
-.cbBanner a {
+.adminBanner a {
 	color: #666;
 }
 
@@ -191,7 +178,7 @@ div.browse {
 	color: #666666;
   } 
 
-  .hide,.tempHide {
+.hide,.tempHide {
 	  display: none;
 }
 
@@ -275,12 +262,12 @@ a.logoff {
 div.alert {
 	font-size: 1.5em;
 	font-weight:bold;
-	color: red;
+	color: #c00;
 	margin: 10px 0;
 }
 
 .alert {
-	color: red;
+	color: #c00;
 }
 
 div.searchBoxLabel {
