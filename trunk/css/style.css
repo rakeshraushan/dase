@@ -179,15 +179,13 @@ div.browse {
   } 
 
 .hide,.tempHide {
-	  display: none;
+	display: none;
 }
-
-a.skipnav {
+div#skipnav {
 	position: absolute;
 	left: -1000em;
 	width: 20em;
 }
-
 
 ul.pageList {
 	margin:15px 0px 15px 0px;
@@ -432,5 +430,31 @@ color: #009;
 }
 dd {
 margin-left: 15px;
+}
+
+li.label {
+	  font-family: arial,sans;
+	  font-weight: bold;
+	  font-size: 1.3em;
+	  color: #333;
+	 margin: 10px 0;
+}
+
+ul#menu li.menuForm {
+	padding: 2px;
+}
+ul#menu li.menuForm form {
+	margin-left:8px; 
+}
+ul#menu li.menuForm input {
+	font-size: 1em;
+}
+
+.loadingMsg {
+	color: #666;
+}
+
+div#ajaxMenuMsg {
+	margin: 10px 18px;
 }
 

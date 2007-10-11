@@ -1,7 +1,7 @@
 if (!Dase) { var Dase = {}; }
 jQuery(function(){ 
 		Dase.getUserTags();
-		Dase.initMenu();
+		Dase.initMenu('menu');
 		Dase.multicheck("checkedCollection");
 		Dase.getItemTallies();
 		Dase.initBrowse();
@@ -16,19 +16,20 @@ Dase.toggle = function(el) {
 	}
 }
 
-
-Dase.initMenu = function() { 
-	menu = document.getElementById('menu');
-	listItems = menu.getElementsByTagName('li');
-	for (var i=0;i<listItems.length;i++) {
-		var listItem = listItems[i];
-		var sub = listItem.getElementsByTagName('ul')[0];
-		if (sub) {
-			var listItemLink = listItem.getElementsByTagName('a')[0];
-			if (listItemLink) {
-				listItemLink.onclick = function() {
-					Dase.toggle(this.nextSibling.nextSibling);
-					return false;
+Dase.initMenu = function(id) { 
+	var menu = document.getElementById(id);
+	if (menu) {
+		var listItems = menu.getElementsByTagName('li');
+		for (var i=0;i<listItems.length;i++) {
+			var listItem = listItems[i];
+			var sub = listItem.getElementsByTagName('ul');
+			if (sub) {
+				var listItemLink = listItem.getElementsByTagName('a')[0];
+				if (listItemLink) {
+					listItemLink.onclick = function() {
+						Dase.toggle(this.parentNode.getElementsByTagName('ul')[0]);
+						return false;
+					}
 				}
 			}
 		}
@@ -41,6 +42,7 @@ Dase.multicheck = function(c) {
 	var multi = document.createElement('a');
 	multi.setAttribute('href','');
 	multi.setAttribute('class','uncheck');
+	multi.setAttribute('className','uncheck');
 	multi.appendChild(document.createTextNode('check/uncheck all'));
 	coll_list.appendChild(multi);
 	var boxes = coll_list.getElementsByTagName('input');
@@ -49,11 +51,13 @@ Dase.multicheck = function(c) {
 		for (var i=0; i<boxes.length; i++) {
 			box = boxes[i];
 			if ('uncheck' == this.className) {
-				box.removeAttribute('checked');
-				box.nextSibling.nextSibling.className = '';
+				//box.removeAttribute('checked');
+				box.checked = null;
+				box.parentNode.getElementsByTagName('a')[0].className = '';
 			} else {
-				box.setAttribute('checked',true);
-				box.nextSibling.nextSibling.className = c;
+				//box.setAttribute('checked',true);
+				box.checked = true;
+				box.parentNode.getElementsByTagName('a')[0].className = c;
 			}
 		}	   
 		if ('uncheck' == this.className) {
@@ -66,7 +70,7 @@ Dase.multicheck = function(c) {
 
 	for (var i=0; i<boxes.length; i++) {
 		boxes[i].onclick = function() {
-			var link = this.nextSibling.nextSibling;
+			var link = this.parentNode.getElementsByTagName('a')[0];
 			if (c == link.className) {
 				link.className = '';
 			} else {
@@ -88,7 +92,10 @@ Dase.getItemTallies = function() {
 
 Dase.getUserTags = function() {
 	var eid = jQuery("#userData").text();
+	//note: the message was overkill on every request....
+	//var msg = document.getElementById('ajaxMenuMsg');
 	if (eid) {
+		//msg.innerHTML = 'loading data for ' + eid + '...';
 		jQuery.getJSON("json/" + eid + "/tags",function(json){
 				var tags={};
 				tags['tagsSelect'] = document.getElementById('tagsSelect');
@@ -98,11 +105,14 @@ Dase.getUserTags = function() {
 				for (var ascii in jsonType) {
 				var jsonAscii = jsonType[ascii];
 				tags['tagsSelect'].innerHTML = tags['tagsSelect'].innerHTML + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
+				//first time through we grab the element using getElementById
 				tags[type] = tags[type] ? tags[type] : document.getElementById(type);	
-				if (tags[type]) {
+				if ((tags[type]) && ('cart' != type)) {
 				tags[type].innerHTML = tags[type].innerHTML + "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
-				} } } 
+				} 
+				} } 
 				});
+		//setTimeout(function() { msg.innerHTML = ''}, 2400);	
 	}
 }
 
@@ -221,10 +231,6 @@ Dase.initDynamicSearchForm = function() {
 	jQuery("select.dynamic").change(function() {
 			jQuery(this).parent().find("input[type=text]").attr("name",jQuery("option:selected",this).attr("value"));
 			});
-}
-
-Dase.gid = function(id) {
-	return document.getElementById(id);
 }
 
 /*

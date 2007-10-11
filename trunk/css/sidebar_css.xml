@@ -8,16 +8,17 @@ margin: 0px 3px 0px 0px;
 float:left;
 }
 
-ul#menu li > a {
+ul#menu a {
 display:block;
 padding: 6px;
 margin: 2px 0px;
 }
-ul#menu > li > ul {
+ul#menu  li  ul {
 	margin-left:18px;
 }
 ul#menu  li ul li ul {
 padding:6px;
+	margin-left:0px;
 		background-color: #eee;
 }
 ul#menu  input {
@@ -26,7 +27,7 @@ margin: 2px 0;
 ul#menu li ul li a{
 padding:6px;
 margin: 0px;
-		border-bottom: 1px solid #fff;
+		border-top: 1px solid #fff;
 
 }
 </css>

@@ -7,11 +7,13 @@
 
 {$last_search}
 
-<form id="searchCollections" method="get" action="search">
 <div class="searchBoxLabel">Search selected collection(s):</div> 
-<input type="text" name="q[]" size="30"/>
-<input type="hidden" name="from_home_page" value="1"/>
-<input type="submit" value="Search" class="button"/>
+<form id="searchCollections" method="get" action="search">
+<div>
+<input type="text" name="q[]" size="30">
+<input type="hidden" name="from_home_page" value="1">
+<input type="submit" value="Search" class="button">
+</div>
 {if $user->recent_search}
 <br/>
 <a href="view/recent_searches/">view my recent searches</a>
@@ -28,9 +30,8 @@
 </li>
 {/if}
 {/foreach}
-<!--</ul>-->
-<h3>Special Access Collections</h3>
-<!--<ul class="pageList">-->
+
+<li class="label">Special Access Collections</li>
 {foreach item=np_coll from=$collections}
 {if $np_coll.is_public ne 1}
 <li><input type="checkbox" name="cols[]" value="{$np_coll.id}" {if in_array($coll.id,$current_collections)}checked="checked"{/if} />
@@ -42,6 +43,7 @@
 {/foreach}
 </ul>
 </div>
+</form>
 
 <h3><a href="action/list_public_tags/">Browse Public User Collections/Slideshows</a></h3>
 </div><!-- closes class=standardListContent id=home--> 

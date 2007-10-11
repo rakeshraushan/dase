@@ -10,18 +10,18 @@
 	</xsl:template>
 
 	<xsl:template match="hue">
-ul#menu li.<xsl:value-of select="@section"/> > a {
+li.<xsl:value-of select="@section"/> a.main {
 border: 1px solid #<xsl:value-of select="hex[@level='1']"/>; 
 border-left: 18px solid #<xsl:value-of select="hex[@level='1']"/>;
 background-color: #ffffff;
 }
-ul#menu li.<xsl:value-of select="@section"/> > a:hover {
+li.<xsl:value-of select="@section"/> a:hover , a:active {
 	background-color: #<xsl:value-of select="hex[@level='4']"/>;
 }
-ul#menu li.<xsl:value-of select="@section"/> ul a {
+ul#<xsl:value-of select="@section"/> a {
 	background-color: #<xsl:value-of select="hex[@level='4']"/>;
 }
-ul#menu li.<xsl:value-of select="@section"/> ul a:hover {
+ul#<xsl:value-of select="@section"/> a:hover {
 	background-color: #<xsl:value-of select="hex[@level='5']"/>;
 }
 
