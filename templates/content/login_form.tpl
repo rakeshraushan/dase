@@ -8,12 +8,12 @@
 
 <form id="login" action="login" method="post">
 <p>
-<label for="username">username:</label>
-<input type="text" name="username">
+<label for="username-input">username:</label>
+<input type="text" id="username-input" name="username">
 </p>
 <p>
-<label for="password">password:</label>
-<input type="password" name="password">
+<label for="password-input">password:</label>
+<input type="password" id="password-input" name="password">
 </p>
 <p>
 <input type="submit" value="login">

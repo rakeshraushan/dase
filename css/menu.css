@@ -7,16 +7,17 @@ margin: 0px 3px 0px 0px;
 float:left;
 }
 
-ul#menu li > a {
+ul#menu a {
 display:block;
 padding: 6px;
 margin: 2px 0px;
 }
-ul#menu > li > ul {
+ul#menu  li  ul {
 	margin-left:18px;
 }
 ul#menu  li ul li ul {
 padding:6px;
+	margin-left:0px;
 		background-color: #eee;
 }
 ul#menu  input {
@@ -25,22 +26,22 @@ margin: 2px 0;
 ul#menu li ul li a{
 padding:6px;
 margin: 0px;
-		border-bottom: 1px solid #fff;
+		border-top: 1px solid #fff;
 
 }
 
-ul#menu li.admin > a {
+li.admin a.main {
 border: 1px solid #000000; 
 border-left: 18px solid #000000;
 background-color: #ffffff;
 }
-ul#menu li.admin > a:hover {
+li.admin a:hover , a:active {
 	background-color: #dddddd;
 }
-ul#menu li.admin ul a {
+ul#admin a {
 	background-color: #dddddd;
 }
-ul#menu li.admin ul a:hover {
+ul#admin a:hover {
 	background-color: #f1f1f1;
 }
 
@@ -48,18 +49,18 @@ ul#menu li.admin ul a:hover {
 	background-color: #dddddd;
 }
 
-ul#menu li.slideshow > a {
+li.slideshow a.main {
 border: 1px solid #263b5e; 
 border-left: 18px solid #263b5e;
 background-color: #ffffff;
 }
-ul#menu li.slideshow > a:hover {
+li.slideshow a:hover , a:active {
 	background-color: #d5deed;
 }
-ul#menu li.slideshow ul a {
+ul#slideshow a {
 	background-color: #d5deed;
 }
-ul#menu li.slideshow ul a:hover {
+ul#slideshow a:hover {
 	background-color: #eef1f8;
 }
 
@@ -67,37 +68,37 @@ ul#menu li.slideshow ul a:hover {
 	background-color: #d5deed;
 }
 
-ul#menu li.collection > a {
+li.user_collection a.main {
 border: 1px solid #283b1c; 
 border-left: 18px solid #283b1c;
 background-color: #ffffff;
 }
-ul#menu li.collection > a:hover {
+li.user_collection a:hover , a:active {
 	background-color: #ceead8;
 }
-ul#menu li.collection ul a {
+ul#user_collection a {
 	background-color: #ceead8;
 }
-ul#menu li.collection ul a:hover {
+ul#user_collection a:hover {
 	background-color: #ebf6ef;
 }
 
-#collection {
+#user_collection {
 	background-color: #ceead8;
 }
 
-ul#menu li.cart > a {
+li.cart a.main {
 border: 1px solid #700c0c; 
 border-left: 18px solid #700c0c;
 background-color: #ffffff;
 }
-ul#menu li.cart > a:hover {
+li.cart a:hover , a:active {
 	background-color: #ecd7d6;
 }
-ul#menu li.cart ul a {
+ul#cart a {
 	background-color: #ecd7d6;
 }
-ul#menu li.cart ul a:hover {
+ul#cart a:hover {
 	background-color: #f7efee;
 }
 
@@ -105,18 +106,18 @@ ul#menu li.cart ul a:hover {
 	background-color: #ecd7d6;
 }
 
-ul#menu li.home > a {
+li.home a.main {
 border: 1px solid #a25c25; 
 border-left: 18px solid #a25c25;
 background-color: #ffffff;
 }
-ul#menu li.home > a:hover {
+li.home a:hover , a:active {
 	background-color: #dfcbbc;
 }
-ul#menu li.home ul a {
+ul#home a {
 	background-color: #dfcbbc;
 }
-ul#menu li.home ul a:hover {
+ul#home a:hover {
 	background-color: #f2eae3;
 }
 
@@ -124,18 +125,18 @@ ul#menu li.home ul a:hover {
 	background-color: #dfcbbc;
 }
 
-ul#menu li.browse > a {
+li.browse a.main {
 border: 1px solid #a8721e; 
 border-left: 18px solid #a8721e;
 background-color: #ffffff;
 }
-ul#menu li.browse > a:hover {
+li.browse a:hover , a:active {
 	background-color: #f2dfc1;
 }
-ul#menu li.browse ul a {
+ul#browse a {
 	background-color: #f2dfc1;
 }
-ul#menu li.browse ul a:hover {
+ul#browse a:hover {
 	background-color: #ffebcc;
 }
 
@@ -143,18 +144,18 @@ ul#menu li.browse ul a:hover {
 	background-color: #f2dfc1;
 }
 
-ul#menu li.subscription > a {
+li.subscription a.main {
 border: 1px solid #5f5121; 
 border-left: 18px solid #5f5121;
 background-color: #ffffff;
 }
-ul#menu li.subscription > a:hover {
+li.subscription a:hover , a:active {
 	background-color: #f4ebd2;
 }
-ul#menu li.subscription ul a {
+ul#subscription a {
 	background-color: #f4ebd2;
 }
-ul#menu li.subscription ul a:hover {
+ul#subscription a:hover {
 	background-color: #faf7ec;
 }
 

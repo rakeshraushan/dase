@@ -16,7 +16,7 @@
 		<hex level="5">eef1f8</hex>
 		<hex level="5">f1f6fe</hex>
 	</hue>
-	<hue id="green" section="collection">
+	<hue id="green" section="user_collection">
 		<hex level="1">283b1c</hex>
 		<hex level="2">669966</hex>
 		<hex level="3">9dbda9</hex>
