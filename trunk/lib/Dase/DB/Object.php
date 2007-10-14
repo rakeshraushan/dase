@@ -18,7 +18,9 @@ class Dase_DB_Object {
 	}
 
 	function __get( $key ) {
-		return $this->fields[ $key ];
+		if ( array_key_exists( $key, $this->fields ) ) {
+			return $this->fields[ $key ];
+		}
 	}
 
 	function __set( $key, $value ) {

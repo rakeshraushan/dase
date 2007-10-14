@@ -5,6 +5,12 @@ class AuthException extends Exception {}
 class Dase_AuthCookie {
 
 	//from Advanced PHP Programming p. 334
+	//NOTE: this could all be made more secure
+	//by adding an arbitrary 'salt' string in DASE_CONFIG
+	//that was mixed in w/ the encrypted data
+	//so that a hacker, even if they had the source code
+	//would have no idea of the 'salt' for a particular 
+	//installation
 
 	private $created;
 	private $userid;
@@ -24,7 +30,7 @@ class Dase_AuthCookie {
 			$this->userid = $userid;
 		} else {
 			if (array_key_exists(self::$cookiename,$_COOKIE)) {
-				$buffer = $this->_unpackage($_COOKIE[self::$cookiename]);
+				$this->_unpackage($_COOKIE[self::$cookiename]);
 			} else {
 				throw new AuthException("no cookie");
 			}
@@ -34,6 +40,7 @@ class Dase_AuthCookie {
 	public function set() {
 		$cookie = $this->_package();
 		setcookie(self::$cookiename,$cookie,0,'/');
+		$user_cookie = new Dase_UserCookie($this->userid);
 	}
 
 	public function validate() {

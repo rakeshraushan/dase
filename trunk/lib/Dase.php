@@ -5,6 +5,7 @@ class Dase
 	private static $instance;
 	public static $user;
 	public $base_url= '';       
+	public $collection;
 	private $module= '';        
 	private $url_params = array();    
 
@@ -44,15 +45,23 @@ class Dase
 			}
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');
-		header('HTTP/1.0 401 Unauthorized');
+		header('HTTP/1.1 401 Unauthorized');
 		echo "please enter a valid username and password";
 		exit;
 	}
 
-	public function checkUser($auth = 'user',$collection_ascii_id = '') {
+	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid) {
 		switch ($auth) {
 		case 'user':
 			self::$user = new Dase_User();
+			if ($collection_ascii_id) {
+				// By having the collection_ascii_id in the URL
+				// required for collection activity, we can safely
+				// protect non-public collections!! 
+				if (!self::$user->checkAuth($collection_ascii_id,'read')) {
+					Dase::error(401);
+				}
+			}
 			break;
 		case 'superuser':
 			self::$user = new Dase_User();
@@ -83,6 +92,12 @@ class Dase
 			break;
 		case 'token':
 			if (!in_array(Dase::filterGet('token'),Dase::getConf('token'))) {
+				Dase::error(401);
+			}
+			break;
+		case 'eid':
+			self::$user = new Dase_User();
+			if (self::$user->eid != $eid) {
 				Dase::error(401);
 			}
 			break;
@@ -329,6 +344,8 @@ class Dase
 					}
 				}
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
+					$eid = '';
+					$collection_ascii_id = '';
 					//conf_array['collection'] originates in configuration file config.php
 					//modules can stipulate an associated collection
 					//this is collection authorization for modules
@@ -338,10 +355,23 @@ class Dase
 						//this is collection authorization for collection admin
 					} elseif (isset($params['collection_ascii_id'])) {
 						$collection_ascii_id = $params['collection_ascii_id'];
+					} elseif (isset($params['eid'])) {
+						$eid = $params['eid'];
+						if (isset($params['collection_ascii_id'])) {
+							$collection_ascii_id = $params['collection_ascii_id'];
+						} else {
+							$collection_ascii_id = '';
+						}
 					} else {
 						$collection_ascii_id = '';
 					}	
-					Dase::checkUser($conf_array['auth'],$collection_ascii_id);
+					if ($collection_ascii_id) {
+						// instantiate collection and let this (singleton controller) hold it
+						// note that here is a GOOD place to decide what kind (db,xml,remote)
+						// of collection to get
+						$controller->collection = Dase_Collection::get($collection_ascii_id,'db');
+					}
+					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$eid);
 				} else {
 					//default auth is user!!!!!!!!!!!!!
 					Dase::checkUser('user');
@@ -365,15 +395,15 @@ class Dase
 	public static function error($code, $msg = '') {
 		$tpl = Dase_Template::instance();
 		if (400 == $code) {
-			header("HTTP/1.0 400 Bad Request");
+			header("HTTP/1.1 400 Bad Request");
 			$tpl->assign('msg',$msg);
 		}
 		if (404 == $code) {
-			header("HTTP/1.0 404 Not Found");
+			header("HTTP/1.1 404 Not Found");
 			$tpl->assign('msg','not found');
 		}
 		if (401 == $code) {
-			header('HTTP/1.0 401 Unauthorized');
+			header('HTTP/1.1 401 Unauthorized');
 			$tpl->assign('msg','Unauthorized');
 		}
 		$tpl->assign('code',$code);
