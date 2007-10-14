@@ -5,5 +5,8 @@
 $user = Dase::getUser();
 $cookie = new Dase_AuthCookie($user->id);
 $cookie->logout();
-header("Location:http://www.lib.utexas.edu");
+$user_cookie = new Dase_UserCookie;
+$user_cookie->delete();
+Dase::reload();
+//header("Location:http://www.lib.utexas.edu");
 exit;

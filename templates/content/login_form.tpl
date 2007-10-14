@@ -1,8 +1,6 @@
 <div class="content list" id="browse">
 
-{if $msg}
-<div class="alert">{$msg}</div>
-{/if}
+<div id="msg" class="alert{if !$msg} hide{/if}">{$msg}</div>
 
 <h1>Please Login to Dase:</h1>
 

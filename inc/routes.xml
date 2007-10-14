@@ -1,10 +1,12 @@
 <routes>
 
   <route action="ajax/error" auth="none">
-	<match>x/.*</match>
+	<match>ajax/error</match>
   </route>
 
-  <route action="list_collections" auth="user">
+  <!--<route action="collection/list" auth="user">-->
+  <route action="collection/list" auth="none">
+	<match>collection/list</match>
 	<match>collections</match>
 	<match></match>
   </route>
@@ -18,12 +20,32 @@
 	<match caps="collection_ascii_id">([^/]*_collection)</match>
   </route>
 
-  <route action="json/user_tags" auth="user">
-	<match caps="eid">json/([^/]*)/tags</match>
+  <route action="json/user_data" auth="eid">
+	<match caps="eid">json/([^/]*)/data</match>
+  </route>
+
+  <route action="json/admin_collections" auth="eid">
+	<match caps="eid">json/([^/]*)/collections</match>
   </route>
 
   <route action="json/attributes" auth="user">
 	<match caps="collection_ascii_id">json/(.*_collection)/attributes</match>
+  </route>
+
+  <route action="json/item_tallies" auth="none">
+	<match>json/item_tallies</match>
+  </route>
+
+  <route action="json/attribute_tallies" auth="user">
+	<match caps="collection_ascii_id">json/(.*_collection)/attribute_tallies</match>
+  </route>
+
+  <route action="json/cb_attribute_tallies" auth="eid">
+	<match caps="collection_ascii_id">json/admin/(.*_collection)/attribute_tallies</match>
+  </route>
+
+  <route action="json/admin_attribute_tallies" auth="user">
+	<match caps="collection_ascii_id">json/(.*_collection)/admin_attribute_tallies</match>
   </route>
 
   <route action="search/search" auth="user">
@@ -57,19 +79,15 @@
 
 
   <route action="ajax/attributes" auth="none">
-	<match caps="collection_ascii_id/pub">ajax/([^/]*_collection)/attributes/(public|admin|all)</match>
+	<match caps="collection_ascii_id">ajax/([^/]*_collection)/attributes/public</match>
+  </route>
+
+  <route action="ajax/admin_attributes" auth="none">
+	<match caps="collection_ascii_id">ajax/([^/]*_collection)/attributes/admin</match>
   </route>
 
   <route action="ajax/admin_attributes" auth="none">
 	<match>ajax/admin_attributes</match>
-  </route>
-
-  <route action="ajax/attribute_tallies" auth="none">
-	<match>ajax/attribute_tallies</match>
-  </route>
-
-  <route action="ajax/item_tallies" auth="none">
-	<match>ajax/item_tallies</match>
   </route>
 
   <route action="ajax/values_by_attribute" auth="none">
@@ -79,7 +97,7 @@
   <route action="error"/>
 
   <route action="login/form" auth="none">
-	<match>login/form</match>
+	<match>login</match>
   </route>
 
   <route action="login/login" auth="none" method="post">
@@ -113,5 +131,9 @@
 
   <route action="manage/phpinfo" auth="superuser"/>
   <route action="manage/stats" auth="superuser"/>
+
+  <route action="user/settings" auth="eid">
+	<match caps="eid">([^/]*)</match>
+  </route>
 
 </routes>

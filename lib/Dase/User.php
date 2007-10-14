@@ -2,6 +2,9 @@
 
 class Dase_User 
 {
+	// this class should ONLY need to be instantiated
+	// if there is an eid in the URL string...
+	
 	public $db_user = null;
 
 	public function __construct() {
@@ -16,10 +19,11 @@ class Dase_User
 			}
 		}
 		catch (AuthException $e) {
-			Dase::reload('login/form');
+			Dase::reload('login');
 		}
 	}
 
+	//factory method
 	public static function get($eid) {
 		$user = new Dase_DB_DaseUser;
 		$user->eid = $eid;
@@ -52,6 +56,14 @@ class Dase_User
 		if (!$collection_ascii_id) {
 			return false;
 		}
+		if ('read' == $auth_level) {
+			// we can short circuit if curr coll is public
+			// which is good, since this will be the case MOST
+			// of the time
+			if (Dase::instance()->collection->is_public) {
+				return true;
+			}
+		}
 		$cm = new Dase_DB_CollectionManager; 
 		$cm->collection_ascii_id = $collection_ascii_id;
 		$cm->dase_user_eid = $this->db_user->eid;
@@ -68,6 +80,6 @@ class Dase_User
 			}
 		} else {
 			return false;
-		}
+		}	
 	}
 }
