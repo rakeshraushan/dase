@@ -50,7 +50,7 @@ class Dase
 		exit;
 	}
 
-	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid) {
+	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid = '') {
 		switch ($auth) {
 		case 'user':
 			self::$user = new Dase_User();
