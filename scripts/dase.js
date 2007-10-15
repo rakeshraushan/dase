@@ -68,8 +68,6 @@ Dase.displayError = function(msg) {
 	Dase.removeClass(jsalert,'hide');
 	jsalert.innerHTML = '';
 	jsalert.innerHTML = msg;
-
-	//Dase.$('jsAlert').appendChild(document.createTextNode(msg));
 }
 
 Dase.toggle = function(el) {
@@ -263,7 +261,6 @@ Dase.initBrowse = function() {
 		att_coll.className = '';
 		var val_coll = Dase.$('valColumn');
 		val_coll.innerHTML = '';
-		Dase.addClass(val_coll,'empty');
 
 		var cats = Dase.$('catColumn').getElementsByTagName('a');
 		for (var i=0;i<cats.length;i++) {
@@ -284,34 +281,29 @@ Dase.initBrowse = function() {
 Dase.getAttributes = function(url) {
 	Dase.getHtml(url,'attColumn',function() {Dase.bindGetValues(Dase.$('collectionAsciiId').className)});
 	var val_coll = Dase.$('valColumn');
+	val_coll.className = 'hide';
 	val_coll.innerHTML = '';
-	Dase.addClass(val_coll,'empty');
 }
 
 
 Dase.bindGetValues = function(coll) {
 	Dase.getAttributeTallies(coll);
-/*
-	jQuery("#attColumn").find('a').each(function() {
-			var attribute_id = jQuery(this).attr("class").split(" ").pop(); //creates closure for click event
-			jQuery(this).click(function() {
-				var params = {
-token: new Date().getTime(),
-attribute_id: attribute_id,
-coll: coll
-};	   
-jQuery("#attColumn//a[class=spill]").attr("class","att_link");
-jQuery("#att_link_"+attribute_id).attr("class","spill");
-jQuery("#valColumn").html("<div class='loading'>Loading Values...</div>");
-jQuery.get("ajax/values_by_attribute",params,function(data) {
-	jQuery("#valColumn").html(data).removeClass();
-	});
-window.scroll(0,0);
-return false;
-});
-			});
-Dase.getAttributeTallies(coll);
-*/
+	var atts = Dase.$('attColumn').getElementsByTagName('a');
+	for (var i=0;i<atts.length;i++) {
+		var att_link = atts[i];
+		if ('att_link' == att_link.className) {
+			att_link.onclick = function() {
+				Dase.getHtml(this.href,'valColumn');	
+				Dase.removeClass(Dase.$('valColumn'),'hide');
+				window.scroll(0,0);
+				for (var j=0;j<atts.length;j++) {
+					atts[j].className = 'att_link';
+				}
+				this.className = 'spill';
+				return false;
+			}
+		}
+	}
 }
 
 Dase.getAttributeTallies = function(coll) {
@@ -329,7 +321,9 @@ Dase.getAttributeTallies = function(coll) {
 	}
 	Dase.getJSON(url,function(json) {
 			for(var ascii_id in json) {
-			var tally = Dase.$('tally-' + ascii_id);
+			var	att_link = Dase.$(ascii_id);
+			if (att_link) {
+			var tally = Dase.$(ascii_id).parentNode.getElementsByTagName('span')[0];
 			if (tally) {
 			if (is_admin && 0 == json[ascii_id]) {
 			//make admin atts w/ no values disappear
@@ -337,7 +331,13 @@ Dase.getAttributeTallies = function(coll) {
 			} else {
 			tally.innerHTML = '(' + json[ascii_id] + ')';
 			}
-			} } });
+			if (is_admin) {
+			// makes admin atts appear ONLY after tallies are set
+			Dase.addClass(Dase.$('get_admin_tallies'),'hide');
+			Dase.removeClass(Dase.$('adminAttsLabel'),'hide');
+			Dase.removeClass(Dase.$('attList'),'hide');
+			}
+			} } } });
 }
 
 Dase.initDynamicSearchForm = function() {
