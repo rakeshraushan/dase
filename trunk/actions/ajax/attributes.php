@@ -1,6 +1,6 @@
 <?php
 $attribute = new Dase_DB_Attribute;
-$c = Dase_DB_Collection::get($params['collection_ascii_id']);
+$c = Dase::instance()->collection;
 $attribute->collection_id = $c->id;
 $attribute->is_public = 1;
 $attribute->orderBy('sort_order');
@@ -13,7 +13,7 @@ $html .="<ul id=\"attList\">";
 if (is_array($attribute_array)) {
 	foreach ($attribute_array as $attribute) {
 		$html .=<<<EOF
-			<li><a href="#" class="att_link {$attribute['id']}" id="att_link_{$attribute['id']}">{$attribute['attribute_name']}</a> <span class="tally" id="tally-{$attribute['ascii_id']}"></span></li>
+			<li><a href="ajax/$c->ascii_id/attribute/{$attribute['ascii_id']}" id="{$attribute['ascii_id']}" class="att_link">{$attribute['attribute_name']} <span class="tally"></span></a></li>
 EOF;
 	}
 }

@@ -309,9 +309,9 @@ function createSql($search) {
 
 	return $sql;
 }
+/*
 print createSql($search);
 exit;
-/*
 print('<pre>');
 print_r($search);
 print('</pre>');

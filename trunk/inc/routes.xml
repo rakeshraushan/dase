@@ -86,12 +86,8 @@
 	<match caps="collection_ascii_id">ajax/([^/]*_collection)/attributes/admin</match>
   </route>
 
-  <route action="ajax/admin_attributes" auth="none">
-	<match>ajax/admin_attributes</match>
-  </route>
-
-  <route action="ajax/values_by_attribute" auth="none">
-	<match>ajax/values_by_attribute</match>
+  <route action="ajax/attribute_values" auth="none">
+	<match caps="collection_ascii_id/attribute_ascii_id">ajax/([^/]*_collection)/attribute/([^/]*)</match>
   </route>
 
   <route action="error"/>
