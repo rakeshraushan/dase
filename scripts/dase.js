@@ -15,16 +15,13 @@ function addLoadEvent(func) {
 	}
 }
 
-Dase.user = {};
-
-Dase.setCookieData = function() {
-
-}
-
 Dase.$ = function(id) {
 	return document.getElementById(id);
 }
-
+Dase.user = {};
+Dase.base_href = document.getElementsByTagName('base')[0].href;
+Dase.setCookieData = function() {
+}
 Dase.getCookieData = function() {
 	/*
 	   if dase cookie exists, get data
@@ -92,7 +89,7 @@ Dase.initUser = function() {
 	if (eid) {
 		Dase.user.eid = eid;
 		Dase.removeClass(Dase.$('logoffControl'),'hide');
-		Dase.getJSON("json/" + eid + "/data",function(json){
+		Dase.getJSON(Dase.base_href + "json/" + eid + "/data",function(json){
 				Dase.user.name = json[eid]['name'];
 				Dase.user.tags = json[eid]['tags'];
 				Dase.user.collections = json[eid]['collections'];
@@ -131,11 +128,13 @@ Dase.placeUserCollections = function() {
 			var a = document.createElement('a');
 			a.setAttribute('href',c.ascii_id);
 			a.setAttribute('class','checkedCollection');
+			a.className = 'checkedCollection';
 			a.appendChild(document.createTextNode(c.collection_name));
 			li.appendChild(a);
 			li.appendChild(document.createTextNode(' '));
 			var span = document.createElement('span');
 			span.setAttribute('class','tally');
+			span.className = 'tally';
 			span.setAttribute('id','tally-'+c.ascii_id);
 			li.appendChild(span);
 			coll_list.appendChild(li);
@@ -224,7 +223,7 @@ Dase.multicheck = function(c) {
 
 Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
-		Dase.getJSON("json/item_tallies", function(json){
+		Dase.getJSON(Dase.base_href+"json/item_tallies", function(json){
 				for(var ascii_id in json) {
 				var tally = Dase.$('tally-' + ascii_id);
 				if (tally) {
@@ -364,7 +363,12 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	if (target) {
 		target.innerHTML = '<div class="loading">Loading...</div>';
 	}
-	var xmlhttp = Dase.createXMLHttpRequest(); //had to put constructor here so key-up functions work
+
+	// this is to deal with IE6 cache behavior
+	date = new Date();
+	url = url + '?' + date.getTime();
+
+	var xmlhttp = Dase.createXMLHttpRequest();
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
@@ -381,7 +385,13 @@ Dase.getHtml = function(url,elem_id,my_func) {
 }
 
 Dase.getJSON = function(url,my_func) {
-	var xmlhttp = Dase.createXMLHttpRequest(); //had to put constructor here so key-up functions work
+	//var xmlhttp = Dase.createXMLHttpRequest();
+	var xmlhttp = Dase.newRequest();
+
+	// this is to deal with IE6 cache behavior
+	date = new Date();
+	url = url + '?' + date.getTime();
+
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
@@ -397,6 +407,35 @@ Dase.getJSON = function(url,my_func) {
 		}
 		return false;
 	}
+}
+
+// From Rhino 5th p. 480
+Dase._factories = [
+    function() { return new XMLHttpRequest(); },
+    function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
+    function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
+];
+Dase._factory = null;
+Dase.newRequest = function() {
+    if (Dase._factory != null) return Dase._factory();
+    for(var i = 0; i < Dase._factories.length; i++) {
+        try {
+            var factory = Dase._factories[i];
+            var request = factory();
+            if (request != null) {
+                Dase._factory = factory;
+                return request;
+            }
+        }
+        catch(e) {
+            continue;
+        }
+    }
+    Dase._factory = function() {
+        alert("XMLHttpRequest not supported");
+        //throw new Error("XMLHttpRequest not supported");
+    }
+    Dase._factory(); // Throw an error
 }
 
 addLoadEvent(function() {

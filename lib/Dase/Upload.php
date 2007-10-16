@@ -24,7 +24,7 @@ class Dase_Upload
 
 	function createItem() {
 		$this->item = Dase_DB_Item::create($this->collection->ascii_id);
-		return "CREATED " . $this->item->serial_number . "\n";
+		return $this->item->serial_number;
 	}
 
 	function retrieveItem() {
@@ -65,11 +65,11 @@ class Dase_Upload
 
 	function moveFileTo($destdir) {
 		$dest = trim($destdir,'/') . '/' . $this->file->getBasename(); 
-		//try {
-		//$this->file->moveTo($dest);
-		//} catch (Exception $e){
-		//	throw new Dase_Upload_Exception("Error: could not move " . $this->file->getFilepath() . " to $dest\n");
-		//}
+		try {
+			$this->file->moveTo($dest);
+		} catch (Exception $e){
+			throw new Dase_Upload_Exception("Error: could not move " . $this->file->getFilepath() . " to $dest\n");
+		}
 		return "MOVED " . $this->file->getFilepath() . " to $dest\n";
 	}
 

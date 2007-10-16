@@ -8,17 +8,17 @@
 <div class="searchBoxLabel">Search selected collection(s):</div> 
 <form id="searchCollections" method="get" action="search">
 <div>
-<input type="text" name="q[]" size="30">
-<input type="hidden" name="from_home_page" value="1">
-<input type="submit" value="Search" class="button">
+<input type="text" name="q[]" size="30"/>
+<input type="hidden" name="from_home_page" value="1"/>
+<input type="submit" value="Search" class="button"/>
 </div>
 
 <ul id="collectionList" class="pageList multicheck">
 
 {foreach item=coll from=$collections}
 <li>
-<input type="checkbox" name="cols[]" value="{$coll.id}" checked="checked">
-<a href="{$coll.ascii_id}" class="checkedCollection">{$coll.collection_name}</a>
+<input type="checkbox" name="cols[]" value="{$coll.id}" checked="checked"/>
+<a href="{$coll.ascii_id}" class="checkedCollection">{$coll.collection_name|escape:'html'}</a>
 <span class="tally" id="tally-{$coll.ascii_id}"></span>
 </li>
 {/foreach}
