@@ -26,11 +26,11 @@
 
 <div id="catColumn">
 <h4>Select Attribute Group:</h4>
-<a href="ajax/{$collection->ascii_id}/attributes/public" class="spill">Collection Attributes</a>
-<a href="ajax/{$collection->ascii_id}/attributes/admin">Admin Attributes</a>
+<a href="html/{$collection->ascii_id}/attributes/public" class="spill">Collection Attributes</a>
+<a href="html/{$collection->ascii_id}/attributes/admin">Admin Attributes</a>
 </div>
 
-<div id="attColumn" class="ajax/{$collection->ascii_id}/attributes/public"></div>
+<div id="attColumn" class="html/{$collection->ascii_id}/attributes/public"></div>
 
 <div id="valColumn" class="hide"></div>
 

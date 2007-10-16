@@ -1,7 +1,7 @@
 <routes>
 
-  <route action="ajax/error" auth="none">
-	<match>ajax/error</match>
+  <route action="html/error" auth="none">
+	<match>html/error</match>
   </route>
 
   <!--<route action="collection/list" auth="user">-->
@@ -78,16 +78,16 @@
   </route>
 
 
-  <route action="ajax/attributes" auth="none">
-	<match caps="collection_ascii_id">ajax/([^/]*_collection)/attributes/public</match>
+  <route action="html/attributes" auth="none">
+	<match caps="collection_ascii_id">html/([^/]*_collection)/attributes/public</match>
   </route>
 
-  <route action="ajax/admin_attributes" auth="none">
-	<match caps="collection_ascii_id">ajax/([^/]*_collection)/attributes/admin</match>
+  <route action="html/admin_attributes" auth="none">
+	<match caps="collection_ascii_id">html/([^/]*_collection)/attributes/admin</match>
   </route>
 
-  <route action="ajax/attribute_values" auth="none">
-	<match caps="collection_ascii_id/attribute_ascii_id">ajax/([^/]*_collection)/attribute/([^/]*)</match>
+  <route action="html/attribute_values" auth="none">
+	<match caps="collection_ascii_id/attribute_ascii_id">html/([^/]*_collection)/attribute/([^/]*)</match>
   </route>
 
   <route action="error"/>
