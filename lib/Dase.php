@@ -172,7 +172,18 @@ class Dase
 	}
 
 	static public function compileRoutes() {
-		return Dase::_compileModuleRoutes(Dase::_compileRoutes());
+		// No cache: (~200 req/sec
+		// Database Cache: (<100 req/sec)
+		// File Based Cache: (>400 req/sec)
+		$routes = array(); 
+		$cache = new Dase_FileCache('routes');
+		if ($cache->get()) {
+			$routes = unserialize($cache->get());
+		} else {
+			$routes = Dase::_compileModuleRoutes(Dase::_compileRoutes());
+			$cache->set(serialize($routes));
+		}
+		return $routes;
 	}
 
 	static private function _compileRoutes($prefix = '',$collection = null,$routes = null) {
