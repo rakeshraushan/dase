@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<collections>
+  <collection id="16" ascii_id="vrc_collection" collection_name="Art &amp; Art History Visual Resources Collection" is_public="1"/>
+  <collection id="3" ascii_id="friesen_collection" collection_name="Friesen Collection" is_public="1"/>
+  <collection id="2" ascii_id="germans_from_russia_collection" collection_name="Germans From Russia" is_public="1"/>
+  <collection id="10" ascii_id="mes_collection" collection_name="Middle Eastern Studies Collection" is_public="1"/>
+  <collection id="11" ascii_id="germanic_collection" collection_name="Germanic Studies" is_public="1"/>
+  <collection id="8" ascii_id="tarl_collection" collection_name="Texas Archaeological Source Materials" is_public="1"/>
+  <collection id="17" ascii_id="asian_studies_collection" collection_name="Asian Studies Collection" is_public="1"/>
+  <collection id="9" ascii_id="spanish_collection" collection_name="Spanish Collection" is_public="1"/>
+  <collection id="7" ascii_id="constitution_collection" collection_name="Constitution Collection" is_public="1"/>
+  <collection id="109" ascii_id="chinese_507_collection" collection_name="Chinese 507 Audio" is_public="1"/>
+  <collection id="14" ascii_id="costume_collection" collection_name="Costume Collection" is_public="1"/>
+  <collection id="6" ascii_id="anthropology_collection" collection_name="Cultural Anthropology Collection" is_public="1"/>
+  <collection id="5" ascii_id="classics_collection" collection_name="Classics Collection" is_public="1"/>
+  <collection id="15" ascii_id="english_collection" collection_name="English Collection" is_public="1"/>
+  <collection id="110" ascii_id="french_312n_collection" collection_name="French 312N Audio" is_public="1"/>
+  <collection id="114" ascii_id="chinese_506_collection" collection_name="Chinese 506 Audio" is_public="1"/>
+  <collection id="111" ascii_id="french_322e_collection" collection_name="French 322E Audio" is_public="1"/>
+  <collection id="117" ascii_id="bsls_collection" collection_name="British Studies Lecture Series" is_public="1"/>
+  <collection id="132" ascii_id="american_west_collection" collection_name="American West Collection" is_public="1"/>
+  <collection id="103" ascii_id="plan2_collection" collection_name="Plan II Thesis Collection" is_public="1"/>
+  <collection id="150" ascii_id="blanton_collection" collection_name="Blanton Museum Archive" is_public="1"/>
+  <collection id="128" ascii_id="akohl_collection" collection_name="Historic Images of Art &amp; Architecture (Allan T. Kohl Archive)" is_public="1"/>
+</collections>

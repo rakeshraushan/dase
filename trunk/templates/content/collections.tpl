@@ -3,8 +3,6 @@
 
 <div id="msg" class="alert{if !$msg} hide{/if}">{$msg}</div>
 
-{$last_search}
-
 <div class="searchBoxLabel">Search selected collection(s):</div> 
 <form id="searchCollections" method="get" action="search">
 <div>
@@ -16,10 +14,10 @@
 <ul id="collectionList" class="pageList multicheck">
 
 {foreach item=coll from=$collections}
-<li>
+<li id="{$coll.ascii_id}">
 <input type="checkbox" name="cols[]" value="{$coll.id}" checked="checked"/>
 <a href="{$coll.ascii_id}" class="checkedCollection">{$coll.collection_name|escape:'html'}</a>
-<span class="tally" id="tally-{$coll.ascii_id}"></span>
+<span class="tally"></span>
 </li>
 {/foreach}
 

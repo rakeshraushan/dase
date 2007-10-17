@@ -422,20 +422,22 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		}
 		$dom->formatOutput = true;
 		return $dom->saveXML();
-/*
+	}
+
+	static function listPublicAsXml() {
 		$dom = new DOMDocument('1.0');
-		$coll_res = $dom->appendChild($dom->createElement('collectionSet'));
-		$collection = new Dase_DB_Collection;
-		foreach ($collection->getAll() as $c) {
-			$coll = $coll_res->appendChild($dom->createElement('collection'));
-			$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public');
+		$root = $dom->appendChild($dom->createElement('collections'));
+		$c = new Dase_DB_Collection;
+		$c->is_public = 1;
+		foreach ($c->findAll() as $row) {
+			$coll = $root->appendChild($dom->createElement('collection'));
+			$fields = array('id','ascii_id','collection_name','is_public');
 			foreach ($fields as $field) {
-				$coll->setAttribute($field,$c[$field]);	
+				$coll->setAttribute($field,$row[$field]);	
 			}
 		}
 		$dom->formatOutput = true;
 		return $dom->saveXML();
- */
 	}
 
 	function getAttributes($sort = null) {

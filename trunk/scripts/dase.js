@@ -118,6 +118,7 @@ Dase.placeUserCollections = function() {
 		if ("1" != c.is_public) {
 			hasSpecial++;
 			var li = document.createElement('li');
+			li.setAttribute('id',c.ascii_id);
 			var input = document.createElement('input');
 			input.setAttribute('type','checkbox');
 			input.setAttribute('name','cols[]');
@@ -135,7 +136,6 @@ Dase.placeUserCollections = function() {
 			var span = document.createElement('span');
 			span.setAttribute('class','tally');
 			span.className = 'tally';
-			span.setAttribute('id','tally-'+c.ascii_id);
 			li.appendChild(span);
 			coll_list.appendChild(li);
 		}
@@ -225,7 +225,7 @@ Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
 		Dase.getJSON(Dase.base_href+"json/item_tallies", function(json){
 				for(var ascii_id in json) {
-				var tally = Dase.$('tally-' + ascii_id);
+				var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
 				if (tally) {
 				tally.innerHTML = '(' + json[ascii_id] + ')';
 				} } });
