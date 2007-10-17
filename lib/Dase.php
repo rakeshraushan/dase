@@ -382,6 +382,7 @@ class Dase
 						echo "$regex => {$conf_array['action']}";
 						exit;
 					}
+					$msg = Dase::filterGet('msg');
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
 				} 

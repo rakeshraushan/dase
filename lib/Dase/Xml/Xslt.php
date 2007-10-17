@@ -2,27 +2,30 @@
 
 class Dase_Xml_Xslt {  
 
-	function __construct() {
+	private $xsl;
+	private $xml;
+	private $xslt;
+
+	function __construct($stylesheet,$source) {
+		$this->xsl = new DOMDocument;
+		$this->xsl->load($stylesheet);
+
+		$this->xml = new DOMDocument;
+		if (is_file($source)) {
+			$this->xml->load($source);
+		} else {
+			$this->xml->loadXML($source);
+		}
+		$this->xslt = new XSLTProcessor();
+		$this->xslt->importStylesheet($this->xsl);
 	}
 
-	static function transform($stylesheet,$source) {
-		//load stylesheet
-		$xsl = new DOMDocument;
-		$stylesheet = XSLT_DIR . "/$stylesheet";
-		$xsl->load($stylesheet);
+	function set($name,$value) {
+		$this->xslt->setParameter( null,$name,$value );
+	}
 
-		//load source xml
-		$xml = new DOMDocument;
-		$xml_doc = XML_DIR . "/$source";
-		if (is_file($xml_doc)) {
-			$xml->load($xml_doc);
-		} else {
-			$xml->loadXML($source);
-		}
-
-		//run xslt transform
-		$xslt = new XSLTProcessor();
-		$xslt->importStylesheet($xsl);
-		return ($xslt->transformToXML($xml));
+	function transform() {
+		$this->set('timer',Dase_Timer::getElapsed());
+		return ($this->xslt->transformToXML($this->xml));
 	}
 }

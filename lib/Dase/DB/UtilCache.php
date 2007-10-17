@@ -28,7 +28,7 @@ class Dase_DB_UtilCache extends Dase_DB_Autogen_UtilCache
 		$cache->ascii_id = $ascii_id;
 		$cache->collection_ascii_id = $collection_ascii_id;
 		if ($cache->findOne()) {
-			$cache->text = $xml;
+			$cache->text = $text;
 			$cache->ttl = $ttl;
 			$cache->timestamp = time();
 			$cache->update();
