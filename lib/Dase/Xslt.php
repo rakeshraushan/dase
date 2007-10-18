@@ -1,12 +1,15 @@
 <?php
 
-class Dase_Xml_Xslt {  
+class Dase_Xslt {  
 
 	private $xsl;
 	private $xml;
 	private $xslt;
 
-	function __construct($stylesheet,$source) {
+	function __construct($stylesheet, $source = '') {
+		if (!$source) {
+			$source = XSLT_PATH . '/layout.xml';
+		}
 		$this->xsl = new DOMDocument;
 		$this->xsl->load($stylesheet);
 
@@ -25,6 +28,7 @@ class Dase_Xml_Xslt {
 	}
 
 	function transform() {
+		$this->set('app_root',APP_ROOT . '/');
 		$this->set('timer',Dase_Timer::getElapsed());
 		return ($this->xslt->transformToXML($this->xml));
 	}

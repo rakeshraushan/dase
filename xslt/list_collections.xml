@@ -3,7 +3,6 @@
 <html>
   <head>
 	<title>List of All Collection</title>
-	<base href="http://quickdraw.laits.utexas.edu/dasetest/"></base>
   </head>
   <body>
 
@@ -21,8 +20,7 @@
 		</div>
 
 		<ul id="collectionList" class="pageList multicheck">
-		  <!-- APP ROOT NEEDS TO BE PASSED IN!! -->
-		  <insert-collection-list-items href="http://quickdraw.laits.utexas.edu/dasetest/xml/collections"/>
+		  <insert-collection-list-items/>
 		  <li id="specialAccessLabel" class="label hide">Special Access Collections</li>
 		</ul>
 	  </form>
