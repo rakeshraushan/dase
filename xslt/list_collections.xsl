@@ -17,6 +17,7 @@
 	<li id="{@ascii_id}">
 	  <input name="cols[]" value="{@id}" checked="checked" type="checkbox"/>
 	  <a href="{@ascii_id}" class="checkedCollection"><xsl:value-of select="@collection_name"/></a>
+	  <xsl:text> </xsl:text>
 	  <span class="tally"></span>
 	</li>
   </xsl:template>
