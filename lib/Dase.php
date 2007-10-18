@@ -124,7 +124,7 @@ class Dase
 	}
 
 	public static function filterArray($ar) {
-		if (Dase_Utils::getVersion() >= 520) {
+		if (Dase_Util::getVersion() >= 520) {
 			return filter_var_array($ar, FILTER_SANITIZE_STRING);
 		} else {
 			foreach ($ar as $k => $v) {
@@ -135,7 +135,7 @@ class Dase
 	}
 
 	public static function filterGetArray() {
-		if (Dase_Utils::getVersion() >= 520) {
+		if (Dase_Util::getVersion() >= 520) {
 			return filter_input_array(INPUT_GET);
 		} else {
 			$ar = array();
@@ -152,7 +152,7 @@ class Dase
 	}
 
 	public static function filterGet($key) {
-		if (Dase_Utils::getVersion() >= 520) {
+		if (Dase_Util::getVersion() >= 520) {
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($_GET[$key])) {
@@ -162,7 +162,7 @@ class Dase
 	}
 
 	public static function filterPost($key) {
-		if (Dase_Utils::getVersion() >= 520) {
+		if (Dase_Util::getVersion() >= 520) {
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($_POST[$key])) {

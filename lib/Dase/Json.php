@@ -29,7 +29,7 @@ class Dase_Json
 	{
 		if ( is_array($data) ) 
 		{ 
-			if ( is_numeric(implode(array_keys($data))) ) 
+			if (is_numeric(implode(array_keys($data)))) 
 				Dase_Json::encodeArray($data,$level); 
 			else 
 				Dase_Json::encodeObject($data,$level); 
