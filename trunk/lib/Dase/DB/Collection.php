@@ -15,7 +15,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return($c->findOne());
 	}
 
-	function getXml($limit = 100000) {
+	function getXmlArchive($limit = 100000) {
 		$admin_atts = $this->getAdminAttributeAsciiIds();
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -99,7 +99,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			//db_object get too 
 			//4:40 for 18K 
 			//records
-			/*
 			$value = new Dase_DB_Value;
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
@@ -109,7 +108,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				$writer->text($val['value_text']);
 				$writer->endElement();
 			}
-			 */
 			$media_file = new Dase_DB_MediaFile;
 			$media_file->item_id = $it['id'];
 			foreach($media_file->findAll() as $mf) {
@@ -121,6 +119,58 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				$writer->writeAttribute('width',$mf['width']);
 				$writer->writeAttribute('height',$mf['height']);
 				$writer->writeAttribute('id',$mf['id']);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
+	function getXml() {
+		$admin_atts = $this->getAdminAttributeAsciiIds();
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('collection');
+		$writer->writeAttribute('id',$this->id);
+		$writer->writeAttribute('name',$this->collection_name);
+		$writer->writeAttribute('ascii_id',$this->ascii_id);
+		$writer->writeAttribute('description',$this->description);
+		$writer->writeAttribute('is_public',$this->is_public);
+		$writer->writeAttribute('updated',$this->getLastUpdated());
+		$writer->writeAttribute('item_count',$this->getItemCount());
+		$attribute = new Dase_DB_Attribute;
+		$attribute->collection_id = $this->id;
+		foreach($attribute->findAll() as $att) {
+			$writer->startElement('attribute');
+			$writer->writeAttribute('name',$att['attribute_name']);
+			$writer->writeAttribute('ascii_id',$att['ascii_id']);
+			$writer->writeAttribute('sort_order',$att['sort_order']);
+			$writer->writeAttribute('is_public',$att['is_public']);
+			if ($att['atom_element']) {
+				$writer->writeAttribute('atom_element',$att['atom_element']);
+			}
+			if ($att['mapped_admin_att_id']) {
+				$writer->writeAttribute('mapped_admin_attribute',$admin_atts[$att['mapped_admin_att_id']]);
+			}
+			$writer->endElement();
+		}
+		$type = new Dase_DB_ItemType;
+		$type->collection_id = $this->id;
+		foreach($type->findAll() as $t) {
+			$writer->startElement('item_type');
+			$writer->writeAttribute('name',$t['name']);
+			$writer->writeAttribute('ascii_id',$t['ascii_id']);
+			$writer->writeAttribute('description',$t['description']);
+			$it_obj = new Dase_DB_ItemType;
+			$it_obj->load($t['id']);
+			foreach ($it_obj->getAttributes() as $a) {
+				$writer->startElement('attribute');
+				$writer->writeAttribute('ascii_id',$a->ascii_id);
+				$writer->writeAttribute('cardinality',$a->cardinality);
 				$writer->endElement();
 			}
 			$writer->endElement();

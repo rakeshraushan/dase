@@ -1,13 +1,24 @@
 <?php
 
 if (isset($params['collection_ascii_id'])) {
-	$coll = new Dase_DB_Collection;
+	$ascii = $params['collection_ascii_id'];
+	//xslt version:
+	$t = new Dase_Xslt(XSLT_PATH.'/browse_collection.xsl');
+	$t->set('c_ascii_id',$ascii);
+	$t->set('layout',XSLT_PATH.'/browse_collection.xml');
+	$t->set('collection',APP_ROOT.'/xml/' . $ascii);
+	$tpl = new Dase_Html_Template();
+	$tpl->setText($t->transform());
+	$tpl->display();
+
+	/* smarty:
+	$c = new Dase_DB_Collection;
+	$c->ascii_id = $params['collection_ascii_id'];
+	$c->findOne();
+	$c->getItemCount();
 	$tpl = Dase_Template::instance();
-	$coll->ascii_id = $params['collection_ascii_id'];
-	$coll->findOne();
-	$coll->getItemCount();
-	$tpl->assign('collection',$coll);
+	$tpl->assign('collection',$c);
 	$tpl->assign('content','collection');
 	$tpl->display('page.tpl');
-	exit;
+	 */
 }

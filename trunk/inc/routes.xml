@@ -78,6 +78,7 @@
 
   <route action="xml/collection" auth="none">
 	<match params="collection_ascii_id">xml/c</match>
+	<match caps="collection_ascii_id">xml/([^/]*_collection)</match>
   </route>
 
   <route action="item_xml_dump" auth="token">
