@@ -55,6 +55,11 @@
 	<match caps="collection_ascii_id">json/(.*_collection)/admin_attribute_tallies</match>
   </route>
 
+  <route action="json/search" auth="user">
+	<match caps="collection_ascii_id">([^/]*_collection)/json/search</match>
+	<match>json/search</match>
+  </route>
+
   <route action="search/search" auth="user">
 	<match caps="collection_ascii_id">([^/]*_collection)/search</match>
 	<match>search</match>

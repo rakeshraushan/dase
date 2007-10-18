@@ -226,7 +226,7 @@ function createSql($search) {
 	}
 	if (count($search_table_sets)) {
 		$search_table_sql = "
-			SELECT item_id 
+			SELECT item_id,collection_id 
 			FROM search_table 
 			WHERE " . join(' AND ', $search_table_sets);
 	}
@@ -273,9 +273,7 @@ function createSql($search) {
 		}
 		unset($ar_table_sets);
 	}
-
-
-	if (count($search['collections']) && isset($search_table_sql)) {
+	if (isset($search['collections']) && isset($search_table_sql)) {
 		foreach ($search['collections'] as $sc) {
 			$quoted[] = "'$sc'";
 		}
@@ -284,16 +282,16 @@ function createSql($search) {
 	}
 	if (isset($search_table_sql) && count($value_table_search_sets)) {
 		$sql = "
-			SELECT id, collection_id FROM item
+			SELECT id,collection_id FROM item
 			WHERE id IN ($search_table_sql)
 			AND " . join(' AND ',$value_table_search_sets);
 	} elseif (isset($search_table_sql)) {
 		$sql = "
-			SELECT id, collection_id FROM item
+			SELECT id,collection_id FROM item
 			WHERE id IN ($search_table_sql)";
 	} elseif (count($value_table_search_sets)) {
 		$sql = "
-			SELECT id, collection_id FROM item
+			SELECT id,collection_id FROM item
 			WHERE " . join(' AND ',$value_table_search_sets);
 	} else {
 		return 'no query';
@@ -308,63 +306,26 @@ function createSql($search) {
 			FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
 			";
 	}
-
 	return $sql;
 }
-
-if (Dase::filterGet('show_sql')) {
-	print createSql($search);
-	print('<pre>');
-	print_r($search);
-	print('</pre>');
-	print md5(normalizeSearch($search));
-	exit;
-}
-
-$collection_lookup = Dase_DB_Collection::getLookupHash();
+/*
+print createSql($search);
+exit;
+print('<pre>');
+print_r($search);
+print('</pre>');
+print md5(normalizeSearch($search));
+exit;
+ */
 $db = Dase_DB::get();
 $st = $db->prepare(createSql($search));	
 $st->execute();
 $item_ids = array();;
 while ($row = $st->fetch()) {
-	$ascii = $collection_lookup[$row['collection_id']];
-	$item_ids[$ascii][] = $row['id'];
+	$item_ids["{$row['collection_id']}"][] = $row['id'];
 }
 
-/*
-$items = array();
-$start = 0;
-$max_items = 50;
-if (count($item_ids)) {
-	$sc = new Dase_DB_SearchCache;
-	$sc->item_id_string = join(',',$item_ids);
-	$sc->search_md5 = md5(normalizeSearch($search));
-	$sc->insert();
-	foreach (array_slice($item_ids,$start,$max_items) as $id) {
-		$item = new Dase_DB_Item;
-		$item->load($id);
-		$item->getValues();
-		$item->getThumbnail();
-		$items[] = $item;
-	}
-}
-
-
-$tpl = Dase_Template::instance();
-if (isset($coll_ascii_id)) {
-	$c = Dase_DB_Collection::get($coll_ascii_id);
-	$c->getItemTypes();
-	$c->getAttributes();
-	$tpl->assign('collection',$c);
-}
-if (count($items)) {
-	$tpl->assign('items',$items);
-}
-$tpl->assign('content','search');
-$tpl->display('page.tpl');
-*/
-
-uasort($item_ids, array('Dase_Util','sortByCount'));
+usort($item_ids, array('Dase_Util','sortByItemCount'));
 
 if (count($item_ids)) {
 	$sc = new Dase_DB_SearchCache;
@@ -375,7 +336,7 @@ if (count($item_ids)) {
 
 $js = new Dase_Json;
 $tpl = new Dase_Json_Template;
-$tpl->setJson($js->encodeData($item_ids,10));
+$tpl->setJson($js->encodeData($item_ids,10,false));
 $tpl->display();
 
 
