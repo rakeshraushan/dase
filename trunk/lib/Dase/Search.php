@@ -3,7 +3,7 @@ class Dase_Search {
 
 	public $search;		
 
-	__construct() {
+	function __construct() {
 		$get_arrays = Dase::filterGetArray();
 		$search['type'] = null;
 		$search['collections'] = array();
@@ -310,17 +310,18 @@ class Dase_Search {
 	}
 
 	private function _executeSearch() {
-		$collection_lookup = Dase_DB_Collection::getLookupHash();
+		//$collection_lookup = Dase_DB_Collection::getLookupHash('collection_name');
 		$db = Dase_DB::get();
-		$st = $db->prepare(_createSql($this->search));	
+		$st = $db->prepare($this->_createSql($this->search));	
 		$st->execute();
 		$item_ids = array();
 		while ($row = $st->fetch()) {
-			$ascii = $collection_lookup[$row['collection_id']];
-			$item_ids[$ascii][] = $row['id'];
+		//$name = $collection_lookup[$row['collection_id']];
+			//$item_ids[$name][] = $row['id'];
+			$item_ids[] = $row['id'];
 		}
-		uasort($item_ids, array('Dase_Util','sortByCount'));
-		return $item_ids[];
+		//uasort($item_ids, array('Dase_Util','sortByCount'));
+		return $item_ids;
 	}
 
 
@@ -332,7 +333,7 @@ class Dase_Search {
 			$item_ids = unserialize($cache->get());
 		} else {
 			$item_ids = $this->_executeSearch();
-			$cache->set(serialize($item_ids);
+			$cache->set(serialize($item_ids));
 		}
 		return $item_ids;
 	}

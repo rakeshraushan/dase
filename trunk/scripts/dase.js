@@ -365,7 +365,7 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	}
 
 	// this is to deal with IE6 cache behavior
-	date = new Date();
+	var date = new Date();
 	url = url + '?' + date.getTime();
 
 	var xmlhttp = Dase.createXMLHttpRequest();
@@ -384,12 +384,37 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	}
 }
 
-Dase.getJSON = function(url,my_func) {
-	//var xmlhttp = Dase.createXMLHttpRequest();
-	var xmlhttp = Dase.newRequest();
+Dase.getElementHtml = function(url,target,my_func) {
+	//this assumes a DOM node being passed in (NOT elem id)
+	if (target) {
+		target.innerHTML = '<div class="loading">Loading...</div>';
+	}
 
 	// this is to deal with IE6 cache behavior
-	date = new Date();
+	//var date = new Date();
+	//url = url + '?' + date.getTime();
+
+	var xmlhttp = Dase.createXMLHttpRequest();
+	xmlhttp.open('GET', url, true);
+	xmlhttp.send(null);
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var returnStr = xmlhttp.responseText;
+			target.innerHTML = returnStr;
+			if (my_func) {
+				my_func();
+			}
+		} else {
+			// wait for the call to complete
+		}
+	}
+}
+
+Dase.getJSON = function(url,my_func) {
+	var xmlhttp = Dase.createXMLHttpRequest();
+
+	// this is to deal with IE6 cache behavior
+	var date = new Date();
 	url = url + '?' + date.getTime();
 
 	xmlhttp.open('GET', url, true);
@@ -409,39 +434,34 @@ Dase.getJSON = function(url,my_func) {
 	}
 }
 
-// From Rhino 5th p. 480
-Dase._factories = [
-    function() { return new XMLHttpRequest(); },
-    function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
-    function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
-];
-Dase._factory = null;
-Dase.newRequest = function() {
-    if (Dase._factory != null) return Dase._factory();
-    for(var i = 0; i < Dase._factories.length; i++) {
-        try {
-            var factory = Dase._factories[i];
-            var request = factory();
-            if (request != null) {
-                Dase._factory = factory;
-                return request;
-            }
-        }
-        catch(e) {
-            continue;
-        }
-    }
-    Dase._factory = function() {
-        alert("XMLHttpRequest not supported");
-        //throw new Error("XMLHttpRequest not supported");
-    }
-    Dase._factory(); // Throw an error
+Dase.initSearchResults = function() {
+	var results = Dase.$('searchResults');
+	var json = Dase.$('itemsJson');
+	if (json) {
+		var items_json = eval('(' + json.innerHTML + ')');
+		for (var name in items_json ) {
+			var set = items_json[name];
+			var h2 = document.createElement('h2');
+			var thumbs = document.createElement('div');
+			var spacer = document.createElement('div');
+			spacer.className = 'spacer';
+			h2.appendChild(document.createTextNode(name + ' (' + set.length + ' items found)'));
+			var id_set = set.slice(0,30);
+			var id_list = id_set.join();
+			results.appendChild(h2);
+			results.appendChild(thumbs);
+			thumbs.appendChild(document.createTextNode(id_list));
+			results.appendChild(spacer);
+			//Dase.getElementHtml('html/item/thumbs/' + id_list,thumbs);
+		}
+	}
 }
 
 addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
+		Dase.initSearchResults();
 //		Dase.initDynamicSearchForm();
 		/*
 		   Dase.prepareAddFileUpload();

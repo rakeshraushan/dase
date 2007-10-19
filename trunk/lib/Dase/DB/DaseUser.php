@@ -73,6 +73,6 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$user_data[$this->eid]['max_items'] = $this->max_items;
 		$user_data[$this->eid]['template_composite'] = $this->template_composite;
 		$j = new Dase_Json;
-		return $j->encodeData($user_data,10);
+		return $j->encodeData($user_data);
 	}
 }
