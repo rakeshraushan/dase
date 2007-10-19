@@ -308,11 +308,16 @@ a.chk,a.unchk {
 div.gridItem {
 	border:1px solid #d9c8ad;
 	float:left;
-	height:140px;
+	height:120px;
 	margin:1px;
 	padding:15px;
 	text-align:center;
-	width:140px;
+	width:120px;
+}
+
+div.gridItem h4 {
+	font-size: 1em;
+	font-weight: 400;
 }
 
 div.itemDisplay div.viewitem {
@@ -453,5 +458,11 @@ a.catLink,a.valLink {
 div.itemGrid,
 div.itemDisplay {
 	margin:20px 0;
+}
+
+div#searchResults h2 {
+	font-weight: 600;
+	color: #009;
+	font-size: 1.2em;
 }
 

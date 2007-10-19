@@ -29,5 +29,5 @@ foreach ($st->fetchAll() as $row) {
 
 $dj = new Dase_Json;
 $tpl = new Dase_Json_Template;
-$tpl->setJson($dj->encodeData($tallies,10));
+$tpl->setJson($dj->encodeData($tallies));
 $tpl->display();

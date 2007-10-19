@@ -31,6 +31,14 @@ class Dase_DB_Object {
 		return false;
 	}
 
+	function hasMember($key) {
+		if ( array_key_exists( $key, $this->fields ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	function setLimit($limit) {
 		$this->limit = $limit;
 	}

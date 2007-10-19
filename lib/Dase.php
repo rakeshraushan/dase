@@ -354,6 +354,11 @@ class Dase
 						die ("routes error");
 					}
 				}
+				if (Dase::filterGet('debug_route')) {
+					//use this to make a handy debug bookmarklet!
+					echo "$regex => {$conf_array['action']}";
+					exit;
+				}
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
 					$eid = '';
 					$collection_ascii_id = '';
@@ -388,11 +393,6 @@ class Dase
 					Dase::checkUser('user');
 				}
 				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
-					if (Dase::filterGet('debug_route')) {
-						//use this to make a handy debug bookmarklet!
-						echo "$regex => {$conf_array['action']}";
-						exit;
-					}
 					$msg = Dase::filterGet('msg');
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;

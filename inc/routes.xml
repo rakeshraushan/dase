@@ -86,6 +86,10 @@
 	<match caps="collection_ascii_id">xml/([^/]*_collection)</match>
   </route>
 
+  <route action="xml/item_thumbs" auth="none">
+	<match params="ids">xml/item/thumbs</match>
+  </route>
+
   <route action="item_xml_dump" auth="token">
 	<match params="serial_number">xml/item</match>
   </route>
@@ -93,7 +97,6 @@
   <route action="xml/collections" auth="none">
 	<match>xml/collections</match>
   </route>
-
 
   <route action="html/collections" auth="none">
 	<match>html/collections</match>
@@ -109,6 +112,10 @@
 
   <route action="html/attribute_values" auth="none">
 	<match caps="collection_ascii_id/attribute_ascii_id">html/([^/]*_collection)/attribute/([^/]*)</match>
+  </route>
+
+  <route action="html/item_thumbs" auth="none">
+	<match params="ids">html/item/thumbs</match>
   </route>
 
   <route action="error"/>
