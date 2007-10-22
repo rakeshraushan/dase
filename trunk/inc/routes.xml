@@ -60,13 +60,13 @@
 	<match>json/search</match>
   </route>
 
-  <route action="search/search" auth="user">
+  <route action="search/result" auth="user">
 	<match caps="collection_ascii_id">([^/]*_collection)/search</match>
 	<match>search</match>
   </route>
 
   <route action="item" auth="user">
-	<match caps="collection_ascii_id" params="serial_number">(.*_collection)</match>
+	<match caps="collection_ascii_id" params="serial_number">([^/]*_collection)</match>
   </route>
 
   <route action="search/form">
@@ -81,13 +81,22 @@
 	<match>xml</match>
   </route>
 
+  <route action="xml/search" auth="none">
+	<match params="md5_hash">xml/search</match>
+  </route>
+
   <route action="xml/collection" auth="none">
 	<match params="collection_ascii_id">xml/c</match>
 	<match caps="collection_ascii_id">xml/([^/]*_collection)</match>
   </route>
 
+  <route action="xml/item" auth="none">
+	<match caps="collection_ascii_id" params="serial_number">xml/([^/]*_collection)</match>
+  </route>
+
   <route action="xml/item_thumbs" auth="none">
 	<match params="ids">xml/item/thumbs</match>
+	<match>xml/item/thumbs</match>
   </route>
 
   <route action="item_xml_dump" auth="token">
@@ -96,10 +105,6 @@
 
   <route action="xml/collections" auth="none">
 	<match>xml/collections</match>
-  </route>
-
-  <route action="html/collections" auth="none">
-	<match>html/collections</match>
   </route>
 
   <route action="html/attributes" auth="none">

@@ -7,7 +7,7 @@ class Dase
 	public $base_url= '';       
 	public $collection;
 	private $module= '';        
-	private $url_params = array();    
+	public $url_params = array();    
 
 	public function __construct() {}
 
@@ -291,6 +291,33 @@ class Dase
 		return $routes;
 	}
 
+	function parseQuery($qs) {
+		$url_params = array();
+		$pairs = explode('&',$qs);
+		if (count($pairs)) {
+			foreach ($pairs as $pair) {
+				if (false !== strpos($pair,'=')) {	
+					list($key,$val) = explode('=',$pair);
+					//NEED TO SANITIZE HERE!!!!!!!!!!!!!!!!!!
+					// automatically creates an arry if there is
+					// more than one of the key
+					if (!isset($url_params[$key])) {
+						$url_params[$key] = $val;
+					} elseif(is_array($url_params[$key])) {
+						$url_params[$key][] = $val;
+					} else {
+						$temp = $url_params[$key];
+						$url_params[$key] = array();
+						$url_params[$key][] = $temp;
+						$url_params[$key][] = $val;
+					}
+				}
+			}
+			$this->url_params = $url_params;
+			return $url_params;
+		}
+	}
+
 	static public function run() {
 		$controller = Dase::instance();
 		$routes = Dase::compileRoutes();
@@ -310,9 +337,13 @@ class Dase
 			$request_url= str_replace(APP_BASE,'',$request_url);
 		}
 
-		/* Remove the querystring from the URL */
+		/* Remove the query_string from the URL */
 		if ( strpos($request_url, '?') !== FALSE ) {
-			list($request_url, )= explode('?', $request_url);
+			list($request_url,$query_string )= explode('?', $request_url);
+		}
+
+		if (isset($query_string) && $query_string) {
+			$url_params = $controller->parseQuery(urldecode($query_string));
 		}
 
 		/* Trim off any leading or trailing slashes */
@@ -386,6 +417,8 @@ class Dase
 						// note that here is a GOOD place to decide what kind (db,xml,remote)
 						// of collection to get
 						$controller->collection = Dase_Collection::get($collection_ascii_id,'db');
+					} else {
+						$controller->collection= null;
 					}
 					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$eid);
 				} else {

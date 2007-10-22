@@ -132,6 +132,16 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $this->viewitem;
 	}
 
+	public function getMediaUrl($size) {  //size really means type here
+		$this->collection || $this->getCollection();
+		$m = new Dase_DB_MediaFile;
+		$m->item_id = $this->id;
+		$m->size = $size;
+		$this->media = $m->findOne();
+		$url = APP_ROOT . "/media/{$this->collection->ascii_id}/$size/$m->filename";
+		return $url;
+	}
+
 	public function getXml() {
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -151,12 +161,12 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			";
 		$st = $db->query($sql);
 		foreach ($st->fetchAll() as $row) {
-			$writer->startElement('metadata');
-			$writer->startElement('attribute');
+			$writer->startElement('meta');
+			$writer->startElement('att');
 			$writer->writeAttribute('ascii_id',$row['ascii_id']);
 			$writer->text($row['attribute_name']);
 			$writer->endElement();
-			$writer->startElement('value');
+			$writer->startElement('val');
 			$writer->writeAttribute('md5',$row['value_text_md5']);
 			$writer->text($row['value_text']);
 			$writer->endElement();
@@ -166,9 +176,9 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$media_file->item_id = $this->id;
 		foreach($media_file->findAll() as $mf) {
 			$writer->startElement('media_file');
-			$writer->writeAttribute('filename',$mf['filename']);
-			$writer->writeAttribute('size',$mf['size']);
-			$writer->writeAttribute('mime_type',$mf['mime_type']);
+			$writer->writeAttribute('href',$this->getMediaUrl($mf['size']));
+			$writer->writeAttribute('rel',$mf['size']);
+			$writer->writeAttribute('type',$mf['mime_type']);
 			$writer->writeAttribute('width',$mf['width']);
 			$writer->writeAttribute('height',$mf['height']);
 			$writer->endElement();

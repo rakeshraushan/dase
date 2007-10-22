@@ -121,9 +121,9 @@ Dase.placeUserCollections = function() {
 			li.setAttribute('id',c.ascii_id);
 			var input = document.createElement('input');
 			input.setAttribute('type','checkbox');
-			input.setAttribute('name','cols[]');
+			input.setAttribute('name','cid');
 			input.setAttribute('value',c.id);
-			input.setAttribute('checked','checked');
+			//input.setAttribute('checked','checked');
 			li.appendChild(input);
 			li.appendChild(document.createTextNode(' '));
 			var a = document.createElement('a');
@@ -236,20 +236,29 @@ Dase.placeUserTags = function() {
 	var eid = Dase.user.eid;
 	var json = Dase.user.tags;
 	var tags={};
-	tags['tagsSelect'] = Dase.$('tagsSelect');
+	var sets = {};
+	tags['allTags'] = Dase.$('allTags');
 	for (var type in json) {
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
 			if ('cart' != type) {
 				var jsonAscii = jsonType[ascii];
-				tags['tagsSelect'].innerHTML = tags['tagsSelect'].innerHTML + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
-				//first time through we grab the element using getElementById
-				tags[type] = tags[type] ? tags[type] : Dase.$(type);	
-				if (tags[type]) {
-					tags[type].innerHTML = tags[type].innerHTML + "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
-				} 
+				if (sets['allTags']) {
+					sets['allTags'] = sets['allTags'] + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
+				} else {
+					sets['allTags'] = "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
+				}
+				if (sets[type]) {
+					sets[type] = sets[type] + "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+				} else {
+					sets[type] = "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+				}
 			}
 		} 
+	}
+	for (var type in sets) {
+		Dase.$(type).innerHTML = sets[type];
+
 	}
 }
 
@@ -322,7 +331,8 @@ Dase.getAttributeTallies = function(coll) {
 			for(var ascii_id in json) {
 			var	att_link = Dase.$(ascii_id);
 			if (att_link) {
-			var tally = Dase.$(ascii_id).parentNode.getElementsByTagName('span')[0];
+			//var tally = Dase.$('tally-'+ascii_id).parentNode.getElementsByTagName('span')[0];
+			var tally = Dase.$('tally-'+ascii_id);
 			if (tally) {
 			if (is_admin && 0 == json[ascii_id]) {
 			//make admin atts w/ no values disappear

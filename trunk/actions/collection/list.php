@@ -14,10 +14,19 @@ if (Dase::filterGet('smarty')) {
 	$tpl->display('page.tpl');
 } else {
 	//xslt version: 103 req/sec
-	$t = new Dase_Xslt(XSLT_PATH.'/list_collections.xsl');
-	$t->set('layout',XSLT_PATH.'/list_collections.xml');
+	$t = new Dase_Xslt(XSLT_PATH.'collection/list.xsl');
+	$t->set('local-layout',XSLT_PATH.'collection/list.xml');
 	$t->set('collections',APP_ROOT.'/xml/collections');
 	$tpl = new Dase_Html_Template();
+	
+	//xhtml output:
 	$tpl->setText($t->transform());
 	$tpl->display();
+
+	//html output:
+	//$t2 = new Dase_Xslt(XSLT_PATH.'xhtml2html.xsl',$t->transform());
+	//$tpl = new Dase_Html_Template();
+	//$tpl->setText($t2->transform());
+	//$tpl->display();
+	
 }

@@ -17,7 +17,7 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($limit = 10,$coll = null) {
+	function getDisplayValues($coll = null) {
 		$admin_sql = '';
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 

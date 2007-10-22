@@ -1,10 +1,11 @@
 <?php
 
+// method: POST
+
 //add a hook here to redirect to alternative login?
 
 $username = Dase::filterPost('username');
 $password = Dase::filterPost('password');
-$tpl = Dase_Template::instance();
 $msg = '';
 //largely from Advanced PHP Programming p. 338
 if ($username && $password) {
@@ -21,6 +22,5 @@ if ($username && $password) {
 		$msg = 'invalid login';
 	}
 }
-$tpl->assign('msg',$msg); 
-$tpl->assign('content','login_form'); //set content template
-$tpl->display();
+// if login fails:
+Dase::reload('/login',$msg);

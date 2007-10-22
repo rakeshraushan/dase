@@ -2,60 +2,81 @@
 class Dase_Search {
 
 	public $search;		
+	public $echo;		
 
 	function __construct() {
-		$get_arrays = Dase::filterGetArray();
+		$url_params = Dase::instance()->url_params;
 		$search['type'] = null;
-		$search['collections'] = array();
+		$search['coll_ids'] = array();
 		$search['att'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
 		$search['or'] = array();
-		if (isset($get_arrays['coll'])) {
-			foreach ($get_arrays['coll'] as $val) {
-				$search['collections'][] = $val;
+
+		// search syntax:
+		// query name is 'q'
+		// include phrases in quotes (' or ")
+		// use '-' to omit a word or phrase
+		// use 'or' for Boolean OR between words or phrases
+		// for attribute searches, name is '<coll_ascii_id>.<attribute_ascii_id>'
+		// use period (as in example) for auto substring/phrase search
+		// use single colon to match md5 hash of exact value_text string
+		// add more attribute searches (refinements) by adding them to
+		// the query string. Note that the use of '.' or ':' in
+		// a query parameter name that is NOT part of the search will
+		// make the search fail (since it'll be interpreted as an
+		// attribute search
+
+		if (isset($url_params['cid'])) {
+			if (!is_array($url_params['cid'])) {
+				$url_params['cid'] = array($url_params['cid']);
 			}
-			$search['collections'] = array_unique($search['collections']);
+			foreach ($url_params['cid'] as $val) {
+				$search['coll_ids'][] = $val;
+			}
+			$search['coll_ids'] = array_unique($search['coll_ids']);
 		}
 		//collection_ascii_id as param TRUMPS coll in get array
 		if (isset($params['collection_ascii_id'])) {
-			$search['collections'] = array();
-			$search['collections'][] = $params['collection_ascii_id'];
+			$search['coll_ids'] = array();
+			//$search['coll_ids'][] = $params['collection_ascii_id'];
 			$coll_ascii_id = $params['collection_ascii_id'];
 		}
 		//populate general find and omit array
-		if ($this->_testArray($get_arrays,'q')) {
-			foreach ($get_arrays['q'] as $query) {
-				foreach ($this->_tokenizeQuoted($query) as $t) {
-					if ('-' == substr($t,0,1)) {
-						$search['omit'][] = substr($t,1);
-					} else {
-						$search['find'][] = $t;
-					}
+		if (isset($url_params['q'])) {
+			$query = is_array($url_params['q']) ? $url_params['q'][0] : $url_params['q'];
+			foreach ($this->_tokenizeQuoted($query) as $t) {
+				if ('-' == substr($t,0,1)) {
+					$search['omit'][] = substr($t,1);
+				} else {
+					$search['find'][] = $t;
 				}
 			}
 		}
 		//for substring att searches
-		foreach ($get_arrays as $k => $val_array) {
-			if (('q' != $k) && ('type' != $k) && strpos($k,'::')){
+		foreach ($url_params as $k => $val) {
+			if (!is_array($val)) {
+				$val = array($val);
+			}
+			if (('q' != $k) && ('type' != $k) && strpos($k,'.')){
 				$coll = null;
 				$att = null;
 				$tokens = array();
-				list($coll,$att) = explode('::',$k);
+				list($coll,$att) = explode('.',$k);
 				if ($coll && $att) {
 					$search['att'][$coll][$att]['find'] = array();
 					$search['att'][$coll][$att]['omit'] = array();
 					$search['att'][$coll][$att]['or'] = array();
-					foreach ($val_array as $k => $v) {
+					foreach($val as $v) {
 						foreach ($this->_tokenizeQuoted($v) as $t) {
 							$tokens[] = $t;
 						}
-						foreach ($tokens as $tok) {
-							if ('-' == substr($tok,0,1)) {
-								$search['att'][$coll][$att]['omit'][] = substr($tok,1);
-							} else {
-								$search['att'][$coll][$att]['find'][] = $tok;
-							}
+					}
+					foreach ($tokens as $tok) {
+						if ('-' == substr($tok,0,1)) {
+							$search['att'][$coll][$att]['omit'][] = substr($tok,1);
+						} else {
+							$search['att'][$coll][$att]['find'][] = $tok;
 						}
 					}
 					$or_keys = array_keys($search['att'][$coll][$att]['find'],'or');
@@ -93,21 +114,23 @@ class Dase_Search {
 				}
 			}
 		}
-		//for attr exact value searches
-		foreach ($get_arrays as $k => $val) {
+		//for attr exact value searches (md5 hash of value_text)
+		foreach ($url_params as $k => $val) {
+			// for md5 hash only take one
+			$val = is_array($val) ? $val[0] : $val;
 			$coll = null;
 			$att = null;
-			if (('q' != $k) && strpos($k,':') && (!strpos($k,'::'))){
+			if (('q' != $k) && strpos($k,':') && (!strpos($k,'.'))){
 				list($coll,$att) = explode(':',$k);
 				$search['att'][$coll][$att]['value_text_md5'] = array();
-				foreach ($val as $v) {
-					$search['att'][$coll][$att]['value_text_md5'][] = $v;
-				}
+				$search['att'][$coll][$att]['value_text_md5'][] = $val;
 				$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
 			}
 		}
 		//for item_type filter
-		foreach ($get_arrays as $k => $val) {
+		foreach ($url_params as $k => $val) {
+			// for md5 hash only take one
+			$val = is_array($val) ? $val[0] : $val;
 			if (('type' == $k) && $val) {
 				list($coll,$type) = explode(':',$val);
 				$search['type']['coll'] = $coll;
@@ -115,6 +138,7 @@ class Dase_Search {
 			}
 		}
 		$or_keys = array_keys($search['find'],'or');
+		//configure global 'or' set
 		foreach ($or_keys as $or_key) {
 			foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
 				if (array_key_exists($k,$search['find'])) {
@@ -140,6 +164,8 @@ class Dase_Search {
 			unset($search['or'][$remove_key]);
 		}
 		$this->search = $search;
+
+		// DONE parsing search string!!
 	}
 	private function _tokenizeQuoted($string) {
 		//from php.net:
@@ -186,8 +212,8 @@ class Dase_Search {
 				}
 			}
 		}
-		if (isset($search['collection'])) {
-			$c_array = $search['collection'];
+		if (isset($search['coll_ids'])) {
+			$c_array = $search['coll_ids'];
 			asort($c_array);
 			$search_string .= "collections:" .  join(',',$c_array) . ";";
 		}
@@ -266,12 +292,9 @@ class Dase_Search {
 			}
 			unset($ar_table_sets);
 		}
-		if (count($search['collections']) && isset($search_table_sql)) {
-			foreach ($search['collections'] as $sc) {
-				$quoted[] = "'$sc'";
-			}
-			$or_set = join(" OR ascii_id = ",$quoted);
-			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id = $or_set)";
+		if (count($search['coll_ids']) && isset($search_table_sql)) {
+			$cid_set = join(",",$search['coll_ids']);
+			$search_table_sql .= " AND collection_id IN ($cid_set)";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = "
@@ -309,33 +332,48 @@ class Dase_Search {
 		print md5($this->_normalizeSearch($search));
 	}
 
-	private function _executeSearch() {
-		//$collection_lookup = Dase_DB_Collection::getLookupHash('collection_name');
+	private function _executeSearch($hash) {
+		$collection_lookup = Dase_DB_Collection::getLookupArray('collection_name');
 		$db = Dase_DB::get();
-		$st = $db->prepare($this->_createSql($this->search));	
+		$sql = $this->_createSql($this->search);	
+		$st = $db->prepare($sql);	
 		$st->execute();
-		$item_ids = array();
+		$result = array();
+		$result['tallies'] = array();
+		$result['item_ids'] = array();
+		$items = array();
 		while ($row = $st->fetch()) {
-		//$name = $collection_lookup[$row['collection_id']];
-			//$item_ids[$name][] = $row['id'];
-			$item_ids[] = $row['id'];
+			$name = $collection_lookup[$row['collection_id']];
+			$items[$name][] = $row['id'];
 		}
-		//uasort($item_ids, array('Dase_Util','sortByCount'));
-		return $item_ids;
+		uasort($items, array('Dase_Util','sortByCount'));
+		foreach ($items as $coll => $set) {
+			$result['tallies'][$coll] = count($set);
+			$result['item_ids'] = array_merge($result['item_ids'],$set);;
+		}
+		$result['hash'] = $hash;
+		$result['count'] = count($result['item_ids']);
+		$result['search'] = $this->search;
+		$result['sql'] = $sql;
+		return $result;
 	}
 
-
-	public function getItems() {
-		$item_ids = array();
+	public function getResult() {
+		$result = array();
+		$cache = new Dase_DB_SearchCache();
 		$hash = md5($this->_normalizeSearch($this->search));
-		$cache = new Dase_FileCache('search_' . $hash,3600);
-		if ($cache->get()) {
-			$item_ids = unserialize($cache->get());
+		$cache->search_md5 = $hash;
+		$cache->refine = 'newdase'; 
+		if (!$cache->findOne()) {
+			$result = $this->_executeSearch($hash);
+			$cache->item_id_string = serialize($result); 
+			$cache->search_md5 = $hash; 
+			$cache->refine = 'newdase'; 
+			$cache->insert();
 		} else {
-			$item_ids = $this->_executeSearch();
-			$cache->set(serialize($item_ids));
+			$result = unserialize($cache->item_id_string);
 		}
-		return $item_ids;
+		return $result;
 	}
 }
 
