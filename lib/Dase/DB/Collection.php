@@ -490,10 +490,10 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $dom->saveXML();
 	}
 
-	static function getLookupHash($field) {
-		$hash = array();
-		$c = new Dase_DB_Collection;
-		if ($c->hasMember($field)) {
+	static function getLookupArray($field) {
+		if (in_array($field,array('ascii_id','collection_name'))) {
+			$hash = array();
+			$c = new Dase_DB_Collection;
 			foreach ($c->getAll() as $row) {
 				$hash[$row['id']] = $row[$field];
 			}

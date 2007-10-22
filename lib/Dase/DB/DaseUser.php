@@ -54,6 +54,7 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 
 	public function getData() {
 		$user_data = array();
+		//this is taking too long:
 		$user_data[$this->eid]['tags'] = $this->getTags();
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();

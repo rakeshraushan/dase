@@ -308,7 +308,7 @@ a.chk,a.unchk {
 div.gridItem {
 	border:1px solid #d9c8ad;
 	float:left;
-	height:120px;
+	height:140px;
 	margin:1px;
 	padding:15px;
 	text-align:center;
@@ -317,7 +317,14 @@ div.gridItem {
 
 div.gridItem h4 {
 	font-size: 1em;
-	font-weight: 400;
+	font-weight: 900;
+	color: #009;
+}
+
+div.gridItem h4.collection_name {
+	font-size: .9em;
+	font-weight: 700;
+	color: #666;
 }
 
 div.itemDisplay div.viewitem {
@@ -327,7 +334,7 @@ div.itemDisplay div.viewitem {
 }
 
 div.itemDisplay div.metadata {
-	background-color:#FFF;
+	background-color: inherit;
 	margin:0;
 	padding:10px;
 }

@@ -12,8 +12,10 @@ foreach ($att->getAll() as $arow) {
 	foreach ($val->findAll() as $row) {
 		$v = new Dase_DB_Value($row);
 		$v->value_text_md5 = md5($row['value_text']);
-		$v->update();
-		$i++;
-		print "$i\n";
+		if ($row['value_text_md5'] != $v->value_text_md5) {
+			$v->update();
+			$i++;
+			print "$i\n";
+		}
 	}
 }

@@ -57,7 +57,7 @@
 			  <ul class="hide">
 				<li>
 				  <form action="sss" method="post">
-					<div id="tagsSelect">
+					<div id="allTags">
 					  <!-- ajax fills in here -->
 					</div>
 					<div><input type="submit" value="move items"/></div>

@@ -4,9 +4,9 @@ $coll = Dase::instance()->collection->ascii_id;
 $attr = Dase_DB_Attribute::get($coll,$att);
 if (0 == $attr->collection_id) {
 	//since it is admin att we need to be able to limit to items in this coll
-	$values_array = $attr->getDisplayValues(400,$coll);
+	$values_array = $attr->getDisplayValues($coll);
 } else {
-	$values_array = $attr->getDisplayValues(400);
+	$values_array = $attr->getDisplayValues();
 }
 $html_coda = '</ul>';
 if (is_array($values_array) && (count($values_array) == 400)) {
@@ -24,7 +24,7 @@ if (is_array($values_array)) {
 			$text = substr_replace($text,'...',47);
 		}
 		$html .=<<<EOF
-		<li><a href="$coll/search?$coll:$attr->ascii_id[]=$md5" class="val_link">$text <span class="tally">($tally)</span></a></li>
+		<li><a href="$coll/search?$coll:$attr->ascii_id=$md5" class="val_link">$text <span class="tally">($tally)</span></a></li>
 EOF;
 	}
 }
