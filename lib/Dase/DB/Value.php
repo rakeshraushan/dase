@@ -14,4 +14,11 @@ class Dase_DB_Value extends Dase_DB_Autogen_Value
 		$this->attribute_name = $a->attribute_name;
 		$this->attribute_ascii_id = $a->ascii_id;
 	}
+
+	public static function getValueTextByHash($coll,$md5) {
+		//let's assume md5 is unique enough
+		$v = new Dase_DB_Value;
+		$v->value_text_md5 = $md5;
+		return $v->findOne()->value_text;
+	}
 }

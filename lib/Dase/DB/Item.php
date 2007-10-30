@@ -91,7 +91,20 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$v->getAttributeName();
 			$this->values[] = $v;
 		}
+		//what about sorting?????
 		return $this->values;
+	}
+
+	public function getValuesXhtml() {
+		$xhtml = '<dl>';
+		foreach ($this->getValues() as $v) {
+			$xhtml .= "
+				<dt class=\"$v->attribute_ascii_id\">$v->attribute_name</dt>
+				<a href=\"search?{$this->collection->ascii_id}:{$v->attribute_ascii_id}=$v->value_text_md5\">
+				<dd>$v->value_text</dd>
+				</a>";
+		}
+		return $xhtml;
 	}
 
 	public function getAttVal($att_ascii_id) {
@@ -132,6 +145,18 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $this->viewitem;
 	}
 
+	public function getMedia() {
+		$this->collection || $this->getCollection();
+		$m = new Dase_DB_MediaFile;
+		$m->item_id = $this->id;
+		$media = array();
+		foreach ($m->findAll() as $row) {
+			$mf = new Dase_DB_MediaFile($row);
+			$media[] = $mf;
+		}
+		return $media;
+	}
+
 	public function getMediaUrl($size) {  //size really means type here
 		$this->collection || $this->getCollection();
 		$m = new Dase_DB_MediaFile;
@@ -142,6 +167,48 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $url;
 	}
 
+	public function asAtomEntry() {
+		$this->collection || $this->getCollection();
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('entry');
+		$writer->startElement('id');
+		$writer->text(APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
+		$writer->endElement();
+		$writer->startElement('content');
+		$writer->writeAttribute('type','application/xml');
+		$writer->text($this->getValuesXhtml());
+		$writer->endElement();
+		$writer->startElement('title');
+		$writer->text($this->getTitle());
+		$writer->endElement();
+		$writer->startElement('updated');
+		$writer->text(date('c',$this->last_update));
+		$writer->endElement();
+		$writer->startElement('link');
+		$writer->writeAttribute('rel','alternate');
+		$writer->writeAttribute('type','text/html');
+		$writer->writeAttribute('href',APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
+		$writer->endElement();
+		$writer->startElement('link');
+		$writer->writeAttribute('rel','alternate');
+		$writer->writeAttribute('type','application/xml');
+		$writer->writeAttribute('href',APP_ROOT . "/xml/{$this->collection->ascii_id}/{$this->serial_number}");
+		$writer->endElement();
+		foreach ($this->getMedia() as $m) {
+			$writer->startElement('link');
+			$writer->writeAttribute('rel',$m->size);
+			$writer->writeAttribute('type',$m->mime_type);
+			$writer->writeAttribute('href',APP_ROOT . "/media/{$this->collection->ascii_id}/{$m->size}/{$m->filename}");
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
 	public function getXml() {
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -149,6 +216,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$writer->startDocument('1.0','UTF-8');
 		$writer->startElement('item');
 		$writer->writeAttribute('serial_number',$this->serial_number);
+		$writer->writeAttribute('collection_ascii_id',$this->getCollection()->ascii_id);
 		$type = new Dase_DB_ItemType;
 		$type->load($this->item_type_id);
 		$writer->writeAttribute('item_type',$type->ascii_id);
@@ -302,5 +370,22 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			}
 		}
 		return $this->admin;
+	}
+
+	function getTitle() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT v.value_text 
+			FROM attribute a, value v
+			WHERE a.id = v.attribute_id
+			AND a.ascii_id = 'title'
+			AND v.item_id = $this->id
+			";
+		$st = $db->query($sql);
+		$title = $st->fetchColumn();
+		if (!$title) {
+			$title = $this->serial_number;
+		}
+		return $title;
 	}
 }

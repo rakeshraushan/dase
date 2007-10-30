@@ -99,6 +99,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			//db_object get too 
 			//4:40 for 18K 
 			//records
+			/*
 			$value = new Dase_DB_Value;
 			$value->item_id = $it['id'];
 			foreach($value->findAll() as $val) {
@@ -108,6 +109,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				$writer->text($val['value_text']);
 				$writer->endElement();
 			}
+			 */
 			$media_file = new Dase_DB_MediaFile;
 			$media_file->item_id = $it['id'];
 			foreach($media_file->findAll() as $mf) {
@@ -479,6 +481,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$root = $dom->appendChild($dom->createElement('collections'));
 		$c = new Dase_DB_Collection;
 		$c->is_public = 1;
+		$c->orderBy('collection_name');
 		foreach ($c->findAll() as $row) {
 			$coll = $root->appendChild($dom->createElement('collection'));
 			$fields = array('id','ascii_id','collection_name','is_public');
@@ -488,6 +491,94 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		}
 		$dom->formatOutput = true;
 		return $dom->saveXML();
+	}
+
+	static function getLastCreated() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT created
+			FROM collection
+			ORDER BY created DESC
+			";
+		$st = $db->prepare($sql);
+		$st->execute();
+		return $st->fetchColumn();
+	}
+	static function listAsAtom($public_only = 1) {
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('feed');
+		$writer->writeAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$writer->writeAttribute("xmlns:dase", APP_HTTP_ROOT);
+		$writer->writeAttribute('xml:base', APP_HTTP_ROOT);
+		$writer->startElement('title');
+		$writer->text("DASe Collections");
+		$writer->endElement();
+		$writer->startElement('id');
+		$writer->text(APP_HTTP_ROOT . '/');
+		$writer->endElement();
+		$writer->startElement('author');
+		$writer->startElement('name');
+		$writer->endElement();
+		$writer->endElement();
+		$writer->startElement('updated');
+		$writer->text(date('c',Dase_DB_Collection::getLastCreated()));
+		$writer->endElement();
+		$writer->startElement('link');
+		$writer->writeAttribute('rel','self');
+		$writer->writeAttribute('type','application/atom+xml');
+		$writer->writeAttribute('href',APP_ROOT . "/atom");
+		$writer->endElement();
+		$c = new Dase_DB_Collection;
+		$c->orderBy('collection_name');
+		if ($public_only) {
+			$c->is_public = true;
+			$iter = $c->findAll();
+		} else {
+			$iter = $c->getAll();
+		}
+		foreach($iter as $row) {
+			$coll = new Dase_DB_Collection($row);
+			$writer->startElement('entry');
+			$writer->startElement('id');
+			$writer->text(APP_ROOT . "/{$coll->ascii_id}/");
+			$writer->endElement();
+			$writer->startElement('content');
+			$writer->text($coll->ascii_id);
+			$writer->endElement();
+			$writer->startElement('title');
+			$writer->text($coll->collection_name);
+			$writer->endElement();
+			$writer->startElement('updated');
+			$writer->text(date('c',$coll->getLastUpdated()));
+			$writer->endElement();
+			$writer->startElement('summary');
+			$writer->text($coll->description);
+			$writer->endElement();
+			$writer->startElement('link');
+			$writer->writeAttribute('rel','alternate');
+			$writer->writeAttribute('type','text/html');
+			$writer->writeAttribute('href',APP_ROOT . "/{$coll->ascii_id}");
+			$writer->endElement();
+			$writer->startElement('link');
+			$writer->writeAttribute('rel','alternate');
+			$writer->writeAttribute('type','application/xml');
+			$writer->writeAttribute('href',APP_ROOT . "/xml/{$coll->ascii_id}");
+			$writer->endElement();
+			if ($coll->is_public) {
+				$writer->startElement('category');
+				$writer->writeAttribute('scheme',APP_HTTP_ROOT . "/collection_type");
+				$writer->writeAttribute('term','public');
+				$writer->writeAttribute('label','public');
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		$writer->endDocument();
+		return $writer->flush(true);
 	}
 
 	static function getLookupArray($field) {

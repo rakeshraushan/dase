@@ -66,6 +66,7 @@ exit;
 
 function makeThumbnail($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
+	$base = basename($base,'.jpg');
 	$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $filename");
 	$thumbnail = MEDIA_ROOT ."/vrc_collection/thumbnails/$item->serial_number" . '_100.jpg';  
 	$mogrified_file = "/tmp/$base.jpeg";
@@ -88,6 +89,7 @@ function makeThumbnail($filename,$item,$coll) {
 
 function makeViewitem($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
+	$base = basename($base,'.jpg');
 	$results = exec("/usr/bin/mogrify -format jpeg -resize '400x400 >' -colorspace RGB $filename");
 	$viewitem = MEDIA_ROOT ."/vrc_collection/400/$item->serial_number" . '_400.jpg';  
 	$mogrified_file = "/tmp/$base.jpeg";
@@ -135,6 +137,7 @@ function makeSizes($filename,$item,$coll) {
 	$last_height = '';
 	foreach ($image_properties as $size => $size_info) {
 		$base = basename($filename,'.tif');
+		$base = basename($base,'.jpg');
 		$results = exec("/usr/bin/mogrify -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $filename");
 		$mogrified_file = "/tmp/$base.jpeg";
 		$newimage = MEDIA_ROOT ."/vrc_collection/$size/$item->serial_number$size_info[size_tag].jpg";  

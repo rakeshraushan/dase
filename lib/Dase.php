@@ -355,7 +355,6 @@ class Dase
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
-
 		foreach ($routes[$method] as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				if (defined('DEBUG')) {
@@ -430,9 +429,10 @@ class Dase
 					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
 					exit;
 				} 
-			}
-		}
+			} 
+		} 
 		//no routes match, so use default:
+		//having this "outlet" here gaurantees only first match gets tested
 		Dase::error(404);
 		exit;
 	}
