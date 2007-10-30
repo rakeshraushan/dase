@@ -121,8 +121,8 @@ Dase.placeUserCollections = function() {
 			li.setAttribute('id',c.ascii_id);
 			var input = document.createElement('input');
 			input.setAttribute('type','checkbox');
-			input.setAttribute('name','cid');
-			input.setAttribute('value',c.id);
+			input.setAttribute('name','c');
+			input.setAttribute('value',c.ascii_id);
 			//input.setAttribute('checked','checked');
 			li.appendChild(input);
 			li.appendChild(document.createTextNode(' '));
@@ -172,6 +172,27 @@ Dase.initMenu = function(id) {
 			}
 		}
 	}
+}
+
+Dase.initCheckImage = function() { 
+	var thumbs = Dase.$('searchResults');
+	if (!thumbs) { return; }
+	/* creates and initializes list check/uncheck toggle 
+	 */
+	var boxes = thumbs.getElementsByTagName('input');
+	/* changes the color of the image bg when box
+	 * next to it is checked/unchecked
+	 */
+	for (var i=0; i<boxes.length; i++) {
+		boxes[i].onclick = function() {
+			var img = this.parentNode;
+			if (Dase.hasClass(img,'checked')) {
+				Dase.removeClass(img,'checked');
+			} else {
+				Dase.addClass(img,'checked');
+			}
+		}
+	}	   
 }
 
 Dase.multicheck = function(c) { 
@@ -472,6 +493,7 @@ addLoadEvent(function() {
 		Dase.initMenu('menu');
 		Dase.initBrowse();
 		Dase.initSearchResults();
+		Dase.initCheckImage();
 //		Dase.initDynamicSearchForm();
 		/*
 		   Dase.prepareAddFileUpload();

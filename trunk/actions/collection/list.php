@@ -16,7 +16,8 @@ if (Dase::filterGet('smarty')) {
 	//xslt version: 103 req/sec
 	$t = new Dase_Xslt(XSLT_PATH.'collection/list.xsl');
 	$t->set('local-layout',XSLT_PATH.'collection/list.xml');
-	$t->set('collections',APP_ROOT.'/xml/collections');
+	//$t->set('collections',APP_ROOT.'/xml/collections');
+	$t->set('collections',APP_ROOT.'/atom');
 	$tpl = new Dase_Html_Template();
 	
 	//xhtml output:

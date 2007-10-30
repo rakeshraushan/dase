@@ -22,6 +22,10 @@
 	<match params="collection_ascii_id">atom</match>
   </route>
 
+  <route action="atom/coll_list" auth="none">
+	<match>atom</match>
+  </route>
+
   <route action="collection/browse" auth="user">
 	<match params="collection_ascii_id">collection</match>
 	<match caps="collection_ascii_id">([^/]*_collection)</match>
@@ -77,7 +81,7 @@
 	<match caps="collection_ascii_id">([^/]*_collection)/search/form</match>
   </route>
 
-  <route action="xml/collection_list" auth="none">
+  <route action="xml/collections" auth="none">
 	<match>xml</match>
   </route>
 

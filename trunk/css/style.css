@@ -305,55 +305,35 @@ a.chk,a.unchk {
 	line-height:3em;
 }
 
-div.gridItem {
-	border:1px solid #d9c8ad;
-	float:left;
-	height:140px;
-	margin:1px;
-	padding:15px;
-	text-align:center;
-	width:120px;
+/*****  ITEM DISPLAY PAGE **************/
+
+table.itemDisplay  td {
+	border: 1px solid #d9c8ad;
+	vertical-align: top;
+	padding: 18px;
 }
 
-div.gridItem h4 {
-	font-size: 1em;
-	font-weight: 900;
-	color: #009;
+table.itemDisplay  td.metadata {
+	width: 100%;
+	background-color:#fff;
 }
 
-div.gridItem h4.collection_name {
-	font-size: .9em;
-	font-weight: 700;
-	color: #666;
-}
 
-div.itemDisplay div.viewitem {
-	float:left;
-	height:500px;
-	margin:0 20px 0 0;
-}
-
-div.itemDisplay div.metadata {
-	background-color: inherit;
-	margin:0;
-	padding:10px;
-}
-
-dl {
+td.metadata dl {
 	font-weight:700;
 	line-height:1.4em;
-	margin-top:4px;
-	padding:10px;
 }
 
-dt {
+td.metadata dt {
 	color:#009;
 	font-weight:700;
 }
 
-dd {
+td.metadata dd {
 	margin-left:15px;
 }
+
+/****************************************/
 
 li.label {
 	color:#333;
@@ -462,14 +442,51 @@ a.catLink,a.valLink {
 	line-height:1.5em;
 }
 
-div.itemGrid,
-div.itemDisplay {
-	margin:20px 0;
-}
-
 div#searchResults h2 {
 	font-weight: 600;
 	color: #009;
 	font-size: 1.2em;
 }
 
+/* from http://thecodecentral.com/2007/10/02/tableless-image-gallery-an-experiment-of-fluid-grid
+ */
+
+#searchResults {
+	/*width:100%;*/
+	padding: 10px; 
+	float:left
+}
+#searchResults .gridItem {
+	float: left; 
+	margin: 1px; 
+	width:156px; 
+	text-align:center; 
+	border: 1px solid #d9c8ad;
+}
+#searchResults div.checked {
+	background-color: #fff0d9;
+}
+#searchResults .gridItem input {
+	float: left; 
+	text-align:left; 
+}
+#searchResults .gridItem .image {
+	width:130px; 
+	height:100px; 
+	margin:2px;
+	margin-top:10px;
+}
+#searchResults .caption  {
+	text-align:center;
+	width: 156px; 
+}
+#searchResults .caption h4 {
+	color:#666; 
+	font-weight:bold; 
+	margin-bottom: 5px;
+}
+#searchResults .caption h4.collection_name {
+	color:#666; 
+	font-weight:normal; 
+
+}

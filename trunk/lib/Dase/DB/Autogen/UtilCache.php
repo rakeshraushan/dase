@@ -9,10 +9,10 @@ require_once 'Dase/DB/Object.php';
  * 
  */
 
-class Dase_DB_Autogen_Collection extends Dase_DB_Object 
+class Dase_DB_Autogen_UtilCache extends Dase_DB_Object 
 {
 	function __construct($assoc = false) {
-		parent::__construct( 'collection',  array('ascii_id','collection_name','created','description','is_public','path_to_media_files'));
+		parent::__construct( 'util_cache',  array('ascii_id','collection_ascii_id','text','timestamp','ttl'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

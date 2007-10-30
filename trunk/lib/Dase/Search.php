@@ -4,15 +4,20 @@ class Dase_Search {
 	public $search;		
 	public $echo;		
 
-	function __construct() {
+	function __construct($params) {
 		$url_params = Dase::instance()->url_params;
 		$search['type'] = null;
-		$search['coll_ids'] = array();
+		$search['colls'] = array();
 		$search['att'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
 		$search['or'] = array();
 
+		$echo['query'] = '';
+		$echo['collection_ascii_id'] = '';
+		$echo['sub'] = array();
+		$echo['exact'] = array();
+		$echo['type'] = '';
 		// search syntax:
 		// query name is 'q'
 		// include phrases in quotes (' or ")
@@ -27,23 +32,23 @@ class Dase_Search {
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
 
-		if (isset($url_params['cid'])) {
-			if (!is_array($url_params['cid'])) {
-				$url_params['cid'] = array($url_params['cid']);
+		if (isset($url_params['c'])) {
+			if (!is_array($url_params['c'])) {
+				$url_params['c'] = array($url_params['c']);
 			}
-			foreach ($url_params['cid'] as $val) {
-				$search['coll_ids'][] = $val;
+			foreach ($url_params['c'] as $c) {
+				$search['colls'][] = "'$c'";
 			}
-			$search['coll_ids'] = array_unique($search['coll_ids']);
+			$search['colls'] = array_unique($search['colls']);
 		}
 		//collection_ascii_id as param TRUMPS coll in get array
 		if (isset($params['collection_ascii_id'])) {
-			$search['coll_ids'] = array();
-			//$search['coll_ids'][] = $params['collection_ascii_id'];
-			$coll_ascii_id = $params['collection_ascii_id'];
+			$search['colls'] = array("'{$params['collection_ascii_id']}'");
+			$echo['collection_ascii_id'] = $params['collection_ascii_id'];
 		}
 		//populate general find and omit array
 		if (isset($url_params['q'])) {
+			$echo['query'] = $url_params['q'];
 			$query = is_array($url_params['q']) ? $url_params['q'][0] : $url_params['q'];
 			foreach ($this->_tokenizeQuoted($query) as $t) {
 				if ('-' == substr($t,0,1)) {
@@ -59,6 +64,7 @@ class Dase_Search {
 				$val = array($val);
 			}
 			if (('q' != $k) && ('type' != $k) && strpos($k,'.')){
+				$echo['sub'][$k] = join(' ',$val);
 				$coll = null;
 				$att = null;
 				$tokens = array();
@@ -122,6 +128,7 @@ class Dase_Search {
 			$att = null;
 			if (('q' != $k) && strpos($k,':') && (!strpos($k,'.'))){
 				list($coll,$att) = explode(':',$k);
+				$echo['exact'][$k] = Dase_DB_Value::getValueTextByHash($coll,$val);
 				$search['att'][$coll][$att]['value_text_md5'] = array();
 				$search['att'][$coll][$att]['value_text_md5'][] = $val;
 				$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
@@ -132,6 +139,7 @@ class Dase_Search {
 			// for md5 hash only take one
 			$val = is_array($val) ? $val[0] : $val;
 			if (('type' == $k) && $val) {
+				$echo['type'] = $val;
 				list($coll,$type) = explode(':',$val);
 				$search['type']['coll'] = $coll;
 				$search['type']['name'] = $type;
@@ -163,6 +171,7 @@ class Dase_Search {
 			$remove_key = array_search('or',$search['or']);
 			unset($search['or'][$remove_key]);
 		}
+		$search['echo'] = $echo;
 		$this->search = $search;
 
 		// DONE parsing search string!!
@@ -212,8 +221,8 @@ class Dase_Search {
 				}
 			}
 		}
-		if (isset($search['coll_ids'])) {
-			$c_array = $search['coll_ids'];
+		if (isset($search['colls'])) {
+			$c_array = $search['colls'];
 			asort($c_array);
 			$search_string .= "collections:" .  join(',',$c_array) . ";";
 		}
@@ -226,6 +235,8 @@ class Dase_Search {
 	private function _createSql($search) {
 		$search_table_sets = array();
 		if (count($search['find'])) {
+			//the key needs to be specified to make sure it overwrites 
+			//(rather than appends) to the array
 			foreach ($search['find'] as $k => $term) {
 				$search['find'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
 			}
@@ -252,7 +263,7 @@ class Dase_Search {
 
 		$value_table_search_sets = array();
 		foreach ($search['att'] as $coll => $att_arrays) {
-			foreach ($search['att'][$coll] as $att => $ar) {
+			foreach ($att_arrays as $att => $ar) {
 				$ar_table_sets = array();
 				if ($this->_testArray($ar,'find')) {
 					foreach ($ar['find'] as $k => $term) {
@@ -279,6 +290,7 @@ class Dase_Search {
 					$ar_table_sets[] = join(' AND ',$ar['value_text_md5']);
 				}
 				if (count($ar_table_sets)) {
+					if (false === strpos($att,'admin_')) {
 					$value_table_search_sets[] = "
 						id IN (
 							SELECT v.item_id FROM value v,collection c,attribute a
@@ -288,13 +300,24 @@ class Dase_Search {
 							AND v.attribute_id = a.id
 							AND " . join(' AND ', $ar_table_sets)
 							. ")";
+					} else {
+						$value_table_search_sets[] = "
+							id IN (
+								SELECT v.item_id FROM value v,collection c,attribute a
+								WHERE c.ascii_id = '$coll'
+								AND a.ascii_id = '$att'
+								AND a.collection_id = 0
+								AND v.attribute_id = a.id
+								AND " . join(' AND ', $ar_table_sets)
+							. ")";
+					}
 				}
 			}
 			unset($ar_table_sets);
 		}
-		if (count($search['coll_ids']) && isset($search_table_sql)) {
-			$cid_set = join(",",$search['coll_ids']);
-			$search_table_sql .= " AND collection_id IN ($cid_set)";
+		if (count($search['colls']) && isset($search_table_sql)) {
+			$ascii_ids = join(",",$search['colls']);
+			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ascii_ids))";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = "
@@ -358,6 +381,25 @@ class Dase_Search {
 		return $result;
 	}
 
+	public function getLink() {
+		$link = '';
+		$url_params = Dase::instance()->url_params;
+		foreach ($url_params as $k => $v) {
+			if (is_array($v)) {
+				foreach($v as $val) {
+					if (!in_array($val,array('max','start'))) {
+						$link .= "&$k=$val";
+					}
+				}
+			} else {
+					if (!in_array($v,array('max','start'))) {
+						$link .= "&$k=$v";
+					}
+			}
+		}
+		return htmlspecialchars("search?" . $link);
+	}
+
 	public function getResult() {
 		$result = array();
 		$cache = new Dase_DB_SearchCache();
@@ -373,6 +415,8 @@ class Dase_Search {
 		} else {
 			$result = unserialize($cache->item_id_string);
 		}
+		$result['link'] = $this->getLink();
+		$result['echo'] = $this->search['echo'];
 		return $result;
 	}
 }

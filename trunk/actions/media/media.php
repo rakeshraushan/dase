@@ -166,7 +166,7 @@ function getThumb($filename) {
 }
 
 function serveFile($collection,$size,$filename,$download,$media_conf) {
-	$media_root="/mnt/www-data/dase/media";
+	$media_root = MEDIA_ROOT;
 	//when I get around to it, I need to rename image directories to match "size" attribute
 	//of media_file exactly (AND strip off directory name part of filename)
 	//but it'll have to wait 'til I redo collection builder
