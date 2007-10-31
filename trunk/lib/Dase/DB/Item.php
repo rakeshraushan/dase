@@ -168,7 +168,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$dl = $dom->createElement('dl');
 		foreach ($this->getValues() as $v) {
 			$dt = $dom->createElement('dt');
-			$dt->setAttribute('class',$v->attribute_ascii_id);
+			$dt->setAttribute('class',$this->collection->ascii_id . '.' . $v->attribute_ascii_id);
 			$dt->appendChild($dom->createTextNode($v->attribute_name));
 			$dl->appendChild($dt);
 			$dd = $dom->createElement('dd');
