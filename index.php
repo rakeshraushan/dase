@@ -25,6 +25,7 @@ define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 define('CART',1);
 define('USER_COLLECTION',2);
 define('SLIDESHOW',3);
+define('MAX_ITEMS',30);
 
 function __autoload($class_name) {
 	$class_name = preg_replace('/_/','/',$class_name);
