@@ -18,12 +18,18 @@
 	<match></match>
   </route>
 
+  <!--
   <route action="atom/collection" auth="none">
 	<match params="collection_ascii_id">atom</match>
   </route>
+  -->
 
   <route action="atom/coll_list" auth="none">
 	<match>atom</match>
+  </route>
+
+  <route action="atom/opensearch" auth="none">
+	<match>atom/search</match>
   </route>
 
   <route action="collection/browse" auth="user">

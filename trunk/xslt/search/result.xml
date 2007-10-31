@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is describing the layout for a specific request.-->
+<html>
+  <head>
+	<title>List of All Collection</title>
+  </head>
+  <body>
+
+	<!--THIS GETS INSERTED-->
+	<div class="content full" id="browse">
+	  <a id="content" name="content"></a>
+	  <div id="msg" class="alert hide"></div>
+	  <insert-collection-name/>
+	  <div id="searchResults">
+		<insert-links/>
+		<form method="post" action="xxxx">	
+		  <insert-item-thumbs/>
+		  <input type="submit"/>
+
+		</form>
+	  </div>
+	  <div class="spacer"/>
+	  <insert-tallies/>
+	</div>
+	<!-- END INSERTED -->
+
+  </body>
+</html>
+

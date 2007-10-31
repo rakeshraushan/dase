@@ -2,7 +2,6 @@
 class Dase_Search {
 
 	public $search;		
-	public $echo;		
 
 	function __construct($params) {
 		$url_params = Dase::instance()->url_params;
@@ -291,15 +290,15 @@ class Dase_Search {
 				}
 				if (count($ar_table_sets)) {
 					if (false === strpos($att,'admin_')) {
-					$value_table_search_sets[] = "
-						id IN (
-							SELECT v.item_id FROM value v,collection c,attribute a
-							WHERE c.ascii_id = '$coll'
-							AND a.ascii_id = '$att'
-							AND a.collection_id = c.id
-							AND v.attribute_id = a.id
-							AND " . join(' AND ', $ar_table_sets)
-							. ")";
+						$value_table_search_sets[] = "
+							id IN (
+								SELECT v.item_id FROM value v,collection c,attribute a
+								WHERE c.ascii_id = '$coll'
+								AND a.ascii_id = '$att'
+								AND a.collection_id = c.id
+								AND v.attribute_id = a.id
+								AND " . join(' AND ', $ar_table_sets)
+								. ")";
 					} else {
 						$value_table_search_sets[] = "
 							id IN (
@@ -309,7 +308,7 @@ class Dase_Search {
 								AND a.collection_id = 0
 								AND v.attribute_id = a.id
 								AND " . join(' AND ', $ar_table_sets)
-							. ")";
+								. ")";
 					}
 				}
 			}
@@ -392,12 +391,12 @@ class Dase_Search {
 					}
 				}
 			} else {
-					if (!in_array($v,array('max','start'))) {
-						$link .= "&$k=$v";
-					}
+				if (!in_array($v,array('max','start'))) {
+					$link .= "&$k=$v";
+				}
 			}
 		}
-		return htmlspecialchars("search?" . $link);
+		return "search?" . $link;
 	}
 
 	public function getResult() {
@@ -418,6 +417,59 @@ class Dase_Search {
 		$result['link'] = $this->getLink();
 		$result['echo'] = $this->search['echo'];
 		return $result;
+	}
+
+	public function getOpenSearchResult() {
+		$result = $this->getResult();
+		$dom = new DOMDocument;
+		$feed = $dom->createElement('feed');
+		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$feed->setAttribute('xmlns:os','http://a9.com/-/spec/opensearch/1.1/');
+		$author = $dom->createElement('author');
+		$name = $dom->createElement('name');
+		$name->appendChild($dom->createTextNode('DASe'));
+		$author->appendChild($name);
+		$feed->appendChild($author);
+		$updated = $dom->createElement('updated');
+		//should get mtime of cache here!!!
+		$updated->appendChild($dom->createTextNode(date('c',time())));
+		$feed->appendChild($updated);
+		$self_link = $dom->createElement('link');
+		$self_link->setAttribute('rel','self');
+		$self_link->setAttribute('type','application/atom+xml');
+		$self_link->setAttribute('href',APP_ROOT . "/atom/" . $result['link']);
+		$feed->appendChild($self_link);
+		$title = $dom->createElement('title');
+		$title->appendChild($dom->createTextNode("DASe search for {$result['echo']['query']}"));
+		$feed->appendChild($title);
+		$id = $dom->createElement('id');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/search_hash/{$result['hash']}"));
+		$feed->appendChild($id);
+		$total = $dom->createElement('os:totalResults');
+		$total->appendChild($dom->createTextNode(count($result['item_ids'])));
+		$feed->appendChild($total);
+
+		$start_num = Dase::filterGet('start');
+		if (!$start_num) { $start_num = 0; }
+		$max_num = Dase::filterGet('max');
+		if (!$max_num) { $max_num = MAX_ITEMS; }
+
+		$start = $dom->createElement('os:startIndex');
+		$start->appendChild($dom->createTextNode($start_num));
+		$feed->appendChild($start);
+		$max = $dom->createElement('os:itemsPerPage');
+		$max->appendChild($dom->createTextNode($max_num));
+		$feed->appendChild($max);
+		$sliced = array_slice($result['item_ids'],$start_num,$max_num);
+		foreach ($sliced as $item_id) {
+			$item = new Dase_DB_Item;
+			$item->load($item_id);
+			$entry = $dom->importNode($item->asAtomEntryDom(),true);
+			$feed->appendChild($entry);
+		}
+		$dom->appendChild($feed);
+		$dom->formatOutput = true;
+		return $dom->saveXml();
 	}
 }
 

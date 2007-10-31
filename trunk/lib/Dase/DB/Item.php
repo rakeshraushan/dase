@@ -95,18 +95,6 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $this->values;
 	}
 
-	public function getValuesXhtml() {
-		$xhtml = '<dl>';
-		foreach ($this->getValues() as $v) {
-			$xhtml .= "
-				<dt class=\"$v->attribute_ascii_id\">$v->attribute_name</dt>
-				<a href=\"search?{$this->collection->ascii_id}:{$v->attribute_ascii_id}=$v->value_text_md5\">
-				<dd>$v->value_text</dd>
-				</a>";
-		}
-		return $xhtml;
-	}
-
 	public function getAttVal($att_ascii_id) {
 		//NOTE: repeat attributes will only get ONE value!!!!
 		$values = array();
@@ -167,46 +155,106 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $url;
 	}
 
-	public function asAtomEntry() {
+	public function asAtomEntryDom() {
 		$this->collection || $this->getCollection();
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('entry');
-		$writer->startElement('id');
-		$writer->text(APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
-		$writer->endElement();
-		$writer->startElement('content');
-		$writer->writeAttribute('type','application/xml');
-		$writer->text($this->getValuesXhtml());
-		$writer->endElement();
-		$writer->startElement('title');
-		$writer->text($this->getTitle());
-		$writer->endElement();
-		$writer->startElement('updated');
-		$writer->text(date('c',$this->last_update));
-		$writer->endElement();
-		$writer->startElement('link');
-		$writer->writeAttribute('rel','alternate');
-		$writer->writeAttribute('type','text/html');
-		$writer->writeAttribute('href',APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
-		$writer->endElement();
-		$writer->startElement('link');
-		$writer->writeAttribute('rel','alternate');
-		$writer->writeAttribute('type','application/xml');
-		$writer->writeAttribute('href',APP_ROOT . "/xml/{$this->collection->ascii_id}/{$this->serial_number}");
-		$writer->endElement();
-		foreach ($this->getMedia() as $m) {
-			$writer->startElement('link');
-			$writer->writeAttribute('rel',$m->size);
-			$writer->writeAttribute('type',$m->mime_type);
-			$writer->writeAttribute('href',APP_ROOT . "/media/{$this->collection->ascii_id}/{$m->size}/{$m->filename}");
-			$writer->endElement();
+		$dom = new DOMDocument;
+		$frag = $dom->createDocumentFragment();
+		$entry = $dom->createElement('entry');
+		$id = $dom->createElement('id');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}"));
+		$entry->appendChild($id);
+		$content = $dom->createElement('content');
+		$content->setAttribute('type','xhtml');
+		$dl = $dom->createElement('dl');
+		foreach ($this->getValues() as $v) {
+			$dt = $dom->createElement('dt');
+			$dt->setAttribute('class',$v->attribute_ascii_id);
+			$dt->appendChild($dom->createTextNode($v->attribute_name));
+			$dl->appendChild($dt);
+			$dd = $dom->createElement('dd');
+			$a = $dom->createElement('a');
+			$a->setAttribute('href',"search?{$this->collection->ascii_id}:{$v->attribute_ascii_id}={$v->value_text_md5}");
+			$a->appendChild($dom->createTextNode($v->value_text));
+			$dd->appendChild($a);
+			$dl->appendChild($dd);
 		}
-		$writer->endElement();
-		$writer->endDocument();
-		return $writer->flush(true);
+		$div = $dom->createElement('div');
+		$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
+		$div->appendChild($dl);
+		$collection_name = $dom->createElement('p');
+		$collection_name->setAttribute('class','collectionName');
+		$collection_name->appendChild($dom->createTextNode($this->collection->collection_name));
+		$content->appendChild($div);
+		$entry->appendChild($content);
+		$title = $dom->createElement('title');
+		$title->appendChild($dom->createTextNode($this->getTitle()));
+		$entry->appendChild($title);
+
+		$updated = $dom->createElement('updated');
+		$updated->appendChild($dom->createTextNode(date('c',$this->last_update)));
+		$entry->appendChild($updated);
+
+		$html_link = $dom->createElement('link');
+		$html_link->setAttribute('rel','alternate');
+		$html_link->setAttribute('type','text/html');
+		$html_link->setAttribute('href',APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
+		$entry->appendChild($html_link);
+
+		$xml_link = $dom->createElement('link');
+		$xml_link->setAttribute('rel','alternate');
+		$xml_link->setAttribute('type','application/xml');
+		$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->collection->ascii_id}/{$this->serial_number}");
+		$entry->appendChild($xml_link);
+
+		foreach ($this->getMedia() as $m) {
+			$link = $dom->createElement('link');
+			$link->setAttribute('rel',$m->size);
+			$link->setAttribute('type',$m->mime_type);
+			$link->setAttribute('href',APP_ROOT . "/media/{$this->collection->ascii_id}/{$m->size}/{$m->filename}");
+			$entry->appendChild($link);
+			if ('thumbnail' == $m->size) {
+				$thumbnail = $dom->createElement('img');
+				$thumbnail->setAttribute('src',APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/{$m->filename}");
+				$thumbnail->setAttribute('alt',$this->getTitle());
+				$div->appendChild($thumbnail);
+			}
+			$div->appendChild($collection_name);
+		}
+		$frag->appendChild($entry);
+		return $frag;
+		//$dom->appendChild($frag);
+		//return $dom->saveXML();
+	}
+
+	//maybe should be in an atom class???
+	public static function getAtomFeed($item_array,$feed_title,$feed_id) {
+		$dom = new DOMDocument;
+		$feed = $dom->createElement('feed');
+		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$author = $dom->createElement('author');
+		$author->appendChild($dom->createElement('name'));
+		$feed->appendChild($author);
+		$updated = $dom->createElement('updated');
+		$updated->appendChild($dom->createTextNode(date('c',time())));
+		$feed->appendChild($updated);
+		$self_link = $dom->createElement('link');
+		$self_link->setAttribute('rel','self');
+		$self_link->setAttribute('type','application/atom+xml');
+		$self_link->setAttribute('href',APP_ROOT . "/atom/feed/$feed_id");
+		$feed->appendChild($self_link);
+		$title = $dom->createElement('title');
+		$title->appendChild($dom->createTextNode($feed_title));
+		$feed->appendChild($title);
+		$id = $dom->createElement('id');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/feed/$feed_id"));
+		$feed->appendChild($id);
+		foreach ($item_array as $item) {
+			$entry = $dom->importNode($item->asAtomEntryDom(),true);
+			$feed->appendChild($entry);
+		}
+		$dom->appendChild($feed);
+		$dom->formatOutput = true;
+		return $dom->saveXml();
 	}
 
 	public function getXml() {

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is describing the layout for a specific request.-->
+<html>
+  <head>
+	<title>Browse Collection</title>
+  </head>
+  <body>
+
+	<!--THIS GETS INSERTED-->
+	<div class="content full" id="browse">
+	  <table class="itemDisplay">
+		<tr>
+		  <td class="image">
+			<insert-viewitem/>
+		  </td>
+		  <td class="metadata">
+			<insert-item-metadata/>
+
+		  </td>
+		</tr>
+	  </table>
+	</div> <!-- close content -->
+	<!-- END INSERTED -->
+
+  </body>
+</html>
+
