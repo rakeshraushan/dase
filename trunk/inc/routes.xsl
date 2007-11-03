@@ -30,34 +30,22 @@
 
   <!-- top template for modules -->
   <xsl:template match="/" mode="modules">
-	<xsl:text> 
-	  $routes = array(
-	  "get" => array(
-	</xsl:text>
 	<xsl:apply-templates mode="get">
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
 	</xsl:apply-templates>
-	),
-	"post" => array(
 	<xsl:apply-templates mode="post">
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
 	</xsl:apply-templates>
-	),
-	"put" => array(
 	<xsl:apply-templates mode="put">
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
 	</xsl:apply-templates>
-	),
-	"delete" => array(
 	<xsl:apply-templates mode="delete">
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
 	</xsl:apply-templates>
-	)
-	);
   </xsl:template>
 
   <xsl:template match="module">
@@ -72,10 +60,12 @@
   <xsl:template match="route" mode="get">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
+	<xsl:param name="method"/>
 	<xsl:if test="not(@method) or @method='get'">
 	  <xsl:apply-templates>
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
+	  <xsl:with-param name="method" select="'get'"/>
 	</xsl:apply-templates>
 	</xsl:if>
   </xsl:template>
@@ -83,10 +73,12 @@
   <xsl:template match="route" mode="post">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
+	<xsl:param name="method"/>
 	<xsl:if test="@method='post'">
 	  <xsl:apply-templates>
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
+	  <xsl:with-param name="method" select="'post'"/>
 	</xsl:apply-templates>
 	</xsl:if>
   </xsl:template>
@@ -94,10 +86,12 @@
   <xsl:template match="route" mode="put">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
+	<xsl:param name="method"/>
 	<xsl:if test="@method='put'">
 	  <xsl:apply-templates>
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
+	  <xsl:with-param name="method" select="'put'"/>
 	</xsl:apply-templates>
 	</xsl:if>
   </xsl:template>
@@ -105,10 +99,12 @@
   <xsl:template match="route" mode="delete">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
+	<xsl:param name="method"/>
 	<xsl:if test="@method='delete'">
 	  <xsl:apply-templates>
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
+	  <xsl:with-param name="method" select="'delete'"/>
 	</xsl:apply-templates>
 	</xsl:if>
   </xsl:template>
@@ -116,11 +112,11 @@
   <xsl:template match="match">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
-	"^<xsl:value-of select="."/>$" => array(
-	<xsl:if test="$name">"action" => "modules/<xsl:value-of select="$name"/>/<xsl:value-of select="../@action"/>",
-	</xsl:if>
-	<xsl:if test="not($name)">"action" => "<xsl:value-of select="../@action"/>",
-	</xsl:if>
+	<xsl:param name="method"/>
+	<!-- if it is a module -->
+	<xsl:if test="$name">$routes["<xsl:value-of select="$method"/>"]["^modules/<xsl:value-of select="$name"/>/<xsl:value-of select="."/>$"] = array(</xsl:if>
+	<xsl:if test="not($name)">"^<xsl:value-of select="."/>$" => array(</xsl:if>
+	"action" => "<xsl:value-of select="../@action"/>",
 	<xsl:if test="../@auth">"auth" => "<xsl:value-of select="../@auth"/>",
 	</xsl:if>
 	<xsl:if test="not(../@auth)">"auth" => "user",
@@ -132,7 +128,11 @@
 	<xsl:if test="$collection">"collection" => "<xsl:value-of select="$collection"/>",
 	</xsl:if>
 	<xml:text>"end" => "end"</xml:text>
-	),
+	)<xsl:text/>
+	<xsl:if test="$name">;
+	</xsl:if>
+	<xsl:if test="not($name)">,
+	</xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>
