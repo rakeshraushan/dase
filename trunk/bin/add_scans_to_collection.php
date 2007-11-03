@@ -3,7 +3,8 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'test_collection';
+$collection_ascii_id = 'ancient_meso_collection';
+//$collection_ascii_id = 'test_collection';
 
 /******************************************/
 
@@ -32,6 +33,7 @@ function processDir($REPOS,$collection,$logfile) {
 		) {
 			try {
 					$u = new Dase_Upload(Dase_File::newFile($file->getPathname()),$collection);
+			//		$u->checkForMultiTiff();
 					$ser_num = $u->createItem();
 					$logdata = $u->ingest();
 					$logdata .= $u->setTitle();
@@ -46,6 +48,7 @@ function processDir($REPOS,$collection,$logfile) {
 					
 			} catch(Exception $e) {
 				print $e->getMessage() . "\n";
+				file_put_contents($logfile,$e->getMessage(),FILE_APPEND);
 			}
 		}
 	}

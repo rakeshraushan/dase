@@ -460,6 +460,7 @@ class Dase_Search {
 		$max = $dom->createElement('os:itemsPerPage');
 		$max->appendChild($dom->createTextNode($max_num));
 		$feed->appendChild($max);
+		//what about sorting on att_vals ??!!
 		$sliced = array_slice($result['item_ids'],$start_num,$max_num);
 		foreach ($sliced as $item_id) {
 			$item = new Dase_DB_Item;

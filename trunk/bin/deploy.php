@@ -3,6 +3,7 @@
 
 $working = dirname(__FILE__) . '/..';
 $target = '/var/www/html/dasetest/';
+//$target = '/var/www/html/dase/';
 $httpd_group = 'apache';
 
 print "copying $working/* to $target";

@@ -165,13 +165,14 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$entry->appendChild($id);
 		$content = $dom->createElement('content');
 		$content->setAttribute('type','xhtml');
+		$ns_prefix = substr($this->collection->ascii_id,0,3);
 		$dl = $dom->createElement('dl');
 		foreach ($this->getValues() as $v) {
 			$dt = $dom->createElement('dt');
-			$dt->setAttribute('class',$this->collection->ascii_id . '.' . $v->attribute_ascii_id);
 			$dt->appendChild($dom->createTextNode($v->attribute_name));
 			$dl->appendChild($dt);
 			$dd = $dom->createElement('dd');
+			$dd->setAttribute('property',$ns_prefix . ':' . $v->attribute_ascii_id);
 			$a = $dom->createElement('a');
 			$a->setAttribute('href',"search?{$this->collection->ascii_id}:{$v->attribute_ascii_id}={$v->value_text_md5}");
 			$a->appendChild($dom->createTextNode($v->value_text));
@@ -180,6 +181,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		}
 		$div = $dom->createElement('div');
 		$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
+		$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->collection->ascii_id}");
 		$div->appendChild($dl);
 		$collection_name = $dom->createElement('p');
 		$collection_name->setAttribute('class','collectionName');
@@ -252,6 +254,37 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$entry = $dom->importNode($item->asAtomEntryDom(),true);
 			$feed->appendChild($entry);
 		}
+		$dom->appendChild($feed);
+		$dom->formatOutput = true;
+		return $dom->saveXml();
+	}
+
+	public function getAtom() {
+		$this->collection || $this->getCollection();
+		$dom = new DOMDocument;
+		$feed = $dom->createElement('feed');
+		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$author = $dom->createElement('author');
+		$name = $dom->createElement('name');
+		$name->appendChild($dom->createTextNode('DASe'));
+		$author->appendChild($name);
+		$feed->appendChild($author);
+		$updated = $dom->createElement('updated');
+		$updated->appendChild($dom->createTextNode(date('c',time())));
+		$feed->appendChild($updated);
+		$self_link = $dom->createElement('link');
+		$self_link->setAttribute('rel','self');
+		$self_link->setAttribute('type','application/atom+xml');
+		$self_link->setAttribute('href',APP_ROOT . "/atom/{$this->collection->ascii_id}/{$this->serial_number}");
+		$feed->appendChild($self_link);
+		$title = $dom->createElement('title');
+		$title->appendChild($dom->createTextNode($this->getTitle()));
+		$feed->appendChild($title);
+		$id = $dom->createElement('id');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/{$this->collection->ascii_id}/{$this->serial_number}"));
+		$feed->appendChild($id);
+		$entry = $dom->importNode($this->asAtomEntryDom(),true);
+		$feed->appendChild($entry);
 		$dom->appendChild($feed);
 		$dom->formatOutput = true;
 		return $dom->saveXml();

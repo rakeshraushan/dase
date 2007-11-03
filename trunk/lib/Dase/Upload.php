@@ -36,6 +36,15 @@ class Dase_Upload
 		}	
 	}
 
+	function checkForMultiTiff() {
+		$image = new Imagick($this->file->getFilepath());
+		if (1 < $image->getNumberImages()) {
+			throw new Dase_Upload_Exception("Error: " . $this->file->getFilepath() . " appears to be a multi-layered tiff\n");
+		} else {
+			return 0;
+		}
+	}
+
 	function isDuplicate() {
 		$meta = $this->file->getMetadata();
 		$v = new Dase_DB_Value;
