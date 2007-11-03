@@ -32,6 +32,10 @@
 	<match>atom/search</match>
   </route>
 
+  <route action="atom/item" auth="none">
+	<match caps="collection_ascii_id" params="serial_number">atom/([^/]*_collection)</match>
+  </route>
+
   <route action="collection/browse" auth="user">
 	<match params="collection_ascii_id">collection</match>
 	<match caps="collection_ascii_id">([^/]*_collection)</match>
