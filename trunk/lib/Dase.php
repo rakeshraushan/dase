@@ -321,6 +321,9 @@ class Dase
 	static public function run() {
 		$controller = Dase::instance();
 		$routes = Dase::compileRoutes();
+		//$r = new Dase_Xslt(DASE_PATH."/inc/routes.xsl",DASE_PATH."/inc/routes.xml");
+		//print_r($r->transform());exit;
+
 		// from habari code
 		$request_url= ( isset($_SERVER['REQUEST_URI']) 
 			? $_SERVER['REQUEST_URI'] 

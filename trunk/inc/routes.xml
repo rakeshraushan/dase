@@ -1,4 +1,8 @@
 <routes>
+  <route action="test" auth="none">
+	<match params="one/two/three">test</match>
+  </route>
+
 
   <!-- START experimentation sandbox -->
   <route action="xslt" auth="none">
