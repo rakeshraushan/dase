@@ -22,11 +22,12 @@ class Dase_Search {
 		// include phrases in quotes (' or ")
 		// use '-' to omit a word or phrase
 		// use 'or' for Boolean OR between words or phrases
-		// for attribute searches, name is '<coll_ascii_id>.<attribute_ascii_id>'
-		// use period (as in example) for auto substring/phrase search
+		// for attribute searches, name is '<coll_ascii_id>%<attribute_ascii_id>'
+		// use percent (as in example) for auto substring/phrase search
 		// use single colon to match md5 hash of exact value_text string
+		// use single period to match exact value_text string (case-insensitive)
 		// add more attribute searches (refinements) by adding them to
-		// the query string. Note that the use of '.' or ':' in
+		// the query string. Note that the use of '.' or ':' or '%' in
 		// a query parameter name that is NOT part of the search will
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
@@ -57,17 +58,17 @@ class Dase_Search {
 				}
 			}
 		}
-		//for substring att searches
+		//for substring att searches  => att%val
 		foreach ($url_params as $k => $val) {
 			if (!is_array($val)) {
 				$val = array($val);
 			}
-			if (('q' != $k) && ('type' != $k) && strpos($k,'.')){
+			if (('q' != $k) && ('type' != $k) && strpos($k,'%')){
 				$echo['sub'][$k] = join(' ',$val);
 				$coll = null;
 				$att = null;
 				$tokens = array();
-				list($coll,$att) = explode('.',$k);
+				list($coll,$att) = explode('%',$k);
 				if ($coll && $att) {
 					$search['att'][$coll][$att]['find'] = array();
 					$search['att'][$coll][$att]['omit'] = array();
@@ -119,20 +120,42 @@ class Dase_Search {
 				}
 			}
 		}
-		//for attr exact value searches (md5 hash of value_text)
+		//for attr exact value searches => att.val
 		foreach ($url_params as $k => $val) {
-			// for md5 hash only take one
-			$val = is_array($val) ? $val[0] : $val;
-			$coll = null;
-			$att = null;
-			if (('q' != $k) && strpos($k,':') && (!strpos($k,'.'))){
-				list($coll,$att) = explode(':',$k);
-				$echo['exact'][$k] = Dase_DB_Value::getValueTextByHash($coll,$val);
-				$search['att'][$coll][$att]['value_text_md5'] = array();
-				$search['att'][$coll][$att]['value_text_md5'][] = $val;
-				$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
+			if (!is_array($val)) {
+				$val = array($val);
+			}
+			foreach($val as $v) {
+				$coll = null;
+				$att = null;
+				if (strpos($k,'.') && !strpos($k,'%') && !strpos($k,':')){
+					list($coll,$att) = explode('.',$k);
+					$echo['exact'][$k][] = $v;
+					$search['att'][$coll][$att]['value_text'] = array();
+					$search['att'][$coll][$att]['value_text'][] = $v;
+					$search['att'][$coll][$att]['value_text'] = array_unique($search['att'][$coll][$att]['value_text']);
+				}
 			}
 		}
+
+		//for attr exact value md5 searches (md5 hash of value_text) => att:val
+		foreach ($url_params as $k => $val) {
+			if (!is_array($val)) {
+				$val = array($val);
+			}
+			$coll = null;
+			$att = null;
+			foreach($val as $v) {
+				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'%')){
+					list($coll,$att) = explode(':',$k);
+					$echo['exact'][$k][] = Dase_DB_Value::getValueTextByHash($coll,$v);
+					$search['att'][$coll][$att]['value_text_md5'] = array();
+					$search['att'][$coll][$att]['value_text_md5'][] = $v;
+					$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
+				}
+			}
+		}
+
 		//for item_type filter
 		foreach ($url_params as $k => $val) {
 			// for md5 hash only take one
@@ -144,6 +167,7 @@ class Dase_Search {
 				$search['type']['name'] = $type;
 			}
 		}
+
 		$or_keys = array_keys($search['find'],'or');
 		//configure global 'or' set
 		foreach ($or_keys as $or_key) {
@@ -208,7 +232,7 @@ class Dase_Search {
 			$att_names_array = array_keys($att_array[$coll_name]);
 			asort($att_names_array);
 			foreach ($att_names_array as $att_name) {
-				foreach(array('find','omit','or','value_text_md5') as $key) {
+				foreach(array('find','omit','or','value_text_md5','value_text') as $key) {
 					$set = array();
 					if (isset($att_array[$coll_name][$att_name][$key])) {
 						$set = $att_array[$coll_name][$att_name][$key];
@@ -265,6 +289,8 @@ class Dase_Search {
 			foreach ($att_arrays as $att => $ar) {
 				$ar_table_sets = array();
 				if ($this->_testArray($ar,'find')) {
+					//the key needs to be specified to make sure it overwrites 
+					//(rather than appends) to the array
 					foreach ($ar['find'] as $k => $term) {
 						$ar['find'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
 					}
@@ -281,6 +307,13 @@ class Dase_Search {
 						$ar['or'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
 					}
 					$ar_table_sets[] = "(" . join(' OR ',$ar['or']) . ")";
+				}
+				if ($this->_testArray($ar,'value_text')) {
+					foreach ($ar['value_text'] as $k => $term) {
+						//note that exact searches are CASE INSENSITIVE
+						$ar['value_text'][$k] = "lower(v.value_text) = '" . strtolower($term) . "'";
+					}
+					$ar_table_sets[] = join(' AND ',$ar['value_text']);
 				}
 				if ($this->_testArray($ar,'value_text_md5')) {
 					foreach ($ar['value_text_md5'] as $k => $term) {
@@ -440,7 +473,13 @@ class Dase_Search {
 		$self_link->setAttribute('href',APP_ROOT . "/atom/" . $result['link']);
 		$feed->appendChild($self_link);
 		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode("DASe search for {$result['echo']['query']}"));
+		$echo = $result['echo']['query'];
+		foreach ($result['echo']['exact'] as $k => $val) {
+			foreach($val as $v) {
+				$echo .= " $k = $v";
+			}
+		}
+		$title->appendChild($dom->createTextNode("DASe search for $echo"));
 		$feed->appendChild($title);
 		$id = $dom->createElement('id');
 		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/search_hash/{$result['hash']}"));

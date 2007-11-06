@@ -7,7 +7,7 @@
   <xsl:strip-space elements="*"/>
 
   <xsl:template match="/">
-	<xsl:text>&lt;?php 
+	<xsl:text>
 	  $routes = array(
 	  "get" => array(
 	</xsl:text>
@@ -65,7 +65,7 @@
 	</xsl:if>
   </xsl:template>
 
-  <xsl:template match="auth|collection|name|caps|params|action">
+  <xsl:template match="auth|collection|name|caps|params|action|prefix">
 	<xsl:if test="text()">
 	  '<xsl:value-of select="local-name(.)"/>' => "<xsl:value-of select="."/>",<xsl:text/>	
 	</xsl:if>

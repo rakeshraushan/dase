@@ -3,12 +3,13 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'ancient_meso_collection';
-//$collection_ascii_id = 'test_collection';
+$collection_ascii_id = 'rm7233_collection';
+//$repo = $collection_ascii_id;
+$repo = mansfield;
 
 /******************************************/
 
-$REPOS = "/mnt/projects/dase_scanning/$collection_ascii_id";
+$REPOS = "/mnt/projects/dase_scanning/$repo";
 
 include 'cli_setup.php';
 $collection = Dase_DB_Collection::get($collection_ascii_id);

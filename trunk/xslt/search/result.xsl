@@ -53,7 +53,7 @@
 	  <input type="checkbox" name="img" value="{atom:id}"/>
 	  <div class="image">
 		<a href="{atom:id}">
-		  <img src="{atom:link[@rel='thumbnail']/@href}" alt="file this in w/ simple title"/>
+		  <img src="{atom:link[@title='thumbnail']/@href}" alt="file this in w/ simple title"/>
 		</a>
 	  </div>
 	  <div class="caption">

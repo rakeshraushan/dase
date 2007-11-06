@@ -115,7 +115,7 @@ class Dase_Upload
 		//$this->metadata['admin_upload_eid'] = 
 		//$this->metadata['admin_upload_ip_address'] = 
 		$this->metadata['admin_serial_number'] = $this->item->serial_number; 
-		$this->metadata['admin_upload_date_time'] = time(); //NOTE this needs to be admin_upload_timestamp
+		$this->metadata['admin_upload_date_time'] = date(DATE_ATOM); //NOTE this needs to be admin_upload_timestamp
 		return $this->metadata;
 	}	
 }

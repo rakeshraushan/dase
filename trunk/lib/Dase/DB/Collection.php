@@ -182,7 +182,39 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $writer->flush(true);
 	}
 
+
 	function getAtom() {
+		/*
+		att:
+		ascii_id - id
+		atom_element - category
+		attribute_name - title
+		html_input_type - category 
+		in_basic_search - category
+		is_on_list_display - category
+		is_public - category
+		mapped_admin_att_id - category
+		sort_order - (look at feed order ext)
+		usage_notes - content
+
+		item_type:
+		ascii_id - id
+		description - content (summary??)
+		name - title
+		attributes - content (links?)
+		 */
+
+
+		$dom = new DOMDocument;
+		$entry = $dom->createElement('feed');
+		$id = $dom->createElement('id');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/"));
+		$entry->appendChild($id);
+		$content = $dom->createElement('content');
+		$content->setAttribute('type','xhtml');
+	}
+
+	function getAtomOrig() {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
