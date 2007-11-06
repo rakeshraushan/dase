@@ -163,9 +163,23 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$id = $dom->createElement('id');
 		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}"));
 		$entry->appendChild($id);
+		//an item can have only one type
+		$type = new Dase_DB_ItemType;
+		if ($type->load($this->item_type_id)) {
+			$cat = $dom->createElement('category');
+			$cat->setAttribute('term',$type->ascii_id);
+			$cat->setAttribute('scheme',APP_ROOT . "/" . $this->collection->ascii_id . "/item-types/");
+			$cat->setAttribute('label',$type->name);
+			$entry->appendChild($cat);
+		}
 		$content = $dom->createElement('content');
 		$content->setAttribute('type','xhtml');
 		$ns_prefix = substr($this->collection->ascii_id,0,3);
+		//create an unorder list to hold
+		//item metadata AND item type
+		$xoxo = $dom->createElement('ul');
+		$xoxo->setAttribute("class","xoxo");
+		$item_metadata_li = $dom->createElement('li');
 		$dl = $dom->createElement('dl');
 		foreach ($this->getValues() as $v) {
 			$dt = $dom->createElement('dt');
@@ -179,10 +193,14 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$dd->appendChild($a);
 			$dl->appendChild($dd);
 		}
+
+		$item_metadata_li->appendChild($dl);
+		$xoxo->appendChild($item_metadata_li);
+
 		$div = $dom->createElement('div');
 		$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
 		$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->collection->ascii_id}");
-		$div->appendChild($dl);
+		$div->appendChild($xoxo);
 		$collection_name = $dom->createElement('p');
 		$collection_name->setAttribute('class','collectionName');
 		$collection_name->appendChild($dom->createTextNode($this->collection->collection_name));
@@ -210,8 +228,9 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 		foreach ($this->getMedia() as $m) {
 			$link = $dom->createElement('link');
-			$link->setAttribute('rel',$m->size);
+			$link->setAttribute('rel',APP_ROOT . "/media-type/" . $m->size);
 			$link->setAttribute('type',$m->mime_type);
+			$link->setAttribute('title',$m->size);
 			$link->setAttribute('href',APP_ROOT . "/media/{$this->collection->ascii_id}/{$m->size}/{$m->filename}");
 			$entry->appendChild($link);
 			if ('thumbnail' == $m->size) {

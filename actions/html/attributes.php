@@ -1,4 +1,9 @@
 <?php
+
+
+//this script should consume an atom feed of attributes for the collection
+//and use xslt to transform it into this shape
+
 $attribute = new Dase_DB_Attribute;
 $c = Dase::instance()->collection;
 $attribute->collection_id = $c->id;

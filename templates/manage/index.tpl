@@ -60,7 +60,7 @@
 <h3>{$method} method</h3>
 <dl class="routes">
 {foreach from=$sroutes key=k item=v}
-<dt>/{$k}/</dt>
+<dt>{$k}</dt>
 {foreach from=$v key=name item=value}
 <dd>[{$name}] {$value}</dd>
 {/foreach}

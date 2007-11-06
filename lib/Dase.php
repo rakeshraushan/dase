@@ -175,6 +175,7 @@ class Dase
 		// No cache: (~200 req/sec
 		// Database Cache: (<100 req/sec)
 		// File Based Cache: (>400 req/sec)
+		// 
 		$routes = array(); 
 		$cache = new Dase_FileCache('routes');
 		if ($cache->get()) {
@@ -182,6 +183,22 @@ class Dase
 		} else {
 			$routes = Dase::_compileModuleRoutes(Dase::_compileRoutes());
 			$cache->set(serialize($routes));
+		}
+		return $routes;
+	}
+
+	static public function compileRoutesXslt() {
+		// No cache: ~115 req/sec
+		// File Based Cache: ~375 req/sec
+		$routes = array(); 
+		$cache = new Dase_FileCache('routes');
+		if ($cache->get()) {
+			eval($cache->get());
+		} else {
+			$rx = new Dase_Xslt(DASE_PATH."/inc/routes2map.xsl",DASE_PATH."/inc/routes.xml");
+			$rp = new Dase_Xslt(DASE_PATH."/inc/xml2php.xsl",$rx->transform());
+			$cache->set($rp->transform());
+			eval($cache->get());
 		}
 		return $routes;
 	}
@@ -320,9 +337,8 @@ class Dase
 
 	static public function run() {
 		$controller = Dase::instance();
-		$routes = Dase::compileRoutes();
-		//$r = new Dase_Xslt(DASE_PATH."/inc/routes.xsl",DASE_PATH."/inc/routes.xml");
-		//print_r($r->transform());exit;
+		//$routes = Dase::compileRoutes();
+		$routes = Dase::compileRoutesXslt();
 
 		// from habari code
 		$request_url= ( isset($_SERVER['REQUEST_URI']) 
@@ -427,35 +443,46 @@ class Dase
 					//default auth is user!!!!!!!!!!!!!
 					Dase::checkUser('user');
 				}
-				if(file_exists(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php')) {
+				$handler = DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php';
+				if(file_exists($handler)) {
 					$msg = Dase::filterGet('msg');
-					include(DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php');
+					include($handler);
 					exit;
-				} 
+				} else { 
+					//matched regex, but didn't find action
+					Dase::error(500, "Server Error (no handler for $request_url)");
+				}
 			} 
 		} 
 		//no routes match, so use default:
-		//having this "outlet" here gaurantees only first match gets tested
-		Dase::error(404);
+		//having this "outlet" here guarantees only first match gets tested
+		Dase::error(404,"Sorry, but $request_url could not be located");
 		exit;
 	}
 
 	public static function error($code, $msg = '') {
-		$tpl = Dase_Template::instance();
 		if (400 == $code) {
 			header("HTTP/1.1 400 Bad Request");
-			$tpl->assign('msg',$msg);
 		}
 		if (404 == $code) {
 			header("HTTP/1.1 404 Not Found");
-			$tpl->assign('msg','not found');
 		}
 		if (401 == $code) {
 			header('HTTP/1.1 401 Unauthorized');
-			$tpl->assign('msg','Unauthorized');
+			$msg = 'Unauthorized';
 		}
-		$tpl->assign('code',$code);
-		$tpl->display('error/index.tpl');
+		if (500 == $code) {
+			header('HTTP/1.1 500 Internal Server Error');
+		}
+		$t = new Dase_Xslt(XSLT_PATH.'error/error.xsl');
+		$t->set('local-layout',XSLT_PATH.'error/error.xml');
+		$t->set('error_msg',$msg);
+		$tpl = new Dase_Html_Template();
+		$tpl->setText($t->transform());
+		$tpl->display();
+
+		//		$tpl->assign('code',$code);
+		//		$tpl->display('error/index.tpl');
 		exit;
 	}
 

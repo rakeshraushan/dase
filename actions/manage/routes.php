@@ -1,5 +1,5 @@
 <?php
-$routes = Dase::compileRoutes();
+$routes = Dase::compileRoutesXslt();
 
 $tpl = Dase_Template::instance();
 $tpl->assign('breadcrumb_url','manage/routes');

@@ -114,6 +114,9 @@
 	  <xsl:element name="collection"><xsl:value-of select="$collection"/></xsl:element>
 	  <xsl:element name="name"><xsl:value-of select="$name"/></xsl:element>
 	  <xsl:element name="caps"><xsl:value-of select="$caps"/></xsl:element>
+	  <xsl:if test="$name">
+		<xsl:element name="prefix"><xsl:value-of select="concat('/modules/',$name)"/></xsl:element>
+	  </xsl:if>
 	</xsl:element>
 	<xsl:text>
 	</xsl:text>
@@ -124,7 +127,10 @@
 	<xsl:param name="name"/>
 	<xsl:param name="local-params"/>
 	<xsl:if test="$name">
-	  <xsl:value-of select="concat('modules/',$name,'/')"/>
+	  <xsl:value-of select="concat('modules/',$name)"/>
+	  <xsl:if test="$match!=''">
+		<xsl:value-of select="'/'"/>
+	  </xsl:if>
 	</xsl:if>
 	<xsl:value-of select="$match"/>
 	<xsl:call-template name="construct-regex">

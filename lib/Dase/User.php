@@ -60,8 +60,10 @@ class Dase_User
 			// we can short circuit if curr coll is public
 			// which is good, since this will be the case MOST
 			// of the time
-			if (Dase::instance()->collection->is_public) {
-				return true;
+			if (Dase::instance()->collection) {
+				if (Dase::instance()->collection->is_public) {
+					return true;
+				}
 			}
 		}
 		$cm = new Dase_DB_CollectionManager; 

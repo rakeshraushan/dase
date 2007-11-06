@@ -22,11 +22,9 @@
 	<match></match>
   </route>
 
-  <!--
   <route action="atom/collection" auth="none">
-	<match params="collection_ascii_id">atom</match>
+	<match caps="collection_ascii_id">atom/([^/]*_collection)</match>
   </route>
-  -->
 
   <route action="atom/coll_list" auth="none">
 	<match>atom</match>
