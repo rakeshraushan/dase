@@ -183,23 +183,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	}
 
 	function getAtom() {
-		/*
-		attribute_name - title
-		html_input_type - category 
-		in_basic_search - category
-		is_on_list_display - category
-		is_public - category
-		mapped_admin_att_id - category
-		sort_order - (look at feed order ext)
-		usage_notes - content
-
-		item_type:
-		ascii_id - id
-		description - content (summary??)
-		name - title
-		attributes - content (links?)
-		 */
-
 		$dom = new DOMDocument;
 		$feed = $dom->createElement('feed');
 		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
@@ -376,9 +359,12 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->ascii_id}");
 
 			$xoxo = $dom->createElement('ul');
+			$xoxo->appendChild($dom->createElement('li')->appendChild($dom->createTextNode($type->name)));
+			/*
 			$name = $dom->createElement('li');
 			$name->appendChild($dom->createTextNode($type->name));
 			$xoxo->appendChild($name);
+			 */
 
 			$atts = $type->getAttributes();
 			if ($atts) {
@@ -418,107 +404,6 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$dom->appendChild($feed);
 		$dom->formatOutput = true;
 		return $dom->saveXml();
-	}
-
-	function getAtomOrig() {
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('feed');
-		$writer->writeAttribute('xmlns','http://www.w3.org/2005/Atom');
-		$ascii_id_array = explode('_',$this->ascii_id);
-		$prefix = $ascii_id_array[0];
-		$writer->writeAttribute("xmlns:dase", APP_HTTP_ROOT);
-		$writer->writeAttribute("xmlns:$prefix", APP_HTTP_ROOT . "/{$this->ascii_id}/1.0");
-		$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
-		$writer->startElement('title');
-		$writer->text($this->collection_name);
-		$writer->endElement();
-		$writer->startElement('id');
-		$writer->text(APP_HTTP_ROOT . "/{$this->ascii_id}");
-		$writer->endElement();
-		$writer->startElement('author');
-		$writer->startElement('name');
-		$writer->endElement();
-		$writer->endElement();
-		$writer->startElement('updated');
-		$writer->text($this->getLastUpdated());
-		$writer->endElement();
-		$item = new Dase_DB_Item;
-		$item->collection_id = $this->id;
-		$item->setLimit(10);
-		foreach($item->findAll() as $it) {
-			$writer->startElement('entry');
-			$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
-			$writer->startElement('id');
-			$writer->text(APP_ROOT . "/{$this->ascii_id}/{$it['serial_number']}");
-			$writer->endElement();
-			$writer->startElement('updated');
-			$writer->text(date('c',$it['last_update']));
-			$writer->endElement();
-			$writer->writeAttribute('xml:base', APP_HTTP_ROOT . "/{$this->ascii_id}/");
-			$item_type = Dase_DB_Object::getArray('item_type',$it['item_type_id']);
-			if (isset($item_type['ascii_id'])) {
-				$writer->startElement('category');
-				$writer->writeAttribute('scheme',APP_HTTP_ROOT . "/{$this->ascii_id}/item_type");
-				$writer->writeAttribute('term',$item_type['ascii_id']);
-				$writer->writeAttribute('label',$item_type['name']);
-				$writer->endElement();
-			}
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT value_text,ascii_id,atom_element 
-				FROM value, attribute
-				WHERE attribute.id = value.attribute_id
-				AND value.item_id = {$it['id']}
-			";
-			$st = $db->query($sql);
-			foreach ($st->fetchAll() as $row) {
-				if ($row['atom_element']) {
-					$writer->startElement($row['atom_element']);
-				} else {
-					if ('admin' == substr($row['ascii_id'],0,5)) {
-						$writer->startElement('dase:' . $row['ascii_id']);
-					} else {
-						$writer->startElement($prefix . ':' . $row['ascii_id']);
-					}
-				}
-				$writer->text($row['value_text']);
-				$writer->endElement();
-			}
-			$media_file = new Dase_DB_MediaFile;
-			$media_file->item_id = $it['id'];
-			foreach($media_file->findAll() as $mf) {
-				if ('thumbnail' == $mf['size']) {
-					$thumbnail_file = $mf['filename'];
-					$thumbnail_type = $mf['mime_type'];
-				}
-				$writer->startElement('link');
-				if (!$mf['file_size']) {
-					$h = get_headers(APP_ROOT . "/{$this->ascii_id}/media/{$mf['size']}/{$mf['filename']}",1);
-					$mf['file_size'] = $h['Content-Length'];
-				}
-				$writer->writeAttribute('length',$mf['file_size']);
-				$writer->writeAttribute('type',$mf['mime_type']);
-				$writer->writeAttribute('rel',APP_ROOT . "/media/{$mf['size']}");
-				$writer->writeAttribute('href',"/media/{$mf['size']}/{$mf['filename']}");
-				$writer->endElement();
-			}
-			$writer->startElement('content');
-			if (isset($thumbnail_file) && isset($thumbnail_type)) { 
-				$writer->writeAttribute('src', APP_ROOT . "/{$this->ascii_id}/media/thumbnail/$thumbnail_file");
-				$writer->writeAttribute('type', $thumbnail_type);
-			}
-			$writer->endElement();
-			$writer->startElement('summary');
-			$writer->text('thumbnail image');
-			$writer->endElement();
-			$writer->endElement();
-		}
-		$writer->endElement();
-		$writer->endDocument();
-		return $writer->flush(true);
 	}
 
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
