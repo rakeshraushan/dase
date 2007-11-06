@@ -477,6 +477,7 @@ class Dase
 		$t = new Dase_Xslt(XSLT_PATH.'error/error.xsl');
 		$t->set('local-layout',XSLT_PATH.'error/error.xml');
 		$t->set('error_msg',$msg);
+		$t->set('error_code',$code);
 		$tpl = new Dase_Html_Template();
 		$tpl->setText($t->transform());
 		$tpl->display();

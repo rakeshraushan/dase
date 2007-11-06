@@ -182,12 +182,8 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $writer->flush(true);
 	}
 
-
 	function getAtom() {
 		/*
-		att:
-		ascii_id - id
-		atom_element - category
 		attribute_name - title
 		html_input_type - category 
 		in_basic_search - category
@@ -204,14 +200,224 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		attributes - content (links?)
 		 */
 
-
 		$dom = new DOMDocument;
-		$entry = $dom->createElement('feed');
+		$feed = $dom->createElement('feed');
+		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
+		$alt_link = $dom->createElement('link');
+		$alt_link->setAttribute('rel','alternate');
+		$alt_link->setAttribute('type','application/atom+xml');
+		$alt_link->setAttribute('href',APP_ROOT . "/{$this->ascii_id}");
+		$feed->appendChild($alt_link);
+		$self_link = $dom->createElement('link');
+		$self_link->setAttribute('rel','self');
+		$self_link->setAttribute('type','application/atom+xml');
+		$self_link->setAttribute('href',APP_ROOT . "/atom/{$this->ascii_id}");
+		$feed->appendChild($self_link);
+		$title = $dom->createElement('title');
+		$title->appendChild($dom->createTextNode($this->collection_name));
+		$feed->appendChild($title);
 		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/"));
-		$entry->appendChild($id);
-		$content = $dom->createElement('content');
-		$content->setAttribute('type','xhtml');
+		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->ascii_id}"));
+		$feed->appendChild($id);
+		$author = $dom->createElement('author');
+		$name = $dom->createElement('name');
+		$name->appendChild($dom->createTextNode('DASe'));
+		$author->appendChild($name);
+		$feed->appendChild($author);
+		$feed_updated = $dom->createElement('updated');
+		$feed->appendChild($feed_updated);
+
+		$biggest_timestamp = 0;
+		foreach( $this->getAttributes() as $row ) {
+			$att = new Dase_DB_Attribute($row);
+			$entry = $dom->createElement('entry');
+
+			$title = $dom->createElement('title');
+			$title->appendChild($dom->createTextNode('Attribute: ' .$att->attribute_name));
+			$entry->appendChild($title);
+
+			$id = $dom->createElement('id');
+			$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->ascii_id}/{$att->ascii_id}"));
+			$entry->appendChild($id);
+
+			$cat = $dom->createElement('category');
+			$cat->setAttribute('term','attribute');
+			$cat->setAttribute('scheme',APP_ROOT . "/categories/");
+			$cat->setAttribute('label','Attribute');
+			$entry->appendChild($cat);
+
+			if ($att->atom_element) {
+				$atom_cat = $dom->createElement('category');
+				$atom_cat->setAttribute('term',$att->atom_element);
+				$atom_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/atom-equiv/");
+				$atom_cat->setAttribute('label',$att->atom_element);
+				$entry->appendChild($atom_cat);
+			}
+
+			if ($att->mapped_admin_att_id) {
+				$aa = new Dase_DB_Attribute;
+				if ($aa->load($att->mapped_admin_att_id)) {
+					$mapped_cat = $dom->createElement('category');
+					$mapped_cat->setAttribute('term',$aa->ascii_id);
+					$mapped_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/admin-attribute-equiv/");
+					$mapped_cat->setAttribute('label',$aa->attribute_name);
+					$entry->appendChild($mapped_cat);
+				}
+			}
+
+			if ($att->html_input_type_id) {
+				$inp = new Dase_DB_HtmlInputType;
+				if ($inp->load($att->html_input_type_id)) {
+					$input_cat = $dom->createElement('category');
+					$input_cat->setAttribute('term',$inp->name);
+					$input_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/html-input-type/");
+					$input_cat->setAttribute('label','HTML input:' . $inp->name);
+					$entry->appendChild($input_cat);
+				}
+			}
+
+			$sort_cat = $dom->createElement('category');
+			$sort_cat->setAttribute('term',$att->sort_order);
+			$sort_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/sort-order/");
+			$sort_cat->setAttribute('label','sort:'. $att->sort_order);
+			$entry->appendChild($sort_cat);
+
+			if ($att->is_on_list_display) {
+				$list_cat = $dom->createElement('category');
+				$list_cat->setAttribute('term','on_list_display');
+				$list_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/on-list-display/");
+				$list_cat->setAttribute('label','on list display');
+				$entry->appendChild($list_cat);
+			}
+
+			if ($att->in_basic_search) {
+				$basic_cat = $dom->createElement('category');
+				$basic_cat->setAttribute('term','in_basic_search');
+				$basic_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/in-basic-search/");
+				$basic_cat->setAttribute('label','in basic search');
+				$entry->appendChild($basic_cat);
+			}
+
+			$pp_cat = $dom->createElement('category');
+			$pp_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/public-private/");
+			if ($att->is_public) {
+				$pp_cat->setAttribute('term','public');
+				$pp_cat->setAttribute('label','public');
+			} else {
+				$pp_cat->setAttribute('term','private');
+				$pp_cat->setAttribute('label','private');
+			}
+			$entry->appendChild($pp_cat);
+
+			$biggest_timestamp = $att->timestamp >= $biggest_timestamp ? $att->timestamp  : $biggest_timestamp;
+			$updated = $dom->createElement('updated');
+			$updated->appendChild($dom->createTextNode(date('c',$att->timestamp)));
+			$entry->appendChild($updated);
+
+			$content = $dom->createElement('content');
+			$content->setAttribute('type','xhtml');
+			$ns_prefix = substr($this->ascii_id,0,3);
+			$div = $dom->createElement('div');
+			$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
+			$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->ascii_id}");
+
+			$content_name = $dom->createElement('p');
+			$content_name->appendChild($dom->createTextNode($att->attribute_name));
+			$div->appendChild($content_name);
+
+			if ($att->usage_notes) {
+				$content_notes = $dom->createElement('p');
+				$content_notes->appendChild($dom->createTextNode($att->usage_notes));
+				$div->appendChild($content_notes);
+			}
+
+			$content->appendChild($div);
+			$entry->appendChild($content);
+
+			$xml_link = $dom->createElement('link');
+			$xml_link->setAttribute('rel','alternate');
+			$xml_link->setAttribute('type','application/xml');
+			$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->ascii_id}/{$att->ascii_id}");
+			$entry->appendChild($xml_link);
+			$feed->appendChild($entry);
+
+		}
+
+		foreach( $this->getItemTypes() as $row ) {
+			$type = new Dase_DB_ItemType($row);
+			$entry = $dom->createElement('entry');
+
+			$title = $dom->createElement('title');
+			$title->appendChild($dom->createTextNode('Item Type: ' . $type->name));
+			$entry->appendChild($title);
+
+			$id = $dom->createElement('id');
+			$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->ascii_id}/item_type/{$type->ascii_id}"));
+			$entry->appendChild($id);
+
+			$cat = $dom->createElement('category');
+			$cat->setAttribute('term','item_type');
+			$cat->setAttribute('scheme',APP_ROOT . "/categories/");
+			$cat->setAttribute('label','Item Type');
+			$entry->appendChild($cat);
+
+			/*
+			$biggest_timestamp = $att->timestamp >= $biggest_timestamp ? $att->timestamp  : $biggest_timestamp;
+			$updated = $dom->createElement('updated');
+			$updated->appendChild($dom->createTextNode(date('c',$att->timestamp)));
+			$entry->appendChild($updated);
+			 */
+
+			$content = $dom->createElement('content');
+			$content->setAttribute('type','xhtml');
+			$ns_prefix = substr($this->ascii_id,0,3);
+			$div = $dom->createElement('div');
+			$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
+			$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->ascii_id}");
+
+			$xoxo = $dom->createElement('ul');
+			$name = $dom->createElement('li');
+			$name->appendChild($dom->createTextNode($type->name));
+			$xoxo->appendChild($name);
+
+			$atts = $type->getAttributes();
+			if ($atts) {
+				$atts_label = $dom->createElement('li');
+				$atts_label->appendChild($dom->createTextNode('Attributes'));
+				$xoxo->appendChild($atts_label);
+				$atts_list = $dom->createElement('ul');
+				foreach ($atts as $att) {
+					$att_li = $dom->createElement('li');
+					$att_li->appendChild($dom->createTextNode($att->ascii_id));
+					$att_li->setAttribute('class',$att->cardinality);
+					$atts_list->appendChild($att_li);
+				}
+				$atts_label->appendChild($atts_list);
+			}
+
+			if ($type->description) {
+				$desc = $dom->createElement('p');
+				$desc->appendChild($dom->createTextNode($type->description));
+				$div->appendChild($desc);
+			}
+
+			$div->appendChild($xoxo);
+
+			$content->appendChild($div);
+			$entry->appendChild($content);
+
+			$xml_link = $dom->createElement('link');
+			$xml_link->setAttribute('rel','alternate');
+			$xml_link->setAttribute('type','application/xml');
+			$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->ascii_id}/item_type/{$type->ascii_id}");
+			$entry->appendChild($xml_link);
+			$feed->appendChild($entry);
+
+		}
+		$feed_updated->appendChild($dom->createTextNode(date('c',$biggest_timestamp)));
+		$dom->appendChild($feed);
+		$dom->formatOutput = true;
+		return $dom->saveXml();
 	}
 
 	function getAtomOrig() {
@@ -536,6 +742,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$st->execute();
 		return $st->fetchColumn();
 	}
+
 	static function listAsAtom($public_only = 1) {
 		$writer = new XMLWriter();
 		$writer->openMemory();
