@@ -242,7 +242,7 @@ class Dase_DB_Object {
 		$db = Dase_DB::get();
 		foreach( $this->fields as $key => $val)
 		{
-			if (('timestamp' != $key) || $val) { //prevents null timestamp as update
+			if ('timestamp' != $key || $val) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
 				$values[]= $val;
 			}
