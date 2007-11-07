@@ -4,7 +4,7 @@ $database = 'dase_prod';
 include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
-$coll = 'efossils_collection';
+$coll = 'south_asia_collection';
 //$coll = 'ancient_meso_collection';
 $c = Dase_DB_Collection::get($coll);
 
