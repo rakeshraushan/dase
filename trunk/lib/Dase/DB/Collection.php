@@ -130,7 +130,65 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $writer->flush(true);
 	}
 
+
 	function getXml() {
+		$admin_atts = $this->getAdminAttributeAsciiIds();
+		$sx = new SimpleXMLElement('<collection/>');
+		$sx->addAttribute('id',$this->id);
+		$sx->addAttribute('name',$this->collection_name);
+		$sx->addAttribute('ascii_id',$this->ascii_id);
+		if ($this->description) {
+			$sx->addAttribute('description',$this->description);
+		}
+		//deals w/ postgres boolean craziness:
+		$this->is_public = $this->is_public ? $this->is_public : 0;
+		$sx->addAttribute('is_public',$this->is_public);
+		$updated = $this->getLastUpdated();
+		if ($updated) {
+			$sx->addAttribute('updated',$updated);
+		}
+		$sx->addAttribute('item_count',$this->getItemCount());
+		$attribute = new Dase_DB_Attribute;
+		$attribute->collection_id = $this->id;
+		foreach($attribute->findAll() as $att) {
+			$a = $sx->addChild('attribute');
+			$a->addAttribute('name',$att['attribute_name']);
+			$a->addAttribute('ascii_id',$att['ascii_id']);
+			$a->addAttribute('sort_order',$att['sort_order']);
+			$att['is_public'] = $att['is_public'] ? $att['is_public'] : 0;
+			$a->addAttribute('is_public',$att['is_public']);
+			$a->addAttribute('timestamp',$att['timestamp']);
+			if ($att['usage_notes']) {
+				$a->addAttribute('usage_notes',$att['usage_notes']);
+			}
+			if ($att['atom_element']) {
+				$a->addAttribute('atom_element',$att['atom_element']);
+			}
+			if ($att['mapped_admin_att_id']) {
+				$a->addAttribute('mapped_admin_attribute',$admin_atts[$att['mapped_admin_att_id']]);
+			}
+		}
+		$type = new Dase_DB_ItemType;
+		$type->collection_id = $this->id;
+		foreach($type->findAll() as $t) {
+			$it = $sx->addChild('item_type');
+			$it->addAttribute('name',$t['name']);
+			$it->addAttribute('ascii_id',$t['ascii_id']);
+			if ($t['description']) {
+				$it->addAttribute('description',$t['description']);
+			}
+			$it_obj = new Dase_DB_ItemType;
+			$it_obj->load($t['id']);
+			foreach ($it_obj->getAttributes() as $a) {
+				$att = $it->addChild('attribute');
+				$att->addAttribute('ascii_id',$a->ascii_id);
+				$att->addAttribute('cardinality',$a->cardinality);
+			}
+		}
+		return $sx->asXml();
+	}
+
+	function getXmlOrig() {
 		$admin_atts = $this->getAdminAttributeAsciiIds();
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -220,7 +278,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			$entry->appendChild($title);
 
 			$id = $dom->createElement('id');
-			$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->ascii_id}/{$att->ascii_id}"));
+			$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->ascii_id}/att/{$att->ascii_id}"));
 			$entry->appendChild($id);
 
 			$cat = $dom->createElement('category');
@@ -320,7 +378,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			$xml_link = $dom->createElement('link');
 			$xml_link->setAttribute('rel','alternate');
 			$xml_link->setAttribute('type','application/xml');
-			$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->ascii_id}/{$att->ascii_id}");
+			$xml_link->setAttribute('href',APP_ROOT . "/html/{$this->ascii_id}/attribute/{$att->ascii_id}");
 			$entry->appendChild($xml_link);
 			$feed->appendChild($entry);
 
@@ -359,12 +417,9 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 			$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->ascii_id}");
 
 			$xoxo = $dom->createElement('ul');
-			$xoxo->appendChild($dom->createElement('li')->appendChild($dom->createTextNode($type->name)));
-			/*
 			$name = $dom->createElement('li');
 			$name->appendChild($dom->createTextNode($type->name));
 			$xoxo->appendChild($name);
-			 */
 
 			$atts = $type->getAttributes();
 			if ($atts) {

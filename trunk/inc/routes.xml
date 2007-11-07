@@ -26,6 +26,10 @@
 	<match caps="collection_ascii_id">atom/([^/]*_collection)</match>
   </route>
 
+  <route action="atom/attribute" auth="none">
+	<match caps="collection_ascii_id" params="attribute_ascii_id">atom/([^/]*_collection)/att</match>
+  </route>
+
   <route action="atom/coll_list" auth="none">
 	<match>atom</match>
   </route>
