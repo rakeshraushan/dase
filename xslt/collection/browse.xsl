@@ -19,7 +19,7 @@
 
   <xsl:template match="insert-collection-label">
 	<div id="collectionAsciiId" class="{$coll/@ascii_id}"></div>
-	<h2><xsl:value-of select="$coll/@name"/><xsl:text> </xsl:text><xsl:value-of select="$coll/@item_count"/> (items)</h2>
+	<h2><xsl:value-of select="$coll/@collection_name"/><xsl:text> (</xsl:text><xsl:value-of select="$coll/@item_count"/> items)</h2>
 	<div id="description"><xsl:value-of select="$coll/@description"/></div>
   </xsl:template>
 
