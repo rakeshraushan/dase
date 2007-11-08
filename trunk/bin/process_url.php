@@ -4,8 +4,10 @@
 
 //$database = 'dase_prod';
 $collection_ascii_id = 'test_collection';
-$root = "http://webspace.utexas.edu";
-$dir = "/keanepj/www/peter_keane/another_kind_of_blue";
+$root = "http://harpo.laits.utexas.edu:6670";
+//$root = "http://webspace.utexas.edu";
+$dir = "/images/20071106";
+//$dir = "/keanepj/www/peter_keane/another_kind_of_blue";
 
 /******************************************/
 

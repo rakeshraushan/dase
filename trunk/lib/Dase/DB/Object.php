@@ -51,10 +51,10 @@ class Dase_DB_Object {
 		if ( array_key_exists( $field, $this->fields)) {
 			//should filter for valid operator as well
 			$this->qualifiers[] = array(
-					'field' => $field,
-					'value' => $value,
-					'operator' => $operator
-					);
+				'field' => $field,
+				'value' => $value,
+				'operator' => $operator
+			);
 		}
 	}
 
@@ -262,8 +262,8 @@ class Dase_DB_Object {
 	function delete() {
 		$db = Dase_DB::get();
 		$sth = $db->prepare(
-				'DELETE FROM '.$this->table.' WHERE id=:id'
-				);
+			'DELETE FROM '.$this->table.' WHERE id=:id'
+		);
 		if (defined('DEBUG')) {
 			Dase::log('sql',"deleting id $this->id from $this->table table");
 		}
@@ -280,9 +280,63 @@ class Dase_DB_Object {
 		if (isset($this->limit)) {
 			$sql .= " LIMIT $this->limit";
 		}
-	   	$sth = $db->prepare( $sql );
+		$sth = $db->prepare( $sql );
 		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute();
 		return $sth->fetchAll();
+	}
+
+	function getAsXml($serialize = true) {
+		$root = $this->table . "s";
+		$xml = new SimpleXMLElement("<{$root}/>");
+		foreach($this->getAll() as $key => $value) {
+			$new = $xml->addChild($this->table);
+			foreach($value as $att => $v) {
+				if ($v) {
+					$new->addAttribute($att, htmlentities($v));
+				}
+			}
+		}
+		if ($serialize) {
+			return $xml->asXml();
+		} else {
+			return $xml;
+		}
+	}
+
+	function findAsXml($serialize = true) {
+		$root = $this->table . "s";
+		$xml = new SimpleXMLElement("<{$root}/>");
+		foreach($this->findAll() as $key => $value) {
+			$new = $xml->addChild($this->table);
+			foreach($value as $att => $v) {
+				if ($v) {
+					$new->addAttribute($att, htmlentities($v));
+				}
+			}
+		}
+		if ($serialize) {
+			return $xml->asXml();
+		} else {
+			return $xml;
+		}
+	}
+
+	function findOneAsXml($serialize = true) {
+		$root = $this->table;
+		$this->setLimit(1);
+		$xml = new SimpleXMLElement("<{$root}/>");
+		foreach($this->findAll() as $key => $value) {
+			foreach($value as $att => $v) {
+				if ($v) {
+					$xml->addAttribute($att, htmlentities($v));
+				}
+			}
+		}
+		if ($serialize) {
+			return $xml->asXml();
+		} else {
+			return $xml;
+		}
 	}
 }

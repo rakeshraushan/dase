@@ -9,6 +9,19 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
+	public static function mergeDbXml($xml_parent, $xml_children, $linkingNode= "linkingNode"){
+		$xml = $xml_parent->addChild($linkingNode);
+		foreach($xml_children->children() as $k => $v) {
+			$child = $xml->addChild($k);
+			foreach ($v->attributes() as $key => $val) {
+				if ($val) {
+					$child->addAttribute($key, $val);
+				}
+			}
+		}
+		return $xml_parent;
+	}
+
 	public static function sortByLastUpdateSortable($b,$a) {
 		if ($a->lastUpdateSortable == $b->lastUpdateSortable) {
 			return 0;

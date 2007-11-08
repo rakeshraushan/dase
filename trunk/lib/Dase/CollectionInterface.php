@@ -10,9 +10,7 @@ interface Dase_CollectionInterface
 	function getXml($limit = 100000);
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false);
 	function getItemsByType($type_ascii_id);
-	function getSettingsXml();
 	function get($ascii_id);
-	function listAllAsXml();
 	function getAttributes($sort = null);
 	function getAdminAttributes();
 	function getAdminAttributeAsciiIds();

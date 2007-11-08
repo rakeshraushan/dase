@@ -132,112 +132,19 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 
 
 	function getXml() {
-		$admin_atts = $this->getAdminAttributeAsciiIds();
-		$sx = new SimpleXMLElement('<collection/>');
-		$sx->addAttribute('id',$this->id);
-		$sx->addAttribute('name',$this->collection_name);
-		$sx->addAttribute('ascii_id',$this->ascii_id);
-		if ($this->description) {
-			$sx->addAttribute('description',$this->description);
-		}
-		//deals w/ postgres boolean craziness:
-		$this->is_public = $this->is_public ? $this->is_public : 0;
-		$sx->addAttribute('is_public',$this->is_public);
-		$updated = $this->getLastUpdated();
-		if ($updated) {
-			$sx->addAttribute('updated',$updated);
-		}
-		$sx->addAttribute('item_count',$this->getItemCount());
+		//merge 3 sets of xml results
+		$coll = new Dase_DB_Collection;
+		$coll->ascii_id = $this->ascii_id;
 		$attribute = new Dase_DB_Attribute;
 		$attribute->collection_id = $this->id;
-		foreach($attribute->findAll() as $att) {
-			$a = $sx->addChild('attribute');
-			$a->addAttribute('name',$att['attribute_name']);
-			$a->addAttribute('ascii_id',$att['ascii_id']);
-			$a->addAttribute('sort_order',$att['sort_order']);
-			$att['is_public'] = $att['is_public'] ? $att['is_public'] : 0;
-			$a->addAttribute('is_public',$att['is_public']);
-			$a->addAttribute('timestamp',$att['timestamp']);
-			if ($att['usage_notes']) {
-				$a->addAttribute('usage_notes',$att['usage_notes']);
-			}
-			if ($att['atom_element']) {
-				$a->addAttribute('atom_element',$att['atom_element']);
-			}
-			if ($att['mapped_admin_att_id']) {
-				$a->addAttribute('mapped_admin_attribute',$admin_atts[$att['mapped_admin_att_id']]);
-			}
-		}
 		$type = new Dase_DB_ItemType;
 		$type->collection_id = $this->id;
-		foreach($type->findAll() as $t) {
-			$it = $sx->addChild('item_type');
-			$it->addAttribute('name',$t['name']);
-			$it->addAttribute('ascii_id',$t['ascii_id']);
-			if ($t['description']) {
-				$it->addAttribute('description',$t['description']);
-			}
-			$it_obj = new Dase_DB_ItemType;
-			$it_obj->load($t['id']);
-			foreach ($it_obj->getAttributes() as $a) {
-				$att = $it->addChild('attribute');
-				$att->addAttribute('ascii_id',$a->ascii_id);
-				$att->addAttribute('cardinality',$a->cardinality);
-			}
-		}
-		return $sx->asXml();
-	}
-
-	function getXmlOrig() {
-		$admin_atts = $this->getAdminAttributeAsciiIds();
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('collection');
-		$writer->writeAttribute('id',$this->id);
-		$writer->writeAttribute('name',$this->collection_name);
-		$writer->writeAttribute('ascii_id',$this->ascii_id);
-		$writer->writeAttribute('description',$this->description);
-		$writer->writeAttribute('is_public',$this->is_public);
-		$writer->writeAttribute('updated',$this->getLastUpdated());
-		$writer->writeAttribute('item_count',$this->getItemCount());
-		$attribute = new Dase_DB_Attribute;
-		$attribute->collection_id = $this->id;
-		foreach($attribute->findAll() as $att) {
-			$writer->startElement('attribute');
-			$writer->writeAttribute('name',$att['attribute_name']);
-			$writer->writeAttribute('ascii_id',$att['ascii_id']);
-			$writer->writeAttribute('sort_order',$att['sort_order']);
-			$writer->writeAttribute('is_public',$att['is_public']);
-			if ($att['atom_element']) {
-				$writer->writeAttribute('atom_element',$att['atom_element']);
-			}
-			if ($att['mapped_admin_att_id']) {
-				$writer->writeAttribute('mapped_admin_attribute',$admin_atts[$att['mapped_admin_att_id']]);
-			}
-			$writer->endElement();
-		}
-		$type = new Dase_DB_ItemType;
-		$type->collection_id = $this->id;
-		foreach($type->findAll() as $t) {
-			$writer->startElement('item_type');
-			$writer->writeAttribute('name',$t['name']);
-			$writer->writeAttribute('ascii_id',$t['ascii_id']);
-			$writer->writeAttribute('description',$t['description']);
-			$it_obj = new Dase_DB_ItemType;
-			$it_obj->load($t['id']);
-			foreach ($it_obj->getAttributes() as $a) {
-				$writer->startElement('attribute');
-				$writer->writeAttribute('ascii_id',$a->ascii_id);
-				$writer->writeAttribute('cardinality',$a->cardinality);
-				$writer->endElement();
-			}
-			$writer->endElement();
-		}
-		$writer->endElement();
-		$writer->endDocument();
-		return $writer->flush(true);
+		$coll_xml = Dase_Util::mergeDbXml(
+			Dase_Util::mergeDbXml($coll->findOneAsXml(false),$attribute->findAsXml(false),'attributes'),
+			$type->findAsXml(false),
+			'item_types');
+		$coll_xml['item_count'] = $this->getItemCount();
+		return $coll_xml->asXml();
 	}
 
 	function getAtom() {
@@ -613,62 +520,13 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $writer->flush(true);
 	}
 
-	function getSettingsXml() {
-		$dom = new DOMDocument('1.0');
-		$coll = $dom->appendChild($dom->createElement('collection'));
-		$fields = array('ascii_id','collection_name','path_to_media_files','description','is_public');
-		foreach ($fields as $field) {
-			$coll->setAttribute($field,$this->$field);	
-		}
-		$dom->formatOutput = true;
-		return $dom->saveXML();
-	}
-
-	static function listAllAsXml() {
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT collection.id, collection.ascii_id,count(item.id) as item_tally,
-				collection.collection_name,collection.path_to_media_files, collection.description,
-				collection.is_public	
-				FROM	
-				collection, item
-				WHERE collection.id = item.collection_id
-				AND item.status_id = 0
-				GROUP BY collection.id, collection.ascii_id,collection.collection_name,
-				collection.path_to_media_files,collection.description,
-				collection.is_public
-				ORDER BY collection.collection_name
-				";
-		$st = $db->prepare($sql);
-		$st->execute();
-		$dom = new DOMDocument('1.0');
-		$root = $dom->appendChild($dom->createElement('collections'));
-		foreach ($st->fetchAll() as $row) {
-			$coll = $root->appendChild($dom->createElement('collection'));
-			$fields = array('ascii_id','collection_name','item_tally','path_to_media_files','description','is_public');
-			foreach ($fields as $field) {
-				$coll->setAttribute($field,$row[$field]);	
-			}
-		}
-		$dom->formatOutput = true;
-		return $dom->saveXML();
-	}
-
 	static function listPublicAsXml() {
 		$dom = new DOMDocument('1.0');
 		$root = $dom->appendChild($dom->createElement('collections'));
 		$c = new Dase_DB_Collection;
 		$c->is_public = 1;
 		$c->orderBy('collection_name');
-		foreach ($c->findAll() as $row) {
-			$coll = $root->appendChild($dom->createElement('collection'));
-			$fields = array('id','ascii_id','collection_name','is_public');
-			foreach ($fields as $field) {
-				$coll->setAttribute($field,$row[$field]);	
-			}
-		}
-		$dom->formatOutput = true;
-		return $dom->saveXML();
+		return $c->findAsXml(true);
 	}
 
 	static function getLastCreated() {
