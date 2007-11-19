@@ -13,17 +13,17 @@ class Dase_DB {
 	public static function get($dbname = null) {
 		// Connect if not already connected
 		if (is_null(self::$db)) {
-			include (DASE_CONFIG); 
-			self::$type = $conf['db_type'];
+			$conf = Dase::getConf('db'); 
+			self::$type = $conf['type'];
 			if ($dbname) {
 				self::$name = $dbname;
 			} else {
-				self::$name = $conf['db_name'];
+				self::$name = $conf['name'];
 			}
-			$host = $conf['db_host'];
-			$sqlite_path = $conf['db_path'];
-			$user = $conf['db_user'];
-			$pass = $conf['db_pass'];
+			$host = $conf['host'];
+			$sqlite_path = $conf['path'];
+			$user = $conf['user'];
+			$pass = $conf['pass'];
 			$driverOpts = array();
 			if ('sqlite' == self::$type) {
 				$dsn = "sqlite:$sqlite_path";

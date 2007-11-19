@@ -1,7 +1,7 @@
 if (!Dase) { var Dase = {}; }
 
 /* from DOM Scripting p. 103 */
-function addLoadEvent(func) {
+Dase.addLoadEvent = function(func) {
 	var oldonload = window.onload;
 	if (typeof window.onload != 'function') {
 		window.onload = func;
@@ -107,9 +107,15 @@ Dase.initUser = function() {
 Dase.placeUserName = function() {
 	var nameElem = Dase.$('userName');
 	nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
+	var eidElem = Dase.$('eid');
+	eidElem.innerHTML = Dase.user.eid;
 }
 
 Dase.placeUserCollections = function() {
+	var cartLink = Dase.$('cartLink');
+	if (cartLink) {
+		cartLink.setAttribute('href',Dase.user.eid+'/cart/');
+	}
 	var hasSpecial = 0;
 	var coll_list = Dase.$('collectionList');
 	if (!coll_list) return;
@@ -185,7 +191,7 @@ Dase.initCheckImage = function() {
 	 */
 	for (var i=0; i<boxes.length; i++) {
 		boxes[i].onclick = function() {
-			var img = this.parentNode;
+			var img = this.parentNode.parentNode;
 			if (Dase.hasClass(img,'checked')) {
 				Dase.removeClass(img,'checked');
 			} else {
@@ -270,16 +276,26 @@ Dase.placeUserTags = function() {
 					sets['allTags'] = "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
 				}
 				if (sets[type]) {
-					sets[type] = sets[type] + "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+					//note that subscriptions don't REALLY use the ascii_id -- it's actually the tag id
+					if ('subscription' == type) {
+						id = ascii.substring(1);
+						sets[type] = sets[type] + "<li><a href='html/tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
+					} else {
+						sets[type] = sets[type] + "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+					}
 				} else {
-					sets[type] = "<li><a href='" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+					if ('subscription' == type) {
+						id = ascii.substring(1);
+						sets[type] = "<li><a href='html/tag/" + id + "'>" + jsonAscii + "</a></li>\n";
+					} else {
+						sets[type] = "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+					}
 				}
 			}
 		} 
 	}
 	for (var type in sets) {
 		Dase.$(type).innerHTML = sets[type];
-
 	}
 }
 
@@ -488,7 +504,7 @@ Dase.initSearchResults = function() {
 	}
 }
 
-addLoadEvent(function() {
+Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();

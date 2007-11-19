@@ -452,42 +452,29 @@ div#searchResults h2 {
  */
 
 #searchResults {
-	/*width:100%;*/
 	padding: 10px; 
-	float:left
 }
-#searchResults .gridItem {
-	float: left; 
-	margin: 1px; 
-	width:156px; 
-	text-align:center; 
+#seearchResults table {
+	width: 100%;
+}
+#searchResults td {
+	padding: 5px;
 	border: 1px solid #d9c8ad;
+	vertical-align: top;
+	text-align: center;
+	width: 20%;
 }
-#searchResults div.checked {
+#searchResults td.checked {
 	background-color: #fff0d9;
 }
-#searchResults .gridItem input {
+#searchResults td div.checkNum {
 	float: left; 
-	text-align:left; 
 }
-#searchResults .gridItem .image {
-	width:130px; 
-	height:100px; 
-	margin:2px;
-	margin-top:10px;
+#searchResults div.caption .collection_name {
+	font-weight: normal;
+	color: #669;
+	font-size: .95em;
 }
-#searchResults .caption  {
-	text-align:center;
-	width: 156px; 
+#searchResults div.caption,div.image {
+	padding: 10px;
 }
-#searchResults .caption h4 {
-	color:#666; 
-	font-weight:bold; 
-	margin-bottom: 5px;
-}
-#searchResults .caption h4.collection_name {
-	color:#666; 
-	font-weight:normal; 
-
-}
- 

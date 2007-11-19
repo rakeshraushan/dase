@@ -22,11 +22,11 @@
   </xsl:template>
 
   <xsl:template match="atom:entry" mode="img">
-	<img src="{atom:link[@title='viewitem']/@href}" alt="file this in w/ simple title"/>
+	<img src="{atom:link[@rel='viewitem']/@href}" alt="file this in w/ simple title"/>
   </xsl:template>
 
   <xsl:template match="insert-item-metadata">
-	<xsl:apply-templates select="$it/atom:content/xhtml:div/xhtml:ul/xhtml:li/xhtml:dl" mode="item-mode"/>
+	<xsl:apply-templates select="$it/atom:content/xhtml:div/xhtml:dl" mode="item-mode"/>
   </xsl:template>
 
   <xsl:template match="xhtml:dl" mode="item-mode">

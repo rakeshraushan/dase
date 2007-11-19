@@ -2,11 +2,11 @@
 
 class Dase 
 {
+	private $module= '';        
 	private static $instance;
-	public static $user;
 	public $base_url= '';       
 	public $collection;
-	private $module= '';        
+	public static $user;
 	public $url_params = array();    
 
 	public function __construct() {}
@@ -25,7 +25,7 @@ class Dase
 		if (isset($conf[$key])) {
 			return $conf[$key];
 		} else {
-			throw new Exception('no such configuration key');
+			throw new Exception("no such configuration key: $key");
 		}
 	}
 
@@ -171,22 +171,6 @@ class Dase
 		}
 	}
 
-	static public function compileRoutes() {
-		// No cache: (~200 req/sec
-		// Database Cache: (<100 req/sec)
-		// File Based Cache: (>400 req/sec)
-		// 
-		$routes = array(); 
-		$cache = new Dase_FileCache('routes');
-		if ($cache->get()) {
-			$routes = unserialize($cache->get());
-		} else {
-			$routes = Dase::_compileModuleRoutes(Dase::_compileRoutes());
-			$cache->set(serialize($routes));
-		}
-		return $routes;
-	}
-
 	static public function compileRoutesXslt() {
 		// No cache: ~115 req/sec
 		// File Based Cache: ~375 req/sec
@@ -199,111 +183,6 @@ class Dase
 			$rp = new Dase_Xslt(DASE_PATH."/inc/xml2php.xsl",$rx->transform());
 			$cache->set($rp->transform());
 			eval($cache->get());
-		}
-		return $routes;
-	}
-
-	static private function _compileRoutes($prefix = '',$collection = null,$routes = null) {
-		$params = '';
-		$path = DASE_PATH . $prefix . '/inc/routes.xml';
-		$sx = simplexml_load_file($path);
-		foreach ($sx->route as $route) {
-			if (!$route->match) {
-				//THESE ARE SINGLE LINE (NO MATCH) ROUTES
-				$regex = (string) $route['action'];
-				if (isset($route['method'])) {
-					$method = (string) $route['method'];
-				} else {
-					$method = 'get';
-				}
-				if ($prefix) {
-					$regex = trim($prefix,'/') . '/' . $regex;
-				}
-				if (isset($route['params'])) {
-					$params = (string) $route['params'];
-					foreach (explode('/',$params) as $p) {
-						$regex .= "/([^/]*)";
-					}
-				}
-				$regex = '^' . $regex . '$';
-				if ($params) {
-					$routes[$method][$regex]['params'] = $params;
-				}
-				$routes[$method][$regex]['action'] = (string) $route['action'];
-				if (isset($route['auth'])) {
-					$routes[$method][$regex]['auth'] = (string) $route['auth'];
-				}
-				if ($prefix) {
-					$routes[$method][$regex]['prefix'] = $prefix;
-				}
-			}
-			foreach ($route->match as $match) {
-				$regex = (string) $match;
-				if (isset($match['method'])) {
-					$method = (string) $match['method'];
-				} elseif (isset($route['method'])) {
-					$method = (string) $route['method'];
-				} else {
-					$method = 'get';
-				}	
-				if ($prefix) {
-					$regex = trim($prefix,'/') . '/' . $regex;
-					$regex = trim($regex,'/'); //in case there had been no original regex
-				}
-				if (isset($match['params'])) {
-					$params = (string) $match['params'];
-				} else {
-					$params = (string) $route['params'];
-				}
-				if ($params) {
-					foreach (explode('/',$params) as $p) {
-						$regex .= "/([^/]*)";
-					}
-				}
-				$regex = '^' . $regex . '$';
-				if ($params) {
-					$routes[$method][$regex]['params'] = $params;
-				}
-				$routes[$method][$regex]['action'] = (string) $route['action'];
-				if (isset($match['caps'])) {
-					$routes[$method][$regex]['caps'] = (string) $match['caps'];
-				}
-				if (isset($match['auth'])) {
-					$routes[$method][$regex]['auth'] = (string) $match['auth'];
-				} else {
-					$routes[$method][$regex]['auth'] = (string) $route['auth'];
-				}
-				if ($prefix) {
-					$routes[$method][$regex]['prefix'] = $prefix;
-				}
-				if ($collection) {
-					$routes[$method][$regex]['collection'] = $collection;
-				}
-			}
-		}
-		return $routes;
-	}
-
-	static private function _compileModuleRoutes($routes) {
-		include(DASE_CONFIG);
-		$dir = (DASE_PATH . "/modules");
-		foreach (new DirectoryIterator($dir) as $file) {
-			if ($file->isDir() && !$file->isDot()) {
-				$module = $file->getFilename();
-				if (
-					is_file("$dir/$module/inc/routes.xml") &&
-					//note that module needs to be registered in DASE_CONFIG
-					isset($conf['modules'][$module]) &&
-					$conf['modules'][$module]
-				) {
-					$collection = $conf['modules'][$module];
-					if (!is_string($collection)) {
-						$collection = null;
-					}
-					$path = "$dir/$module/inc/routes.xml";
-					$routes = Dase::_compileRoutes("/modules/$module",$collection,$routes);
-				}
-			}
 		}
 		return $routes;
 	}
@@ -388,9 +267,10 @@ class Dase
 					$params = explode('/',$conf_array['params']);
 				}
 				$params = array_merge($caps,$params);
-				$action_prefix = '';
+				$module_prefix = '';
 				if (isset($conf_array['prefix'])) {
-					$action_prefix = $conf_array['prefix'];
+					$module_prefix = $conf_array['prefix'];
+					define('MODULE_PATH',DASE_PATH . $module_prefix);
 				}
 				if (isset($matches[1])) {
 					array_shift($matches);
@@ -411,8 +291,6 @@ class Dase
 				if (isset($conf_array['auth']) && $conf_array['auth']) {
 					$eid = '';
 					$collection_ascii_id = '';
-					//conf_array['collection'] originates in configuration file config.php
-					//modules can stipulate an associated collection
 					//this is collection authorization for modules
 					if (isset($conf_array['collection'])) {
 						$collection_ascii_id = $conf_array['collection'];
@@ -432,9 +310,7 @@ class Dase
 					}	
 					if ($collection_ascii_id) {
 						// instantiate collection and let this (singleton controller) hold it
-						// note that here is a GOOD place to decide what kind (db,xml,remote)
-						// of collection to get
-						$controller->collection = Dase_Collection::get($collection_ascii_id,'db');
+						$controller->collection = Dase_Collection::get($collection_ascii_id);
 					} else {
 						$controller->collection= null;
 					}
@@ -443,7 +319,7 @@ class Dase
 					//default auth is user!!!!!!!!!!!!!
 					Dase::checkUser('user');
 				}
-				$handler = DASE_PATH . $action_prefix . '/actions/' . $conf_array['action'] . '.php';
+				$handler = DASE_PATH . $module_prefix . '/actions/' . $conf_array['action'] . '.php';
 				if(file_exists($handler)) {
 					$msg = Dase::filterGet('msg');
 					include($handler);

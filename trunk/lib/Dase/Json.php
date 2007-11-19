@@ -4,6 +4,11 @@ class Dase_Json
 { 
 	public $json = '';
 
+	public static function get($data) {
+		$js = new Dase_Json;
+		return $js->encodeData($data);
+	}
+
 	private function encodeArray($data) {
 		$this->json .= "[";
 		$i=0; 
@@ -34,8 +39,4 @@ class Dase_Json
 		} 
 		return $this->json;
 	} 
-	public function encodeFromArray( array $data ) {
-		Dase_Json::encodeData($data,1);
-		return $this->json;
-	}
 }

@@ -10,15 +10,4 @@ if (isset($params['collection_ascii_id'])) {
 	$tpl = new Dase_Html_Template();
 	$tpl->setText($t->transform());
 	$tpl->display();
-
-	/* smarty:
-	$c = new Dase_DB_Collection;
-	$c->ascii_id = $params['collection_ascii_id'];
-	$c->findOne();
-	$c->getItemCount();
-	$tpl = Dase_Template::instance();
-	$tpl->assign('collection',$c);
-	$tpl->assign('content','collection');
-	$tpl->display('page.tpl');
-	 */
 }

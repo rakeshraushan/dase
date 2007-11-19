@@ -23,9 +23,11 @@
 
   <xsl:template match="dynamic"/>
 
+  <!--
   <xsl:template match="insert-timer">
 	<xsl:value-of select="$timer"/>	
   </xsl:template>
+  -->
 
   <!-- Identity transformation -->
   <xsl:template match="@*|*">

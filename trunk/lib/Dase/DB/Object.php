@@ -2,7 +2,8 @@
 
 require_once 'Dase/DB.php';
 
-class Dase_DB_Object {
+class Dase_DB_Object implements IteratorAggregate
+{
 	public $id = 0;
 	private $table;
 	private $fields = array(); 
@@ -240,8 +241,7 @@ class Dase_DB_Object {
 
 	function update() {
 		$db = Dase_DB::get();
-		foreach( $this->fields as $key => $val)
-		{
+		foreach( $this->fields as $key => $val) {
 			if ('timestamp' != $key || $val) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
 				$values[]= $val;
@@ -271,6 +271,14 @@ class Dase_DB_Object {
 		//probably need to destroy $this here
 	}
 
+	function query($sql,$params = null) {
+		$db = Dase_DB::get();
+		$sth = $db->prepare( $sql );
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute($params);
+		return $sth->fetchAll();
+	}
+
 	function getAll() {
 		$db = Dase_DB::get();
 		$sql = "SELECT * FROM ".$this->table;
@@ -288,55 +296,79 @@ class Dase_DB_Object {
 
 	function getAsXml($serialize = true) {
 		$root = $this->table . "s";
-		$xml = new SimpleXMLElement("<{$root}/>");
+		$sx = new SimpleXMLElement("<{$root}/>");
 		foreach($this->getAll() as $key => $value) {
-			$new = $xml->addChild($this->table);
+			$new = $sx->addChild($this->table);
 			foreach($value as $att => $v) {
 				if ($v) {
-					$new->addAttribute($att, htmlentities($v));
+					$new->addAttribute($att,$v);
+				}
+				if (false !== strpos($att,'name')) {
+					$node1 = dom_import_simplexml($new);
+					$node1->appendChild(new DOMText($v));
 				}
 			}
 		}
 		if ($serialize) {
-			return $xml->asXml();
+			return $sx->asXml();
 		} else {
-			return $xml;
+			return $sx;
+		}
+	}
+
+	//get xml of ANY database query:
+	function queryAsXml($serialize = true,$sql) {
+		$root = $this->table . "s";
+		$sx = new SimpleXMLElement("<{$root}/>");
+		foreach($this->query($sql) as $key => $value) {
+			$new = $sx->addChild($this->table);
+			foreach($value as $att => $v) {
+				if ($v) {
+					$new->addAttribute($att,$v);
+				}
+				if (false !== strpos($att,'name')) {
+					$node1 = dom_import_simplexml($new);
+					$node1->appendChild(new DOMText($v));
+				} elseif (false !== strpos($att,'text')) {
+					$node1 = dom_import_simplexml($new);
+					$node1->appendChild(new DOMText($v));
+				}
+			}
+		}
+		if ($serialize) {
+			return $sx->asXml();
+		} else {
+			return $sx;
 		}
 	}
 
 	function findAsXml($serialize = true) {
 		$root = $this->table . "s";
-		$xml = new SimpleXMLElement("<{$root}/>");
-		foreach($this->findAll() as $key => $value) {
-			$new = $xml->addChild($this->table);
-			foreach($value as $att => $v) {
+		$sx = new SimpleXMLElement("<{$root}/>");
+		foreach($this->findAll() as $row) {
+			$new = $sx->addChild($this->table);
+			foreach($row as $att => $v) {
 				if ($v) {
-					$new->addAttribute($att, htmlentities($v));
+					$new->addAttribute($att,$v);
+				}
+				if (false !== strpos($att,'name')) {
+					$node1 = dom_import_simplexml($new);
+					$node1->appendChild(new DOMText($v));
 				}
 			}
 		}
 		if ($serialize) {
-			return $xml->asXml();
+			return $sx->asXml();
 		} else {
-			return $xml;
+			return $sx;
 		}
 	}
 
-	function findOneAsXml($serialize = true) {
-		$root = $this->table;
-		$this->setLimit(1);
-		$xml = new SimpleXMLElement("<{$root}/>");
-		foreach($this->findAll() as $key => $value) {
-			foreach($value as $att => $v) {
-				if ($v) {
-					$xml->addAttribute($att, htmlentities($v));
-				}
-			}
-		}
-		if ($serialize) {
-			return $xml->asXml();
-		} else {
-			return $xml;
-		}
+	//implement SPL IteratorAggregate:
+	//now simply use 'foreach' to iterate 
+	//over object properties
+	public function getIterator() {
+		return new ArrayObject($this->fields);
 	}
+
 }

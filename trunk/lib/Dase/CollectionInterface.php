@@ -6,6 +6,7 @@ interface Dase_CollectionInterface
 	function getXml();
 	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
 	function getItemsXmlByType($type_ascii_id);
+	function buildSearchIndex();
 	/*
 	function getXml($limit = 100000);
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false);
@@ -20,7 +21,6 @@ interface Dase_CollectionInterface
 	function insertCollection($xml);
 	function insertAttributes($ascii_id,$xml);
 	function insertItem($ascii_id,$xml);
-	function buildSearchIndex();
 	function createNewItem($serial_number = null);
 	function getLastUpdated();
 	function getAtom();
