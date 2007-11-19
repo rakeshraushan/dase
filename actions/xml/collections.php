@@ -1,5 +1,4 @@
 <?php
-
 // performance note:
 // without cache ~55 req/sec
 // with cache ~ 195 req/sec
@@ -13,7 +12,7 @@ $cache = new Dase_FileCache('collections.xml');
 if ($cache->get()) {
 	$cxml = $cache->get();
 } else {
-	$cxml = Dase_DB_Collection::listPublicAsXml();
+	$cxml = Dase_DB_Collection::listAsXml(1);
 	$cache->set($cxml);
 }
 $tpl = new Dase_Xml_Template();

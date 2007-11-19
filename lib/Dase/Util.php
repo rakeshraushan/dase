@@ -9,17 +9,13 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
-	public static function mergeDbXml($xml_parent, $xml_children, $linkingNode= "linkingNode"){
-		$xml = $xml_parent->addChild($linkingNode);
-		foreach($xml_children->children() as $k => $v) {
-			$child = $xml->addChild($k);
-			foreach ($v->attributes() as $key => $val) {
-				if ($val) {
-					$child->addAttribute($key, $val);
-				}
-			}
-		}
-		return $xml_parent;
+	//from http://us.php.net/manual/en/function.simplexml-element-addChild.php:
+	public static function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child){
+		$node1 = dom_import_simplexml($parent);
+		$dom_sxe = dom_import_simplexml($new_child);
+		$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
+		$node1->appendChild($node2);
+		return simplexml_import_dom($node1);
 	}
 
 	public static function sortByLastUpdateSortable($b,$a) {

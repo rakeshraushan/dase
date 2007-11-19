@@ -30,11 +30,13 @@
 	<match caps="collection_ascii_id" params="attribute_ascii_id">atom/([^/]*_collection)/att</match>
   </route>
 
-  <route action="atom/coll_list" auth="none">
+  <route action="atom/collections" auth="none">
 	<match>atom</match>
   </route>
 
   <route action="atom/opensearch" auth="none">
+	<match caps="collection_ascii_id">([^/]*_collection)/atom/search</match>
+	<match caps="collection_ascii_id">atom/([^/]*_collection)/search</match>
 	<match>atom/search</match>
   </route>
 
@@ -85,7 +87,7 @@
 	<match>search</match>
   </route>
 
-  <route action="item" auth="user">
+  <route action="item/item" auth="user">
 	<match caps="collection_ascii_id" params="serial_number">([^/]*_collection)</match>
   </route>
 
@@ -101,8 +103,24 @@
 	<match>xml</match>
   </route>
 
+  <route action="xml/tags" auth="none">
+	<match caps="eid">xml/user/([^/]*)/tags</match>
+  </route>
+
+  <route action="xml/attribute" auth="none">
+	<match caps="collection_ascii_id" params="attribute_ascii_id">xml/([^/]*_collection)/att</match>
+  </route>
+
+  <route action="xml/tag" auth="none">
+	<match caps="eid" params="ascii_id">xml/user/([^/]*)/tag</match>
+	<match params="id">xml/tag</match>
+  </route>
+
   <route action="xml/search" auth="none">
-	<match params="md5_hash">xml/search</match>
+	<match caps="collection_ascii_id">([^/]*_collection)/xml/search</match>
+	<match caps="collection_ascii_id">xml/([^/]*_collection)/search</match>
+	<match>xml/search</match>
+	<match params="md5_hash">xml/search/md5</match>
   </route>
 
   <route action="xml/collection" auth="none">
@@ -114,17 +132,12 @@
 	<match caps="collection_ascii_id" params="serial_number">xml/([^/]*_collection)</match>
   </route>
 
-  <route action="xml/item_thumbs" auth="none">
-	<match params="ids">xml/item/thumbs</match>
-	<match>xml/item/thumbs</match>
-  </route>
-
-  <route action="item_xml_dump" auth="token">
-	<match params="serial_number">xml/item</match>
-  </route>
-
   <route action="xml/collections" auth="none">
 	<match>xml/collections</match>
+  </route>
+
+  <route action="html/attribute" auth="none">
+	<match caps="collection_ascii_id" params="attribute_ascii_id">html/([^/]*_collection)/att</match>
   </route>
 
   <route action="html/attributes" auth="none">
@@ -139,8 +152,30 @@
 	<match caps="collection_ascii_id/attribute_ascii_id">html/([^/]*_collection)/attribute/([^/]*)</match>
   </route>
 
+  <route action="html/collection" auth="none">
+	<match params="collection_ascii_id">html/c</match>
+	<match caps="collection_ascii_id">html/([^/]*_collection)</match>
+  </route>
+
+  <route action="html/collections" auth="none">
+	<match>html</match>
+  </route>
+
   <route action="html/item_thumbs" auth="none">
 	<match params="ids">html/item/thumbs</match>
+  </route>
+
+  <route action="html/item" auth="none">
+	<match caps="collection_ascii_id" params="serial_number">html/([^/]*_collection)</match>
+  </route>
+
+  <route action="html/tags" auth="eid">
+	<match caps="eid">html/user/([^/]*)/tags</match>
+  </route>
+
+  <route action="html/tag" auth="none">
+	<match caps="eid" params="ascii_id">html/user/([^/]*)/tag</match>
+	<match params="id">html/tag</match>
   </route>
 
   <route action="error"/>
@@ -157,7 +192,7 @@
 	<match>logoff</match>
   </route>
 
-  <route action="build_index" auth="admin" params="collection_ascii_id"/>
+  <route action="collection/build_index" auth="admin" params="collection_ascii_id"/>
 
   <route action="media/media" auth="none">
 	<match params="collection/size/filename">media</match>

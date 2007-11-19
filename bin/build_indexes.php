@@ -4,10 +4,11 @@ $database = 'dase_prod';
 include 'cli_setup.php';
 
 $colls = array(
-	'test_collection',
-	'texpol_image_collection',
-	'bsls_collection',
-	'blanton_collection'
+	//'test_collection',
+	//'texpol_image_collection',
+	//'bsls_collection',
+	//'blanton_collection'
+	'medieval_collection'
 );
 
 Dase_Timer::start();

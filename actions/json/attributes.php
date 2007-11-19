@@ -12,8 +12,7 @@ foreach($attribute->findAll() as $att) {
 			'attribute_name' => $att['attribute_name']
 		);
 }
-$js = new Dase_Json;
 $tpl = new Dase_Json_Template;
-$tpl->setJson($js->encodeData($att_array));
+$tpl->setJson(Dase_Json::get($att_array));
 $tpl->display();
 

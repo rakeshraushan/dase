@@ -4,20 +4,20 @@ class Dase_Collection
 
 //this is a simple collection factory
 //it allows collection type to be determined
-//at runtime (by simply passing in desired type).  
+//at runtime in inc/config.php.  
 //The Dase_CollectionInterface defines
 //the methods implemented by any Dase_Collection
 
 {
-	private static $types_map = array(
-		//store in xml??
+	private static $models_map = array(
 		'xml' => array('class'=>'Dase_Xml_Collection'),
 		'db' => array('class'=>'Dase_DB_Collection'),
 		'remote' => array('class'=>'Dase_Remote_Collection'),
 	);
 
-	public static function get($ascii_id, $type) {
-		$class =self::$types_map[$type]['class'];
+	public static function get($ascii_id) {
+		$model = Dase::getConf('model');
+		$class =self::$models_map[$model]['class'];
 		return call_user_func_array(array($class,"get"),array($ascii_id));
 	}
 }

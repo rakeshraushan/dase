@@ -23,7 +23,9 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 			$tag = new Dase_DB_Tag;
 			$tag->load($row['tag_id']);
 			if ($tag->name && $tag->ascii_id) {
-				$tag_array['subscription'][$tag->ascii_id] = $tag->name;
+				//note that I am overloading the ascii_id place w/ the id
+				$key = "a" . $row['tag_id'];
+				$tag_array['subscription'][$key] = $tag->name;
 			}
 		}
 		return $tag_array;

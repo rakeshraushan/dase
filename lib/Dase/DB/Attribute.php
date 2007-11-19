@@ -2,11 +2,12 @@
 
 require_once 'Dase/DB/Autogen/Attribute.php';
 
-class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute 
+class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute implements Dase_AttributeInterface
 {
+	public $cardinality;
 	public $collection = null;
 	public $display_values = array();
-	public $cardinality;
+	public $html_input_type = null;
 
 	function getValueCount() {
 		if (!$this->id) {
@@ -76,140 +77,107 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		return $c;
 	}
 
-	function getAtom() {
-		$this->collection || $this->getCollection();
-		$dom = new DOMDocument;
-		$feed = $dom->createElement('feed');
-		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
-		$alt_link = $dom->createElement('link');
-		$alt_link->setAttribute('rel','alternate');
-		$alt_link->setAttribute('type','application/atom+xml');
-		$alt_link->setAttribute('href',APP_ROOT . "/{$this->collection->ascii_id}/att/{$this->ascii_id}");
-		$feed->appendChild($alt_link);
-		$self_link = $dom->createElement('link');
-		$self_link->setAttribute('rel','self');
-		$self_link->setAttribute('type','application/atom+xml');
-		$self_link->setAttribute('href',APP_ROOT . "/atom/{$this->collection->ascii_id}/att/{$this->ascii_id}");
-		$feed->appendChild($self_link);
-		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode($this->attribute_name));
-		$feed->appendChild($title);
-		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/att/{$this->ascii_id}"));
-		$feed->appendChild($id);
-		$author = $dom->createElement('author');
-		$name = $dom->createElement('name');
-		$name->appendChild($dom->createTextNode('DASe'));
-		$author->appendChild($name);
-		$feed->appendChild($author);
-		$updated = $dom->createElement('updated');
-		$updated->appendChild($dom->createTextNode(date('c',$this->timestamp)));
-		$feed->appendChild($updated);
+	function getHtmlInputType() {
+		$inp = new Dase_DB_HtmlInputType;
+		$inp->load($this->html_input_type_id);
+		$this->html_input_type = $inp;
+		return $inp;
+	}
 
-		$entry = $dom->createElement('entry');
-		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/att/{$this->ascii_id}"));
-		$entry->appendChild($id);
-		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode($this->attribute_name));
-		$entry->appendChild($title);
-		$updated = $dom->createElement('updated');
-		$updated->appendChild($dom->createTextNode(date('c',$this->timestamp)));
-		$entry->appendChild($updated);
-
-		if ($this->atom_element) {
-			$atom_cat = $dom->createElement('category');
-			$atom_cat->setAttribute('term',$this->atom_element);
-			$atom_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/atom-equiv/");
-			$atom_cat->setAttribute('label',$this->atom_element);
-			$entry->appendChild($atom_cat);
-		}
-
-		if ($this->mapped_admin_att_id) {
-			$aa = new Dase_DB_Attribute;
-			if ($aa->load($this->mapped_admin_att_id)) {
-				$mapped_cat = $dom->createElement('category');
-				$mapped_cat->setAttribute('term',$aa->ascii_id);
-				$mapped_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/admin-attribute-equiv/");
-				$mapped_cat->setAttribute('label',$aa->attribute_name);
-				$entry->appendChild($mapped_cat);
+	function findAsXml($serialize = true) {
+		$sx = parent::findAsXml(false);
+		foreach ($sx->attribute as $att) {
+			foreach ($att as $v) {
+				if ('attribute_name' == $att) {
+					$node1 = dom_import_simplexml($att);
+					$node1->appendChild(new DOMText($v));
+				}
 			}
 		}
-
-		if ($this->html_input_type_id) {
-			$inp = new Dase_DB_HtmlInputType;
-			if ($inp->load($this->html_input_type_id)) {
-				$input_cat = $dom->createElement('category');
-				$input_cat->setAttribute('term',$inp->name);
-				$input_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/html-input-type/");
-				$input_cat->setAttribute('label','HTML input:' . $inp->name);
-				$entry->appendChild($input_cat);
-			}
-		}
-
-		$sort_cat = $dom->createElement('category');
-		$sort_cat->setAttribute('term',$this->sort_order);
-		$sort_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/sort-order/");
-		$sort_cat->setAttribute('label','sort:'. $this->sort_order);
-		$entry->appendChild($sort_cat);
-
-		if ($this->is_on_list_display) {
-			$list_cat = $dom->createElement('category');
-			$list_cat->setAttribute('term','on_list_display');
-			$list_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/on-list-display/");
-			$list_cat->setAttribute('label','on list display');
-			$entry->appendChild($list_cat);
-		}
-
-		if ($this->in_basic_search) {
-			$basic_cat = $dom->createElement('category');
-			$basic_cat->setAttribute('term','in_basic_search');
-			$basic_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/in-basic-search/");
-			$basic_cat->setAttribute('label','in basic search');
-			$entry->appendChild($basic_cat);
-		}
-
-		$pp_cat = $dom->createElement('category');
-		$pp_cat->setAttribute('scheme',APP_ROOT . "/categories/attribute/public-private/");
-		if ($this->is_public) {
-			$pp_cat->setAttribute('term','public');
-			$pp_cat->setAttribute('label','public');
+		if ($serialize) {
+			return $sx->asXml();
 		} else {
-			$pp_cat->setAttribute('term','private');
-			$pp_cat->setAttribute('label','private');
+			return $sx;
 		}
-		$entry->appendChild($pp_cat);
+	}
 
-
-		$content = $dom->createElement('content');
-		$content->setAttribute('type','xhtml');
-		$ns_prefix = substr($this->ascii_id,0,3);
-		$div = $dom->createElement('div');
-		$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
-		$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->ascii_id}");
-
-		$content_name = $dom->createElement('p');
-		$content_name->appendChild($dom->createTextNode($this->attribute_name));
-		$div->appendChild($content_name);
-
-		if ($this->usage_notes) {
-			$content_notes = $dom->createElement('p');
-			$content_notes->appendChild($dom->createTextNode($this->usage_notes));
-			$div->appendChild($content_notes);
+	function asSimpleXml() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT a.attribute_name, a.ascii_id, c.ascii_id as collection,
+			a.usage_notes, a.sort_order, a.in_basic_search, a.is_on_list_display,
+			a.is_public, h.name as html_input_type, a.atom_element, a.timestamp as updated,
+			a.mapped_admin_att_id
+			FROM attribute a, collection c, html_input_type h
+			WHERE a.collection_id = c.id
+			AND h.id = a.html_input_type_id
+			AND c.id = ? 
+			AND a.ascii_id = ? 
+			";
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($this->collection_id,$this->ascii_id));
+		$sx = new SimpleXMLElement("<attribute/>");
+		foreach($sth->fetch() as $key => $val) {
+			if ('mapped_admin_att_id' == $key) {
+				$key = 'admin_equiv';
+				$val = $this->getAdminEquiv($val);
+			}
+			if ($val) {
+				$sx->addAttribute($key, $val);
+				if ('attribute_name' == $key) {
+					$node1 = dom_import_simplexml($sx);
+					$node1->appendChild(new DOMText($val));
+				}
+			}
 		}
+		return $sx;
+	}
 
-		$content->appendChild($div);
-		$entry->appendChild($content);
+	function resultSetAsSimpleXml() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT a.attribute_name, a.ascii_id, c.ascii_id as collection,
+			a.usage_notes, a.sort_order, a.in_basic_search, a.is_on_list_display,
+			a.is_public, h.name as html_input_type, a.atom_element, a.timestamp as updated,
+			a.mapped_admin_att_id
+			FROM attribute a, collection c, html_input_type h
+			WHERE a.collection_id = c.id
+			AND h.id = a.html_input_type_id
+			AND c.id = ? 
+			";
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($this->collection_id));
+		$sx = new SimpleXMLElement("<attributes/>");
+		foreach($sth->fetchAll() as $row) {
+			$row['admin_equiv'] = $this->getAdminEquiv($row['mapped_admin_att_id']);
+			$row['mapped_admin_att_id'] = 0;
+			$new = $sx->addChild('attribute');
+			foreach($row as $key => $val) {
+				if ($val) {
+					$new->addAttribute($key, $val);
+					if ('attribute_name' == $key) {
+						$node1 = dom_import_simplexml($new);
+						$node1->appendChild(new DOMText($val));
+					}
+				}
+			}
+		}
+		return $sx;
+	}
 
-		$xml_link = $dom->createElement('link');
-		$xml_link->setAttribute('rel','alternate');
-		$xml_link->setAttribute('type','application/xml');
-		$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->ascii_id}/{$this->ascii_id}");
-		$entry->appendChild($xml_link);
-		$feed->appendChild($entry);
-		$dom->appendChild($feed);
-		$dom->formatOutput = true;
-		return $dom->saveXml();
+	function getAdminEquiv($mapped_id) {
+		if ($this->mapped_admin_att_id) {
+			$mapped_id = $this->mapped_admin_att_id;
+		}
+		$aa = new Dase_DB_Attribute;
+		if ($aa->load($mapped_id)) {
+			return $aa->ascii_id;
+		} else {
+			return 'none';
+		}
 	}
 }
+
 

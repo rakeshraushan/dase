@@ -19,4 +19,35 @@ class Dase_DB_ItemType extends Dase_DB_Autogen_ItemType
 		$this->attributes = $attributes;
 		return $attributes;
 	}
+
+	function asSimpleXml() {
+		$sx = new SimpleXMLElement("<item_type/>");
+		foreach($this as $k => $v) {
+			if ($v) {
+				if ('name' == $k) {
+					$node1 = dom_import_simplexml($sx);
+					$node1->appendChild(new DOMText($v));
+				}
+				$sx->addAttribute($k,$v);
+			}
+		}
+		return $sx;
+	}
+
+	function resultSetAsSimpleXml() {
+		$sx = new SimpleXMLElement("<item_types/>");
+		foreach($this->findAll() as $row) {
+			$new = $sx->addChild('item_type');
+			foreach($row as $key => $val) {
+				if ($val) {
+					$new->addAttribute($key,$val);
+					if ('name' == $key) {
+						$node1 = dom_import_simplexml($new);
+						$node1->appendChild(new DOMText($val));
+					}
+				}
+			}
+		}
+		return $sx;
+	}
 }

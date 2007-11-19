@@ -14,10 +14,10 @@ class Dase_Upload
 	protected $metadata = array();
 	public $message = '';
 
-	public function __construct(Dase_File $file,Dase_DB_Collection $collection) {
+	public function __construct(Dase_File $file,Dase_DB_Collection $collection,$check_for_dup = true) {
 		$this->file = $file;
 		$this->collection = $collection;
-		if ($this->isDuplicate()) {
+		if ($check_for_dup && $this->isDuplicate()) {
 			throw new Dase_Upload_Exception("Error: duplicate file found: " . $this->file->getFilepath());
 		}
 	}
@@ -27,8 +27,12 @@ class Dase_Upload
 		return $this->item->serial_number;
 	}
 
+	function getItem() {
+		return $this->item;
+	}
+
 	function retrieveItem() {
-		$this->item = Dase_DB_Item::retrieve($this->collection->ascii_id,$this->file->getFilename());
+		$this->item = Dase_Item::get($this->collection->ascii_id,$this->file->getFilename());
 		if ($this->item->id) {
 			return "RETRIEVED " . $this->item->serial_number . "\n";
 		} else {
@@ -73,7 +77,7 @@ class Dase_Upload
 	}
 
 	function moveFileTo($destdir) {
-		$dest = trim($destdir,'/') . '/' . $this->file->getBasename(); 
+		$dest = rtrim($destdir,'/') . '/' . $this->file->getBasename(); 
 		try {
 			$this->file->moveTo($dest);
 		} catch (Exception $e){
@@ -92,6 +96,12 @@ class Dase_Upload
 			$this->item->setValue($ascii,$val);
 		}
 		$msg .= "added admin metadata\n";
+		return $msg;
+	}
+
+	function makeCustom($geometry) {
+		$msg = '';
+		$msg .= $this->file->makeCustom($this->item,$this->collection,$geometry);
 		return $msg;
 	}
 

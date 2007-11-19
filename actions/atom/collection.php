@@ -1,14 +1,13 @@
 <?php
 
 if (isset($params['collection_ascii_id'])) {
-	$coll = Dase_DB_Collection::get($params['collection_ascii_id']);
-	if ($coll) {
-	$tpl = new Dase_Xml_Template;
-	$tpl->setXml($coll->getAtom());
+	$t = new Dase_Xslt(XSLT_PATH.'/atom/collection.xsl',XSLT_PATH.'/atom/layout.xml');
+	$t->set('src',APP_ROOT.'/xml/' . $params['collection_ascii_id']);
+	$tpl = new Dase_Xml_Template();
+	$tpl->setXml($t->transform());
 	$tpl->setContentType('application/atom+xml');
 	$tpl->display();
-	} else {
-		Dase::error(404);
-	}
+} else {
+	Dase::error(404);
 }
-exit;
+

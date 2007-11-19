@@ -2,22 +2,31 @@
 
 require_once 'Dase/DB/Autogen/Item.php';
 
-class Dase_DB_Item extends Dase_DB_Autogen_Item 
+class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 {
 
-	public $collection = null;
-	public $values = array();
 	public $admin = array();
-	public $thumbnail = null;
-	public $viewitem = null;
+	public $collection_ascii_id = '';
+	public $collection_name = '';
+	public $collection = null;
+	public $item_type;
+	public $item_type_ascii = '';
+	public $item_type_label = '';
+	public $media;
+	public $status = '';
+	public $thumbnail;
+	public $thumbnail_url = '';
+	public $values = array();
+	public $viewitem;
+	public $viewitem_url = '';
 
 	public static function create($collection_ascii_id,$serial_number= null) {
 		$c = Dase_DB_Collection::get($collection_ascii_id);
 		return $c->createNewItem($serial_number);
 	}
 
-	public static function retrieve($collection_ascii_id,$serial_number) {
-		$c = Dase_DB_Collection::get($collection_ascii_id);
+	public static function get($collection_ascii_id,$serial_number) {
+		$c = Dase_Collection::get($collection_ascii_id);
 		$item = new Dase_DB_Item;
 		$item->collection_id = $c->id;
 		$item->serial_number = $serial_number;
@@ -88,7 +97,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$val->item_id = $this->id;
 		foreach ($val->findAll() as $row) {
 			$v = new Dase_DB_Value($row);
-			$v->getAttributeName();
+			$v->getAttribute();
 			$this->values[] = $v;
 		}
 		//what about sorting?????
@@ -110,6 +119,8 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$c = new Dase_DB_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
+		$this->collection_ascii_id = $c->ascii_id;
+		$this->collection_name = $c->collection_name;
 		return $c;
 	}
 
@@ -119,7 +130,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$m->item_id = $this->id;
 		$m->size = 'thumbnail';
 		$this->thumbnail = $m->findOne();
-		$this->thumbnail->url = APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/$m->filename";
+		$this->thumbnail_url = APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/$m->filename";
 		return $this->thumbnail;
 	}
 
@@ -129,8 +140,26 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		$m->item_id = $this->id;
 		$m->size = 'viewitem';
 		$this->viewitem = $m->findOne();
-		$this->viewitem->url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
+		$this->viewitem_url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
 		return $this->viewitem;
+	}
+
+	public function getItemType() {
+		$type = new Dase_DB_ItemType;
+		$type->item_id = $this->id;
+		$this->item_type = $type->findOne();
+		$this->item_type_ascii = $type->ascii_id;
+		$this->item_type_label = $type->name;
+		return $this->item_type;
+	}
+
+	public function getItemStatus() {
+		$status = new Dase_DB_ItemStatus;
+		$status->item_id = $this->id;
+		if ($status->findOne()) {
+			$this->item_status = $status->status;
+		}
+		return $this->item_status;
 	}
 
 	public function getMedia() {
@@ -142,6 +171,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$mf = new Dase_DB_MediaFile($row);
 			$media[] = $mf;
 		}
+		$this->media = $media;
 		return $media;
 	}
 
@@ -155,205 +185,19 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		return $url;
 	}
 
-	public function asAtomEntryDom() {
-		$this->collection || $this->getCollection();
-		$dom = new DOMDocument;
-		$frag = $dom->createDocumentFragment();
-		$entry = $dom->createElement('entry');
-		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}"));
-		$entry->appendChild($id);
-		//an item can have only one type
-		$type = new Dase_DB_ItemType;
-		if ($type->load($this->item_type_id)) {
-			$cat = $dom->createElement('category');
-			$cat->setAttribute('term',$type->ascii_id);
-			$cat->setAttribute('scheme',APP_ROOT . "/" . $this->collection->ascii_id . "/item-types/");
-			$cat->setAttribute('label',$type->name);
-			$entry->appendChild($cat);
-		}
-		$content = $dom->createElement('content');
-		$content->setAttribute('type','xhtml');
-		$ns_prefix = substr($this->collection->ascii_id,0,3);
-		//create an unorder list to hold
-		//item metadata AND item type
-		$xoxo = $dom->createElement('ul');
-		$xoxo->setAttribute("class","xoxo");
-		$item_metadata_li = $dom->createElement('li');
-		$dl = $dom->createElement('dl');
-		foreach ($this->getValues() as $v) {
-			$dt = $dom->createElement('dt');
-			$dt->appendChild($dom->createTextNode($v->attribute_name));
-			$dl->appendChild($dt);
-			$dd = $dom->createElement('dd');
-			$dd->setAttribute('property',$ns_prefix . ':' . $v->attribute_ascii_id);
-			$a = $dom->createElement('a');
-			$a->setAttribute('href',"search?{$this->collection->ascii_id}:{$v->attribute_ascii_id}={$v->value_text_md5}");
-			$a->appendChild($dom->createTextNode($v->value_text));
-			$dd->appendChild($a);
-			$dl->appendChild($dd);
-		}
-
-		$item_metadata_li->appendChild($dl);
-		$xoxo->appendChild($item_metadata_li);
-
-		$div = $dom->createElement('div');
-		$div->setAttribute('xmlns',"http://www.w3.org/1999/xhtml");
-		$div->setAttribute('xmlns:' . $ns_prefix,APP_ROOT . "/{$this->collection->ascii_id}");
-		$div->appendChild($xoxo);
-		$collection_name = $dom->createElement('p');
-		$collection_name->setAttribute('class','collectionName');
-		$collection_name->appendChild($dom->createTextNode($this->collection->collection_name));
-		$content->appendChild($div);
-		$entry->appendChild($content);
-		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode($this->getTitle()));
-		$entry->appendChild($title);
-
-		$updated = $dom->createElement('updated');
-		$updated->appendChild($dom->createTextNode(date('c',$this->last_update)));
-		$entry->appendChild($updated);
-
-		$html_link = $dom->createElement('link');
-		$html_link->setAttribute('rel','alternate');
-		$html_link->setAttribute('type','text/html');
-		$html_link->setAttribute('href',APP_ROOT . "/{$this->collection->ascii_id}/{$this->serial_number}");
-		$entry->appendChild($html_link);
-
-		$xml_link = $dom->createElement('link');
-		$xml_link->setAttribute('rel','alternate');
-		$xml_link->setAttribute('type','application/xml');
-		$xml_link->setAttribute('href',APP_ROOT . "/xml/{$this->collection->ascii_id}/{$this->serial_number}");
-		$entry->appendChild($xml_link);
-
-		foreach ($this->getMedia() as $m) {
-			$link = $dom->createElement('link');
-			$link->setAttribute('rel',APP_ROOT . "/media-type/" . $m->size);
-			$link->setAttribute('type',$m->mime_type);
-			$link->setAttribute('title',$m->size);
-			$link->setAttribute('href',APP_ROOT . "/media/{$this->collection->ascii_id}/{$m->size}/{$m->filename}");
-			$entry->appendChild($link);
-			if ('thumbnail' == $m->size) {
-				$thumbnail = $dom->createElement('img');
-				$thumbnail->setAttribute('src',APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/{$m->filename}");
-				$thumbnail->setAttribute('alt',$this->getTitle());
-				$div->appendChild($thumbnail);
-			}
-			$div->appendChild($collection_name);
-		}
-		$frag->appendChild($entry);
-		return $frag;
-		//$dom->appendChild($frag);
-		//return $dom->saveXML();
-	}
-
-	//maybe should be in an atom class???
-	public static function getAtomFeed($item_array,$feed_title,$feed_id) {
-		$dom = new DOMDocument;
-		$feed = $dom->createElement('feed');
-		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
-		$author = $dom->createElement('author');
-		$author->appendChild($dom->createElement('name'));
-		$feed->appendChild($author);
-		$updated = $dom->createElement('updated');
-		$updated->appendChild($dom->createTextNode(date('c',time())));
-		$feed->appendChild($updated);
-		$self_link = $dom->createElement('link');
-		$self_link->setAttribute('rel','self');
-		$self_link->setAttribute('type','application/atom+xml');
-		$self_link->setAttribute('href',APP_ROOT . "/atom/feed/$feed_id");
-		$feed->appendChild($self_link);
-		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode($feed_title));
-		$feed->appendChild($title);
-		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/feed/$feed_id"));
-		$feed->appendChild($id);
-		foreach ($item_array as $item) {
-			$entry = $dom->importNode($item->asAtomEntryDom(),true);
-			$feed->appendChild($entry);
-		}
-		$dom->appendChild($feed);
-		$dom->formatOutput = true;
-		return $dom->saveXml();
-	}
-
-	public function getAtom() {
-		$this->collection || $this->getCollection();
-		$dom = new DOMDocument;
-		$feed = $dom->createElement('feed');
-		$feed->setAttribute('xmlns','http://www.w3.org/2005/Atom');
-		$author = $dom->createElement('author');
-		$name = $dom->createElement('name');
-		$name->appendChild($dom->createTextNode('DASe'));
-		$author->appendChild($name);
-		$feed->appendChild($author);
-		$updated = $dom->createElement('updated');
-		$updated->appendChild($dom->createTextNode(date('c',time())));
-		$feed->appendChild($updated);
-		$self_link = $dom->createElement('link');
-		$self_link->setAttribute('rel','self');
-		$self_link->setAttribute('type','application/atom+xml');
-		$self_link->setAttribute('href',APP_ROOT . "/atom/{$this->collection->ascii_id}/{$this->serial_number}");
-		$feed->appendChild($self_link);
-		$title = $dom->createElement('title');
-		$title->appendChild($dom->createTextNode($this->getTitle()));
-		$feed->appendChild($title);
-		$id = $dom->createElement('id');
-		$id->appendChild($dom->createTextNode(APP_ROOT . "/atom/{$this->collection->ascii_id}/{$this->serial_number}"));
-		$feed->appendChild($id);
-		$entry = $dom->importNode($this->asAtomEntryDom(),true);
-		$feed->appendChild($entry);
-		$dom->appendChild($feed);
-		$dom->formatOutput = true;
-		return $dom->saveXml();
-	}
-
 	public function getXml() {
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('item');
-		$writer->writeAttribute('serial_number',$this->serial_number);
-		$writer->writeAttribute('collection_ascii_id',$this->getCollection()->ascii_id);
-		$type = new Dase_DB_ItemType;
-		$type->load($this->item_type_id);
-		$writer->writeAttribute('item_type',$type->ascii_id);
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT value.value_text,value.value_text_md5,attribute.ascii_id,attribute.attribute_name 
-			FROM value, attribute
-			WHERE attribute.id = value.attribute_id
-			AND value.item_id = $this->id
-			";
-		$st = $db->query($sql);
-		foreach ($st->fetchAll() as $row) {
-			$writer->startElement('meta');
-			$writer->startElement('att');
-			$writer->writeAttribute('ascii_id',$row['ascii_id']);
-			$writer->text($row['attribute_name']);
-			$writer->endElement();
-			$writer->startElement('val');
-			$writer->writeAttribute('md5',$row['value_text_md5']);
-			$writer->text($row['value_text']);
-			$writer->endElement();
-			$writer->endElement();
-		}
-		$media_file = new Dase_DB_MediaFile;
-		$media_file->item_id = $this->id;
-		foreach($media_file->findAll() as $mf) {
-			$writer->startElement('media_file');
-			$writer->writeAttribute('href',$this->getMediaUrl($mf['size']));
-			$writer->writeAttribute('rel',$mf['size']);
-			$writer->writeAttribute('type',$mf['mime_type']);
-			$writer->writeAttribute('width',$mf['width']);
-			$writer->writeAttribute('height',$mf['height']);
-			$writer->endElement();
-		}
-		$writer->endElement();
-		$writer->endDocument();
-		return $writer->flush(true);
+		$this->collection || $this->getCollection();
+		$this->item_type || $this->getItemType();
+		$this->item_status || $this->getItemStatus();
+		//merge 3 sets of xml results
+		$value = new Dase_DB_Value;
+		$value->item_id = $this->id;
+		$media = new Dase_DB_MediaFile;
+		$media->item_id = $this->id;
+		$item_xml = Dase_Util::simplexml_append(
+			Dase_Util::simplexml_append($this->asSimpleXml(),$value->resultSetAsSimpleXml()),
+			$media->resultSetAsSimpleXml());
+		return $item_xml->asXml();
 	}
 
 	function getMediaCount() {
@@ -392,6 +236,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = $value_text;
+			$v->value_text_md5 = md5($value_text);
 			return($v->insert());
 		} else {
 			return false;
@@ -488,4 +333,21 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		}
 		return $title;
 	}
+
+	function asSimpleXml() {
+		$sx = new SimpleXMLElement("<item/>");
+		$props = array(
+			'id','collection_name','collection_ascii_id','serial_number',
+			'status','item_type_ascii','item_type_label','last_update'
+		);
+		foreach($props as $p) {
+			if ($this->$p) {
+				$sx->addAttribute($p,$this->$p);
+			}
+		}
+		$node1 = dom_import_simplexml($sx);
+		$node1->appendChild(new DOMText($this->getTitle()));
+		return $sx;
+	}
+
 }
