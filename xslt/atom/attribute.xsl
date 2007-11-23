@@ -34,7 +34,7 @@
 	<a:entry>
 	  <a:title><xsl:value-of select="@attribute_name"/></a:title>
 	  <a:id><xsl:value-of select="concat($app_root,@collection,'/att/',@ascii_id,'/')"/></a:id>
-	  <a:category term="attribute" scheme="{concat($app_root,'categories')}" label="Attribute"/>
+	  <a:category term="attribute" scheme="http://daseproject.org/category" label="Attribute"/>
 	  <a:updated><xsl:value-of select="@updated"/></a:updated>
 	  <a:link type="application/xhtml+xml" href="{concat($app_root,'html/',@collection,'/att/',@ascii_id,'/')}"/>
 	  <xsl:apply-templates select="defined_values"/>

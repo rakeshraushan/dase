@@ -20,7 +20,6 @@ if ($cache->get()) {
 	}
 	$cache->set(serialize($tallies));
 }
-$dj = new Dase_Json;
 $tpl = new Dase_Json_Template;
-$tpl->setJson($dj->encodeData($tallies));
+$tpl->setJson(Dase_Json::get($tallies));
 $tpl->display();

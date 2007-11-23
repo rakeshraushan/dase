@@ -16,7 +16,6 @@ while ($row = $st->fetch()) {
 	$sth->execute(array($row['id']));
 	$tallies[$row['ascii_id']] = $sth->fetchColumn();
 }
-$dj = new Dase_Json;
 $tpl = new Dase_Json_Template;
-$tpl->setJson($dj->encodeData($tallies));
+$tpl->setJson(Dase_Json::get($tallies));
 $tpl->display();

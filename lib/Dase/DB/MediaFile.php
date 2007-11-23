@@ -17,9 +17,13 @@ class Dase_DB_MediaFile extends Dase_DB_Autogen_MediaFile
 			";	
 		$params[] = $this->item_id;
 		$csx = new SimpleXMLElement("<media_files/>");
+		$sizes = array();
 		foreach($this->query($sql,$params) as $row) {
 			$new = $csx->addChild('media_file');
 			foreach($row as $k => $v) {
+				if ('size' == $k) {
+					$sizes[] = $v;
+				}
 				if ($v) {
 					$new->addAttribute($k,$v);
 				}
@@ -36,6 +40,20 @@ class Dase_DB_MediaFile extends Dase_DB_Autogen_MediaFile
 			$new->addAttribute('url',APP_ROOT . '/media/' . $row['p_collection_ascii_id'] . '/' . $row['size'] . '/' . $row['filename']);
 			$node1 = dom_import_simplexml($new);
 			$node1->appendChild(new DOMText($row['filename']));
+		}
+		//this is to guarantee there is a thumbnail and viewitem
+		foreach(array('thumbnail','viewitem') as $size) {
+			if (!in_array($size,$sizes)) {
+				$new = $csx->addChild('media_file');
+				$new->addAttribute('item_id',$this->item_id);
+				$new->addAttribute('width',80);
+				$new->addAttribute('height',80);
+				$new->addAttribute('mime_type','image/jpeg');
+				$new->addAttribute('size',$size);
+				$new->addAttribute('url',APP_ROOT . '/images/unavail.jpg');
+				$node1 = dom_import_simplexml($new);
+				$node1->appendChild(new DOMText('image unavailable'));
+			}
 		}
 		return $csx;
 	}

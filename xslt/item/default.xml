@@ -7,7 +7,9 @@
   <body>
 
 	<!--THIS GETS INSERTED-->
-	<div class="content full" id="browse">
+	<div class="content full item" id="browse">
+	  <insert-search-echo/>
+	  <insert-prev-next/>
 	  <table class="itemDisplay">
 		<tr>
 		  <td class="image">

@@ -2,8 +2,7 @@
 
 $search = new Dase_Search();
 
-$js = new Dase_Json;
-$items_json = "var items_json = " . $js->encodeData($search->getItems());
+$items_json = "var items_json = " . Dase_Json::get($search->getItems());
 
 print($items_json);exit;
 

@@ -7,6 +7,7 @@ class Dase_DB_Search {
 		$url_params = Dase::instance()->url_params;
 		$search['type'] = null;
 		$search['colls'] = array();
+		$search['omit_colls'] = array();
 		$search['att'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
@@ -41,20 +42,50 @@ class Dase_DB_Search {
 			}
 			$search['colls'] = array_unique($search['colls']);
 		}
+		//url parameter 'nc' means "NOT collection..."
+		if (isset($url_params['nc'])) {
+			if (!is_array($url_params['nc'])) {
+				$url_params['nc'] = array($url_params['nc']);
+			}
+			foreach ($url_params['nc'] as $nc) {
+				$search['omit_colls'][] = "'$nc'";
+			}
+			$search['omit_colls'] = array_unique($search['omit_colls']);
+		}
 		//collection_ascii_id as param TRUMPS coll in get array
+		//can come from request url
 		if (isset($params['collection_ascii_id'])) {
-			$search['colls'] = array("'{$params['collection_ascii_id']}'");
-			$echo['collection_ascii_id'] = $params['collection_ascii_id'];
+			$collection_ascii_id = $params['collection_ascii_id'];
+			$search['colls'] = array("'$collection_ascii_id'");
+			$echo['collection_ascii_id'] = $collection_ascii_id;
+		}
+		//OR query string
+		if (isset($url_params['collection_ascii_id'])) {
+			if (is_array($url_params['collection_ascii_id'])) {
+				//take the last one
+				$collection_ascii_id = array_pop($url_params['collection_ascii_id']);
+			} else {
+				$collection_ascii_id = $url_params['collection_ascii_id'];
+			}
+			if ($collection_ascii_id) {
+				$search['colls'] = array("'$collection_ascii_id'");
+				$echo['collection_ascii_id'] = $collection_ascii_id;
+			}
 		}
 		//populate general find and omit array
 		if (isset($url_params['q'])) {
-			$echo['query'] = $url_params['q'];
-			$query = is_array($url_params['q']) ? $url_params['q'][0] : $url_params['q'];
-			foreach ($this->_tokenizeQuoted($query) as $t) {
-				if ('-' == substr($t,0,1)) {
-					$search['omit'][] = substr($t,1);
-				} else {
-					$search['find'][] = $t;
+			$query = $url_params['q'];
+			if (!is_array($query)) {
+				$query = array($query);
+			}
+			$echo['query'] = join(' AND ',$query);
+			foreach ($query as $q) {
+				foreach ($this->_tokenizeQuoted($q) as $t) {
+					if ('-' == substr($t,0,1)) {
+						$search['omit'][] = substr($t,1);
+					} else {
+						$search['find'][] = $t;
+					}
 				}
 			}
 		}
@@ -64,7 +95,8 @@ class Dase_DB_Search {
 				$val = array($val);
 			}
 			if (('q' != $k) && ('type' != $k) && strpos($k,'%')){
-				$echo['sub'][$k] = join(' ',$val);
+				//$echo['sub'][$k] = join(' ',$val);
+				$echo['sub'][$k] = $val;
 				$coll = null;
 				$att = null;
 				$tokens = array();
@@ -196,21 +228,19 @@ class Dase_DB_Search {
 		}
 
 		//construct echo
-		$echo_str = "search ";
-		if ($echo['collection_ascii_id']) {
-			$echo_str .= "in {$echo['collection_ascii_id']} ";
-		}
+		$echo_str = '';
 		if ($echo['query']) {
-			$echo_str .= "for {$echo['query']} ";
-		} else {
-			$echo_str .= "for ";
-		}
+			$echo_str .= " {$echo['query']} ";
+		} 
 		if ($echo['exact']) {
 			$echo_arr = array();
 			foreach ($echo['exact'] as $k => $v) {
 				foreach( $v as $val) {
 					$echo_arr[] = "$val in $k";
 				}
+			}
+			if ($echo_str) {
+				$echo_str .= " AND ";
 			}
 			$echo_str .= join(' AND ',$echo_arr);
 		}
@@ -221,10 +251,19 @@ class Dase_DB_Search {
 				$echo_arr[] = "$val in $k";
 				}
 			}
+			if ($echo_str) {
+				$echo_str .= " AND ";
+			}
 			$echo_str .= join(' AND ',$echo_arr);
 		}
+		if ($echo['collection_ascii_id']) {
+			$echo_str .= " in {$echo['collection_ascii_id']} ";
+		}
 		if ($echo['type']) {
-			$echo_str .= " and item type {$echo['type']} ";
+			if ($echo_str) {
+				$echo_str .= " WITH ";
+			}
+			$echo_str .= " item type {$echo['type']} ";
 		}
 		$search['echo'] = $echo_str;
 		$this->search = $search;
@@ -287,6 +326,11 @@ class Dase_DB_Search {
 			$c_array = $search['colls'];
 			asort($c_array);
 			$search_string .= "collections:" .  join(',',$c_array) . ";";
+		}
+		if (isset($search['omit_colls'])) {
+			$nc_array = $search['omit_colls'];
+			asort($nc_array);
+			$search_string .= "omit_collections:" .  join(',',$nc_array) . ";";
 		}
 		if (isset($search['type']) && isset($search['type']['coll']) && isset($search['type']['name'])) {
 			$search_string .= 'type=:' .  $search['type']['coll'] . $search['type']['name'];
@@ -388,10 +432,18 @@ class Dase_DB_Search {
 			}
 			unset($ar_table_sets);
 		}
-		//if colls is not set, search all collections (by omitting filter)
 		if (count($search['colls']) && isset($search_table_sql)) {
 			$ascii_ids = join(",",$search['colls']);
 			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ascii_ids))";
+		}
+		//if not explicitly requested, non-public collecitons will be omitted
+		if (!count($search['colls']) && isset($search_table_sql)) {
+			//make sure this boolean query is portable!!!
+			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
+		}
+		if (count($search['omit_colls']) && isset($search_table_sql)) {
+			$ascii_ids = join(",",$search['omit_colls']);
+			$search_table_sql .= " AND collection_id NOT IN (SELECT id FROM collection WHERE ascii_id IN ($ascii_ids))";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = "
@@ -453,18 +505,24 @@ class Dase_DB_Search {
 		$result['item_ids'] = array();
 		$items = array();
 		while ($row = $st->fetch()) {
-			$name = $collection_lookup[$row['collection_id']]['collection_name'];
-			$items[$name][] = $row['id'];
+			$items[$row['collection_id']][] = $row['id'];
 		}
 		uasort($items, array('Dase_Util','sortByCount'));
-		foreach ($items as $coll => $set) {
-			$result['tallies'][$coll] = count($set);
+		foreach ($items as $coll_id => $set) {
+			$ascii_id = $collection_lookup[$coll_id]['ascii_id'];
+			$name = $collection_lookup[$coll_id]['collection_name'];
+			$result['tallies'][$ascii_id]['total'] = count($set);
+			$result['tallies'][$ascii_id]['name'] = $name;
 			$result['item_ids'] = array_merge($result['item_ids'],$set);
 		}
 		$result['hash'] = $hash;
 		$result['count'] = count($result['item_ids']);
 		$result['search'] = $this->search;
 		$result['sql'] = $sql;
+		$result['link'] = $this->getLink();
+		$result['echo'] = $this->search['echo'];
+		$result['request_url'] = Dase::instance()->request_url;
+		$result['query_string'] = Dase::instance()->query_string;
 		return $result;
 	}
 
@@ -505,32 +563,19 @@ class Dase_DB_Search {
 		}
 		$result['timestamp'] = $cache->timestamp;
 		$result['hash'] = $hash;
-		$result['link'] = $this->getLink();
-		$result['echo'] = $this->search['echo'];
 		return $result;
 	}
 
-	public function getJsonResult() {
-		return Dase_Json::get($this->getResult());
-	}
-
-	public function simpleXml($result) {
-		$sx = new SimpleXMLElement('<searchResult/>');
-		$tallies = $sx->addChild('tallies');
-		foreach($result['tallies'] as $cname => $total) {
-			$tal = $tallies->addChild('tally');
-			$tal->addAttribute('collection_name',$cname);
-			$tal->addAttribute('total',$total);
+	public static function getResultByHash($hash) {
+		$result = array();
+		$cache = new Dase_DB_SearchCache();
+		$cache->search_md5 = $hash;
+		if ($cache->findOne()) {
+		$result = unserialize($cache->item_id_string);
+		$result['timestamp'] = $cache->timestamp;
+		$result['hash'] = $cache->search_md5;
 		}
-		$sx->addChild('item_ids',join(',',$result['item_ids']));
-		$sx->addChild('total',$result['count']);
-		$sx->addChild('sql',$result['sql']);
-		$sx->addChild('echo',var_export($result['echo'],true));
-		return $sx->asXml();
-	}
-
-	public function getOpenSearchResult() {
-		$result = $this->getResult();
+		return $result;
 	}
 }
 

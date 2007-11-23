@@ -6,7 +6,11 @@ class Dase_Json
 
 	public static function get($data) {
 		$js = new Dase_Json;
-		return $js->encodeData($data);
+		$json = $js->encodeData($data);
+		//note: for better xss security, do not return arrays
+		//rather make sure an array gets wrapped in an object
+		$jsonObj = "{\"json\":$json}";
+		return $jsonObj;
 	}
 
 	private function encodeArray($data) {

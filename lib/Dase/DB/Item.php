@@ -185,7 +185,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		return $url;
 	}
 
-	public function getXml() {
+	public function getXml($asXml = true) {
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		$this->item_status || $this->getItemStatus();
@@ -197,7 +197,11 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$item_xml = Dase_Util::simplexml_append(
 			Dase_Util::simplexml_append($this->asSimpleXml(),$value->resultSetAsSimpleXml()),
 			$media->resultSetAsSimpleXml());
-		return $item_xml->asXml();
+		if ($asXml) {
+			return $item_xml->asXml();
+		} else {
+			return $item_xml;
+		}
 	}
 
 	function getMediaCount() {

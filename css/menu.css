@@ -166,3 +166,24 @@ ul#subscription a:hover {
 #subscription {
 	background-color: #f4ebd2;
 }
+
+#search_tallies {
+	margin-left: 12px;
+}
+
+#search_tallies li a {
+	color:#009;
+	line-height:1.4em;
+}
+
+#search_tallies li a:hover {
+	color:#333;
+	text-decoration:underline;
+}
+
+#search_tallies a.delete {
+	font-weight: normal;
+	font-size: .9em;
+	color: #c00;
+}
+

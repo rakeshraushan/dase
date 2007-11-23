@@ -32,7 +32,7 @@
   <xsl:template match="collection">
 	<entry><title type="html"><xsl:value-of select="@collection_name"/></title>
 	  <id><xsl:value-of select="concat($app_root,@ascii_id,'/')"/></id>
-	  <category term="public" scheme="{concat($app_root,'public')}" label="Public"/>
+	  <category term="public" scheme="http://daseproject/category" label="Public"/>
 	  <updated><xsl:value-of select="@updated"/></updated>
 	  <link type="application/atom+xml" href="{concat($app_root,'atom/',@ascii_id,'/')}"/>
 	  <link type="application/xhtml+xml" href="{@url}"/>
