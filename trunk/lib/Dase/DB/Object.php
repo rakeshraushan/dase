@@ -79,13 +79,6 @@ class Dase_DB_Object implements IteratorAggregate
 		return $sth->fetch();
 	}
 
-	public static function getId($table,$ascii_id) {
-		$db = Dase_DB::get();
-		$sth = $db->prepare("SELECT id from $table WHERE ascii_id = ?");
-		$sth->execute(array($ascii_id));
-		return $sth->fetchColumn();
-	}
-
 	function load( $id ) {
 		$this->id = $id;
 		$db = Dase_DB::get();

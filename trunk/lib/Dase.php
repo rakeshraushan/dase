@@ -8,6 +8,8 @@ class Dase
 	public $collection;
 	public static $user;
 	public $url_params = array();    
+	public $request_url = '';    
+	public $query_string = '';    
 
 	public function __construct() {}
 
@@ -241,11 +243,14 @@ class Dase
 		}
 
 		if (isset($query_string) && $query_string) {
+			$controller->query_string = $query_string;
 			$url_params = $controller->parseQuery(urldecode($query_string));
 		}
 
 		/* Trim off any leading or trailing slashes */
 		$request_url= trim($request_url, '/');
+
+		$controller->request_url = $request_url;
 
 		$matches = array();
 		$params = array();

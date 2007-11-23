@@ -178,6 +178,14 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute implements Dase_Attrib
 			return 'none';
 		}
 	}
+
+	public static function getId($ascii_id) {
+		$db = Dase_DB::get();
+		$sth = $db->prepare("SELECT id from attribute WHERE ascii_id = ?");
+		$sth->execute(array($ascii_id));
+		return $sth->fetchColumn();
+	}
+
 }
 
 

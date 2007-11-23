@@ -40,8 +40,18 @@
 	<match>atom/search</match>
   </route>
 
+  <route action="atom/search_by_hash" auth="none">
+	<match params="md5_hash">atom/search/md5</match>
+  </route>
+
   <route action="atom/item" auth="none">
 	<match caps="collection_ascii_id" params="serial_number">atom/([^/]*_collection)</match>
+  </route>
+
+  <route action="atom/search_item" auth="none">
+	<match caps="collection_ascii_id">([^/]*_collection)/atom/search_item</match>
+	<match caps="collection_ascii_id">atom/([^/]*_collection)/search_item</match>
+	<match>atom/search_item</match>
   </route>
 
   <route action="collection/browse" auth="user">
@@ -58,7 +68,7 @@
   </route>
 
   <route action="json/attributes" auth="user">
-	<match caps="collection_ascii_id">json/(.*_collection)/attributes</match>
+	<match caps="collection_ascii_id">json/([^/]*_collection)/attributes</match>
   </route>
 
   <route action="json/item_tallies" auth="none">
@@ -66,15 +76,15 @@
   </route>
 
   <route action="json/attribute_tallies" auth="user">
-	<match caps="collection_ascii_id">json/(.*_collection)/attribute_tallies</match>
+	<match caps="collection_ascii_id">json/([^/]*_collection)/attribute_tallies</match>
   </route>
 
   <route action="json/cb_attribute_tallies" auth="eid">
-	<match caps="collection_ascii_id">json/admin/(.*_collection)/attribute_tallies</match>
+	<match caps="collection_ascii_id">json/admin/([^/]*_collection)/attribute_tallies</match>
   </route>
 
   <route action="json/admin_attribute_tallies" auth="user">
-	<match caps="collection_ascii_id">json/(.*_collection)/admin_attribute_tallies</match>
+	<match caps="collection_ascii_id">json/([^/]*_collection)/admin_attribute_tallies</match>
   </route>
 
   <route action="json/search" auth="user">
@@ -85,6 +95,16 @@
   <route action="search/result" auth="user">
 	<match caps="collection_ascii_id">([^/]*_collection)/search</match>
 	<match>search</match>
+  </route>
+
+  <route action="search/item" auth="none">
+	<match caps="collection_ascii_id">([^/]*_collection)/search_item</match>
+	<match caps="collection_ascii_id">([^/]*_collection)/search_item</match>
+	<match>search_item</match>
+  </route>
+
+  <route action="search/by_hash" auth="none">
+	<match params="md5_hash">search/md5</match>
   </route>
 
   <route action="item/item" auth="user">
@@ -120,7 +140,16 @@
 	<match caps="collection_ascii_id">([^/]*_collection)/xml/search</match>
 	<match caps="collection_ascii_id">xml/([^/]*_collection)/search</match>
 	<match>xml/search</match>
+  </route>
+
+  <route action="xml/search_by_hash" auth="none">
 	<match params="md5_hash">xml/search/md5</match>
+  </route>
+
+  <route action="xml/search_item" auth="none">
+	<match caps="collection_ascii_id">([^/]*_collection)/xml/search_item</match>
+	<match caps="collection_ascii_id">xml/([^/]*_collection)/search_item</match>
+	<match>xml/search_item</match>
   </route>
 
   <route action="xml/collection" auth="none">
@@ -178,6 +207,16 @@
 	<match params="id">html/tag</match>
   </route>
 
+  <route action="html/search_tallies" auth="none">
+	<match>html/tallies/search</match>
+	<match caps="collection_ascii_id">html/tallies/([^/]*_collection)/search</match>
+  </route>
+
+  <route action="html/sql" auth="none">
+	<match>sql/search</match>
+	<match caps="collection_ascii_id">sql/([^/]*_collection)/search</match>
+  </route>
+
   <route action="error"/>
 
   <route action="login/form" auth="none">
@@ -196,7 +235,7 @@
 
   <route action="media/media" auth="none">
 	<match params="collection/size/filename">media</match>
-	<match caps="collection" params="size/filename">(.*_collection)/media</match>
+	<match caps="collection" params="size/filename">([^/]*_collection)/media</match>
   </route>
 
   <!-- manage routes -->

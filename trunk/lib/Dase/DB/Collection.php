@@ -620,4 +620,11 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$item->findOne();
 		return $item->last_update;
 	}
+
+	public static function getId($ascii_id) {
+		$db = Dase_DB::get();
+		$sth = $db->prepare("SELECT id from collection WHERE ascii_id = ?");
+		$sth->execute(array($ascii_id));
+		return $sth->fetchColumn();
+	}
 }

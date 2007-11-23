@@ -235,6 +235,7 @@ div.alert {
 div.searchBoxLabel {
 	color:#333;
 	font-weight:700;
+	margin-left:10px;
 }
 
 div#browseColumns a {
@@ -307,6 +308,12 @@ a.chk,a.unchk {
 
 /*****  ITEM DISPLAY PAGE **************/
 
+.item h1 {
+	color: #336;
+	font-size: 1.4em;
+	margin: 0;
+}
+
 table.itemDisplay  td {
 	border: 1px solid #d9c8ad;
 	vertical-align: top;
@@ -331,6 +338,7 @@ td.metadata dt {
 
 td.metadata dd {
 	margin-left:15px;
+	font-weight: 300;
 }
 
 /****************************************/
@@ -448,9 +456,6 @@ div#searchResults h2 {
 	font-size: 1.2em;
 }
 
-/* from http://thecodecentral.com/2007/10/02/tableless-image-gallery-an-experiment-of-fluid-grid
- */
-
 #searchResults {
 	padding: 10px; 
 }
@@ -462,7 +467,10 @@ div#searchResults h2 {
 	border: 1px solid #d9c8ad;
 	vertical-align: top;
 	text-align: center;
-	width: 20%;
+	width: 180px;
+}
+#searchResults td.blank {
+	border: 0;
 }
 #searchResults td.checked {
 	background-color: #fff0d9;
@@ -476,5 +484,27 @@ div#searchResults h2 {
 	font-size: .95em;
 }
 #searchResults div.caption,div.image {
-	padding: 10px;
+	padding: 10px 5px 0 5px;
+}
+#searchResults h1 {
+	font-size: 1.4em;
+	color: #336;
+	margin: 0;
+}
+
+form#searchCollections {
+margin:0 0 0 10px;
+}
+
+div.pageControls {
+	margin: 10px 0;
+}
+
+ul#mediaLinks {
+}
+
+ul#mediaLinks a {
+	font-weight: normal;
+	color: #336;
+	line-height: 1.4em;
 }

@@ -96,6 +96,7 @@ Dase.initUser = function() {
 				Dase.placeUserName();
 				Dase.placeUserTags();
 				Dase.placeUserCollections();
+				Dase.placeUserSearchCollections();
 				Dase.multicheck("checkedCollection");
 				Dase.getItemTallies();
 				});
@@ -149,6 +150,172 @@ Dase.placeUserCollections = function() {
 	if (hasSpecial) {
 		Dase.removeClass(Dase.$('specialAccessLabel'),'hide');
 	}
+}
+
+Dase.placeUserSearchCollections = function() {
+	var maxCollName = 30;
+	var sel = Dase.$('collectionsSelect');
+	if (!sel)  return; 
+	var opt = document.createElement('option');
+	opt.setAttribute('value','');
+	opt.appendChild(document.createTextNode('All Collections'));
+	sel.appendChild(opt);
+	if (!sel) return; 
+	for (var i=0;i<Dase.user.collections.length;i++) {
+		var c = Dase.user.collections[i];
+		var opt = document.createElement('option');
+		opt.setAttribute('value',c.ascii_id);
+		var label = Dase.truncate(c.collection_name,maxCollName);
+		opt.appendChild(document.createTextNode(label));
+		sel.appendChild(opt);
+	}
+	sel.onchange = function() {
+		Dase.setCollectionAtts(this.options[this.selectedIndex].value);
+	}
+
+	Dase.$('refineCheckbox').onchange = Dase.searchRefine;
+}
+
+Dase.searchRefine = function() {
+	var formDiv = Dase.$('refinements');
+	if (formDiv.hasChildNodes()) {
+		//means this is UNchecking the box
+		while (formDiv.childNodes[0]) {
+			formDiv.removeChild(formDiv.childNodes[0]);
+		}
+		//undo any restriction to single collection
+		var sel = Dase.$('collectionsSelect');
+		while (sel.childNodes[0]) {
+			sel.removeChild(sel.childNodes[0]);
+		}
+		Dase.placeUserSearchCollections();
+		Dase.setCollectionAtts('');
+		return;
+	}
+	var single_collection_flag = 0;
+	var colls_array = [];
+	var re = new RegExp('[^/&=?]*_collection');
+	var current = String(Dase.$('self_url').innerHTML);
+	var parts = (current.split('?'));
+	var url_string = parts[0];
+	var qstring = decodeURIComponent(parts[1]);
+	var qpairs = qstring.split('&amp;');
+	for (var i=0;i<qpairs.length; i++) {
+		var qp = qpairs[i];
+		var keyval = qp.split('=');
+		if (keyval.length > 1 && keyval[1]) {
+			var hidden = document.createElement('input');
+			hidden.setAttribute('type','hidden');
+			hidden.setAttribute('name',keyval[0]);
+			hidden.setAttribute('value',keyval[1]);
+			formDiv.appendChild(hidden);
+			if ('c' != keyval[0] && 'nc' != keyval[0]) {
+				//check for collection_ascii_id in key and value
+				c1 = re.exec(keyval[0]);
+				c2 = re.exec(keyval[1]);
+				if (c1) {
+					Dase.limitSearchToCollection(new Array(c1));
+					single_collection_flag = 1;
+				}
+				if (c2) {
+					Dase.limitSearchToCollection(new Array(c2));
+					single_collection_flag = 1;
+				}
+			} else {
+				colls_array.push(keyval[1]);
+			}
+		}
+	}
+	var collection = re.exec(url_string);
+	if (collection) {
+		var hidden = document.createElement('input');
+		hidden.setAttribute('type','hidden');
+		hidden.setAttribute('name','collection_ascii_id');
+		hidden.setAttribute('value',collection);
+		formDiv.appendChild(hidden);
+		Dase.limitSearchToCollection(new Array(collection));
+		single_collection_flag = 1;
+	} 
+	if (!single_collection_flag && colls_array.length) {
+		Dase.limitSearchToCollection(colls_array);
+	}
+}
+
+Dase.limitSearchToCollection = function(c_ascii_array) {
+	//remove all collection option except for c_ascii_array
+	var keepers = [];
+	var sel = Dase.$('collectionsSelect');
+	while (sel.childNodes[0]) {
+		for (var i=0;i<c_ascii_array.length;i++) {
+			if (sel.childNodes[0].value == c_ascii_array[i]) {
+				keepers.push(sel.childNodes[0]);
+			}
+		}
+		sel.removeChild(sel.childNodes[0]);
+	}
+	for (var j=0;j<keepers.length;j++) { 
+		sel.appendChild(keepers[j]);
+	}
+	if (1 == c_ascii_array.length) {
+		Dase.setCollectionAtts(c_ascii_array[0]);
+	} else {
+		var opt = document.createElement('option');
+		opt.setAttribute('value','');
+		opt.setAttribute('selected','selected');
+		opt.appendChild(document.createTextNode('Current Collections'));
+		sel.appendChild(opt);
+		Dase.setCollectionAtts('');
+	}
+}
+
+Dase.setCollectionAtts = function(coll) {
+	//you can pass in a coll OR use as an event handler
+	var sel = Dase.$('attributesSelect');
+	if (!sel) return; 
+	sel.onchange = Dase.specifyQueryType;
+	/* per http://raibledesigns.com/rd/entry/javascript_removechild_howto */
+	while (sel.childNodes[0]) {
+		sel.removeChild(sel.childNodes[0]);
+	}
+	var maxAttName = 40;
+	if ('' == coll) {
+		Dase.addClass(Dase.$('preposition'),'hide');
+		Dase.addClass(sel,'hide');
+	} else {
+		Dase.getJSON(Dase.base_href + "json/" + coll + "/attributes",function(json){
+				var opt = document.createElement('option');
+				opt.setAttribute('value',"");
+				opt.appendChild(document.createTextNode("All Attributes"));
+				sel.appendChild(opt);
+				for (var i=0;i<json.length;i++) {
+				var att = json[i];
+				var opt = document.createElement('option');
+				opt.setAttribute('value',att.collection+'%'+att.ascii_id);
+				var label = Dase.truncate(att.attribute_name,maxAttName);
+				opt.appendChild(document.createTextNode(label));
+				sel.appendChild(opt);
+				}
+				Dase.removeClass(Dase.$('preposition'),'hide');
+				Dase.removeClass(sel,'hide');
+				});
+	}
+}
+
+Dase.specifyQueryType = function() {
+	var opt = this.options[this.selectedIndex];
+	var query = Dase.$('queryInput');
+	if (!query) return; 
+	query.name = opt.value;
+}
+
+
+
+Dase.truncate = function(str,len) {
+	var s = new String(str);
+	if (s.length <= len ) return str;
+	var small = s.slice(0,len);
+	small = small + '...';
+	return small.toString();
 }
 
 Dase.initMenu = function(id) { 
@@ -468,7 +635,8 @@ Dase.getJSON = function(url,my_func) {
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var json = eval('(' + xmlhttp.responseText + ')');
+			var jsonObj = eval('(' + xmlhttp.responseText + ')');
+			var json = jsonObj.json;
 			if (my_func) {
 				my_func(json);
 			} else {

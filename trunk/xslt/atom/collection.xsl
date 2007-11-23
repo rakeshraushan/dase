@@ -38,18 +38,18 @@
 	<entry>
 	  <title><xsl:value-of select="@attribute_name"/></title>
 	  <id><xsl:value-of select="concat($app_root,../../@ascii_id,'/',@ascii_id)"/></id>
-	  <category term="attribute" scheme="{concat($app_root,'categories')}" label="Attribute"/>
+	  <category term="attribute" scheme="http://daseproject.org/category" label="Attribute"/>
 	  <updated><xsl:value-of select="@updated"/></updated>
-	  <link type="application/atom+xml" href="{concat($app_root,'atom/',../../@ascii_id,'/att/',@ascii_id,'/')}"/>
+	  <link rel="self" type="application/atom+xml" href="{concat($app_root,'atom/',../../@ascii_id,'/att/',@ascii_id,'/')}"/>
 	  <link type="application/xhtml+xml" href="{concat($app_root,'html/',../../@ascii_id,'/att/',@ascii_id)}"/>
 	  <xsl:if test="@in_basic_search = 1">
-		<category term="in_basic_search" scheme="{concat($app_root,'categories/attribute/basic_search')}" label="in_basic_search"/>
+		<category term="in_basic_search" scheme="http://daseproject.org/category/attribute/basic_search" label="in_basic_search"/>
 	  </xsl:if>
-	  <xsl:if test="@in_basic_search = 1">
-		<category term="in_basic_search" scheme="{concat($app_root,'categories/attribute/public_private')}" label="is_public"/>
+	  <xsl:if test="@is_public = 1">
+		<category term="is_public" scheme="http://daseproject.org/category/attribute/public_private" label="is_public"/>
 	  </xsl:if>
 	  <xsl:if test="@is_on_list_display = 1">
-		<category term="is_on_list_display" scheme="{concat($app_root,'categories/attribute/list_display')}" label="is_on_list_display"/>
+		<category term="is_on_list_display" scheme="http://daseproject.org/category/attribute/list_display" label="is_on_list_display"/>
 	  </xsl:if>
 	</entry>
   </xsl:template>
