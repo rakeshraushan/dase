@@ -2,17 +2,18 @@
 <xsl:stylesheet version="1.0" 
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:d="http://daseproject.org"
+  exclude-result-prefixes="atom h d"
   >
   <xsl:output method="xml" 
-	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
+	doctype-public="-//W3C//DTD XHTML+RDFa 1.0//EN" 
+	doctype-system="http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"
 	encoding="UTF-8"/>
   <!-- include general stylesheet -->
   <xsl:include href="../site/stylesheet.xsl"/>
   <!-- use services to get any needed content -->
-  <xsl:variable name="it" select="document($atom)/atom:feed"/>
+  <xsl:variable name="it" select="document($src)/atom:feed"/>
 
   <xsl:template match="/">
 	<xsl:apply-templates/>
@@ -27,6 +28,7 @@
   </xsl:template>
 
   <xsl:template match="atom:entry" mode="img">
+	<h2><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h2>
 	<img src="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@href}" width="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:width}" height="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:height}" alt="{atom:title/text()}"/>
   </xsl:template>
 
@@ -47,10 +49,10 @@
   </xsl:template>
 
   <xsl:template match="insert-item-metadata">
-	<xsl:apply-templates select="$it/atom:entry/atom:content/xhtml:div/xhtml:dl" mode="item-mode"/>
+	<xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl" mode="item-mode"/>
   </xsl:template>
 
-  <xsl:template match="xhtml:dl" mode="item-mode">
+  <xsl:template match="h:dl" mode="item-mode">
 	<xsl:copy>
 	  <xsl:apply-templates/>
 	</xsl:copy>

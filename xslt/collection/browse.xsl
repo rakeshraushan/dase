@@ -3,14 +3,14 @@
   <!-- include general stylesheet -->
   <xsl:include href="../site/stylesheet.xsl"/>
   <!-- use services to get any needed content -->
-  <xsl:variable name="coll" select="document($collection)/collection"/>
+  <xsl:variable name="coll" select="document($src)/collection"/>
 
   <xsl:template match="div[@id=browse]">
 	<xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="replace_att_column">
-	<div id="attColumn" class="html/{$c_ascii_id}/attributes/public"></div>
+	<div id="attColumn" class="html/{$coll/@ascii_id}/attributes/public"></div>
   </xsl:template>
 
   <xsl:template match="insert-collection-label">

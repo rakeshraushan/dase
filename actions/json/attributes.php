@@ -1,5 +1,4 @@
 <?php
-
 $attribute = new Dase_DB_Attribute;
 $attribute->collection_id = Dase_DB_Collection::getId($params['collection_ascii_id']);
 $attribute->is_public = true;
@@ -13,7 +12,4 @@ foreach($attribute->findAll() as $att) {
 			'collection' => $params['collection_ascii_id']
 		);
 }
-$tpl = new Dase_Json_Template;
-$tpl->setJson(Dase_Json::get($att_array));
-$tpl->display();
-
+Dase::display(Dase_Json::get($att_array));

@@ -89,7 +89,7 @@ Dase.initUser = function() {
 	if (eid) {
 		Dase.user.eid = eid;
 		Dase.removeClass(Dase.$('logoffControl'),'hide');
-		Dase.getJSON(Dase.base_href + "json/" + eid + "/data",function(json){
+		Dase.getJSON(Dase.base_href + "json/user/" + eid + "/data",function(json){
 				Dase.user.name = json[eid]['name'];
 				Dase.user.tags = json[eid]['tags'];
 				Dase.user.collections = json[eid]['collections'];
@@ -158,7 +158,7 @@ Dase.placeUserSearchCollections = function() {
 	if (!sel)  return; 
 	var opt = document.createElement('option');
 	opt.setAttribute('value','');
-	opt.appendChild(document.createTextNode('All Collections'));
+	opt.appendChild(document.createTextNode('All Public Collections'));
 	sel.appendChild(opt);
 	if (!sel) return; 
 	for (var i=0;i<Dase.user.collections.length;i++) {
@@ -462,7 +462,11 @@ Dase.placeUserTags = function() {
 		} 
 	}
 	for (var type in sets) {
-		Dase.$(type).innerHTML = sets[type];
+		try{
+			Dase.$(type).innerHTML = sets[type];
+		} catch(e) {
+			alert(e);
+		}
 	}
 }
 
@@ -553,13 +557,6 @@ Dase.getAttributeTallies = function(coll) {
 			} } } });
 }
 
-Dase.initDynamicSearchForm = function() {
-	jQuery("select.dynamic").change(function() {
-			jQuery(this).parent().find("input[type=text]").attr("name",jQuery("option:selected",this).attr("value"));
-			});
-}
-
-
 Dase.createXMLHttpRequest = function() {
 	var xmlhttp;
 	if (window.XMLHttpRequest) {
@@ -591,6 +588,25 @@ Dase.getHtml = function(url,elem_id,my_func) {
 			Dase.$(elem_id).innerHTML = returnStr;
 			if (my_func) {
 				my_func();
+			}
+		} else {
+			// wait for the call to complete
+		}
+	}
+}
+
+Dase.ajax = function(url,method,my_func) {
+	if (!method) {
+		method = 'POST';
+	}
+	var xmlhttp = Dase.createXMLHttpRequest();
+	xmlhttp.open(method, url, true);
+	xmlhttp.send(null);
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var returnStr = xmlhttp.responseText;
+			if (my_func) {
+				my_func(returnStr);
 			}
 		} else {
 			// wait for the call to complete
@@ -649,36 +665,79 @@ Dase.getJSON = function(url,my_func) {
 	}
 }
 
-Dase.initSearchResults = function() {
-	var results = Dase.$('searchResults');
-	var json = Dase.$('itemsJson');
-	if (json) {
-		var items_json = eval('(' + json.innerHTML + ')');
-		for (var name in items_json ) {
-			var set = items_json[name];
-			var h2 = document.createElement('h2');
-			var thumbs = document.createElement('div');
-			var spacer = document.createElement('div');
-			spacer.className = 'spacer';
-			h2.appendChild(document.createTextNode(name + ' (' + set.length + ' items found)'));
-			var id_set = set.slice(0,30);
-			var id_list = id_set.join();
-			results.appendChild(h2);
-			results.appendChild(thumbs);
-			thumbs.appendChild(document.createTextNode(id_list));
-			results.appendChild(spacer);
-			//Dase.getElementHtml('html/item/thumbs/' + id_list,thumbs);
+Dase.initAddToCart = function() {
+	var sr = Dase.$('searchResults');
+	if (!sr) return;
+	var anchors = sr.getElementsByTagName('a');
+	for (var i=0;i<anchors.length;i++) {
+		if ('add to cart' == anchors[i].innerHTML) {
+			anchors[i].onclick = function(e) {
+				this.innerHTML = '(remove)';
+				Dase.removeClass(this.parentNode.getElementsByTagName('span')[0],'hide');
+				var inputElem = this.parentNode.parentNode.getElementsByTagName('input')[0];
+				var item = {};
+				item.item_id = inputElem.value;
+				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
+						function(resp) { 
+						Dase.initCart(); 
+						});
+				return false;
+			}
+			Dase.removeClass(anchors[i],'hide');
 		}
 	}
+}
+
+Dase.initCart = function() {
+	var sr = Dase.$('searchResults');
+	if (!sr) return;
+	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
+			function(json) { 
+			cart_tally = Dase.$('cart_tally');
+			if (cart_tally) {
+			cart_tally.innerHTML = json.length;
+			}
+			for (var i=0;i<json.length;i++) {
+			var in_cart = Dase.$('addToCart_'+ json[i].item_id);
+			if  (in_cart) {
+			//by default all search result thumbnails have an 'add to cart' link
+			//with id = addToCart_{item_id} when this initCart function runs,
+			//items currently in cart have link changed to '(remove)', the
+			//'in cart' label is unhidden, and the link id is set to removeFromCart_{tag_item_id}
+			//and the href is created that, sent with 'delete' http method, will
+			//delete item from user's cart
+			in_cart.innerHTML = '(remove)';
+			in_cart.id = 'removeFromCart_'+json[i].tag_item_id;
+			in_cart.href=Dase.base_href + 'user/' + Dase.user.eid + '/tag_items/' + json[i].tag_item_id;
+			Dase.removeClass(in_cart.parentNode.getElementsByTagName('span')[0],'hide');
+			Dase.addClass(in_cart,'inCart');
+			in_cart.item_id = json[i].item_id;
+			in_cart.onclick = function() {
+			//first, optimistically assume delete will work
+			//and reset this link to be an 'add to cart' link
+			this.innerHTML = 'add to cart';
+			this.id = 'addToCart_' + this.item_id;
+			var delete_url = this.href;
+			this.href = '#';
+			Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
+			Dase.ajax(delete_url,'DELETE',function(resp) {
+				Dase.initCart();
+				Dase.initAddToCart();
+				});
+			return false;
+			}
+			}
+			}
+			});
 }
 
 Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
-		Dase.initSearchResults();
 		Dase.initCheckImage();
-//		Dase.initDynamicSearchForm();
+		Dase.initCart();
+		Dase.initAddToCart();
 		/*
 		   Dase.prepareAddFileUpload();
 		   Dase.prepareAttributeFlags();

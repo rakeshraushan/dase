@@ -77,4 +77,26 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$user_data[$this->eid]['template_composite'] = $this->template_composite;
 		return Dase_Json::get($user_data);
 	}
+
+	public function getCart() {
+		$cart_data = array();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT ti.id,ti.item_id,t.id
+			FROM tag t, tag_item ti
+			WHERE t.id = ti.tag_id
+			AND t.dase_user_id = ?
+			AND t.tag_type_id = ?
+			";
+		$sth = $db->prepare($sql);	
+		$sth->execute(array($this->id,CART));
+		while (list($tag_item_id,$item_id,$tag_id) = $sth->fetch()) {
+			$item_id_array[] = array(
+				'tag_item_id' => $tag_item_id,
+				'item_id' => $item_id,
+				'tag_id' => $tag_id
+			);
+		}
+		return Dase_Json::get($item_id_array);
+	}
 }

@@ -30,6 +30,4 @@ EOF;
 }
 $html .= $html_coda;
 
-$tpl = new Dase_Html_Template;
-$tpl->setText($html);
-$tpl->display();
+Dase::display($html);

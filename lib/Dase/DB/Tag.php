@@ -27,7 +27,7 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 			AND m.size = t.size
 			AND t.tag_id = $this->id
 		";	
-		$tag_xml = Dase_Util::simplexml_append($tag->findOneAsXml(false),$tag_item->queryAsXml(false,$sql));
+		$tag_xml = Dase_Util::simplexml_append($tag->findAsXml(false),$tag_item->queryAsXml(false,$sql));
 		foreach ($tag_xml->tag_items->tag_item as $tag_item) {
 			$tag_item['url'] = APP_ROOT . '/media/' . $tag_item['p_collection_ascii_id'] . '/' . $tag_item['size'] . '/' . $tag_item['filename'];
 		}
@@ -45,5 +45,15 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		$st->execute(array($this->id));
 		$this->item_count = $st->fetchColumn();
 		return $this->item_count;
+	}
+
+	function getItemIds() {
+		$item_ids = array();
+		$tag_item = new Dase_DB_TagItem;
+		$tag_item->tag_id = $this->id;
+		foreach ($tag_item->findAll() as $row) {
+			$item_ids[] = $row['item_id'];
+		}
+		return $item_ids;
 	}
 }

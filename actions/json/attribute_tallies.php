@@ -1,11 +1,12 @@
 <?php
+
 $c = Dase::instance()->collection;
 $sql = "
 	SELECT id, ascii_id
 	FROM attribute
 	WHERE attribute.collection_id = ?
 	AND attribute.is_public = true;
-	";
+";
 $db = Dase_DB::get();
 $st = $db->prepare($sql);	
 $st->execute(array($c->id));
@@ -16,6 +17,4 @@ while ($row = $st->fetch()) {
 	$sth->execute(array($row['id']));
 	$tallies[$row['ascii_id']] = $sth->fetchColumn();
 }
-$tpl = new Dase_Json_Template;
-$tpl->setJson(Dase_Json::get($tallies));
-$tpl->display();
+Dase::display(Dase_Json::get($tallies));

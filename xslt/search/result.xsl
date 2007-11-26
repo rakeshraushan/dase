@@ -9,7 +9,7 @@
   <!-- include general stylesheet -->
   <xsl:include href="../site/stylesheet.xsl"/>
   <!-- use services to get any needed content -->
-  <xsl:variable name="items" select="document($atom)/atom:feed"/>
+  <xsl:variable name="items" select="document($src)/atom:feed"/>
   <!-- note that column numbers are hard-coded in 2 places below
   where they cannot be included in a predicate in a match-->
   <xsl:variable name="columns" select="5"/>
@@ -21,7 +21,7 @@
 	  <a href="{$items/atom:link[@rel='next']/@href}">next</a> 
 	</div>
 	<table>
-	  <xsl:apply-templates select="$items/atom:entry" mode="items"/>
+	    <xsl:apply-templates select="$items/atom:entry" mode="items"/>
 	</table>
 	<!-- we just need a place to stash the current url so our refine code can parse it -->
 	<div id="self_url" class="hide"><xsl:value-of select="$items/atom:link[@rel='self']/@href"/></div>
@@ -59,9 +59,6 @@
   </xsl:template>
 
   <xsl:template match="atom:entry[(position()-1) mod 5 = 0]" mode="items">
-	<xsl:variable name="coll" select="concat($app_root,'categories/collection')"/>
-	<xsl:variable name="index" select="concat($app_root,'categories/search_result/index')"/>
-	<xsl:variable name="item_id" select="concat($app_root,'categories/item_id')"/>
 	<xsl:text>
 	</xsl:text>
 	<tr>
@@ -69,8 +66,11 @@
 	  </xsl:text>
 	  <td>
 		<div class="checkNum">
-		  <input type="checkbox" name="item_id" value="{atom:category[@scheme=$item_id]/@term}"/>
+		  <input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}"/>
 		  <xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/search_result/index']/@label"/><xsl:text>.</xsl:text>
+		</div>
+		<div class="cartAdd">
+		  <span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
 		</div>
 		<div class="image">
 		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item-link']/@href}">
@@ -82,7 +82,7 @@
 			<xsl:value-of select="substring(atom:title,0,80)"/>
 			<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
 		  </h4>
-		  <h4 class="collection_name"><xsl:value-of select="atom:category[@scheme=$coll]/@label"/></h4>
+		  <h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
 		</div>
 
 	  </td>
@@ -91,8 +91,11 @@
 		</xsl:text>
 		<td>
 		  <div class="checkNum">
-			<input type="checkbox" name="img" value="{atom:id}"/>
+			<input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}"/>
 			<xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/search_result/index']/@label"/><xsl:text>.</xsl:text>
+		  </div>
+		  <div class="cartAdd">
+			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
 		  </div>
 		  <div class="image">
 			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item-link']/@href}">
@@ -104,7 +107,7 @@
 			  <xsl:value-of select="substring(atom:title,0,80)"/>
 			  <xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
 			</h4>
-			<h4 class="collection_name"><xsl:value-of select="atom:category[@scheme=$coll]/@label"/></h4>
+			<h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
 		  </div>
 		</td>
 		<!-- this will fill out blank cells in table-->

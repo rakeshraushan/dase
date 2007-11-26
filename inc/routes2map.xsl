@@ -36,6 +36,8 @@
 	<!-- may contain these attributes -->
 	<xsl:param name="action" select="@action"/>
 	<xsl:param name="auth" select="@auth"/>
+	<xsl:param name="mime" select="@mime"/>
+	<xsl:param name="nocache" select="@nocache"/>
 	<xsl:param name="params" select="@params"/>
 	<xsl:param name="method">
 	  <!-- if no method, use 'get' -->
@@ -55,6 +57,8 @@
 	  <xsl:with-param name="action" select="$action"/>
 	  <xsl:with-param name="params" select="$params"/>
 	  <xsl:with-param name="auth" select="$auth"/>
+	  <xsl:with-param name="mime" select="$mime"/>
+	  <xsl:with-param name="nocache" select="$nocache"/>
 	  <xsl:with-param name="method" select="$method"/>
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
@@ -66,6 +70,8 @@
 		<xsl:element name="action"><xsl:value-of select="$action"/></xsl:element>
 		<xsl:element name="method"><xsl:value-of select="$method"/></xsl:element>
 		<xsl:element name="auth"><xsl:value-of select="$auth"/></xsl:element>
+		<xsl:element name="mime"><xsl:value-of select="$mime"/></xsl:element>
+		<xsl:element name="nocache"><xsl:value-of select="$nocache"/></xsl:element>
 		<xsl:element name="params"><xsl:value-of select="$params"/></xsl:element>
 		<xsl:element name="collection"><xsl:value-of select="$collection"/></xsl:element>
 		<xsl:element name="name"><xsl:value-of select="$name"/></xsl:element>
@@ -79,6 +85,8 @@
 	<!-- we'll always get action, auth & method from invoking template -->
 	<xsl:param name="action"/>
 	<xsl:param name="auth"/>
+	<xsl:param name="mime"/>
+	<xsl:param name="nocache"/>
 	<xsl:param name="method"/>
 	<xsl:param name="params"/>
 	<xsl:param name="collection"/>
@@ -110,6 +118,8 @@
 	  <xsl:element name="action"><xsl:value-of select="$action"/></xsl:element>
 	  <xsl:element name="method"><xsl:value-of select="$method"/></xsl:element>
 	  <xsl:element name="auth"><xsl:value-of select="$auth"/></xsl:element>
+	  <xsl:element name="mime"><xsl:value-of select="$mime"/></xsl:element>
+	  <xsl:element name="nocache"><xsl:value-of select="$nocache"/></xsl:element>
 	  <xsl:element name="params"><xsl:value-of select="$local-params"/></xsl:element>
 	  <xsl:element name="collection"><xsl:value-of select="$collection"/></xsl:element>
 	  <xsl:element name="name"><xsl:value-of select="$name"/></xsl:element>
