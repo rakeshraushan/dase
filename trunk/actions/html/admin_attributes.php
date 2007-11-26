@@ -16,6 +16,4 @@ EOF;
 	}
 }
 $html .="</ul></div>";
-$tpl = new Dase_Html_Template;
-$tpl->setText($html);
-$tpl->display();
+Dase::display($html);

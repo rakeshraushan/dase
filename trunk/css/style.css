@@ -314,15 +314,22 @@ a.chk,a.unchk {
 	margin: 0;
 }
 
-table.itemDisplay  td {
+table.itemDisplay td {
 	border: 1px solid #d9c8ad;
 	vertical-align: top;
-	padding: 18px;
+	padding: 10px 24px;
 }
 
-table.itemDisplay  td.metadata {
+table.itemDisplay td.metadata {
+	padding: 12px 24px;
 	width: 100%;
 	background-color:#fff;
+}
+
+table.itemDisplay td.image h2 {
+	color:#336;
+	font-size: 1.2em;
+	margin:0 0 10px 0;
 }
 
 
@@ -478,13 +485,32 @@ div#searchResults h2 {
 #searchResults td div.checkNum {
 	float: left; 
 }
+#searchResults td div.cartAdd {
+	float: right; 
+	margin: 0 5px 0 0;
+}
+#searchResults td div.cartAdd a {
+	font-weight: normal;
+	padding: 1px 5px;
+}
+#searchResults td div.cartAdd a:hover {
+	background-color:#fff0d9;
+	text-decoration: underline;
+}
+#searchResults td div.cartAdd span {
+	color: #700c0c;
+	font-weight: bold;
+}
 #searchResults div.caption .collection_name {
 	font-weight: normal;
 	color: #669;
 	font-size: .95em;
 }
-#searchResults div.caption,div.image {
-	padding: 10px 5px 0 5px;
+#searchResults div.image {
+	margin-top: 25px;
+}
+#searchResults div.caption {
+	padding: 10px 3px 0 3px;
 }
 #searchResults h1 {
 	font-size: 1.4em;
@@ -508,3 +534,4 @@ ul#mediaLinks a {
 	color: #336;
 	line-height: 1.4em;
 }
+

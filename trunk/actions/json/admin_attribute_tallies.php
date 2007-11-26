@@ -12,15 +12,13 @@ $sql = "
 	SELECT count(DISTINCT value_text) 
 	FROM value WHERE attribute_id = ? 
 	AND value.item_id IN
-		(SELECT id FROM item
-		WHERE item.collection_id = $c->id)
-		";
+	(SELECT id FROM item
+	WHERE item.collection_id = $c->id)
+	";
 $sth = $db->prepare($sql);
 $tallies = array();
 while ($row = $st->fetch()) {
 	$sth->execute(array($row['id']));
 	$tallies[$row['ascii_id']] = $sth->fetchColumn();
 }
-$tpl = new Dase_Json_Template;
-$tpl->setJson(Dase_Json::get($tallies));
-$tpl->display();
+Dase::display(Dase_Json::get($tallies));

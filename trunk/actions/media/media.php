@@ -187,6 +187,7 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 	if (!$content_type) {
 		$content_type = 'application/octet-stream';
 	}
+	/* original 
 	header('Last-Modified: '.date('r',filemtime($path)));
 	header('Content-Length: '.filesize($path));
 	header('Content-Type: '.$content_type);
@@ -197,6 +198,26 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 	}
 	readfile($path);
 	return;
+	 */
+
+	/*  test */
+	$headers = apache_request_headers();
+	// Checking if the client is validating its cache and if it is current.
+	if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($path))) {
+		// Client's cache IS current, so we just respond '304 Not Modified'.
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($path)).' GMT', true, 304);
+	} else {
+		// Image not cached or cache outdated, we respond '200 OK' and output the image.
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($path)).' GMT', true, 200);
+		header('Content-Length: '.filesize($path));
+		header('Content-Type: '.$content_type);
+		if ($download) {
+			header("Content-Disposition: attachment; filename=$filename");
+		} else {
+			header("Content-Disposition: inline; filename=$filename");
+		}
+		print file_get_contents($path);
+	}
 }
 
 /*

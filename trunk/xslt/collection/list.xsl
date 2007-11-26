@@ -5,7 +5,7 @@
   <!-- include general stylesheet -->
   <xsl:include href="../site/stylesheet.xsl"/>
   <!-- use services to get any needed content -->
-  <xsl:variable name="collections-list" select="document($collections)/collections"/>
+  <xsl:variable name="collections-list" select="document($src)/collections"/>
 
   <xsl:template match="insert-collection-list-items">
 	<xsl:apply-templates select="$collections-list"/>

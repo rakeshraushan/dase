@@ -9,6 +9,7 @@ class Dase
 	public static $user;
 	public $url_params = array();    
 	public $request_url = '';    
+	public $response_mime_type = '';
 	public $query_string = '';    
 
 	public function __construct() {}
@@ -245,6 +246,9 @@ class Dase
 		if (isset($query_string) && $query_string) {
 			$controller->query_string = $query_string;
 			$url_params = $controller->parseQuery(urldecode($query_string));
+		} else {
+			$query_string = '';
+			$controller->query_string = '';
 		}
 
 		/* Trim off any leading or trailing slashes */
@@ -324,8 +328,25 @@ class Dase
 					//default auth is user!!!!!!!!!!!!!
 					Dase::checkUser('user');
 				}
+				if (!isset($conf_array['mime'])) { 
+					$conf_array['mime'] = 'text/html'; 
+				}
+				$controller->response_mime_type = $conf_array['mime'];
 				$handler = DASE_PATH . $module_prefix . '/actions/' . $conf_array['action'] . '.php';
 				if(file_exists($handler)) {
+					//check cache, but only for 'get' method
+					//NOTE that using the cache means you use the mime
+					//type specified in 'routes.xml', so to set mime at
+					//runtime, nocache="yes" should be set in routes.xml 
+					//for the particular route
+					if ('get' == $method && !isset($conf_array['nocache'])) {
+						$cache = new Dase_FileCache();
+						$page = $cache->get();
+						if ($page) {
+							Dase::display($page,false);
+							exit;
+						} 
+					}
 					$msg = Dase::filterGet('msg');
 					include($handler);
 					exit;
@@ -365,6 +386,22 @@ class Dase
 
 		//		$tpl->assign('code',$code);
 		//		$tpl->display('error/index.tpl');
+		exit;
+	}
+
+	public static function display($content,$set_cache = true,$mime = '') {
+		if ($set_cache) {
+			$cache = new Dase_FileCache();
+			$cache->set($content);
+		}
+		$mime = $mime ? $mime : Dase::instance()->response_mime_type;
+
+		//note: firefox gives me all sorts of trouble when I send
+		//application/xhtml+xml.  this is a well-documented problem:
+		//http://groups.google.com/group/habari-dev/msg/91d736688ee445ad
+
+		header("Content-Type: $mime; charset=utf-8");
+		echo $content;
 		exit;
 	}
 
