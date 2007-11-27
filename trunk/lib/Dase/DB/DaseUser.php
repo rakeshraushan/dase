@@ -8,13 +8,14 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$tag_array;
 		foreach (Dase_DB_Tag::getByUser($this) as $row) {
 			if (CART == $row['tag_type_id']) {
-				$tag_array['cart'][$row['ascii_id']] = $row['name'];
+				//$tag_array['cart'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
+				$tag_array['cart'][$row['ascii_id']] = $row['count'];
 			}
 			if (USER_COLLECTION == $row['tag_type_id']) {
-				$tag_array['user_collection'][$row['ascii_id']] = $row['name'];
+				$tag_array['user_collection'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
 			}
 			if (SLIDESHOW == $row['tag_type_id']) {
-				$tag_array['slideshow'][$row['ascii_id']] = $row['name'];
+				$tag_array['slideshow'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
 			}
 		}
 		$subs = new Dase_DB_Subscription;
@@ -79,7 +80,7 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 	}
 
 	public function getCart() {
-		$cart_data = array();
+		$item_id_array = array();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT ti.id,ti.item_id,t.id
@@ -98,5 +99,10 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 			);
 		}
 		return Dase_Json::get($item_id_array);
+	}
+
+	function expireDataCache() {
+		$cache = new Dase_FileCache("json/user/$this->eid/data");
+		$cache->expire();
 	}
 }

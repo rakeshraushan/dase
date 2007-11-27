@@ -1,16 +1,6 @@
 <?php
 
-/*
-$conf['modules']['vrc'] = 'vrc_collection';
-$conf['modules']['efossils'] = 'efossils_collection';
-$conf['modules']['elucy'] = 'efossils_collection';
-$conf['modules']['pkeane'] = 'keanepj_collection';
-$conf['modules']['search'] = 1;
-$conf['modules']['dbadmin'] = 1;
-$conf['modules']['eid_auth'] = 0;
-$conf['modules']['starter'] = 0;
-$conf['modules']['friesen'] = 'friesen_collection';
- */
+$conf['path_to_media'] = '/mnt/www-data/dase/media';
 
 $conf['superuser'][] = 'pkeane';
 
@@ -38,11 +28,16 @@ if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 }
 //also allow modules to overide config if
 //request is coming from a module
+//note that passwords in modules will
+//likely get checked in
 if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
 	include(MODULE_PATH . '/inc/config.php');
 }	
 
 //default lookup values
+//basing id's on array indexes
+//here is way too fragile &
+//generally a bad idea
 
 $conf['html_input_type'][] = 'checkboxes';
 $conf['html_input_type'][] = 'list_box';

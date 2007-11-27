@@ -1,6 +1,7 @@
 <?php
 
 $u = Dase_User::get($params['eid']);
+$u->expireDataCache();
 $tag_item = new Dase_DB_TagItem;
 $tag_item->load($params['tag_item_id']);
 $tag = new Dase_DB_Tag;
@@ -10,5 +11,6 @@ if ($tag->dase_user_id == $u->id) {
 	echo "tag item {$params['tag_item_id']} deleted!";
 	exit;
 } else {
+	echo "dddd";
 	Dase::error(401);
 }

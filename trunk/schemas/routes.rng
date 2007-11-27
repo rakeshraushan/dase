@@ -4,9 +4,7 @@
     <element name="routes">
       <oneOrMore>
         <element name="route">
-          <attribute name="action">
-            <data type="NCName"/>
-          </attribute>
+          <attribute name="action"/>
           <optional>
             <attribute name="auth">
               <data type="NCName"/>
@@ -18,6 +16,14 @@
             </attribute>
           </optional>
           <optional>
+            <attribute name="mime"/>
+          </optional>
+          <optional>
+            <attribute name="nocache">
+              <data type="NCName"/>
+            </attribute>
+          </optional>
+          <optional>
             <attribute name="params">
               <data type="NCName"/>
             </attribute>
@@ -25,19 +31,10 @@
           <zeroOrMore>
             <element name="match">
               <optional>
-                <attribute name="auth">
-                  <data type="NCName"/>
-                </attribute>
+                <attribute name="caps"/>
               </optional>
               <optional>
-                <attribute name="caps">
-                  <data type="NCName"/>
-                </attribute>
-              </optional>
-              <optional>
-                <attribute name="params">
-                  <data type="NCName"/>
-                </attribute>
+                <attribute name="params"/>
               </optional>
               <text/>
             </element>
