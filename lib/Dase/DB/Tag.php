@@ -5,9 +5,25 @@ require_once 'Dase/DB/Autogen/Tag.php';
 class Dase_DB_Tag extends Dase_DB_Autogen_Tag 
 {
 	public static function getByUser($user) {
-		$tag = new Dase_DB_Tag;
-		$tag->dase_user_id = $user->id;
-		return $tag->findAll();
+		//$tag = new Dase_DB_Tag;
+		//$tag->dase_user_id = $user->id;
+		//return $tag->findAll();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,count(ti.id)
+			FROM tag t , tag_item ti
+			WHERE t.id = ti.tag_id
+			AND t.dase_user_id = ?
+			GROUP BY t.id,t.ascii_id,t.name,t.tag_type_id
+			UNION
+			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,0
+			FROM tag t 
+			WHERE NOT EXISTS(SELECT * FROM tag_item ti WHERE ti.tag_id = t.id)
+			AND t.dase_user_id = ?
+		";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($user->id,$user->id));
+		return $sth->fetchAll();
 	}
 
 	function getXml() {

@@ -1,4 +1,12 @@
-if (!Dase) { var Dase = {}; }
+var Dase;
+if (Dase && (typeof Dase != "object" || Dase.NAME)) {
+	throw new Error("Namespace 'Dase' already exists");
+}
+
+// Create our namespace, and specify some meta-information
+Dase = {};
+Dase.NAME = "Dase";    // The name of this namespace
+Dase.VERSION = 1.0;    // The version of this namespace
 
 /* from DOM Scripting p. 103 */
 Dase.addLoadEvent = function(func) {
@@ -11,17 +19,18 @@ Dase.addLoadEvent = function(func) {
 				oldonload();
 			}
 			func();
-		}
+		};
 	}
-}
+};
 
 Dase.$ = function(id) {
 	return document.getElementById(id);
-}
+};
+
 Dase.user = {};
 Dase.base_href = document.getElementsByTagName('base')[0].href;
 Dase.setCookieData = function() {
-}
+};
 Dase.getCookieData = function() {
 	/*
 	   if dase cookie exists, get data
@@ -29,7 +38,7 @@ Dase.getCookieData = function() {
 	   if so, ajaxily get data and store in cookie
 	   else return null		
 	 */
-}
+};
 
 Dase.addClass = function(elem,cname) {
 	if (elem.className) {
@@ -37,7 +46,7 @@ Dase.addClass = function(elem,cname) {
 	} else {
 		elem.className = cname;
 	}
-}
+};
 
 Dase.removeClass = function(elem,cname) {
 	var cnames = elem.className.split(" ");
@@ -48,7 +57,7 @@ Dase.removeClass = function(elem,cname) {
 		}
 	}
 	elem.className = newClassName;
-}
+};
 
 Dase.hasClass = function(elem,cname) {
 	var cnames = elem.className.split(" ");
@@ -58,14 +67,14 @@ Dase.hasClass = function(elem,cname) {
 		}
 	}
 	return false;
-}
+};
 
 Dase.displayError = function(msg) {
 	var jsalert = Dase.$('msg');
 	Dase.removeClass(jsalert,'hide');
 	jsalert.innerHTML = '';
 	jsalert.innerHTML = msg;
-}
+};
 
 Dase.toggle = function(el) {
 	if (Dase.hasClass(el,'hide')) {
@@ -73,7 +82,7 @@ Dase.toggle = function(el) {
 	} else {
 		Dase.addClass(el,'hide');
 	}
-}
+};
 
 Dase.initUser = function() {
 	// from rhino 5th ed. p. 460 
@@ -90,9 +99,9 @@ Dase.initUser = function() {
 		Dase.user.eid = eid;
 		Dase.removeClass(Dase.$('logoffControl'),'hide');
 		Dase.getJSON(Dase.base_href + "json/user/" + eid + "/data",function(json){
-				Dase.user.name = json[eid]['name'];
-				Dase.user.tags = json[eid]['tags'];
-				Dase.user.collections = json[eid]['collections'];
+				Dase.user.name = json[eid].name;
+				Dase.user.tags = json[eid].tags;
+				Dase.user.collections = json[eid].collections;
 				Dase.placeUserName();
 				Dase.placeUserTags();
 				Dase.placeUserCollections();
@@ -103,19 +112,19 @@ Dase.initUser = function() {
 	} else {
 		Dase.removeClass(Dase.$('loginControl'),'hide');
 	}
-}
+};
 
 Dase.placeUserName = function() {
 	var nameElem = Dase.$('userName');
 	nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
 	var eidElem = Dase.$('eid');
 	eidElem.innerHTML = Dase.user.eid;
-}
+};
 
 Dase.placeUserCollections = function() {
 	var cartLink = Dase.$('cartLink');
 	if (cartLink) {
-		cartLink.setAttribute('href',Dase.user.eid+'/cart/');
+		cartLink.setAttribute('href','user/'+Dase.user.eid+'/cart/');
 	}
 	var hasSpecial = 0;
 	var coll_list = Dase.$('collectionList');
@@ -150,7 +159,7 @@ Dase.placeUserCollections = function() {
 	if (hasSpecial) {
 		Dase.removeClass(Dase.$('specialAccessLabel'),'hide');
 	}
-}
+};
 
 Dase.placeUserSearchCollections = function() {
 	var maxCollName = 30;
@@ -163,7 +172,7 @@ Dase.placeUserSearchCollections = function() {
 	if (!sel) return; 
 	for (var i=0;i<Dase.user.collections.length;i++) {
 		var c = Dase.user.collections[i];
-		var opt = document.createElement('option');
+		opt = document.createElement('option');
 		opt.setAttribute('value',c.ascii_id);
 		var label = Dase.truncate(c.collection_name,maxCollName);
 		opt.appendChild(document.createTextNode(label));
@@ -171,10 +180,10 @@ Dase.placeUserSearchCollections = function() {
 	}
 	sel.onchange = function() {
 		Dase.setCollectionAtts(this.options[this.selectedIndex].value);
-	}
+	};
 
 	Dase.$('refineCheckbox').onchange = Dase.searchRefine;
-}
+};
 
 Dase.searchRefine = function() {
 	var formDiv = Dase.$('refinements');
@@ -198,7 +207,8 @@ Dase.searchRefine = function() {
 	var current = String(Dase.$('self_url').innerHTML);
 	var parts = (current.split('?'));
 	var url_string = parts[0];
-	var qstring = decodeURIComponent(parts[1]);
+	//note that '+' are replaced in the xslt stylesheet
+	var qstring = decodeURI(parts[1]);
 	var qpairs = qstring.split('&amp;');
 	for (var i=0;i<qpairs.length; i++) {
 		var qp = qpairs[i];
@@ -211,14 +221,14 @@ Dase.searchRefine = function() {
 			formDiv.appendChild(hidden);
 			if ('c' != keyval[0] && 'nc' != keyval[0]) {
 				//check for collection_ascii_id in key and value
-				c1 = re.exec(keyval[0]);
-				c2 = re.exec(keyval[1]);
+				var c1 = re.exec(keyval[0]);
+				var c2 = re.exec(keyval[1]);
 				if (c1) {
-					Dase.limitSearchToCollection(new Array(c1));
+					Dase.limitSearchToCollection([c1]);
 					single_collection_flag = 1;
 				}
 				if (c2) {
-					Dase.limitSearchToCollection(new Array(c2));
+					Dase.limitSearchToCollection([c2]);
 					single_collection_flag = 1;
 				}
 			} else {
@@ -233,13 +243,13 @@ Dase.searchRefine = function() {
 		hidden.setAttribute('name','collection_ascii_id');
 		hidden.setAttribute('value',collection);
 		formDiv.appendChild(hidden);
-		Dase.limitSearchToCollection(new Array(collection));
+		Dase.limitSearchToCollection([collection]);
 		single_collection_flag = 1;
 	} 
 	if (!single_collection_flag && colls_array.length) {
 		Dase.limitSearchToCollection(colls_array);
 	}
-}
+};
 
 Dase.limitSearchToCollection = function(c_ascii_array) {
 	//remove all collection option except for c_ascii_array
@@ -266,7 +276,7 @@ Dase.limitSearchToCollection = function(c_ascii_array) {
 		sel.appendChild(opt);
 		Dase.setCollectionAtts('');
 	}
-}
+};
 
 Dase.setCollectionAtts = function(coll) {
 	//you can pass in a coll OR use as an event handler
@@ -278,7 +288,7 @@ Dase.setCollectionAtts = function(coll) {
 		sel.removeChild(sel.childNodes[0]);
 	}
 	var maxAttName = 40;
-	if ('' == coll) {
+	if ('' === coll) {
 		Dase.addClass(Dase.$('preposition'),'hide');
 		Dase.addClass(sel,'hide');
 	} else {
@@ -299,24 +309,21 @@ Dase.setCollectionAtts = function(coll) {
 				Dase.removeClass(sel,'hide');
 				});
 	}
-}
+};
 
 Dase.specifyQueryType = function() {
 	var opt = this.options[this.selectedIndex];
 	var query = Dase.$('queryInput');
 	if (!query) return; 
 	query.name = opt.value;
-}
-
-
+};
 
 Dase.truncate = function(str,len) {
-	var s = new String(str);
-	if (s.length <= len ) return str;
-	var small = s.slice(0,len);
+	if (str.length <= len ) return str;
+	var small = str.slice(0,len);
 	small = small + '...';
 	return small.toString();
-}
+};
 
 Dase.initMenu = function(id) { 
 	var menu = Dase.$(id);
@@ -340,12 +347,12 @@ Dase.initMenu = function(id) {
 						} else {
 							return true;
 						}
-					}
+					};
 				}
 			}
 		}
 	}
-}
+};
 
 Dase.initCheckImage = function() { 
 	var thumbs = Dase.$('searchResults');
@@ -364,9 +371,9 @@ Dase.initCheckImage = function() {
 			} else {
 				Dase.addClass(img,'checked');
 			}
-		}
+		};
 	}	   
-}
+};
 
 Dase.multicheck = function(c) { 
 	var coll_list = Dase.$('collectionList');
@@ -382,7 +389,7 @@ Dase.multicheck = function(c) {
 	var boxes = coll_list.getElementsByTagName('input');
 	multi.onclick = function() {
 		for (var i=0; i<boxes.length; i++) {
-			box = boxes[i];
+			var box = boxes[i];
 			if ('uncheck' == this.className) {
 				//box.removeAttribute('checked');
 				box.checked = null;
@@ -399,7 +406,7 @@ Dase.multicheck = function(c) {
 			this.className = 'uncheck';
 		}
 		return false;
-	}
+	};
 	/* changes the color of the collection name when box
 	 * next to it is checked/unchecked
 	 */
@@ -411,9 +418,9 @@ Dase.multicheck = function(c) {
 			} else {
 				link.className = c;
 			}
-		}
+		};
 	}	   
-}
+};
 
 Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
@@ -424,33 +431,39 @@ Dase.getItemTallies = function() {
 				tally.innerHTML = '(' + json[ascii_id] + ')';
 				} } });
 	}
-}
+};
 
 Dase.placeUserTags = function() {
 	var eid = Dase.user.eid;
 	var json = Dase.user.tags;
 	var tags={};
 	var sets = {};
-	tags['allTags'] = Dase.$('allTags');
+	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
 			if ('cart' != type) {
 				var jsonAscii = jsonType[ascii];
-				if (sets['allTags']) {
-					sets['allTags'] = sets['allTags'] + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
+				//we populate 'sets' as we go
+				//populate list of ALL tags that can be copied to from cart
+				//concat...
+				if (sets.allTags) {
+					sets.allTags = sets.allTags + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
 				} else {
-					sets['allTags'] = "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
+					//first time through...
+					sets.allTags = "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
 				}
 				if (sets[type]) {
+					//concat...
 					//note that subscriptions don't REALLY use the ascii_id -- it's actually the tag id
 					if ('subscription' == type) {
-						id = ascii.substring(1);
+						var id = ascii.substring(1);
 						sets[type] = sets[type] + "<li><a href='html/tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
 					} else {
 						sets[type] = sets[type] + "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				} else {
+					//first time through...
 					if ('subscription' == type) {
 						id = ascii.substring(1);
 						sets[type] = "<li><a href='html/tag/" + id + "'>" + jsonAscii + "</a></li>\n";
@@ -458,6 +471,9 @@ Dase.placeUserTags = function() {
 						sets[type] = "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				}
+			} else { // cart tally
+				var cart_tally = Dase.$('cart_tally');
+				cart_tally.innerHTML = jsonType[ascii];
 			}
 		} 
 	}
@@ -468,7 +484,7 @@ Dase.placeUserTags = function() {
 			alert(e);
 		}
 	}
-}
+};
 
 Dase.initBrowse = function() {
 	if (Dase.$('browseColumns')) {
@@ -489,17 +505,19 @@ Dase.initBrowse = function() {
 				}
 				this.className = 'spill';
 				return false;
-			}
+			};
 		}
 	}
-}
+};
 
 Dase.getAttributes = function(url) {
-	Dase.getHtml(url,'attColumn',function() {Dase.bindGetValues(Dase.$('collectionAsciiId').className)});
+	Dase.getHtml(url,'attColumn',function() {
+			Dase.bindGetValues(Dase.$('collectionAsciiId').className);
+			});
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
 	val_coll.innerHTML = '';
-}
+};
 
 
 Dase.bindGetValues = function(coll) {
@@ -517,10 +535,10 @@ Dase.bindGetValues = function(coll) {
 				}
 				this.className = 'spill';
 				return false;
-			}
+			};
 		}
 	}
-}
+};
 
 Dase.getAttributeTallies = function(coll) {
 	var url;
@@ -542,7 +560,7 @@ Dase.getAttributeTallies = function(coll) {
 			//var tally = Dase.$('tally-'+ascii_id).parentNode.getElementsByTagName('span')[0];
 			var tally = Dase.$('tally-'+ascii_id);
 			if (tally) {
-			if (is_admin && 0 == json[ascii_id]) {
+			if (is_admin && 0 === json[ascii_id]) {
 			//make admin atts w/ no values disappear
 			tally.parentNode.className = 'hide';
 			} else {
@@ -555,7 +573,7 @@ Dase.getAttributeTallies = function(coll) {
 			Dase.removeClass(Dase.$('attList'),'hide');
 			}
 			} } } });
-}
+};
 
 Dase.createXMLHttpRequest = function() {
 	var xmlhttp;
@@ -567,7 +585,7 @@ Dase.createXMLHttpRequest = function() {
 		alert('Perhaps your browser does not support xmlhttprequests?');
 	}
 	return xmlhttp;
-}
+};
 
 Dase.getHtml = function(url,elem_id,my_func) {
 	var target = Dase.$(elem_id);
@@ -592,8 +610,8 @@ Dase.getHtml = function(url,elem_id,my_func) {
 		} else {
 			// wait for the call to complete
 		}
-	}
-}
+	};
+};
 
 Dase.ajax = function(url,method,my_func) {
 	if (!method) {
@@ -611,8 +629,8 @@ Dase.ajax = function(url,method,my_func) {
 		} else {
 			// wait for the call to complete
 		}
-	}
-}
+	};
+};
 
 Dase.getElementHtml = function(url,target,my_func) {
 	//this assumes a DOM node being passed in (NOT elem id)
@@ -621,8 +639,8 @@ Dase.getElementHtml = function(url,target,my_func) {
 	}
 
 	// this is to deal with IE6 cache behavior
-	//var date = new Date();
-	//url = url + '?' + date.getTime();
+	var date = new Date();
+	url = url + '?' + date.getTime();
 
 	var xmlhttp = Dase.createXMLHttpRequest();
 	xmlhttp.open('GET', url, true);
@@ -637,13 +655,15 @@ Dase.getElementHtml = function(url,target,my_func) {
 		} else {
 			// wait for the call to complete
 		}
-	}
-}
+	};
+};
 
 Dase.getJSON = function(url,my_func) {
 	var xmlhttp = Dase.createXMLHttpRequest();
 
 	// this is to deal with IE6 cache behavior
+	// also note that JSON data needs to be up-to-the-second
+	// accurate given the way we currently do deletes!
 	var date = new Date();
 	url = url + '?' + date.getTime();
 
@@ -662,8 +682,8 @@ Dase.getJSON = function(url,my_func) {
 			// wait for the call to complete
 		}
 		return false;
-	}
-}
+	};
+};
 
 Dase.initAddToCart = function() {
 	var sr = Dase.$('searchResults');
@@ -682,20 +702,24 @@ Dase.initAddToCart = function() {
 						Dase.initCart(); 
 						});
 				return false;
-			}
+			};
 			Dase.removeClass(anchors[i],'hide');
 		}
 	}
-}
+};
 
 Dase.initCart = function() {
 	var sr = Dase.$('searchResults');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
 			function(json) { 
-			cart_tally = Dase.$('cart_tally');
+			var cart_tally = Dase.$('cart_tally');
 			if (cart_tally) {
+			if (undefined !== json.length) {
 			cart_tally.innerHTML = json.length;
+			} else {
+			cart_tally.innerHTML = 0;
+			}
 			}
 			for (var i=0;i<json.length;i++) {
 			var in_cart = Dase.$('addToCart_'+ json[i].item_id);
@@ -713,23 +737,23 @@ Dase.initCart = function() {
 			Dase.addClass(in_cart,'inCart');
 			in_cart.item_id = json[i].item_id;
 			in_cart.onclick = function() {
-			//first, optimistically assume delete will work
-			//and reset this link to be an 'add to cart' link
-			this.innerHTML = 'add to cart';
-			this.id = 'addToCart_' + this.item_id;
-			var delete_url = this.href;
-			this.href = '#';
-			Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
-			Dase.ajax(delete_url,'DELETE',function(resp) {
-				Dase.initCart();
-				Dase.initAddToCart();
-				});
-			return false;
-			}
+				//first, optimistically assume delete will work
+				//and reset this link to be an 'add to cart' link
+				this.innerHTML = 'add to cart';
+				this.id = 'addToCart_' + this.item_id;
+				var delete_url = this.href;
+				this.href = '#';
+				Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
+				Dase.ajax(delete_url,'DELETE',function(resp) {
+						Dase.initCart();
+						Dase.initAddToCart();
+						});
+				return false;
+			};
 			}
 			}
 			});
-}
+};
 
 Dase.addLoadEvent(function() {
 		Dase.initUser();

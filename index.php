@@ -1,5 +1,5 @@
 <?php
-ini_set('include_path','.:lib:lib/Smarty:plugins');
+ini_set('include_path','.:lib:lib/Smarty');
 
 define('DASE_PATH', dirname(__FILE__));
 
@@ -21,7 +21,6 @@ define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('CACHE_DIR', DASE_PATH . '/cache/');
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('XSLT_PATH', DASE_PATH . '/xslt/');
-define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 define('CART',1);
 define('USER_COLLECTION',2);
 define('SLIDESHOW',3);

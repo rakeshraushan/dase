@@ -1,6 +1,7 @@
 <?php
 
 $u = Dase_User::get($params['eid']);
+$u->expireDataCache();
 $tag = new Dase_DB_Tag;
 $tag->dase_user_id = $u->id;
 $tag->tag_type_id = CART;

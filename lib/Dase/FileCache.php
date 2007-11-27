@@ -5,7 +5,7 @@
 class Dase_FileCache {
 	private $filename;
 	private $tempfilename;
-	private $expiration = 10;
+	private $ttl = 10;
 	private $cache_dir = CACHE_DIR;
 
 	function __construct($file='') {
@@ -23,8 +23,13 @@ class Dase_FileCache {
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
-	function setExpiration($exp) {
-		$this->expiration = $exp;
+	function setTimeToLive($exp) {
+		$this->ttl = $exp;
+	}
+
+	function expire() {
+		//Dase::log('standard','expired ' . $this->getLoc());
+		unlink($this->getLoc());
 	}
 
 	function getLoc() {
@@ -37,10 +42,10 @@ class Dase_FileCache {
 		if (!file_exists($filename)) {
 			return false;
 		}
-		if($this->expiration) {
+		if($this->ttl) {
 			$stat = @stat($filename);
 			if($stat[9]) {
-				if(time() > $stat[9] + $this->expiration) {
+				if(time() > $stat[9] + $this->ttl) {
 					unlink($filename);
 					return false;
 				}

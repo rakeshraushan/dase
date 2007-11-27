@@ -1,4 +1,13 @@
 <?php  
+include "inc/config.php";
+define('MEDIA_ROOT', $conf['path_to_media']);
+
+//need to filter these
+$collection = $_GET['collection'];
+$size = $_GET['size'];
+$filename = $_GET['filename'];
+$download = $_GET['force_download'];
+
 //ini_set('display_errors',1);
 //error_reporting(E_ALL);
 //0 means all access, 1 means EID only, 2 means collection owner
@@ -94,10 +103,6 @@ $public_access_collections = array(
 	'eskeletons_collection',
 	'american_politics_collection'
 );
-$collection = $params['collection']; 
-$size = $params['size']; 
-$filename = $params['filename']; 
-$download = Dase::filterGet('force_download');
 
 if (stristr($filename,'..')) { //prevent hacker from going up dir tree
 	exit;
@@ -201,6 +206,7 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 	 */
 
 	/*  test */
+	//from php.net
 	$headers = apache_request_headers();
 	// Checking if the client is validating its cache and if it is current.
 	if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($path))) {
@@ -219,29 +225,4 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 		print file_get_contents($path);
 	}
 }
-
-/*
- * from php.net:
- When using PHP to output an image, it won't be cached by the client so if you don't want them to download the image each time they reload the page, you will need to emulate part of the HTTP protocol.
- Here's how:
-<?php
-Test image.
-$fn = '/test/foo.png';
-// Getting headers sent by the client.
-$headers = apache_request_headers();
-// Checking if the client is validating his cache and if it is current.
-if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($fn))) {
-	// Client's cache IS current, so we just respond '304 Not Modified'.
-	header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 304);
-} else {
-	// Image not cached or cache outdated, we respond '200 OK' and output the image.
-	header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($fn)).' GMT', true, 200);
-	header('Content-Length: '.filesize($fn));
-	header('Content-Type: image/png');
-	print file_get_contents($fn);
-}
-?>
-	That way foo.png will be properly cached by the client and you'll save bandwith. :)
- */
-
 

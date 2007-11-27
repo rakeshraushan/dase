@@ -49,6 +49,10 @@
 	<match params="md5_hash">atom/search/md5</match>
   </route>
 
+  <route action="atom/user_tag" auth="none" mime="application/atom+xml">
+	<match caps="eid" params="id">atom/user/([^/]*)/tag/id</match>
+  </route>
+
   <route action="atom/item" auth="none" mime="application/atom+xml">
 	<match caps="collection_ascii_id" params="serial_number">atom/([^/]*_collection)</match>
   </route>
@@ -59,7 +63,7 @@
   </route>
 
   <!-- NOTE: eid should always be preceded by 'user' in regex -->
-  <route action="json/user_data" auth="eid" mime="application/json">
+  <route action="json/user_data" auth="eid" mime="application/json" nocache="custom">
 	<match caps="eid">json/user/([^/]*)/data</match>
   </route>
 
@@ -98,7 +102,7 @@
 	<match>search_item</match>
   </route>
 
-  <route action="search/result" auth="none">
+  <route action="search/result" auth="user">
 	<match caps="collection_ascii_id">([^/]*_collection)/search</match>
 	<match params="md5_hash">search/md5</match>
 	<match>search</match>
@@ -130,7 +134,7 @@
 	<match params="id">xml/tag</match>
   </route>
 
-  <route action="xml/user_tag" auth="eid" mime="application/xml">
+  <route action="xml/user_tag" auth="none" mime="application/xml">
 	<match caps="eid" params="id">xml/user/([^/]*)/tag/id</match>
   </route>
 
@@ -231,10 +235,7 @@
 
   <route action="collection/build_index" auth="admin" params="collection_ascii_id"/>
 
-  <route action="media/media" auth="none" nocache="yes">
-	<match params="collection/size/filename">media</match>
-	<match caps="collection" params="size/filename">([^/]*_collection)/media</match>
-  </route>
+  <!-- NOTE that media requests are dispatched by mod_rewrite. see prod_htaccess -->
 
   <route action="user/add_cart_item" auth="eid" method="post">
 	<match caps="eid">user/([^/]*)/cart</match>
@@ -244,7 +245,11 @@
 	<match caps="eid" params="tag_item_id">user/([^/]*)/tag_items</match>
   </route>
 
-  <route action="user/view_cart" auth="eid">
+  <route action="user/tag" auth="eid">
+	<match caps="eid" params="id">user/([^/]*)/tag/id</match>
+  </route>
+
+  <route action="user/cart" auth="eid">
 	<match caps="eid">user/([^/]*)/cart</match>
   </route>
 

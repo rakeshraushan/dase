@@ -219,8 +219,6 @@ class Dase
 
 	static public function run() {
 		$controller = Dase::instance();
-		//$routes = Dase::compileRoutes();
-		$routes = Dase::compileRoutesXslt();
 
 		// from habari code
 		$request_url= ( isset($_SERVER['REQUEST_URI']) 
@@ -259,6 +257,7 @@ class Dase
 		$matches = array();
 		$params = array();
 
+		$routes = Dase::compileRoutesXslt();
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -339,6 +338,8 @@ class Dase
 					//type specified in 'routes.xml', so to set mime at
 					//runtime, nocache="yes" should be set in routes.xml 
 					//for the particular route
+					//use nocache="custom" to document custom cache in
+					//action file (here same as using 'yes')
 					if ('get' == $method && !isset($conf_array['nocache'])) {
 						$cache = new Dase_FileCache();
 						$page = $cache->get();

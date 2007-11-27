@@ -24,7 +24,7 @@
 	    <xsl:apply-templates select="$items/atom:entry" mode="items"/>
 	</table>
 	<!-- we just need a place to stash the current url so our refine code can parse it -->
-	<div id="self_url" class="hide"><xsl:value-of select="$items/atom:link[@rel='self']/@href"/></div>
+	<div id="self_url" class="hide"><xsl:value-of select="translate($items/atom:link[@rel='self']/@href,'+',' ')"/></div>
   </xsl:template>
 
   <xsl:template match="insert-collection-name">
