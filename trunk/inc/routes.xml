@@ -49,7 +49,7 @@
 	<match params="md5_hash">atom/search/md5</match>
   </route>
 
-  <route action="atom/user_tag" auth="none" mime="application/atom+xml">
+  <route action="atom/user_tag" auth="token" mime="application/atom+xml">
 	<match caps="eid" params="id">atom/user/([^/]*)/tag/id</match>
   </route>
 
@@ -134,7 +134,7 @@
 	<match params="id">xml/tag</match>
   </route>
 
-  <route action="xml/user_tag" auth="none" mime="application/xml">
+  <route action="xml/user_tag" auth="token" mime="application/xml">
 	<match caps="eid" params="id">xml/user/([^/]*)/tag/id</match>
   </route>
 

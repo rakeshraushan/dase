@@ -56,6 +56,9 @@ class Dase
 	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid = '') {
 		switch ($auth) {
 		case 'user':
+			//this means the user has read access to an access-controlled
+			//collection OR the are a registed user (any user) accessing a 
+			//public collection
 			self::$user = new Dase_User();
 			if ($collection_ascii_id) {
 				// By having the collection_ascii_id in the URL
@@ -68,11 +71,15 @@ class Dase
 			break;
 		case 'superuser':
 			self::$user = new Dase_User();
+			//only folks whose EID is in config.php as superuser
+			//this is for application monitoring and management
 			if (!in_array(self::$user->eid,Dase::getConf('superuser'))) {
 				Dase::error(401);
 			}
 			break;
 		case 'admin':
+			//the checkAuth methods use the collection manager
+			//table to look-up privilege level
 			self::$user = new Dase_User();
 			if (!self::$user->checkAuth($collection_ascii_id,'admin')) {
 				Dase::error(401);
@@ -91,20 +98,30 @@ class Dase
 			}
 			break;
 		case 'http':
+			//HTTP basic auth is the prefered (simple) auth method
+			//when other computers are interacting with resources
+			//it also provides an extra 'layer' on top of collection
+			//admin privileges
 			Dase::basicHttpAuth();
 			break;
 		case 'token':
-			if (!in_array(Dase::filterGet('token'),Dase::getConf('token'))) {
+			//token-based auth is the prefered method when DASe is
+			//requesting AND serving a resource as in the case of
+			//xml and atom data source docs
+			if (Dase::filterGet('token') != md5(Dase::getConf('token'))) {
 				Dase::error(401);
 			}
 			break;
 		case 'eid':
+			//the authorized user eid and the eid in the url
+			//must match for thi sto go through
 			self::$user = new Dase_User();
 			if (self::$user->eid != $eid) {
 				Dase::error(401);
 			}
 			break;
 		case 'none':
+			//no authorization required
 			break;
 		default:
 			Dase::error(404);
@@ -182,6 +199,7 @@ class Dase
 		if ($cache->get()) {
 			eval($cache->get());
 		} else {
+			//xslt pipeline:
 			$rx = new Dase_Xslt(DASE_PATH."/inc/routes2map.xsl",DASE_PATH."/inc/routes.xml");
 			$rp = new Dase_Xslt(DASE_PATH."/inc/xml2php.xsl",$rx->transform());
 			$cache->set($rp->transform());
@@ -381,12 +399,7 @@ class Dase
 		$t->set('local-layout',XSLT_PATH.'error/error.xml');
 		$t->set('error_msg',$msg);
 		$t->set('error_code',$code);
-		$tpl = new Dase_Html_Template();
-		$tpl->setText($t->transform());
-		$tpl->display();
-
-		//		$tpl->assign('code',$code);
-		//		$tpl->display('error/index.tpl');
+		Dase::display($t->transform(),false);
 		exit;
 	}
 

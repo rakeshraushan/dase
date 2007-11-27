@@ -13,6 +13,7 @@ if ($username && $password) {
 		$user = Dase_User::check_credentials($username,$password);
 		if ($user) {
 			$cookie = new Dase_AuthCookie($user->eid);
+			//also sets the unecrypted DASE_USER cookie
 			$cookie->set();
 			Dase::reload('/',"Hello $user->name");
 		} else {

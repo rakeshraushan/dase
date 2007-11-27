@@ -4,7 +4,7 @@ $conf['path_to_media'] = '/mnt/www-data/dase/media';
 
 $conf['superuser'][] = 'pkeane';
 
-$conf['token'][] = 'secret';
+$conf['token'] = 'secret';
 
 //model can be db, xml, or remote
 $conf['model'] = 'db';
