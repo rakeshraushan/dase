@@ -86,6 +86,8 @@ Dase.toggle = function(el) {
 
 Dase.initUser = function() {
 	// from rhino 5th ed. p. 460 
+	//this does not work on error 
+	//pages (401,404, etc) not sure why
 	var allcookies = document.cookie;
 	var pos = allcookies.indexOf("DASE_USER=");
 	var eid;
@@ -458,17 +460,17 @@ Dase.placeUserTags = function() {
 					//note that subscriptions don't REALLY use the ascii_id -- it's actually the tag id
 					if ('subscription' == type) {
 						var id = ascii.substring(1);
-						sets[type] = sets[type] + "<li><a href='html/tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = sets[type] + "<li><a href='tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
 					} else {
-						sets[type] = sets[type] + "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = sets[type] + "<li><a href='user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				} else {
 					//first time through...
 					if ('subscription' == type) {
 						id = ascii.substring(1);
-						sets[type] = "<li><a href='html/tag/" + id + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = "<li><a href='tag/" + id + "'>" + jsonAscii + "</a></li>\n";
 					} else {
-						sets[type] = "<li><a href='html/user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = "<li><a href='user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				}
 			} else { // cart tally

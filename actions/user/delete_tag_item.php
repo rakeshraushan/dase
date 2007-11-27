@@ -11,6 +11,5 @@ if ($tag->dase_user_id == $u->id) {
 	echo "tag item {$params['tag_item_id']} deleted!";
 	exit;
 } else {
-	echo "dddd";
 	Dase::error(401);
 }

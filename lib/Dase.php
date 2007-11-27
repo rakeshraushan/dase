@@ -395,8 +395,7 @@ class Dase
 		if (500 == $code) {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
-		$t = new Dase_Xslt(XSLT_PATH.'error/error.xsl');
-		$t->set('local-layout',XSLT_PATH.'error/error.xml');
+		$t = new Dase_Xslt(XSLT_PATH.'error/error.xsl',XSLT_PATH.'error/error.xml');
 		$t->set('error_msg',$msg);
 		$t->set('error_code',$code);
 		Dase::display($t->transform(),false);

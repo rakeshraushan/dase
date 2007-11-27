@@ -1,12 +1,7 @@
 #!/usr/bin/php
 <?php
-
+include 'cli_setup.php';
 $sernum = '03-03941';
-
-$host = "SQL01.austin.utexas.edu:1036";
-$name = "vrc_live";
-$user = "dasevrc";
-$pass = "d453vrc";
 
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
 $sql = "
