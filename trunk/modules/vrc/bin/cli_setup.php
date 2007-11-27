@@ -26,3 +26,8 @@ if (isset($messages)) {
 		exit;
 	}
 }
+
+$host = "";
+$name = "";
+$user = "";
+$pass = "";

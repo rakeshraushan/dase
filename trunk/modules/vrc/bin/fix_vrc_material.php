@@ -6,11 +6,6 @@ include 'cli_setup.php';
 
 $coll = Dase_DB_Collection::get('vrc_collection');
 
-$host = "SQL01.austin.utexas.edu:1036";
-$name = "vrc_live";
-$user = "dasevrc";
-$pass = "d453vrc";
-
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
 
 $sql = "

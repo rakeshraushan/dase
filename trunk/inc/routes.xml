@@ -249,6 +249,10 @@
 	<match caps="eid" params="id">user/([^/]*)/tag/id</match>
   </route>
 
+  <route action="user/tag" auth="eid">
+	<match caps="eid" params="ascii_id">user/([^/]*)/tag</match>
+  </route>
+
   <route action="user/cart" auth="eid">
 	<match caps="eid">user/([^/]*)/cart</match>
   </route>

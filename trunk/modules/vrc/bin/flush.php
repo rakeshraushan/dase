@@ -10,11 +10,6 @@ $coll = new Dase_DB_Collection;
 $coll->ascii_id = 'vrc_collection';
 $coll->findOne();
 
-$host = "SQL01.austin.utexas.edu:1036";
-$name = "vrc_live";
-$user = "dasevrc";
-$pass = "d453vrc";
-
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
 
 $sql = "

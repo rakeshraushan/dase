@@ -54,11 +54,6 @@ while ($row = $sth->fetch()) {
 	$media_count[$row['serial_number']] = $row['count'];
 }
 
-$host = "SQL01.austin.utexas.edu:1036";
-$name = "vrc_live";
-$user = "dasevrc";
-$pass = "d453vrc";
-
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
 $sql = "
 	SELECT  
