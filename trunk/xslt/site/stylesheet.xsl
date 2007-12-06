@@ -9,6 +9,8 @@
 	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
 	encoding="UTF-8"/>
 
+  <xsl:variable name="local" select="document($local-layout)/source"/>
+
   <xsl:template match="/">
 	<xsl:apply-templates/>
   </xsl:template>
@@ -18,11 +20,11 @@
   </xsl:template>
 
   <xsl:template match="insert-title">
-	<xsl:apply-templates select="document($local-layout)/html/head/title"/>
+	<xsl:apply-templates select="$local/title"/>
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<xsl:apply-templates select="document($local-layout)/html/body/*"/>
+	<xsl:apply-templates select="$local/content/*"/>
   </xsl:template>
 
   <xsl:template match="dynamic"/>

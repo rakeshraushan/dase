@@ -41,14 +41,17 @@ Dase.getCookieData = function() {
 };
 
 Dase.addClass = function(elem,cname) {
+	if (!elem || !cname) return false;
 	if (elem.className) {
 		elem.className = elem.className + " " + cname;
 	} else {
 		elem.className = cname;
 	}
+	return true;
 };
 
 Dase.removeClass = function(elem,cname) {
+	if (!elem || !cname) return false;
 	var cnames = elem.className.split(" ");
 	var newClassName = '';
 	for (var i=0;i<cnames.length;i++) {
@@ -57,9 +60,11 @@ Dase.removeClass = function(elem,cname) {
 		}
 	}
 	elem.className = newClassName;
+	return true;
 };
 
 Dase.hasClass = function(elem,cname) {
+	if (!elem || !cname) return false;;
 	var cnames = elem.className.split(" ");
 	for (var i=0;i<cnames.length;i++) {
 		if (cname == cnames[i]) {
@@ -85,42 +90,39 @@ Dase.toggle = function(el) {
 };
 
 Dase.initUser = function() {
-	// from rhino 5th ed. p. 460 
-	//this does not work on error 
-	//pages (401,404, etc) not sure why
-	var allcookies = document.cookie;
-	var pos = allcookies.indexOf("DASE_USER=");
-	var eid;
-	if (pos != -1) {
-		var start = pos + 10;
-		var end = allcookies.indexOf(";",start);
-		if (end == -1) end = allcookies.length;
-		eid = allcookies.substring(start,end);
-	}
+	Dase.getJSON(Dase.base_href + "json/user/current/data",function(json){
+			for (var eid in json) {
+			Dase.user.eid = eid;
+			Dase.user.name = json[eid].name;
+			Dase.user.tags = json[eid].tags;
+			Dase.user.collections = json[eid].collections;
+			Dase.placeUserName();
+			Dase.placeUserTags();
+			Dase.placeUserCollections();
+			Dase.placeUserSearchCollections();
+			Dase.initLogoff();
+			}
+			Dase.loginControl(Dase.user.eid);
+			Dase.multicheck("checkedCollection");
+			Dase.getItemTallies();
+			});
+};
+
+Dase.loginControl = function(eid) {
 	if (eid) {
-		Dase.user.eid = eid;
 		Dase.removeClass(Dase.$('logoffControl'),'hide');
-		Dase.getJSON(Dase.base_href + "json/user/" + eid + "/data",function(json){
-				Dase.user.name = json[eid].name;
-				Dase.user.tags = json[eid].tags;
-				Dase.user.collections = json[eid].collections;
-				Dase.placeUserName();
-				Dase.placeUserTags();
-				Dase.placeUserCollections();
-				Dase.placeUserSearchCollections();
-				Dase.multicheck("checkedCollection");
-				Dase.getItemTallies();
-				});
 	} else {
 		Dase.removeClass(Dase.$('loginControl'),'hide');
 	}
-};
+}
 
 Dase.placeUserName = function() {
 	var nameElem = Dase.$('userName');
-	nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
-	var eidElem = Dase.$('eid');
-	eidElem.innerHTML = Dase.user.eid;
+	if (nameElem) {
+		nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
+		var eidElem = Dase.$('eid');
+		eidElem.innerHTML = Dase.user.eid;
+	}
 };
 
 Dase.placeUserCollections = function() {
@@ -313,6 +315,30 @@ Dase.setCollectionAtts = function(coll) {
 	}
 };
 
+
+Dase.initRowTable = function(id,new_class) {
+	var table = Dase.$(id);
+	if (!table) return;
+	var rows = table.getElementsByTagName('tr');
+	for (var i=0;i<rows.length;i++) {
+		var row = rows[i];
+		row.onmouseover = function() {
+			var cells = this.getElementsByTagName('td');
+			for (var i=0;i<cells.length;i++) {
+				cells[i].className = new_class;
+			}
+		};
+		row.onmouseout = function() {
+			var cells = this.getElementsByTagName('td');
+			for (var i=0;i<cells.length;i++) {
+				cells[i].className = "";
+			}
+		};
+	}
+};
+
+
+
 Dase.specifyQueryType = function() {
 	var opt = this.options[this.selectedIndex];
 	var query = Dase.$('queryInput');
@@ -428,10 +454,12 @@ Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
 		Dase.getJSON(Dase.base_href+"json/item_tallies", function(json){
 				for(var ascii_id in json) {
+				var asc = Dase.$(ascii_id);
+				if (asc) {
 				var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
 				if (tally) {
 				tally.innerHTML = '(' + json[ascii_id] + ')';
-				} } });
+				} } } });
 	}
 };
 
@@ -475,7 +503,9 @@ Dase.placeUserTags = function() {
 				}
 			} else { // cart tally
 				var cart_tally = Dase.$('cart_tally');
-				cart_tally.innerHTML = jsonType[ascii];
+				if (cart_tally) {
+					cart_tally.innerHTML = jsonType[ascii];
+				}
 			}
 		} 
 	}
@@ -672,15 +702,24 @@ Dase.getJSON = function(url,my_func) {
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var jsonObj = eval('(' + xmlhttp.responseText + ')');
-			var json = jsonObj.json;
-			if (my_func) {
-				my_func(json);
+		if (xmlhttp.readyState == 4) {
+			if (xmlhttp.status == 200 && xmlhttp.responseText) {
+				var jsonObj = eval('(' + xmlhttp.responseText + ')');
+				var json = jsonObj.json;
+				if (my_func) {
+					my_func(json);
+				} else {
+					return json;
+				}
 			} else {
-				return json;
+				var json = {};
+				if (my_func) {
+					my_func(json);
+				} else {
+					return json;
+				}
 			}
-		} else {
+		} else { 	
 			// wait for the call to complete
 		}
 		return false;
@@ -757,6 +796,66 @@ Dase.initCart = function() {
 			});
 };
 
+//the user never SEES ths form, it its simply to hijackin a http auth login
+Dase.initLogin = function() {
+	//largely from http://www.peej.co.uk/articles/http-auth-with-html-forms.html
+	var form = Dase.$('login');
+	if (!form) return;
+	var name = Dase.$('username-input').value;
+	var pass = Dase.$('password-input').value;
+	var xmlhttp = Dase.createXMLHttpRequest();
+	//has to be post as stated in routes.xml
+	xmlhttp.open('POST','login',false, name, pass);
+	xmlhttp.send(null);
+	if (xmlhttp.status == 200) {
+		//alert(xmlhttp.responseText);
+		//document.location = this.action;
+		form.submit();
+	} else {	
+		//Dase.logoff();
+		alert('incorrect login - try again');
+	}
+};
+
+Dase.initLogoff = function() {
+	//logoff will fire if we are on a page w/ a 'logoff' id
+	var lo = Dase.$('logoff-link');
+	if (!lo) return;
+	lo.onclick = function() {
+		Dase.logoff();
+	};
+};
+
+
+Dase.logoff = function() {
+	//from http://tech.groups.yahoo.com/group/rest-discuss/message/9908
+	//modified by pk
+	//also see http://userfirstweb.com/23/logouts-form-based-http-basic-authentication/
+	var xmlhttp = Dase.createXMLHttpRequest();
+	xmlhttp.open("PUT", "logoff", false, "logoff", "logoff");             
+	try {                                 
+		xmlhttp.send(null);                             
+	}                                  
+	catch (err) {                               
+		//MSIE6 fails the send, but it has logged us out actually                   
+		// So we ignore the error                           
+		// We get some strange status in that case: 12152.                     
+		// And on other machines I've seen 502.                        
+	}                                  
+	if ((xmlhttp.status == 200) || (request.status == 404) || (request.status == 12152) || (request.status == 502)) {      
+		// we just reload the page at the moment                        
+		//alert(xmlhttp.responseText);
+		//now auth won't be there
+	//	window.location.reload();                           
+		return true;                              
+	}                                  
+	else {                                 
+		alert (xmlhttp.status);                            
+		return true;                               
+	}                                  
+}                                  
+
+
 Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
@@ -764,6 +863,8 @@ Dase.addLoadEvent(function() {
 		Dase.initCheckImage();
 		Dase.initCart();
 		Dase.initAddToCart();
+		Dase.initLogin();
+		Dase.initRowTable('writing','highlight');
 		/*
 		   Dase.prepareAddFileUpload();
 		   Dase.prepareAttributeFlags();

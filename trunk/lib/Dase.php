@@ -43,13 +43,13 @@ class Dase
 	public static function basicHttpAuth() {
 		//from php cookbook 2nd ed. p 240
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-			if (('dase' == $_SERVER['PHP_AUTH_USER']) && ('api' == $_SERVER['PHP_AUTH_PW'])) {
+			if (('dase2' == $_SERVER['PHP_AUTH_USER']) && ('api' == $_SERVER['PHP_AUTH_PW'])) {
 				return;
 			}
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');
 		header('HTTP/1.1 401 Unauthorized');
-		echo "please enter a valid username and password";
+		echo "sorry, authorized users only";
 		exit;
 	}
 
@@ -70,6 +70,7 @@ class Dase
 			}
 			break;
 		case 'superuser':
+			break;
 			self::$user = new Dase_User();
 			//only folks whose EID is in config.php as superuser
 			//this is for application monitoring and management
@@ -114,7 +115,7 @@ class Dase
 			break;
 		case 'eid':
 			//the authorized user eid and the eid in the url
-			//must match for thi sto go through
+			//must match for this to go through
 			self::$user = new Dase_User();
 			if (self::$user->eid != $eid) {
 				Dase::error(401);
@@ -281,6 +282,7 @@ class Dase
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
 		foreach ($routes[$method] as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
+				//if debug in force, log action
 				if (defined('DEBUG')) {
 					Dase::log('standard',$regex . " => " . $conf_array['action']);
 				}
@@ -298,9 +300,10 @@ class Dase
 					$module_prefix = $conf_array['prefix'];
 					define('MODULE_PATH',DASE_PATH . $module_prefix);
 				}
-				if (isset($matches[1])) {
+				if (isset($matches[1])) { // i.e. at least one paramenter
 					array_shift($matches);
 					$clean_matches = Dase::filterArray($matches);
+					//match param value to its param key
 					if (count($params) == count($clean_matches)) {
 						$params = array_combine($params,$clean_matches);
 					} else {
@@ -314,14 +317,12 @@ class Dase
 					echo "$regex => {$conf_array['action']}";
 					exit;
 				}
-				if (isset($conf_array['auth']) && $conf_array['auth']) {
+				if (isset($conf_array['auth']) && $conf_array['auth'] && $conf_array['auth'] != 'none') {
 					$eid = '';
 					$collection_ascii_id = '';
 					//this is collection authorization for modules
 					if (isset($conf_array['collection'])) {
 						$collection_ascii_id = $conf_array['collection'];
-						//params['collection_ascii_id'] originates in routes.xml
-						//this is collection authorization for collection admin
 					} elseif (isset($params['collection_ascii_id'])) {
 						$collection_ascii_id = $params['collection_ascii_id'];
 					} elseif (isset($params['eid'])) {
@@ -343,7 +344,7 @@ class Dase
 					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$eid);
 				} else {
 					//default auth is user!!!!!!!!!!!!!
-					Dase::checkUser('user');
+					//Dase::checkUser('user');
 				}
 				if (!isset($conf_array['mime'])) { 
 					$conf_array['mime'] = 'text/html'; 
@@ -421,9 +422,6 @@ class Dase
 	public static function reload($path = '',$msg = '') {
 		$msg_qstring = '';
 		$msg = urlencode($msg);
-		if (!defined('NO_SESSIONS')) {
-			Dase_Session::write();
-		}
 		if ($msg) {
 			$msg_qstring = "?msg=$msg";
 		}

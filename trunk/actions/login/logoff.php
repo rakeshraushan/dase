@@ -1,12 +1,12 @@
 <?php
 
-//add a hook here?
+//xhr has already gooten the user logged out
+//this is the completion of the logoff link click
 
-$user = Dase::getUser();
-$cookie = new Dase_AuthCookie($user->id);
-$cookie->logout();
-$user_cookie = new Dase_UserCookie;
-$user_cookie->delete();
-Dase::reload();
-//header("Location:http://www.lib.utexas.edu");
-exit;
+if (Dase::getConf('login_module')) {
+	$module = Dase::getConf('login_module');
+	Dase::reload("modules/$module/logoff");
+} else {
+	Dase::reload();
+	exit;
+}

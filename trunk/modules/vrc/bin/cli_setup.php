@@ -27,7 +27,7 @@ if (isset($messages)) {
 	}
 }
 
-$host = "";
-$name = "";
-$user = "";
-$pass = "";
+$host = "SQL01.austin.utexas.edu:1036";
+$name = "vrc_live";
+$user = "dasevrc";
+$pass = "d453vrc";

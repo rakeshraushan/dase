@@ -1,27 +1,11 @@
 <?php
+///the idea is that you can initiate the login process simply by sending a "GET"
+//to the '/login/' resource, which will bring you here
 
-// method: POST
-
-//add a hook here to redirect to alternative login?
-
-$username = Dase::filterPost('username');
-$password = Dase::filterPost('password');
-$msg = '';
-//largely from Advanced PHP Programming p. 338
-if ($username && $password) {
-	try {
-		$user = Dase_User::check_credentials($username,$password);
-		if ($user) {
-			$cookie = new Dase_AuthCookie($user->eid);
-			//also sets the unecrypted DASE_USER cookie
-			$cookie->set();
-			Dase::reload('/',"Hello $user->name");
-		} else {
-			$msg = 'incorrect username/password combination';
-		}
-	} catch (AuthException $e) {
-		$msg = 'invalid login';
-	}
+if (Dase::getConf('login_module')) {
+	$module = Dase::getConf('login_module');
+	Dase::reload("modules/$module");
+} else {
+	Dase::error('no authentication mechanism configured');
+	exit;
 }
-// if login fails:
-Dase::reload('/login',$msg);
