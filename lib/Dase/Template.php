@@ -1,6 +1,12 @@
 <?php
 class Dase_Template 
 {
+
+	//
+	//this is a wrapper around smarty
+	//
+	//
+	//
 	private static $template;
 	private static $instance;
 
@@ -39,10 +45,6 @@ class Dase_Template
 	}
 
 	public function display( $template = 'page.tpl' ) {
-		//NOTE: code MUST use template class to guarantee session data will be saved
-		if (!defined('NO_SESSIONS')) {
-			Dase_Session::write();
-		}
 		self::$template->assign('timer',Dase_Timer::getElapsed());
 		self::$template->display( $template );
 		exit;

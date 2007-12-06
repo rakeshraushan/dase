@@ -4,10 +4,24 @@ $conf['path_to_media'] = '/mnt/www-data/dase/media';
 
 $conf['superuser'][] = 'pkeane';
 
-$conf['token'] = 'secret';
+$conf['token'] = '
+	Let us go then, you and I,	
+	When the evening is spread out against the sky	
+	Like a patient etherised upon a table;	
+	Let us go, through certain half-deserted streets,	
+	The muttering retreats
+	Of restless nights in one-night cheap hotels	
+	And sawdust restaurants with oyster-shells:	
+	Streets that follow like a tedious argument	
+	Of insidious intent	
+	To lead you to an overwhelming question 
+	Oh, do not ask, "What is it?"	
+	Let us go and make our visit.' . date('Ymd',time()); //changes every day
 
 //model can be db, xml, or remote
 $conf['model'] = 'db';
+
+$conf['login_module'] = 'auth';
 
 $conf['db']['type'] = 'sqlite';
 $conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only

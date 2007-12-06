@@ -62,6 +62,10 @@
 	<match caps="collection_ascii_id">([^/]*_collection)</match>
   </route>
 
+  <route action="json/user_data" auth="user" mime="application/json" nocache="custom">
+	<match>json/user/current/data</match>
+  </route>
+
   <!-- NOTE: eid should always be preceded by 'user' in regex -->
   <route action="json/user_data" auth="eid" mime="application/json" nocache="custom">
 	<match caps="eid">json/user/([^/]*)/data</match>
@@ -221,15 +225,31 @@
 
   <route action="error"/>
 
-  <route action="login/form" auth="none">
+  <!-- initiate login process (it'll delegate to module) -->
+  <route action="login/login" auth="none">
 	<match>login</match>
   </route>
 
-  <route action="login/login" auth="none" method="post">
+  <route action="login/process_login" auth="none" method="post">
 	<match>login</match>
   </route>
 
-  <route action="login/logoff" auth="user">
+  <!-- accept GET from module at '/login/{eid}/{token}' and send
+  form to browser that XHR will use to log the browser in -->
+  <route action="login/login_user" auth="none">
+	<match params="eid/token">login</match>
+  </route>
+
+  <!-- get info on logged in user -->
+  <route action="login/login_user_data" auth="none">
+	<match params="eid">login</match>
+  </route>
+
+  <route action="login/logoff" auth="none">
+	<match>logoff</match>
+  </route>
+
+  <route action="login/process_logoff" auth="none" method="put">
 	<match>logoff</match>
   </route>
 
@@ -258,6 +278,10 @@
   </route>
 
   <!-- manage routes -->
+
+  <route action="exec" auth="superuser">
+	<match>exec</match>
+  </route>
 
   <route action="manage/view_log" auth="superuser">
 	<match params="log_name">manage/log</match>

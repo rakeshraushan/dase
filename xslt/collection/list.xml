@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This file is describing the layout for a specific request.-->
-<html>
-  <head>
-	<title>List of All Collection</title>
-  </head>
-  <body>
+<source>
 
-	<!--THIS GETS INSERTED-->
+  <title>List of All Collection</title>
+
+  <content>
 	<div class="content list" id="browse">
 	  <a id="content" name="content"></a>
 
@@ -26,8 +22,7 @@
 
 	  <h3 class="browsePublicTags"><a href="action/list_public_tags/">Browse Public User Collections/Slideshows</a></h3>
 	</div>
-	<!-- END INSERTED -->
+  </content>
 
-  </body>
-</html>
+</source>
 

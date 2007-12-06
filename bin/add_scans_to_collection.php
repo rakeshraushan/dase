@@ -3,9 +3,9 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'rm7233_collection';
-//$repo = $collection_ascii_id;
-$repo = mansfield;
+$collection_ascii_id = 'medieval_collection';
+$repo = $collection_ascii_id;
+//$repo = mansfield;
 
 /******************************************/
 

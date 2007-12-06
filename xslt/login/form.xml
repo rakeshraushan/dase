@@ -1,31 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This file is describing the layout for a specific request.-->
 <html>
   <head>
+	<insert-base-href/>
 	<title>Login Form</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="shortcut icon" href="images/favicon.ico"/>
+	<script type="text/javascript" src="scripts/dase.js"></script>
   </head>
-  <body>
 
-	<!--THIS GETS INSERTED-->
-	<div class="content list" id="browse">
-	  <insert-msg/>
-	  <h1>Please Login to Dase:</h1>
+  <body>
+	<div class="generic">
+	<h1>DASe: Authorizing User...</h1>
 	  <form id="login" action="login" method="post">
-		<p>
-		  <label for="username-input">username:</label>
-		  <input type="text" id="username-input" name="username"/>
-		</p>
-		<p>
-		  <label for="password-input">password:</label>
-		  <input type="password" id="password-input" name="password"/>
-		</p>
-		<p>
-		  <input type="submit" value="login"/>
-		</p>
+		<input type="hidden" id="username-input" value="" name="username"/>
+		<input type="hidden" id="password-input" value="" name="password"/>
 	  </form>
 	</div>
-	<!-- END INSERTED -->
-
   </body>
+
 </html>
 

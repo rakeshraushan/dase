@@ -6,7 +6,18 @@
 //operations that change user date are required to expire this cache
 //NOTE: request_url is 'json/user/{eid}/data'
 
-$cache = new Dase_FileCache($request_url);
+
+//need to have SOME data returned if there is no user
+
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+	exit;
+}
+
+if (!isset($params['eid'])) {
+	$params['eid'] = $_SERVER['PHP_AUTH_USER'];
+}
+
+$cache = new Dase_FileCache($params['eid'] . '_data');
 $page = $cache->get();
 if (!$page) {
 	$cache->setTimeToLive(300);

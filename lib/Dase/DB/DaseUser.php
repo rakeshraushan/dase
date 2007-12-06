@@ -5,7 +5,7 @@ require_once 'Dase/DB/Autogen/DaseUser.php';
 class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser 
 {
 	public function getTags() {
-		$tag_array;
+		$tag_array = array();
 		foreach (Dase_DB_Tag::getByUser($this) as $row) {
 			if (CART == $row['tag_type_id']) {
 				//$tag_array['cart'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
