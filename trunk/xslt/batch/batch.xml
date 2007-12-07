@@ -1,0 +1,21 @@
+<html>
+  <head>
+	<title>DASe Auth</title>
+	<insert-base-href/>
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/menu.css"/>
+	<link rel="shortcut icon" href="images/favicon.ico"/>
+
+	<script type="text/javascript" src="scripts/http.js"></script>
+	<script type="text/javascript" src="scripts/dase.js"></script>
+  </head>
+  <body>
+
+	<div class="generic" id="page-id">
+	  <h1>DASe</h1>
+	  <insert-data/>
+	</div>
+
+  </body>
+</html>
+
