@@ -267,6 +267,7 @@
   <route action="manage/phpinfo" auth="superuser"/>
   <route action="manage/stats" auth="superuser"/>
   <route action="manage/file_finder" auth="superuser"/>
+  <route action="manage/xml/file_finder" auth="superuser"/>
 
   <route action="user/settings" auth="eid">
 	<match caps="eid">([^/]*)</match>
