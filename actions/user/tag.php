@@ -23,7 +23,7 @@ $t->set('local-layout',XSLT_PATH.'search/result.xml');
 //atom and xml documents that feed it? DASe requests AND serves the docs
 //so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
 $t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));
-print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));exit;
+//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));exit;
 Dase::display($t->transform());
 
 

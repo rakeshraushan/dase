@@ -2,6 +2,8 @@
 <xsl:stylesheet version="1.0" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:h="http://www.w3.org/1999/xhtml"
+  xmlns:php="http://php.net/xsl"
+  xsl:extension-element-prefixes="php"
   exclude-result-prefixes="h"
   >
   <xsl:output method="xml" 
@@ -30,7 +32,8 @@
   <xsl:template match="dynamic"/>
 
   <xsl:template match="insert-timer">
-	<xsl:value-of select="$timer"/>	
+	<!--<xsl:value-of select="$timer"/>-->	
+	<xsl:value-of select="php:functionString('Dase_Timer::getElapsed')"/>	
   </xsl:template>
 
   <!-- Identity transformation -->

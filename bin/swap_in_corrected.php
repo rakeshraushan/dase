@@ -3,9 +3,11 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'medieval_collection';
-$REPOS = "/mnt/projects/dase_scanning/$collection_ascii_id/uploaded_to_be_color_corrected/color_corrected";
-$ARCHIVE = "/mnt/projects/dase_scanning/$collection_ascii_id/to_be_archived/color_corrected";
+$collection_ascii_id = 'rm7233_collection';
+//$repo = $collection_ascii_id;
+$repo = 'mansfield';
+$REPOS = "/mnt/projects/dase_scanning/$repo/uploaded_to_be_color_corrected/color_corrected";
+$ARCHIVE = "/mnt/projects/dase_scanning/$repo/to_be_archived/color_corrected";
 
 /******************************************/
 

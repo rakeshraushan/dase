@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This file is describing the layout for a specific request.-->
-<html>
-  <head>
-	<title>Browse Collection</title>
-  </head>
-  <body>
+<source>
 
-	<!--THIS GETS INSERTED-->
+  <title>Browse Collection</title>
+
+  <content>
 
 	<div class="content full" id="browse">
 
@@ -37,8 +33,7 @@
 	  </div> <!-- close browseColumns -->
 	  <div class="spacer"></div>
 	</div> <!-- close content -->
-	<!-- END INSERTED -->
+  </content>
 
-  </body>
-</html>
+</source>
 

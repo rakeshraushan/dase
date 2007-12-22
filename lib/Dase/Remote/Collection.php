@@ -1,7 +1,18 @@
 <?php
-class Dase_Remote_Collection extends Dase_Remote
+class Dase_Remote_Collection extends Dase_Remote // implements Dase_CollectionInterface
 {
 	public $ascii_id;
+
+	/* 
+	 * interface contract:
+	 *
+	 * static function get($ascii_id);
+	 * function getXml();
+	 * function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
+	 * function getItemsXmlByType($type_ascii_id);
+	 * function buildSearchIndex();
+	 *
+	 */
 
 	public function __construct($url,$ascii_id,$user='',$pass='',$method='GET') {
 		$this->ascii_id = $ascii_id;

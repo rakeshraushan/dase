@@ -77,6 +77,7 @@
 			<img src="{atom:link[@rel='http://daseproject.org/relation/media/thumbnail']/@href}" alt="{atom:title/text()}"/>
 		  </a>
 		</div>
+		<div class="spacer"></div>
 		<div class="caption">
 		  <h4>
 			<xsl:value-of select="substring(atom:title,0,80)"/>
@@ -102,6 +103,7 @@
 			  <img src="{atom:link[@rel='http://daseproject.org/relation/media/thumbnail']/@href}" alt="{atom:title/text()}"/>
 			</a>
 		  </div>
+		  <div class="spacer"></div>
 		  <div class="caption">
 			<h4>
 			  <xsl:value-of select="substring(atom:title,0,80)"/>

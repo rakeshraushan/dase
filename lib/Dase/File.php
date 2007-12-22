@@ -102,6 +102,15 @@ class Dase_File
 		}
 	}
 
+	static function getMTime($file) {
+		$stat = @stat($file);
+		if($stat[9]) {
+			return $stat[9];
+		} else {
+			return false;
+		}
+	}
+
 	function copyTo($location) {
 		if (copy($this->filepath,$location)) {
 			return true;

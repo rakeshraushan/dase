@@ -29,16 +29,6 @@ Dase.$ = function(id) {
 
 Dase.user = {};
 Dase.base_href = document.getElementsByTagName('base')[0].href;
-Dase.setCookieData = function() {
-};
-Dase.getCookieData = function() {
-	/*
-	   if dase cookie exists, get data
-	   else see if there is an eid set on web page
-	   if so, ajaxily get data and store in cookie
-	   else return null		
-	 */
-};
 
 Dase.addClass = function(elem,cname) {
 	if (!elem || !cname) return false;
@@ -90,16 +80,19 @@ Dase.toggle = function(el) {
 };
 
 Dase.initUser = function() {
+	Dase.loadingMsg(true);
 	Dase.getJSON(Dase.base_href + "json/user/current/data",function(json){
 			for (var eid in json) {
 			Dase.user.eid = eid;
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
-			Dase.placeUserName();
-			Dase.placeUserTags();
-			Dase.placeUserCollections();
+			Dase.placeUserName(eid);
+			Dase.placeUserTags(eid);
+			Dase.placeUserCollections(eid);
 			Dase.placeUserSearchCollections();
+			Dase.initCart();
+			Dase.initAddToCart();
 			Dase.initLogoff();
 			}
 			Dase.loginControl(Dase.user.eid);
@@ -116,19 +109,19 @@ Dase.loginControl = function(eid) {
 	}
 }
 
-Dase.placeUserName = function() {
+Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
 	if (nameElem) {
 		nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
 		var eidElem = Dase.$('eid');
-		eidElem.innerHTML = Dase.user.eid;
+		eidElem.innerHTML = eid;
 	}
 };
 
-Dase.placeUserCollections = function() {
+Dase.placeUserCollections = function(eid) {
 	var cartLink = Dase.$('cartLink');
 	if (cartLink) {
-		cartLink.setAttribute('href','user/'+Dase.user.eid+'/cart/');
+		cartLink.setAttribute('href','user/'+eid+'/cart/');
 	}
 	var hasSpecial = 0;
 	var coll_list = Dase.$('collectionList');
@@ -186,7 +179,7 @@ Dase.placeUserSearchCollections = function() {
 		Dase.setCollectionAtts(this.options[this.selectedIndex].value);
 	};
 
-	Dase.$('refineCheckbox').onchange = Dase.searchRefine;
+	Dase.$('refineCheckbox').onclick = Dase.searchRefine;
 };
 
 Dase.searchRefine = function() {
@@ -287,16 +280,25 @@ Dase.setCollectionAtts = function(coll) {
 	var sel = Dase.$('attributesSelect');
 	if (!sel) return; 
 	sel.onchange = Dase.specifyQueryType;
-	/* per http://raibledesigns.com/rd/entry/javascript_removechild_howto */
-	while (sel.childNodes[0]) {
-		sel.removeChild(sel.childNodes[0]);
-	}
 	var maxAttName = 40;
 	if ('' === coll) {
+		/* per http://raibledesigns.com/rd/entry/javascript_removechild_howto */
+		while (sel.childNodes[0]) {
+			sel.removeChild(sel.childNodes[0]);
+		}
 		Dase.addClass(Dase.$('preposition'),'hide');
 		Dase.addClass(sel,'hide');
 	} else {
 		Dase.getJSON(Dase.base_href + "json/" + coll + "/attributes",function(json){
+				//fixes problem in which search string defined a collection_ascii
+				//AND refinement to THIS collection did also and for some reason the att
+				//list got populated twice
+				//(it's because the child removal above gets called on the second call
+				//of this function BEFORE this async call is complete, so you have
+				//remove-remove-add-add rather than remove-add-remove-add
+				while (sel.childNodes[0]) {
+				sel.removeChild(sel.childNodes[0]);
+				}
 				var opt = document.createElement('option');
 				opt.setAttribute('value',"");
 				opt.appendChild(document.createTextNode("All Attributes"));
@@ -316,6 +318,7 @@ Dase.setCollectionAtts = function(coll) {
 };
 
 
+//created fro Persion Online
 Dase.initRowTable = function(id,new_class) {
 	var table = Dase.$(id);
 	if (!table) return;
@@ -336,8 +339,6 @@ Dase.initRowTable = function(id,new_class) {
 		};
 	}
 };
-
-
 
 Dase.specifyQueryType = function() {
 	var opt = this.options[this.selectedIndex];
@@ -459,12 +460,25 @@ Dase.getItemTallies = function() {
 				var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
 				if (tally) {
 				tally.innerHTML = '(' + json[ascii_id] + ')';
-				} } } });
+				} } } 
+				Dase.loadingMsg(false);
+				});
 	}
 };
 
-Dase.placeUserTags = function() {
-	var eid = Dase.user.eid;
+Dase.loadingMsg = function(displayBool) {
+	var loading = Dase.$('ajaxMsg');
+	if (!loading) return;
+	if (displayBool) {
+		loading.innerHTML = 'loading page data...';
+		setTimeout('Dase.loadingMsg(false)',3000);
+	} else {
+		var loading = Dase.$('ajaxMsg');
+		loading.innerHTML = '';
+	}
+}
+
+Dase.placeUserTags = function(eid) {
 	var json = Dase.user.tags;
 	var tags={};
 	var sets = {};
@@ -513,7 +527,7 @@ Dase.placeUserTags = function() {
 		try{
 			Dase.$(type).innerHTML = sets[type];
 		} catch(e) {
-			alert(e);
+			alert('a friendly notice: ' +e);
 		}
 	}
 };
@@ -592,7 +606,7 @@ Dase.getAttributeTallies = function(coll) {
 			//var tally = Dase.$('tally-'+ascii_id).parentNode.getElementsByTagName('span')[0];
 			var tally = Dase.$('tally-'+ascii_id);
 			if (tally) {
-			if (is_admin && 0 === json[ascii_id]) {
+			if (is_admin && 0 == json[ascii_id]) {
 			//make admin atts w/ no values disappear
 			tally.parentNode.className = 'hide';
 			} else {
@@ -604,7 +618,9 @@ Dase.getAttributeTallies = function(coll) {
 			Dase.removeClass(Dase.$('adminAttsLabel'),'hide');
 			Dase.removeClass(Dase.$('attList'),'hide');
 			}
-			} } } });
+			} } }
+			Dase.loadingMsg(false);
+		   	});
 };
 
 Dase.createXMLHttpRequest = function() {
@@ -750,6 +766,7 @@ Dase.initAddToCart = function() {
 };
 
 Dase.initCart = function() {
+	Dase.loadingMsg(true);
 	var sr = Dase.$('searchResults');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
@@ -796,11 +813,13 @@ Dase.initCart = function() {
 			});
 };
 
-//the user never SEES ths form, it its simply to hijackin a http auth login
+//simply to hijack an http auth login
 Dase.initLogin = function() {
 	//largely from http://www.peej.co.uk/articles/http-auth-with-html-forms.html
 	var form = Dase.$('login');
 	if (!form) return;
+	//first, make sure auth cache is cleared
+	Dase.logoff();
 	var name = Dase.$('username-input').value;
 	var pass = Dase.$('password-input').value;
 	var xmlhttp = Dase.createXMLHttpRequest();
@@ -808,12 +827,16 @@ Dase.initLogin = function() {
 	xmlhttp.open('POST','login',false, name, pass);
 	xmlhttp.send(null);
 	if (xmlhttp.status == 200) {
+		var al = Dase.$('authAlert');
+		al.className = 'success';
+		al.innerHTML = 'succeeded';
 		//alert(xmlhttp.responseText);
 		//document.location = this.action;
 		form.submit();
 	} else {	
-		//Dase.logoff();
-		alert('incorrect login - try again');
+		var al = Dase.$('authAlert');
+		al.className = 'failure';
+		al.innerHTML = 'failed';
 	}
 };
 
@@ -861,8 +884,6 @@ Dase.addLoadEvent(function() {
 		Dase.initMenu('menu');
 		Dase.initBrowse();
 		Dase.initCheckImage();
-		Dase.initCart();
-		Dase.initAddToCart();
 		Dase.initLogin();
 		Dase.initRowTable('writing','highlight');
 		/*

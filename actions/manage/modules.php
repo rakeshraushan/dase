@@ -1,19 +1,15 @@
 <?php
-$tpl = Dase_Template::instance();
+$tpl = new Smarty;
 
 include(DASE_CONFIG);
 $dir = (DASE_PATH . "/modules");
 foreach (new DirectoryIterator($dir) as $file) {
 	if ($file->isDir() && !$file->isDot()) {
 		$module = $file->getFilename();
-		//need to validate routes.xml as well
-		if (is_file("$dir/$module/inc/routes.xml") && in_array($module,$conf['modules'])) {
-			$modules[$file->getFilename()] = 'active';
-		} else {
-			$modules[$file->getFilename()] = 'not active';
-		}
+		$modules[$file->getFilename()] = 'installed';
 	}
 }
+$tpl->assign('app_root',APP_ROOT);
 $tpl->assign('modules',$modules);
 $tpl->assign('breadcrumb_url','manage/modules');
 $tpl->assign('breadcrumb_name','modules');

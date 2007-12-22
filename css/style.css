@@ -70,8 +70,8 @@ h1 {
 }
 
 h2 {
-	font-size:1.7em;
-	margin:.4em 0;
+	font-size:1.4em;
+	margin: .1em 0;
 }
 
 h3 {
@@ -89,7 +89,7 @@ strong {
 }
 
 .daseBanner {
-	background-image:url(../images/daseBanner3.jpg);
+	background-image:url(../images/daseBanner.jpg);
 	height:70px;
 	margin-top:-1px;
 	padding:0 12px;
@@ -208,6 +208,12 @@ div.login {
 
 div.controls {
 	float:right;
+	margin-right:20px;
+}
+
+div.loader {
+	float:right;
+	margin-top: 20px;
 	margin-right:20px;
 }
 
@@ -370,8 +376,9 @@ ul#menu li.menuForm input {
 	font-size:1em;
 }
 
-div#ajaxMenuMsg {
+div#ajaxMsg {
 	margin:10px 18px;
+	font-weight: bold;
 }
 
 h3.browsePublicTags {
@@ -509,6 +516,27 @@ div#searchResults h2 {
 #searchResults div.image {
 	margin-top: 25px;
 }
+
+/*
+div.image a{
+	float:left;
+	clear:center;
+	background: url(../images/shadowAlpha.png) no-repeat bottom right !important;
+	background: url(../images/shadow.gif) no-repeat bottom right;
+	margin: 4px 0 0px 50px !important;
+	margin: 4px 0 0px 45px;
+
+}
+
+div.image a img {
+	position:relative;
+	bottom:5px;
+	right: 5px;
+	padding:0px;
+	margin: 0px;
+}
+	*/
+
 #searchResults div.caption {
 	padding: 10px 3px 0 3px;
 }
@@ -546,4 +574,11 @@ div.generic {
 
 div.generic a {
 	text-decoration: underline;
+}
+
+.success {
+	color: #090;
+}
+.failure {
+	color: #c00;
 }

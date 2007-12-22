@@ -17,6 +17,10 @@
 	<base href="{$app_root}"/>
   </xsl:template>
 
+  <xsl:template match="insert-return">
+	<a href="{$app_root}">Return to DASe</a>	
+  </xsl:template>
+
   <xsl:template match="@id[.='page-id']">
 	<xsl:attribute name="id">
 	  <xsl:value-of select="'error'"/>

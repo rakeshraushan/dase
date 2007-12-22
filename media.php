@@ -7,7 +7,6 @@ $collection = $_GET['collection'];
 $size = $_GET['size'];
 $filename = $_GET['filename'];
 $download = $_GET['force_download'];
-
 //ini_set('display_errors',1);
 //error_reporting(E_ALL);
 //0 means all access, 1 means EID only, 2 means collection owner
