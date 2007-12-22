@@ -23,11 +23,12 @@ if ($previous < 1) {
 $item_ids = array_slice($result['item_ids'],$start-1,$max);
 
 $end = $start + count($item_ids) - 1;
-if ($end - $start > 0) {
+if ($end > $start) {
 	$subtitle = ' results ' . $start . '-' . $end . ' of ' . $result['count'] . ' items for ' . $result['echo']; 
+} elseif ($end == $start) {
+	$subtitle = ' 1 result for ' . $result['echo']; 
 } else {
 	$subtitle = ' no results for ' . $result['echo']; 
-
 }
 
 //note that we are only creating xml for THIS slice
@@ -72,7 +73,7 @@ foreach($item_ids as $search_index => $item_id) {
 	$media->item_id = $item->id;
 	$item_sx = $item->asSimpleXml();
 	//since we need to do things like adding index,
-	//best to have all this here in action that as
+	//best to have all this here in action than as
 	//a method on Item class
 	$item_sx->addChild('search_index',$search_index + $start);
 	$new_request_url = str_replace('search','search_item',$request_url);

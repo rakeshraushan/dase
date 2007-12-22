@@ -49,7 +49,8 @@ class Dase_Xslt {
 	function transform() {
 		$this->set('msg',Dase::filterGet('msg'));
 		$this->set('app_root',APP_ROOT . '/');
-		$this->set('timer',Dase_Timer::getElapsed());
-		return ($this->xslt->transformToXML($this->xml));
+		//$this->set('timer',Dase_Timer::getElapsed());
+		$this->xslt->registerPHPFunctions();
+		return $this->xslt->transformToXML($this->xml);
 	}
 }

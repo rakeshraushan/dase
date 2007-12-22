@@ -19,7 +19,8 @@ if (isset($params['log_name'])) {
 	}
 	$log = file_get_contents(DASE_PATH . "/log/" . $file);
 }
-$tpl = Dase_Template::instance();
+$tpl = new Smarty;
+$tpl->assign('app_root',APP_ROOT);
 $tpl->assign('breadcrumb_url',"manage/log/{$params['log_name']}");
 $tpl->assign('breadcrumb_name',"{$params['log_name']} log");
 $tpl->assign('log',$log);

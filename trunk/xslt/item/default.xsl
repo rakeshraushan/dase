@@ -28,7 +28,6 @@
   </xsl:template>
 
   <xsl:template match="atom:entry" mode="img">
-	<h2><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h2>
 	<img src="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@href}" width="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:width}" height="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:height}" alt="{atom:title/text()}"/>
   </xsl:template>
 
@@ -37,7 +36,8 @@
   </xsl:template>
 
   <xsl:template match="insert-search-echo">
-	<h1><xsl:value-of select="$it/atom:subtitle/text()"/></h1>
+	<h2><a href="{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
+	<h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>
   </xsl:template>
 
   <xsl:template match="insert-prev-next">

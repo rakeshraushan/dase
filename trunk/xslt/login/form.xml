@@ -9,11 +9,12 @@
 
   <body>
 	<div class="generic">
-	<h1>DASe: Authorizing User...</h1>
+	  <h1>DASe: Authorizing User...<span id="authAlert"></span></h1>
 	  <form id="login" action="login" method="post">
 		<input type="hidden" id="username-input" value="" name="username"/>
 		<input type="hidden" id="password-input" value="" name="password"/>
 	  </form>
+	<insert-return/>
 	</div>
   </body>
 

@@ -41,6 +41,11 @@
 	<match caps="eid" params="id">atom/user/([^/]*)/tag/id</match>
   </route>
 
+  <!-- note that I created a second stanza w/o auth-->
+  <route action="atom/user_tag" auth="none" mime="application/atom+xml">
+	<match caps="eid" params="ascii_id">atom/user/([^/]*)/tag</match>
+  </route>
+
   <route action="atom/item" auth="none" mime="application/atom+xml">
 	<match caps="collection_ascii_id" params="serial_number">atom/([^/]*_collection)</match>
   </route>
@@ -122,6 +127,10 @@
 	<match caps="eid" params="id">xml/user/([^/]*)/tag/id</match>
   </route>
 
+  <route action="xml/user_tag" auth="none" mime="application/xml">
+	<match caps="eid" params="ascii_id">xml/user/([^/]*)/tag</match>
+  </route>
+
   <route action="xml/search" auth="none" mime="application/xml">
 	<match caps="collection_ascii_id">([^/]*_collection)/xml/search</match>
 	<match caps="collection_ascii_id">xml/([^/]*_collection)/search</match>
@@ -200,11 +209,11 @@
   </route>
 
   <!-- initiate login process (it'll delegate to module) -->
-  <route action="login/login" auth="none">
+  <route action="login/initiate_login" auth="none">
 	<match>login</match>
   </route>
 
-  <route action="login/process_login" auth="none" method="post">
+  <route action="login/http_login" auth="none" method="post">
 	<match>login</match>
   </route>
 

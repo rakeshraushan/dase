@@ -71,7 +71,7 @@ class Dase_Upload
 		foreach ($mf->findAll() as $row) {
 			$m = new Dase_DB_MediaFile($row);
 			$msg .= "DELETING {$row['size']} for " . $this->item->serial_number . "\n";
-			//$m->delete();
+			$m->delete();
 		}
 		return $msg;
 	}
@@ -99,12 +99,6 @@ class Dase_Upload
 		return $msg;
 	}
 
-	function makeCustom($geometry) {
-		$msg = '';
-		$msg .= $this->file->makeCustom($this->item,$this->collection,$geometry);
-		return $msg;
-	}
-
 	function buildSearchIndex() {
 		return $this->item->buildSearchIndex();
 	}
@@ -116,6 +110,12 @@ class Dase_Upload
 	function setTitle() {
 		$name = $this->file->getFilename();
 		$this->item->setValue('title',$name);
+	}
+
+	function setMetadata($att_ascii_id,$value) {
+		//need to check here is att_ascii_id is valid!!!!
+		//now it fails silently
+		$this->item->setValue($att_ascii_id,$value);
 	}
 
 	function getMetadata() {

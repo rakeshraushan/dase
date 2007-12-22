@@ -1,7 +1,7 @@
 <?php
 
 //check to see that the get from the login module is in order
-//and if so , create the form which XHR will submit
+//and if so , create the "form" which XHR will submit
 if ($params['token'] != md5($params['eid'] . Dase::getConf('token'))) {
 	Dase::error(401);
 } else {

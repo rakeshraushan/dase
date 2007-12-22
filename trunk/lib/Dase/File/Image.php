@@ -124,26 +124,6 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeCustom($item,$collection,$geometry) {
-		$custom = $collection->path_to_media_files . "/custom/$item->serial_number" . '.jpg';  
-		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '$geometry >' -colorspace RGB $custom");
-		$file_info = getimagesize($custom);
-
-		$media_file = new Dase_DB_MediaFile;
-		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number . '.jpg';
-		if ($file_info) {
-			$media_file->width = $file_info[0];
-			$media_file->height = $file_info[1];
-		}
-		$media_file->mime_type = 'image/jpeg';
-		$media_file->size = 'custom';
-		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $item->serial_number;
-		$media_file->insert();
-		return "created $media_file->size $media_file->filename\n";
-	}
-
 	function makeThumbnail($item,$collection) {
 		$thumbnail = $collection->path_to_media_files . "/thumbnails/$item->serial_number" . '_100.jpg';  
 		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");

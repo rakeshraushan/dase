@@ -5,7 +5,7 @@
 //and use xslt to transform it into this shape
 
 $attribute = new Dase_DB_Attribute;
-$c = Dase::instance()->collection;
+$c = Dase_Collection::get($params['collection_ascii_id']);
 $attribute->collection_id = $c->id;
 $attribute->is_public = 1;
 $attribute->orderBy('sort_order');

@@ -32,6 +32,17 @@ class Dase_DB_Search {
 		// a query parameter name that is NOT part of the search will
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
+		/*
+		 * exact match:
+		 * test_collection.title=farewell+to+arms 
+		 *
+		 * match hash:
+		 * test_collection:title=5045aca392ed260667b8489bfe7ccc03
+		 *
+		 * match substring:
+		 * test_collection%title=farewell+to+a
+		 *
+		 */
 
 		if (isset($url_params['c'])) {
 			if (!is_array($url_params['c'])) {
@@ -248,7 +259,7 @@ class Dase_DB_Search {
 			$echo_arr = array();
 			foreach ($echo['sub'] as $k => $v) {
 				foreach( $v as $val) {
-				$echo_arr[] = "$val in $k";
+					$echo_arr[] = "$val in $k";
 				}
 			}
 			if ($echo_str) {
@@ -273,6 +284,62 @@ class Dase_DB_Search {
 
 	public static function get($params) {
 		return new Dase_DB_Search($params);
+	}
+
+	public function getXml() {
+		//print_r($this->search);exit;
+		$sx = new SimpleXMLElement("<search/>");
+		foreach ($this->search as $key => $val) {
+			if (!is_array($val)) {
+				$val = array($val);
+			}
+			if (in_array($key,array('find','omit','or'))) {
+				foreach($val as $v) {
+					$sx->addChild($key,$v);
+				}
+			}
+			if ('colls' == $key) {
+				foreach($val as $v) {
+					$sx->addChild('collection',$v);
+				}
+			}
+			if ('omit_colls' == $key) {
+				foreach($val as $v) {
+					$sx->addChild('omit_collection',$v);
+				}
+			}
+			if ('att' == $key) {
+				foreach($val as $coll => $ar) {
+					foreach($ar as $attr => $set) {
+						foreach($set as $section => $values) {
+							foreach($values as $vv) {
+								$at = $sx->addChild('filter',$vv);
+								$at->addAttribute('collection',$coll);
+								$at->addAttribute('attr',$attr);
+								$at->addAttribute('type',$section);
+							}
+						}
+					}
+				}
+			}
+			foreach($val as $v) {
+				foreach (array('.',':','%') as $sep) {
+					if (strpos($key,$sep)) {
+						list($coll,$att) = explode($sep,$key);
+						$c = $sx->addChild('collection');
+						$c->addAttribute('name',$coll);
+						$c->addChild($att,$v);
+					}
+				}
+			}
+		}
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+		$domnode = dom_import_simplexml($sx);
+		$domnode = $doc->importNode($domnode, true);
+		$domnode = $doc->appendChild($domnode);
+		header("Content-Type: application/xml; charset=utf-8");
+		echo $doc->saveXML();
 	}
 
 	private function _tokenizeQuoted($string) {
@@ -458,8 +525,8 @@ class Dase_DB_Search {
 			$sql = "
 				SELECT id, collection_id FROM item
 				WHERE " . join(' AND ',$value_table_search_sets);
-		//if searching ONLY for item type (NOT simply as filter)
-		//as indicated by lack of other queries (i.e., we got to this point in decision tree)
+			//if searching ONLY for item type (NOT simply as filter)
+			//as indicated by lack of other queries (i.e., we got to this point in decision tree)
 		} elseif (isset($search['type']['coll']) && isset($search['type']['name'])) {
 			$sql =" 
 				SELECT id, collection_id FROM item
@@ -475,23 +542,15 @@ class Dase_DB_Search {
 		//if search type is used as filter:
 		if (isset($search['type']['coll']) && isset($search['type']['name']) && 
 			(isset($search_table_sql) || count($value_table_search_sets))) {
-			$sql .=" 
-				AND WHERE item_type_id IN
-				(SELECT id FROM item_type
-				WHERE ascii_id = '{$search['type']['name']}'
-				AND collection_id IN (SELECT id
-				FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
-				";
-		}
+				$sql .=" 
+					AND WHERE item_type_id IN
+					(SELECT id FROM item_type
+					WHERE ascii_id = '{$search['type']['name']}'
+					AND collection_id IN (SELECT id
+					FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
+					";
+			}
 		return $sql;
-	}
-
-	public function printDiagnostics() {
-		print $this->_createSql($this->search);
-		print('<pre>');
-		print_r($search);
-		print('</pre>');
-		print md5($this->_normalizeSearch($search));
 	}
 
 	private function _executeSearch($hash) {
@@ -571,9 +630,9 @@ class Dase_DB_Search {
 		$cache = new Dase_DB_SearchCache();
 		$cache->search_md5 = $hash;
 		if ($cache->findOne()) {
-		$result = unserialize($cache->item_id_string);
-		$result['timestamp'] = $cache->timestamp;
-		$result['hash'] = $cache->search_md5;
+			$result = unserialize($cache->item_id_string);
+			$result['timestamp'] = $cache->timestamp;
+			$result['hash'] = $cache->search_md5;
 		}
 		return $result;
 	}

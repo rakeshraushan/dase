@@ -21,9 +21,11 @@ foreach ($dir as $file) {
 		) {
 			try {
 				$u = new Dase_Upload(Dase_File::newFile($file->getPathname()),$collection);
+//				$u->checkForMultiTiff();
 				print $u->createItem();
 				print $u->ingest();
 				print $u->setTitle();
+				//$u->setMetadata('scratch_pad','test');
 				print $u->buildSearchIndex();
 			} catch(Exception $e) {
 				print $e->getMessage() . "\n";

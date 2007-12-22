@@ -39,7 +39,8 @@ while ($row = $sth->fetch()) {
 }
 
 
-$tpl = Dase_Template::instance();
+$tpl = new Smarty;
+$tpl->assign('app_root',APP_ROOT);
 $tpl->assign('breadcrumb_url','manage/stats');
 $tpl->assign('breadcrumb_name','collection usage statics');
 $tpl->assign('top_ten',$top_ten);

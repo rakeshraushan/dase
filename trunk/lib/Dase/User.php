@@ -17,7 +17,8 @@ class Dase_User
 				";	
 			$sth = $db->prepare($sql);
 			if ($sth->execute(array(strtolower($eid)))) {
-				return new Dase_DB_DaseUser($sth->fetch());
+				$this->db_user = new Dase_DB_DaseUser($sth->fetch());
+				$this->db_user;
 			}
 		} 
 		//a "GET" to '/login/' should initiate the login process

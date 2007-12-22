@@ -1,7 +1,8 @@
 <?php
 $routes = Dase::compileRoutesXslt();
 
-$tpl = Dase_Template::instance();
+$tpl = new Smarty;
+$tpl->assign('app_root',APP_ROOT);
 $tpl->assign('breadcrumb_url','manage/routes');
 $tpl->assign('breadcrumb_name','route mappings');
 $tpl->assign('routes',$routes);

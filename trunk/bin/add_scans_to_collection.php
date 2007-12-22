@@ -3,8 +3,8 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'medieval_collection';
-$repo = $collection_ascii_id;
+$collection_ascii_id = 'ancient_meso_collection';
+$repo = $collection_ascii_id . '/problems';
 //$repo = mansfield;
 
 /******************************************/
@@ -34,7 +34,7 @@ function processDir($REPOS,$collection,$logfile) {
 		) {
 			try {
 					$u = new Dase_Upload(Dase_File::newFile($file->getPathname()),$collection);
-			//		$u->checkForMultiTiff();
+					$u->checkForMultiTiff();
 					$ser_num = $u->createItem();
 					$logdata = $u->ingest();
 					$logdata .= $u->setTitle();
@@ -49,7 +49,7 @@ function processDir($REPOS,$collection,$logfile) {
 					
 			} catch(Exception $e) {
 				print $e->getMessage() . "\n";
-				file_put_contents($logfile,$e->getMessage(),FILE_APPEND);
+				file_put_contents($logfile,$e->getMessage() . "\n",FILE_APPEND);
 			}
 		}
 	}

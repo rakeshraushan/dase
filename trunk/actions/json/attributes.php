@@ -2,6 +2,7 @@
 $attribute = new Dase_DB_Attribute;
 $attribute->collection_id = Dase_DB_Collection::getId($params['collection_ascii_id']);
 $attribute->is_public = true;
+$attribute->orderBy('sort_order');
 $att_array = array();
 foreach($attribute->findAll() as $att) {
 	$att_array[] =

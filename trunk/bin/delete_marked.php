@@ -4,8 +4,8 @@ $database = 'dase_prod';
 include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
-$coll = 'south_asia_collection';
-//$coll = 'ancient_meso_collection';
+//$coll = 'south_asia_collection';
+$coll = 'ancient_meso_collection';
 $c = Dase_DB_Collection::get($coll);
 
 $status = new Dase_DB_ItemStatus;

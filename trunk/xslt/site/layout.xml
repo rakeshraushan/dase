@@ -95,7 +95,7 @@
 		</li>
 	  </ul>
 
-	  <div class="loadingMsg" id="ajaxMenuMsg"></div>
+	  <div class="loadingMsg" id="ajaxMsg"></div>
 
 	</div> <!-- closes sidebar -->
 
