@@ -26,7 +26,7 @@
   <xsl:template match="module">
 	<xsl:param name="collection" select="@collection"/>
 	<xsl:param name="name" select="@name"/>
-	<xsl:apply-templates select="document(concat('../modules/',@name,'/inc/routes.xml'))" mode="modules">
+	<xsl:apply-templates select="document(concat('../modules/',@name,'/routes.xml'))" mode="modules">
 	  <xsl:with-param name="collection" select="$collection"/>
 	  <xsl:with-param name="name" select="$name"/>
 	</xsl:apply-templates>
