@@ -21,6 +21,7 @@
 
   <route action="atom/collections" auth="none" mime="application/atom+xml">
 	<match>atom</match>
+	<match>atom/collections</match>
   </route>
 
   <!-- note search_item MUST precede search -->
@@ -105,9 +106,7 @@
 	<match caps="collection_ascii_id" params="serial_number">([^/]*_collection)</match>
   </route>
 
-  <route action="xml/collections" auth="none" mime="application/xml">
-	<match>xml</match>
-  </route>
+  <!-- try to get rid of all of these XML routes -->
 
   <route action="xml/tags" auth="none" mime="application/xml">
 	<match caps="eid">xml/user/([^/]*)/tags</match>
@@ -131,12 +130,6 @@
 	<match caps="eid" params="ascii_id">xml/user/([^/]*)/tag</match>
   </route>
 
-  <route action="xml/search" auth="none" mime="application/xml">
-	<match caps="collection_ascii_id">([^/]*_collection)/xml/search</match>
-	<match caps="collection_ascii_id">xml/([^/]*_collection)/search</match>
-	<match>xml/search</match>
-  </route>
-
   <route action="xml/search_by_hash" auth="none" mime="application/xml">
 	<match params="md5_hash">xml/search/md5</match>
   </route>
@@ -147,17 +140,8 @@
 	<match>xml/search_item</match>
   </route>
 
-  <route action="xml/collection" auth="none" mime="application/xml">
-	<match params="collection_ascii_id">xml/c</match>
-	<match caps="collection_ascii_id">xml/([^/]*_collection)</match>
-  </route>
-
   <route action="xml/item" auth="none" mime="application/xml">
 	<match caps="collection_ascii_id" params="serial_number">xml/([^/]*_collection)</match>
-  </route>
-
-  <route action="xml/collections" auth="none" mime="application/xml">
-	<match>xml/collections</match>
   </route>
 
   <route action="html/attribute" auth="none">

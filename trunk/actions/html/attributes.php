@@ -3,6 +3,7 @@
 
 //this script should consume an atom feed of attributes for the collection
 //and use xslt to transform it into this shape
+// --maybe :-)
 
 $attribute = new Dase_DB_Attribute;
 $c = Dase_Collection::get($params['collection_ascii_id']);

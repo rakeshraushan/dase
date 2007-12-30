@@ -121,6 +121,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$this->collection = $c;
 		$this->collection_ascii_id = $c->ascii_id;
 		$this->collection_name = $c->collection_name;
+		//$this->coll = substr($c->ascii_idi,0,-11);
 		return $c;
 	}
 
@@ -183,25 +184,6 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$this->media = $m->findOne();
 		$url = APP_ROOT . "/media/{$this->collection->ascii_id}/$size/$m->filename";
 		return $url;
-	}
-
-	public function getXml($asXml = true) {
-		$this->collection || $this->getCollection();
-		$this->item_type || $this->getItemType();
-		$this->item_status || $this->getItemStatus();
-		//merge 3 sets of xml results
-		$value = new Dase_DB_Value;
-		$value->item_id = $this->id;
-		$media = new Dase_DB_MediaFile;
-		$media->item_id = $this->id;
-		$item_xml = Dase_Util::simplexml_append(
-			Dase_Util::simplexml_append($this->asSimpleXml(),$value->resultSetAsSimpleXml()),
-			$media->resultSetAsSimpleXml());
-		if ($asXml) {
-			return $item_xml->asXml();
-		} else {
-			return $item_xml;
-		}
 	}
 
 	function getMediaCount() {
@@ -338,20 +320,62 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		return $title;
 	}
 
-	function asSimpleXml() {
-		$sx = new SimpleXMLElement("<item/>");
-		$props = array(
-			'id','collection_name','collection_ascii_id','serial_number',
-			'status','item_type_ascii','item_type_label','last_update'
-		);
-		foreach($props as $p) {
-			if ($this->$p) {
-				$sx->addAttribute($p,$this->$p);
-			}
+	function injectAtomEntryData(Dase_Atom_Entry $entry) {
+		$this->collection || $this->getCollection();
+		if (is_numeric($this->updated)) {
+			$updated = date(DATE_ATOM,$this->updated);
+		} else {
+			$updated = $this->updated;
 		}
-		$node1 = dom_import_simplexml($sx);
-		$node1->appendChild(new DOMText($this->getTitle()));
-		return $sx;
+		$entry->setTitle($this->getTitle());
+		$entry->setUpdated($updated);
+		$entry->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
+		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
+		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
+		$entry->addLink(APP_ROOT.'/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
+		foreach ($this->getMedia() as $med) {
+			$entry->addLink(APP_ROOT."/media/".$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,"http://daseproject.org/relation/media/".$med->size);
+		}
+		//switch to the simple xml interface here
+		$div = simplexml_import_dom($entry->setContent());
+		$div->addAttribute('class',$this->collection_ascii_id);
+		$dl = $div->addChild('dl');
+		foreach ($this->getValues() as $value) {
+			$dl->addChild('dt',htmlentities($value->attribute->attribute_name));
+			$dd = $dl->addChild('dd',htmlentities($value->value_text));
+			$dd->addAttribute('class',$value->attribute->ascii_id);
+		}
+		$this->thumbnail || $this->getThumbnail();
+		$img = $div->addChild('img');
+		$img->addAttribute('src',$this->thumbnail_url);
+		$img->addAttribute('class','thumbnail');
+		$div->addChild('p',htmlentities($this->collection->collection_name));
+		if ($this->xhtml_content) {
+			$content_sx = new SimpleXMLElement($this->xhtml_content);	
+			//from http://us.php.net/manual/en/function.simplexml-element-addChild.php
+			$node1 = dom_import_simplexml($div);
+			$dom_sxe = dom_import_simplexml($content_sx);
+			$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
+			$node1->appendChild($node2);
+		} elseif ($this->text_content) {
+			$text = $div->addChild('div',htmlentities($content));
+			$text->addAttribute('class','itemContent');
+		}
+		return $entry;
 	}
 
+	function injectAtomFeedData(Dase_Atom_Feed $feed) {
+		$this->collection || $this->getCollection();
+		if (is_numeric($this->updated)) {
+			$updated = date(DATE_ATOM,$this->updated);
+		} else {
+			$updated = $this->updated;
+		}
+		$feed->setUpdated($updated);
+		$feed->setTitle($this->getTitle());
+		$feed->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
+		$feed->setGenerator('DASe','http://daseproject.org','1.0');
+		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
+		return $feed;
+	}
 }

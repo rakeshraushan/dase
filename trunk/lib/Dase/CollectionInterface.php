@@ -3,12 +3,8 @@ interface Dase_CollectionInterface
 {
 	//NOTE: these are all now availble as web services 
 	static function get($ascii_id);
-	function getXml();
-	function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
-	function getItemsXmlByType($type_ascii_id);
 	function buildSearchIndex();
 	/*
-	function getXml($limit = 100000);
 	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false);
 	function getItemsByType($type_ascii_id);
 	function get($ascii_id);

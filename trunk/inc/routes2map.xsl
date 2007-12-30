@@ -14,6 +14,25 @@
 	</xsl:element>
   </xsl:template>
 
+  <!--
+  <xsl:template match="/" mode="core">
+	<xsl:param name="name"/>
+	<xsl:apply-templates>
+	  <xsl:with-param name="collection" select="$collection"/>
+	  <xsl:with-param name="name" select="$name"/>
+	</xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template match="module">
+	<xsl:param name="name" select="@name"/>
+	<xsl:apply-templates select="document(concat('../modules/',@name,'/routes.xml'))" mode="core">
+	  <xsl:with-param name="collection" select="$collection"/>
+	  <xsl:with-param name="name" select="$name"/>
+	</xsl:apply-templates>
+  </xsl:template>
+  -->
+
+  <!-- we do this for the routes.xml file in each extension module--> 
   <xsl:template match="/" mode="modules">
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>

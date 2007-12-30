@@ -7,7 +7,6 @@ class Dase_Remote_Collection extends Dase_Remote // implements Dase_CollectionIn
 	 * interface contract:
 	 *
 	 * static function get($ascii_id);
-	 * function getXml();
 	 * function getItemsXmlByAttVal($att_ascii_id,$value_text,$substr = false);
 	 * function getItemsXmlByType($type_ascii_id);
 	 * function buildSearchIndex();

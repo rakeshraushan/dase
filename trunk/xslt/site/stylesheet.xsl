@@ -33,7 +33,7 @@
 
   <xsl:template match="insert-timer">
 	<!--<xsl:value-of select="$timer"/>-->	
-	<xsl:value-of select="php:functionString('Dase_Timer::getElapsed')"/>	
+	<!--	<xsl:value-of select="php:functionString('Dase_Timer::getElapsed')"/>-->	
   </xsl:template>
 
   <!-- Identity transformation -->

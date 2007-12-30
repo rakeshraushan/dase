@@ -1,7 +1,10 @@
 <?php
 
-$t = new Dase_Xslt(XSLT_PATH.'/atom/collections.xsl',XSLT_PATH.'/atom/layout.xml');
-$xml_request_url = str_replace('atom/','xml/',$request_url);
-$t->set('src',APP_ROOT. '/' . $xml_request_url . '?' . $query_string);
-Dase::display($t->transform());
+if (Dase::filterGet('get_all')) {
+	$public_only = false;
+} else {
+	$public_only = true;
+}
+
+Dase::display(Dase_DB_Collection::listAsAtom($public_only));
 

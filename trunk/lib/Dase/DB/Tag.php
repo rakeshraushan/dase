@@ -4,6 +4,9 @@ require_once 'Dase/DB/Autogen/Tag.php';
 
 class Dase_DB_Tag extends Dase_DB_Autogen_Tag 
 {
+	private $type;
+	private $user;
+
 	public static function getByUser($user) {
 		//$tag = new Dase_DB_Tag;
 		//$tag->dase_user_id = $user->id;
@@ -20,34 +23,10 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 			FROM tag t 
 			WHERE NOT EXISTS(SELECT * FROM tag_item ti WHERE ti.tag_id = t.id)
 			AND t.dase_user_id = ?
-		";
+			";
 		$sth = $db->prepare($sql);
 		$sth->execute(array($user->id,$user->id));
 		return $sth->fetchAll();
-	}
-
-	function getXml() {
-		//merge 3 sets of xml results
-		$tag = new Dase_DB_Tag;
-		$tag->ascii_id = $this->ascii_id;
-		$tag->dase_user_id = $this->dase_user_id;
-		$tag_item = new Dase_DB_TagItem;
-		$sql = "
-			SELECT 
-			t.annotation, t.p_collection_ascii_id, 
-			t.p_serial_number, t.size, t.sort_order, 
-			t.timestamp, m.filename, m.mime_type,
-		   	m.width, m.height, m.file_size
-			FROM tag_item t, media_file m
-			WHERE t.item_id = m.item_id
-			AND m.size = t.size
-			AND t.tag_id = $this->id
-		";	
-		$tag_xml = Dase_Util::simplexml_append($tag->findAsXml(false),$tag_item->queryAsXml(false,$sql));
-		foreach ($tag_xml->tag_items->tag_item as $tag_item) {
-			$tag_item['url'] = APP_ROOT . '/media/' . $tag_item['p_collection_ascii_id'] . '/' . $tag_item['size'] . '/' . $tag_item['filename'];
-		}
-		return $tag_xml->asXml();
 	}
 
 	function getItemCount() {
@@ -63,13 +42,75 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		return $this->item_count;
 	}
 
-	function getItemIds() {
-		$item_ids = array();
+	function getUpdated() {
 		$tag_item = new Dase_DB_TagItem;
 		$tag_item->tag_id = $this->id;
-		foreach ($tag_item->findAll() as $row) {
-			$item_ids[] = $row['item_id'];
+		$tag_item->orderBy('updated DESC');
+		$tag_item->findOne();
+		return $tag_item->updated;
+	}
+
+	function getTagItems() {
+		$item_ids = array();
+		$_tag_item = new Dase_DB_TagItem;
+		$_tag_item->tag_id = $this->id;
+		foreach ($_tag_item->findAll() as $row) {
+			$tag_item = new Dase_DB_TagItem($row);
+			$tag_items[] = $tag_item;
 		}
-		return $item_ids;
+		return $tag_items;
+	}
+
+	function getType() {
+		$type = new Dase_DB_TagType;
+		$this->type = $type->load($this->tag_type_id);
+		return $this->type;
+	}
+
+	function getUser() {
+		$user = new Dase_DB_DaseUser;
+		$this->user = $user->load($this->dase_user_id);
+		return $this->user;
+	}
+
+	function asAtom() {
+		$this->type || $this->getType(); 
+		$this->user || $this->getUser(); 
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->name);
+		if ($this->description) {
+			$feed->setSubtitle($this->description);
+		}
+		$feed->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
+		$feed->setUpdated($this->getUpdated());
+		$feed->addAuthor($this->user->eid);
+		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/','self');
+		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
+		if ($this->is_public) {
+			$pub = "public";
+		} else {
+			$pub = "private";
+		}
+		$feed->addCategory($pub,"http://daseproject.org/category/visibility");
+		$feed->addCategory($this->background,"http://daseproject.org/category/tag_background");
+
+		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
+		foreach($this->getTagItems() as $tag_item) {
+			$entry = $feed->addEntry();
+			$tag_item->getItem()->injectAtomEntryData($entry);
+			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				$source = $sx->addChild('source');
+			$source->addChild('title',htmlentities($this->item->collection_name));
+			if (is_numeric($this->item->updated)) {
+				$updated = date(DATE_ATOM,$this->item->updated);
+			} else {
+				$updated = $this->item->updated;
+			}
+
+			$source->addChild('updated',$updated);
+			$source->addChild('id',APP_ROOT . '/collection/'. substr($this->item->collection_ascii_id,0,-11));
+			 */
+		}
+		return $feed->asXml();
 	}
 }
