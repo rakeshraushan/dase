@@ -1,3 +1,31 @@
+2007-12-26
+
+reorganize code into modules:
+
+core and add-ons (called modules)
+
+so...
+
+sdase/
+        core/
+                user/
+                collection/
+                item/
+                attribute/
+        module/
+                auth/
+                vrc/
+                elucy/
+
+each module is set up like:
+
+user/
+        routes.xml
+        controller.php
+        xslt/
+        
+
+
 2007-07-27
 
 how about we NOT have item_type identifying attribute and parent attribute stated in item_type table but rather follow a convention that an item type's identifying attribute will always be one of:

@@ -1,5 +1,9 @@
 <?php
-$t = new Dase_Xslt(XSLT_PATH.'/atom/item.xsl',XSLT_PATH.'/atom/layout.xml');
-$xml_request_url = str_replace('atom/','xml/',$request_url);
-$t->set('src',APP_ROOT. '/' . $xml_request_url . '?' . $query_string);
-Dase::display($t->transform());
+
+if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
+	$item = Dase_Item::get($params['collection_ascii_id'],$params['serial_number']);
+	if ($item) {
+		Dase::display($item->asAtom(true));
+	}
+}
+Dase::error(404);
