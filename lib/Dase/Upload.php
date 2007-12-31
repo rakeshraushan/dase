@@ -54,9 +54,9 @@ class Dase_Upload
 		$v = new Dase_DB_Value;
 		$v->attribute_id = Dase_DB_Attribute::getAdmin('admin_checksum')->id;
 		$v->value_text = $meta['admin_checksum'];
-		foreach ($v->findAll() as $row) {
+		foreach ($v->find() as $val) {
 			$it = new Dase_DB_Item;
-			$it->load($row['item_id']);
+			$it->load($val->item_id);
 			if ($it->collection_id == $this->collection->id) {
 				return true;
 			}
@@ -68,10 +68,9 @@ class Dase_Upload
 		$msg = '';
 		$mf = new Dase_DB_MediaFile;
 		$mf->item_id = $this->item->id;
-		foreach ($mf->findAll() as $row) {
-			$m = new Dase_DB_MediaFile($row);
-			$msg .= "DELETING {$row['size']} for " . $this->item->serial_number . "\n";
-			$m->delete();
+		foreach ($mf->find() as $doomed) {
+			$msg .= "DELETING $doomed->size for " . $this->item->serial_number . "\n";
+			$doomed->delete();
 		}
 		return $msg;
 	}

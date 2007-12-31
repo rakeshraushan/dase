@@ -21,15 +21,6 @@ foreach($di as $line) {
 	}
 }
 
-/*
-	$mf = new Dase_DB_MediaFile;
-	$mf->item_id = $item->id;
-	foreach ($mf->findAll() as $row) {
-		$m = new Dase_DB_MediaFile($row);
-		$m->delete();
-	}
-
- */
 function processUrl($url) {
 	$basename = basename($url);
 	$headers = get_headers($url);

@@ -95,13 +95,30 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	public function getValues() {
 		$val = new Dase_DB_Value;
 		$val->item_id = $this->id;
-		foreach ($val->findAll() as $row) {
-			$v = new Dase_DB_Value($row);
+		foreach ($val->find() as $v) {
 			$v->getAttribute();
 			$this->values[] = $v;
 		}
 		//what about sorting?????
 		return $this->values;
+	}
+
+	public function getMetadata() {
+		//minimize memory consumption 
+		//as compared to getValues()
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT a.ascii_id, a.attribute_name,v.value_text
+			FROM attribute a, value v
+			WHERE v.item_id = $this->id
+			AND v.attribute_id = a.id
+			";
+		$st = $db->prepare($sql);
+		$st->execute();
+		while ($row = $st->fetch()) {
+			$metadata[] = $row;
+		}
+		return $metadata;
 	}
 
 	public function getAttVal($att_ascii_id) {
@@ -168,9 +185,8 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$m = new Dase_DB_MediaFile;
 		$m->item_id = $this->id;
 		$media = array();
-		foreach ($m->findAll() as $row) {
-			$mf = new Dase_DB_MediaFile($row);
-			$media[] = $mf;
+		foreach ($m->find() as $media_file) {
+			$media[] = $media_file;
 		}
 		$this->media = $media;
 		return $media;
@@ -190,7 +206,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$mf = new Dase_DB_MediaFile;
 		$mf->item_id = $this->id;
 		$i = 0;
-		foreach ($mf->findAll() as $m) {
+		foreach ($mf->find() as $m) {
 			$i++;
 		}
 		return $i;
@@ -230,23 +246,20 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	}
 
 	function deleteValues() {
-		//should snaity check and archive values
+		//should sanity check and archive values
 		$v = new Dase_DB_Value;
 		$v->item_id = $this->id;
-		foreach ($v->findAll() as $row) {
-			$doomed = new Dase_DB_Value($row);
+		foreach ($v->find() as $doomed) {
 			$doomed->delete();
 		}
 		$st = new Dase_DB_SearchTable;
 		$st->item_id = $this->id;
-		foreach ($st->findAll() as $row) {
-			$doomed = new Dase_DB_SearchTable($row);;
+		foreach ($st->find() as $doomed) {
 			$doomed->delete();
 		}
 		$ast = new Dase_DB_AdminSearchTable;
 		$ast->item_id = $this->id;
-		foreach ($ast->findAll() as $row) {
-			$doomed = new Dase_DB_SearchTable($row);;
+		foreach ($ast->find() as $doomed) {
 			$doomed->delete();
 		}
 	}
@@ -254,12 +267,11 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	function deleteAdminValues() {
 		$a = new Dase_DB_Attribute;
 		$a->collection_id = 0;
-		foreach ($a->findAll() as $row) {
+		foreach ($a->find() as $aa) {
 			$v = new Dase_DB_Value;
 			$v->item_id = $this->id;
-			$v->attribute_id = $row['id'];
-			foreach ($v->findAll() as $row) {
-				$doomed = new Dase_DB_Value($row);
+			$v->attribute_id = $aa->id;
+			foreach ($v->find() as $doomed) {
 				$doomed->delete();
 			}
 		}
@@ -269,8 +281,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	function deleteMedia() {
 		$mf = new Dase_DB_MediaFile;
 		$mf->item_id = $this->id;
-		foreach ($mf->findAll() as $row) {
-			$doomed = new Dase_DB_MediaFile($row);
+		foreach ($mf->find() as $doomed) {
 			$doomed->delete();
 		}
 	}
@@ -334,16 +345,24 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$entry->addLink(APP_ROOT.'/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
 		foreach ($this->getMedia() as $med) {
-			$entry->addLink(APP_ROOT."/media/".$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,"http://daseproject.org/relation/media/".$med->size);
+			$entry->addLink(
+				APP_ROOT."/media/".$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
+				"http://daseproject.org/relation/media/".$med->size,
+				$med->mime_type,
+				$med->file_size
+			);
 		}
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
 		$dl = $div->addChild('dl');
-		foreach ($this->getValues() as $value) {
-			$dl->addChild('dt',htmlentities($value->attribute->attribute_name));
-			$dd = $dl->addChild('dd',htmlentities($value->value_text));
-			$dd->addAttribute('class',$value->attribute->ascii_id);
+		foreach ($this->getMetadata() as $row) {
+			//note: since this is used in archiving scripts
+			//I use getMetadata() rather than getValues() to
+			//conserve memory
+			$dl->addChild('dt',htmlentities($row['attribute_name']));
+			$dd = $dl->addChild('dd',htmlentities($row['value_text']));
+			$dd->addAttribute('class',$row['ascii_id']);
 		}
 		$this->thumbnail || $this->getThumbnail();
 		$img = $div->addChild('img');

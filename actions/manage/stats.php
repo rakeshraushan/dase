@@ -3,12 +3,11 @@ $tag_item = new Dase_DB_TagItem;
 $tot = array();
 $slice = array();
 $top_ten = array();
-foreach ($tag_item->getAll() as $t) {
-	$tag_item = new Dase_DB_TagItem($t);
-	if (isset($tot[$tag_item->p_collection_ascii_id])) {
-		$tot[$tag_item->p_collection_ascii_id]++;
+foreach ($tag_item->getAll() as $tag_it) {
+	if (isset($tot[$tag_it->p_collection_ascii_id])) {
+		$tot[$tag_it->p_collection_ascii_id]++;
 	} else {
-		$tot[$tag_item->p_collection_ascii_id] = 1;
+		$tot[$tag_it->p_collection_ascii_id] = 1;
 	}
 }
 

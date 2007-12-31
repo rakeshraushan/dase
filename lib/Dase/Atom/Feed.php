@@ -57,11 +57,12 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	function asXml() {
 		//attach entries
-		foreach ($this->entries as $entry) {
-			$this->root->appendChild($entry->root);
+		if ($this->entries) {
+			foreach ($this->entries as $entry) {
+				$this->root->appendChild($entry->root);
+			}
 		}
-		//format output
-		$this->dom->formatOutput = true;
-		return $this->dom->saveXML();
+		return parent::asXml();
 	}
+
 }

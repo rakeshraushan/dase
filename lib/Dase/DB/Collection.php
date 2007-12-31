@@ -5,9 +5,6 @@ require_once 'Dase/DB/Autogen/Collection.php';
 class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_CollectionInterface
 {
 	public $item_count;
-	public $admin_attribute_array;
-	public $attribute_array;
-	public $item_type_array;
 
 	public static function get($ascii_id) {
 		$c = new Dase_DB_Collection;
@@ -52,9 +49,9 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$c->orderBy('collection_name');
 		if ($public_only) {
 			$c->is_public = 1;
-			$rows = $c->findAll();
+			$cs = $c->find();
 		} else {
-			$rows = $c->getAll();
+			$cs = $c->getAll();
 		}
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('DASe Collections');
@@ -62,8 +59,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$feed->setUpdated(Dase_DB_Collection::getLastCreated());
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink(APP_ROOT.'/atom','self');
-		foreach ($rows as $row) {
-			$coll = new Dase_DB_Collection($row);
+		foreach ($cs as $coll) {
 			$entry = $feed->addEntry();
 			$entry->setTitle($coll->collection_name);
 			$entry->setContent($coll->ascii_id);
@@ -96,11 +92,12 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	static function getLookupArray() {
 		$hash = array();
 		$c = new Dase_DB_Collection;
-		foreach ($c->getAll() as $row) {
-			foreach ($row as $field => $value) {
+		foreach ($c->getAll() as $coll) {
+			$iter = $coll->getIterator();
+			foreach ($iter as $field => $value) {
 				$coll_hash[$field] = $value;
 			}
-			$hash[$row['id']] = $coll_hash;
+			$hash[$coll->id] = $coll_hash;
 		}
 		return $hash;
 	}
@@ -113,28 +110,14 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		} else {
 			$att->orderBy('sort_order');
 		}
-		$this->attribute_array = $att->findAll();
-		return $this->attribute_array;
+		return $att->find();
 	}
 
 	function getAdminAttributes() {
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
-		$admin_attribute_array = $att->findAll();
-		$this->admin_attribute_array = $admin_attribute_array;
-		return $admin_attribute_array;
-	}
-
-	function getAdminAttributeAsciiIds() {
-		$att = new Dase_DB_Attribute;
-		$att->collection_id = 0;
-		$att->orderBy('sort_order');
-		$admin_atts = array();
-		foreach ($att->findAll() as $row) {
-			$admin_atts[$row['id']] = $row['ascii_id'];
-		}
-		return $admin_atts;
+		return $att->find();
 	}
 
 	function getItemCount() {
@@ -151,36 +134,25 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	}
 
 	function getItems() {
-		//beware -- this could fill exceed memory limitations!!!
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT *
-			FROM item
-			where collection_id = $this->id
-			";
-		$st = $db->query($sql);
-		$st->setFetchMode(PDO::FETCH_ASSOC);
-		while ($row = $st->fetch()) {
-			$items[] = new Dase_DB_Item($row);
-		}
-		return $items;
+		$item = new Dase_DB_Item;
+		$item->collection_id = $this->id;
+		return $item->find();
 	}
 
 	function getItemTypes() {
 		$type = new Dase_DB_ItemType;
 		$type->collection_id = $this->id;
 		$type->orderBy('name');
-		$this->item_type_array = $type->findAll();
-		return $this->item_type_array;
+		return $type->find();
 	}
 
 	public function buildSearchIndex() {
 		$db = Dase_DB::get();
 		$db->query("DELETE FROM search_table WHERE collection_id = $this->id");
 		$db->query("DELETE FROM admin_search_table WHERE collection_id = $this->id");
-		$item = new Dase_DB_Item;
-		$item->collection_id = $this->id;
-		foreach ($item->findAll() as $it) {
+		$items = new Dase_DB_Item;
+		$items->collection_id = $this->id;
+		foreach ($items->find() as $item) {
 			//search table
 			$composite_value_text = '';
 			//NOTE: '= true' works for mysql AND postgres!
@@ -191,13 +163,13 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
 				";
 			$st = $db->prepare($sql);
-			$st->execute(array($it['id']));
+			$st->execute(array($item->id));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
 			$search_table = new Dase_DB_SearchTable;
 			$search_table->value_text = $composite_value_text;
-			$search_table->item_id = $it['id'];
+			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
 			$search_table->insert();
 
@@ -209,13 +181,13 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 				WHERE item_id = ?
 				";
 			$st = $db->prepare($sql);
-			$st->execute(array($it['id']));
+			$st->execute(array($item->id));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
 			$search_table = new Dase_DB_AdminSearchTable;
 			$search_table->value_text = $composite_value_text;
-			$search_table->item_id = $it['id'];
+			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
 			$search_table->insert();
 		}

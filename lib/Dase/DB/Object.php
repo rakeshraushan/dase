@@ -150,51 +150,13 @@ class Dase_DB_Object implements IteratorAggregate
 	}
 
 	function findOne() {
-		//finds matches based on set fields (omitting 'id')
-		$db = Dase_DB::get();
-		$class = get_class($this);
-		$objects = array();
-		$sets = array();
-		$bind = array();
-		foreach( array_keys( $this->fields ) as $field ) {
-			if (isset($this->fields[ $field ]) 
-				&& ('id' != $field)) {
-					$sets []= "$field = :$field";
-					$bind[":$field"] = $this->fields[ $field ];
-				}
-		}
-		if (isset($this->qualifiers)) {
-			//work on this
-			foreach ($this->qualifiers as $qual) {
-				$f = $qual['field'];
-				$op = $qual['operator'];
-				$v = $db->quote($qual['value']);
-				$sets [] = "$f $op $v";
-			}
-		}
-		$where = join( " AND ", $sets );
-		$sql = "SELECT * FROM ".$this->table. " WHERE ".$where;
-		if (isset($this->order_by)) {
-			$sql .= " ORDER BY $this->order_by";
-		}
-		$sql .= " LIMIT 1";
-		$sth = $db->prepare( $sql );
-		if (defined('DEBUG')) {
-			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
-		}
-		$sth->setFetchMode(PDO::FETCH_INTO, $this);
-		$sth->execute($bind);
-		if ($sth->fetch()) {
-			if ($sth->columnCount()) {
-				return $this;
-			} else {
-				return false;
-			}
-		}
+		$this->setLimit(1);
+		return $this->find()->fetch();
 	}
 
-	function findAll() {
+	function find() {
 		//finds matches based on set fields (omitting 'id')
+		//returns an iterator
 		$db = Dase_DB::get();
 		$sets = array();
 		$bind = array();
@@ -227,9 +189,9 @@ class Dase_DB_Object implements IteratorAggregate
 		if (defined('DEBUG')) {
 			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
 		}
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
-		return $sth->fetchAll();
+		return $sth;
 	}
 
 	function update() {
@@ -282,9 +244,9 @@ class Dase_DB_Object implements IteratorAggregate
 			$sql .= " LIMIT $this->limit";
 		}
 		$sth = $db->prepare( $sql );
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute();
-		return $sth->fetchAll();
+		return $sth;
 	}
 
 	//implement SPL IteratorAggregate:
