@@ -17,7 +17,6 @@ foreach ($sx->query as $query) {
 		print "$query\n";
 	}
 }
-exit;
 $t = Dase_Timer::start();
 //get search xml doc
 $term = $argv[1];
@@ -26,7 +25,7 @@ $term = "%$term%";
 
 $c = new Dase_DB_Collection;
 foreach ($c->getAll() as $coll) {
-	search($term,$coll['id']);
+	search($term,$coll->id);
 }
 
 
@@ -34,8 +33,8 @@ function search($term,$coll_id) {
 	$st = new Dase_DB_SearchTable;
 	$st->addWhere('value_text',$term,'like');
 	$st->addWhere('collection_id',$coll_id,'=');
-	foreach ($st->findAll() as $row) {
-		print "$coll_id : {$row['item_id']}\n";
+	foreach ($st->find() as $search_table) {
+		print "$coll_id : $search_table->item_id\n";
 	}
 }
 

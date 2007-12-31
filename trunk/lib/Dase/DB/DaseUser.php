@@ -20,12 +20,12 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		}
 		$subs = new Dase_DB_Subscription;
 		$subs->dase_user_id = $this->id;
-		foreach($subs->findAll() as $row) {
+		foreach($subs->find() as $sub) {
 			$tag = new Dase_DB_Tag;
-			$tag->load($row['tag_id']);
+			$tag->load($sub->tag_id);
 			if ($tag->name && $tag->ascii_id) {
 				//note that I am overloading the ascii_id place w/ the id
-				$key = "a" . $row['tag_id'];
+				$key = "a" . $sub->tag_id;
 				$tag_array['subscription'][$key] = $tag->name;
 			}
 		}
@@ -37,18 +37,18 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$cm->dase_user_eid = $this->eid;
 		$special_colls = array();
 		$user_colls = array();
-		foreach ($cm->findAll() as $row) {
-			$special_colls[] = $row['collection_ascii_id'];
+		foreach ($cm->find() as $managed) {
+			$special_colls[] = $managed->collection_ascii_id;
 		}
 		$coll = new Dase_DB_Collection;
 		$coll->orderBy('collection_name');
-		foreach($coll->getAll() as $row) {
-			if ((1 == $row['is_public']) || (in_array($row['ascii_id'],$special_colls))) {
+		foreach($coll->getAll() as $c) {
+			if ((1 == $c->is_public) || (in_array($c->ascii_id,$special_colls))) {
 				$user_colls[] =  array(
-					'id' => $row['id'],
-					'collection_name' => $row['collection_name'],
-					'ascii_id' => $row['ascii_id'],
-					'is_public' => $row['is_public']
+					'id' => $c->id,
+					'collection_name' => $c->collection_name,
+					'ascii_id' => $c->ascii_id,
+					'is_public' => $c->is_public
 				);
 			}
 		}

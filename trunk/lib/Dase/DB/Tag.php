@@ -8,9 +8,6 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 	private $user;
 
 	public static function getByUser($user) {
-		//$tag = new Dase_DB_Tag;
-		//$tag->dase_user_id = $user->id;
-		//return $tag->findAll();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,count(ti.id)
@@ -51,14 +48,9 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 	}
 
 	function getTagItems() {
-		$item_ids = array();
-		$_tag_item = new Dase_DB_TagItem;
-		$_tag_item->tag_id = $this->id;
-		foreach ($_tag_item->findAll() as $row) {
-			$tag_item = new Dase_DB_TagItem($row);
-			$tag_items[] = $tag_item;
-		}
-		return $tag_items;
+		$tag_item = new Dase_DB_TagItem;
+		$tag_item->tag_id = $this->id;
+		return $tag_item->find();
 	}
 
 	function getType() {
