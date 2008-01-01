@@ -93,6 +93,8 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	}
 
 	public function getValues() {
+		//n+1 anti-pattern
+		//(see getMetadata)
 		$val = new Dase_DB_Value;
 		$val->item_id = $this->id;
 		foreach ($val->find() as $v) {
@@ -185,11 +187,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$m = new Dase_DB_MediaFile;
 		$m->item_id = $this->id;
 		$media = array();
-		foreach ($m->find() as $media_file) {
-			$media[] = $media_file;
-		}
-		$this->media = $media;
-		return $media;
+		return $m->find();
 	}
 
 	public function getMediaUrl($size) {  //size really means type here
@@ -203,13 +201,13 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	}
 
 	function getMediaCount() {
-		$mf = new Dase_DB_MediaFile;
-		$mf->item_id = $this->id;
-		$i = 0;
-		foreach ($mf->find() as $m) {
-			$i++;
-		}
-		return $i;
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT count(*) 
+			FROM media_file
+			WHERE item_id = $this->id
+			";
+		return $db->query($sql)->fetchColumn();
 	}
 
 	function setType($type_ascii_id) {
@@ -355,20 +353,21 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
-		$dl = $div->addChild('dl');
-		foreach ($this->getMetadata() as $row) {
-			//note: since this is used in archiving scripts
-			//I use getMetadata() rather than getValues() to
-			//conserve memory
-			$dl->addChild('dt',htmlentities($row['attribute_name']));
-			$dd = $dl->addChild('dd',htmlentities($row['value_text']));
-			$dd->addAttribute('class',$row['ascii_id']);
-		}
 		$this->thumbnail || $this->getThumbnail();
 		$img = $div->addChild('img');
 		$img->addAttribute('src',$this->thumbnail_url);
 		$img->addAttribute('class','thumbnail');
-		$div->addChild('p',htmlentities($this->collection->collection_name));
+		$div->addChild('p',htmlspecialchars($this->collection->collection_name));
+		$dl = $div->addChild('dl');
+		$dl->addAttribute('class','metadata');
+		foreach ($this->getMetadata() as $row) {
+			//note: since this is used in archiving scripts
+			//I use getMetadata() rather than getValues() to
+			//conserve memory
+			$dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
+			$dd->addAttribute('class',$row['ascii_id']);
+		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
 			//from http://us.php.net/manual/en/function.simplexml-element-addChild.php
@@ -377,7 +376,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
 			$node1->appendChild($node2);
 		} elseif ($this->text_content) {
-			$text = $div->addChild('div',htmlentities($content));
+			$text = $div->addChild('div',htmlspecialchars($content));
 			$text->addAttribute('class','itemContent');
 		}
 		return $entry;

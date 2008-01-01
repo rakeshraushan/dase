@@ -192,7 +192,7 @@ class Dase
 		}
 	}
 
-	static public function compileRoutesXslt() {
+	static public function compileRoutes() {
 		// No cache: ~115 req/sec
 		// File Based Cache: ~375 req/sec
 		$routes = array(); 
@@ -276,7 +276,7 @@ class Dase
 		$matches = array();
 		$params = array();
 
-		$routes = Dase::compileRoutesXslt();
+		$routes = Dase::compileRoutes();
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);

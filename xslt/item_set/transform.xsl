@@ -73,7 +73,7 @@
 		  <span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
 		</div>
 		<div class="image">
-		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item-link']/@href}">
+		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
 			<img src="{atom:link[@rel='http://daseproject.org/relation/media/thumbnail']/@href}" alt="{atom:title/text()}"/>
 		  </a>
 		</div>
@@ -99,7 +99,7 @@
 			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
 		  </div>
 		  <div class="image">
-			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item-link']/@href}">
+			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
 			  <img src="{atom:link[@rel='http://daseproject.org/relation/media/thumbnail']/@href}" alt="{atom:title/text()}"/>
 			</a>
 		  </div>

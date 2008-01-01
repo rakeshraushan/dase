@@ -3,7 +3,11 @@
 //this is the result of an XHR request
 //a POST to /login/
 
-if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
+if (
+	!isset($_SERVER['PHP_AUTH_USER']) || 
+	!isset($_SERVER['PHP_AUTH_PW']) ||
+	('logoff' == $_SERVER['PHP_AUTH_USER'])
+) {
 	header('WWW-Authenticate: Basic realm="DASe"');
 	header('HTTP/1.0 401 Unauthorized');
 	echo "you must be authorized";

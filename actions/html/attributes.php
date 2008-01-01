@@ -5,7 +5,7 @@
 //and use xslt to transform it into this shape
 // --maybe :-)
 
-$attribute = new Dase_DB_Attribute;
+$atts = new Dase_DB_Attribute;
 $c = Dase_Collection::get($params['collection_ascii_id']);
 $atts->collection_id = $c->id;
 $atts->is_public = 1;
