@@ -240,18 +240,10 @@
 	<match>manage</match>
   </route>
 
-  <route action="manage/whoami" auth="superuser">
-	<match>manage/whoami</match>
-  </route>
-
   <route action="manage/modules" auth="superuser"/>
-
   <route action="manage/routes" auth="superuser"/>
-
   <route action="manage/phpinfo" auth="superuser"/>
   <route action="manage/stats" auth="superuser"/>
-  <route action="manage/file_finder" auth="superuser"/>
-  <route action="manage/xml/file_finder" auth="superuser"/>
 
   <route action="user/settings" auth="eid">
 	<match caps="eid">([^/]*)</match>
