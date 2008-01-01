@@ -17,8 +17,8 @@ if (isset($params['id'])) {
 	Dase::error(404);
 }
 
-$t = new Dase_Xslt(XSLT_PATH.'search/result.xsl');
-$t->set('local-layout',XSLT_PATH.'search/result.xml');
+$t = new Dase_Xslt(XSLT_PATH.'item_set/transform.xsl');
+$t->set('local-layout',XSLT_PATH.'item_set/source.xml');
 //THIS script is protected by eid auth, but how to protect restricted
 //atom and xml documents that feed it? DASe requests AND serves the docs
 //so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)

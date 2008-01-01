@@ -12,7 +12,7 @@ require_once 'Dase/DB/Object.php';
 class Dase_DB_Autogen_Value extends Dase_DB_Object 
 {
 	function __construct($assoc = false) {
-		parent::__construct( 'value',  array('attribute_id','is_literal','item_id','value_text','value_text_md5'));
+		parent::__construct( 'value',  array('attribute_id','item_id','value_text','value_text_md5'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

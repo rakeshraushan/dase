@@ -23,7 +23,7 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 			";
 		$sth = $db->prepare($sql);
 		$sth->execute(array($user->id,$user->id));
-		return $sth->fetchAll();
+		return $sth;
 	}
 
 	function getItemCount() {
@@ -37,6 +37,19 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		$st->execute(array($this->id));
 		$this->item_count = $st->fetchColumn();
 		return $this->item_count;
+	}
+
+	function getItemIds() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT item_id
+			FROM tag_item 
+			WHERE tag_id = ?
+			ORDER BY sort_order
+			";
+		$st = $db->prepare($sql);
+		$st->execute(array($this->id));
+		return $st->fetchAll(PDO::FETCH_COLUMN);
 	}
 
 	function getUpdated() {
@@ -77,6 +90,7 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		$feed->setUpdated($this->getUpdated());
 		$feed->addAuthor($this->user->eid);
 		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/','self');
+		
 		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
 		if ($this->is_public) {
 			$pub = "public";
@@ -89,6 +103,7 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		foreach($this->getTagItems() as $tag_item) {
 			$entry = $feed->addEntry();
+		$entry->addLink("search_result_item","http://daseproject.org/category","search_result_item");
 			$tag_item->getItem()->injectAtomEntryData($entry);
 			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				$source = $sx->addChild('source');

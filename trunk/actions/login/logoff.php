@@ -1,6 +1,6 @@
 <?php
 
-//xhr has already gooten the user logged out
+//xhr has already gotten the user logged out
 //this is the completion of the logoff link click
 
 if (Dase::getConf('login_module')) {

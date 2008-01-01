@@ -816,6 +816,7 @@ Dase.initCart = function() {
 //simply to hijack an http auth login
 Dase.initLogin = function() {
 	//largely from http://www.peej.co.uk/articles/http-auth-with-html-forms.html
+	//ONLY happens when login from is present
 	var form = Dase.$('login');
 	if (!form) return;
 	//first, make sure auth cache is cleared
@@ -865,15 +866,20 @@ Dase.logoff = function() {
 		// We get some strange status in that case: 12152.                     
 		// And on other machines I've seen 502.                        
 	}                                  
-	if ((xmlhttp.status == 200) || (request.status == 404) || (request.status == 12152) || (request.status == 502)) {      
+	if (
+			(xmlhttp.status == 200) || 
+			(xmlhttp.status == 404) || 
+			(xmlhttp.status == 12152) || 
+			(xmlhttp.status == 502)
+	   ) {      
 		// we just reload the page at the moment                        
 		//alert(xmlhttp.responseText);
 		//now auth won't be there
-	//	window.location.reload();                           
+		//window.location.reload();                           
 		return true;                              
 	}                                  
 	else {                                 
-		alert (xmlhttp.status);                            
+		//alert (xmlhttp.status);                            
 		return true;                               
 	}                                  
 }                                  

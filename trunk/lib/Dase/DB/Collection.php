@@ -13,35 +13,19 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	}
 
 	function asAtom() {
-		$feed = new SimpleXMLElement('<feed xmlns="http://www.w3.org/2005/Atom"/>');
-		$feed->addChild('title',htmlentities($this->collection_name));
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->collection_name);
 		if ($this->description) {
-			$feed->addChild('subtitle',$this->description);
+			$feed->setSubtitle($this->description);
 		}
-		$ascii_id_category = $feed->addChild('category');
-		$ascii_id_category->addAttribute('scheme',"http://daseproject.org/category/collection/ascii_id");
-		$ascii_id_category->addAttribute('term',$this->ascii_id);
-		$item_count_category = $feed->addChild('category');
-		$item_count_category->addAttribute('scheme',"http://daseproject.org/category/collection/item_count");
-		$item_count_category->addAttribute('term',$this->getItemCount());
-		$feed->addChild('id',APP_ROOT . '/' . $this->ascii_id);
-		$feed->addChild('updated',$this->created);
-		$author = $feed->addChild('author');
-		$author->addChild('name','DASe (Digital Archive Services)');
-		$author->addChild('uri','http://daseproject.org');
-		$self_link = $feed->addChild('link');
-		$self_link->addAttribute('rel',"self");
-		$self_link->addAttribute('href',APP_ROOT . '/atom/' . $this->ascii_id);
-		$alt_link = $feed->addChild('link');
-		$alt_link->addAttribute('rel',"alternate");
-		$alt_link->addAttribute('href',APP_ROOT . '/' . $this->ascii_id);
-		//format output
-		$dom_sxe = dom_import_simplexml($feed);
-		$dom = new DOMDocument('1.0');
-		$dom_sxe = $dom->importNode($dom_sxe, true);
-		$dom->appendChild($dom_sxe);
-		$dom->formatOutput = true;
-		return $dom->saveXML();
+		$feed->setUpdated($this->getLastUpdated());
+		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/collection/ascii_id");
+		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
+		$feed->setId(APP_ROOT . '/' . $this->ascii_id);
+		$feed->addAuthor();
+		$feed->addLink(APP_ROOT.'/atom/'.$this->ascii_id,'self');
+		$feed->addLink(APP_ROOT.'/'.$this->ascii_id,'alternate');
+		return $feed->asXml();
 	}
 
 	static function listAsAtom($public_only = false) {

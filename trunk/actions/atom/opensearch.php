@@ -1,5 +1,5 @@
 <?php
-if ($params['md5_hash']) {
+if (isset($params['md5_hash'])) {
 	$result = Dase_DB_Search::getResultByHash($params['md5_hash']);
 } else {
 	$result = Dase_Search::get($params)->getResult();
@@ -38,7 +38,6 @@ if ($end > $start) {
 $feed = new Dase_Atom_Feed();
 $feed->addAuthor();
 $feed->setTitle('DASe Search Result');
-$feed->setSubtitle($subtitle);
 $feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string,'self');
 $feed->setUpdated($result['timestamp']);
 /*
@@ -57,17 +56,20 @@ $feed->setId(APP_ROOT.'/search/'.$result['hash']);
 $feed->setOpensearchTotalResults($result['count']);
 $feed->setOpensearchStartIndex($start);
 $feed->setOpensearchItemsPerPage($max);
-//$tallies = $sx->addChild('tallies');
-/*
+
+//switch to the simple xml interface here
+$div = simplexml_import_dom($feed->setSubtitle());
+$h2 = $div->addChild('h2',htmlspecialchars($subtitle));
+$h2->addAttribute('class','searchEcho');
+$ul = $div->addChild('ul');
+$ul->addAttribute('class','searchTallies');
 foreach ($result['tallies'] as $coll => $tal) {
 	if ($tal['name'] && $tal['total']) {
-		$tally_elem = $tallies->addChild('tally');
-		$tally_elem->addAttribute('collection_ascii_id',$coll);
-		$tally_elem->addAttribute('collection_name',$tal['name']);
-		$tally_elem->addAttribute('total',$tal['total']);
+		$tally_elem = $ul->addChild('li',htmlspecialchars($tal['name'] . ': ' . $tal['total']));
+		$tally_elem->addAttribute('class',$coll);
 	}
 }
- */
+
 foreach($item_ids as $search_index => $item_id) {
 	$item = new Dase_DB_Item();
 	$item->load($item_id);
@@ -76,13 +78,6 @@ foreach($item_ids as $search_index => $item_id) {
 	$item->item_status || $item->getItemStatus();
 	$entry = $feed->addEntry();
 	$item->injectAtomEntryData($entry);
-	/*
-	$item_sx->addChild('search_index',$search_index + $start);
-	$new_request_url = str_replace('search','search_item',$request_url);
-	$search_item_link_elem = $item_sx->addChild('search_item_link');
-	$search_item_link_elem->addAttribute('url',$new_request_url . '?' . $query_string . '&num=' . ($search_index + $start));
-	$sx = Dase_Util::simplexml_append($sx,Dase_Util::simplexml_append(Dase_Util::simplexml_append($item_sx,$value->resultSetAsSimpleXml()),$media->resultSetAsSimpleXml()));
-	 */
 }
 
 Dase::display($feed->asXml());

@@ -70,15 +70,6 @@ class Dase_DB_Object implements IteratorAggregate
 		return $out;
 	}
 
-	//to conserve memory, static method to get array
-	public static function getArray($table,$id) {
-		$db = Dase_DB::get();
-		$sth = $db->prepare("SELECT * from $table WHERE id = ?");
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute(array($id));
-		return $sth->fetch();
-	}
-
 	function load( $id ) {
 		$this->id = $id;
 		$db = Dase_DB::get();
@@ -226,15 +217,8 @@ class Dase_DB_Object implements IteratorAggregate
 		//probably need to destroy $this here
 	}
 
-	function query($sql,$params = null) {
-		$db = Dase_DB::get();
-		$sth = $db->prepare( $sql );
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute($params);
-		return $sth->fetchAll();
-	}
-
 	function getAll() {
+		//returns an iterator
 		$db = Dase_DB::get();
 		$sql = "SELECT * FROM ".$this->table;
 		if (isset($this->order_by)) {

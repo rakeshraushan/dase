@@ -34,13 +34,26 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function setSubtitle($text) {
+	function setSubtitle($text='') {
 		if ($this->subtitle_is_set) {
 			throw new Dase_Atom_Exception('subtitle is already set');
 		} else {
 			$this->subtitle_is_set = true;
 		}
-		$this->addElement('subtitle',$text);
+		if ($text) {
+			$subtitle = $this->addElement('subtitle',$text);
+			$subtitle->setAttribute('type','text');
+		} else {
+			$subtitle = $this->addElement('subtitle');
+			$subtitle->setAttribute('type','xhtml');
+			//results in namespace prefixes which messes up some aggregators
+			//return $this->addChildElement($subtitle,'xhtml:div','',Dase_Atom::$ns['xhtml']);
+			$div = $subtitle->appendChild($this->dom->createElement('div'));
+			$div->setAttribute('xmlns',Dase_Atom::$ns['xhtml']);
+			return $div;
+			//note that best practice here is to use simplexml 
+			//to add subtitle to the returned div
+		}
 	}
 
 	function setOpensearchTotalResults($num) {
