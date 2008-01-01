@@ -9,12 +9,8 @@
 
 //need to have SOME data returned if there is no user
 
-if (!isset($_SERVER['PHP_AUTH_USER'])) {
-	exit;
-}
-
 if (!isset($params['eid'])) {
-	$params['eid'] = $_SERVER['PHP_AUTH_USER'];
+	echo "user data error"; exit;
 }
 
 $cache = new Dase_FileCache($params['eid'] . '_data');
