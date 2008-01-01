@@ -79,9 +79,29 @@ Dase.toggle = function(el) {
 	}
 };
 
+Dase.getEid = function() {
+	//adapted from rhino 5th ed. p 460
+	var allcookies = document.cookie;
+	var pos = allcookies.indexOf("DASE_USER=");
+	if (pos != -1) {
+		var start = pos + 10;
+		var end = allcookies.indexOf(";",start); 
+		if (end == -1) end = allcookies.length;
+		var value = allcookies.substring(start,end);
+		return decodeURIComponent(value);
+	} else {
+		return false;
+	}
+};
+
 Dase.initUser = function() {
+	var eid = Dase.getEid();
+	if (!eid) {
+		Dase.removeClass(Dase.$('loginControl'),'hide');
+		return;
+	}
 	Dase.loadingMsg(true);
-	Dase.getJSON(Dase.base_href + "json/user/current/data",function(json){
+	Dase.getJSON(Dase.base_href + "json/user/"+eid+ "/data",function(json){
 			for (var eid in json) {
 			Dase.user.eid = eid;
 			Dase.user.name = json[eid].name;
@@ -93,7 +113,6 @@ Dase.initUser = function() {
 			Dase.placeUserSearchCollections();
 			Dase.initCart();
 			Dase.initAddToCart();
-			Dase.initLogoff();
 			}
 			Dase.loginControl(Dase.user.eid);
 			Dase.multicheck("checkedCollection");
@@ -318,7 +337,7 @@ Dase.setCollectionAtts = function(coll) {
 };
 
 
-//created fro Persion Online
+//created for Persion Online & not used in DASe just yet
 Dase.initRowTable = function(id,new_class) {
 	var table = Dase.$(id);
 	if (!table) return;
@@ -813,85 +832,12 @@ Dase.initCart = function() {
 			});
 };
 
-//simply to hijack an http auth login
-Dase.initLogin = function() {
-	//largely from http://www.peej.co.uk/articles/http-auth-with-html-forms.html
-	//ONLY happens when login from is present
-	var form = Dase.$('login');
-	if (!form) return;
-	//first, make sure auth cache is cleared
-	Dase.logoff();
-	var name = Dase.$('username-input').value;
-	var pass = Dase.$('password-input').value;
-	var xmlhttp = Dase.createXMLHttpRequest();
-	//has to be post as stated in routes.xml
-	xmlhttp.open('POST','login',false, name, pass);
-	xmlhttp.send(null);
-	if (xmlhttp.status == 200) {
-		var al = Dase.$('authAlert');
-		al.className = 'success';
-		al.innerHTML = 'succeeded';
-		//alert(xmlhttp.responseText);
-		//document.location = this.action;
-		form.submit();
-	} else {	
-		var al = Dase.$('authAlert');
-		al.className = 'failure';
-		al.innerHTML = 'failed';
-	}
-};
-
-Dase.initLogoff = function() {
-	//logoff will fire if we are on a page w/ a 'logoff' id
-	var lo = Dase.$('logoff-link');
-	if (!lo) return;
-	lo.onclick = function() {
-		Dase.logoff();
-	};
-};
-
-
-Dase.logoff = function() {
-	//from http://tech.groups.yahoo.com/group/rest-discuss/message/9908
-	//modified by pk
-	//also see http://userfirstweb.com/23/logouts-form-based-http-basic-authentication/
-	var xmlhttp = Dase.createXMLHttpRequest();
-	xmlhttp.open("PUT", "logoff", false, "logoff", "logoff");             
-	try {                                 
-		xmlhttp.send(null);                             
-	}                                  
-	catch (err) {                               
-		//MSIE6 fails the send, but it has logged us out actually                   
-		// So we ignore the error                           
-		// We get some strange status in that case: 12152.                     
-		// And on other machines I've seen 502.                        
-	}                                  
-	if (
-			(xmlhttp.status == 200) || 
-			(xmlhttp.status == 404) || 
-			(xmlhttp.status == 12152) || 
-			(xmlhttp.status == 502)
-	   ) {      
-		// we just reload the page at the moment                        
-		//alert(xmlhttp.responseText);
-		//now auth won't be there
-		//window.location.reload();                           
-		return true;                              
-	}                                  
-	else {                                 
-		//alert (xmlhttp.status);                            
-		return true;                               
-	}                                  
-}                                  
-
-
 Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
 		Dase.initCheckImage();
-		Dase.initLogin();
-		Dase.initRowTable('writing','highlight');
+		//Dase.initRowTable('writing','highlight');
 		/*
 		   Dase.prepareAddFileUpload();
 		   Dase.prepareAttributeFlags();

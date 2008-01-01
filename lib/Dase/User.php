@@ -41,19 +41,18 @@ class Dase_User
 
 
 	public static function getCurrent() {
-		if (isset($_SERVER['PHP_AUTH_USER']) && 
-			isset($_SERVER['PHP_AUTH_PW']) && 
-			$_SERVER['PHP_AUTH_PW'] == md5($_SERVER['PHP_AUTH_USER'] . Dase::getConf('token'))) {
-				return $_SERVER['PHP_AUTH_USER'];
-			} else {
-				//should this be here???
-				//(seems a bit dramatic)
-				Dase::error(401);
-				exit;
-			}
+		$eid = Dase_CookieAuth::validate();
+		if ($eid) {
+			return $eid;
+		} else {
+			Dase::reload('login');
+			exit;
+		}
 	}
 
 	public static function logoff() {
+		Dase_CookieAuth::clear();
+		Dase::reload();
 	}
 
 	public function __get($prop) {
