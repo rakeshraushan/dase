@@ -1,4 +1,10 @@
 <?php
+require(MODULE_PATH . '/lib/Smarty/Smarty.class.php');
+$tpl = new Smarty();
+$tpl->template_dir = MODULE_PATH . '/templates';
+$tpl->compile_id = 'dbadmin';
+$tpl->compile_dir = CACHE_DIR;
+$tpl->assign('module_root',MODULE_ROOT);
 
 $types['sqlite'] = "SQLite";
 $types['mysql'] = "MySQL";
@@ -15,8 +21,6 @@ foreach (Dase_DB::listTables() as $t) {
 	}
 }
 
-
-$tpl = Dase_Template::instance('dbadmin');
 $tpl->assign('tables',$tables);
 $tpl->assign('db',$types[$db_type]);
 $tpl->display('index.tpl');
