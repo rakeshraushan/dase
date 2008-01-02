@@ -299,6 +299,7 @@ class Dase
 				if (isset($conf_array['prefix'])) {
 					$module_prefix = $conf_array['prefix'];
 					define('MODULE_PATH',DASE_PATH . $module_prefix);
+					define('MODULE_ROOT',APP_ROOT . $module_prefix);
 				}
 				if (isset($matches[1])) { // i.e. at least one paramenter
 					array_shift($matches);

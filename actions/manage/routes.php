@@ -1,5 +1,5 @@
 <?php
-$routes = Dase::compileRoutesXslt();
+$routes = Dase::compileRoutes();
 
 $tpl = new Smarty;
 $tpl->assign('app_root',APP_ROOT);
