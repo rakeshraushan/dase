@@ -1,10 +1,23 @@
 <?php
-$routes = Dase::compileRoutes();
+$t = new Dase_Xslt(
+	XSLT_PATH.'manage/routes.xsl',
+	XSLT_PATH.'manage/source.xml'
+);
 
-$tpl = new Smarty;
-$tpl->assign('app_root',APP_ROOT);
-$tpl->assign('breadcrumb_url','manage/routes');
-$tpl->assign('breadcrumb_name','route mappings');
-$tpl->assign('routes',$routes);
-$tpl->display('manage/index.tpl');
-exit;
+$routes = Dase::compileRoutes();
+$sx = new SimpleXMLElement('<routes/>');
+foreach ($routes as $http_method => $routes_set) {
+	$method = $sx->addChild('h3',$http_method . ' method');
+	$dl = $sx->addChild('dl');
+	$dl->addAttribute('class','routes');
+	foreach($routes_set as $match => $atts) {
+		$dl->addChild('dt',$match);
+		if (is_array($atts)){
+			foreach($atts as $name => $value) {
+				$dl->addChild('dd',"[$name] $value");
+			}
+		}
+	}
+}
+$t->addSourceNode($sx);
+Dase::display($t->transform());

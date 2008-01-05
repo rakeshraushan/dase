@@ -300,6 +300,7 @@ class Dase
 					$module_prefix = $conf_array['prefix'];
 					define('MODULE_PATH',DASE_PATH . $module_prefix);
 					define('MODULE_ROOT',APP_ROOT . $module_prefix);
+					ini_set('include_path',ini_get('include_path').':'.MODULE_PATH.'/lib');
 				}
 				if (isset($matches[1])) { // i.e. at least one paramenter
 					array_shift($matches);

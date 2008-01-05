@@ -1,17 +1,19 @@
 <?php
-$tpl = new Smarty;
+$t = new Dase_Xslt(
+	XSLT_PATH.'manage/modules.xsl',
+	XSLT_PATH.'manage/source.xml'
+);
 
-include(DASE_CONFIG);
+$sx = new SimpleXMLElement('<modules/>');
+
 $dir = (DASE_PATH . "/modules");
 foreach (new DirectoryIterator($dir) as $file) {
 	if ($file->isDir() && !$file->isDot()) {
 		$module = $file->getFilename();
-		$modules[$file->getFilename()] = 'installed';
+		$mod = $sx->addChild('module',$module);
+		$mod->addAttribute('installed','installed');
 	}
 }
-$tpl->assign('app_root',APP_ROOT);
-$tpl->assign('modules',$modules);
-$tpl->assign('breadcrumb_url','manage/modules');
-$tpl->assign('breadcrumb_name','modules');
-$tpl->display('manage/index.tpl');
-exit;
+
+$t->addSourceNode($sx);
+Dase::display($t->transform());

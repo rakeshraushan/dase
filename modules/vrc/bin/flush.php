@@ -59,9 +59,9 @@ function build($sernum,$coll) {
 
 	$val = new Dase_DB_Value;
 	$val->item_id = $item->id;
-	foreach ($val->findAll() as $row) {
-		$dv = new Dase_DB_Value($row);
-		$dv->delete();
+	foreach ($val->find() as $doomed) {
+		print "deleting $doomed->value_text\n";
+		$doomed->delete();
 	}
 
 	foreach ($sxe->item[0]->metadata as $m) {
