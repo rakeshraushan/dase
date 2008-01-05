@@ -1,9 +1,10 @@
 <?php
+$t = new Dase_Xslt(
+	XSLT_PATH.'manage/common.xsl',
+	XSLT_PATH.'manage/source.xml'
+);
+Dase::display($t->transform());
 
-$smarty = new Smarty;
-$smarty->assign('app_root',APP_ROOT);
-$smarty->display('manage/index.tpl');
-exit;
 
 
 

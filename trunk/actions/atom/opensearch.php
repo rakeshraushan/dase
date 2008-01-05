@@ -13,6 +13,8 @@ $max = $max ? $max : MAX_ITEMS;
 $request_url = $result['request_url'];
 $query_string = $result['query_string'];
 
+$request_url = str_replace('atom/','',$request_url);
+
 if ($start > $result['count']) {
 	$start = 1;
 }
@@ -40,18 +42,12 @@ $feed->addAuthor();
 $feed->setTitle('DASe Search Result');
 $feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string,'self');
 $feed->setUpdated($result['timestamp']);
-/*
-$request_elem = $sx->addChild('request');
-$request_elem->addAttribute('url',$request_url . '?' . $query_string);
 if (isset($next)) {
-	$next_elem = $sx->addChild('request-next');
-	$next_elem->addAttribute('url',$request_url . '?' . $query_string . '&start=' . $next);
+	$feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string.'&start='.$next,'next');
 }
 if (isset($previous)) {
-	$previous_elem = $sx->addChild('request-previous');
-	$previous_elem->addAttribute('url',$request_url . '?' . $query_string . '&start=' . $previous);
+	$feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string.'&start='.$previous,'previous');
 }
- */
 $feed->setId(APP_ROOT.'/search/'.$result['hash']);
 $feed->setOpensearchTotalResults($result['count']);
 $feed->setOpensearchStartIndex($start);
@@ -70,7 +66,10 @@ foreach ($result['tallies'] as $coll => $tal) {
 	}
 }
 
+$item_request_url = str_replace('search','search_item',$request_url);
+$num = 0;
 foreach($item_ids as $search_index => $item_id) {
+	$num++;
 	$item = new Dase_DB_Item();
 	$item->load($item_id);
 	$item->collection || $item->getCollection();
@@ -78,6 +77,7 @@ foreach($item_ids as $search_index => $item_id) {
 	$item->item_status || $item->getItemStatus();
 	$entry = $feed->addEntry();
 	$item->injectAtomEntryData($entry);
+	$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item');
 }
 
 Dase::display($feed->asXml());

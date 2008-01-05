@@ -66,11 +66,11 @@
 	  </xsl:text>
 	  <td>
 		<div class="checkNum">
-		  <input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}"/>
+		  <input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
 		  <xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/search_result/index']/@label"/><xsl:text>.</xsl:text>
 		</div>
 		<div class="cartAdd">
-		  <span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
+		  <span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}">add to cart</a>
 		</div>
 		<div class="image">
 		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
@@ -92,11 +92,11 @@
 		</xsl:text>
 		<td>
 		  <div class="checkNum">
-			<input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}"/>
+			<input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
 			<xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/search_result/index']/@label"/><xsl:text>.</xsl:text>
 		  </div>
 		  <div class="cartAdd">
-			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item_id']/@term}">add to cart</a>
+			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}">add to cart</a>
 		  </div>
 		  <div class="image">
 			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">

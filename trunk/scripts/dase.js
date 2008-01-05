@@ -79,12 +79,35 @@ Dase.toggle = function(el) {
 	}
 };
 
+Dase.formatDate = function() {
+	var d = new Date();
+	var mo;
+	var da;
+	if (1 == String(d.getMonth()+1).length) {
+		mo = "0" + String(d.getMonth()+1);
+	} else {
+		mo = String(d.getMonth()+1);
+	} 
+	if (1 == String(d.getDate()).length) {
+		da = "0" + String(d.getDate());
+	} else {
+		da = String(d.getDate());
+	} 
+	return String(d.getFullYear()) + mo + da; 
+}
+
+
 Dase.getEid = function() {
+	var base = Dase.base_href;
+	var d = new Date();
+	//note that the cookie name changes every day, so user will need to 
+	//login again if they have not closed their browser since yesterday
+	var cookiename = base.substr(7,base.length-8).replace(/\/|\./g,'_') + '_' + Dase.formatDate() + '_' + 'DASE_USER';
 	//adapted from rhino 5th ed. p 460
 	var allcookies = document.cookie;
-	var pos = allcookies.indexOf("DASE_USER=");
+	var pos = allcookies.indexOf(cookiename + "=");
 	if (pos != -1) {
-		var start = pos + 10;
+		var start = pos + cookiename.length + 1;
 		var end = allcookies.indexOf(";",start); 
 		if (end == -1) end = allcookies.length;
 		var value = allcookies.substring(start,end);
@@ -315,24 +338,24 @@ Dase.setCollectionAtts = function(coll) {
 				//(it's because the child removal above gets called on the second call
 				//of this function BEFORE this async call is complete, so you have
 				//remove-remove-add-add rather than remove-add-remove-add
-				while (sel.childNodes[0]) {
+			while (sel.childNodes[0]) {
 				sel.removeChild(sel.childNodes[0]);
-				}
-				var opt = document.createElement('option');
-				opt.setAttribute('value',"");
-				opt.appendChild(document.createTextNode("All Attributes"));
-				sel.appendChild(opt);
-				for (var i=0;i<json.length;i++) {
+			}
+			var opt = document.createElement('option');
+			opt.setAttribute('value',"");
+			opt.appendChild(document.createTextNode("All Attributes"));
+			sel.appendChild(opt);
+			for (var i=0;i<json.length;i++) {
 				var att = json[i];
 				var opt = document.createElement('option');
 				opt.setAttribute('value',att.collection+'%'+att.ascii_id);
 				var label = Dase.truncate(att.attribute_name,maxAttName);
 				opt.appendChild(document.createTextNode(label));
 				sel.appendChild(opt);
-				}
-				Dase.removeClass(Dase.$('preposition'),'hide');
-				Dase.removeClass(sel,'hide');
-				});
+			}
+			Dase.removeClass(Dase.$('preposition'),'hide');
+			Dase.removeClass(sel,'hide');
+		});
 	}
 };
 
@@ -490,7 +513,7 @@ Dase.loadingMsg = function(displayBool) {
 	if (!loading) return;
 	if (displayBool) {
 		loading.innerHTML = 'loading page data...';
-		setTimeout('Dase.loadingMsg(false)',3000);
+		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
 		var loading = Dase.$('ajaxMsg');
 		loading.innerHTML = '';
@@ -639,7 +662,7 @@ Dase.getAttributeTallies = function(coll) {
 			}
 			} } }
 			Dase.loadingMsg(false);
-		   	});
+	});
 };
 
 Dase.createXMLHttpRequest = function() {

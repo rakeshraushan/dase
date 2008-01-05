@@ -9,7 +9,7 @@ if (!$num) {
 }
 $result = $search->getResult();
 //this will change:
-$request_url = str_replace('xml/','',$result['request_url']);
+$request_url = str_replace('atom/','',$result['request_url']);
 $item_request_url = str_replace('search','search_item',$request_url);
 $query_string = $result['query_string'];
 $count = $result['count'];

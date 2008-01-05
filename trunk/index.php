@@ -1,5 +1,5 @@
 <?php
-ini_set('include_path','.:lib:lib/Smarty');
+ini_set('include_path','.:lib');
 
 define('DASE_PATH', dirname(__FILE__));
 

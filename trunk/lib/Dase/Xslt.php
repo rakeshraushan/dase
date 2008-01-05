@@ -8,7 +8,7 @@ class Dase_Xslt {
 
 	function __construct($stylesheet, $source = '') {
 		if (!$source) {
-			$source = XSLT_PATH . 'site/layout.xml';
+			$source = XSLT_PATH . 'layout.xml';
 		}
 		$this->xsl = new DOMDocument;
 		$this->xsl->load($stylesheet);

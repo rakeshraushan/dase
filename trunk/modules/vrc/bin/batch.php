@@ -115,17 +115,17 @@ function build($sernum,$coll,$media_count) {
 	//shoould be in class
 	$val = new Dase_DB_Value;
 	$val->item_id = $item->id;
-	foreach ($val->findAll() as $row) {
-		$dv = new Dase_DB_Value($row);
-		$dv->delete();
+	foreach ($val->find() as $doomed) {
+		print "deleting $doomed->value_text\n";
+		$doomed->delete();
 	}
 
 	//shoould be in class
 	$mf = new Dase_DB_MediaFile;
 	$mf->item_id = $item->id;
-	foreach ($mf->findAll() as $row) {
-		$m = new Dase_DB_MediaFile($row);
-		$m->delete();
+	foreach ($mf->find() as $doomed2) {
+		print "deleting $doomed2->filename\n";
+		$doomed2->delete();
 	}
 
 	foreach ($sxe->item[0]->metadata as $m) {

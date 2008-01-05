@@ -4,6 +4,7 @@
   <module name="pkeane" collection="pkeane_collection"/>
   <module name="friesen" collection="friesen_collection"/>
   <module name="auth"/>
+  <module name="utlookup"/>
   <module name="search"/>
   <module name="dbadmin"/>
 </modules>
