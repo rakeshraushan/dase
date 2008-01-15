@@ -14,24 +14,6 @@
 	</xsl:element>
   </xsl:template>
 
-  <!--
-  <xsl:template match="/" mode="core">
-	<xsl:param name="name"/>
-	<xsl:apply-templates>
-	  <xsl:with-param name="collection" select="$collection"/>
-	  <xsl:with-param name="name" select="$name"/>
-	</xsl:apply-templates>
-  </xsl:template>
-
-  <xsl:template match="module">
-	<xsl:param name="name" select="@name"/>
-	<xsl:apply-templates select="document(concat('../modules/',@name,'/routes.xml'))" mode="core">
-	  <xsl:with-param name="collection" select="$collection"/>
-	  <xsl:with-param name="name" select="$name"/>
-	</xsl:apply-templates>
-  </xsl:template>
-  -->
-
   <!-- we do this for the routes.xml file in each extension module--> 
   <xsl:template match="/" mode="modules">
 	<xsl:param name="collection"/>
@@ -53,6 +35,7 @@
 
   <xsl:template match="route">
 	<!-- may contain these attributes -->
+	<xsl:param name="handler" select="../@name"/>
 	<xsl:param name="action" select="@action"/>
 	<xsl:param name="auth" select="@auth"/>
 	<xsl:param name="mime" select="@mime"/>
@@ -73,6 +56,7 @@
 	<xsl:param name="collection"/>
 	<xsl:param name="name"/>
 	<xsl:apply-templates>
+	  <xsl:with-param name="handler" select="$handler"/>
 	  <xsl:with-param name="action" select="$action"/>
 	  <xsl:with-param name="params" select="$params"/>
 	  <xsl:with-param name="auth" select="$auth"/>
@@ -85,7 +69,8 @@
 	<!-- handle case where no match is explicitly set -->
 	<xsl:if test="not(child::node())">
 	  <xsl:element name="route">
-		<xsl:element name="match"><xsl:value-of select="$action"/></xsl:element>
+		<xsl:element name="match"><xsl:value-of select="$handler"/><xsl:text>/</xsl:text><xsl:value-of select="$action"/></xsl:element>
+		<xsl:element name="handler"><xsl:value-of select="$handler"/></xsl:element>
 		<xsl:element name="action"><xsl:value-of select="$action"/></xsl:element>
 		<xsl:element name="method"><xsl:value-of select="$method"/></xsl:element>
 		<xsl:element name="auth"><xsl:value-of select="$auth"/></xsl:element>
@@ -102,6 +87,7 @@
 
   <xsl:template match="match">
 	<!-- we'll always get action, auth & method from invoking template -->
+	<xsl:param name="handler"/>
 	<xsl:param name="action"/>
 	<xsl:param name="auth"/>
 	<xsl:param name="mime"/>
@@ -134,6 +120,7 @@
 		</xsl:call-template>
 		<xsl:text>$</xsl:text>
 	  </xsl:element>
+	  <xsl:element name="handler"><xsl:value-of select="$handler"/></xsl:element>
 	  <xsl:element name="action"><xsl:value-of select="$action"/></xsl:element>
 	  <xsl:element name="method"><xsl:value-of select="$method"/></xsl:element>
 	  <xsl:element name="auth"><xsl:value-of select="$auth"/></xsl:element>

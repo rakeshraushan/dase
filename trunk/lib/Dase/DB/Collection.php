@@ -23,8 +23,8 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
 		$feed->setId(APP_ROOT . '/' . $this->ascii_id);
 		$feed->addAuthor();
-		$feed->addLink(APP_ROOT.'/atom/'.$this->ascii_id,'self');
-		$feed->addLink(APP_ROOT.'/'.$this->ascii_id,'alternate');
+		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
+		$feed->addLink(APP_ROOT.'/collection/'.$this->ascii_id,'alternate');
 		return $feed->asXml();
 	}
 
@@ -46,11 +46,11 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		foreach ($cs as $coll) {
 			$entry = $feed->addEntry();
 			$entry->setTitle($coll->collection_name);
-			$entry->setContent($coll->ascii_id);
+			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
 			$entry->setId(APP_ROOT . '/' . $coll->ascii_id . '/');
 			$entry->setUpdated($coll->created);
-			$entry->addLink(APP_ROOT.'/atom/'.$coll->ascii_id.'/','self');
-			$entry->addLink(APP_ROOT.'/'.$coll->ascii_id.'/','alternate');
+			$entry->addLink(APP_ROOT.'/atom/collection/'.$coll->ascii_id.'/','self');
+			$entry->addLink(APP_ROOT.'/collection/'.$coll->ascii_id.'/','alternate');
 			if ($coll->is_public) {
 				$pub = "public";
 			} else {
@@ -124,10 +124,31 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	}
 
 	function getItemTypes() {
-		$type = new Dase_DB_ItemType;
-		$type->collection_id = $this->id;
-		$type->orderBy('name');
-		return $type->find();
+		$types = new Dase_DB_ItemType;
+		$types->collection_id = $this->id;
+		$types->orderBy('name');
+		return $types->find();
+	}
+
+	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
+		$a = new Dase_DB_Attribute;
+		$a->ascii_id = $att_ascii_id;
+		$a->collection_id = $this->id;
+		$a->findOne();
+		$v = new Dase_DB_Value;
+		$v->attribute_id = $a->id;
+		if ($substr) {
+			$v->addWhere('value_text',"%$value_text%",'like');
+		} else {
+			$v->value_text = $value_text;
+		}
+		$items = array();
+		foreach ($v->find() as $val) {
+			$it = new Dase_DB_Item;
+			$it->load($val->item_id);
+			$items[] = $it;
+		}
+		return $items;
 	}
 
 	public function buildSearchIndex() {
@@ -214,10 +235,10 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	function staticGetLastUpdated($id) {
 		$item = new Dase_DB_Item;
 		$item->collection_id = $id;
-		$item->orderBy('last_update DESC');
+		$item->orderBy('updated DESC');
 		$item->setLimit(1);
 		$item->findOne();
-		return $item->last_update;
+		return $item->updated;
 	}
 
 	public static function getId($ascii_id) {
@@ -225,5 +246,24 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$sth = $db->prepare("SELECT id from collection WHERE ascii_id = ?");
 		$sth->execute(array($ascii_id));
 		return $sth->fetchColumn();
+	}
+
+	public function getData() {
+		foreach ($this->getAttributes() as $att) {
+			foreach ($att as $k => $v) {
+			$collection_data['attributes'][$att->ascii_id][$k] = $v;
+			}
+		}
+		foreach ($this->getItemTypes() as $type) {
+			foreach ($type as $k => $v) {
+			$collection_data['item_types'][$type->ascii_id][$k] = $v;
+			}
+			foreach ($type->getAttributes() as $type_att) {
+				//note: just need att_ascii_id, since javascript can reference
+				//rest of data from attributes array
+				$collection_data['item_types'][$type->ascii_id]['attributes'][$type_att->ascii_id] = $type_att->cardinality;
+			}
+		}
+		return Dase_Json::get($collection_data);
 	}
 }

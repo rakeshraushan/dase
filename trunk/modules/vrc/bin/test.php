@@ -3,7 +3,7 @@
 $database = 'dase_prod';
 include 'cli_setup.php';
 $coll = new Dase_DB_Collection;
-$coll->ascii_id = 'vrc_collection';
+$coll->ascii_id = 'vrc';
 $coll->findOne();
 
 

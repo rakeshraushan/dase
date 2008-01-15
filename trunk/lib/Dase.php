@@ -2,15 +2,14 @@
 
 class Dase 
 {
-	private $module= '';        
 	private static $instance;
 	public $base_url= '';       
 	public $collection;
-	public static $user;
-	public $url_params = array();    
+	public $query_string = '';    
 	public $request_url = '';    
 	public $response_mime_type = '';
-	public $query_string = '';    
+	public static $user;
+	public $url_params = array();    
 
 	public function __construct() {}
 
@@ -55,6 +54,9 @@ class Dase
 
 	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid = '') {
 		switch ($auth) {
+		case 'none':
+			//no authorization required
+			break;
 		case 'user':
 			//this means the user has read access to an access-controlled
 			//collection OR the are a registed user (any user) accessing a 
@@ -82,6 +84,9 @@ class Dase
 			//the checkAuth methods use the collection manager
 			//table to look-up privilege level
 			self::$user = new Dase_User();
+			if (self::$user->eid != $eid) {
+				Dase::error(401);
+			}
 			if (!self::$user->checkAuth($collection_ascii_id,'admin')) {
 				Dase::error(401);
 			}
@@ -120,9 +125,6 @@ class Dase
 			if (self::$user->eid != $eid) {
 				Dase::error(401);
 			}
-			break;
-		case 'none':
-			//no authorization required
 			break;
 		default:
 			Dase::error(404);
@@ -192,7 +194,7 @@ class Dase
 		}
 	}
 
-	static public function compileRoutes() {
+	public static function compileRoutes() {
 		// No cache: ~115 req/sec
 		// File Based Cache: ~375 req/sec
 		$routes = array(); 
@@ -236,9 +238,7 @@ class Dase
 		}
 	}
 
-	static public function run() {
-		$controller = Dase::instance();
-
+	public static function getRequestUrl() {
 		// from habari code
 		$request_url= ( isset($_SERVER['REQUEST_URI']) 
 			? $_SERVER['REQUEST_URI'] 
@@ -249,10 +249,15 @@ class Dase
 			( (isset($_SERVER['QUERY_STRING']) && ($_SERVER['QUERY_STRING'] != '')) 
 			? '?' . $_SERVER['QUERY_STRING'] 
 			: ''));
+		return $request_url;
+	}
+
+	public static function run() {
+		$dase = Dase::instance();
 
 		/* Strip out the base URL from the requested URL */
 		if ('/' != APP_BASE) {
-			$request_url= str_replace(APP_BASE,'',$request_url);
+			$request_url= str_replace(APP_BASE,'',Dase::getRequestUrl());
 		}
 
 		/* Remove the query_string from the URL */
@@ -261,17 +266,17 @@ class Dase
 		}
 
 		if (isset($query_string) && $query_string) {
-			$controller->query_string = $query_string;
-			$url_params = $controller->parseQuery(urldecode($query_string));
+			$dase->query_string = $query_string;
+			$url_params = $dase->parseQuery(urldecode($query_string));
 		} else {
 			$query_string = '';
-			$controller->query_string = '';
+			$dase->query_string = '';
 		}
 
 		/* Trim off any leading or trailing slashes */
 		$request_url= trim($request_url, '/');
 
-		$controller->request_url = $request_url;
+		$dase->request_url = $request_url;
 
 		$matches = array();
 		$params = array();
@@ -319,41 +324,46 @@ class Dase
 					echo "$regex => {$conf_array['action']}";
 					exit;
 				}
-				if (isset($conf_array['auth']) && $conf_array['auth'] && $conf_array['auth'] != 'none') {
-					$eid = '';
-					$collection_ascii_id = '';
-					//this is collection authorization for modules
-					if (isset($conf_array['collection'])) {
-						$collection_ascii_id = $conf_array['collection'];
-					} elseif (isset($params['collection_ascii_id'])) {
-						$collection_ascii_id = $params['collection_ascii_id'];
-					} elseif (isset($params['eid'])) {
-						$eid = $params['eid'];
-						if (isset($params['collection_ascii_id'])) {
-							$collection_ascii_id = $params['collection_ascii_id'];
-						} else {
-							$collection_ascii_id = '';
-						}
-					} else {
-						$collection_ascii_id = '';
-					}	
-					if ($collection_ascii_id) {
-						// instantiate collection and let this (singleton controller) hold it
-						$controller->collection = Dase_Collection::get($collection_ascii_id);
-					} else {
-						$controller->collection= null;
-					}
-					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$eid);
+
+				$collection_ascii_id = '';
+				if (isset($conf_array['collection'])) {
+					$collection_ascii_id = $conf_array['collection'];
+				} elseif (isset($params['collection_ascii_id'])) {
+					$collection_ascii_id = $params['collection_ascii_id'];
+				}
+				if ($collection_ascii_id) {
+					// instantiate collection and let this (singleton) hold it
+					$dase->collection = Dase_Collection::get($collection_ascii_id);
+				} else {
+					$dase->collection= null;
+				}
+
+				//AUTHORIZATION:
+				if (!isset($params['eid'])) {
+					$params['eid'] = '';
+				}
+				if (isset($conf_array['auth']) && $conf_array['auth']) {
+					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$params['eid']);
 				} else {
 					//default auth is user!!!!!!!!!!!!!
-					//Dase::checkUser('user');
+					Dase::checkUser('user');
 				}
+
 				if (!isset($conf_array['mime'])) { 
 					$conf_array['mime'] = 'text/html'; 
 				}
-				$controller->response_mime_type = $conf_array['mime'];
-				$handler = DASE_PATH . $module_prefix . '/actions/' . $conf_array['action'] . '.php';
-				if(file_exists($handler)) {
+				$dase->response_mime_type = $conf_array['mime'];
+				$dase->params = $params;
+				if ($module_prefix) {
+					//modules, by convention, have one handler in a file named
+					//'handler.php' with classname {Module}ModuleHandler
+					include(DASE_PATH . $module_prefix . '/handler.php');
+					$classname = ucfirst($conf_array['name']) . 'ModuleHandler';
+				} else {
+					include(DASE_PATH .  '/handlers/' . $conf_array['handler'] . '.php');
+					$classname = ucfirst($conf_array['handler']) . 'Handler';
+				}
+				if(method_exists($classname,$conf_array['action'])) {
 					//check cache, but only for 'get' method
 					//NOTE that using the cache means you use the mime
 					//type specified in 'routes.xml', so to set mime at
@@ -370,11 +380,11 @@ class Dase
 						} 
 					}
 					$msg = Dase::filterGet('msg');
-					include($handler);
+					call_user_func(array($classname,$conf_array['action']));
 					exit;
 				} else { 
 					//matched regex, but didn't find action
-					Dase::error(500, "Server Error (no handler for $request_url)");
+					Dase::error(500, "Server Error -- no handler for $request_url ($method)");
 				}
 			} 
 		} 
@@ -405,7 +415,7 @@ class Dase
 		exit;
 	}
 
-	public static function display($content,$set_cache = true,$mime = '') {
+	public static function display($content,$set_cache=true,$mime='') {
 		if ($set_cache) {
 			$cache = new Dase_FileCache();
 			$cache->set($content);
@@ -421,13 +431,17 @@ class Dase
 		exit;
 	}
 
-	public static function reload($path = '',$msg = '') {
+	public static function redirect($path='',$msg='',$code="303") {
+		//SHOULD use 303 (redirect after put,post,delte)
+		//OR 307 -- no go -- look here
 		$msg_qstring = '';
 		$msg = urlencode($msg);
 		if ($msg) {
 			$msg_qstring = "?msg=$msg";
 		}
-		header( "Location:". trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring);
+		//NOTE that this redirect may be innapropriate when
+		//client expect something OTHER than html (e.g., json,text,xml)
+		header( "Location:". trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring,TRUE,$code);
 		exit;
 	}
 }

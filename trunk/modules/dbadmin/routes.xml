@@ -1,6 +1,6 @@
 <routes>
 
-  <route action="index" auth="none">
+  <route action="show" auth="none">
 	<match params="msg"></match>
 	<match></match>
   </route>

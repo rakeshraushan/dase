@@ -65,7 +65,7 @@
 	</xsl:if>
   </xsl:template>
 
-  <xsl:template match="auth|mime|nocache|collection|name|caps|params|action|prefix">
+  <xsl:template match="auth|mime|nocache|collection|name|caps|params|action|handler|prefix">
 	<xsl:if test="text()">
 	  '<xsl:value-of select="local-name(.)"/>' => "<xsl:value-of select="."/>",<xsl:text/>	
 	</xsl:if>

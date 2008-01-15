@@ -8,6 +8,7 @@ class Dase_Xslt {
 
 	function __construct($stylesheet, $source = '') {
 		if (!$source) {
+			//default layout xml source
 			$source = XSLT_PATH . 'layout.xml';
 		}
 		$this->xsl = new DOMDocument;

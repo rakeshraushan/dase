@@ -3,6 +3,7 @@
   <module name="efossils" collection="efossils_collection"/>
   <module name="pkeane" collection="pkeane_collection"/>
   <module name="friesen" collection="friesen_collection"/>
+  <module name="elucy" collection="efossils"/>
   <module name="auth"/>
   <module name="utlookup"/>
   <module name="search"/>

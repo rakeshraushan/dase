@@ -1,7 +1,6 @@
 <?php  
 include "inc/config.php";
 define('MEDIA_ROOT', $conf['path_to_media']);
-
 //need to filter these
 $collection = $_GET['collection'];
 $size = $_GET['size'];
@@ -93,14 +92,14 @@ $media_conf['xslt']['mime_type'] = 'application/xslt+xml';
 
 //should be generated into acl from db
 $public_access_collections = array(
-	'germans_from_russia_collection',
-	'biodoc_collection',
-	'bsls_collection',
-	'asl_collection',
-	'texpol_cms_collection',
-	'efossils_collection',
-	'eskeletons_collection',
-	'american_politics_collection'
+	'germans_from_russia',
+	'biodoc',
+	'bsls',
+	'asl',
+	'texpol_cms',
+	'efossils',
+	'eskeletons',
+	'american_politics'
 );
 
 if (stristr($filename,'..')) { //prevent hacker from going up dir tree
@@ -180,7 +179,7 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 	if ('viewitem' == $size) {
 		$size = '400';
 	}
-	$path = "$media_root/$collection/$size/$filename";
+	$path = "$media_root/{$collection}_collection/$size/$filename";
 
 	if ((!file_exists($path)) || (!$filename) || (!$size)) {
 		header('Content-Type: image/jpeg');

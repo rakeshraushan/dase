@@ -14,7 +14,6 @@
 class AtomFeed {
     var $links = array();
     var $categories = array();
-
     var $entries = array();
 }
 

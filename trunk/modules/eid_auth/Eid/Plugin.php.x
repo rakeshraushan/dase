@@ -10,7 +10,7 @@ class Dase_Eid_Plugin extends Dase_Plugin
 	}
 
 	public function beforeLoginForm() {
-#Dase::reload('/plugins/Dase/Eid/target.php');
+#Dase::redirect('/plugins/Dase/Eid/target.php');
 		header("Location:http://dase.lib.utexas.edu/plugins/Dase/Eid/target.php");
 	}
 
@@ -21,7 +21,7 @@ class Dase_Eid_Plugin extends Dase_Plugin
 			if ($user) {
 				$cookie = new Dase_AuthCookie($user->id);
 				$cookie->set();
-				Dase::reload();
+				Dase::redirect();
 			} else {
 				//simply add the user
 				$person_array =	Dase_Eid_Ldap::lookup($username,'uid');
@@ -40,9 +40,9 @@ class Dase_Eid_Plugin extends Dase_Plugin
 				if ($user) {
 					$cookie = new Dase_AuthCookie($user->id);
 					$cookie->set();
-					Dase::reload();
+					Dase::redirect();
 				} else {
-					Dase::reload('error','there was an authentication problem');
+					Dase::redirect('error','there was an authentication problem');
 				}
 			}
 		}

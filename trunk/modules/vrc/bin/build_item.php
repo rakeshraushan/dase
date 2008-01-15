@@ -6,7 +6,7 @@ include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
-$coll = Dase_DB_Collection::get('vrc_collection');
+$coll = Dase_DB_Collection::get('vrc');
 
 //build('07-06703',$coll);
 //build('77-05839',$coll);
