@@ -266,14 +266,6 @@
 
   </handler>
 
-  <handler name="error">
-
-	<route action="show" auth="none">
-	  <match>html/error</match>
-	</route>
-
-  </handler>
-
   <handler name="admin">
 
 	<route action="atts" auth="admin">
