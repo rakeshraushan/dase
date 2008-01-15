@@ -384,17 +384,20 @@ class Dase
 					exit;
 				} else { 
 					//matched regex, but didn't find action
-					Dase::error(500, "Server Error -- no handler for $request_url ($method)");
+					Dase::log('error',"no handler for $request_url ($method)");
+					Dase::error(500);
 				}
 			} 
 		} 
 		//no routes match, so use default:
 		//having this "outlet" here guarantees only first match gets tested
-		Dase::error(404,"Sorry, but $request_url could not be located");
+		Dase::log('error',"$request_url could not be located");
+		Dase::error(404);
 		exit;
 	}
 
-	public static function error($code, $msg = '') {
+	public static function error($code) {
+		$msg = "check server error log for details";
 		if (400 == $code) {
 			header("HTTP/1.1 400 Bad Request");
 		}
@@ -408,10 +411,7 @@ class Dase
 		if (500 == $code) {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
-		$t = new Dase_Xslt(XSLT_PATH.'error/error.xsl',XSLT_PATH.'error/error.xml');
-		$t->set('error_msg',$msg);
-		$t->set('error_code',$code);
-		Dase::display($t->transform(),false);
+		Dase::display("Error: $msg",false);
 		exit;
 	}
 

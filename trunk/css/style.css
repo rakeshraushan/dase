@@ -572,28 +572,6 @@ ul#mediaLinks a {
 	line-height: 1.4em;
 }
 
-div.generic {
-	padding: 20px;
-	margin: 30px;
-	width: 50%;
-}
-
-div.generic h1 {
-	font-family:'lucida grande',verdana,helvetica,sans-serif;
-	color: #a00;
-	color: #fa0;
-}
-
-div.generic h2 {
-	font-family:'lucida grande',verdana,helvetica,sans-serif;
-	margin: 10px 0;
-}
-
-div.generic a {
-	padding: 30px 0;
-	text-decoration: underline;
-}
-
 .success {
 	color: #090;
 }
