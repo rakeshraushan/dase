@@ -7,7 +7,7 @@ define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
 $coll = new Dase_DB_Collection;
-$coll->ascii_id = 'vrc_collection';
+$coll->ascii_id = 'vrc';
 $coll->findOne();
 
 $pdo = new PDO("dblib:host=$host;dbname=$name", $user, $pass);
@@ -47,7 +47,8 @@ function build($sernum,$coll) {
 		print "didn't find $sernum in DASe\n";
 		return;
 	} 
-	if ($item->last_update > (time()-60*60*24)) {
+	print (substr($item->updated,0,10) . ' ' . substr(date(DATE_ATOM),0,10)); 
+	if (substr($item->updated,0,10) == substr(date(DATE_ATOM),0,10)) {
 		print "item $sernum was update within the last 24 hours\n";
 		return;
 	}	

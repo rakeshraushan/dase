@@ -66,7 +66,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
-		$search_table->last_update = time();
+		$search_table->updated = date(DATE_ATOM);
 		$search_table->insert();
 
 		//admin search table
@@ -85,9 +85,9 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
-		$search_table->last_update = time();
+		$search_table->updated = date(DATE_ATOM);
 		$search_table->insert();
-		$this->last_update = time();
+		$this->updated = date(DATE_ATOM);
 		$this->update();
 		return "built indexes for " . $this->serial_number . "\n";
 	}
@@ -166,11 +166,16 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 
 	public function getItemType() {
 		$type = new Dase_DB_ItemType;
-		$type->item_id = $this->id;
-		$this->item_type = $type->findOne();
-		$this->item_type_ascii = $type->ascii_id;
-		$this->item_type_label = $type->name;
-		return $this->item_type;
+		if ($this->item_type_id) {
+			$type->load($this->item_type_id);
+			$this->item_type = $type->findOne();
+			if ($this->item_type) {
+				$this->item_type_ascii = $type->ascii_id;
+				$this->item_type_label = $type->name;
+				return $this->item_type;
+			} 
+		}
+		return false;
 	}
 
 	public function getItemStatus() {
@@ -186,7 +191,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$this->collection || $this->getCollection();
 		$m = new Dase_DB_MediaFile;
 		$m->item_id = $this->id;
-		$media = array();
+		$m->orderBy('width');
 		return $m->find();
 	}
 
@@ -331,6 +336,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry) {
 		$this->collection || $this->getCollection();
+		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {
@@ -341,15 +347,10 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$entry->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
 		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		$entry->addLink(APP_ROOT.'/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
-		foreach ($this->getMedia() as $med) {
-			$entry->addLink(
-				APP_ROOT."/media/".$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
-				"http://daseproject.org/relation/media/".$med->size,
-				$med->mime_type,
-				$med->file_size
-			);
+		if ($this->item_type) {
+			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
 		}
+		$entry->addLink(APP_ROOT.'/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
@@ -357,7 +358,11 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$img = $div->addChild('img');
 		$img->addAttribute('src',$this->thumbnail_url);
 		$img->addAttribute('class','thumbnail');
-		$div->addChild('p',htmlspecialchars($this->collection->collection_name));
+		$this->viewitem || $this->getViewitem();
+		$img = $div->addChild('img');
+		$img->addAttribute('src',$this->viewitem_url);
+		$img->addAttribute('class','viewitem');
+		$div->addChild('p',htmlspecialchars($this->collection->collection_name))->addAttribute('class','collection_name');;
 		$dl = $div->addChild('dl');
 		$dl->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
@@ -367,6 +372,15 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			$dl->addChild('dt',htmlspecialchars($row['attribute_name']));
 			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
 			$dd->addAttribute('class',$row['ascii_id']);
+		}
+		$media_ul = $div->addChild('ul');
+		$media_ul->addAttribute('class','media');
+		foreach ($this->getMedia() as $med) {
+			$media_li = $media_ul->addChild('li');
+			$media_li->addAttribute('class',$med->size);
+			$a = $media_li->addChild('a', $med->size . " (" . $med->width ."x" .$med->height .")");
+			$a->addAttribute('href', APP_ROOT . "/media/" . $this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
+			$a->addAttribute('class',$med->mime_type);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
@@ -395,5 +409,12 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		return $feed;
+	}
+
+	function asAtom() {
+		$feed = new Dase_Atom_Feed;
+		$this->injectAtomFeedData($feed);
+		$this->injectAtomEntryData($feed->addEntry());
+		return $feed->asXml();
 	}
 }

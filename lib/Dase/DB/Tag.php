@@ -101,10 +101,12 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 		$feed->addCategory($this->background,"http://daseproject.org/category/tag_background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
-		foreach($this->getTagItems() as $tag_item) {
+		foreach($this->getTagItems() as $index => $tag_item) {
 			$entry = $feed->addEntry();
-		$entry->addLink("search_result_item","http://daseproject.org/category","search_result_item");
-			$tag_item->getItem()->injectAtomEntryData($entry);
+			$item = $tag_item->getItem();
+			$item->injectAtomEntryData($entry);
+			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag_item/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			$entry->addCategory($index+1,'http://daseproject.org/category/item_set/index',$index+1);
 			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				$source = $sx->addChild('source');
 			$source->addChild('title',htmlentities($this->item->collection_name));

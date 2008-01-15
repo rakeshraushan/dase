@@ -13,7 +13,7 @@
 	encoding="UTF-8"/>
 
   <!-- use services to get any needed content -->
-  <xsl:variable name="collections-list" select="document($src)/atom:feed"/>
+  <xsl:variable name="collections" select="document($src)"/>
 
   <!-- proof of concept: how to add javascript to the page
   <xsl:template match="script[@type='text/javascript'][position() = 1]">
@@ -46,7 +46,7 @@
 		  <input type="submit" value="Search" class="button"/>
 		</div>
 		<ul id="collectionList" class="pageList multicheck">
-		  <xsl:apply-templates select="$collections-list"/>
+		  <xsl:apply-templates select="$collections/atom:feed/atom:entry"/>
 		  <li id="specialAccessLabel" class="label hide">Special Access Collections</li>
 		</ul>
 	  </form>
@@ -75,17 +75,13 @@
 	</div>
   </xsl:template>
 
-  <xsl:template match="atom:feed">
-	<xsl:apply-templates select="atom:entry"/>
-  </xsl:template>
-
   <xsl:template match="atom:entry">
 	  <xsl:text>
 	  </xsl:text>
 	  <li id="{atom:content/text()}">
 		<input name="c" value="{atom:content/text()}" checked="checked" type="checkbox"/>
 	  <xsl:text> </xsl:text>
-	  <a href="{atom:content/text()}" class="checkedCollection"><xsl:value-of select="atom:title"/></a>
+	  <a href="collection/{atom:content/text()}" class="checkedCollection"><xsl:value-of select="atom:title"/></a>
 	  <xsl:text> </xsl:text>
 	  <span class="tally"></span>
 	</li>

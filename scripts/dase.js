@@ -66,6 +66,7 @@ Dase.hasClass = function(elem,cname) {
 
 Dase.displayError = function(msg) {
 	var jsalert = Dase.$('msg');
+	if (!jsalert) return false;
 	Dase.removeClass(jsalert,'hide');
 	jsalert.innerHTML = '';
 	jsalert.innerHTML = msg;
@@ -79,6 +80,7 @@ Dase.toggle = function(el) {
 	}
 };
 
+//note: this isn't used anymore:
 Dase.formatDate = function() {
 	var d = new Date();
 	var mo;
@@ -100,9 +102,7 @@ Dase.formatDate = function() {
 Dase.getEid = function() {
 	var base = Dase.base_href;
 	var d = new Date();
-	//note that the cookie name changes every day, so user will need to 
-	//login again if they have not closed their browser since yesterday
-	var cookiename = base.substr(7,base.length-8).replace(/\/|\./g,'_') + '_' + Dase.formatDate() + '_' + 'DASE_USER';
+	var cookiename = base.substr(7,base.length-8).replace(/\/|\./g,'_') + '_' + 'DASE_USER';
 	//adapted from rhino 5th ed. p 460
 	var allcookies = document.cookie;
 	var pos = allcookies.indexOf(cookiename + "=");
@@ -182,7 +182,7 @@ Dase.placeUserCollections = function(eid) {
 			li.appendChild(input);
 			li.appendChild(document.createTextNode(' '));
 			var a = document.createElement('a');
-			a.setAttribute('href',c.ascii_id);
+			a.setAttribute('href','collection/'+c.ascii_id);
 			a.setAttribute('class','checkedCollection');
 			a.className = 'checkedCollection';
 			a.appendChild(document.createTextNode(c.collection_name));
@@ -240,9 +240,24 @@ Dase.searchRefine = function() {
 		Dase.setCollectionAtts('');
 		return;
 	}
-	var single_collection_flag = 0;
+
+	var st = Dase.$('searchTallies');
+	var coll_tallies = st.getElementsByTagName('li');
 	var colls_array = [];
-	var re = new RegExp('[^/&=?]*_collection');
+	for (var i=0;i<coll_tallies.length;i++) {
+		colls_array.push(coll_tallies[i].className);
+	}
+	if (1 == colls_array.length) {
+		var collection = colls_array[0];
+		var hidden = document.createElement('input');
+		hidden.setAttribute('type','hidden');
+		hidden.setAttribute('name','collection_ascii_id');
+		hidden.setAttribute('value',collection);
+		formDiv.appendChild(hidden);
+		Dase.limitSearchToCollection([collection]);
+	} else {
+		Dase.limitSearchToCollection(colls_array);
+	}
 	var current = String(Dase.$('self_url').innerHTML);
 	var parts = (current.split('?'));
 	var url_string = parts[0];
@@ -258,40 +273,13 @@ Dase.searchRefine = function() {
 			hidden.setAttribute('name',keyval[0]);
 			hidden.setAttribute('value',keyval[1]);
 			formDiv.appendChild(hidden);
-			if ('c' != keyval[0] && 'nc' != keyval[0]) {
-				//check for collection_ascii_id in key and value
-				var c1 = re.exec(keyval[0]);
-				var c2 = re.exec(keyval[1]);
-				if (c1) {
-					Dase.limitSearchToCollection([c1]);
-					single_collection_flag = 1;
-				}
-				if (c2) {
-					Dase.limitSearchToCollection([c2]);
-					single_collection_flag = 1;
-				}
-			} else {
-				colls_array.push(keyval[1]);
-			}
 		}
-	}
-	var collection = re.exec(url_string);
-	if (collection) {
-		var hidden = document.createElement('input');
-		hidden.setAttribute('type','hidden');
-		hidden.setAttribute('name','collection_ascii_id');
-		hidden.setAttribute('value',collection);
-		formDiv.appendChild(hidden);
-		Dase.limitSearchToCollection([collection]);
-		single_collection_flag = 1;
-	} 
-	if (!single_collection_flag && colls_array.length) {
-		Dase.limitSearchToCollection(colls_array);
 	}
 };
 
 Dase.limitSearchToCollection = function(c_ascii_array) {
-	//remove all collection option except for c_ascii_array
+	//remove all collection options except for
+	//those in c_ascii_array
 	var keepers = [];
 	var sel = Dase.$('collectionsSelect');
 	while (sel.childNodes[0]) {
@@ -331,7 +319,7 @@ Dase.setCollectionAtts = function(coll) {
 		Dase.addClass(Dase.$('preposition'),'hide');
 		Dase.addClass(sel,'hide');
 	} else {
-		Dase.getJSON(Dase.base_href + "json/" + coll + "/attributes",function(json){
+		Dase.getJSON(Dase.base_href + "json/collection/" + coll + "/attributes",function(json){
 				//fixes problem in which search string defined a collection_ascii
 				//AND refinement to THIS collection did also and for some reason the att
 				//list got populated twice
@@ -569,7 +557,7 @@ Dase.placeUserTags = function(eid) {
 		try{
 			Dase.$(type).innerHTML = sets[type];
 		} catch(e) {
-			alert('a friendly notice: ' +e);
+		//	alert('a friendly notice: ' +e);
 		}
 	}
 };
@@ -632,14 +620,14 @@ Dase.getAttributeTallies = function(coll) {
 	var url;
 	var is_admin = 0;
 	if (Dase.$('get_admin_tallies')) {
-		url = "json/" + coll + "/admin_attribute_tallies";
+		url = "json/collection/" + coll + "/admin_attribute_tallies";
 		is_admin = 1;
 	}
 	if (Dase.$('get_public_tallies')) {
-		url = "json/" + coll + "/attribute_tallies";
+		url = "json/collection/" + coll + "/attribute_tallies";
 	}
 	if (Dase.$('get_cb_tallies')) {
-		url = "json/" + coll + "/cb_attribute_tallies";
+		url = "json/collection/" + coll + "/cb_attribute_tallies";
 	}
 	Dase.getJSON(url,function(json) {
 			for(var ascii_id in json) {

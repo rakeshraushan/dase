@@ -18,8 +18,8 @@ RewriteBase  /dasetest
 php_flag magic_quotes_gpc off
 
 # media files go straight to media.php
-RewriteRule ^media/([0-9a-z_]*_collection)/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
-RewriteRule ^([0-9a-z_]*_collection)/media/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
+RewriteRule ^media/([0-9a-z_]*)/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
+RewriteRule ^([0-9a-z_]*)/media/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
 
 RewriteCond %{REQUEST_FILENAME} !-f 
 RewriteCond %{REQUEST_FILENAME} !-d

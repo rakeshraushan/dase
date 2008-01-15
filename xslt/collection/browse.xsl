@@ -39,7 +39,7 @@
 		  <h4>Select Attribute Group:</h4>
 		  <xsl:call-template name="collection-category-links"/>
 		</div>
-		<div id="attColumn" class="html/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/public"></div>
+		<div id="attColumn" class="collection/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/public"></div>
 		<div id="valColumn" class="hide"></div>
 	  </div> <!-- close browseColumns -->
 	  <div class="spacer"></div>
@@ -72,12 +72,12 @@
   </xsl:template>
 
   <xsl:template name="collection-category-links">
-	<a href="html/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/public" class="spill">Collection Attributes</a>
-	<a href="html/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/admin">Admin Attributes</a>
+	<a href="collection/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/public" class="spill">Collection Attributes</a>
+	<a href="collection/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/admin">Admin Attributes</a>
   </xsl:template>
 
   <xsl:template name="collection-search-form">
-	<form method="get" action="{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/search">
+	<form method="get" action="collection/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/search">
 	  <input type="text" name="q" size="30"/>
 	  <input type="submit" value="go" class="button"/>
 	</form>

@@ -34,14 +34,16 @@ class Dase_DB_Search {
 		// attribute search
 		/*
 		 * exact match:
-		 * test_collection.title=farewell+to+arms 
+		 * test.title=farewell+to+arms 
 		 *
 		 * match hash:
-		 * test_collection:title=5045aca392ed260667b8489bfe7ccc03
+		 * test:title=5045aca392ed260667b8489bfe7ccc03
 		 *
 		 * match substring:
-		 * test_collection%title=farewell+to+a
+		 * test%title=farewell+to+a
 		 *
+		 * match item_type:
+		 * type=test:picture
 		 */
 
 		if (isset($url_params['c'])) {
@@ -49,7 +51,7 @@ class Dase_DB_Search {
 				$url_params['c'] = array($url_params['c']);
 			}
 			foreach ($url_params['c'] as $c) {
-				$search['colls'][] = "'$c'";
+				$search['colls'][] = "'".$c."'";
 			}
 			$search['colls'] = array_unique($search['colls']);
 		}
@@ -59,7 +61,7 @@ class Dase_DB_Search {
 				$url_params['nc'] = array($url_params['nc']);
 			}
 			foreach ($url_params['nc'] as $nc) {
-				$search['omit_colls'][] = "'$nc'";
+				$search['omit_colls'][] = "'".$nc."'";
 			}
 			$search['omit_colls'] = array_unique($search['omit_colls']);
 		}

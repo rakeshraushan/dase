@@ -1,4 +1,4 @@
 <?php
-header("Location: index");
+header("Location: show");
 exit;
 

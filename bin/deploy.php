@@ -13,7 +13,6 @@ system("rsync -ar --delete --exclude='.svn' -e ssh $working/* $target");
 system("rsync -ar  -e ssh $working/prod_htaccess $target/.htaccess");
 system("rsync -ar  -e ssh $working/../dase_build_conf.php $target/inc/local_config.php");
 
-apacheWrite("$working/templates_c", $httpd_group);
 apacheWrite("$working/cache", $httpd_group);
 apacheWrite("$working/log/error.log", $httpd_group);
 apacheWrite("$working/log/sql.log", $httpd_group);

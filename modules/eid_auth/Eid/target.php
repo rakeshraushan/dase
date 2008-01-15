@@ -10,6 +10,6 @@ if (isset($_SERVER['HTTP_X_EID'])) {
 	$cookie = new Dase_AuthCookie($eid);
 	$cookie->set();
 	include '../../../lib/Dase.php';
-	Dase::reload();
+	Dase::redirect();
 }
 

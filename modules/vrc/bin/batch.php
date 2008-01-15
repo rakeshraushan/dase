@@ -1,14 +1,17 @@
 #!/usr/bin/php
 <?php
-$days = 30;
+$days = 300;
 $database = 'dase_prod';
 include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
 $coll = new Dase_DB_Collection;
-$coll->ascii_id = 'vrc_collection';
-$coll->findOne();
+$coll->ascii_id = 'vrc';
+if(!$coll->findOne()) {
+	print "no such collection\n";
+	exit;
+}
 
 $IMAGE_REPOS = "/mnt/dar/favrc/for-dase";
 if (!file_exists($IMAGE_REPOS)) {
@@ -38,7 +41,7 @@ $media_count = array();
 $db = Dase_DB::get();
 $query = "
 	SELECT count(m.item_id), i.serial_number
-	FROM media_file m , item i
+	FROM item i , media_file m
 	WHERE
 	m.item_id = i.id
 	AND
@@ -74,11 +77,13 @@ $sql = "
 	FROM tblAccession 
 	WHERE acc_digital_num != ''
 	";
+	//WHERE acc_digital_num like '66-02608%'
 
 $st = $pdo->prepare($sql);
 $st->setFetchMode(PDO::FETCH_ASSOC);
 $st->execute();
 while ($row = $st->fetch()) {
+//	print_r($row); exit;
 	$df = $row['acc_digital_num'];
 	//we'll only perform operations on items for which we have a file
 	if (isset($images[$df])) {
@@ -105,8 +110,8 @@ function build($sernum,$coll,$media_count) {
 		if (isset($media_count[$sernum])) {
 			print "$item->serial_number already exists , but has {$media_count[$sernum]} items!\n";
 		} else {
-			print "problem!!!!!! (DASe has item, but we don't have image)\n";
-			return;
+			print "potential problem $sernum !!!!!! (DASe has item, but we don't have image)\n";
+			//return;
 		}
 	}
 
@@ -159,6 +164,7 @@ function build($sernum,$coll,$media_count) {
 function makeThumbnail($filename,$item,$coll) {
 	$base = basename($filename,'.tif');
 	$base = basename($base,'.jpg');
+	print("--------------------------- base file name: $base ---------------------------\n");
 	$results = exec("/usr/bin/mogrify -format jpeg -resize '100x100 >' -colorspace RGB $filename");
 	$thumbnail = MEDIA_ROOT ."/vrc_collection/thumbnails/$item->serial_number" . '_100.jpg';  
 	$mogrified_file = "/tmp/$base.jpeg";

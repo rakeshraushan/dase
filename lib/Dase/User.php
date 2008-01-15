@@ -8,6 +8,7 @@ class Dase_User
 	public $db_user = null;
 
 	public function __construct() {
+		//check for current user (look to the cookie)
 		$eid = Dase_User::getCurrent();
 		if ($eid) {
 			$db = Dase_DB::get();
@@ -21,8 +22,6 @@ class Dase_User
 				$this->db_user;
 			}
 		} 
-		//a "GET" to '/login/' should initiate the login process
-		//Dase::reload('login');
 		return false;
 	}
 
@@ -41,18 +40,19 @@ class Dase_User
 
 
 	public static function getCurrent() {
+		//attempt to validate cookie
+		//since token changes every day, it'll be
+		//invalidated overnight
 		$eid = Dase_CookieAuth::validate();
 		if ($eid) {
 			return $eid;
 		} else {
-			Dase::reload('login');
-			exit;
+			return false;
 		}
 	}
 
 	public static function logoff() {
 		Dase_CookieAuth::clear();
-		Dase::reload();
 	}
 
 	public function __get($prop) {
