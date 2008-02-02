@@ -3,8 +3,10 @@
 class Dase 
 {
 	private static $instance;
+	public $action;
 	public $base_url= '';       
 	public $collection;
+	public $handler;
 	public $query_string = '';    
 	public $request_url = '';    
 	public $response_mime_type = '';
@@ -56,78 +58,76 @@ class Dase
 		switch ($auth) {
 		case 'none':
 			//no authorization required
-			break;
+			return true;
 		case 'user':
 			//this means the user has read access to an access-controlled
-			//collection OR the are a registed user (any user) accessing a 
+			//collection OR they are a registed user (any user) accessing a 
 			//public collection
 			self::$user = new Dase_User();
 			if ($collection_ascii_id) {
-				// By having the collection_ascii_id in the URL
-				// required for collection activity, we can safely
-				// protect non-public collections!! 
-				if (!self::$user->checkAuth($collection_ascii_id,'read')) {
-					Dase::error(401);
+				if (self::$user->checkAuth($collection_ascii_id,'read')) {
+					return true;
+				}
+			} else {
+				if (self::$user->eid) {
+					return true;
 				}
 			}
-			break;
+			return false;
 		case 'superuser':
-			break;
 			self::$user = new Dase_User();
 			//only folks whose EID is in config.php as superuser
 			//this is for application monitoring and management
-			if (!in_array(self::$user->eid,Dase::getConf('superuser'))) {
-				Dase::error(401);
+			if (in_array(self::$user->eid,Dase::getConf('superuser'))) {
+				return true;
 			}
-			break;
+			return false;
 		case 'admin':
 			//the checkAuth methods use the collection manager
 			//table to look-up privilege level
 			self::$user = new Dase_User();
-			if (self::$user->eid != $eid) {
-				Dase::error(401);
-			}
-			if (!self::$user->checkAuth($collection_ascii_id,'admin')) {
-				Dase::error(401);
-			}
-			break;
+			if (self::$user->eid == $eid &&
+				self::$user->checkAuth($collection_ascii_id,'admin')) {
+					return true;
+				}
+			return false;
 		case 'write':
 			self::$user = new Dase_User();
-			if (!self::$user->checkAuth($collection_ascii_id,'write')) {
-				Dase::error(401);
+			if (self::$user->checkAuth($collection_ascii_id,'write')) {
+				return true;
 			}
-			break;
+			return false;
 		case 'read':
 			self::$user = new Dase_User();
-			if (!self::$user->checkAuth($collection_ascii_id,'read')) {
-				Dase::error(401);
+			if (self::$user->checkAuth($collection_ascii_id,'read')) {
+				return true;
 			}
-			break;
+			return false;
 		case 'http':
 			//HTTP basic auth is the prefered (simple) auth method
 			//when other computers are interacting with resources
 			//it also provides an extra 'layer' on top of collection
 			//admin privileges
 			Dase::basicHttpAuth();
-			break;
+			return true;
 		case 'token':
 			//token-based auth is the prefered method when DASe is
 			//requesting AND serving a resource as in the case of
 			//xml and atom data source docs
-			if (Dase::filterGet('token') != md5(Dase::getConf('token'))) {
-				Dase::error(401);
+			if (Dase::filterGet('token') == md5(Dase::getConf('token'))) {
+				return true;
 			}
-			break;
+			return false;
 		case 'eid':
 			//the authorized user eid and the eid in the url
 			//must match for this to go through
 			self::$user = new Dase_User();
-			if (self::$user->eid != $eid) {
-				Dase::error(401);
+			if (self::$user->eid == $eid) {
+				return true;
 			}
-			break;
+			return false;
 		default:
-			Dase::error(404);
+			return false;
 		}
 	}
 
@@ -203,8 +203,15 @@ class Dase
 			eval($cache->get());
 		} else {
 			//xslt pipeline:
-			$rx = new Dase_Xslt(DASE_PATH."/inc/routes2map.xsl",DASE_PATH."/inc/routes.xml");
-			$rp = new Dase_Xslt(DASE_PATH."/inc/xml2php.xsl",$rx->transform());
+
+			$rx = new Dase_Xslt;
+			$rx->stylesheet = DASE_PATH."/inc/routes2map.xsl";
+			$rx->source =DASE_PATH."/inc/routes.xml";
+
+			$rp = new Dase_Xslt;
+			$rp->stylesheet = DASE_PATH."/inc/xml2php.xsl";
+			$rp->source = $rx->transform();
+
 			$cache->set($rp->transform());
 			eval($cache->get());
 		}
@@ -290,14 +297,17 @@ class Dase
 				//if debug in force, log action
 				if (defined('DEBUG')) {
 					Dase::log('standard',$regex . " => " . $conf_array['action']);
+					Dase::log('standard',"request_url => " . $request_url);
 				}
 				$caps = array();
 				if (isset($conf_array['caps'])) {
 					$caps = explode('/',$conf_array['caps']);
+					Dase::log('standard',"caps => " . $conf_array['caps']);
 				}
 				$params = array();
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
+					Dase::log('standard',"params => " . $conf_array['params']);
 				}
 				$params = array_merge($caps,$params);
 				$module_prefix = '';
@@ -305,6 +315,7 @@ class Dase
 					$module_prefix = $conf_array['prefix'];
 					define('MODULE_PATH',DASE_PATH . $module_prefix);
 					define('MODULE_ROOT',APP_ROOT . $module_prefix);
+					//modules can include class files in 'lib' dir
 					ini_set('include_path',ini_get('include_path').':'.MODULE_PATH.'/lib');
 				}
 				if (isset($matches[1])) { // i.e. at least one paramenter
@@ -338,32 +349,49 @@ class Dase
 					$dase->collection= null;
 				}
 
+				if (isset($conf_array['mime'])) {
+					$dase->response_mime_type = $conf_array['mime'];
+				} else {
+					//note: firefox gives me all sorts of trouble when I send
+					//application/xhtml+xml.  this is a well-documented problem:
+					//http://groups.google.com/group/habari-dev/msg/91d736688ee445ad
+					$dase->response_mime_type = 'text/html';
+				}
+
 				//AUTHORIZATION:
 				if (!isset($params['eid'])) {
 					$params['eid'] = '';
 				}
-				if (isset($conf_array['auth']) && $conf_array['auth']) {
-					Dase::checkUser($conf_array['auth'],$collection_ascii_id,$params['eid']);
-				} else {
-					//default auth is user!!!!!!!!!!!!!
-					Dase::checkUser('user');
+				if (!isset($conf_array['auth'])) {
+					//default required auth is 'user' (i.e., ANY valid user
+					$conf_array['auth'] = 'user';
 				}
 
-				if (!isset($conf_array['mime'])) { 
-					$conf_array['mime'] = 'text/html'; 
+				if (!Dase::checkUser($conf_array['auth'],$collection_ascii_id,$params['eid'])) {
+					if ('text/html' == $dase->response_mime_type) {
+						//guarantees cookies will be deleted:
+						Dase::redirect('logoff');
+					} else {
+						Dase::error(401);
+					}
+				} else {
+					//good to go
 				}
-				$dase->response_mime_type = $conf_array['mime'];
+
 				$dase->params = $params;
 				if ($module_prefix) {
 					//modules, by convention, have one handler in a file named
 					//'handler.php' with classname {Module}ModuleHandler
 					include(DASE_PATH . $module_prefix . '/handler.php');
+					$conf_array['handler'] = $conf_array['name'] . '_module'; // so we can set this->handler 
 					$classname = ucfirst($conf_array['name']) . 'ModuleHandler';
 				} else {
 					include(DASE_PATH .  '/handlers/' . $conf_array['handler'] . '.php');
 					$classname = ucfirst($conf_array['handler']) . 'Handler';
 				}
 				if(method_exists($classname,$conf_array['action'])) {
+					$dase->handler = $conf_array['handler'];
+					$dase->action = $conf_array['action'];
 					//check cache, but only for 'get' method
 					//NOTE that using the cache means you use the mime
 					//type specified in 'routes.xml', so to set mime at
@@ -415,17 +443,12 @@ class Dase
 		exit;
 	}
 
-	public static function display($content,$set_cache=true,$mime='') {
+	public static function display($content,$set_cache=true) {
 		if ($set_cache) {
 			$cache = new Dase_FileCache();
 			$cache->set($content);
 		}
-		$mime = $mime ? $mime : Dase::instance()->response_mime_type;
-
-		//note: firefox gives me all sorts of trouble when I send
-		//application/xhtml+xml.  this is a well-documented problem:
-		//http://groups.google.com/group/habari-dev/msg/91d736688ee445ad
-
+		$mime = Dase::instance()->response_mime_type;
 		header("Content-Type: $mime; charset=utf-8");
 		echo $content;
 		exit;

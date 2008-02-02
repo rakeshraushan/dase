@@ -13,10 +13,13 @@
 
 	<link rel="stylesheet" type="text/css" href="css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="css/menu.css"/>
+	<link rel="stylesheet" type="text/css" href="css/dynamic.css"/>
 	<link rel="shortcut icon" href="images/favicon.ico"/>
 
 	<script type="text/javascript" src="scripts/http.js"></script>
+	<script type="text/javascript" src="scripts/json2.js"></script>
 	<script type="text/javascript" src="scripts/dase.js"></script>
+	<script type="text/javascript" src="scripts/widgets.js"></script>
 
 	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="css/ie.css"/>
@@ -25,7 +28,7 @@
   </head>
 
   <body>
-	<div id="skipnav"><a href="#content" title="Skip to main content">Skip to main content</a></div>
+	<div id="skipnav"><a href="#maincontent" title="Skip to main content">Skip to main content</a></div>
 
 	<noscript>
 	  <h1 class="alert">The optimal DASe experience requires Javascript!</h1>
@@ -99,14 +102,22 @@
 
 	</div> <!-- closes sidebar -->
 
-	<insert-content/>
+	<div id="content">
+	  <insert-content/>
+	</div>
 
-	<div class="footer">
+	<div id="subcontent">
+	  <insert-subcontent/>
+	</div>
+
+	<div id="footer">
 	  <a href="apps/help" id="helpModule">FAQ</a> | 
 	  <a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 	  <a href="copyright">Copyright/Usage Statement</a>| 
 	  <insert-timer/> seconds |
 	  <img src="images/dasepowered.png" alt="DASePowered icon"/>
 	</div><!--closes footer-->
+	<div id="debugData" class="hide"></div>
+	<div id="pageHook" class="hide"><insert-page-hook/></div>
   </body>
 </html>

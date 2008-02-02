@@ -25,7 +25,7 @@ if (!$term) { die ('no term'); }
 $term = "%$term%";
 
 $c = new Dase_DB_Collection;
-foreach ($c->getAll() as $coll) {
+foreach ($c->find() as $coll) {
 	search($term,$coll['id']);
 }
 

@@ -5,7 +5,7 @@ $conf['path_to_media'] = '/mnt/www-data/dase/media';
 $conf['superuser'][] = 'pkeane';
 
 $conf['token'] = '
-	--
+	---
 	Let us go then, you and I,	
 	When the evening is spread out against the sky	
 	Like a patient etherised upon a table;	

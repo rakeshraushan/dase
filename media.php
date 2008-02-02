@@ -1,4 +1,10 @@
 <?php  
+/*
+ *
+ * Copyright 2008 The University of Texas at Austin
+ *
+ */
+
 include "inc/config.php";
 define('MEDIA_ROOT', $conf['path_to_media']);
 //need to filter these
@@ -190,20 +196,6 @@ function serveFile($collection,$size,$filename,$download,$media_conf) {
 	if (!$content_type) {
 		$content_type = 'application/octet-stream';
 	}
-	/* original 
-	header('Last-Modified: '.date('r',filemtime($path)));
-	header('Content-Length: '.filesize($path));
-	header('Content-Type: '.$content_type);
-	if ($download) {
-		header("Content-Disposition: attachment; filename=$filename");
-	} else {
-		header("Content-Disposition: inline; filename=$filename");
-	}
-	readfile($path);
-	return;
-	 */
-
-	/*  test */
 	//from php.net
 	$headers = apache_request_headers();
 	// Checking if the client is validating its cache and if it is current.

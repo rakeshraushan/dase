@@ -116,32 +116,50 @@ strong {
 	top:90px;
 }
 
-html .content {
+html #maincontent {
 	height:1%;
 }
 
-div.content {
-	margin-left:17%;
+/* PAGE background */
+
+div.cb {
 	padding:15px;
+	background-color:#eef1f8;
+}
+
+div#content {
+	margin-left:17%;
+}
+
+div#subcontent {
+	margin-top 0;
+	margin-left:17%;
+	background-color: #d79d42;
+	background-color: #c0d3f2;
+	background-color: #eef1f8;
+	background-color: #a8721e;
+	background-color: #d9c8ad;
+	background-color: #e6d4b8;
+	padding:10px 15px 15px 30px;
 }
 
 div.list {
-	padding-left:100px;
+	padding:10px 15px 15px 100px;
 }
 
 div.full {
-	padding-left:20px;
+	padding:10px 15px 15px 30px;
 }
 
 div.browse {
-	padding-left:50px;
+	background-color:#f2dfc1;
 }
 
 .spacer {
 	clear:both;
 }
 
-.footer {
+div#footer {
 	background-color:#fff;
 	color:#666;
 	margin:5px 0 0 17%;
@@ -149,6 +167,10 @@ div.browse {
 
 .hide,.tempHide {
 	display:none;
+}
+
+.show {
+	display:block;
 }
 
 div#skipnav {
@@ -176,6 +198,24 @@ form.styled p {
 	margin:1em 0;
 }
 
+form#searchCollections {
+	padding: 3px;
+}
+
+form#searchCollections input,select {
+	margin: 3px 4px;
+}
+
+form#searchCollectionsAdv {
+	background-color: #e6d4b8;
+	padding: 3px;
+margin:0px 0px 10px 0px;
+}
+
+form#searchCollectionsAdv input,select {
+	margin: 3px 4px;
+}
+
 form.login {
 	background-color:#e6d4b8;
 	border:1px solid #aaa;
@@ -188,7 +228,7 @@ form.login p {
 }
 
 form.login label {
-	color:.333;
+	color:#333;
 	font-size:1.2em;
 	font-weight:700;
 }
@@ -300,6 +340,10 @@ a.spill {
 
 #valColumn a.anchor {
 	background-color:#c9c8ad;
+}
+
+#valColumn.empty {
+	background-color:#f2dfc1;
 }
 
 .tally {
@@ -431,7 +475,7 @@ h4.collName,
 	color:#666;
 }
 
-div.content h3,
+div#content h3,
 div#browseColumns {
 	margin:10px 0;
 }
@@ -454,18 +498,13 @@ ul#collectionList a.checkedCollection:active {
 	color:#000;
 }
 
-div#browse,
-#valColumn.empty {
-	background-color:#f2dfc1;
-}
-
 a.catLink,a.valLink {
 	display:block;
 	line-height:1.5em;
 }
 
 #searchResults div.caption {
-	padding: 10px 3px 0 3px;
+	padding: 10px 3px 0 0px;
 }
 #searchResults h2 {
 	font-size: 1.4em;
@@ -474,7 +513,7 @@ a.catLink,a.valLink {
 }
 
 #searchResults {
-	padding: 10px; 
+	padding: 0px; 
 }
 #seearchResults table {
 	width: 100%;
@@ -555,10 +594,6 @@ ul#mediaLinks a:hover {
 	text-decoration: underline;
 }
 
-form#searchCollections {
-margin:0 0 0 10px;
-}
-
 div.pageControls {
 	margin: 10px 0;
 }
@@ -582,4 +617,44 @@ p.collection_name {
 	margin-bottom: 5px;
 	font-weight: bold;
 	color: #666;
+}
+
+div#debugData ul {
+	list-style: disc;
+	margin-left: 20px;
+}
+div#debugData li {
+	list-style: disc;
+	margin-left: 20px;
+}
+
+a.clickTarget {
+	font-weight: bold;
+	font-size: 1.4em;
+	padding: 0 3px;
+}
+
+a.clickTarget:hover {
+	background-color: #eee;
+}
+
+.highlight td {
+	background-color: #ffc;
+}
+.highlight  th.rows {
+	background-color: #ffc;
+}
+
+li#markedList {
+/*	display: none;*/
+}
+
+ul.searchTallies li {
+	line-height: 1.4em;
+}
+#searchTallies {
+	float:left;
+}
+div#saveMarkedToCollection {
+	margin-left: 300px;
 }

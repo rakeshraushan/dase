@@ -15,16 +15,12 @@
   <!-- use services to get any needed content -->
   <xsl:variable name="collections" select="document($src)"/>
 
-  <!-- proof of concept: how to add javascript to the page
-  <xsl:template match="script[@type='text/javascript'][position() = 1]">
-	<xsl:copy-of select="."/>
-	<xsl:text>
-	</xsl:text>
-	<script type="text/javascript" src="scripts/test.js"></script>
-  </xsl:template>
-  -->
   <xsl:template match="/">
 	<xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="insert-page-hook">
+	<xsl:value-of select="$page_hook"/>
   </xsl:template>
 
   <xsl:template match="insert-base-href">
@@ -36,8 +32,8 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="content list" id="browse">
-	  <a id="content" name="content"></a>
+	<div class="list browse">
+	  <a id="maincontent" name="maincontent"></a>
 	  <div id="msg" class="alert hide"></div>
 	  <div class="searchBoxLabel">Search selected collection(s):</div> 
 	  <form id="searchCollections" method="get" action="search">

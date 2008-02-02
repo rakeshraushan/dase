@@ -373,14 +373,19 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
 			$dd->addAttribute('class',$row['ascii_id']);
 		}
-		$media_ul = $div->addChild('ul');
-		$media_ul->addAttribute('class','media');
+		$dm = 'http://daseproject.org/media/';
+		//$media_ul = $div->addChild('ul');
+		//$media_ul->addAttribute('class','media');
 		foreach ($this->getMedia() as $med) {
-			$media_li = $media_ul->addChild('li');
-			$media_li->addAttribute('class',$med->size);
-			$a = $media_li->addChild('a', $med->size . " (" . $med->width ."x" .$med->height .")");
-			$a->addAttribute('href', APP_ROOT . "/media/" . $this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
-			$a->addAttribute('class',$med->mime_type);
+			//$media_li = $media_ul->addChild('li');
+			//$media_li->addAttribute('class',$med->size);
+			//$a = $media_li->addChild('a', $med->size . " (" . $med->width ."x" .$med->height .")");
+			//$a->addAttribute('href', APP_ROOT . "/media/" . $this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
+			//$a->addAttribute('class',$med->mime_type);
+			$link = $entry->addLink(APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,'alternate',$med->mime_type,$med->file_size);
+			$link->setAttributeNS($dm,'dm:class',$med->size);
+			$link->setAttributeNS($dm,'dm:width',$med->width);
+			$link->setAttributeNS($dm,'dm:height',$med->height);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	

@@ -35,22 +35,22 @@
 	}
 	
 	li.admin a.main {
-	border: 1px solid #000000; 
-	border-left: 18px solid #000000;
+	border: 1px solid #6480ae; 
+	border-left: 18px solid #6480ae;
 	background-color: #ffffff;
 	}
 	li.admin a:hover , a:active {
-	background-color: #dddddd;
+	background-color: #d5deed;
 	}
 	ul#admin a {
-	background-color: #dddddd;
+	background-color: #d5deed;
 	}
 	ul#admin a:hover {
-	background-color: #f1f1f1;
+	background-color: #eef1f8;
 	}
 
 	#admin {
-	background-color: #dddddd;
+	background-color: #d5deed;
 	}
   
 	li.slideshow a.main {
@@ -89,6 +89,25 @@
 
 	#user_collection {
 	background-color: #ceead8;
+	}
+  
+	li.searches a.main {
+	border: 1px solid #947672; 
+	border-left: 18px solid #947672;
+	background-color: #ffffff;
+	}
+	li.searches a:hover , a:active {
+	background-color: #f7efee;
+	}
+	ul#searches a {
+	background-color: #f7efee;
+	}
+	ul#searches a:hover {
+	background-color: #ffffff;
+	}
+
+	#searches {
+	background-color: #f7efee;
 	}
   
 	li.cart a.main {

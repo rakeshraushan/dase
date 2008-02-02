@@ -32,6 +32,9 @@ class Dase_DB {
 			}
 			try {
 				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
+				if ('mysql' == self::$type) {
+					self::$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+				}
 			} catch (PDOException $e) {
 				echo 'connect failed: ' . $e->getMessage();
 			}

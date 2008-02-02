@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <palette>
-	<hue id="black" section="admin">
-		<hex level="1">000000</hex>
-		<hex level="2">666666</hex>
-		<hex level="3">9e9e9e</hex>
-		<hex level="4">dddddd</hex>
-		<hex level="5">f1f1f1</hex>
-		<hex level="6">ffffff</hex>
+	<hue id="ltblue" section="admin">
+		<hex level="1">6480ae</hex>
+		<hex level="2">6480ae</hex>
+		<hex level="3">9cacc6</hex>
+		<hex level="4">d5deed</hex>
+		<hex level="5">eef1f8</hex>
+		<hex level="5">f1f6fe</hex>
 	</hue>
 	<hue id="blue" section="slideshow">
 		<hex level="1">263b5e</hex>
@@ -14,7 +14,7 @@
 		<hex level="3">9cacc6</hex>
 		<hex level="4">d5deed</hex>
 		<hex level="5">eef1f8</hex>
-		<hex level="5">f1f6fe</hex>
+		<hex level="6">f1f6fe</hex>
 	</hue>
 	<hue id="green" section="user_collection">
 		<hex level="1">283b1c</hex>
@@ -23,6 +23,13 @@
 		<hex level="4">ceead8</hex>
 		<hex level="5">ebf6ef</hex>
 		<hex level="6">f4fff8</hex>
+	</hue>
+	<hue id="ltred" section="searches">
+		<hex level="1">947672</hex>
+		<hex level="2">947672</hex>
+		<hex level="3">ecd7d6</hex>
+		<hex level="4">f7efee</hex>
+		<hex level="5">ffffff</hex>
 	</hue>
 	<hue id="red" section="cart">
 		<hex level="1">700c0c</hex>

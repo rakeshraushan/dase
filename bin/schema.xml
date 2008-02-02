@@ -28,7 +28,6 @@
   <column name="collection_id" type="integer"/>
   <column name="id" type="integer" is_primary_key="true"/>
   <column name="updated" type="character varying" max_length="50"/>
-  <column name="atom_element" type="character varying" max_length="20"/>
   <column name="usage_notes" type="character varying" max_length="2000"/>
   <column name="attribute_name" type="character varying" max_length="200"/>
   <column name="ascii_id" type="character varying" max_length="200"/>
@@ -183,14 +182,6 @@
   <column name="id" type="integer" is_primary_key="true"/>
   <column name="name" type="character varying" max_length="20"/>
   <column name="ascii_id" type="character varying" max_length="20"/>
- </table>
- <table name="util_cache">
-  <column name="ttl" type="integer"/>
-  <column name="id" type="integer" is_primary_key="true"/>
-  <column name="text" type="text"/>
-  <column name="timestamp" type="character varying" max_length="50"/>
-  <column name="collection_ascii_id" type="character varying" max_length="200"/>
-  <column name="ascii_id" type="character varying" max_length="200"/>
  </table>
  <table name="value">
   <column name="attribute_id" type="integer"/>
