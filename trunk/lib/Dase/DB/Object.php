@@ -49,8 +49,10 @@ class Dase_DB_Object implements IteratorAggregate
 	}
 
 	function addWhere($field,$value,$operator) {
-		if ( array_key_exists( $field, $this->fields)) {
-			//should filter for valid operator as well
+		if ( 
+			array_key_exists( $field, $this->fields) &&
+			in_array($operator,array('is','like','=','!=','<','>'))
+		) {
 			$this->qualifiers[] = array(
 				'field' => $field,
 				'value' => $value,
@@ -89,7 +91,7 @@ class Dase_DB_Object implements IteratorAggregate
 		}
 	}
 
-	function insert($seq = '') { //postgres need id specified
+	function insert($seq = '') { //postgres needs id specified
 		if ('pgsql' == Dase_DB::getDbType()) {
 			if (!$seq) {
 				//beware!!! fix this after no longer using DB_DataObject
@@ -119,7 +121,7 @@ class Dase_DB_Object implements IteratorAggregate
 		$sth = $db->prepare( $sql );
 		if (! $sth) {
 			$error = $db->errorInfo();
-			print "Dase_DB_Object 'insert()' Problem ({$error[2]})";
+			throw new Exception("problem on insert: " . $error[2]);
 			exit;
 		}
 		if ($sth->execute($bind)) {
@@ -130,8 +132,8 @@ class Dase_DB_Object implements IteratorAggregate
 			}
 			return $last_id;
 		} else { 
-			$msg_array = $sth->errorInfo();
-			throw new Exception("could not insert: " . $msg_array[2]);
+			$error = $sth->errorInfo();
+			throw new Exception("could not insert: " . $error[2]);
 		}
 	}
 
@@ -165,11 +167,15 @@ class Dase_DB_Object implements IteratorAggregate
 				$f = $qual['field'];
 				$op = $qual['operator'];
 				$v = $db->quote($qual['value']);
-				$sets [] = "$f $op $v";
+				$sets[] = "$f $op $v";
 			}
 		}
 		$where = join( " AND ", $sets );
-		$sql = "SELECT * FROM ".$this->table. " WHERE ".$where;
+		if ($where) {
+			$sql = "SELECT * FROM ".$this->table. " WHERE ".$where;
+		} else {
+			$sql = "SELECT * FROM ".$this->table;
+		}
 		if (isset($this->order_by)) {
 			$sql .= " ORDER BY $this->order_by";
 		}
@@ -182,6 +188,21 @@ class Dase_DB_Object implements IteratorAggregate
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
+		//NOTE: PDOStatement implements Traversable. 
+		//That means you can use it in foreach loops 
+		//to iterate over rows:
+		// foreach ($thing->find() as $one) {
+		//     print_r($one);
+		// }
+		return $sth;
+	}
+
+	public static function query($sql) {
+		//return generic object
+		$db = Dase_DB::get();
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_OBJ);
+		$sth->execute();
 		return $sth;
 	}
 
@@ -215,22 +236,6 @@ class Dase_DB_Object implements IteratorAggregate
 		}
 		$sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
-	}
-
-	function getAll() {
-		//returns an iterator
-		$db = Dase_DB::get();
-		$sql = "SELECT * FROM ".$this->table;
-		if (isset($this->order_by)) {
-			$sql .= " ORDER BY $this->order_by";
-		}
-		if (isset($this->limit)) {
-			$sql .= " LIMIT $this->limit";
-		}
-		$sth = $db->prepare( $sql );
-		$sth->setFetchMode(PDO::FETCH_INTO,$this);
-		$sth->execute();
-		return $sth;
 	}
 
 	//implement SPL IteratorAggregate:

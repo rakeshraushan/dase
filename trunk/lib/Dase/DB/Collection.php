@@ -33,10 +33,8 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		$c->orderBy('collection_name');
 		if ($public_only) {
 			$c->is_public = 1;
-			$cs = $c->find();
-		} else {
-			$cs = $c->getAll();
-		}
+		} 
+		$cs = $c->find();
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('DASe Collections');
 		$feed->setId(APP_ROOT);
@@ -76,7 +74,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	static function getLookupArray() {
 		$hash = array();
 		$c = new Dase_DB_Collection;
-		foreach ($c->getAll() as $coll) {
+		foreach ($c->find() as $coll) {
 			$iter = $coll->getIterator();
 			foreach ($iter as $field => $value) {
 				$coll_hash[$field] = $value;
@@ -86,15 +84,59 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $hash;
 	}
 
-	function getAttributes($sort = null) {
+	function getManagers() {
+		//note: this returns an array of arrays
+		//NOT an array of manager objects
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
+			FROM collection_manager m,dase_user u 
+			WHERE m.collection_ascii_id = ?
+			AND m.dase_user_eid = u.eid
+			ORDER BY m.dase_user_eid";
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($this->ascii_id));
+		return $sth;
+	}
+
+	function getAttributes($sort = 'sort_order') {
 		$att = new Dase_DB_Attribute;
 		$att->collection_id = $this->id;
-		if ($sort) {
-			$att->orderBy($sort);
-		} else {
-			$att->orderBy('sort_order');
-		}
+		$att->orderBy($sort);
 		return $att->find();
+	}
+
+	function changeAttributeSort($att_ascii_id,$new_so) {
+		$att_ascii_id_array = array();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT ascii_id 
+			FROM attribute
+			WHERE collection_id = ?
+			ORDER BY sort_order";
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($this->id));
+		while ($row = $sth->fetch()) {
+			if ($att_ascii_id != $row['ascii_id']) {
+				$att_ascii_id_array[] = $row['ascii_id'];
+			}
+		} 
+		array_splice($att_ascii_id_array,$new_so-1,0,$att_ascii_id);
+		$sql = "
+			UPDATE attribute
+			SET sort_order = ?,
+			updated = ?
+			WHERE ascii_id = ?
+			AND collection_id = ?";
+		$sth = $db->prepare($sql);
+		$so = 1;
+		foreach ($att_ascii_id_array as $ascii) {
+			$now = date(DATE_ATOM);
+			$sth->execute(array($so,$now,$ascii,$this->id));
+			$so++;
+		}
 	}
 
 	function getAdminAttributes() {
@@ -248,20 +290,37 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $sth->fetchColumn();
 	}
 
-	public function getData() {
-		foreach ($this->getAttributes() as $att) {
-			foreach ($att as $k => $v) {
-			$collection_data['attributes'][$att->ascii_id][$k] = $v;
+	public function getData($select = 'all') {
+		$collection_data = array();
+		if (('attributes' == $select) || ('all' == $select)) {
+			foreach ($this->getAttributes() as $att) {
+				$att_as_array = array();
+				foreach ($att as $k => $v) {
+					$att_as_array[$k] = $v;
+				}
+				$collection_data['attributes'][] = $att_as_array;
 			}
 		}
-		foreach ($this->getItemTypes() as $type) {
-			foreach ($type as $k => $v) {
-			$collection_data['item_types'][$type->ascii_id][$k] = $v;
+		if (('types' == $select) || ('all' == $select)) {
+			foreach ($this->getItemTypes() as $type) {
+				foreach ($type as $k => $v) {
+					$collection_data['item_types'][$type->ascii_id][$k] = $v;
+				}
+				foreach ($type->getAttributes() as $type_att) {
+					//note: just need att_ascii_id, since javascript can reference
+					//rest of data from attributes array
+					$collection_data['item_types'][$type->ascii_id]['attributes'][$type_att->ascii_id] = $type_att->cardinality;
+				}
 			}
-			foreach ($type->getAttributes() as $type_att) {
-				//note: just need att_ascii_id, since javascript can reference
-				//rest of data from attributes array
-				$collection_data['item_types'][$type->ascii_id]['attributes'][$type_att->ascii_id] = $type_att->cardinality;
+		}
+		if (('settings' == $select) || ('all' == $select)) {
+			foreach ($this as $k => $v) {
+				$collection_data['settings'][$k] = $v;
+			}
+		}
+		if (('managers' == $select) || ('all' == $select)) {
+			foreach ($this->getManagers() as $manager) {
+			$collection_data['managers'][] = $manager;
 			}
 		}
 		return Dase_Json::get($collection_data);

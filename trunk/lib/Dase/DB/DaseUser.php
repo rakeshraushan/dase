@@ -4,6 +4,7 @@ require_once 'Dase/DB/Autogen/DaseUser.php';
 
 class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser 
 {
+
 	public function getTags() {
 		$tag_array = array();
 		foreach (Dase_DB_Tag::getByUser($this) as $row) {
@@ -38,17 +39,23 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$special_colls = array();
 		$user_colls = array();
 		foreach ($cm->find() as $managed) {
-			$special_colls[] = $managed->collection_ascii_id;
+			$special_colls[$managed->collection_ascii_id] = $managed->auth_level;
 		}
 		$coll = new Dase_DB_Collection;
 		$coll->orderBy('collection_name');
-		foreach($coll->getAll() as $c) {
-			if ((1 == $c->is_public) || (in_array($c->ascii_id,$special_colls))) {
+		foreach($coll->find() as $c) {
+			if ((1 == $c->is_public) || (in_array($c->ascii_id,array_keys($special_colls)))) {
+				if (isset($special_colls[$c->ascii_id])) {
+					$auth_level = $special_colls[$c->ascii_id];
+				} else {
+					$auth_level = '';
+				}
 				$user_colls[] =  array(
 					'id' => $c->id,
 					'collection_name' => $c->collection_name,
 					'ascii_id' => $c->ascii_id,
-					'is_public' => $c->is_public
+					'is_public' => $c->is_public,
+					'auth_level' => $auth_level
 				);
 			}
 		}

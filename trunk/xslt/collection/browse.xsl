@@ -19,6 +19,10 @@
 	<xsl:apply-templates/>
   </xsl:template>
 
+  <xsl:template match="insert-page-hook">
+	<xsl:value-of select="$page_hook"/>
+  </xsl:template>
+
   <xsl:template match="insert-base-href">
 	<base href="{$app_root}"/>
   </xsl:template>
@@ -28,7 +32,7 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="content full" id="browse">
+	<div class="full browse">
 	  <div id="msg" class="alert hide"></div>
 	  <xsl:call-template name="collection-label"/>
 	  <h3>Search:</h3>
@@ -65,7 +69,7 @@
   </xsl:template>
 
   <xsl:template name="collection-label">
-	<div id="collectionAsciiId" class="{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}"></div>
+	<div id="collectionAsciiId" class="hide"><xsl:value-of select="$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term"/></div>
 	<h2><xsl:value-of select="$coll/atom:title/text()"/>
 	  <xsl:text> (</xsl:text><xsl:value-of select="$coll/atom:category[@scheme='http://daseproject.org/category/collection/item_count']/@term"/> items)</h2>
 	<div id="description"><xsl:value-of select="$coll/atom:subtitle/text()"/></div>

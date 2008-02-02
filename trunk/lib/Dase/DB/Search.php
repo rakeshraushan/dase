@@ -607,6 +607,8 @@ class Dase_DB_Search {
 	}
 
 	public function getResult() {
+		//by the way, no easy way to grab a 
+		//particular user's recent searches
 		$result = array();
 		$cache = new Dase_DB_SearchCache();
 		$hash = md5($this->_normalizeSearch($this->search));

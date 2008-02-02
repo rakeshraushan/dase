@@ -7,6 +7,29 @@ if (Dase && (typeof Dase != "object" || Dase.NAME)) {
 Dase = {};
 Dase.NAME = "Dase";    // The name of this namespace
 Dase.VERSION = 1.0;    // The version of this namespace
+Dase.user = {};
+Dase.registry = {};
+Dase.base_href = document.getElementsByTagName('base')[0].href;
+Dase.htmlInputTypes = {};
+Dase.htmlInputTypeLabel = {};
+Dase.htmlInputTypes.RADIO = 1;
+Dase.htmlInputTypes.CHECKBOX = 2;
+Dase.htmlInputTypes.SELECTMENU = 3;
+Dase.htmlInputTypes.DYNAMICBOX = 4;
+Dase.htmlInputTypes.TEXT = 5;
+Dase.htmlInputTypes.TEXTAREA = 6;
+Dase.htmlInputTypes.LISTINPUT = 7;
+Dase.htmlInputTypes.NOEDIT = 8;
+Dase.htmlInputTypeLabel[1] = "Radio Buttons";
+Dase.htmlInputTypeLabel[2] = "Checkboxes";
+Dase.htmlInputTypeLabel[3] = "Select Menu";
+Dase.htmlInputTypeLabel[4] = "Text Box w/ Menu";
+Dase.htmlInputTypeLabel[5] = "Text Box";
+Dase.htmlInputTypeLabel[6] = "Text Area";
+Dase.htmlInputTypeLabel[7] = "List Input";
+Dase.htmlInputTypeLabel[8] = "Non-Editable";
+
+/* utilities */
 
 /* from DOM Scripting p. 103 */
 Dase.addLoadEvent = function(func) {
@@ -26,9 +49,6 @@ Dase.addLoadEvent = function(func) {
 Dase.$ = function(id) {
 	return document.getElementById(id);
 };
-
-Dase.user = {};
-Dase.base_href = document.getElementsByTagName('base')[0].href;
 
 Dase.addClass = function(elem,cname) {
 	if (!elem || !cname) return false;
@@ -70,6 +90,7 @@ Dase.displayError = function(msg) {
 	Dase.removeClass(jsalert,'hide');
 	jsalert.innerHTML = '';
 	jsalert.innerHTML = msg;
+	return true;
 };
 
 Dase.toggle = function(el) {
@@ -98,6 +119,90 @@ Dase.formatDate = function() {
 	return String(d.getFullYear()) + mo + da; 
 }
 
+Dase.createListFromObj = function(parent,set,cName) {
+	parent.className = 'show';
+	var list = document.createElement('ul');
+	parent.appendChild(list);
+	if (cName) {
+		list.setAttribute('class',cName);
+	}
+	for (var member in set) {
+		var item = document.createElement('li');
+		item.appendChild(document.createTextNode(member+' '+set[member]));
+		list.appendChild(item);
+		if (set[member] instanceof Object) {
+			Dase.createListFromObj(item,set[member]);
+		}
+	}
+};
+
+Dase.createHtmlSet = function(parent,set,tagName) {
+	for (var i=0;i<set.length;i++) {
+		Dase.createElem(parent,set[i],tagName);
+	}
+};
+
+Dase.createElem = function(parent,value,tagName,className) {
+	var element = document.createElement(tagName);
+	element.style.visibility = 'hidden';
+	if (value) {
+		element.appendChild(document.createTextNode(value));
+	}
+	parent.appendChild(element);
+	if (className) {
+		element.setAttribute('class',className);
+	}
+	element.style.visibility = 'visible';
+	return element;
+};
+
+Dase.createCheckbox = function(parent,value,name) {
+	var input = Dase.createElem(parent,value,'input');
+	input.setAttribute('type','checkbox');
+	input.setAttribute('name',name);
+	if (value) {	
+		input.setAttribute('checked','checked');
+	}
+};
+
+Dase.removeChildren = function(target) {
+	while (target.childNodes[0]) {
+		target.removeChild(target.childNodes[0]);
+	}
+}
+
+Dase.highlight = function(id,time) {
+	var target = Dase.$(id);
+	Dase.addClass(target,'highlight');
+	setTimeout(function() {
+			Dase.removeClass(target,'highlight');
+			},time);
+}
+
+Dase.removeFromArray = function(ar,val) {
+	for (var i=0;i<ar.length;i++) {
+		if (val == ar[i]) {
+			ar.splice(i,1);
+		}
+	}
+}
+
+/* end utilities */
+
+Dase.initWidget = function(widget,hooks) {
+	var ph = Dase.$('pageHook').innerHTML;
+	for (var i=0;i<hooks.length;i++) {
+		if (ph == hooks[i]) {
+			widget.run();
+		}
+	}
+}
+
+Dase.registerWidget = function(widget,hooks) {
+	Dase.addLoadEvent(function() {
+			Dase.initWidget(widget,hooks);
+			});
+}
 
 Dase.getEid = function() {
 	var base = Dase.base_href;
@@ -133,6 +238,7 @@ Dase.initUser = function() {
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(eid);
 			Dase.placeUserCollections(eid);
+			Dase.checkAdminStatus(eid);
 			Dase.placeUserSearchCollections();
 			Dase.initCart();
 			Dase.initAddToCart();
@@ -159,6 +265,29 @@ Dase.placeUserName = function(eid) {
 		eidElem.innerHTML = eid;
 	}
 };
+
+Dase.checkAdminStatus = function(eid) {
+	var current_coll_elem = Dase.$('collectionAsciiId');  
+	if (!current_coll_elem) return;
+	var current_coll = current_coll_elem.innerHTML;  
+	for (var i=0;i<Dase.user.collections.length;i++) {
+		var c = Dase.user.collections[i];
+		//display link to administer collection is user has privs
+		if (current_coll && (c.ascii_id == current_coll)  
+				&& ((c.auth_level == 'manager') || (c.auth_level == 'superuser'))
+		   ) {
+			var menu = Dase.$('menu');
+			var li = document.createElement('li');
+			li.setAttribute('class','admin');
+			var a = document.createElement('a');
+			a.setAttribute('href','admin/'+eid+'/'+c.ascii_id);
+			a.setAttribute('class','main');
+			a.appendChild(document.createTextNode(c.collection_name+' Admin'));
+			li.appendChild(a);
+			menu.appendChild(li);
+		}
+	}
+}
 
 Dase.placeUserCollections = function(eid) {
 	var cartLink = Dase.$('cartLink');
@@ -196,6 +325,7 @@ Dase.placeUserCollections = function(eid) {
 		}
 	}
 	if (hasSpecial) {
+		//this simply shows the "Special Access Collections" subhead
 		Dase.removeClass(Dase.$('specialAccessLabel'),'hide');
 	}
 };
@@ -347,7 +477,6 @@ Dase.setCollectionAtts = function(coll) {
 	}
 };
 
-
 //created for Persion Online & not used in DASe just yet
 Dase.initRowTable = function(id,new_class) {
 	var table = Dase.$(id);
@@ -414,8 +543,11 @@ Dase.initMenu = function(id) {
 };
 
 Dase.initCheckImage = function() { 
+	Dase.marked = new Array();
 	var thumbs = Dase.$('searchResults');
 	if (!thumbs) { return; }
+	var formParent = Dase.$('saveMarkedToCollection');
+	var form = Dase.createElem(formParent,null,form);
 	/* creates and initializes list check/uncheck toggle 
 	 */
 	var boxes = thumbs.getElementsByTagName('input');
@@ -424,12 +556,19 @@ Dase.initCheckImage = function() {
 	 */
 	for (var i=0; i<boxes.length; i++) {
 		boxes[i].onclick = function() {
-			var img = this.parentNode.parentNode;
-			if (Dase.hasClass(img,'checked')) {
-				Dase.removeClass(img,'checked');
+			var thumbTd = this.parentNode.parentNode;
+			var itemId = this.value;
+			var target = Dase.$('saveMarkedToCollection');
+			//var title = thumbTd.getElementsByTagName('h4')[0].innerHTML;
+			//	Dase.createElem(target,title,'li','item_'+itemId);
+			if (Dase.hasClass(thumbTd,'checked')) {
+				Dase.removeClass(thumbTd,'checked');
+				Dase.removeFromArray(Dase.marked,itemId);
 			} else {
-				Dase.addClass(img,'checked');
+				Dase.marked[Dase.marked.length] = itemId;
+				Dase.addClass(thumbTd,'checked');
 			}
+			target.innerHTML = Dase.marked.length;
 		};
 	}	   
 };
@@ -588,7 +727,7 @@ Dase.initBrowse = function() {
 
 Dase.getAttributes = function(url) {
 	Dase.getHtml(url,'attColumn',function() {
-			Dase.bindGetValues(Dase.$('collectionAsciiId').className);
+			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
 			});
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
@@ -691,13 +830,17 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	};
 };
 
-Dase.ajax = function(url,method,my_func) {
+Dase.ajax = function(url,method,my_func,msgBody) {
 	if (!method) {
 		method = 'POST';
 	}
 	var xmlhttp = Dase.createXMLHttpRequest();
 	xmlhttp.open(method, url, true);
-	xmlhttp.send(null);
+	if (msgBody) {
+		xmlhttp.send(msgBody);
+	} else {
+		xmlhttp.send(null);
+	}
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			var returnStr = xmlhttp.responseText;
@@ -707,6 +850,9 @@ Dase.ajax = function(url,method,my_func) {
 		} else {
 			// wait for the call to complete
 		}
+		if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
+			alert(xmlhttp.responseText);
+		} 
 	};
 };
 
@@ -736,28 +882,32 @@ Dase.getElementHtml = function(url,target,my_func) {
 	};
 };
 
-Dase.getJSON = function(url,my_func) {
+Dase.getJSON = function(url,my_func,error_func,params) {
 	var xmlhttp = Dase.createXMLHttpRequest();
-
 	// this is to deal with IE6 cache behavior
 	// also note that JSON data needs to be up-to-the-second
 	// accurate given the way we currently do deletes!
 	var date = new Date();
-	url = url + '?' + date.getTime();
+	if (params) {
+		url = url + '?' + params + '&' + date.getTime();
+	} else {
+		url = url + '?' + date.getTime();
+	}
 
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4) {
 			if (xmlhttp.status == 200 && xmlhttp.responseText) {
-				var jsonObj = eval('(' + xmlhttp.responseText + ')');
+				//var jsonObj = eval('(' + xmlhttp.responseText + ')');
+				var jsonObj = JSON.parse(xmlhttp.responseText);
 				var json = jsonObj.json;
 				if (my_func) {
 					my_func(json);
 				} else {
 					return json;
 				}
-			} else {
+			} else { //non 200 status returned
 				var json = {};
 				if (my_func) {
 					my_func(json);

@@ -53,14 +53,16 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute implements Dase_Attrib
 	}
 
 	public static function get($collection_ascii_id,$ascii_id) {
-		$a = new Dase_DB_Attribute;
-		$a->ascii_id = $ascii_id;
-		if ('admin_' == substr($ascii_id,0,6)) {
-			$a->collection_id = 0;
-		} else {
-			$a->collection_id = Dase_DB_Collection::get($collection_ascii_id)->id;
+		if ($collection_ascii_id && $ascii_id) {
+			$a = new Dase_DB_Attribute;
+			$a->ascii_id = $ascii_id;
+			if ('admin_' == substr($ascii_id,0,6)) {
+				$a->collection_id = 0;
+			} else {
+				$a->collection_id = Dase_DB_Collection::get($collection_ascii_id)->id;
+			}
+			return($a->findOne());
 		}
-		return($a->findOne());
 	}
 
 	public static function getAdmin($ascii_id) {

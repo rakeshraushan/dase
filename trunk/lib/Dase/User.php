@@ -59,8 +59,12 @@ class Dase_User
 		if (defined('DEBUG')) {
 			Dase::log('standard','__get from Dase_User prop: ' . $prop);
 		}
-		if ($this->db_user->$prop) {
-			return $this->db_user->$prop;
+		//note that I cannot do an isset here since we are using __get
+		//magic method on db_user as well!!
+		if (isset($this->db_user)) {
+			if ($this->db_user->$prop) {
+				return $this->db_user->$prop;
+			}
 		}
 	}
 
@@ -79,7 +83,7 @@ class Dase_User
 	}
 
 	function checkAuth($collection_ascii_id = null,$auth_level) {
-		if (!$collection_ascii_id) {
+		if (!$collection_ascii_id || !isset($this->db_user)) {
 			return false;
 		}
 		if ('read' == $auth_level) {

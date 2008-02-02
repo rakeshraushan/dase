@@ -6,6 +6,7 @@ $coll = new Dase_DB_Collection;
 $coll->ascii_id = 'vrc';
 $coll->findOne();
 
+print_r($coll->getData('managers'));exit;
 
 $item = new Dase_DB_Item;
 $item->collection_id = $coll->id;
