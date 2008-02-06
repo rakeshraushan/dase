@@ -7,7 +7,7 @@
   <xsl:strip-space elements="*"/>
 
   <xsl:template match="/">
-	<xsl:text>
+	<xsl:text>&lt;?php 
 	  $routes = array(
 	  "get" => array(
 	</xsl:text>

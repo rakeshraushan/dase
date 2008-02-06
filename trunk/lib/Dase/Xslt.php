@@ -45,6 +45,7 @@ class Dase_Xslt {
 	 */
 
 	function addSourceNode($simple_xml) {
+		$this->init();
 		if ($this->xml) {
 			$domnode = dom_import_simplexml($simple_xml);
 			//see http://wiki.flux-cms.org/display/BLOG/GetElementById+Pitfalls

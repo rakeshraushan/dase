@@ -1,0 +1,15 @@
+#error-data div.masthead {
+	background-color: #900;
+	padding: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+
+#error-data dt {
+	float: left;
+	font-weight: bold;
+	color: #900;
+}
+#error-data dd {
+	margin-left: 150px;
+}

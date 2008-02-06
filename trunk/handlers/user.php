@@ -1,0 +1,152 @@
+<?php
+
+class UserHandler
+{
+	public static function initiateLogin() {
+		///the idea is that you can initiate the login process simply by sending a "GET"
+		//to the '/login/' resource, which will bring you here
+		if (Dase::getConf('login_module')) {
+			$module = Dase::getConf('login_module');
+			Dase::redirect("modules/$module");
+		} else {
+			Dase::log('error','no authentication mechanism configured');
+			Dase::error(500);
+			exit;
+		}
+	}
+
+	public static function finishLogin() {
+		$params = Dase::instance()->params;
+		if (isset($params['eid'])) {
+			if ($params['eid'] == Dase_User::getCurrent()) {
+				Dase::redirect('/',"welcome {$params['eid']} is logged in");
+			} else {
+				Dase::redirect('login');
+			}
+		}
+	}
+
+	public static function logoff() {
+		Dase_User::logoff();
+		Dase::redirect('login');
+	}
+
+	public static function dataAsJson() {
+		$params = Dase::instance()->params;
+		//NOTE WELL!!!:
+		//note that we ONLY use the request_url so the IE cache-busting
+		//timestamp is ignored.  We can have a long ttl here because ALL
+		//operations that change user date are required to expire this cache
+		//NOTE: request_url is 'json/user/{eid}/data'
+		//need to have SOME data returned if there is no user
+		if (!isset($params['eid'])) {
+			echo "user data error"; exit;
+		}
+		$cache = new Dase_FileCache($params['eid'] . '_data');
+		$page = $cache->get();
+		if (!$page) {
+			$cache->setTimeToLive(300);
+			$page = Dase_User::get($params['eid'])->getData();
+			$cache->set($page);
+		}
+		//passing false as second param 
+		//means cache will NOT be reset
+		Dase::display($page,false);
+	}
+
+	public static function cartAsJson() {
+		$params = Dase::instance()->params;
+		Dase::display(Dase_User::get($params['eid'])->getCart());
+	}
+
+	public static function addCartItem() {
+		$params = Dase::instance()->params;
+		$u = Dase_User::get($params['eid']);
+		$u->expireDataCache();
+		$tag = new Dase_DB_Tag;
+		$tag->dase_user_id = $u->id;
+		$tag->tag_type_id = CART;
+		$tag->findOne();
+		$tag_item = new Dase_DB_TagItem;
+		$tag_item->item_id = Dase::filterPost('item_id');
+		$tag_item->tag_id = $tag->id;
+		if ($tag_item->insert()) {
+			echo "added cart item $tag_item->id";
+		} else {
+			echo "add to cart failed";
+		}
+	}
+
+	public static function deleteTagItem() {
+		$params = Dase::instance()->params;
+		$u = Dase_User::get($params['eid']);
+		$u->expireDataCache();
+		$tag_item = new Dase_DB_TagItem;
+		$tag_item->load($params['tag_item_id']);
+		$tag = new Dase_DB_Tag;
+		$tag->load($tag_item->tag_id);
+		if ($tag->dase_user_id == $u->id) {
+			$tag_item->delete();
+			echo "tag item {$params['tag_item_id']} deleted!";
+			exit;
+		} else {
+			Dase::error(401);
+		}
+	}
+
+	public static function adminCollectionsAsJson() {
+		Dase::display(Dase_User::get($params['eid'])->getCollections());
+	}
+
+	public static function cart() {
+		$params = Dase::instance()->params;
+		$u = Dase_User::get($params['eid']);
+		$tag = new Dase_DB_Tag;
+		$tag->dase_user_id = $u->id;
+		$tag->tag_type_id = CART;
+		$tag->findOne();
+		$t = new Dase_Xslt;
+		$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
+
+		//THIS script is protected by eid auth, but how to protect restricted
+		//atom and xml documents that feed it? DASe requests AND serves the docs
+		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));
+		Dase::display($t->transform());
+	}
+
+	public static function tag() {
+		//this probably belongs in the tag handler!
+		$params = Dase::instance()->params;
+		$u = Dase_User::get($params['eid']);
+		$tag = new Dase_DB_Tag;
+		if (isset($params['id'])) {
+			$tag->load($params['id']);
+			if ($tag->dase_user_id != $u->id) {
+				Dase::error(401);
+			}
+		} elseif (isset($params['ascii_id'])) {
+			$tag->ascii_id = $params['ascii_id'];
+			$tag->dase_user_id = $u->id;
+			if (!$tag->findOne()) {
+				Dase::error(401);
+			}
+		} else {
+			Dase::error(404);
+		}
+
+		$t = new Dase_Xslt;
+		$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
+		//THIS script is protected by eid auth, but how to protect restricted
+		//atom and xml documents that feed it? DASe requests AND serves the docs
+		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));
+		//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));exit;
+		Dase::display($t->transform());
+	}
+
+	public static function settings() {
+		print "user settings access not implemented";
+	}
+}
+

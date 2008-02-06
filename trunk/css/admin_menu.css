@@ -1,0 +1,26 @@
+
+#sidebar
+{
+	width: 16%;
+	background-color: #ffffff;
+	margin: 0px 3px;
+	float:left;
+}
+ul#menu a {
+	display:block;
+	padding: 9px 9px 9px 18px;
+	margin: 5px 0px;
+}
+ul#menu  li  {
+	/* fixes ie problem */
+	background-color: #d5deed;
+	-moz-border-radius: 5px;
+}
+ul#menu li:hover {
+	background-color: #eef1f8;
+}
+
+sup {
+	margin-left: 10px;
+}
+

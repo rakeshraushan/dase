@@ -8,7 +8,7 @@ if (!file_exists($IMAGE_REPOS)) {
 $images = array();
 $media_count = array();
 
-$coll = Dase_DB_Collection::get('vrc_collection');
+$coll = Dase_DB_Collection::get('vrc');
 
 $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($IMAGE_REPOS));
 foreach ($dir as $file) {

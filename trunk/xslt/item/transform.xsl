@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" 
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:h="http://www.w3.org/1999/xhtml"
+  xmlns:dm="http://daseproject.org/media/"
+  xmlns:php="http://php.net/xsl"
+  xsl:extension-element-prefixes="php"
+  exclude-result-prefixes="atom h dm"
+  >
+  <xsl:output method="xml" indent="yes"
+	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
+	encoding="UTF-8"/>
+
+  <!-- use services to get any needed content -->
+  <xsl:variable name="it" select="document($src)/atom:feed"/>
+
+  <xsl:template match="/">
+	<xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="insert-page-hook">
+	<xsl:value-of select="$page_hook"/>
+  </xsl:template>
+
+  <xsl:template match="insert-base-href">
+	<base href="{$app_root}"/>
+  </xsl:template>
+
+  <xsl:template match="insert-title">
+	<title>View Item</title>
+  </xsl:template>
+
+  <xsl:template match="insert-content">
+	<div class="full item browse">
+	  <h2><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
+	  <h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>
+	  <div class="pageControls">
+		<a href="{$it/atom:link[@rel='previous']/@href}">prev</a> |
+		<a href="{$it/atom:link[@rel='http://daseproject.org/relation/search-link']/@href}">up</a> |
+		<a href="{$it/atom:link[@rel='next']/@href}">next</a> 
+	  </div>
+	  <table class="itemDisplay">
+		<tr>
+		  <td class="image">
+			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:p[@class='collection_name']"/>
+			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']"/>
+			<h4>Media:</h4>
+			<ul id="mediaLinks">
+			  <xsl:apply-templates select="$it/atom:entry/atom:link" mode="media"/>
+			</ul>
+		  </td>
+		  <td class="metadata">
+			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:dl"/>
+		  </td>
+		</tr>
+	  </table>
+	</div> <!-- close content -->
+  </xsl:template>
+
+  <xsl:template match="dynamic"/>
+
+  <xsl:template match="insert-timer">
+	<!--<xsl:value-of select="$timer"/>-->	
+	<!--	<xsl:value-of select="php:functionString('Dase_Timer::getElapsed')"/>-->	
+  </xsl:template>
+
+  <!-- Identity transformation -->
+  <xsl:template match="@*|*">
+	<xsl:copy>
+	  <xsl:apply-templates select="@*|node()"/>
+	</xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="atom:entry" mode="img">
+	<img src="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@href}" width="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:width}" height="{atom:link[@rel='http://daseproject.org/relation/media/vewitem']/@d:height}" alt="{atom:title/text()}"/>
+  </xsl:template>
+
+  <xsl:template match="atom:link[@dm:class]" mode="media">
+	<li><a href="{@href}"><xsl:value-of select="@dm:class"/> (<xsl:value-of select="@dm:width"/>x<xsl:value-of select="@dm:height"/>)</a></li>
+  </xsl:template>
+
+  <xsl:template match="h:dl|h:ul">
+	<xsl:copy>
+	  <xsl:apply-templates/>
+	</xsl:copy>
+  </xsl:template>
+
+</xsl:stylesheet>
