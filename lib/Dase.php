@@ -200,10 +200,9 @@ class Dase
 		$routes = array(); 
 		$cache = new Dase_FileCache('routes');
 		if ($cache->get()) {
-			eval($cache->get());
+			include($cache->getLoc());
 		} else {
 			//xslt pipeline:
-
 			$rx = new Dase_Xslt;
 			$rx->stylesheet = DASE_PATH."/inc/routes2map.xsl";
 			$rx->source =DASE_PATH."/inc/routes.xml";
@@ -213,7 +212,7 @@ class Dase
 			$rp->source = $rx->transform();
 
 			$cache->set($rp->transform());
-			eval($cache->get());
+			include($cache->getLoc());
 		}
 		return $routes;
 	}
@@ -439,7 +438,27 @@ class Dase
 		if (500 == $code) {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
-		Dase::display("Error: $msg",false);
+		$t = new Dase_Xslt;
+		if (defined('DEBUG')) {
+			$msg = "<dl>";
+			$d = Dase::instance();
+			foreach (array('action','base_url','collection','handler','query_string','request_url','response_mime_type') as $m) {
+				$val = $d->$m ? htmlspecialchars($d->$m) : '[no value]';
+				$msg .= "<dt>DASe::$m</dt><dd>$val</dd>\n";
+			}
+			$routes = Dase::compileRoutes();
+			$method = strtolower($_SERVER['REQUEST_METHOD']);
+			foreach (array_keys($routes[$method]) as $regex) {
+				$msg .= "<dt>matcher</dt><dd>$regex</dd>\n";
+			}
+			$msg .= "</dl>";
+			$t->stylesheet = XSLT_PATH.'error/debug.xsl';
+			$t->source = XSLT_PATH.'error/layout.xml';
+			$t->addSourceNode(simplexml_load_string($msg));
+		} else {
+			$t->stylesheet = XSLT_PATH.'error/production.xsl';
+		}
+		Dase::display($t->transform());
 		exit;
 	}
 

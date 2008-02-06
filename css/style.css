@@ -658,3 +658,20 @@ ul.searchTallies li {
 div#saveMarkedToCollection {
 	margin-left: 300px;
 }
+
+#error-data div.masthead {
+	background-color: #900;
+	padding: 12px;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #fff;
+}
+
+#error-data dt {
+	float: left;
+	font-weight: bold;
+	color: #900;
+}
+#error-data dd {
+	margin-left: 150px;
+}
