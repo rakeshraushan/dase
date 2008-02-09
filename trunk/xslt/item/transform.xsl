@@ -3,10 +3,10 @@
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:h="http://www.w3.org/1999/xhtml"
-  xmlns:dm="http://daseproject.org/media/"
+  xmlns:d="http://daseproject.org/media/"
   xmlns:php="http://php.net/xsl"
   xsl:extension-element-prefixes="php"
-  exclude-result-prefixes="atom h dm"
+  exclude-result-prefixes="atom h d"
   >
   <xsl:output method="xml" indent="yes"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -77,8 +77,8 @@
 	<img src="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@href}" width="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:width}" height="{atom:link[@rel='http://daseproject.org/relation/media/vewitem']/@d:height}" alt="{atom:title/text()}"/>
   </xsl:template>
 
-  <xsl:template match="atom:link[@dm:class]" mode="media">
-	<li><a href="{@href}"><xsl:value-of select="@dm:class"/> (<xsl:value-of select="@dm:width"/>x<xsl:value-of select="@dm:height"/>)</a></li>
+  <xsl:template match="atom:link[@title]" mode="media">
+	<li><a href="{@href}"><xsl:value-of select="@title"/> (<xsl:value-of select="@d:width"/>x<xsl:value-of select="@d:height"/>)</a></li>
   </xsl:template>
 
   <xsl:template match="h:dl|h:ul">

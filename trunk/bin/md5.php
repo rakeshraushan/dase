@@ -6,7 +6,7 @@ include 'cli_setup.php';
 $i = 0;
 
 $att = new Dase_DB_Attribute;
-foreach ($att->getAll() as $a) {
+foreach ($att->find() as $a) {
 	$val = new Dase_DB_Value;
 	$val->attribute_id = $a->id;
 	foreach ($val->find() as $v) {

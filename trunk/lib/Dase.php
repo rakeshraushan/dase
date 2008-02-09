@@ -4,9 +4,9 @@ class Dase
 {
 	private static $instance;
 	public $action;
-	public $base_url= '';       
 	public $collection;
 	public $handler;
+	public $method;
 	public $query_string = '';    
 	public $request_url = '';    
 	public $response_mime_type = '';
@@ -291,6 +291,7 @@ class Dase
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
+		$dase->method = $method;
 		foreach ($routes[$method] as $regex => $conf_array) {
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				//if debug in force, log action
@@ -440,25 +441,38 @@ class Dase
 		}
 		$t = new Dase_Xslt;
 		if (defined('DEBUG')) {
-			$msg = "<dl>";
+			//create an XML doc w/ DASe members
+			//AND current routes
+			$sx = simplexml_load_string('<errors/>');
+			$d_atts = $sx->addChild('dase');
+			$d_atts->addChild('http_error_code',$code);
 			$d = Dase::instance();
-			foreach (array('action','base_url','collection','handler','query_string','request_url','response_mime_type') as $m) {
-				$val = $d->$m ? htmlspecialchars($d->$m) : '[no value]';
-				$msg .= "<dt>DASe::$m</dt><dd>$val</dd>\n";
+			foreach (array('action','handler','method','query_string','request_url','response_mime_type') as $m) {
+				$val = $d->$m ? htmlspecialchars($d->$m) : ' -- ';
+				$d_atts->addChild($m,$val);
 			}
+			$routes_xml = $sx->addChild('routes');
 			$routes = Dase::compileRoutes();
 			$method = strtolower($_SERVER['REQUEST_METHOD']);
-			foreach (array_keys($routes[$method]) as $regex) {
-				$msg .= "<dt>matcher</dt><dd>$regex</dd>\n";
+			foreach ($routes[$method] as $regex => $parts) {
+				$route = $routes_xml->addChild('route');
+				$route->addChild('regex',$regex);
+				if (is_array($parts)) {
+					foreach ($parts as $k => $v) {
+						if (!$v) { $v = "--"; }
+						if ('end' != $k) {
+							$route->addChild($k,$v);
+						}
+					}
+				}
 			}
-			$msg .= "</dl>";
 			$t->stylesheet = XSLT_PATH.'error/debug.xsl';
 			$t->source = XSLT_PATH.'error/layout.xml';
-			$t->addSourceNode(simplexml_load_string($msg));
+			$t->addSourceNode($sx);
 		} else {
 			$t->stylesheet = XSLT_PATH.'error/production.xsl';
 		}
-		Dase::display($t->transform());
+		echo $t->transform();
 		exit;
 	}
 
