@@ -350,7 +350,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		if ($this->item_type) {
 			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
 		}
-		$entry->addLink(APP_ROOT.'/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
+		$entry->addLink(APP_ROOT.'/collection/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
@@ -373,7 +373,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
 			$dd->addAttribute('class',$row['ascii_id']);
 		}
-		$dm = 'http://daseproject.org/media/';
+		$d = 'http://daseproject.org/media/';
 		//$media_ul = $div->addChild('ul');
 		//$media_ul->addAttribute('class','media');
 		foreach ($this->getMedia() as $med) {
@@ -382,10 +382,14 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			//$a = $media_li->addChild('a', $med->size . " (" . $med->width ."x" .$med->height .")");
 			//$a->addAttribute('href', APP_ROOT . "/media/" . $this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
 			//$a->addAttribute('class',$med->mime_type);
-			$link = $entry->addLink(APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,'alternate',$med->mime_type,$med->file_size);
-			$link->setAttributeNS($dm,'dm:class',$med->size);
-			$link->setAttributeNS($dm,'dm:width',$med->width);
-			$link->setAttributeNS($dm,'dm:height',$med->height);
+			$link = $entry->addLink(
+				APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
+				'http://daseproject.org/relation/media',
+				$med->mime_type,$med->file_size
+			);
+			$link->setAttributeNS($d,'d:width',$med->width);
+			$link->setAttributeNS($d,'d:height',$med->height);
+			$link->setAttribute('title',$med->size);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	

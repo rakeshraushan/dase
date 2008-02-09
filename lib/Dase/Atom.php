@@ -14,7 +14,7 @@ class Dase_Atom
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',
 		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 		'xhtml' => 'http://www.w3.org/1999/xhtml',
-		'dm' => 'http://daseproject.org/media/'
+		'd' => 'http://daseproject.org/media/'
 	);
 
 	//convenience method for atom elements

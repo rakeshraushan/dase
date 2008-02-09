@@ -5,7 +5,7 @@ include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
 //$coll = 'south_asia_collection';
-$coll = 'test_collection';
+$coll = 'medieval';
 $c = Dase_DB_Collection::get($coll);
 
 $status = new Dase_DB_ItemStatus;
