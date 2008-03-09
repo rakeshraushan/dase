@@ -5,6 +5,7 @@ require_once 'Dase/DB/Autogen/Attribute.php';
 class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute implements Dase_AttributeInterface
 {
 	public $cardinality;
+	public $is_identifier;
 	public $collection = null;
 	public $display_values = array();
 	public $html_input_type = null;

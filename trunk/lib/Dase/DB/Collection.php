@@ -107,6 +107,22 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 		return $att->find();
 	}
 
+	function getAttributesData() {
+		$att = new Dase_DB_Attribute;
+		$cols = Dase_DB::listColumns('attribute');
+		$sql = "
+			SELECT *
+			FROM attribute
+			WHERE collection_id = ?
+			ORDER BY sort_order
+			";
+		$db = Dase_DB::get();
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
+		$sth->execute(array($this->id));
+		return $sth->fetchAll();
+	}
+
 	function changeAttributeSort($att_ascii_id,$new_so) {
 		$att_ascii_id_array = array();
 		$db = Dase_DB::get();
@@ -293,13 +309,7 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 	public function getData($select = 'all') {
 		$collection_data = array();
 		if (('attributes' == $select) || ('all' == $select)) {
-			foreach ($this->getAttributes() as $att) {
-				$att_as_array = array();
-				foreach ($att as $k => $v) {
-					$att_as_array[$k] = $v;
-				}
-				$collection_data['attributes'][] = $att_as_array;
-			}
+			$collection_data['attributes'] = $this->getAttributesData();
 		}
 		if (('types' == $select) || ('all' == $select)) {
 			foreach ($this->getItemTypes() as $type) {
@@ -307,9 +317,12 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_Coll
 					$collection_data['item_types'][$type->ascii_id][$k] = $v;
 				}
 				foreach ($type->getAttributes() as $type_att) {
-					//note: just need att_ascii_id, since javascript can reference
-					//rest of data from attributes array
-					$collection_data['item_types'][$type->ascii_id]['attributes'][$type_att->ascii_id] = $type_att->cardinality;
+					$type_att_as_array = array();
+					$type_att_as_array['ascii_id'] = $type_att->ascii_id;
+					$type_att_as_array['attribute_name'] = $type_att->attribute_name;
+					$type_att_as_array['cardinality'] = $type_att->cardinality;
+					$type_att_as_array['is_identifier'] = $type_att->is_identifier;
+					$collection_data['item_types'][$type->ascii_id]['attributes'][] = $type_att_as_array;
 				}
 			}
 		}

@@ -143,6 +143,10 @@ Dase.createHtmlSet = function(parent,set,tagName) {
 };
 
 Dase.createElem = function(parent,value,tagName,className) {
+	if (!parent) {
+		//alert('no parent');
+		return;
+	}
 	var element = document.createElement(tagName);
 	element.style.visibility = 'hidden';
 	if (value) {
@@ -150,29 +154,47 @@ Dase.createElem = function(parent,value,tagName,className) {
 	}
 	parent.appendChild(element);
 	if (className) {
-		element.setAttribute('class',className);
+		element.className = className;
 	}
 	element.style.visibility = 'visible';
 	return element;
 };
 
 Dase.createCheckbox = function(parent,value,name) {
-	var input = Dase.createElem(parent,value,'input');
-	input.setAttribute('type','checkbox');
-	input.setAttribute('name',name);
-	if (value) {	
-		input.setAttribute('checked','checked');
+	/*
+	var element = document.createElement('input');
+	parent.appendChild(element);
+	//from http://alt-tag.com/blog/archives/2006/02/ie-dom-bugs/
+	//WORK ON THIS!
+	try {
+		element.setAttribute("type", "checkbox");
+	} catch (e) {
+		var newElement = null;
+		var tempStr = element.getAttribute("name");
+		try {
+			newElement = document.createElement("<input type=\"" +typeStr+ "\" name=\"" +tempStr+ "\">");
+		} catch (e) {}
+		if (!newElement) {
+			newElement = document.createElement("input");
+			newElement.setAttribute("type", "checkbox");
+			newElement.setAttribute("name", tempStr);
+		}
+		if (tempStr = element.getAttribute("value")) {
+			newElement.setAttribute("value", tempStr);
+		}
+		element.parentNode.replaceChild(newElement, element);
 	}
+	*/
 };
 
 Dase.removeChildren = function(target) {
+	if (!target) return;
 	while (target.childNodes[0]) {
 		target.removeChild(target.childNodes[0]);
 	}
 }
 
-Dase.highlight = function(id,time) {
-	var target = Dase.$(id);
+Dase.highlight = function(target,time) {
 	Dase.addClass(target,'highlight');
 	setTimeout(function() {
 			Dase.removeClass(target,'highlight');
@@ -279,9 +301,11 @@ Dase.checkAdminStatus = function(eid) {
 			var menu = Dase.$('menu');
 			var li = document.createElement('li');
 			li.setAttribute('class','admin');
+			li.setAttribute('className','admin');
 			var a = document.createElement('a');
 			a.setAttribute('href','admin/'+eid+'/'+c.ascii_id);
 			a.setAttribute('class','main');
+			a.setAttribute('className','main');
 			a.appendChild(document.createTextNode(c.collection_name+' Admin'));
 			li.appendChild(a);
 			menu.appendChild(li);
@@ -650,6 +674,7 @@ Dase.loadingMsg = function(displayBool) {
 Dase.placeUserTags = function(eid) {
 	var json = Dase.user.tags;
 	var tags={};
+	var cart_tally = 0;
 	var sets = {};
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
@@ -685,10 +710,7 @@ Dase.placeUserTags = function(eid) {
 					}
 				}
 			} else { // cart tally
-				var cart_tally = Dase.$('cart_tally');
-				if (cart_tally) {
-					cart_tally.innerHTML = jsonType[ascii];
-				}
+				cart_tally = jsonType[ascii];
 			}
 		} 
 	}
@@ -699,6 +721,16 @@ Dase.placeUserTags = function(eid) {
 		//	alert('a friendly notice: ' +e);
 		}
 	}
+	var label = Dase.$('cartLabel');
+	if (label) {
+		label.innerHTML += " ("+cart_tally+")";
+	}
+	//UNsuccessful attempt to fix ie bug
+	//label.parentNode.style.display = 'inline';
+
+	//UNsuccessful attempt to fix ie bug
+	//see ie7-squish.js,ie7-recalc.js
+	//document.recalc();
 };
 
 Dase.initBrowse = function() {
@@ -820,7 +852,9 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			var returnStr = xmlhttp.responseText;
-			Dase.$(elem_id).innerHTML = returnStr;
+			if (Dase.$(elem_id)) {
+				Dase.$(elem_id).innerHTML = returnStr;
+			}
 			if (my_func) {
 				my_func();
 			}
@@ -899,7 +933,7 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4) {
 			if (xmlhttp.status == 200 && xmlhttp.responseText) {
-				//var jsonObj = eval('(' + xmlhttp.responseText + ')');
+				//alert(xmlhttp.responseText);
 				var jsonObj = JSON.parse(xmlhttp.responseText);
 				var json = jsonObj.json;
 				if (my_func) {
@@ -951,12 +985,12 @@ Dase.initCart = function() {
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
 			function(json) { 
-			var cart_tally = Dase.$('cart_tally');
-			if (cart_tally) {
+			var label = Dase.$('cartLabel');
+			if (label) {
 			if (undefined !== json.length) {
-			cart_tally.innerHTML = json.length;
+			label.innerHTML = "My Cart ("+json.length+")";
 			} else {
-			cart_tally.innerHTML = 0;
+			label.innerHTML = "My Cart (" + 0 + ")";
 			}
 			}
 			for (var i=0;i<json.length;i++) {

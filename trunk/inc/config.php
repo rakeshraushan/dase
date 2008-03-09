@@ -45,6 +45,8 @@ if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 //request is coming from a module
 //note that passwords in modules will
 //likely get checked in
+//also, login_module cannot be overridden since calls to logoff,login 
+//will not create a MODULE_PATH
 if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
 	include(MODULE_PATH . '/inc/config.php');
 }	

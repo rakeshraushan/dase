@@ -22,7 +22,6 @@ class Dase_User
 				$this->db_user;
 			}
 		} 
-		return false;
 	}
 
 	//factory method
@@ -56,6 +55,7 @@ class Dase_User
 	}
 
 	public function __get($prop) {
+		//this method gets invoked when $user->eid is referenced
 		if (defined('DEBUG')) {
 			Dase::log('standard','__get from Dase_User prop: ' . $prop);
 		}

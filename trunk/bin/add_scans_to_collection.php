@@ -3,8 +3,10 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-$collection_ascii_id = 'yoruba';
-$repo = $collection_ascii_id;
+//$collection_ascii_id = 'yoruba';
+//$collection_ascii_id = 'american_photography';
+$collection_ascii_id = 'medieval';
+$repo = $collection_ascii_id .'_collection';
 //$repo = mansfield;
 
 /******************************************/

@@ -27,6 +27,9 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 
 	public static function get($collection_ascii_id,$serial_number) {
 		$c = Dase_Collection::get($collection_ascii_id);
+		if (!$c) {
+			return false;
+		}
 		$item = new Dase_DB_Item;
 		$item->collection_id = $c->id;
 		$item->serial_number = $serial_number;
@@ -93,21 +96,15 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 	}
 
 	public function getValues() {
-		//n+1 anti-pattern
-		//(see getMetadata)
 		$val = new Dase_DB_Value;
 		$val->item_id = $this->id;
-		foreach ($val->find() as $v) {
-			$v->getAttribute();
-			$this->values[] = $v;
-		}
-		//what about sorting?????
-		return $this->values;
+		return $val->find();
 	}
 
 	public function getMetadata() {
 		//minimize memory consumption 
 		//as compared to getValues()
+		$metadata = array();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,v.value_text
@@ -121,6 +118,23 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			$metadata[] = $row;
 		}
 		return $metadata;
+	}
+
+	public function getChildren() {
+
+		//WORK ON THIS!!!!!!!!
+		$sql = "
+			SELECT i.id 
+			FROM attribute a, attribute_item_type ai, item i, item_type_relation r
+			WHERE a.item_id = $this->id
+			AND a.id = ai.attribute_id
+			AND ai.is_identifier = 't'	
+			AND ai.item_type_id = $this->item_type_id
+			AND r.parent_item_type_id = $this->item_type_id
+			AND i.item_type_id = r.item_type_id
+			";
+
+
 	}
 
 	public function getAttVal($att_ascii_id) {
@@ -279,6 +293,13 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			}
 		}
 		return "deleted admin metadata for " . $this->serial_number . "\n";
+	}
+
+	function expunge() {
+		$this->deleteMedia();
+		$this->deleteValues();
+		$this->deleteAdminValues();
+		$this->delete();
 	}
 
 	function deleteMedia() {

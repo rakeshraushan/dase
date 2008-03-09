@@ -30,25 +30,43 @@ ul.collData li {
 	margin-left: 20px;
 }
 
-table.dataDisplay {
+table#dataDisplay {
 	background-color: #ffebcc;
 }
 
-table.dataDisplay  td {
+table#dataDisplay  td {
 	border: 1px solid #999;
-	padding: 10px;
+	padding: 8px;
 	text-align: center;
 }
 
-table.dataDisplay  th {
+/* allows some cells to be left-aligned */
+table#dataDisplay  td.data {
+	text-align: left;
+}
+
+table#dataDisplay  th {
 	background-color: #f2dfc1;
 	border: 1px solid #999;
-	padding: 10px;
+	padding: 8px;
 	text-align: center;
 	font-weight: bold;
 }
 
-table.dataDisplay  th.rows {
+table#dataDisplay  th.rows {
 	text-align: right;
 }
 
+table#dataDisplay dt {
+	font-weight: bold;
+}
+
+table#dataDisplay dd {
+	margin-left: 12px;
+}
+
+div.adminForm {
+	background-color: #ffebcc;
+	border: 1px solid #999;
+	padding: 8px;
+}

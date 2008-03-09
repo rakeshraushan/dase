@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-$days = 400;
+$days = 200;
 $database = 'dase_prod';
 include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
@@ -20,12 +20,14 @@ $sql = "
 	AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < $days 
 	";
 
+/*
 $sql = "
 	SELECT  
 	acc_num_PK
 	FROM tblAccession 
 	WHERE acc_digital_num != ''
 	";
+ */
 
 $st = $pdo->prepare($sql);
 $st->setFetchMode(PDO::FETCH_ASSOC);

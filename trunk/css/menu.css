@@ -53,6 +53,25 @@
 	background-color: #d5deed;
 	}
   
+	li.marked a.main {
+	border: 1px solid #6480ae; 
+	border-left: 18px solid #6480ae;
+	background-color: #ffffff;
+	}
+	li.marked a:hover , a:active {
+	background-color: #d5deed;
+	}
+	ul#marked a {
+	background-color: #d5deed;
+	}
+	ul#marked a:hover {
+	background-color: #eef1f8;
+	}
+
+	#marked {
+	background-color: #d5deed;
+	}
+  
 	li.slideshow a.main {
 	border: 1px solid #263b5e; 
 	border-left: 18px solid #263b5e;

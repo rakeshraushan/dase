@@ -58,7 +58,7 @@
 
 	  <ul id="menu">
 		<li>
-		  <a href="admin/upload_form">
+		  <a href="admin/upload_form" id="collUpload">
 			<img border="0" src="images/tango-icons/list-add.png"/><sup>Create Item</sup>
 		  </a>
 		</li>
@@ -102,6 +102,7 @@
 	  <insert-timer/> seconds |
 	  <img src="images/dasepowered.png" alt="DASePowered icon"/>
 	</div><!--closes footer-->
+	<div id="debugData" class="hide"></div>
 	<div id="pageHook" class="hide"><insert-page-hook/></div>
   </body>
 </html>

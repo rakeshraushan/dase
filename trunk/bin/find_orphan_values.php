@@ -1,8 +1,19 @@
 <?php
-//$database = 'dase_prod';
+$database = 'dase_prod';
 require_once 'cli_setup.php'; //sets up the environment (autoload, etc.)
 
 $db = Dase_DB::get();
+$sql = "
+	SELECT count(v.id)
+	FROM value v LEFT JOIN item i
+	ON v.item_id = i.id
+	WHERE i.id IS NULL
+	";
+$sth = $db->prepare($sql);
+$sth->execute();
+$count = $sth->fetchColumn();
+print "$count orphaned values found\n\n";
+
 $sql = "
 	SELECT v.id, v.value_text
 	FROM value v LEFT JOIN item i

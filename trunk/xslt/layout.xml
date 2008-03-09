@@ -16,10 +16,16 @@
 	<link rel="stylesheet" type="text/css" href="css/dynamic.css"/>
 	<link rel="shortcut icon" href="images/favicon.ico"/>
 
+	<!--[if lt IE 7]>
+	<script type="text/javascript" src="scripts/ie7/IE7.js"></script>
+	<script type="text/javascript" src="scripts/ie7/ie7-squish.js"></script>
+	<script type="text/javascript" src="scripts/ie7/ie7-recalc.js"></script>
+	<![endif]-->
 	<script type="text/javascript" src="scripts/http.js"></script>
 	<script type="text/javascript" src="scripts/json2.js"></script>
 	<script type="text/javascript" src="scripts/dase.js"></script>
 	<script type="text/javascript" src="scripts/widgets.js"></script>
+	<script type="text/javascript" src="scripts/firebug/firebug.js"></script>
 
 	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="css/ie.css"/>
@@ -53,7 +59,7 @@
 
 	  <ul id="menu">
 		<li class="home"><a href="" class="main">Home/Search</a></li>
-		<li class="cart"><a href="" class="main">My Cart (<span id="cart_tally"></span>)</a>
+		<li class="cart"><a href="" class="main" id="cartLabel">My Cart</a>
 		  <ul class="hide" id="cart">
 			<li><a href="" class="create" id="cartLink">view cart</a></li>
 			<li><a href="" class="create">empty cart</a></li>
@@ -69,7 +75,6 @@
 				</li>
 			  </ul>
 			</li>
-
 		  </ul>
 		</li>
 
