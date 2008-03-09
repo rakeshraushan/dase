@@ -98,6 +98,7 @@ while ($row = $st->fetch()) {
 
 function build($sernum,$coll,$media_count) {
 	$url = APP_ROOT . "/modules/vrc/$sernum";
+	print "retrieve $url\n";
 	$sxe = new SimpleXMLElement($url, NULL, TRUE);
 	$item = new Dase_DB_Item;
 	$item->serial_number = $sernum;
@@ -148,6 +149,7 @@ function build($sernum,$coll,$media_count) {
 	}
 
 	$file = $sxe->item[0]['digital_file'];
+	print "retrieving htttp://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file\n";
 	$img = file_get_contents("http://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file");
 	file_put_contents("/tmp/$file",$img);
 

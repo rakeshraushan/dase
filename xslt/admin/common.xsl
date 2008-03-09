@@ -25,7 +25,7 @@
   </xsl:template>
 
   <xsl:template match="insert-collection-name">
-	<p><xsl:value-of select="$collection-name"/></p>
+	<p id="collection_name"><xsl:value-of select="$collection-name"/></p>
 	<div class="hide" id="collection_ascii_id"><xsl:value-of select="$collection-ascii-id"/></div>
   </xsl:template>
 

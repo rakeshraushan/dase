@@ -5,6 +5,8 @@ require_once 'Dase/DB.php';
 class Dase_DB_Object implements IteratorAggregate
 {
 	public $id = 0;
+	public $sql;
+	public $bind = array();
 	private $table;
 	private $fields = array(); 
 	protected $limit;
@@ -58,6 +60,8 @@ class Dase_DB_Object implements IteratorAggregate
 				'value' => $value,
 				'operator' => $operator
 			);
+		} else {
+			throw new Exception('addWhere problem');
 		}
 	}
 
@@ -182,6 +186,8 @@ class Dase_DB_Object implements IteratorAggregate
 		if (isset($this->limit)) {
 			$sql .= " LIMIT $this->limit";
 		}
+		$this->sql = $sql;
+		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
 		if (defined('DEBUG')) {
 			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
@@ -234,7 +240,7 @@ class Dase_DB_Object implements IteratorAggregate
 		if (defined('DEBUG')) {
 			Dase::log('sql',"deleting id $this->id from $this->table table");
 		}
-		$sth->execute(array( ':id' => $this->id));
+		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
 	}
 

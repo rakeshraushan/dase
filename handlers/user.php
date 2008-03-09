@@ -2,16 +2,28 @@
 
 class UserHandler
 {
+	//rewrite/replace for alternate authentication
 	public static function initiateLogin() {
-		///the idea is that you can initiate the login process simply by sending a "GET"
-		//to the '/login/' resource, which will bring you here
-		if (Dase::getConf('login_module')) {
-			$module = Dase::getConf('login_module');
-			Dase::redirect("modules/$module");
+		$msg = Dase::filterGet('msg');
+		$t = new Dase_Xslt;
+		$t->stylesheet = XSLT_PATH.'login_form.xsl';
+		if ($msg) {
+			$t->set('msg',$msg);
+		}
+		Dase::display($t->transform());
+	}
+
+	//rewrite/replace for alternate authentication
+	public static function processLogin() {
+		$user = Dase::filterPost('username');
+		$pass = Dase::filterPost('password');
+		if ('tseliot' == $pass) {
+			Dase_CookieAuth::set($user);
+			//do this so cookie is passed along
+			Dase::redirect("login/$user");
 		} else {
-			Dase::log('error','no authentication mechanism configured');
-			Dase::error(500);
-			exit;
+			//I could probably just display here instead of redirect
+			Dase::redirect("login",'incorrect username/password');
 		}
 	}
 

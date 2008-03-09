@@ -39,6 +39,14 @@ class Dase
 		if(file_exists(DASE_PATH . "/log/{$logfile}.log")) {
 			file_put_contents(DASE_PATH ."/log/{$logfile}.log",$msg,FILE_APPEND);
 		}
+		if ('error' == $logfile) {
+			//include backtrace w/ errors
+			ob_start();
+			debug_print_backtrace();
+			$trace = ob_get_contents();
+			ob_end_clean();
+			file_put_contents(DASE_PATH ."/log/error.log",$trace,FILE_APPEND);
+		}
 	}
 
 	public static function basicHttpAuth() {
@@ -194,29 +202,6 @@ class Dase
 		}
 	}
 
-	public static function compileRoutes() {
-		// No cache: ~115 req/sec
-		// File Based Cache: ~375 req/sec
-		$routes = array(); 
-		$cache = new Dase_FileCache('routes');
-		if ($cache->get()) {
-			include($cache->getLoc());
-		} else {
-			//xslt pipeline:
-			$rx = new Dase_Xslt;
-			$rx->stylesheet = DASE_PATH."/inc/routes2map.xsl";
-			$rx->source =DASE_PATH."/inc/routes.xml";
-
-			$rp = new Dase_Xslt;
-			$rp->stylesheet = DASE_PATH."/inc/xml2php.xsl";
-			$rp->source = $rx->transform();
-
-			$cache->set($rp->transform());
-			include($cache->getLoc());
-		}
-		return $routes;
-	}
-
 	function parseQuery($qs) {
 		$url_params = array();
 		$pairs = explode('&',$qs);
@@ -287,7 +272,7 @@ class Dase
 		$matches = array();
 		$params = array();
 
-		$routes = Dase::compileRoutes();
+		$routes = Dase_Routes::compile();
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -296,21 +281,18 @@ class Dase
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				//if debug in force, log action
 				if (defined('DEBUG')) {
+					Dase::log('standard','--------- beginning DASe route -------------');
 					Dase::log('standard',$regex . " => " . $conf_array['action']);
 					Dase::log('standard',"request_url => " . $request_url);
-				}
-				$caps = array();
-				if (isset($conf_array['caps'])) {
-					$caps = explode('/',$conf_array['caps']);
-					Dase::log('standard',"caps => " . $conf_array['caps']);
 				}
 				$params = array();
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
 					Dase::log('standard',"params => " . $conf_array['params']);
 				}
-				$params = array_merge($caps,$params);
+				//$params = array_merge($caps,$params);
 				$module_prefix = '';
+				//if prefix is set, it means this is a module request
 				if (isset($conf_array['prefix'])) {
 					$module_prefix = $conf_array['prefix'];
 					define('MODULE_PATH',DASE_PATH . $module_prefix);
@@ -319,6 +301,7 @@ class Dase
 					ini_set('include_path',ini_get('include_path').':'.MODULE_PATH.'/lib');
 				}
 				if (isset($matches[1])) { // i.e. at least one paramenter
+					//don't need matches[0] (see preg_match docs)
 					array_shift($matches);
 					$clean_matches = Dase::filterArray($matches);
 					//match param value to its param key
@@ -394,8 +377,8 @@ class Dase
 					$dase->action = $conf_array['action'];
 					//check cache, but only for 'get' method
 					//NOTE that using the cache means you use the mime
-					//type specified in 'routes.xml', so to set mime at
-					//runtime, nocache="yes" should be set in routes.xml 
+					//type specified in routes config, so to set mime at
+					//runtime, nocache="yes" should be set in routes config
 					//for the particular route
 					//use nocache="custom" to document custom cache in
 					//action file (here same as using 'yes')
@@ -403,11 +386,21 @@ class Dase
 						$cache = new Dase_FileCache();
 						$page = $cache->get();
 						if ($page) {
+							if (defined('DEBUG')) {
+								Dase::log('standard','------- using cache -------');
+								Dase::log('standard','using cached page '.$page);
+								Dase::log('standard','---------------------------');
+							}
 							Dase::display($page,false);
 							exit;
 						} 
 					}
 					$msg = Dase::filterGet('msg');
+					if (defined('DEBUG')) {
+						Dase::log('standard','------ call_user_func -----');
+						Dase::log('standard',"calling method {$conf_array['action']} on class $classname");
+						Dase::log('standard','---------------------------');
+					}
 					call_user_func(array($classname,$conf_array['action']));
 					exit;
 				} else { 
@@ -425,12 +418,14 @@ class Dase
 	}
 
 	public static function error($code) {
-		$msg = "check server error log for details";
+		$msg = "";
 		if (400 == $code) {
 			header("HTTP/1.1 400 Bad Request");
+			$msg = 'Bad Request';
 		}
 		if (404 == $code) {
 			header("HTTP/1.1 404 Not Found");
+			$msg = '404 not found';
 		}
 		if (401 == $code) {
 			header('HTTP/1.1 401 Unauthorized');
@@ -452,7 +447,7 @@ class Dase
 				$d_atts->addChild($m,$val);
 			}
 			$routes_xml = $sx->addChild('routes');
-			$routes = Dase::compileRoutes();
+			$routes = Dase_Routes::compile();
 			$method = strtolower($_SERVER['REQUEST_METHOD']);
 			foreach ($routes[$method] as $regex => $parts) {
 				$route = $routes_xml->addChild('route');
@@ -466,12 +461,20 @@ class Dase
 					}
 				}
 			}
-			$t->stylesheet = XSLT_PATH.'error/debug.xsl';
-			$t->source = XSLT_PATH.'error/layout.xml';
+			if (($d->method != 'get') && ($d->method != 'post')) {
+				//send back plain text debug msg for put & delete
+				$t->stylesheet = XSLT_PATH.'error/debug_text.xsl';
+				$t->source = XSLT_PATH.'error/layout_text.xml';
+				header("Content-Type: text/plain; charset=utf-8");
+			} else {
+				$t->stylesheet = XSLT_PATH.'error/debug.xsl';
+				$t->source = XSLT_PATH.'error/layout.xml';
+			}
 			$t->addSourceNode($sx);
 		} else {
 			$t->stylesheet = XSLT_PATH.'error/production.xsl';
 		}
+		$t->set('msg',$msg);
 		echo $t->transform();
 		exit;
 	}
@@ -497,7 +500,11 @@ class Dase
 		}
 		//NOTE that this redirect may be innapropriate when
 		//client expect something OTHER than html (e.g., json,text,xml)
-		header( "Location:". trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring,TRUE,$code);
+		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
+		if (defined('DEBUG')) {
+			Dase::log('standard','redirecting to '.$redirect_path);
+		}
+		header("Location:". $redirect_path,TRUE,$code);
 		exit;
 	}
 }

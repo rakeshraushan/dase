@@ -9,6 +9,11 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
+	public static function dirify($str) {
+		$str = strtolower(preg_replace('/[^a-zA-Z0-9_]/','_',$str));
+		return preg_replace('/__*/','_',$str);
+	}
+
 	//from http://us.php.net/manual/en/function.simplexml-element-addChild.php:
 	public static function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child){
 		$node1 = dom_import_simplexml($parent);

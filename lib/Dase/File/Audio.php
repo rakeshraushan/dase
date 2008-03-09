@@ -10,7 +10,8 @@ class Dase_File_Audio extends Dase_File
 
 	function getMetadata() {
 		$this->metadata = parent::getMetadata();
-		$getid3 = new getID3;
+		//$getid3 = new getID3;
+		$getid3 = new getid3;
 		$getid3->encoding = 'UTF-8';
 		try {
 			$getid3->Analyze($this->filepath);

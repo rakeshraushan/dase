@@ -5,7 +5,7 @@
 $database = 'dase_prod';
 #$collection_ascii_id = 'ut_collection';
 #$REPOS = "/mnt/dar/fa/utcp/";
-$collection_ascii_id = 'bsls_collection';
+$collection_ascii_id = 'bsls';
 $REPOS = "/mnt/projects/bsls/DASE weekly upload/";
 
 /******************************************/

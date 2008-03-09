@@ -17,9 +17,7 @@ $item->collection_id = $c->id;
 $item->status_id = $status->id;
 foreach ($item->find() as $doomed) {
 	print "DELETING $doomed->serial_number\n";
-	$doomed->deleteValues();
-	$doomed->deleteMedia();
-	$doomed->delete();
+	$doomed->expunge();
 }
 
 

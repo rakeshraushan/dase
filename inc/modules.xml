@@ -9,5 +9,7 @@
   <module name="utlookup"/>
   <module name="search"/>
   <module name="dbadmin"/>
+  <module name="itsprop"/>
+  <module name="eidauth"/>
 </modules>
 

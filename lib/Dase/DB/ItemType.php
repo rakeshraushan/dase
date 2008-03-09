@@ -14,6 +14,7 @@ class Dase_DB_ItemType extends Dase_DB_Autogen_ItemType
 			$att = new Dase_DB_Attribute;
 			$att->load($ait->attribute_id);
 			$att->cardinality = $ait->cardinality; 
+			$att->is_identifier = $ait->is_identifier; 
 			$attributes[] = $att;
 		}
 		$this->attributes = $attributes;
