@@ -1,8 +1,0 @@
-<routes>
-
-  <route action="show" auth="none">
-	<match params="msg"></match>
-	<match></match>
-  </route>
-
-</routes>
