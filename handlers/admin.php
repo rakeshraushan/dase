@@ -21,7 +21,7 @@ class AdminHandler
 		} else {
 			$select = 'all';
 		}	
-		$cache = new Dase_FileCache($c->ascii_id . '_' . $select);
+		$cache = new Dase_Cache($c->ascii_id . '_' . $select);
 		$page = $cache->get();
 		if (!$page) {
 			//long cache -- make sure that changes kill it
@@ -38,7 +38,7 @@ class AdminHandler
 			Dase::log('error',"no collection found");
 			Dase::error(400);
 		}	
-		$cache = new Dase_FileCache($c->ascii_id . '_attributes');
+		$cache = new Dase_Cache($c->ascii_id . '_attributes');
 		$cache->expire();
 		$params = Dase::instance()->params;
 		$att_ascii_id = $params['attribute_ascii_id'];

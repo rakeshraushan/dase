@@ -355,6 +355,8 @@ Dase.placeUserCollections = function(eid) {
 };
 
 Dase.placeUserSearchCollections = function() {
+	//this is the selector of all of the collections
+	//the user is allowed to search
 	var maxCollName = 30;
 	var sel = Dase.$('collectionsSelect');
 	if (!sel)  return; 
@@ -566,18 +568,14 @@ Dase.initMenu = function(id) {
 	}
 };
 
+/*
 Dase.initCheckImage = function() { 
 	Dase.marked = new Array();
 	var thumbs = Dase.$('searchResults');
 	if (!thumbs) { return; }
 	var formParent = Dase.$('saveMarkedToCollection');
 	var form = Dase.createElem(formParent,null,form);
-	/* creates and initializes list check/uncheck toggle 
-	 */
 	var boxes = thumbs.getElementsByTagName('input');
-	/* changes the color of the image bg when box
-	 * next to it is checked/unchecked
-	 */
 	for (var i=0; i<boxes.length; i++) {
 		boxes[i].onclick = function() {
 			var thumbTd = this.parentNode.parentNode;
@@ -595,6 +593,42 @@ Dase.initCheckImage = function() {
 			target.innerHTML = Dase.marked.length;
 		};
 	}	   
+};
+*/
+
+Dase.multicheckItems = function(className) {
+	if (!className) {
+		className = 'check';
+	}
+	var item_set = Dase.$('itemSet');
+	if (!item_set)  return; 
+	/* creates and initializes list check/uncheck toggle 
+	 */
+	var multi = document.createElement('a');
+	multi.setAttribute('href','');
+	multi.className = className;
+	multi.appendChild(document.createTextNode('check/uncheck all'));
+	target = Dase.$('checkItems');
+	target.innerHTML = '';
+	var boxes = item_set.getElementsByTagName('input');
+	if (boxes.length > 0) {
+		target.appendChild(multi);
+	}
+	multi.onclick = function() {
+		if ('uncheck' == this.className) {
+			for (var i=0; i<boxes.length; i++) {
+				boxes[i].checked = false;
+			}	   
+			this.className = 'check';
+		} else {
+			for (var i=0; i<boxes.length; i++) {
+				boxes[i].checked = true;
+			}	   
+			this.className = 'uncheck';
+		}
+		Dase.multicheckItems(this.className);
+		return false;
+	};
 };
 
 Dase.multicheck = function(c) { 
@@ -672,16 +706,27 @@ Dase.loadingMsg = function(displayBool) {
 }
 
 Dase.placeUserTags = function(eid) {
+	var types = {
+		'cart':'My Cart',
+		'subscription':'Subscription',
+		'slideshow':'Slideshow',
+		'user_collection':'User Collection'
+	};
 	var json = Dase.user.tags;
 	var tags={};
 	var cart_tally = 0;
 	var sets = {};
+	var saveToSelector = "<select class='plainSelect' name='collection_ascii_id'>";
+	saveToSelector += "<option value=''>save checked items to...</option>";
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
+			var jsonAscii = jsonType[ascii];
+			if ('subscription' != type) {
+				saveToSelector += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
+			}
 			if ('cart' != type) {
-				var jsonAscii = jsonType[ascii];
 				//we populate 'sets' as we go
 				//populate list of ALL tags that can be copied to from cart
 				//concat...
@@ -713,6 +758,17 @@ Dase.placeUserTags = function(eid) {
 				cart_tally = jsonType[ascii];
 			}
 		} 
+	}
+	saveToSelector += "</select>";
+	//the select menu for "save checked items to...."
+	var target = Dase.$('saveToSelector');
+	var item_set = Dase.$('itemSet');
+	if (item_set) {
+		var items = item_set.getElementsByTagName('td');
+	}
+	if (target && item_set && items) {
+		target.innerHTML = saveToSelector;
+		target.innerHTML += "<input type='submit' value='add'/>";
 	}
 	for (var type in sets) {
 		try{
@@ -1031,7 +1087,8 @@ Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
-		Dase.initCheckImage();
+		Dase.multicheckItems();
+//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*
 		   Dase.prepareAddFileUpload();

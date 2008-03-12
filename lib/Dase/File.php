@@ -1,6 +1,6 @@
 <?php
 
-class Dase_File
+abstract class Dase_File
 {
 	private static $types_map = array(
 		//store in xml??
@@ -29,7 +29,7 @@ class Dase_File
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
 
-	public function __construct($file) {
+	protected function __construct($file) {  //can only be called by subclass
 		$this->filepath = $file;
 		$this->file_size = filesize($file);
 		$path_parts = pathinfo($file);
@@ -53,6 +53,9 @@ class Dase_File
 	function getBasename() {
 		return $this->basename;
 	}
+
+	abstract public function makeThumbnail($item,$collection);
+	abstract public function makeViewitem($item,$collection);
 
 	function getMetadata() {
 		$this->metadata['admin_checksum'] = md5_file($this->filepath);

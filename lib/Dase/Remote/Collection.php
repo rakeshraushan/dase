@@ -1,5 +1,5 @@
 <?php
-class Dase_Remote_Collection extends Dase_Remote // implements Dase_CollectionInterface
+class Dase_Remote_Collection extends Dase_Remote 
 {
 	public $ascii_id;
 

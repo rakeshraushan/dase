@@ -1,6 +1,6 @@
 <?php
 
-class Dase_CookieAuth {
+class Dase_Cookie {
 
 	static $user_cookiename = 'DASE_USER';
 	static $auth_cookiename = 'DASE_AUTH';
@@ -17,14 +17,14 @@ class Dase_CookieAuth {
 	}
 
 	public static function set($eid) {
-		$pre = Dase_CookieAuth::getPrefix();
+		$pre = Dase_Cookie::getPrefix();
 		$key = md5(Dase::getConf('token').$eid);
 		setcookie($pre . self::$user_cookiename,$eid,0,'/');
 		setcookie($pre . self::$auth_cookiename,$key,0,'/');
 	}
 
 	public static function validate() {
-		$pre = Dase_CookieAuth::getPrefix();
+		$pre = Dase_Cookie::getPrefix();
 		$token = Dase::getConf('token');
 		$key = '';
 		$eid = '';
@@ -41,7 +41,7 @@ class Dase_CookieAuth {
 	}
 
 	public static function clear() {
-		$pre = Dase_CookieAuth::getPrefix();
+		$pre = Dase_Cookie::getPrefix();
 		setcookie($pre . self::$user_cookiename,"",-86400,'/');
 		setcookie($pre . self::$auth_cookiename,"",-86400,'/');
 	}

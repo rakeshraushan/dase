@@ -63,18 +63,19 @@
 		  <ul class="hide" id="cart">
 			<li><a href="" class="create" id="cartLink">view cart</a></li>
 			<li><a href="" class="create">empty cart</a></li>
+			<!--
 			<li><a href="" class="create" id="moveCartTo">move cart items to...</a>
 			  <ul class="hide">
 				<li>
 				  <form action="sss" method="post">
 					<div id="allTags">
-					  <!-- ajax fills in here -->
 					</div>
 					<div><input type="submit" value="move items"/></div>
 				  </form>
 				</li>
 			  </ul>
 			</li>
+			-->
 		  </ul>
 		</li>
 

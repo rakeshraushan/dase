@@ -109,7 +109,7 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 	}
 
 	function expireDataCache() {
-		$cache = new Dase_FileCache("json/user/$this->eid/data");
+		$cache = new Dase_Cache("json/user/$this->eid/data");
 		$cache->expire();
 	}
 }

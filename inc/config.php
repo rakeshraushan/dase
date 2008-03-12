@@ -22,6 +22,9 @@ $conf['token'] = '
 //model can be db, xml, or remote
 $conf['model'] = 'db';
 
+//cache can be file or memcached (only 'file' is implemented) 
+$conf['cache'] = 'file';
+
 $conf['login_module'] = 'auth';
 
 $conf['db']['type'] = 'sqlite';

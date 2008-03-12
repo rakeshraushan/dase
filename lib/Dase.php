@@ -49,96 +49,6 @@ class Dase
 		}
 	}
 
-	public static function basicHttpAuth() {
-		//from php cookbook 2nd ed. p 240
-		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-			if (('dase2' == $_SERVER['PHP_AUTH_USER']) && ('api' == $_SERVER['PHP_AUTH_PW'])) {
-				return;
-			}
-		}
-		header('WWW-Authenticate: Basic realm="DASe"');
-		header('HTTP/1.1 401 Unauthorized');
-		echo "sorry, authorized users only";
-		exit;
-	}
-
-	public function checkUser($auth = 'user',$collection_ascii_id = '',$eid = '') {
-		switch ($auth) {
-		case 'none':
-			//no authorization required
-			return true;
-		case 'user':
-			//this means the user has read access to an access-controlled
-			//collection OR they are a registed user (any user) accessing a 
-			//public collection
-			self::$user = new Dase_User();
-			if ($collection_ascii_id) {
-				if (self::$user->checkAuth($collection_ascii_id,'read')) {
-					return true;
-				}
-			} else {
-				if (self::$user->eid) {
-					return true;
-				}
-			}
-			return false;
-		case 'superuser':
-			self::$user = new Dase_User();
-			//only folks whose EID is in config.php as superuser
-			//this is for application monitoring and management
-			if (in_array(self::$user->eid,Dase::getConf('superuser'))) {
-				return true;
-			}
-			return false;
-		case 'admin':
-			//the checkAuth methods use the collection manager
-			//table to look-up privilege level
-			self::$user = new Dase_User();
-			if (self::$user->eid == $eid &&
-				self::$user->checkAuth($collection_ascii_id,'admin')) {
-					return true;
-				}
-			return false;
-		case 'write':
-			self::$user = new Dase_User();
-			if (self::$user->checkAuth($collection_ascii_id,'write')) {
-				return true;
-			}
-			return false;
-		case 'read':
-			self::$user = new Dase_User();
-			if (self::$user->checkAuth($collection_ascii_id,'read')) {
-				return true;
-			}
-			return false;
-		case 'http':
-			//HTTP basic auth is the prefered (simple) auth method
-			//when other computers are interacting with resources
-			//it also provides an extra 'layer' on top of collection
-			//admin privileges
-			Dase::basicHttpAuth();
-			return true;
-		case 'token':
-			//token-based auth is the prefered method when DASe is
-			//requesting AND serving a resource as in the case of
-			//xml and atom data source docs
-			if (Dase::filterGet('token') == md5(Dase::getConf('token'))) {
-				return true;
-			}
-			return false;
-		case 'eid':
-			//the authorized user eid and the eid in the url
-			//must match for this to go through
-			self::$user = new Dase_User();
-			if (self::$user->eid == $eid) {
-				return true;
-			}
-			return false;
-		default:
-			return false;
-		}
-	}
-
 	public static function getUser() {
 		if (self::$user) {
 			return self::$user;
@@ -213,10 +123,14 @@ class Dase
 					// automatically creates an arry if there is
 					// more than one of the key
 					if (!isset($url_params[$key])) {
+						//not an array
 						$url_params[$key] = $val;
 					} elseif(is_array($url_params[$key])) {
+						//IS an array
 						$url_params[$key][] = $val;
 					} else {
+						//key is set, but it is NOT an array
+						//so make it one!!
 						$temp = $url_params[$key];
 						$url_params[$key] = array();
 						$url_params[$key][] = $temp;
@@ -290,7 +204,6 @@ class Dase
 					$params = explode('/',$conf_array['params']);
 					Dase::log('standard',"params => " . $conf_array['params']);
 				}
-				//$params = array_merge($caps,$params);
 				$module_prefix = '';
 				//if prefix is set, it means this is a module request
 				if (isset($conf_array['prefix'])) {
@@ -347,10 +260,12 @@ class Dase
 				}
 				if (!isset($conf_array['auth'])) {
 					//default required auth is 'user' (i.e., ANY valid user
+					//should probably be a config setting
 					$conf_array['auth'] = 'user';
 				}
 
-				if (!Dase::checkUser($conf_array['auth'],$collection_ascii_id,$params['eid'])) {
+				//a simple authorization check roadblock
+				if (!Dase_Auth::authorize($conf_array['auth'],$collection_ascii_id,$params['eid'])) {
 					if ('text/html' == $dase->response_mime_type) {
 						//guarantees cookies will be deleted:
 						Dase::redirect('logoff');
@@ -383,7 +298,7 @@ class Dase
 					//use nocache="custom" to document custom cache in
 					//action file (here same as using 'yes')
 					if ('get' == $method && !isset($conf_array['nocache'])) {
-						$cache = new Dase_FileCache();
+						$cache = new Dase_Cache();
 						$page = $cache->get();
 						if ($page) {
 							if (defined('DEBUG')) {
@@ -481,7 +396,7 @@ class Dase
 
 	public static function display($content,$set_cache=true) {
 		if ($set_cache) {
-			$cache = new Dase_FileCache();
+			$cache = new Dase_Cache();
 			$cache->set($content);
 		}
 		$mime = Dase::instance()->response_mime_type;

@@ -1,5 +1,5 @@
 <?php
-class Dase_Xml_Collection  implements Dase_CollectionInterface
+class Dase_Xml_Collection
 {
 	public $xml_file;
 	public $xml_index_file;
