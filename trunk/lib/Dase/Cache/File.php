@@ -2,7 +2,8 @@
 
 //adapted from http://talks.php.net/show/hpp/56
 
-class Dase_FileCache {
+class Dase_Cache_File extends Dase_Cache 
+{
 	private $filename;
 	private $tempfilename;
 	private $ttl = 10;

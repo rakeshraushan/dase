@@ -61,7 +61,7 @@ class EiduserModuleHandler {
 				$db_user->eid = $ut_user->eid; 
 				$db_user->insert();
 			}
-			Dase_CookieAuth::set($db_user->eid);
+			Dase_Cookie::set($db_user->eid);
 			Dase::redirect("login/$db_user->eid");
 		}
 	}

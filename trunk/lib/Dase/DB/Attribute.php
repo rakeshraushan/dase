@@ -2,7 +2,7 @@
 
 require_once 'Dase/DB/Autogen/Attribute.php';
 
-class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute implements Dase_AttributeInterface
+class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 {
 	public $cardinality;
 	public $is_identifier;

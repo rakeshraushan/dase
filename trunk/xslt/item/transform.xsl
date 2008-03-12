@@ -16,6 +16,8 @@
   <!-- use services to get any needed content -->
   <xsl:variable name="it" select="document($src)/atom:feed"/>
 
+  <xsl:variable name="coll" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/>
+
   <xsl:template match="/">
 	<xsl:apply-templates/>
   </xsl:template>
@@ -52,11 +54,21 @@
 			</ul>
 		  </td>
 		  <td class="metadata">
-			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:dl"/>
+			<dl>
+			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl" mode="keyvals"/>
+			</dl>
 		  </td>
 		</tr>
 	  </table>
 	</div> <!-- close content -->
+  </xsl:template>
+
+  <xsl:template match="h:dl/h:dt" mode="keyvals">
+	<dt><xsl:value-of select="text()"/></dt>
+  </xsl:template>
+
+  <xsl:template match="h:dl/h:dd" mode="keyvals">
+	<dd><a href="search?{$coll}:{preceding-sibling::h:dt[position()=1]/@class}={@class}"><xsl:value-of select="text()"/></a></dd>
   </xsl:template>
 
   <xsl:template match="dynamic"/>

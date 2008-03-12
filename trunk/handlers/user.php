@@ -18,7 +18,7 @@ class UserHandler
 		$user = Dase::filterPost('username');
 		$pass = Dase::filterPost('password');
 		if ('tseliot' == $pass) {
-			Dase_CookieAuth::set($user);
+			Dase_Cookie::set($user);
 			//do this so cookie is passed along
 			Dase::redirect("login/$user");
 		} else {
@@ -54,7 +54,7 @@ class UserHandler
 		if (!isset($params['eid'])) {
 			echo "user data error"; exit;
 		}
-		$cache = new Dase_FileCache($params['eid'] . '_data');
+		$cache = new Dase_Cache($params['eid'] . '_data');
 		$page = $cache->get();
 		if (!$page) {
 			$cache->setTimeToLive(300);

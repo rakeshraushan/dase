@@ -28,16 +28,7 @@ Dase.displayUploadForm = function() {
 	var coll = Dase.$('collection_ascii_id').innerHTML;
 	var coll_name = Dase.$('collection_name').innerHTML;
 	Dase.$('pageHeader').innerHTML = coll_name+" Upload Form";
-	var target = Dase.$('collectionData');
-	while (target.childNodes[0]) {
-		target.removeChild(target.childNodes[0]);
-	}
-	target.className = 'show';
-	var div = document.createElement('div');
-	div.setAttribute('class','adminForm');
-	div.setAttribute('className','adminForm');
-	target.appendChild(div);
-	Dase.createElem(div,'upload form','h2');
+	var table = Dase.$('dataDisplay');
 };
 
 Dase.getCollectionData = function(select,my_func) {
@@ -123,20 +114,6 @@ Dase.buildTable = function(parent,atts,c_ascii) {
 }
 
 Dase.buildAttributeTable = function(parent,atts,c_ascii) {
-	//alert(JSON.stringify(atts));
-	parent.className = 'show';
-	var table = Dase.$('dataDisplay');
-	/*
-	for (i=0; i<atts.length; i++) {
-		row = table.insertRow(-1);
-		for (j=0;j<cols.length;j++) {
-			cell = row.insertCell(-1);
-			cell.innerHTML = atts[i][cols[j]];
-		}
-	}
-	*/
-	//note that atts need ot be an array so I can 
-	//iterate over them and maintain the sort
 	var inputTypes = Dase.htmlInputTypeLabel;
 	parent.className = 'show';
 	var table = Dase.$('dataDisplay');
@@ -252,7 +229,7 @@ Dase.buildAttributeTable = function(parent,atts,c_ascii) {
 		var pub = Dase.createElem(attrow,null,'td');
 		Dase.createCheckbox(pub,atts[i].is_public,'public');
 		Dase.createElem(attrow,atts[i].usage_notes,'td');
-		tbl.appendChild(attrow);
+		table.appendChild(attrow);
 	}
 	/*
 	 * ascii_id
@@ -273,9 +250,7 @@ Dase.buildDebugTable = function(parent,settings,c_ascii) {
 	//note that atts need ot be an array so I can 
 	//iterate over them and maintain the sort
 	parent.className = 'show';
-	var tbl = document.createElement('table');
-	tbl.setAttribute('class','dataDisplay');
-	tbl.setAttribute('className','dataDisplay');
+	var tbl = Dase.$('dataDisplay');
 	parent.appendChild(tbl);
 	var headers = document.createElement('tr');
 	tbl.appendChild(headers);
@@ -291,9 +266,7 @@ Dase.buildManagersTable = function(parent,managers,c_ascii) {
 	//note that atts need ot be an array so I can 
 	//iterate over them and maintain the sort
 	parent.className = 'show';
-	var tbl = document.createElement('table');
-	tbl.setAttribute('class','dataDisplay');
-	tbl.setAttribute('className','dataDisplay');
+	var tbl = Dase.$('dataDisplay');
 	parent.appendChild(tbl);
 	var headers = document.createElement('tr');
 	tbl.appendChild(headers);
@@ -373,8 +346,7 @@ Dase.createTable = function(oTable,heading,data)
 Dase.buildSettingsTable = function(parent,settings,c_ascii) {
 	//alert(JSON.stringify(settings));
 	parent.className = 'show';
-	var table = Dase.$('dataDisplay');
-	var tbl = table.getElementsByTagName('tbody')[0];
+	var tbl = Dase.$('dataDisplay');
 
 	var tr = document.createElement('tr');
 	tr.setAttribute('id','collection_name_row');
@@ -440,9 +412,7 @@ Dase.buildSettingsTable = function(parent,settings,c_ascii) {
 
 Dase.buildTypesTable = function(parent,types,c_ascii) {
 	parent.className = 'show';
-	var tbl = document.createElement('table');
-	tbl.setAttribute('class','dataDisplay');
-	tbl.setAttribute('className','dataDisplay');
+	var tbl = Dase.$('dataDisplay');
 	parent.appendChild(tbl);
 	var headers = document.createElement('tr');
 	tbl.appendChild(headers);

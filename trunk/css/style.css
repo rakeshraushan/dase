@@ -50,6 +50,15 @@ blockquote:before,blockquote:after,q:before,q:after {
 	content:"";
 }
 
+/*
+label {
+	margin: 15px 0 5px 0;
+	font-weight: bold;
+	display: block;
+	color: #666;
+}
+	*/
+
 a:hover,a:active {
 	background:transparent;
 	border:0;
@@ -449,6 +458,16 @@ h3.browsePublicTags a:hover,a:active {
 	color:#000;
 }
 
+div#checkItems .check {
+	line-height:3em;
+	margin: 18px 0 8px 0;
+}
+
+div#checkItems .uncheck {
+	line-height:3em;
+	margin: 18px 0 8px 0;
+}
+
 ul#collectionList .check,.uncheck {
 	line-height:3em;
 	margin:8px;
@@ -674,5 +693,13 @@ div#saveMarkedToCollection {
 }
 #error-data dd {
 	margin-left: 150px;
+}
+
+div#saveToSelector {
+	margin: 5px 0 0px 0;
+}
+
+select.plainSelect {
+	margin: 0 5px 0 0;
 }
 

@@ -2,7 +2,7 @@
 
 require_once 'Dase/DB/Autogen/Item.php';
 
-class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
+class Dase_DB_Item extends Dase_DB_Autogen_Item 
 {
 
 	public $admin = array();
@@ -107,7 +107,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 		$metadata = array();
 		$db = Dase_DB::get();
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,v.value_text
+			SELECT a.ascii_id, a.attribute_name,v.value_text, v.value_text_md5
 			FROM attribute a, value v
 			WHERE v.item_id = $this->id
 			AND v.attribute_id = a.id
@@ -390,9 +390,10 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item implements Dase_ItemInterface
 			//note: since this is used in archiving scripts
 			//I use getMetadata() rather than getValues() to
 			//conserve memory
-			$dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+			$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+			$dt->addAttribute('class',$row['ascii_id']);
 			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-			$dd->addAttribute('class',$row['ascii_id']);
+			$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
 		}
 		$d = 'http://daseproject.org/media/';
 		//$media_ul = $div->addChild('ul');

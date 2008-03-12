@@ -69,11 +69,13 @@
 			<a href="{$items/atom:link[@rel='previous']/@href}">prev</a> |
 			<a href="{$items/atom:link[@rel='next']/@href}">next</a> 
 		  </div>
-		  <table>
+		  <table id="itemSet">
 			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
 		  </table>
 		  <!-- we just need a place to stash the current url so our refine code can parse it -->
 		  <div id="self_url" class="hide"><xsl:value-of select="translate($items/atom:link[@rel='self']/@href,'+',' ')"/></div>
+		  <div id="checkItems"></div>
+		  <div id="saveToSelector"></div>
 		</form>
 	  </div>
 	</div>

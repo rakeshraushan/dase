@@ -2,7 +2,7 @@
 
 require_once 'Dase/DB/Autogen/Collection.php';
 
-class Dase_DB_Collection extends Dase_DB_Autogen_Collection implements Dase_CollectionInterface
+class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 {
 	public $item_count;
 

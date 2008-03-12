@@ -42,7 +42,7 @@ class Dase_User
 		//attempt to validate cookie
 		//since token changes every day, it'll be
 		//invalidated overnight
-		$eid = Dase_CookieAuth::validate();
+		$eid = Dase_Cookie::validate();
 		if ($eid) {
 			return $eid;
 		} else {
@@ -51,7 +51,7 @@ class Dase_User
 	}
 
 	public static function logoff() {
-		Dase_CookieAuth::clear();
+		Dase_Cookie::clear();
 	}
 
 	public function __get($prop) {
