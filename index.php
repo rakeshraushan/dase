@@ -32,6 +32,7 @@ if (isset($_SERVER['HTTPS'])) {
 } else {
 	$protocol = "http://";
 }
+
 define('DEBUG',1); 
 define('APP_ROOT',trim($protocol . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'),'/'));
 define('APP_HTTP_ROOT','http://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
@@ -40,6 +41,7 @@ define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('CACHE_DIR', DASE_PATH . '/cache/');
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('XSLT_PATH', DASE_PATH . '/xslt/');
+
 define('CART',1);
 define('USER_COLLECTION',2);
 define('SLIDESHOW',3);

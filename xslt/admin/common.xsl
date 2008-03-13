@@ -14,7 +14,8 @@
 	<xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="dynamic"/>
+  <xsl:variable name="user" select="html/head/dynamic/user"/>
+  <xsl:variable name="collection" select="html/head/dynamic/collection"/>
 
   <xsl:template match="insert-base-href">
 	<base href="{$app_root}"/>
@@ -25,8 +26,8 @@
   </xsl:template>
 
   <xsl:template match="insert-collection-name">
-	<p id="collection_name"><xsl:value-of select="$collection-name"/></p>
-	<div class="hide" id="collection_ascii_id"><xsl:value-of select="$collection-ascii-id"/></div>
+	<p id="collection_name"><xsl:value-of select="$collection/collection_name"/></p>
+	<div class="hide" id="collection_ascii_id"><xsl:value-of select="$collection/ascii-id"/></div>
   </xsl:template>
 
   <xsl:template match="insert-breadcrumbs">

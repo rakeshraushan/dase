@@ -58,8 +58,8 @@
 
 	  <ul id="menu">
 		<li>
-		  <a href="admin/upload_form" id="collUpload">
-			<img border="0" src="images/tango-icons/list-add.png"/><sup>Create Item</sup>
+		  <a href="home">
+			<img border="0" src="images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
 		  </a>
 		</li>
 		<li>
@@ -74,7 +74,7 @@
 		</li>
 		<li>
 		  <a href="admin/manage_collection" id="collSettings">
-			<img border="0" src="images/tango-icons/emblem-system.png"/><sup>Settings</sup>
+			<img border="0" src="images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
 		  </a>
 		</li>
 		<li>
@@ -83,8 +83,8 @@
 		  </a>
 		</li>
 		<li>
-		  <a href="home">
-			<img border="0" src="images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
+		  <a href="admin/upload_form" id="collUpload">
+			<img border="0" src="images/tango-icons/list-add.png"/><sup>Create Item</sup>
 		  </a>
 		</li>
 	  </ul>

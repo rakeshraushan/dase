@@ -14,8 +14,8 @@ class AtomHandler
 	}
 
 	function get_service() {
-		$params = Dase::instance()->params;
-		$c = Dase::instance()->collection;
+		$params = Dase_Registry::get('params');
+		$c = Dase_Registry::get('collection');
 		$entries_url = APP_ROOT . '/collection/' . $c->ascii_id . '/posts'; 
 		//$entries_url = APP_ROOT . '/collection/' . $c->ascii_id . '/attachments'; 
 		$media_url = APP_ROOT . '/collection/' . $c->ascii_id . '/attachments'; 

@@ -2,26 +2,9 @@
 
 class Dase 
 {
-	private static $instance;
-	public $action;
-	public $collection;
-	public $handler;
-	public $method;
-	public $query_string = '';    
-	public $request_url = '';    
-	public $response_mime_type = '';
-	public static $user;
-	public $url_params = array();    
 
-	public function __construct() {}
-
-	//singleton
-	public static function instance() {
-		if (empty( self::$instance )) {
-			self::$instance = new Dase();
-		}
-		return self::$instance;
-	}
+	//this is the "application" class which holds the 
+	//static methods for the flow of the app
 
 	public static function getConf($key) {
 		$conf = array();
@@ -46,21 +29,6 @@ class Dase
 			$trace = ob_get_contents();
 			ob_end_clean();
 			file_put_contents(DASE_PATH ."/log/error.log",$trace,FILE_APPEND);
-		}
-	}
-
-	public static function getUser() {
-		if (self::$user) {
-			return self::$user;
-		}
-	}
-
-	public static function getCurrentCollections() {
-		if (self::$user) {
-			$current_collections = self::$user->current_collections;
-			if ($current_collections) {
-				return explode(',',$current_collections);
-			}
 		}
 	}
 
@@ -112,86 +80,19 @@ class Dase
 		}
 	}
 
-	function parseQuery($qs) {
-		$url_params = array();
-		$pairs = explode('&',$qs);
-		if (count($pairs)) {
-			foreach ($pairs as $pair) {
-				if (false !== strpos($pair,'=')) {	
-					list($key,$val) = explode('=',$pair);
-					//NEED TO SANITIZE HERE!!!!!!!!!!!!!!!!!!
-					// automatically creates an arry if there is
-					// more than one of the key
-					if (!isset($url_params[$key])) {
-						//not an array
-						$url_params[$key] = $val;
-					} elseif(is_array($url_params[$key])) {
-						//IS an array
-						$url_params[$key][] = $val;
-					} else {
-						//key is set, but it is NOT an array
-						//so make it one!!
-						$temp = $url_params[$key];
-						$url_params[$key] = array();
-						$url_params[$key][] = $temp;
-						$url_params[$key][] = $val;
-					}
-				}
-			}
-			$this->url_params = $url_params;
-			return $url_params;
-		}
-	}
-
-	public static function getRequestUrl() {
-		// from habari code
-		$request_url= ( isset($_SERVER['REQUEST_URI']) 
-			? $_SERVER['REQUEST_URI'] 
-			: $_SERVER['SCRIPT_NAME'] . 
-			( isset($_SERVER['PATH_INFO']) 
-			? $_SERVER['PATH_INFO'] 
-			: '') . 
-			( (isset($_SERVER['QUERY_STRING']) && ($_SERVER['QUERY_STRING'] != '')) 
-			? '?' . $_SERVER['QUERY_STRING'] 
-			: ''));
-		return $request_url;
-	}
-
 	public static function run() {
-		$dase = Dase::instance();
 
-		/* Strip out the base URL from the requested URL */
-		if ('/' != APP_BASE) {
-			$request_url= str_replace(APP_BASE,'',Dase::getRequestUrl());
-		}
-
-		/* Remove the query_string from the URL */
-		if ( strpos($request_url, '?') !== FALSE ) {
-			list($request_url,$query_string )= explode('?', $request_url);
-		}
-
-		if (isset($query_string) && $query_string) {
-			$dase->query_string = $query_string;
-			$url_params = $dase->parseQuery(urldecode($query_string));
-		} else {
-			$query_string = '';
-			$dase->query_string = '';
-		}
-
-		/* Trim off any leading or trailing slashes */
-		$request_url= trim($request_url, '/');
-
-		$dase->request_url = $request_url;
-
-		$matches = array();
-		$params = array();
-
+		$request_url = Dase_Url::getRequestUrl(); 
+		Dase_Registry::set('request_url',$request_url);
 		$routes = Dase_Routes::compile();
+
 		//note: there is only ONE method on a request
 		//so that is the only route map we need to traverse
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
-		$dase->method = $method;
+		Dase_Registry::set('method',$method);
+		//look through dispatch table for match
 		foreach ($routes[$method] as $regex => $conf_array) {
+			$matches = array();
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				//if debug in force, log action
 				if (defined('DEBUG')) {
@@ -233,50 +134,42 @@ class Dase
 				}
 
 				$collection_ascii_id = '';
-				if (isset($conf_array['collection'])) {
-					$collection_ascii_id = $conf_array['collection'];
-				} elseif (isset($params['collection_ascii_id'])) {
+				if (isset($params['collection_ascii_id']) && $params['collection_ascii_id']) {
 					$collection_ascii_id = $params['collection_ascii_id'];
-				}
-				if ($collection_ascii_id) {
-					// instantiate collection and let this (singleton) hold it
-					$dase->collection = Dase_Collection::get($collection_ascii_id);
-				} else {
-					$dase->collection= null;
+					Dase_Registry::set('collection',Dase_Collection::get($collection_ascii_id));
 				}
 
 				if (isset($conf_array['mime'])) {
-					$dase->response_mime_type = $conf_array['mime'];
-				} else {
 					//note: firefox gives me all sorts of trouble when I send
 					//application/xhtml+xml.  this is a well-documented problem:
 					//http://groups.google.com/group/habari-dev/msg/91d736688ee445ad
-					$dase->response_mime_type = 'text/html';
-				}
+					Dase_Registry::set('response_mime_type',$conf_array['mime']);
+				} else {
+					Dase_Registry::set('response_mime_type','text/html');
+				}	
 
 				//AUTHORIZATION:
 				if (!isset($params['eid'])) {
 					$params['eid'] = '';
 				}
-				if (!isset($conf_array['auth'])) {
+				if (!isset($conf_array['auth']) || !$conf_array['auth']) {
 					//default required auth is 'user' (i.e., ANY valid user
-					//should probably be a config setting
 					$conf_array['auth'] = 'user';
 				}
 
 				//a simple authorization check roadblock
 				if (!Dase_Auth::authorize($conf_array['auth'],$collection_ascii_id,$params['eid'])) {
-					if ('text/html' == $dase->response_mime_type) {
+					if ('text/html' == Dase_Registry::get('response_mime_type')) {
 						//guarantees cookies will be deleted:
 						Dase::redirect('logoff');
 					} else {
-						Dase::error(401);
+						Dase_Error::report(401);
 					}
 				} else {
 					//good to go
 				}
 
-				$dase->params = $params;
+				Dase_Registry::set('params',$params);
 				if ($module_prefix) {
 					//modules, by convention, have one handler in a file named
 					//'handler.php' with classname {Module}ModuleHandler
@@ -288,8 +181,6 @@ class Dase
 					$classname = ucfirst($conf_array['handler']) . 'Handler';
 				}
 				if(method_exists($classname,$conf_array['action'])) {
-					$dase->handler = $conf_array['handler'];
-					$dase->action = $conf_array['action'];
 					//check cache, but only for 'get' method
 					//NOTE that using the cache means you use the mime
 					//type specified in routes config, so to set mime at
@@ -316,81 +207,22 @@ class Dase
 						Dase::log('standard',"calling method {$conf_array['action']} on class $classname");
 						Dase::log('standard','---------------------------');
 					}
+					//call the action on the handler
+					Dase_Registry::set('handler',$conf_array['handler']);
+					Dase_Registry::set('action',$conf_array['action']);
 					call_user_func(array($classname,$conf_array['action']));
 					exit;
 				} else { 
 					//matched regex, but didn't find action
 					Dase::log('error',"no handler for $request_url ($method)");
-					Dase::error(500);
+					Dase_Error::report(500);
 				}
 			} 
 		} 
 		//no routes match, so use default:
 		//having this "outlet" here guarantees only first match gets tested
 		Dase::log('error',"$request_url could not be located");
-		Dase::error(404);
-		exit;
-	}
-
-	public static function error($code) {
-		$msg = "";
-		if (400 == $code) {
-			header("HTTP/1.1 400 Bad Request");
-			$msg = 'Bad Request';
-		}
-		if (404 == $code) {
-			header("HTTP/1.1 404 Not Found");
-			$msg = '404 not found';
-		}
-		if (401 == $code) {
-			header('HTTP/1.1 401 Unauthorized');
-			$msg = 'Unauthorized';
-		}
-		if (500 == $code) {
-			header('HTTP/1.1 500 Internal Server Error');
-		}
-		$t = new Dase_Xslt;
-		if (defined('DEBUG')) {
-			//create an XML doc w/ DASe members
-			//AND current routes
-			$sx = simplexml_load_string('<errors/>');
-			$d_atts = $sx->addChild('dase');
-			$d_atts->addChild('http_error_code',$code);
-			$d = Dase::instance();
-			foreach (array('action','handler','method','query_string','request_url','response_mime_type') as $m) {
-				$val = $d->$m ? htmlspecialchars($d->$m) : ' -- ';
-				$d_atts->addChild($m,$val);
-			}
-			$routes_xml = $sx->addChild('routes');
-			$routes = Dase_Routes::compile();
-			$method = strtolower($_SERVER['REQUEST_METHOD']);
-			foreach ($routes[$method] as $regex => $parts) {
-				$route = $routes_xml->addChild('route');
-				$route->addChild('regex',$regex);
-				if (is_array($parts)) {
-					foreach ($parts as $k => $v) {
-						if (!$v) { $v = "--"; }
-						if ('end' != $k) {
-							$route->addChild($k,$v);
-						}
-					}
-				}
-			}
-			if (($d->method != 'get') && ($d->method != 'post')) {
-				//send back plain text debug msg for put & delete
-				$t->stylesheet = XSLT_PATH.'error/debug_text.xsl';
-				$t->source = XSLT_PATH.'error/layout_text.xml';
-				header("Content-Type: text/plain; charset=utf-8");
-			} else {
-				$t->stylesheet = XSLT_PATH.'error/debug.xsl';
-				$t->source = XSLT_PATH.'error/layout.xml';
-			}
-			$t->addSourceNode($sx);
-		} else {
-			$t->stylesheet = XSLT_PATH.'error/production.xsl';
-		}
-		$t->set('msg',$msg);
-		echo $t->transform();
+		Dase_Error::report(404);
 		exit;
 	}
 
@@ -399,7 +231,7 @@ class Dase
 			$cache = new Dase_Cache();
 			$cache->set($content);
 		}
-		$mime = Dase::instance()->response_mime_type;
+		$mime = Dase_Registry::get('response_mime_type');
 		header("Content-Type: $mime; charset=utf-8");
 		echo $content;
 		exit;

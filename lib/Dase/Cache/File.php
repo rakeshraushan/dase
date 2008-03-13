@@ -19,7 +19,7 @@ class Dase_Cache_File extends Dase_Cache
 			}
 			$this->filename = md5($file);
 		} else {
-			$this->filename = md5(Dase::instance()->request_url . '?' . Dase::instance()->query_string);
+			$this->filename = md5(Dase_Url::get());
 		}
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}

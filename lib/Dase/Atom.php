@@ -2,6 +2,10 @@
 
 class Dase_Atom
 {
+
+	//convenience class(es) to deal w/ Atom feeds
+	//based somewhat on similar classes in Abdera
+
 	private $id_is_set;
 	private $rights_is_set;
 	private $title_is_set;

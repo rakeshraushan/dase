@@ -2,6 +2,9 @@
 
 class Dase_Cookie {
 
+	//this class just deals with the eid cookie and the 
+	//encrypted eid cookie
+
 	static $user_cookiename = 'DASE_USER';
 	static $auth_cookiename = 'DASE_AUTH';
 	private $token;
