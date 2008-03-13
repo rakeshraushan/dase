@@ -18,7 +18,7 @@ class Dase_User
 				";	
 			$sth = $db->prepare($sql);
 			if ($sth->execute(array(strtolower($eid)))) {
-				$this->db_user = new Dase_DB_DaseUser($sth->fetch());
+				$this->db_user = new Dase_DBO_DaseUser($sth->fetch());
 			}
 		} 
 	}
@@ -32,7 +32,7 @@ class Dase_User
 			";	
 		$sth = $db->prepare($sql);
 		if ($sth->execute(array(strtolower($eid)))) {
-			return new Dase_DB_DaseUser($sth->fetch());
+			return new Dase_DBO_DaseUser($sth->fetch());
 		}
 	}
 
@@ -69,7 +69,7 @@ class Dase_User
 	static function check_credentials($username,$password) {
 		$auth_users = array();
 		if (md5($username . Dase::getConf('token')) == $password) {
-			$user = new Dase_DB_DaseUser();
+			$user = new Dase_DBO_DaseUser();
 			//need to account for case here!!!!!!!!!!!!!!!!!
 			//needs to be case-insensitive
 			$user->eid = $username;
@@ -94,7 +94,7 @@ class Dase_User
 				}
 			}
 		}
-		$cm = new Dase_DB_CollectionManager; 
+		$cm = new Dase_DBO_CollectionManager; 
 		$cm->collection_ascii_id = $collection_ascii_id;
 		//need to account for case here!!!!!!!!!!!!!!!!!
 		//needs to be case-insensitive

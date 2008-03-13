@@ -1,8 +1,8 @@
 <?php
 
-require_once 'Dase/DB/Autogen/Attribute.php';
+require_once 'Dase/DBO/Autogen/Attribute.php';
 
-class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
+class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 {
 	public $cardinality;
 	public $is_identifier;
@@ -56,33 +56,33 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 
 	public static function get($collection_ascii_id,$ascii_id) {
 		if ($collection_ascii_id && $ascii_id) {
-			$a = new Dase_DB_Attribute;
+			$a = new Dase_DBO_Attribute;
 			$a->ascii_id = $ascii_id;
 			if ('admin_' == substr($ascii_id,0,6)) {
 				$a->collection_id = 0;
 			} else {
-				$a->collection_id = Dase_DB_Collection::get($collection_ascii_id)->id;
+				$a->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
 			}
 			return($a->findOne());
 		}
 	}
 
 	public static function getAdmin($ascii_id) {
-		$a = new Dase_DB_Attribute;
+		$a = new Dase_DBO_Attribute;
 		$a->ascii_id = $ascii_id;
 		$a->collection_id = 0;
 		return($a->findOne());
 	}
 
 	public function getCollection() {
-		$c = new Dase_DB_Collection;
+		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
 	}
 
 	function getHtmlInputType() {
-		$inp = new Dase_DB_HtmlInputType;
+		$inp = new Dase_DBO_HtmlInputType;
 		$inp->load($this->html_input_type_id);
 		$this->html_input_type = $inp;
 		return $inp;
@@ -92,7 +92,7 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 		if ($this->mapped_admin_att_id) {
 			$mapped_id = $this->mapped_admin_att_id;
 		}
-		$aa = new Dase_DB_Attribute;
+		$aa = new Dase_DBO_Attribute;
 		if ($aa->load($mapped_id)) {
 			return $aa->ascii_id;
 		} else {

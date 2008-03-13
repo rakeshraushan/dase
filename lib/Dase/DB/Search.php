@@ -1,10 +1,10 @@
 <? 
-class Dase_DB_Search {
+class Dase_DBO_Search {
 
 	public $search;		
 
 	public static function get() {
-		return new Dase_DB_Search();
+		return new Dase_DBO_Search();
 	}
 
 	function __construct() {
@@ -197,7 +197,7 @@ class Dase_DB_Search {
 			foreach($val as $v) {
 				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'%')){
 					list($coll,$att) = explode(':',$k);
-					$echo['exact'][$k][] = Dase_DB_Value::getValueTextByHash($coll,$v);
+					$echo['exact'][$k][] = Dase_DBO_Value::getValueTextByHash($coll,$v);
 					$search['att'][$coll][$att]['value_text_md5'] = array();
 					$search['att'][$coll][$att]['value_text_md5'][] = $v;
 					$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
@@ -559,7 +559,7 @@ class Dase_DB_Search {
 	}
 
 	private function _executeSearch($hash) {
-		$collection_lookup = Dase_DB_Collection::getLookupArray();
+		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$db = Dase_DB::get();
 		$sql = $this->_createSql($this->search);	
 		$st = $db->prepare($sql);	
@@ -613,7 +613,7 @@ class Dase_DB_Search {
 		//by the way, no easy way to grab a 
 		//particular user's recent searches
 		$result = array();
-		$cache = new Dase_DB_SearchCache();
+		$cache = new Dase_DBO_SearchCache();
 		$hash = md5($this->_normalizeSearch($this->search));
 		$cache->search_md5 = $hash;
 		$cache->refine = 'newdase'; 
@@ -634,7 +634,7 @@ class Dase_DB_Search {
 
 	public static function getResultByHash($hash) {
 		$result = array();
-		$cache = new Dase_DB_SearchCache();
+		$cache = new Dase_DBO_SearchCache();
 		$cache->search_md5 = $hash;
 		if ($cache->findOne()) {
 			$result = unserialize($cache->item_id_string);

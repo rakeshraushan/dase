@@ -1,8 +1,8 @@
 <?php
 
-require_once 'Dase/DB/Autogen/Tag.php';
+require_once 'Dase/DBO/Autogen/Tag.php';
 
-class Dase_DB_Tag extends Dase_DB_Autogen_Tag 
+class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag 
 {
 	private $type;
 	private $user;
@@ -53,7 +53,7 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 	}
 
 	function getUpdated() {
-		$tag_item = new Dase_DB_TagItem;
+		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
 		$tag_item->orderBy('updated DESC');
 		$tag_item->findOne();
@@ -61,19 +61,19 @@ class Dase_DB_Tag extends Dase_DB_Autogen_Tag
 	}
 
 	function getTagItems() {
-		$tag_item = new Dase_DB_TagItem;
+		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
 		return $tag_item->find();
 	}
 
 	function getType() {
-		$type = new Dase_DB_TagType;
+		$type = new Dase_DBO_TagType;
 		$this->type = $type->load($this->tag_type_id);
 		return $this->type;
 	}
 
 	function getUser() {
-		$user = new Dase_DB_DaseUser;
+		$user = new Dase_DBO_DaseUser;
 		$this->user = $user->load($this->dase_user_id);
 		return $this->user;
 	}

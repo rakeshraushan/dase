@@ -1,8 +1,8 @@
 <?php
 
-require_once 'Dase/DB/Autogen/DaseUser.php';
+require_once 'Dase/DBO/Autogen/DaseUser.php';
 
-class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser 
+class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser 
 {
 
 	public function getTags() {
@@ -19,10 +19,10 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 				$tag_array['slideshow'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
 			}
 		}
-		$subs = new Dase_DB_Subscription;
+		$subs = new Dase_DBO_Subscription;
 		$subs->dase_user_id = $this->id;
 		foreach($subs->find() as $sub) {
-			$tag = new Dase_DB_Tag;
+			$tag = new Dase_DBO_Tag;
 			$tag->load($sub->tag_id);
 			if ($tag->name && $tag->ascii_id) {
 				//note that I am overloading the ascii_id place w/ the id
@@ -34,14 +34,14 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 	}
 
 	public function getCollections() {
-		$cm = new Dase_DB_CollectionManager;
+		$cm = new Dase_DBO_CollectionManager;
 		$cm->dase_user_eid = $this->eid;
 		$special_colls = array();
 		$user_colls = array();
 		foreach ($cm->find() as $managed) {
 			$special_colls[$managed->collection_ascii_id] = $managed->auth_level;
 		}
-		$coll = new Dase_DB_Collection;
+		$coll = new Dase_DBO_Collection;
 		$coll->orderBy('collection_name');
 		foreach($coll->find() as $c) {
 			if ((1 == $c->is_public) || (in_array($c->ascii_id,array_keys($special_colls)))) {

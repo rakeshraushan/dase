@@ -75,11 +75,11 @@ class UserHandler
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
-		$tag = new Dase_DB_Tag;
+		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
 		$tag->findOne();
-		$tag_item = new Dase_DB_TagItem;
+		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->item_id = Dase::filterPost('item_id');
 		$tag_item->tag_id = $tag->id;
 		if ($tag_item->insert()) {
@@ -93,9 +93,9 @@ class UserHandler
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
-		$tag_item = new Dase_DB_TagItem;
+		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->load($params['tag_item_id']);
-		$tag = new Dase_DB_Tag;
+		$tag = new Dase_DBO_Tag;
 		$tag->load($tag_item->tag_id);
 		if ($tag->dase_user_id == $u->id) {
 			$tag_item->delete();
@@ -113,7 +113,7 @@ class UserHandler
 	public static function cart() {
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
-		$tag = new Dase_DB_Tag;
+		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
 		$tag->findOne();
@@ -131,7 +131,7 @@ class UserHandler
 		//this probably belongs in the tag handler!
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
-		$tag = new Dase_DB_Tag;
+		$tag = new Dase_DBO_Tag;
 		if (isset($params['id'])) {
 			$tag->load($params['id']);
 			if ($tag->dase_user_id != $u->id) {

@@ -16,7 +16,7 @@ class CollectionHandler
 		} else {
 			$public_only = true;
 		}
-		Dase::display(Dase_DB_Collection::listAsAtom($public_only));
+		Dase::display(Dase_DBO_Collection::listAsAtom($public_only));
 	}
 
 	public static function browse() {
@@ -71,7 +71,7 @@ class CollectionHandler
 
 	public static function attributesAsAtom() {
 		$c = Dase_Registry::get('collection');
-		$atts = new Dase_DB_Attribute;
+		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $c->id;
 		$atts->is_public = 1;
 		$atts->orderBy('sort_order');
@@ -82,7 +82,7 @@ class CollectionHandler
 
 	public static function attributesAsHtml() {
 		$c = Dase_Registry::get('collection');
-		$atts = new Dase_DB_Attribute;
+		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $c->id;
 		$atts->is_public = 1;
 		$atts->orderBy('sort_order');
@@ -101,7 +101,7 @@ EOF;
 	public static function attributesAsJson() {
 		$params = Dase_Registry::get('params');
 		$c = Dase_Registry::get('collection');
-		$attribute = new Dase_DB_Attribute;
+		$attribute = new Dase_DBO_Attribute;
 		$attribute->collection_id = $c->id;
 		$attribute->is_public = true;
 		$attribute->orderBy('sort_order');
@@ -120,7 +120,7 @@ EOF;
 
 	public static function adminAttributesAsHtml() {
 		$c = Dase_Registry::get('collection');
-		$atts = new Dase_DB_Attribute;
+		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = 0;
 
 		$html ="<h4 id=\"adminAttsLabel\" class=\"hide\">Select Admin Attribute:</h4>";
