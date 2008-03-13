@@ -8,7 +8,7 @@ class SearchHandler
 		if (isset($params['md5_hash'])) {
 			$result = Dase_DB_Search::getResultByHash($params['md5_hash']);
 		} else {
-			$result = Dase_Search::get()->getResult();
+			$result = Dase_DB_Search::get()->getResult();
 		}
 
 		$start = Dase::filterGet('start');
@@ -93,7 +93,7 @@ class SearchHandler
 
 	public static function itemAsAtom() {
 
-		$search = Dase_Search::get();
+		$search = Dase_DB_Search::get();
 		$num = Dase::filterGet('num');
 		$max = Dase::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
@@ -138,7 +138,7 @@ class SearchHandler
 			Dase::display($feed->asXml());
 		}
 		Dase_Error::report(404);
-		$search = Dase_Search::get($params);
+		$search = Dase_DB_Search::get($params);
 		$num = Dase::filterGet('num');
 		$max = Dase::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
@@ -206,7 +206,7 @@ class SearchHandler
 	}
 
 	public static function sql() {
-		$result = htmlspecialchars(Dase_Search::get()->getResult());
+		$result = htmlspecialchars(Dase_DB_Search::get()->getResult());
 		print "<pre>{$result['sql']}</pre>";
 		exit;
 	}
