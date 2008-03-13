@@ -139,7 +139,7 @@ class Dase
 
 				if (isset($params['collection_ascii_id']) && $params['collection_ascii_id']) {
 					$collection_ascii_id = $params['collection_ascii_id'];
-					Dase_Registry::set('collection',Dase_DB_Collection::get($collection_ascii_id));
+					Dase_Registry::set('collection',Dase_DBO_Collection::get($collection_ascii_id));
 				}
 
 				if (isset($conf_array['mime'])) {

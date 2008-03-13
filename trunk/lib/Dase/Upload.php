@@ -14,7 +14,7 @@ class Dase_Upload
 	protected $metadata = array();
 	public $message = '';
 
-	public function __construct(Dase_File $file,Dase_DB_Collection $collection,$check_for_dup = true) {
+	public function __construct(Dase_File $file,Dase_DBO_Collection $collection,$check_for_dup = true) {
 		$this->file = $file;
 		$this->collection = $collection;
 		if ($check_for_dup && $this->isDuplicate()) {
@@ -23,7 +23,7 @@ class Dase_Upload
 	}
 
 	function createItem() {
-		$this->item = Dase_DB_Item::create($this->collection->ascii_id);
+		$this->item = Dase_DBO_Item::create($this->collection->ascii_id);
 		return $this->item->serial_number;
 	}
 
@@ -32,7 +32,7 @@ class Dase_Upload
 	}
 
 	function retrieveItem() {
-		$this->item = Dase_DB_Item::get($this->collection->ascii_id,$this->file->getFilename());
+		$this->item = Dase_DBO_Item::get($this->collection->ascii_id,$this->file->getFilename());
 		if ($this->item->id) {
 			return "RETRIEVED " . $this->item->serial_number . "\n";
 		} else {
@@ -51,11 +51,11 @@ class Dase_Upload
 
 	function isDuplicate() {
 		$meta = $this->file->getMetadata();
-		$v = new Dase_DB_Value;
-		$v->attribute_id = Dase_DB_Attribute::getAdmin('admin_checksum')->id;
+		$v = new Dase_DBO_Value;
+		$v->attribute_id = Dase_DBO_Attribute::getAdmin('admin_checksum')->id;
 		$v->value_text = $meta['admin_checksum'];
 		foreach ($v->find() as $val) {
-			$it = new Dase_DB_Item;
+			$it = new Dase_DBO_Item;
 			$it->load($val->item_id);
 			if ($it->collection_id == $this->collection->id) {
 				return true;
@@ -66,7 +66,7 @@ class Dase_Upload
 
 	function deleteItemMedia() {
 		$msg = '';
-		$mf = new Dase_DB_MediaFile;
+		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->item->id;
 		foreach ($mf->find() as $doomed) {
 			$msg .= "DELETING $doomed->size for " . $this->item->serial_number . "\n";

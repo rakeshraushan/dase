@@ -1,13 +1,13 @@
 <?php
 
-require_once 'Dase/DB/Autogen/CollectionManager.php';
+require_once 'Dase/DBO/Autogen/CollectionManager.php';
 
-class Dase_DB_CollectionManager extends Dase_DB_Autogen_CollectionManager 
+class Dase_DBO_CollectionManager extends Dase_DBO_Autogen_CollectionManager 
 {
 	public $name;
 
 	public function getUser() {
-		$user = new Dase_DB_DaseUser;
+		$user = new Dase_DBO_DaseUser;
 		$user->eid = $this->dase_user_eid;
 		return	$user->findOne();
 	}

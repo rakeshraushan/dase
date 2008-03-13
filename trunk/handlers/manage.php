@@ -71,7 +71,7 @@ class ManageHandler
 
 	public static function stats() {
 		$params = Dase_Registry::get('params');
-		$tag_item = new Dase_DB_TagItem;
+		$tag_item = new Dase_DBO_TagItem;
 		$tot = array();
 		$slice = array();
 		$top_ten = array();
@@ -85,7 +85,7 @@ class ManageHandler
 		arsort($tot);
 		$slice = array_slice($tot,0,20);
 		foreach ($slice as $k => $v) {
-			$coll = Dase_DB_Collection::get($k);
+			$coll = Dase_DBO_Collection::get($k);
 			if ($coll) {
 				$top_ten[$coll->collection_name] = $v;
 			}

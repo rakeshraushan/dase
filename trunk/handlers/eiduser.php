@@ -54,9 +54,9 @@ class EiduserModuleHandler {
 			$sth->execute(array(strtolower($ut_user->eid)));
 			$row = $sth->fetch();
 			if ($row) {
-				$db_user = new Dase_DB_DaseUser($row);
+				$db_user = new Dase_DBO_DaseUser($row);
 			} else {
-				$db_user = new Dase_DB_DaseUser();
+				$db_user = new Dase_DBO_DaseUser();
 				$db_user->name = $ut_user->name; 
 				$db_user->eid = $ut_user->eid; 
 				$db_user->insert();

@@ -1,15 +1,15 @@
 <?php
 
-require_once 'Dase/DB/Autogen/MediaFile.php';
+require_once 'Dase/DBO/Autogen/MediaFile.php';
 
-class Dase_DB_MediaFile extends Dase_DB_Autogen_MediaFile 
+class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile 
 {
 	public $url = '';
 
 	function getCollection() {
-		$item = new Dase_DB_Item;
+		$item = new Dase_DBO_Item;
 		$item->load($this->item_id);
-		$coll = new Dase_DB_Collection;
+		$coll = new Dase_DBO_Collection;
 		$coll->load($item->collection_id);
 		return $coll;
 	}

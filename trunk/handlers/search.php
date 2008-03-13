@@ -6,9 +6,9 @@ class SearchHandler
 	public static function opensearch() {
 
 		if (isset($params['md5_hash'])) {
-			$result = Dase_DB_Search::getResultByHash($params['md5_hash']);
+			$result = Dase_DBO_Search::getResultByHash($params['md5_hash']);
 		} else {
-			$result = Dase_DB_Search::get()->getResult();
+			$result = Dase_DBO_Search::get()->getResult();
 		}
 
 		$start = Dase::filterGet('start');
@@ -78,7 +78,7 @@ class SearchHandler
 		$num = 0;
 		foreach($item_ids as $search_index => $item_id) {
 			$num++;
-			$item = new Dase_DB_Item();
+			$item = new Dase_DBO_Item();
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
@@ -93,7 +93,7 @@ class SearchHandler
 
 	public static function itemAsAtom() {
 
-		$search = Dase_DB_Search::get();
+		$search = Dase_DBO_Search::get();
 		$num = Dase::filterGet('num');
 		$max = Dase::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
@@ -120,7 +120,7 @@ class SearchHandler
 		$start = (floor($num/$max) * $max) + 1;
 
 		$item_id = $result['item_ids'][$num-1];
-		$item = new Dase_DB_Item;
+		$item = new Dase_DBO_Item;
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
 			$item->injectAtomFeedData($feed);
@@ -138,7 +138,7 @@ class SearchHandler
 			Dase::display($feed->asXml());
 		}
 		Dase_Error::report(404);
-		$search = Dase_DB_Search::get($params);
+		$search = Dase_DBO_Search::get($params);
 		$num = Dase::filterGet('num');
 		$max = Dase::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
@@ -165,7 +165,7 @@ class SearchHandler
 		$start = (floor($num/$max) * $max) + 1;
 
 		$item_id = $result['item_ids'][$num-1];
-		$item = new Dase_DB_Item;
+		$item = new Dase_DBO_Item;
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
 			$item->injectAtomFeedData($feed);
@@ -206,7 +206,7 @@ class SearchHandler
 	}
 
 	public static function sql() {
-		$result = htmlspecialchars(Dase_DB_Search::get()->getResult());
+		$result = htmlspecialchars(Dase_DBO_Search::get()->getResult());
 		print "<pre>{$result['sql']}</pre>";
 		exit;
 	}
