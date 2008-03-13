@@ -57,7 +57,7 @@ class Dase_File_Audio extends Dase_File
 		if (!file_exists($collection->path_to_media_files . "/thumbnails/audio.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',$collection->path_to_media_files . '/thumbnails/audio.jpg');
 		}
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'audio.jpg';
 		$media_file->width = 80;
@@ -74,7 +74,7 @@ class Dase_File_Audio extends Dase_File
 		if (!file_exists($collection->path_to_media_files . "/400/audio.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',$collection->path_to_media_files . '/400/audio.jpg');
 		}
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'audio.jpg';
 		$media_file->width = 80;
@@ -90,7 +90,7 @@ class Dase_File_Audio extends Dase_File
 	function makeSizes($item,$collection) {
 		$dest = $collection->path_to_media_files . "/mp3/" . $item->serial_number . '.mp3';
 		$this->copyTo($dest);
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '.mp3';
 		$media_file->file_size = $this->file_size;

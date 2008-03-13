@@ -7,7 +7,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getTags() {
 		$tag_array = array();
-		foreach (Dase_DB_Tag::getByUser($this) as $row) {
+		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
 			if (CART == $row['tag_type_id']) {
 				//$tag_array['cart'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
 				$tag_array['cart'][$row['ascii_id']] = $row['count'];
