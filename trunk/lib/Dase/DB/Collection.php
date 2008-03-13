@@ -12,6 +12,15 @@ class Dase_DB_Collection extends Dase_DB_Autogen_Collection
 		return($c->findOne());
 	}
 
+	public function asSimpleXml() {
+		$sx = simplexml_load_string("<collection/>");
+		foreach($this as $k => $v) {
+			$sx->addChild($k,htmlspecialchars($v));
+		}
+		$sx->addChild('id',$this->id);
+		return $sx;
+	}
+
 	function asAtom() {
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);

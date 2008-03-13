@@ -112,4 +112,24 @@ class Dase_DB_DaseUser extends Dase_DB_Autogen_DaseUser
 		$cache = new Dase_Cache("json/user/$this->eid/data");
 		$cache->expire();
 	}
+
+	public function isSuperuser() {
+		if (in_array($this->eid,Dase::getConf('superuser'))) {
+			return true;
+		}
+		return false;
+	}
+
+	public function asSimpleXml() {
+		$sx = simplexml_load_string("<user/>");
+		foreach($this as $k => $v) {
+			$sx->addChild($k,htmlspecialchars($v));
+		}
+		$superuser = 0;
+		if ($this->isSuperuser()) {
+			$superuser = 1;
+		}
+		$sx->addChild('superuser',$superuser);
+		return $sx;
+	}
 }

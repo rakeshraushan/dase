@@ -33,7 +33,7 @@ class ManageHandler
 	}
 
 	public static function viewLog() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		if (isset($params['log_name'])) {
 			switch ($params['log_name']) {
 			case 'standard':
@@ -70,7 +70,7 @@ class ManageHandler
 	}
 
 	public static function stats() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		$tag_item = new Dase_DB_TagItem;
 		$tot = array();
 		$slice = array();

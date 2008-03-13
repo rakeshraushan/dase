@@ -1,6 +1,10 @@
 <?php
 
-class Dase_Xslt {  
+class Dase_Xslt 
+{  
+
+	//convenince wrapper for PHP
+	//XSLT class
 
 	private $xsl;
 	private $xml;
@@ -71,9 +75,10 @@ class Dase_Xslt {
 
 	function transform() {
 		$this->init();
-		$d = Dase::instance();
-		$this->set('msg',Dase::filterGet('msg'));
-		$page_hook = $d->handler.'_'.$d->action;
+		if (!$this->xslt->getParameter(null,'msg')) {
+			$this->set('msg',Dase::filterGet('msg'));
+		}
+		$page_hook = Dase_Registry::get('handler').'_'.Dase_Registry::get('action');
 		$this->set('page_hook',$page_hook);
 		$this->set('app_root',APP_ROOT . '/');
 		//$this->set('timer',Dase_Timer::getElapsed());

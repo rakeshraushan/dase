@@ -90,8 +90,8 @@ class Dase_User
 			// we can short circuit if curr coll is public
 			// which is good, since this will be the case MOST
 			// of the time
-			if (Dase::instance()->collection) {
-				if (Dase::instance()->collection->is_public) {
+			if (Dase_Registry::get('collection')) {
+				if (Dase_Registry::get('collection')->is_public) {
 					return true;
 				}
 			}

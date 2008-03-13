@@ -3,8 +3,12 @@ class Dase_DB_Search {
 
 	public $search;		
 
-	function __construct($params) {
-		$url_params = Dase::instance()->url_params;
+	public static function get() {
+		return new Dase_DB_Search();
+	}
+
+	function __construct() {
+		$url_params = Dase_Url::parseQueryString();;
 		$search['type'] = null;
 		$search['colls'] = array();
 		$search['omit_colls'] = array();
@@ -66,9 +70,9 @@ class Dase_DB_Search {
 			$search['omit_colls'] = array_unique($search['omit_colls']);
 		}
 		//collection_ascii_id as param TRUMPS coll in get array
-		//can come from request url
-		if (isset($params['collection_ascii_id'])) {
-			$collection_ascii_id = $params['collection_ascii_id'];
+		//can come from request url (so it sits in registry)
+		if (Dase_Registry::get('collection')) {
+			$collection_ascii_id = Dase_Registry::get('collection')->ascii_id;
 			$search['colls'] = array("'$collection_ascii_id'");
 			$echo['collection_ascii_id'] = $collection_ascii_id;
 		}
@@ -284,10 +288,6 @@ class Dase_DB_Search {
 		// DONE parsing search string!!
 	}
 
-	public static function get($params) {
-		return new Dase_DB_Search($params);
-	}
-
 	public function getXml() {
 		//print_r($this->search);exit;
 		$sx = new SimpleXMLElement("<search/>");
@@ -297,17 +297,17 @@ class Dase_DB_Search {
 			}
 			if (in_array($key,array('find','omit','or'))) {
 				foreach($val as $v) {
-					$sx->addChild($key,$v);
+					$sx->addChild($key,htmlspecialchars($v));
 				}
 			}
 			if ('colls' == $key) {
 				foreach($val as $v) {
-					$sx->addChild('collection',$v);
+					$sx->addChild('collection',htmlspecialchars($v));
 				}
 			}
 			if ('omit_colls' == $key) {
 				foreach($val as $v) {
-					$sx->addChild('omit_collection',$v);
+					$sx->addChild('omit_collection',htmlspecialchars($v));
 				}
 			}
 			if ('att' == $key) {
@@ -315,7 +315,7 @@ class Dase_DB_Search {
 					foreach($ar as $attr => $set) {
 						foreach($set as $section => $values) {
 							foreach($values as $vv) {
-								$at = $sx->addChild('filter',$vv);
+								$at = $sx->addChild('filter',htmlspecialchars($vv));
 								$at->addAttribute('collection',$coll);
 								$at->addAttribute('attr',$attr);
 								$at->addAttribute('type',$section);
@@ -330,7 +330,7 @@ class Dase_DB_Search {
 						list($coll,$att) = explode($sep,$key);
 						$c = $sx->addChild('collection');
 						$c->addAttribute('name',$coll);
-						$c->addChild($att,$v);
+						$c->addChild($att,htmlspecialchars($v));
 					}
 				}
 			}
@@ -582,14 +582,14 @@ class Dase_DB_Search {
 		$result['sql'] = $sql;
 		$result['link'] = $this->getLink();
 		$result['echo'] = $this->search['echo'];
-		$result['request_url'] = Dase::instance()->request_url;
-		$result['query_string'] = Dase::instance()->query_string;
+		$result['request_url'] = Dase_Url::getRequestUrl();
+		$result['query_string'] = Dase_Url::getQueryString();
 		return $result;
 	}
 
 	public function getLink() {
 		$link = '';
-		$url_params = Dase::instance()->url_params;
+		$url_params = Dase_Url::parseQueryString();;
 		foreach ($url_params as $k => $v) {
 			if (is_array($v)) {
 				foreach($v as $val) {

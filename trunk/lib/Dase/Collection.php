@@ -5,8 +5,6 @@ class Dase_Collection
 //this is a simple collection factory
 //it allows collection type to be determined
 //at runtime in inc/config.php.  
-//The Dase_CollectionInterface defines
-//the methods implemented by any Dase_Collection
 
 {
 	private static $models_map = array(

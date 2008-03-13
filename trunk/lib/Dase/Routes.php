@@ -71,7 +71,7 @@ class Dase_Routes
 		if (file_exists($module_routes_file)) {
 			//note that module routes.php is being TRUSTED here 
 			//(potential security hole if we are not careful)
-			//modules can ONLY be added by app admin
+			//modules can ONLY be added by app admin!!!
 			include $module_routes_file;
 		}
 		return $routes;
@@ -84,8 +84,14 @@ class Dase_Routes
 		foreach ($dir as $module) {
 			if (!$module->isDot()) {
 				$routes = Dase_Routes::getModuleRoutes($modules_dir,$module);
+				//a module can declare a collection that all operation 
+				//apply to
+				if (!isset($routes['collection'])) {
+					$routes['collection'] = '';
+				}
 				foreach (array('get','post','put','delete') as $method) {
 					foreach ($routes as $action => $params) {
+						if ('collection' == $action) { continue; }
 						if (!is_array($params['uri_template'])) {
 							$params['uri_template'] = array($params['uri_template']);
 						}
@@ -106,6 +112,7 @@ class Dase_Routes
 								$params['action'] = $action;
 								$params['name'] = $module->getFilename();
 								$params['prefix'] = '/modules/'.$module;
+								$params['collection_ascii_id'] = $routes['collection'];
 								foreach ($params as $k => $v) {
 									if ('uri_template' == $k) { continue; }
 									$compiled_routes[$method][$regex][$k] = $v;

@@ -28,7 +28,7 @@ class UserHandler
 	}
 
 	public static function finishLogin() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		if (isset($params['eid'])) {
 			if ($params['eid'] == Dase_User::getCurrent()) {
 				Dase::redirect('/',"welcome {$params['eid']} is logged in");
@@ -44,7 +44,7 @@ class UserHandler
 	}
 
 	public static function dataAsJson() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		//NOTE WELL!!!:
 		//note that we ONLY use the request_url so the IE cache-busting
 		//timestamp is ignored.  We can have a long ttl here because ALL
@@ -67,12 +67,12 @@ class UserHandler
 	}
 
 	public static function cartAsJson() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		Dase::display(Dase_User::get($params['eid'])->getCart());
 	}
 
 	public static function addCartItem() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
 		$tag = new Dase_DB_Tag;
@@ -90,7 +90,7 @@ class UserHandler
 	}
 
 	public static function deleteTagItem() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
 		$tag_item = new Dase_DB_TagItem;
@@ -102,7 +102,7 @@ class UserHandler
 			echo "tag item {$params['tag_item_id']} deleted!";
 			exit;
 		} else {
-			Dase::error(401);
+			Dase_Error::report(401);
 		}
 	}
 
@@ -111,7 +111,7 @@ class UserHandler
 	}
 
 	public static function cart() {
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$tag = new Dase_DB_Tag;
 		$tag->dase_user_id = $u->id;
@@ -129,22 +129,22 @@ class UserHandler
 
 	public static function tag() {
 		//this probably belongs in the tag handler!
-		$params = Dase::instance()->params;
+		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$tag = new Dase_DB_Tag;
 		if (isset($params['id'])) {
 			$tag->load($params['id']);
 			if ($tag->dase_user_id != $u->id) {
-				Dase::error(401);
+				Dase_Error::report(401);
 			}
 		} elseif (isset($params['ascii_id'])) {
 			$tag->ascii_id = $params['ascii_id'];
 			$tag->dase_user_id = $u->id;
 			if (!$tag->findOne()) {
-				Dase::error(401);
+				Dase_Error::report(401);
 			}
 		} else {
-			Dase::error(404);
+			Dase_Error::report(404);
 		}
 
 		$t = new Dase_Xslt;

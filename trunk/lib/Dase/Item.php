@@ -2,6 +2,8 @@
 
 class Dase_Item 
 
+//this is a simple item factory
+
 {
 	private static $models_map = array(
 		'xml' => array('class'=>'Dase_Xml_Item'),

@@ -18,11 +18,13 @@
 	</div>
   </xsl:template>
 
+  <!--
   <xsl:template match="script[@type='text/javascript'][position() = last()]">
 	<xsl:copy-of select="."/>
 	<xsl:text>
 	</xsl:text>
 	<script type="text/javascript" src="scripts/collection.js"></script>
   </xsl:template>
+  -->
 
 </xsl:stylesheet>
