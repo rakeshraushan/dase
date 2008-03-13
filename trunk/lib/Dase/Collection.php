@@ -10,7 +10,6 @@ class Dase_Collection
 	private static $models_map = array(
 		'xml' => array('class'=>'Dase_Xml_Collection'),
 		'db' => array('class'=>'Dase_DB_Collection'),
-		'remote' => array('class'=>'Dase_Remote_Collection'),
 	);
 
 	public static function get($ascii_id) {
