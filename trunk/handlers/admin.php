@@ -7,7 +7,7 @@ class AdminHandler
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'admin/index.xsl';
 		$t->source = XSLT_PATH.'admin/layout.xml';
-		$user = Dase::getUser();
+		$user = Dase_Registry::get('user');
 		$t->addSourceNode($user->asSimpleXml());
 		$c = Dase_Registry::get('collection');
 		$t->addSourceNode($c->asSimpleXml());

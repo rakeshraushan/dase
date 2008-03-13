@@ -38,6 +38,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public function buildSearchIndex() {
 		$db = Dase_DB::get();
+		//todo: make sure item->id is an integer
 		$sql = "
 			DELETE
 			FROM search_table 

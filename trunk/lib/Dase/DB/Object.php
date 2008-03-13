@@ -120,6 +120,7 @@ class Dase_DB_Object implements IteratorAggregate
 		}
 		$field_set = join( ", ", $fields );
 		$insert = join( ", ", $inserts );
+		//todo: filter $this->table string
 		$sql = "INSERT INTO ".$this->table. 
 			" ( $field_set ) VALUES ( $insert )";
 		$sth = $db->prepare( $sql );
@@ -249,6 +250,15 @@ class Dase_DB_Object implements IteratorAggregate
 	//over object properties
 	public function getIterator() {
 		return new ArrayObject($this->fields);
+	}
+
+	function asSimpleXml() {
+		$sx = simplexml_load_string("<$this->table/>");
+		foreach($this as $k => $v) {
+			$sx->addChild($k,htmlspecialchars($v));
+		}
+		$sx->addChild('id',$this->id);
+		return $sx;
 	}
 
 }

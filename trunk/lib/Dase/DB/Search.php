@@ -408,6 +408,9 @@ class Dase_DB_Search {
 	}
 
 	private function _createSql($search) {
+
+		//this needs to be reworked w/ bound parameters!!
+
 		//compile sql for queries of search_table (i.e. search index)
 		$search_table_sets = array();
 		if (count($search['find'])) {

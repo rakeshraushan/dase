@@ -26,7 +26,8 @@ class Dase_DB_Attribute extends Dase_DB_Autogen_Attribute
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
 		$db = Dase_DB::get();
-		//presence od collection_id says it is an admin att
+		//presence of collection_id says it is an admin att
+		//todo: make sure $coll is a-z or '_'
 		if ($coll) {
 			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id IN (SELECT id FROM collection WHERE ascii_id = '$coll'))";
 		}

@@ -19,7 +19,6 @@ class Dase_User
 			$sth = $db->prepare($sql);
 			if ($sth->execute(array(strtolower($eid)))) {
 				$this->db_user = new Dase_DB_DaseUser($sth->fetch());
-				$this->db_user;
 			}
 		} 
 	}
@@ -36,7 +35,6 @@ class Dase_User
 			return new Dase_DB_DaseUser($sth->fetch());
 		}
 	}
-
 
 	public static function getCurrent() {
 		//attempt to validate cookie

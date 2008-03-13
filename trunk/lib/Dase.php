@@ -134,6 +134,9 @@ class Dase
 				}
 
 				$collection_ascii_id = '';
+
+				//if collection_ascii_id is set, go ahead and instantiate collection!
+
 				if (isset($params['collection_ascii_id']) && $params['collection_ascii_id']) {
 					$collection_ascii_id = $params['collection_ascii_id'];
 					Dase_Registry::set('collection',Dase_Collection::get($collection_ascii_id));
