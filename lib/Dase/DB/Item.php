@@ -26,7 +26,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	public static function get($collection_ascii_id,$serial_number) {
-		$c = Dase_Collection::get($collection_ascii_id);
+		$c = Dase_DB_Collection::get($collection_ascii_id);
 		if (!$c) {
 			return false;
 		}

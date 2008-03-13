@@ -32,7 +32,7 @@ class Dase_Upload
 	}
 
 	function retrieveItem() {
-		$this->item = Dase_Item::get($this->collection->ascii_id,$this->file->getFilename());
+		$this->item = Dase_DB_Item::get($this->collection->ascii_id,$this->file->getFilename());
 		if ($this->item->id) {
 			return "RETRIEVED " . $this->item->serial_number . "\n";
 		} else {

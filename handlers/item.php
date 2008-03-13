@@ -5,7 +5,7 @@ class ItemHandler
 	public static function asAtom() {
 		$params = Dase_Registry::get('params');
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
-			$item = Dase_Item::get($params['collection_ascii_id'],$params['serial_number']);
+			$item = Dase_DB_Item::get($params['collection_ascii_id'],$params['serial_number']);
 			if ($item) {
 				Dase::display($item->asAtom());
 			}
@@ -17,7 +17,7 @@ class ItemHandler
 		$params = Dase_Registry::get('params');
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 			//see if it exists
-			if (Dase_Item::get($params['collection_ascii_id'],$params['serial_number'])) {
+			if (Dase_DB_Item::get($params['collection_ascii_id'],$params['serial_number'])) {
 				$t = new Dase_Xslt;
 				$t->stylesheet = XSLT_PATH.'item/transform.xsl';
 				$t->set('src',APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
