@@ -2,7 +2,7 @@
 
 require_once 'Dase/DB.php';
 
-class Dase_DB_Object implements IteratorAggregate
+class Dase_DBO implements IteratorAggregate
 {
 	public $id = 0;
 	public $sql;
@@ -84,7 +84,7 @@ class Dase_DB_Object implements IteratorAggregate
 		$sth = $db->prepare($sql);
 		if (! $sth) {
 			$error = $db->errorInfo();
-			print "DASE_DB_Object 'load()' Problem ({$error[2]})";
+			print "DASE_DBO 'load()' Problem ({$error[2]})";
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
