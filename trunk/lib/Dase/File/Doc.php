@@ -17,7 +17,7 @@ class Dase_File_Doc extends Dase_File
 		if (!file_exists($collection->path_to_media_files . "/thumbnails/doc.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',$collection->path_to_media_files . '/thumbnails/doc.jpg');
 		}
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'doc.jpg';
 		$media_file->width = 80;
@@ -34,7 +34,7 @@ class Dase_File_Doc extends Dase_File
 		if (!file_exists($collection->path_to_media_files . "/400/doc.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',$collection->path_to_media_files . '/400/doc.jpg');
 		}
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'doc.jpg';
 		$media_file->width = 80;
@@ -50,7 +50,7 @@ class Dase_File_Doc extends Dase_File
 	function makeSizes($item,$collection) {
 		$dest = $collection->path_to_media_files . "/doc/" . $item->serial_number . '.doc';
 		$this->copyTo($dest);
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '.doc';
 		$media_file->file_size = $this->file_size;

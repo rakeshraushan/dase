@@ -1,8 +1,8 @@
 <?php
 
-require_once 'Dase/DB/Autogen/Item.php';
+require_once 'Dase/DBO/Autogen/Item.php';
 
-class Dase_DB_Item extends Dase_DB_Autogen_Item 
+class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
 	public $admin = array();
@@ -21,16 +21,16 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	public $viewitem_url = '';
 
 	public static function create($collection_ascii_id,$serial_number= null) {
-		$c = Dase_DB_Collection::get($collection_ascii_id);
+		$c = Dase_DBO_Collection::get($collection_ascii_id);
 		return $c->createNewItem($serial_number);
 	}
 
 	public static function get($collection_ascii_id,$serial_number) {
-		$c = Dase_DB_Collection::get($collection_ascii_id);
+		$c = Dase_DBO_Collection::get($collection_ascii_id);
 		if (!$c) {
 			return false;
 		}
-		$item = new Dase_DB_Item;
+		$item = new Dase_DBO_Item;
 		$item->collection_id = $c->id;
 		$item->serial_number = $serial_number;
 		return $item->findOne();
@@ -66,7 +66,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}
-		$search_table = new Dase_DB_SearchTable;
+		$search_table = new Dase_DBO_SearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
@@ -85,7 +85,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}
-		$search_table = new Dase_DB_AdminSearchTable;
+		$search_table = new Dase_DBO_AdminSearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
@@ -97,7 +97,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	public function getValues() {
-		$val = new Dase_DB_Value;
+		$val = new Dase_DBO_Value;
 		$val->item_id = $this->id;
 		return $val->find();
 	}
@@ -142,15 +142,15 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 		//NOTE: repeat attributes will only get ONE value!!!!
 		$values = array();
 		$this->collection || $this->getCollection();
-		$val = new Dase_DB_Value;
+		$val = new Dase_DBO_Value;
 		$val->item_id = $this->id;
-		$val->attribute_id = Dase_DB_Attribute::get($this->collection->ascii_id,$att_ascii_id)->id;
+		$val->attribute_id = Dase_DBO_Attribute::get($this->collection->ascii_id,$att_ascii_id)->id;
 		$val->findOne();
 		return $val->value_text;
 	}
 
 	public function getCollection() {
-		$c = new Dase_DB_Collection;
+		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		$this->collection_ascii_id = $c->ascii_id;
@@ -161,7 +161,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public function getThumbnail() {
 		$this->collection || $this->getCollection();
-		$m = new Dase_DB_MediaFile;
+		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
 		$m->size = 'thumbnail';
 		$this->thumbnail = $m->findOne();
@@ -171,7 +171,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public function getViewitem() {
 		$this->collection || $this->getCollection();
-		$m = new Dase_DB_MediaFile;
+		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
 		$m->size = 'viewitem';
 		$this->viewitem = $m->findOne();
@@ -180,7 +180,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	public function getItemType() {
-		$type = new Dase_DB_ItemType;
+		$type = new Dase_DBO_ItemType;
 		if ($this->item_type_id) {
 			$type->load($this->item_type_id);
 			$this->item_type = $type->findOne();
@@ -194,7 +194,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	public function getItemStatus() {
-		$status = new Dase_DB_ItemStatus;
+		$status = new Dase_DBO_ItemStatus;
 		$status->item_id = $this->id;
 		if ($status->findOne()) {
 			$this->item_status = $status->status;
@@ -204,7 +204,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public function getMedia() {
 		$this->collection || $this->getCollection();
-		$m = new Dase_DB_MediaFile;
+		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
 		$m->orderBy('width');
 		return $m->find();
@@ -212,7 +212,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	public function getMediaUrl($size) {  //size really means type here
 		$this->collection || $this->getCollection();
-		$m = new Dase_DB_MediaFile;
+		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
 		$m->size = $size;
 		$this->media = $m->findOne();
@@ -231,7 +231,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	function setType($type_ascii_id) {
-		$type = new Dase_DB_ItemType;
+		$type = new Dase_DBO_ItemType;
 		$type->ascii_id = $type_ascii_id;
 		$type->collection_id = $this->collection_id;
 		if ($type->findOne()) {
@@ -244,7 +244,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	function setValue($att_ascii_id,$value_text) {
-		$att = new Dase_DB_Attribute;
+		$att = new Dase_DBO_Attribute;
 		$att->ascii_id = $att_ascii_id;
 		//allows for admin metadata, att_ascii for which
 		//always begins 'admin_'
@@ -252,7 +252,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 			$att->collection_id = $this->collection_id;
 		}
 		if ($att->findOne()) {
-			$v = new Dase_DB_Value;
+			$v = new Dase_DBO_Value;
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = $value_text;
@@ -265,17 +265,17 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 
 	function deleteValues() {
 		//should sanity check and archive values
-		$v = new Dase_DB_Value;
+		$v = new Dase_DBO_Value;
 		$v->item_id = $this->id;
 		foreach ($v->find() as $doomed) {
 			$doomed->delete();
 		}
-		$st = new Dase_DB_SearchTable;
+		$st = new Dase_DBO_SearchTable;
 		$st->item_id = $this->id;
 		foreach ($st->find() as $doomed) {
 			$doomed->delete();
 		}
-		$ast = new Dase_DB_AdminSearchTable;
+		$ast = new Dase_DBO_AdminSearchTable;
 		$ast->item_id = $this->id;
 		foreach ($ast->find() as $doomed) {
 			$doomed->delete();
@@ -283,10 +283,10 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	function deleteAdminValues() {
-		$a = new Dase_DB_Attribute;
+		$a = new Dase_DBO_Attribute;
 		$a->collection_id = 0;
 		foreach ($a->find() as $aa) {
-			$v = new Dase_DB_Value;
+			$v = new Dase_DBO_Value;
 			$v->item_id = $this->id;
 			$v->attribute_id = $aa->id;
 			foreach ($v->find() as $doomed) {
@@ -304,7 +304,7 @@ class Dase_DB_Item extends Dase_DB_Autogen_Item
 	}
 
 	function deleteMedia() {
-		$mf = new Dase_DB_MediaFile;
+		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
 			$doomed->delete();
