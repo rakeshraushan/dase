@@ -5,11 +5,11 @@ $class_dir = '../lib/Dase';
 if (!file_exists($class_dir)) {
 	mkdir ($class_dir,0755);
 }
-if (!file_exists($class_dir . '/DB')) {
-	mkdir ($class_dir . '/DB', 0755);
+if (!file_exists($class_dir . '/DBO')) {
+	mkdir ($class_dir . '/DBO', 0755);
 }
-if (!file_exists($class_dir . '/DB/Autogen')) {
-	mkdir ($class_dir . '/DB/Autogen', 0755);
+if (!file_exists($class_dir . '/DBO/Autogen')) {
+	mkdir ($class_dir . '/DBiO/Autogen', 0755);
 }
 
 function capFirst (&$item,$key) {
@@ -26,7 +26,7 @@ foreach (Dase_DB::listTables() as $table) {
 	$parts = explode('_',$table);
 	array_walk($parts,'capFirst');
 	$class_root_name = implode('',$parts);
-	$db_class_name = 'Dase_DB_Autogen_' . $class_root_name;
+	$db_class_name = 'Dase_DBO_Autogen_' . $class_root_name;
 	$db_class_text = "<?php
 
 require_once 'Dase/DBO.php';
@@ -49,7 +49,7 @@ class $db_class_name extends Dase_DBO
 		}
 	}
 }";		
-$db_class_filepath = $class_dir . '/DB/Autogen/' . $class_root_name . '.php';
+$db_class_filepath = $class_dir . '/DBO/Autogen/' . $class_root_name . '.php';
 $fh = fopen($db_class_filepath,'w');
 	if (-1 == fwrite($fh,$db_class_text)) { 
 		die("no go write $db_class_filepath"); 
@@ -57,12 +57,12 @@ $fh = fopen($db_class_filepath,'w');
 	fclose($fh) or die("no go close");
 	print "created $db_class_name\n";
 
-	$class_filepath = $class_dir . '/DB/' . $class_root_name . '.php';
-	$class_name = 'Dase_DB_' . $class_root_name;
+	$class_filepath = $class_dir . '/DBO/' . $class_root_name . '.php';
+	$class_name = 'Dase_DBO_' . $class_root_name;
 	if (!file_exists($class_filepath)) {
 		$class_text = "<?php
 
-require_once 'Dase/DB/Autogen/$class_root_name.php';
+require_once 'Dase/DBO/Autogen/$class_root_name.php';
 
 class $class_name extends $db_class_name 
 {
