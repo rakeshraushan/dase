@@ -2,6 +2,10 @@
 
 require_once 'Dase/DB.php';
 
+/* this class implements the ActiveRecord pattern
+ *
+ */
+
 class Dase_DBO implements IteratorAggregate
 {
 	public $id = 0;

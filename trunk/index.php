@@ -39,6 +39,7 @@ define('APP_HTTP_ROOT','http://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_
 define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('CACHE_DIR', DASE_PATH . '/cache/');
+define('LOG_DIR', DASE_PATH . '/log/');
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('XSLT_PATH', DASE_PATH . '/xslt/');
 

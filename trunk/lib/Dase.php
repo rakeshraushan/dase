@@ -19,8 +19,8 @@ class Dase
 	public static function log($logfile,$msg) {
 		$date = date(DATE_W3C);
 		$msg = "$date : $msg\n";
-		if(file_exists(DASE_PATH . "/log/{$logfile}.log")) {
-			file_put_contents(DASE_PATH ."/log/{$logfile}.log",$msg,FILE_APPEND);
+		if(file_exists(LOG_DIR . "{$logfile}.log")) {
+			file_put_contents(LOG_DIR ."{$logfile}.log",$msg,FILE_APPEND);
 		}
 		if ('error' == $logfile) {
 			//include backtrace w/ errors
@@ -28,7 +28,7 @@ class Dase
 			debug_print_backtrace();
 			$trace = ob_get_contents();
 			ob_end_clean();
-			file_put_contents(DASE_PATH ."/log/error.log",$trace,FILE_APPEND);
+			file_put_contents(LOG_DIR ."error.log",$trace,FILE_APPEND);
 		}
 	}
 
