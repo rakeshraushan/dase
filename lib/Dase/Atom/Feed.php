@@ -7,19 +7,22 @@ class Dase_Atom_Feed extends Dase_Atom
 	private $generator_is_set;
 	private $subtitle_is_set;
 
-	function __construct() {
+	function __construct()
+	{
 		$dom = new DOMDocument('1.0');
 		$this->dom = $dom;
 		$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
 	}
 
-	function addEntry() {
+	function addEntry()
+	{
 		$entry = new Dase_Atom_Entry($this->dom);
 		$this->entries[] = $entry;
 		return $entry;
 	}
 
-	function setGenerator($text,$uri='',$version='') {
+	function setGenerator($text,$uri='',$version='')
+	{
 		if ($this->generator_is_set) {
 			throw new Dase_Atom_Exception('generator is already set');
 		} else {
@@ -34,7 +37,8 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function setSubtitle($text='') {
+	function setSubtitle($text='')
+	{
 		if ($this->subtitle_is_set) {
 			throw new Dase_Atom_Exception('subtitle is already set');
 		} else {
@@ -56,19 +60,23 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function setOpensearchTotalResults($num) {
+	function setOpensearchTotalResults($num)
+	{
 		$this->addElement('totalResults',$num,Dase_Atom::$ns['opensearch']);
 	}
 
-	function setOpensearchStartIndex($num) {
+	function setOpensearchStartIndex($num)
+	{
 		$this->addElement('startIndex',$num,Dase_Atom::$ns['opensearch']);
 	}
 
-	function setOpensearchItemsPerPage($num) {
+	function setOpensearchItemsPerPage($num)
+	{
 		$this->addElement('itemsPerPage',$num,Dase_Atom::$ns['opensearch']);
 	}
 
-	function asXml() {
+	function asXml()
+	{
 		//attach entries
 		if ($this->entries) {
 			foreach ($this->entries as $entry) {

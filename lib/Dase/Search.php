@@ -7,13 +7,15 @@ class Dase_Search {
 	private $request_uri;
 	private $query_string;
 
-	public static function get($request_uri,$query_string) {
+	public static function get($request_uri,$query_string)
+	{
 		$search_obj = new Dase_Search();
 		$search_obj->parse($request_uri,$query_string);
 		return $search_obj;
 	}
 
-	public static function parseQueryString($query_string) {
+	public static function parseQueryString($query_string)
+	{
 		//split params into key value pairs AND allow multiple 
 		//params w/ same key as an array (like standard CGI)
 		$url_params = array();
@@ -43,7 +45,8 @@ class Dase_Search {
 		return $url_params;
 	}
 
-	public static function getCollectionAsciiId($request_uri) {
+	public static function getCollectionAsciiId($request_uri)
+	{
 		//NOTE: this ASSUMES the uri pattern for collection
 		if (preg_match('/collection\/([^\/]*)\/search/',$request_uri,$matches)) {
 			$collection_ascii_id = $matches[1];
@@ -53,7 +56,8 @@ class Dase_Search {
 		}
 	}
 
-	function parse($request_uri,$query_string) {
+	function parse($request_uri,$query_string)
+	{
 		$url_params = Dase_Search::parseQueryString($query_string);
 		$this->url_params = $url_params;
 		$this->request_uri = $request_uri;
@@ -335,7 +339,8 @@ class Dase_Search {
 		// DONE parsing search string!!
 	}
 
-	public function getXml() {
+	public function getXml()
+	{
 		//print_r($this->search);exit;
 		$sx = new SimpleXMLElement("<search/>");
 		foreach ($this->search as $key => $val) {
@@ -391,7 +396,8 @@ class Dase_Search {
 		echo $doc->saveXML();
 	}
 
-	private function _tokenizeQuoted($string) {
+	private function _tokenizeQuoted($string)
+	{
 		//from php.net:
 		for($tokens=array(), $nextToken=strtok($string, ' '); $nextToken!==false; $nextToken=strtok(' ')) {
 			if($nextToken{0}=='"')
@@ -402,14 +408,16 @@ class Dase_Search {
 		return $tokens;
 	}
 
-	private function _testArray($a,$key) {
+	private function _testArray($a,$key)
+	{
 		if ( isset($a[$key]) && is_array($a[$key]) && count($a[$key]) && isset($a[$key][0]) && $a[$key][0]) {
 			return true;
 		}
 		return false;
 	}
 
-	private function _normalizeSearch($search) {
+	private function _normalizeSearch($search)
+	{
 		$search_string = '';
 		foreach(array('find','omit','or') as $key) {
 			$search_string .= "$key:";
@@ -454,7 +462,8 @@ class Dase_Search {
 		return $search_string;
 	}
 
-	public function createSql() {
+	public function createSql()
+	{
 		$search = $this->search;
 		$search_table_params = array();
 		$value_table_params = array();
@@ -604,7 +613,8 @@ class Dase_Search {
 		return $sql;
 	}
 
-	private function _executeSearch($hash) {
+	private function _executeSearch($hash)
+	{
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$db = Dase_DB::get();
 		$sql = $this->createSql();	
@@ -641,7 +651,8 @@ class Dase_Search {
 		return $result;
 	}
 
-	public function getLink($query_string) {
+	public function getLink($query_string)
+	{
 		$link = '';
 		$url_params = Dase_Search::parseQueryString($query_string);;
 		foreach ($url_params as $k => $v) {
@@ -660,7 +671,8 @@ class Dase_Search {
 		return "search?" . $link;
 	}
 
-	public function getResult() {
+	public function getResult()
+	{
 		//by the way, no easy way to grab a 
 		//particular user's recent searches
 		$result = array();

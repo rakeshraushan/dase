@@ -2,14 +2,17 @@
 
 Class Dase_Util 
 {
-	function __construct() {}
+	function __construct()
+	{}
 
-	public static function getVersion() {
+	public static function getVersion()
+	{
 		$ver = explode( '.', PHP_VERSION );
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
-	public static function dirify($str) {
+	public static function dirify($str)
+	{
 		$str = strtolower(preg_replace('/[^a-zA-Z0-9_]/','_',$str));
 		return preg_replace('/__*/','_',$str);
 	}
@@ -23,31 +26,36 @@ Class Dase_Util
 		return simplexml_import_dom($node1);
 	}
 
-	public static function sortByLastUpdateSortable($b,$a) {
+	public static function sortByLastUpdateSortable($b,$a)
+	{
 		if ($a->lastUpdateSortable == $b->lastUpdateSortable) {
 			return 0;
 		}
 		return ($a->lastUpdateSortable < $b->lastUpdateSortable) ? -1 : 1;
 	}
-	public static function sortByCount($b,$a) {
+	public static function sortByCount($b,$a)
+	{
 		if (count($a) == count($b)) {
 			return 0;
 		}
 		return (count($a) < count($b)) ? -1 : 1;
 	}
-	public static function sortByItemCount($b,$a) {
+	public static function sortByItemCount($b,$a)
+	{
 		if ($a->item_count == $b->item_count) {
 			return 0;
 		}
 		return ($a->item_count < $b->item_count) ? -1 : 1;
 	}
-	public static function sortBySubLevel($a,$b) {
+	public static function sortBySubLevel($a,$b)
+	{
 		if ($a->sub_level == $b->sub_level) {
 			return 0;
 		}
 		return ($a->sub_level < $b->sub_level) ? -1 : 1;
 	}
-	public static function sortByAttributeName($a,$b) {
+	public static function sortByAttributeName($a,$b)
+	{
 		$a_str = strtolower($a->attribute_name);
 		$b_str = strtolower($b->attribute_name);
 		if ($a_str == $b_str) {
@@ -55,7 +63,8 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
-	public static function sortBySortOrder($a,$b) {
+	public static function sortBySortOrder($a,$b)
+	{
 		$a_str = $a->sort_order;
 		$b_str = $b->sort_order;
 		if ($a_str == $b_str) {
@@ -63,7 +72,8 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
-	public static function sortByCollectionName($a,$b) {
+	public static function sortByCollectionName($a,$b)
+	{
 		$a_str = strtolower($a->collection_name);
 		$b_str = strtolower($b->collection_name);
 		if ($a_str == $b_str) {
@@ -71,7 +81,8 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
-	public static function sortByTitle($a,$b) {
+	public static function sortByTitle($a,$b)
+	{
 		$a_str = strtolower($a->title);
 		$b_str = strtolower($b->title);
 		if ($a_str == $b_str) {
@@ -79,7 +90,8 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
-	public static function sortByValueText($a,$b) {
+	public static function sortByValueText($a,$b)
+	{
 		$a_str = strtolower($a->value_text);
 		$b_str = strtolower($b->value_text);
 		if ($a_str == $b_str) {
@@ -87,7 +99,8 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
-	public static function sortValuesByAttributeSortOrder($a,$b) {
+	public static function sortValuesByAttributeSortOrder($a,$b)
+	{
 		$a_so = $a->attribute->sort_order;
 		$b_so = $b->attribute->sort_order;
 		if ($a_so == $b_so) {
@@ -95,7 +108,8 @@ Class Dase_Util
 		}
 		return ($a_so < $b_so) ? -1 : 1;
 	}
-	public static function diffObjects($obj_array_a,$obj_array_b,$member_name) {
+	public static function diffObjects($obj_array_a,$obj_array_b,$member_name)
+	{
 		if (is_array($obj_array_a)) {
 			foreach ($obj_array_a as $object_a) {
 				$object_a_member_array[] = $object_a->$member_name;
@@ -126,7 +140,8 @@ Class Dase_Util
 		}
 		return $set;
 	}
-	public static function stopApp($time_start) {
+	public static function stopApp($time_start)
+	{
 		$time_stop = microtime_float();
 		$timer = round($time_stop - $time_start, 4);
 		echo $timer; exit;

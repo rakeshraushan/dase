@@ -2,7 +2,8 @@
 
 class TagHandler
 {
-	public static function asAtom() {
+	public static function asAtom()
+	{
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$tag = new Dase_DBO_Tag;

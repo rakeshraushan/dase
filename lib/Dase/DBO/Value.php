@@ -9,7 +9,8 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 	public $attribute_ascii_id;
 
 	//this might need renaming????????
-	function getAttribute() {
+	function getAttribute()
+	{
 		$a = new Dase_DBO_Attribute();
 		$a->load($this->attribute_id);	
 		$this->attribute_name = $a->attribute_name;
@@ -18,7 +19,8 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 		return $a;
 	}
 
-	public static function getValueTextByHash($coll,$md5) {
+	public static function getValueTextByHash($coll,$md5)
+	{
 		//let's assume md5 is unique enough
 		$v = new Dase_DBO_Value;
 		$v->value_text_md5 = $md5;

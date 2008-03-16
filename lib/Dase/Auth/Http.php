@@ -3,12 +3,14 @@
 class Dase_Auth_Http
 {
 
-	public function authorize($collection_ascii_id = '',$eid = '') {
+	public function authorize($collection_ascii_id = '',$eid = '')
+	{
 		Dase_Auth_Http::basic();
 		return true;
 	}
 
-	public static function basic() {
+	public static function basic()
+	{
 		//from php cookbook 2nd ed. p 240
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			//HARDCODED (change that!)

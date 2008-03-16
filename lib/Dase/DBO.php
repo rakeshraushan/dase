@@ -3,7 +3,6 @@
 require_once 'Dase/DB.php';
 
 /* this class implements the ActiveRecord pattern
- *
  */
 
 class Dase_DBO implements IteratorAggregate
@@ -17,20 +16,23 @@ class Dase_DBO implements IteratorAggregate
 	protected $order_by;
 	protected $qualifiers = array();
 
-	function __construct( $table, $fields ) {
+	function __construct( $table, $fields )
+	{
 		$this->table = $table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
 		}
 	}
 
-	function __get( $key ) {
+	function __get( $key )
+	{
 		if ( array_key_exists( $key, $this->fields ) ) {
 			return $this->fields[ $key ];
 		}
 	}
 
-	function __set( $key, $value ) {
+	function __set( $key, $value )
+	{
 		if ( array_key_exists( $key, $this->fields ) ) {
 			$this->fields[ $key ] = $value;
 			return true;
@@ -38,7 +40,8 @@ class Dase_DBO implements IteratorAggregate
 		return false;
 	}
 
-	function hasMember($key) {
+	function hasMember($key)
+	{
 		if ( array_key_exists( $key, $this->fields ) ) {
 			return true;
 		} else {
@@ -46,15 +49,18 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function setLimit($limit) {
+	function setLimit($limit)
+	{
 		$this->limit = $limit;
 	}
 
-	function orderBy($ob) {
+	function orderBy($ob)
+	{
 		$this->order_by = $ob;
 	}
 
-	function addWhere($field,$value,$operator) {
+	function addWhere($field,$value,$operator)
+	{
 		if ( 
 			array_key_exists( $field, $this->fields) &&
 			in_array($operator,array('is','like','=','!=','<','>'))
@@ -69,7 +75,8 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function __toString() {
+	function __toString()
+	{
 		$members = '';
 		$table = $this->table;
 		$id = $this->id;
@@ -80,7 +87,8 @@ class Dase_DBO implements IteratorAggregate
 		return $out;
 	}
 
-	function load( $id ) {
+	function load( $id )
+	{
 		$this->id = $id;
 		$db = Dase_DB::get();
 		$table = $this->table;
@@ -99,7 +107,8 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function insert($seq = '') { //postgres needs id specified
+	function insert($seq = '')
+	{ //postgres needs id specified
 		if ('pgsql' == Dase_DB::getDbType()) {
 			if (!$seq) {
 				//beware!!! fix this after no longer using DB_DataObject
@@ -124,7 +133,7 @@ class Dase_DBO implements IteratorAggregate
 		}
 		$field_set = join( ", ", $fields );
 		$insert = join( ", ", $inserts );
-		//todo: filter $this->table string
+		//$this->table string is NOT tainted
 		$sql = "INSERT INTO ".$this->table. 
 			" ( $field_set ) VALUES ( $insert )";
 		$sth = $db->prepare( $sql );
@@ -146,17 +155,20 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function getMethods() {
+	function getMethods()
+	{
 		$class = new ReflectionClass(get_class($this));
 		return $class->getMethods();
 	}
 
-	function findOne() {
+	function findOne()
+	{
 		$this->setLimit(1);
 		return $this->find()->fetch();
 	}
 
-	function find() {
+	function find()
+	{
 		//finds matches based on set fields (omitting 'id')
 		//returns an iterator
 		$db = Dase_DB::get();
@@ -208,7 +220,8 @@ class Dase_DBO implements IteratorAggregate
 		return $sth;
 	}
 
-	public static function query($sql) {
+	public static function query($sql)
+	{
 		//return generic object
 		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
@@ -217,7 +230,8 @@ class Dase_DBO implements IteratorAggregate
 		return $sth;
 	}
 
-	function update() {
+	function update()
+	{
 		$db = Dase_DB::get();
 		foreach( $this->fields as $key => $val) {
 			if ('timestamp' != $key || $val) { //prevents null timestamp as update
@@ -237,7 +251,8 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function delete() {
+	function delete()
+	{
 		$db = Dase_DB::get();
 		$sth = $db->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
@@ -252,11 +267,13 @@ class Dase_DBO implements IteratorAggregate
 	//implement SPL IteratorAggregate:
 	//now simply use 'foreach' to iterate 
 	//over object properties
-	public function getIterator() {
+	public function getIterator()
+	{
 		return new ArrayObject($this->fields);
 	}
 
-	function asSimpleXml() {
+	function asSimpleXml()
+	{
 		$sx = simplexml_load_string("<$this->table/>");
 		foreach($this as $k => $v) {
 			$sx->addChild($k,htmlspecialchars($v));

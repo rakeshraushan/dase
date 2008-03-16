@@ -6,13 +6,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 {
 	public $item_count;
 
-	public static function get($ascii_id) {
+	public static function get($ascii_id)
+	{
 		$c = new Dase_DBO_Collection;
 		$c->ascii_id = $ascii_id;
 		return($c->findOne());
 	}
 
-	function asAtom() {
+	function asAtom()
+	{
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);
 		if ($this->description) {
@@ -28,7 +30,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	static function listAsAtom($public_only = false) {
+	static function listAsAtom($public_only = false)
+	{
 		$c = new Dase_DBO_Collection;
 		$c->orderBy('collection_name');
 		if ($public_only) {
@@ -59,7 +62,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXML();
 	}
 
-	static function getLastCreated() {
+	static function getLastCreated()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT created
@@ -71,7 +75,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $st->fetchColumn();
 	}
 
-	static function getLookupArray() {
+	static function getLookupArray()
+	{
 		$hash = array();
 		$c = new Dase_DBO_Collection;
 		foreach ($c->find() as $coll) {
@@ -84,7 +89,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $hash;
 	}
 
-	function getManagers() {
+	function getManagers()
+	{
 		//note: this returns an array of arrays
 		//NOT an array of manager objects
 		$db = Dase_DB::get();
@@ -100,14 +106,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $sth;
 	}
 
-	function getAttributes($sort = 'sort_order') {
+	function getAttributes($sort = 'sort_order')
+	{
 		$att = new Dase_DBO_Attribute;
 		$att->collection_id = $this->id;
 		$att->orderBy($sort);
 		return $att->find();
 	}
 
-	function getAttributesData() {
+	function getAttributesData()
+	{
 		$att = new Dase_DBO_Attribute;
 		$cols = Dase_DB::listColumns('attribute');
 		$sql = "
@@ -123,7 +131,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $sth->fetchAll();
 	}
 
-	function changeAttributeSort($att_ascii_id,$new_so) {
+	function changeAttributeSort($att_ascii_id,$new_so)
+	{
 		$att_ascii_id_array = array();
 		$db = Dase_DB::get();
 		$sql = "
@@ -155,14 +164,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	function getAdminAttributes() {
+	function getAdminAttributes()
+	{
 		$att = new Dase_DBO_Attribute;
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
 		return $att->find();
 	}
 
-	function getItemCount() {
+	function getItemCount()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(item.id) as count
@@ -175,20 +186,23 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $this->item_count;
 	}
 
-	function getItems() {
+	function getItems()
+	{
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $this->id;
 		return $item->find();
 	}
 
-	function getItemTypes() {
+	function getItemTypes()
+	{
 		$types = new Dase_DBO_ItemType;
 		$types->collection_id = $this->id;
 		$types->orderBy('name');
 		return $types->find();
 	}
 
-	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false) {
+	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false)
+	{
 		$a = new Dase_DBO_Attribute;
 		$a->ascii_id = $att_ascii_id;
 		$a->collection_id = $this->id;
@@ -209,7 +223,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $items;
 	}
 
-	public function buildSearchIndex() {
+	public function buildSearchIndex()
+	{
 		$db = Dase_DB::get();
 		//todo: make sure this->id is an integer
 		$db->query("DELETE FROM search_table WHERE collection_id = $this->id");
@@ -258,7 +273,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return true;
 	}
 
-	function createNewItem($serial_number = null) {
+	function createNewItem($serial_number = null)
+	{
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $this->id;
 		if ($serial_number) {
@@ -281,7 +297,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	function getLastUpdated($id = '') {
+	function getLastUpdated($id = '')
+	{
 		$id = $this->id ? $this->id : $id;
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $id;
@@ -291,7 +308,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $item->updated;
 	}
 
-	function staticGetLastUpdated($id) {
+	function staticGetLastUpdated($id)
+	{
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $id;
 		$item->orderBy('updated DESC');
@@ -300,14 +318,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $item->updated;
 	}
 
-	public static function getId($ascii_id) {
+	public static function getId($ascii_id)
+	{
 		$db = Dase_DB::get();
 		$sth = $db->prepare("SELECT id from collection WHERE ascii_id = ?");
 		$sth->execute(array($ascii_id));
 		return $sth->fetchColumn();
 	}
 
-	public function getData($select = 'all') {
+	public function getData($select = 'all')
+	{
 		$collection_data = array();
 		if (('attributes' == $select) || ('all' == $select)) {
 			$collection_data['attributes'] = $this->getAttributesData();
@@ -334,7 +354,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		if (('managers' == $select) || ('all' == $select)) {
 			foreach ($this->getManagers() as $manager) {
-			$collection_data['managers'][] = $manager;
+				$collection_data['managers'][] = $manager;
 			}
 		}
 		return Dase_Json::get($collection_data);

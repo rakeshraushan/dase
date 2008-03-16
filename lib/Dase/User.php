@@ -7,7 +7,8 @@ class Dase_User
 
 	public $db_user = null;
 
-	public function __construct() {
+	public function __construct()
+	{
 		//check for current user (look to the cookie)
 		$eid = Dase_User::getCurrent();
 		if ($eid) {
@@ -24,7 +25,8 @@ class Dase_User
 	}
 
 	//factory method
-	public static function get($eid) {
+	public static function get($eid)
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT * FROM dase_user
@@ -36,7 +38,8 @@ class Dase_User
 		}
 	}
 
-	public static function getCurrent() {
+	public static function getCurrent()
+	{
 		//attempt to validate cookie
 		//since token changes every day, it'll be
 		//invalidated overnight
@@ -48,11 +51,13 @@ class Dase_User
 		}
 	}
 
-	public static function logoff() {
+	public static function logoff()
+	{
 		Dase_Cookie::clear();
 	}
 
-	public function __get($prop) {
+	public function __get($prop)
+	{
 		//this method gets invoked when $user->eid is referenced
 		if (defined('DEBUG')) {
 			Dase::log('standard','__get from Dase_User prop: ' . $prop);
@@ -66,7 +71,8 @@ class Dase_User
 		}
 	}
 
-	static function check_credentials($username,$password) {
+	static function check_credentials($username,$password)
+	{
 		$auth_users = array();
 		if (md5($username . Dase::getConf('token')) == $password) {
 			$user = new Dase_DBO_DaseUser();
@@ -80,7 +86,8 @@ class Dase_User
 		return false;
 	}
 
-	function checkAuth($collection_ascii_id = null,$auth_level) {
+	function checkAuth($collection_ascii_id = null,$auth_level)
+	{
 		if (!$collection_ascii_id || !isset($this->db_user)) {
 			return false;
 		}

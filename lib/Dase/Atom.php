@@ -22,7 +22,8 @@ class Dase_Atom
 	);
 
 	//convenience method for atom elements
-	function addElement($tagname,$text='',$ns='') {
+	function addElement($tagname,$text='',$ns='') 
+	{
 		if (!$ns) {
 			$ns = Dase_Atom::$ns['atom'];
 		}
@@ -34,7 +35,8 @@ class Dase_Atom
 	}
 
 	//convenience method for atom elements
-	function addChildElement($parent,$tagname,$text='',$ns='') {
+	function addChildElement($parent,$tagname,$text='',$ns='') 
+	{
 		if (!$ns) {
 			$ns = Dase_Atom::$ns['atom'];
 		}
@@ -45,7 +47,8 @@ class Dase_Atom
 		return $elem;
 	}
 
-	function addAuthor($name_text='',$uri_text='',$email_text='') {
+	function addAuthor($name_text='',$uri_text='',$email_text='') 
+	{
 		$author = $this->addElement('author');
 		if (!$name_text) {
 			$name_text = 'DASe (Digital Archive Services)';
@@ -61,7 +64,8 @@ class Dase_Atom
 		}
 	}
 
-	function addCategory($term,$scheme='',$label='') {
+	function addCategory($term,$scheme='',$label='') 
+	{
 		$cat = $this->addElement('category');
 		$cat->setAttribute('term',$term);
 		if ($scheme) {
@@ -72,7 +76,8 @@ class Dase_Atom
 		}
 	}
 
-	function addContributor($name_text,$uri_text = '',$email_text = '') {
+	function addContributor($name_text,$uri_text = '',$email_text = '') 
+	{
 		$contributor = $this->addElement('contributor');
 		$this->addChildElement($contributor,'name',$name_text);
 		if ($uri_text) {
@@ -83,7 +88,8 @@ class Dase_Atom
 		}
 	}
 
-	function setId($text) {
+	function setId($text) 
+	{
 		if ($this->id_is_set) {
 			throw new Dase_Atom_Exception('id is already set');
 		} else {
@@ -92,7 +98,8 @@ class Dase_Atom
 		$id_element = $this->addElement('id',$text);
 	}
 
-	function addLink($href,$rel='',$type='',$length='') {
+	function addLink($href,$rel='',$type='',$length='') 
+	{
 		$link = $this->addElement('link');
 		$link->setAttribute('href',$href);
 		if ($rel) {
@@ -107,7 +114,8 @@ class Dase_Atom
 		return $link;
 	}
 
-	function setRights($text) {
+	function setRights($text) 
+	{
 		if ($this->rights_is_set) {
 			throw new Dase_Atom_Exception('rights is already set');
 		} else {
@@ -116,7 +124,8 @@ class Dase_Atom
 		$rights = $addElement('rights',$text);
 	}
 
-	function setTitle($text) {
+	function setTitle($text) 
+	{
 		if ($this->title_is_set) {
 			throw new Dase_Atom_Exception('title is already set');
 		} else {
@@ -125,7 +134,8 @@ class Dase_Atom
 		$title = $this->addElement('title',$text);
 	}
 
-	function setUpdated($text) {
+	function setUpdated($text) 
+	{
 		if ($this->updated_is_set) {
 			throw new Dase_Atom_Exception('updated is already set');
 		} else {
@@ -134,7 +144,8 @@ class Dase_Atom
 		$updated = $this->addElement('updated',$text);
 	}
 
-	function asXml() {
+	function asXml() 
+	{
 		//format output
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();

@@ -2,7 +2,8 @@
 
 class WidgetHandler
 {
-	public static function init() {
+	public static function init()
+	{
 
 		//needs to be given a LONG ttl
 

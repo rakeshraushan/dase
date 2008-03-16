@@ -2,7 +2,8 @@
 
 class AtomHandler
 {
-	public static function original() {
+	public static function original()
+	{
 		require_once(DASE_PATH . '/lib/atomlib.php');
 		$parser = new AtomParser();
 		$parser->parse();
@@ -13,7 +14,8 @@ class AtomHandler
 		echo "success!";
 	}
 
-	function get_service() {
+	function get_service()
+	{
 		$params = Dase_Registry::get('params');
 		$c = Dase_Registry::get('collection');
 		$entries_url = APP_ROOT . '/collection/' . $c->ascii_id . '/posts'; 

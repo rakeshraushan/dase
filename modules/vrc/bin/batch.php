@@ -6,7 +6,7 @@ include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
-$coll = new Dase_DB_Collection;
+$coll = new Dase_DBO_Collection;
 $coll->ascii_id = 'vrc';
 if(!$coll->findOne()) {
 	print "no such collection\n";
@@ -100,7 +100,7 @@ function build($sernum,$coll,$media_count) {
 	$url = APP_ROOT . "/modules/vrc/$sernum";
 	print "retrieve $url\n";
 	$sxe = new SimpleXMLElement($url, NULL, TRUE);
-	$item = new Dase_DB_Item;
+	$item = new Dase_DBO_Item;
 	$item->serial_number = $sernum;
 	$item->collection_id = $coll->id;
 	if (!$item->findOne()) {
@@ -119,7 +119,7 @@ function build($sernum,$coll,$media_count) {
 	print "\nWORKING ON $item->serial_number\n";
 
 	//shoould be in class
-	$val = new Dase_DB_Value;
+	$val = new Dase_DBO_Value;
 	$val->item_id = $item->id;
 	foreach ($val->find() as $doomed) {
 		print "deleting $doomed->value_text\n";
@@ -127,7 +127,7 @@ function build($sernum,$coll,$media_count) {
 	}
 
 	//shoould be in class
-	$mf = new Dase_DB_MediaFile;
+	$mf = new Dase_DBO_MediaFile;
 	$mf->item_id = $item->id;
 	foreach ($mf->find() as $doomed2) {
 		print "deleting $doomed2->filename\n";
@@ -135,11 +135,11 @@ function build($sernum,$coll,$media_count) {
 	}
 
 	foreach ($sxe->item[0]->metadata as $m) {
-		$a = new Dase_DB_Attribute;
+		$a = new Dase_DBO_Attribute;
 		$a->collection_id = $coll->id;
 		$a->ascii_id = $m['attribute_ascii_id'];
 		$a->findOne();
-		$v = new Dase_DB_Value;
+		$v = new Dase_DBO_Value;
 		$v->item_id = $item->id;
 		$v->attribute_id = $a->id;
 		$v->value_text = $m;
@@ -173,7 +173,7 @@ function makeThumbnail($filename,$item,$coll) {
 	rename($mogrified_file,$thumbnail);
 	$thumb_file_info = getimagesize($thumbnail);
 
-	$media_file = new Dase_DB_MediaFile;
+	$media_file = new Dase_DBO_MediaFile;
 	$media_file->item_id = $item->id;
 	$media_file->filename = $item->serial_number . '_100.jpg';
 	if ($thumb_file_info) {
@@ -197,7 +197,7 @@ function makeViewitem($filename,$item,$coll) {
 	rename($mogrified_file,$viewitem);
 	$thumb_file_info = getimagesize($viewitem);
 
-	$media_file = new Dase_DB_MediaFile;
+	$media_file = new Dase_DBO_MediaFile;
 	$media_file->item_id = $item->id;
 	$media_file->filename = $item->serial_number . '_400.jpg';
 	if ($thumb_file_info) {
@@ -247,7 +247,7 @@ function makeSizes($filename,$item,$coll) {
 		$file_info = getimagesize($newimage);
 
 		//create the media_file entry
-		$media_file = new Dase_DB_MediaFile;
+		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = "$item->serial_number$size_info[size_tag].jpg";
 		if ($file_info) {

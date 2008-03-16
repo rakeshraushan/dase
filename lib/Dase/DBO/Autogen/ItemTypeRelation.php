@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_ItemTypeRelation extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'item_type_relation',  array('item_type_id','parent_item_type_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

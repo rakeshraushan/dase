@@ -14,7 +14,8 @@ class Dase_Upload
 	protected $metadata = array();
 	public $message = '';
 
-	public function __construct(Dase_File $file,Dase_DBO_Collection $collection,$check_for_dup = true) {
+	public function __construct(Dase_File $file,Dase_DBO_Collection $collection,$check_for_dup = true)
+	{
 		$this->file = $file;
 		$this->collection = $collection;
 		if ($check_for_dup && $this->isDuplicate()) {
@@ -22,16 +23,19 @@ class Dase_Upload
 		}
 	}
 
-	function createItem() {
+	function createItem()
+	{
 		$this->item = Dase_DBO_Item::create($this->collection->ascii_id);
 		return $this->item->serial_number;
 	}
 
-	function getItem() {
+	function getItem()
+	{
 		return $this->item;
 	}
 
-	function retrieveItem() {
+	function retrieveItem()
+	{
 		$this->item = Dase_DBO_Item::get($this->collection->ascii_id,$this->file->getFilename());
 		if ($this->item->id) {
 			return "RETRIEVED " . $this->item->serial_number . "\n";
@@ -40,7 +44,8 @@ class Dase_Upload
 		}	
 	}
 
-	function checkForMultiTiff() {
+	function checkForMultiTiff()
+	{
 		$image = new Imagick($this->file->getFilepath());
 		if (1 < $image->getNumberImages()) {
 			throw new Dase_Upload_Exception("Error: " . $this->file->getFilepath() . " appears to be a multi-layered tiff\n");
@@ -49,7 +54,8 @@ class Dase_Upload
 		}
 	}
 
-	function isDuplicate() {
+	function isDuplicate()
+	{
 		$meta = $this->file->getMetadata();
 		$v = new Dase_DBO_Value;
 		$v->attribute_id = Dase_DBO_Attribute::getAdmin('admin_checksum')->id;
@@ -64,7 +70,8 @@ class Dase_Upload
 		return false;
 	}
 
-	function deleteItemMedia() {
+	function deleteItemMedia()
+	{
 		$msg = '';
 		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->item->id;
@@ -75,7 +82,8 @@ class Dase_Upload
 		return $msg;
 	}
 
-	function moveFileTo($destdir) {
+	function moveFileTo($destdir)
+	{
 		$dest = rtrim($destdir,'/') . '/' . $this->file->getBasename(); 
 		try {
 			$this->file->moveTo($dest);
@@ -85,7 +93,8 @@ class Dase_Upload
 		return "MOVED " . $this->file->getFilepath() . " to $dest\n";
 	}
 
-	function ingest() {
+	function ingest()
+	{
 		$msg = '';
 		$msg .= $this->file->makeThumbnail($this->item,$this->collection);
 		$msg .= $this->file->makeViewitem($this->item,$this->collection);
@@ -98,26 +107,31 @@ class Dase_Upload
 		return $msg;
 	}
 
-	function buildSearchIndex() {
+	function buildSearchIndex()
+	{
 		return $this->item->buildSearchIndex();
 	}
 
-	function deleteItemAdminMetadata() {
+	function deleteItemAdminMetadata()
+	{
 		return $this->item->deleteAdminValues();
 	}
 
-	function setTitle() {
+	function setTitle()
+	{
 		$name = $this->file->getFilename();
 		$this->item->setValue('title',$name);
 	}
 
-	function setMetadata($att_ascii_id,$value) {
+	function setMetadata($att_ascii_id,$value)
+	{
 		//need to check here is att_ascii_id is valid!!!!
 		//now it fails silently
 		$this->item->setValue($att_ascii_id,$value);
 	}
 
-	function getMetadata() {
+	function getMetadata()
+	{
 		$this->metadata = $this->file->getMetadata();
 		//$this->metadata['admin_corrected_image_upload_date'] = 
 		//$this->metadata['admin_project_name'] = 

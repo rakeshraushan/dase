@@ -6,7 +6,8 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 {
 	public $attributes;
 
-	function getAttributes() {
+	function getAttributes()
+	{
 		$attributes = array();
 		$att_it = new Dase_DBO_AttributeItemType;
 		$att_it->item_type_id = $this->id;

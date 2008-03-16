@@ -4,16 +4,19 @@ class Dase_File_Doc extends Dase_File
 {
 	protected $metadata = array();
 
-	function __construct($file) {
+	function __construct($file)
+	{
 		parent::__construct($file);
 	}
 
-	function getMetadata() {
+	function getMetadata()
+	{
 		$this->metadata = parent::getMetadata();
 		return $this->metadata;
 	}
 
-	function makeThumbnail($item,$collection) {
+	function makeThumbnail($item,$collection)
+	{
 		if (!file_exists($collection->path_to_media_files . "/thumbnails/doc.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',$collection->path_to_media_files . '/thumbnails/doc.jpg');
 		}
@@ -30,7 +33,8 @@ class Dase_File_Doc extends Dase_File
 		return "created $media_file->filename\n";
 	}
 
-	function makeViewitem($item,$collection) {
+	function makeViewitem($item,$collection)
+	{
 		if (!file_exists($collection->path_to_media_files . "/400/doc.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',$collection->path_to_media_files . '/400/doc.jpg');
 		}
@@ -47,7 +51,8 @@ class Dase_File_Doc extends Dase_File
 		return "created $media_file->filename\n";
 	}
 
-	function makeSizes($item,$collection) {
+	function makeSizes($item,$collection)
+	{
 		$dest = $collection->path_to_media_files . "/doc/" . $item->serial_number . '.doc';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;

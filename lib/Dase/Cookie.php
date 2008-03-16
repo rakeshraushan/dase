@@ -10,7 +10,8 @@ class Dase_Cookie {
 	private $token;
 
 
-	private static function getPrefix() {
+	private static function getPrefix() 
+	{
 		//NOTE that the cookie name will be unique per dase instance 
 		//(note: HAD been doing it by date, bu that's no good when browser & server
 		//dates disagree)
@@ -19,14 +20,16 @@ class Dase_Cookie {
 		return str_replace('/','_',$prefix) . '_';
 	}
 
-	public static function set($eid) {
+	public static function set($eid) 
+	{
 		$pre = Dase_Cookie::getPrefix();
 		$key = md5(Dase::getConf('token').$eid);
 		setcookie($pre . self::$user_cookiename,$eid,0,'/');
 		setcookie($pre . self::$auth_cookiename,$key,0,'/');
 	}
 
-	public static function validate() {
+	public static function validate() 
+	{
 		$pre = Dase_Cookie::getPrefix();
 		$token = Dase::getConf('token');
 		$key = '';
@@ -43,7 +46,8 @@ class Dase_Cookie {
 		return false;
 	}
 
-	public static function clear() {
+	public static function clear() 
+	{
 		$pre = Dase_Cookie::getPrefix();
 		setcookie($pre . self::$user_cookiename,"",-86400,'/');
 		setcookie($pre . self::$auth_cookiename,"",-86400,'/');

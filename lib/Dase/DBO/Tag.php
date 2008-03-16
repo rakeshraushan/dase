@@ -7,7 +7,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	private $type;
 	private $user;
 
-	public static function getByUser($user) {
+	public static function getByUser($user)
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,count(ti.id)
@@ -26,7 +27,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $sth;
 	}
 
-	function getItemCount() {
+	function getItemCount()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*)
@@ -39,7 +41,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $this->item_count;
 	}
 
-	function getItemIds() {
+	function getItemIds()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT item_id
@@ -52,7 +55,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $st->fetchAll(PDO::FETCH_COLUMN);
 	}
 
-	function getUpdated() {
+	function getUpdated()
+	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
 		$tag_item->orderBy('updated DESC');
@@ -60,25 +64,29 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tag_item->updated;
 	}
 
-	function getTagItems() {
+	function getTagItems()
+	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
 		return $tag_item->find();
 	}
 
-	function getType() {
+	function getType()
+	{
 		$type = new Dase_DBO_TagType;
 		$this->type = $type->load($this->tag_type_id);
 		return $this->type;
 	}
 
-	function getUser() {
+	function getUser()
+	{
 		$user = new Dase_DBO_DaseUser;
 		$this->user = $user->load($this->dase_user_id);
 		return $this->user;
 	}
 
-	function asAtom() {
+	function asAtom()
+	{
 		$this->type || $this->getType(); 
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
@@ -90,7 +98,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->setUpdated($this->getUpdated());
 		$feed->addAuthor($this->user->eid);
 		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/','self');
-		
+
 		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
 		if ($this->is_public) {
 			$pub = "public";

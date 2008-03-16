@@ -8,17 +8,20 @@ class Dase_Registry
 	private static $instance;
 	private $members = array();
 
-	private function __construct() {}
+	private function __construct()
+	{}
 
 	//singleton
-	private static function instance() {
+	private static function instance()
+	{
 		if (empty( self::$instance )) {
 			self::$instance = new Dase_Registry();
 		}
 		return self::$instance;
 	}
 
-	public static function set($key,$value) {
+	public static function set($key,$value)
+	{
 		$reg = Dase_Registry::instance();
 		if (!isset($reg->members[$key])) {
 			$reg->members[$key] = $value;
@@ -27,7 +30,8 @@ class Dase_Registry
 		}
 	}
 
-	public static function get($key) {
+	public static function get($key)
+	{
 		$reg = Dase_Registry::instance();
 		if (isset($reg->members[$key])) {
 			return $reg->members[$key];

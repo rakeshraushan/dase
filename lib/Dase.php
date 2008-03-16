@@ -6,7 +6,8 @@ class Dase
 	//this is the "application" class which holds the 
 	//static methods for the flow of the app
 
-	public static function getConf($key) {
+	public static function getConf($key)
+	{
 		$conf = array();
 		include(DASE_CONFIG);
 		if (isset($conf[$key])) {
@@ -16,7 +17,8 @@ class Dase
 		}
 	}
 
-	public static function log($logfile,$msg) {
+	public static function log($logfile,$msg)
+	{
 		$date = date(DATE_W3C);
 		$msg = "$date : $msg\n";
 		if(file_exists(LOG_DIR . "{$logfile}.log")) {
@@ -32,7 +34,8 @@ class Dase
 		}
 	}
 
-	public static function filterArray($ar) {
+	public static function filterArray($ar)
+	{
 		if (Dase_Util::getVersion() >= 520) {
 			return filter_var_array($ar, FILTER_SANITIZE_STRING);
 		} else {
@@ -43,7 +46,8 @@ class Dase
 		}
 	}
 
-	public static function filterGetArray() {
+	public static function filterGetArray()
+	{
 		if (Dase_Util::getVersion() >= 520) {
 			return filter_input_array(INPUT_GET);
 		} else {
@@ -60,7 +64,8 @@ class Dase
 		}
 	}
 
-	public static function filterGet($key) {
+	public static function filterGet($key)
+	{
 		if (Dase_Util::getVersion() >= 520) {
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
 		} else {
@@ -70,7 +75,8 @@ class Dase
 		}
 	}
 
-	public static function filterPost($key) {
+	public static function filterPost($key)
+	{
 		if (Dase_Util::getVersion() >= 520) {
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
 		} else {
@@ -80,7 +86,8 @@ class Dase
 		}
 	}
 
-	public static function run() {
+	public static function run()
+	{
 
 		$request_url = Dase_Url::getRequestUrl(); 
 		Dase_Registry::set('request_url',$request_url);
@@ -229,7 +236,8 @@ class Dase
 		exit;
 	}
 
-	public static function display($content,$set_cache=true) {
+	public static function display($content,$set_cache=true)
+	{
 		if ($set_cache) {
 			$cache = new Dase_Cache();
 			$cache->set($content);
@@ -240,7 +248,8 @@ class Dase
 		exit;
 	}
 
-	public static function redirect($path='',$msg='',$code="303") {
+	public static function redirect($path='',$msg='',$code="303")
+	{
 		//SHOULD use 303 (redirect after put,post,delte)
 		//OR 307 -- no go -- look here
 		$msg_qstring = '';

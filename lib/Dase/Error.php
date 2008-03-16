@@ -7,7 +7,8 @@ class Dase_Error
 	//w/ proper http header
 	//todo: make it work with command line (not just web)
 
-	public static function report($code) {
+	public static function report($code)
+	{
 		$msg = "";
 		if (400 == $code) {
 			header("HTTP/1.1 400 Bad Request");

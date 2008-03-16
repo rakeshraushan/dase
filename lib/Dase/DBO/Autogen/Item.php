@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_Item extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'item',  array('collection_id','created','item_type_id','serial_number','status_id','text_content','updated','xhtml_content'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

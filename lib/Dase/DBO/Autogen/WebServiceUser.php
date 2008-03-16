@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_WebServiceUser extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'web_service_user',  array('auth_level','name','token'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

@@ -9,7 +9,8 @@ class Dase_Cache_File extends Dase_Cache
 	private $ttl = 10;
 	private $cache_dir = CACHE_DIR;
 
-	function __construct($file='') {
+	function __construct($file='')
+	{
 		if ($file) {
 			if (strpos($file,'?')) {
 				//this prevents module writers from trouncing on a
@@ -24,20 +25,24 @@ class Dase_Cache_File extends Dase_Cache
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
-	function setTimeToLive($exp) {
+	function setTimeToLive($exp)
+	{
 		$this->ttl = $exp;
 	}
 
-	function expire() {
+	function expire()
+	{
 		//Dase::log('standard','expired ' . $this->getLoc());
 		unlink($this->getLoc());
 	}
 
-	function getLoc() {
+	function getLoc()
+	{
 		return $this->cache_dir . $this->filename;
 	}
 
-	function get() {
+	function get()
+	{
 		//clean up this logic
 		$filename = $this->getLoc();
 		if (!file_exists($filename)) {
@@ -55,7 +60,8 @@ class Dase_Cache_File extends Dase_Cache
 		return @file_get_contents($filename);
 	}
 
-	function set($data) { 
+	function set($data)
+	{ 
 		//avoids race condition
 		if ($data) {
 			file_put_contents($this->tempfilename,$data);

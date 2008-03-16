@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_Value extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'value',  array('attribute_id','item_id','value_text','value_text_md5'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

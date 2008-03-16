@@ -3,7 +3,8 @@
 class UserHandler
 {
 	//rewrite/replace for alternate authentication
-	public static function initiateLogin() {
+	public static function initiateLogin()
+	{
 		$msg = Dase::filterGet('msg');
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'login_form.xsl';
@@ -14,7 +15,8 @@ class UserHandler
 	}
 
 	//rewrite/replace for alternate authentication
-	public static function processLogin() {
+	public static function processLogin()
+	{
 		$user = Dase::filterPost('username');
 		$pass = Dase::filterPost('password');
 		if ('tseliot' == $pass) {
@@ -27,7 +29,8 @@ class UserHandler
 		}
 	}
 
-	public static function finishLogin() {
+	public static function finishLogin()
+	{
 		$params = Dase_Registry::get('params');
 		if (isset($params['eid'])) {
 			if ($params['eid'] == Dase_User::getCurrent()) {
@@ -38,12 +41,14 @@ class UserHandler
 		}
 	}
 
-	public static function logoff() {
+	public static function logoff()
+	{
 		Dase_User::logoff();
 		Dase::redirect('login');
 	}
 
-	public static function dataAsJson() {
+	public static function dataAsJson()
+	{
 		$params = Dase_Registry::get('params');
 		//NOTE WELL!!!:
 		//note that we ONLY use the request_url so the IE cache-busting
@@ -66,12 +71,14 @@ class UserHandler
 		Dase::display($page,false);
 	}
 
-	public static function cartAsJson() {
+	public static function cartAsJson()
+	{
 		$params = Dase_Registry::get('params');
 		Dase::display(Dase_User::get($params['eid'])->getCart());
 	}
 
-	public static function addCartItem() {
+	public static function addCartItem()
+	{
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
@@ -89,7 +96,8 @@ class UserHandler
 		}
 	}
 
-	public static function deleteTagItem() {
+	public static function deleteTagItem()
+	{
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$u->expireDataCache();
@@ -106,11 +114,13 @@ class UserHandler
 		}
 	}
 
-	public static function adminCollectionsAsJson() {
+	public static function adminCollectionsAsJson()
+	{
 		Dase::display(Dase_User::get($params['eid'])->getCollections());
 	}
 
-	public static function cart() {
+	public static function cart()
+	{
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
 		$tag = new Dase_DBO_Tag;
@@ -127,7 +137,8 @@ class UserHandler
 		Dase::display($t->transform());
 	}
 
-	public static function tag() {
+	public static function tag()
+	{
 		//this probably belongs in the tag handler!
 		$params = Dase_Registry::get('params');
 		$u = Dase_User::get($params['eid']);
@@ -157,7 +168,8 @@ class UserHandler
 		Dase::display($t->transform());
 	}
 
-	public static function settings() {
+	public static function settings()
+	{
 		print "user settings access not implemented";
 	}
 }
