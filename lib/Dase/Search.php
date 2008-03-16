@@ -1,14 +1,63 @@
 <? 
-class Dase_DBO_Search {
+class Dase_Search {
 
 	public $search;		
+	public $bound_params = array();
+	private $url_params;
+	private $request_uri;
+	private $query_string;
 
-	public static function get() {
-		return new Dase_DBO_Search();
+	public static function get($request_uri,$query_string) {
+		$search_obj = new Dase_Search();
+		$search_obj->parse($request_uri,$query_string);
+		return $search_obj;
 	}
 
-	function __construct() {
-		$url_params = Dase_Url::parseQueryString();;
+	public static function parseQueryString($query_string) {
+		//split params into key value pairs AND allow multiple 
+		//params w/ same key as an array (like standard CGI)
+		$url_params = array();
+		//NOTE: urldecode is NOT UTF-8 compatible
+		$qs = html_entity_decode(urldecode($query_string));
+		$pairs = explode('&',$qs);
+		if (count($pairs)) {
+			foreach ($pairs as $pair) {
+				if (false !== strpos($pair,'=')) {	
+					list($key,$val) = explode('=',$pair);
+					if (!isset($url_params[$key])) {
+						//not an array
+						$url_params[$key] = $val;
+					} elseif(is_array($url_params[$key])) {
+						//IS an array
+						$url_params[$key][] = $val;
+					} else {
+						//key is set, but it is NOT an array, so make it one!!
+						$temp = $url_params[$key];
+						$url_params[$key] = array();
+						$url_params[$key][] = $temp;
+						$url_params[$key][] = $val;
+					}
+				}
+			}
+		}
+		return $url_params;
+	}
+
+	public static function getCollectionAsciiId($request_uri) {
+		//NOTE: this ASSUMES the uri pattern for collection
+		if (preg_match('/collection\/([^\/]*)\/search/',$request_uri,$matches)) {
+			$collection_ascii_id = $matches[1];
+			return $collection_ascii_id;
+		} else {
+			return false;
+		}
+	}
+
+	function parse($request_uri,$query_string) {
+		$url_params = Dase_Search::parseQueryString($query_string);
+		$this->url_params = $url_params;
+		$this->request_uri = $request_uri;
+		$this->query_string = $query_string;
 		$search['type'] = null;
 		$search['colls'] = array();
 		$search['omit_colls'] = array();
@@ -27,12 +76,12 @@ class Dase_DBO_Search {
 		// include phrases in quotes (' or ")
 		// use '-' to omit a word or phrase
 		// use 'or' for Boolean OR between words or phrases
-		// for attribute searches, name is '<coll_ascii_id>%<attribute_ascii_id>'
-		// use percent (as in example) for auto substring/phrase search
+		// for attribute searches, name is '<coll_ascii_id>~<attribute_ascii_id>'
+		// use tilde (as in example) for auto substring/phrase search
 		// use single colon to match md5 hash of exact value_text string
 		// use single period to match exact value_text string (case-insensitive)
 		// add more attribute searches (refinements) by adding them to
-		// the query string. Note that the use of '.' or ':' or '%' in
+		// the query string. Note that the use of '.' or ':' or '~' in
 		// a query parameter name that is NOT part of the search will
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
@@ -44,7 +93,7 @@ class Dase_DBO_Search {
 		 * test:title=5045aca392ed260667b8489bfe7ccc03
 		 *
 		 * match substring:
-		 * test%title=farewell+to+a
+		 * test~title=farewell+to+a
 		 *
 		 * match item_type:
 		 * type=test:picture
@@ -55,7 +104,7 @@ class Dase_DBO_Search {
 				$url_params['c'] = array($url_params['c']);
 			}
 			foreach ($url_params['c'] as $c) {
-				$search['colls'][] = "'".$c."'";
+				$search['colls'][] = $c;
 			}
 			$search['colls'] = array_unique($search['colls']);
 		}
@@ -65,18 +114,15 @@ class Dase_DBO_Search {
 				$url_params['nc'] = array($url_params['nc']);
 			}
 			foreach ($url_params['nc'] as $nc) {
-				$search['omit_colls'][] = "'".$nc."'";
+				$search['omit_colls'][] = $nc;
 			}
 			$search['omit_colls'] = array_unique($search['omit_colls']);
 		}
-		//collection_ascii_id as param TRUMPS coll in get array
-		//can come from request url (so it sits in registry)
-		if (Dase_Registry::get('collection')) {
-			$collection_ascii_id = Dase_Registry::get('collection')->ascii_id;
-			$search['colls'] = array("'$collection_ascii_id'");
-			$echo['collection_ascii_id'] = $collection_ascii_id;
-		}
-		//OR query string
+
+		//collection_ascii_id in uri_string trumps coll in get array
+		$collection_ascii_id = Dase_Search::getCollectionAsciiId($request_uri);
+
+		//'collection_ascii_id' in query string trumps both
 		if (isset($url_params['collection_ascii_id'])) {
 			if (is_array($url_params['collection_ascii_id'])) {
 				//take the last one
@@ -84,11 +130,12 @@ class Dase_DBO_Search {
 			} else {
 				$collection_ascii_id = $url_params['collection_ascii_id'];
 			}
-			if ($collection_ascii_id) {
-				$search['colls'] = array("'$collection_ascii_id'");
-				$echo['collection_ascii_id'] = $collection_ascii_id;
-			}
 		}
+		if ($collection_ascii_id) {
+			$search['colls'] = array($collection_ascii_id);
+			$echo['collection_ascii_id'] = $collection_ascii_id;
+		}
+
 		//populate general find and omit array
 		if (isset($url_params['q'])) {
 			$query = $url_params['q'];
@@ -106,18 +153,18 @@ class Dase_DBO_Search {
 				}
 			}
 		}
-		//for substring att searches  => att%val
+		//for substring att searches  => att~val
 		foreach ($url_params as $k => $val) {
 			if (!is_array($val)) {
 				$val = array($val);
 			}
-			if (('q' != $k) && ('type' != $k) && strpos($k,'%')){
+			if (('q' != $k) && ('type' != $k) && strpos($k,'~')){
 				//$echo['sub'][$k] = join(' ',$val);
 				$echo['sub'][$k] = $val;
 				$coll = null;
 				$att = null;
 				$tokens = array();
-				list($coll,$att) = explode('%',$k);
+				list($coll,$att) = explode('~',$k);
 				if ($coll && $att) {
 					$search['att'][$coll][$att]['find'] = array();
 					$search['att'][$coll][$att]['omit'] = array();
@@ -177,7 +224,7 @@ class Dase_DBO_Search {
 			foreach($val as $v) {
 				$coll = null;
 				$att = null;
-				if (strpos($k,'.') && !strpos($k,'%') && !strpos($k,':')){
+				if (strpos($k,'.') && !strpos($k,'~') && !strpos($k,':')){
 					list($coll,$att) = explode('.',$k);
 					$echo['exact'][$k][] = $v;
 					$search['att'][$coll][$att]['value_text'] = array();
@@ -195,7 +242,7 @@ class Dase_DBO_Search {
 			$coll = null;
 			$att = null;
 			foreach($val as $v) {
-				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'%')){
+				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'~')){
 					list($coll,$att) = explode(':',$k);
 					$echo['exact'][$k][] = Dase_DBO_Value::getValueTextByHash($coll,$v);
 					$search['att'][$coll][$att]['value_text_md5'] = array();
@@ -325,7 +372,7 @@ class Dase_DBO_Search {
 				}
 			}
 			foreach($val as $v) {
-				foreach (array('.',':','%') as $sep) {
+				foreach (array('.',':','~') as $sep) {
 					if (strpos($key,$sep)) {
 						list($coll,$att) = explode($sep,$key);
 						$c = $sx->addChild('collection');
@@ -407,37 +454,39 @@ class Dase_DBO_Search {
 		return $search_string;
 	}
 
-	private function _createSql($search) {
-
-		//this needs to be reworked w/ bound parameters!!
+	public function createSql() {
+		$search = $this->search;
+		$search_table_params = array();
+		$value_table_params = array();
 
 		//compile sql for queries of search_table (i.e. search index)
 		$search_table_sets = array();
 		if (count($search['find'])) {
-			//the key needs to be specified to make sure it overwrites 
+			//the key needs to be specified 
+			//(it is just the number index) to make sure it overwrites 
 			//(rather than appends) to the array
 			foreach ($search['find'] as $k => $term) {
-				$search['find'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
+				$search['find'][$k] = "lower(value_text) LIKE ?";
+				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['find']);
 		}
 		if (count($search['omit'])) {
 			foreach ($search['omit'] as $k => $term) {
-				$search['omit'][$k] = "lower(value_text) NOT LIKE '%". strtolower($term) . "%'";
+				$search['omit'][$k] = "lower(value_text) NOT LIKE ?";
+				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['omit']);
 		}
 		if (count($search['or'])) {
 			foreach ($search['or'] as $k => $term) {
-				$search['or'][$k] = "lower(value_text) LIKE '%". strtolower($term) . "%'";
+				$search['or'][$k] = "lower(value_text) LIKE ?";
+				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = "(" . join(' OR ',$search['or']) . ")";
 		}
 		if (count($search_table_sets)) {
-			$search_table_sql = "
-				SELECT item_id 
-				FROM search_table 
-				WHERE " . join(' AND ', $search_table_sets);
+			$search_table_sql = "SELECT item_id FROM search_table WHERE " . join(' AND ', $search_table_sets);
 		}
 
 		//compile sql for queries of value table 
@@ -449,64 +498,63 @@ class Dase_DBO_Search {
 					//the key needs to be specified to make sure it overwrites 
 					//(rather than appends) to the array
 					foreach ($ar['find'] as $k => $term) {
-						$ar['find'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
+						$ar['find'][$k] = "lower(v.value_text) LIKE ?";
+						$value_table_params[] = "%".strtolower($term)."%";
 					}
 					$ar_table_sets[] = join(' AND ',$ar['find']);
 				}
 				if ($this->_testArray($ar,'omit')) {
 					foreach ($ar['omit'] as $k => $term) {
-						$ar['omit'][$k] = "lower(v.value_text) NOT LIKE '%". strtolower($term) . "%'";
+						$ar['omit'][$k] = "lower(v.value_text) NOT LIKE ?";
+						$value_table_params[] = "%".strtolower($term)."%";
 					}
 					$ar_table_sets[] = join(' AND ',$ar['omit']);
 				}
 				if ($this->_testArray($ar,'or')) {
 					foreach ($ar['or'] as $k => $term) {
-						$ar['or'][$k] = "lower(v.value_text) LIKE '%". strtolower($term) . "%'";
+						$ar['or'][$k] = "lower(v.value_text) LIKE ?";
+						$value_table_params[] = "%".strtolower($term)."%";
 					}
 					$ar_table_sets[] = "(" . join(' OR ',$ar['or']) . ")";
 				}
 				if ($this->_testArray($ar,'value_text')) {
 					foreach ($ar['value_text'] as $k => $term) {
 						//note that exact searches are CASE INSENSITIVE
-						$ar['value_text'][$k] = "lower(v.value_text) = '" . strtolower($term) . "'";
+						$ar['value_text'][$k] = "lower(v.value_text) = ?";
+						$value_table_params[] = strtolower($term);
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text']);
 				}
 				if ($this->_testArray($ar,'value_text_md5')) {
 					foreach ($ar['value_text_md5'] as $k => $term) {
-						$ar['value_text_md5'][$k] = "v.value_text_md5 = '$term'";
+						$ar['value_text_md5'][$k] = "v.value_text_md5 = ?";
+						$value_table_params[] = $term;
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text_md5']);
 				}
 				if (count($ar_table_sets)) {
 					if (false === strpos($att,'admin_')) {
-						$value_table_search_sets[] = "
-							id IN (
-								SELECT v.item_id FROM value v,collection c,attribute a
-								WHERE c.ascii_id = '$coll'
-								AND a.ascii_id = '$att'
-								AND a.collection_id = c.id
-								AND v.attribute_id = a.id
-								AND " . join(' AND ', $ar_table_sets)
-								. ")";
+						$value_table_search_sets[] = 
+							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					} else {
-						$value_table_search_sets[] = "
-							id IN (
-								SELECT v.item_id FROM value v,collection c,attribute a
-								WHERE c.ascii_id = '$coll'
-								AND a.ascii_id = '$att'
-								AND a.collection_id = 0
-								AND v.attribute_id = a.id
-								AND " . join(' AND ', $ar_table_sets)
-								. ")";
+						//it's an admin attribute, so collection_id is 0
+						$value_table_search_sets[] = 
+							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					}
 				}
+				$value_table_params[] = $coll;
+				$value_table_params[] = $att;
 			}
 			unset($ar_table_sets);
 		}
 		if (count($search['colls']) && isset($search_table_sql)) {
-			$ascii_ids = join(",",$search['colls']);
-			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ascii_ids))";
+			foreach ($search['colls'] as $ccc) {
+				$placeholders[] = '?'; 
+			}
+			$ph = join(",",$placeholders);
+			unset($placeholders);
+			$search_table_params = array_merge($search_table_params,$search['colls']);
+			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
 		}
 		//if not explicitly requested, non-public collecitons will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
@@ -514,46 +562,44 @@ class Dase_DBO_Search {
 			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
 		}
 		if (count($search['omit_colls']) && isset($search_table_sql)) {
-			$ascii_ids = join(",",$search['omit_colls']);
-			$search_table_sql .= " AND collection_id NOT IN (SELECT id FROM collection WHERE ascii_id IN ($ascii_ids))";
+			foreach ($search['omit_colls'] as $ccc) {
+				$placeholders[] = '?'; 
+			}
+			$ph = join(",",$placeholders);
+			unset($placeholders);
+			$search_table_params = array_merge($search_table_params,$search['omit_colls']);
+			$search_table_sql .= " AND collection_id NOT IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
-			$sql = "
-				SELECT id, collection_id FROM item
-				WHERE id IN ($search_table_sql)
-				AND " . join(' AND ',$value_table_search_sets);
+			$sql = 
+				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql) AND " . join(' AND ',$value_table_search_sets);
+			$this->bound_params = array_merge($this->bound_params,$search_table_params);
+			$this->bound_params = array_merge($this->bound_params,$value_table_params);
 		} elseif (isset($search_table_sql)) {
-			$sql = "
-				SELECT id, collection_id FROM item
-				WHERE id IN ($search_table_sql)";
+			$sql = 
+				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql)";
+			$this->bound_params = array_merge($this->bound_params,$search_table_params);
 		} elseif (count($value_table_search_sets)) {
-			$sql = "
-				SELECT id, collection_id FROM item
-				WHERE " . join(' AND ',$value_table_search_sets);
+			$sql = 
+				"SELECT id, collection_id FROM item WHERE " . join(' AND ',$value_table_search_sets);
+			$this->bound_params = array_merge($this->bound_params,$value_table_params);
 			//if searching ONLY for item type (NOT simply as filter)
 			//as indicated by lack of other queries (i.e., we got to this point in decision tree)
 		} elseif (isset($search['type']['coll']) && isset($search['type']['name'])) {
-			$sql =" 
-				SELECT id, collection_id FROM item
-				WHERE item_type_id IN
-				(SELECT id FROM item_type
-				WHERE ascii_id = '{$search['type']['name']}'
-				AND collection_id IN (SELECT id
-				FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
-				";
+			$sql =
+				"SELECT id, collection_id FROM item WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
+			$this->bound_params[] = $search['type']['name'];
+			$this->bound_params[] = $search['type']['coll'];
 		} else {
 			$sql = 'no query';
 		}
 		//if search type is used as filter:
 		if (isset($search['type']['coll']) && isset($search['type']['name']) && 
 			(isset($search_table_sql) || count($value_table_search_sets))) {
-				$sql .=" 
-					AND WHERE item_type_id IN
-					(SELECT id FROM item_type
-					WHERE ascii_id = '{$search['type']['name']}'
-					AND collection_id IN (SELECT id
-					FROM collection WHERE ascii_id = '{$search['type']['coll']}'))
-					";
+				$sql .=
+					"AND WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
+				$this->bound_params[] = $search['type']['name'];
+				$this->bound_params[] = $search['type']['coll'];
 			}
 		return $sql;
 	}
@@ -561,13 +607,18 @@ class Dase_DBO_Search {
 	private function _executeSearch($hash) {
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$db = Dase_DB::get();
-		$sql = $this->_createSql($this->search);	
+		$sql = $this->createSql();	
+		if (defined('DEBUG')) {
+			Dase::log('sql',$sql);
+			Dase::log('sql',join(', ',$this->bound_params));
+		}
 		$st = $db->prepare($sql);	
-		$st->execute();
+		$st->execute($this->bound_params);
 		$result = array();
 		$result['tallies'] = array();
 		$result['item_ids'] = array();
 		$items = array();
+		//create hit tally per collection:
 		while ($row = $st->fetch()) {
 			$items[$row['collection_id']][] = $row['id'];
 		}
@@ -583,16 +634,16 @@ class Dase_DBO_Search {
 		$result['count'] = count($result['item_ids']);
 		$result['search'] = $this->search;
 		$result['sql'] = $sql;
-		$result['link'] = $this->getLink();
+		$result['link'] = $this->getLink($this->query_string);
 		$result['echo'] = $this->search['echo'];
-		$result['request_url'] = Dase_Url::getRequestUrl();
-		$result['query_string'] = Dase_Url::getQueryString();
+		$result['request_url'] = $this->request_uri;
+		$result['query_string'] = $this->query_string;
 		return $result;
 	}
 
-	public function getLink() {
+	public function getLink($query_string) {
 		$link = '';
-		$url_params = Dase_Url::parseQueryString();;
+		$url_params = Dase_Search::parseQueryString($query_string);;
 		foreach ($url_params as $k => $v) {
 			if (is_array($v)) {
 				foreach($v as $val) {
@@ -619,6 +670,9 @@ class Dase_DBO_Search {
 		$cache->refine = 'newdase'; 
 		if (!$cache->findOne()) {
 			$result = $this->_executeSearch($hash);
+			//for backward compatibilty this is called
+			//item_id_string, but it is actually the
+			//complete result data structure
 			$cache->item_id_string = serialize($result); 
 			$cache->search_md5 = $hash; 
 			$cache->refine = 'newdase'; 
@@ -632,16 +686,5 @@ class Dase_DBO_Search {
 		return $result;
 	}
 
-	public static function getResultByHash($hash) {
-		$result = array();
-		$cache = new Dase_DBO_SearchCache();
-		$cache->search_md5 = $hash;
-		if ($cache->findOne()) {
-			$result = unserialize($cache->item_id_string);
-			$result['timestamp'] = $cache->timestamp;
-			$result['hash'] = $cache->search_md5;
-		}
-		return $result;
-	}
 }
 

@@ -16,7 +16,6 @@
 	<div class="standard">
 	  <a id="maincontent" name="maincontent"></a>
 	  <div id="msg" class="alert">An error has occurred.</div>
-	  <p><a href="{$app_root}">&lt;&lt;-- return</a></p>
 	</div>
   </xsl:template>
 

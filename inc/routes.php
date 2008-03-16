@@ -68,6 +68,17 @@ $routes['atom'] = array (
 	),
 );
 
+$routes['test'] = array (
+	'first' => array (
+		'uri_template' => 'test/first',
+		'auth' => 'superuser',
+	),
+	'search' => array (
+		'uri_template' => 'test/search',
+		'auth' => 'superuser',
+	),
+);
+
 $routes['collection'] = array (
 	'listAll' =>    array (
 		'uri_template' => array('collection/list','collections','home',''),

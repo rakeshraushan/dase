@@ -492,7 +492,7 @@ Dase.setCollectionAtts = function(coll) {
 			for (var i=0;i<json.length;i++) {
 				var att = json[i];
 				var opt = document.createElement('option');
-				opt.setAttribute('value',att.collection+'%'+att.ascii_id);
+				opt.setAttribute('value',att.collection+'~'+att.ascii_id);
 				var label = Dase.truncate(att.attribute_name,maxAttName);
 				opt.appendChild(document.createTextNode(label));
 				sel.appendChild(opt);

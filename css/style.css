@@ -703,3 +703,15 @@ select.plainSelect {
 	margin: 0 5px 0 0;
 }
 
+h3.test {
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+h3.success {
+	color: green;
+}
+h3.failed {
+	color: red;
+}
+
