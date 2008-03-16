@@ -161,7 +161,8 @@ if ($ut_user) {
 	exit;
 }
 
-function getThumb($filename) {
+function getThumb($filename)
+{
 	$ext = array('_100.jpg','_400.jpg','_640.jpg','_800.jpg','_1024.jpg','_4800.jpg');
 	$filename = str_replace($ext,'_100.jpg',$filename);
 	//really these others should be determined by 'size' param
@@ -174,7 +175,8 @@ function getThumb($filename) {
 	return $filename;
 }
 
-function serveFile($collection,$size,$filename,$download,$media_conf) {
+function serveFile($collection,$size,$filename,$download,$media_conf)
+{
 	$media_root = MEDIA_ROOT;
 	//when I get around to it, I need to rename image directories to match "size" attribute
 	//of media_file exactly (AND strip off directory name part of filename)

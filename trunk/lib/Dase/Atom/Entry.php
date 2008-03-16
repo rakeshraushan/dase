@@ -8,7 +8,8 @@ class Dase_Atom_Entry extends Dase_Atom
 	private $source_is_set;
 	private $summary_is_set;
 
-	function __construct($dom=null) {
+	function __construct($dom=null)
+	{
 		if ($dom) {
 			$this->root = $dom->createElement('entry');
 			$this->dom = $dom;
@@ -20,7 +21,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	function setContent($text='') {
+	function setContent($text='')
+	{
 		if ($this->content_is_set) {
 			throw new Dase_Atom_Exception('content is already set');
 		} else {
@@ -42,7 +44,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	function setPublished() {
+	function setPublished()
+	{
 		if ($this->published_is_set) {
 			throw new Dase_Atom_Exception('published is already set');
 		} else {
@@ -51,7 +54,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		//finish!!!!!!!!!!
 	}
 
-	function setSource() {
+	function setSource()
+	{
 		if ($this->source_is_set) {
 			throw new Dase_Atom_Exception('source is already set');
 		} else {
@@ -60,7 +64,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		//finish!!!!!!!!!!
 	}
 
-	function setSummary($text) {
+	function setSummary($text)
+	{
 		if ($this->summary_is_set) {
 			throw new Dase_Atom_Exception('summary is already set');
 		} else {

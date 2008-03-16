@@ -29,7 +29,8 @@ abstract class Dase_File
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
 
-	protected function __construct($file) {  //can only be called by subclass
+	protected function __construct($file)
+	{  //can only be called by subclass
 		$this->filepath = $file;
 		$this->file_size = filesize($file);
 		$path_parts = pathinfo($file);
@@ -42,22 +43,26 @@ abstract class Dase_File
 		}
 	}
 
-	function getFilepath() {
+	function getFilepath()
+	{
 		return $this->filepath;
 	}
 
-	function getFilename() {
+	function getFilename()
+	{
 		return $this->filename;
 	}
 
-	function getBasename() {
+	function getBasename()
+	{
 		return $this->basename;
 	}
 
 	abstract public function makeThumbnail($item,$collection);
 	abstract public function makeViewitem($item,$collection);
 
-	function getMetadata() {
+	function getMetadata()
+	{
 		$this->metadata['admin_checksum'] = md5_file($this->filepath);
 		$this->metadata['admin_file_size'] = $this->file_size;
 		$this->metadata['admin_filename'] = $this->basename;
@@ -67,7 +72,8 @@ abstract class Dase_File
 		return $this->metadata;
 	}	
 
-	static function newFile($file) {
+	static function newFile($file)
+	{
 		$mime = Dase_File::getMimeType($file);
 		if ($mime) {
 			if (!isset(self::$types_map[$mime])) {
@@ -81,12 +87,14 @@ abstract class Dase_File
 		}
 	}
 
-	static function newFileFromUrl($file) {
+	static function newFileFromUrl($file)
+	{
 		$mime = Dase_File::getMimeType($file,1);
 
 	}
 
-	static function getMimeType($file,$is_url = false) {
+	static function getMimeType($file,$is_url = false)
+	{
 		if ($is_url) {
 			$headers = get_headers($file);
 			foreach ($headers as $hdr) {
@@ -105,7 +113,8 @@ abstract class Dase_File
 		}
 	}
 
-	static function getMTime($file) {
+	static function getMTime($file)
+	{
 		$stat = @stat($file);
 		if($stat[9]) {
 			return $stat[9];
@@ -114,7 +123,8 @@ abstract class Dase_File
 		}
 	}
 
-	function copyTo($location) {
+	function copyTo($location)
+	{
 		if (copy($this->filepath,$location)) {
 			return true;
 		} else {
@@ -122,7 +132,8 @@ abstract class Dase_File
 		}
 	}
 
-	function moveTo($location) {
+	function moveTo($location)
+	{
 		if (rename($this->filepath,$location)) {
 			return true;
 		} else {

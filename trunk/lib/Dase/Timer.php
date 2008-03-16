@@ -4,11 +4,13 @@ class Dase_Timer {
 	private $_start;
 	private static $instance;
 
-	private function __construct() {
+	private function __construct()
+	{
 		$this->_start = self::microtime_float();
 	}
 
-	public static function start() {
+	public static function start()
+	{
 		if (empty (self::$instance)) {
 			self::$instance = new Dase_Timer();
 		} else {
@@ -17,12 +19,14 @@ class Dase_Timer {
 		return self::$instance;
 	}
 
-	static function microtime_float() {
+	static function microtime_float()
+	{
 		list($usec, $sec) = explode(" ", microtime());
 		return ((float)$usec + (float)$sec);
 	} 
 
-	public static function getElapsed() {
+	public static function getElapsed()
+	{
 		if (empty (self::$instance)) {
 			throw new Exception( 'timer was not started' ); 
 		}

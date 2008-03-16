@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_ApplicationMonitor extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'application_monitor',  array('dase_user_eid','remote_addr','request_uri','response_time','server_addr','server_name','timestamp'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

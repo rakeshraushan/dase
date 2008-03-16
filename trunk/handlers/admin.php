@@ -3,7 +3,8 @@
 class AdminHandler
 {
 
-	public static function index() {
+	public static function index()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'admin/index.xsl';
 		$t->source = XSLT_PATH.'admin/layout.xml';
@@ -14,7 +15,8 @@ class AdminHandler
 		Dase::display($t->transform());
 	}
 
-	public static function dataAsJson() {
+	public static function dataAsJson()
+	{
 		$c = Dase_Registry::get('collection');
 		$params = Dase_Registry::get('params');
 		if (isset($params['select'])) {
@@ -34,7 +36,8 @@ class AdminHandler
 		Dase::display($page,false);
 	}
 
-	public static function setAttributeSortOrder() {
+	public static function setAttributeSortOrder()
+	{
 		$c = Dase_Registry::get('collection');
 		if (!$c) {
 			Dase::log('error',"no collection found");

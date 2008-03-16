@@ -4,7 +4,8 @@ class Dase_Json
 { 
 	public $json = '';
 
-	public static function get($data) {
+	public static function get($data)
+	{
 		$js = new Dase_Json;
 		$json = $js->encodeData($data);
 		//note: for better xss security, do not return arrays
@@ -13,7 +14,8 @@ class Dase_Json
 		return $jsonObj;
 	}
 
-	private function encodeArray($data) {
+	private function encodeArray($data)
+	{
 		$this->json .= "[";
 		$i=0; 
 		foreach ( $data as $value ) { 
@@ -22,7 +24,8 @@ class Dase_Json
 		}
 		$this->json .= "]"; 
 	} 
-	private function encodeObject($data) {
+	private function encodeObject($data)
+	{
 		$this->json .= "{"; 
 		$i=0; 
 		foreach ( $data as $key => $value ) {
@@ -32,7 +35,8 @@ class Dase_Json
 		}
 		$this->json .= "}"; 
 	} 
-	public function encodeData($data) {
+	public function encodeData($data)
+	{
 		if ( is_array($data) ) { 
 			if (is_numeric(array_shift(array_keys($data)))) 
 				Dase_Json::encodeArray($data); 

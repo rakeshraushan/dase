@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_TagType extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'tag_type',  array('ascii_id','name'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

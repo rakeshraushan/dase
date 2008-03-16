@@ -2,7 +2,8 @@
 
 class ManageHandler
 {
-	public static function checkRoutes() {
+	public static function checkRoutes()
+	{
 		$r = Dase::compileRoutes();
 		foreach ($r as $method => $route) {
 			foreach ($route as $match => $parts) {
@@ -25,14 +26,16 @@ class ManageHandler
 		}
 	}
 
-	public static function index() {
+	public static function index()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'manage/common.xsl';
 		$t->source = XSLT_PATH.'manage/source.xml';
 		Dase::display($t->transform());
 	}
 
-	public static function viewLog() {
+	public static function viewLog()
+	{
 		$params = Dase_Registry::get('params');
 		if (isset($params['log_name'])) {
 			switch ($params['log_name']) {
@@ -64,12 +67,14 @@ class ManageHandler
 		exit;
 	}
 
-	public static function phpinfo() {
+	public static function phpinfo()
+	{
 		phpinfo();
 		exit;
 	}
 
-	public static function stats() {
+	public static function stats()
+	{
 		$params = Dase_Registry::get('params');
 		$tag_item = new Dase_DBO_TagItem;
 		$tot = array();
@@ -112,10 +117,12 @@ class ManageHandler
 		exit;
 	}
 
-	public static function exec() {
+	public static function exec()
+	{
 	}
 
-	public static function modules() {
+	public static function modules()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'manage/modules.xsl';
 		$t->source = XSLT_PATH.'manage/source.xml';
@@ -134,7 +141,8 @@ class ManageHandler
 		Dase::display($t->transform());
 	}
 
-	public static function routes() {
+	public static function routes()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'manage/routes.xsl';
 		$t->source = XSLT_PATH.'manage/source.xml';

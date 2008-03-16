@@ -5,7 +5,8 @@ require_once 'Dase/DBO/Autogen/DaseUser.php';
 class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser 
 {
 
-	public function getTags() {
+	public function getTags()
+	{
 		$tag_array = array();
 		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
 			if (CART == $row['tag_type_id']) {
@@ -33,7 +34,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $tag_array;
 	}
 
-	public function getCollections() {
+	public function getCollections()
+	{
 		$cm = new Dase_DBO_CollectionManager;
 		$cm->dase_user_eid = $this->eid;
 		$special_colls = array();
@@ -62,7 +64,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user_colls;
 	}
 
-	public function getData() {
+	public function getData()
+	{
 		$user_data = array();
 		//this is taking too long:
 		$user_data[$this->eid]['tags'] = $this->getTags();
@@ -86,7 +89,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_data);
 	}
 
-	public function getCart() {
+	public function getCart()
+	{
 		$item_id_array = array();
 		$db = Dase_DB::get();
 		$sql = "
@@ -108,19 +112,22 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($item_id_array);
 	}
 
-	function expireDataCache() {
+	function expireDataCache()
+	{
 		$cache = new Dase_Cache("json/user/$this->eid/data");
 		$cache->expire();
 	}
 
-	public function isSuperuser() {
+	public function isSuperuser()
+	{
 		if (in_array($this->eid,Dase::getConf('superuser'))) {
 			return true;
 		}
 		return false;
 	}
 
-	public function asSimpleXml() {
+	public function asSimpleXml()
+	{
 		$sx = simplexml_load_string("<user/>");
 		foreach($this as $k => $v) {
 			$sx->addChild($k,htmlspecialchars($v));

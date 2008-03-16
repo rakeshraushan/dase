@@ -2,7 +2,8 @@
 
 class ItemHandler
 {
-	public static function asAtom() {
+	public static function asAtom()
+	{
 		$params = Dase_Registry::get('params');
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 			$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
@@ -13,7 +14,8 @@ class ItemHandler
 		Dase_Error::report(404);
 	}
 
-	public static function display() {
+	public static function display()
+	{
 		$params = Dase_Registry::get('params');
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 			//see if it exists

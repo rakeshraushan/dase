@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_DaseUser extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'dase_user',  array('backtrack','cb','current_collections','current_search_cache_id','display','eid','has_access_exception','last_action','last_cb_access','last_item','max_items','name','template_composite'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

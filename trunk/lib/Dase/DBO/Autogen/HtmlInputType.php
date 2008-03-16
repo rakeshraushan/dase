@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_HtmlInputType extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'html_input_type',  array('name'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

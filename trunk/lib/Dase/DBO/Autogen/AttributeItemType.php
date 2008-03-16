@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_AttributeItemType extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'attribute_item_type',  array('attribute_id','cardinality','is_identifier','item_type_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

@@ -4,7 +4,8 @@ include 'test-more.php';
 
 class TestHandler
 {
-	public static function first() {
+	public static function first()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'test/index.xsl';
 		$t->source = XSLT_PATH.'test/layout.xml';
@@ -19,7 +20,8 @@ class TestHandler
 		Dase::display($t->transform());
 	}
 
-	public static function search() {
+	public static function search()
+	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'test/index.xsl';
 		$t->source = XSLT_PATH.'test/layout.xml';

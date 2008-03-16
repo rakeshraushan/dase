@@ -11,7 +11,8 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_SearchTable extends Dase_DBO 
 {
-	function __construct($assoc = false) {
+	function __construct($assoc = false) 
+	{
 		parent::__construct( 'search_table',  array('collection_id','item_id','status_id','updated','value_text'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {

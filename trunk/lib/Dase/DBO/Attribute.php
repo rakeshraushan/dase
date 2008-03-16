@@ -10,7 +10,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	public $display_values = array();
 	public $html_input_type = null;
 
-	function getValueCount() {
+	function getValueCount()
+	{
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
@@ -20,7 +21,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($coll = null) {
+	function getDisplayValues($coll = null)
+	{
 		$admin_sql = '';
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
@@ -54,7 +56,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $display_values_array;
 	}
 
-	public static function get($collection_ascii_id,$ascii_id) {
+	public static function get($collection_ascii_id,$ascii_id)
+	{
 		if ($collection_ascii_id && $ascii_id) {
 			$a = new Dase_DBO_Attribute;
 			$a->ascii_id = $ascii_id;
@@ -67,28 +70,32 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public static function getAdmin($ascii_id) {
+	public static function getAdmin($ascii_id)
+	{
 		$a = new Dase_DBO_Attribute;
 		$a->ascii_id = $ascii_id;
 		$a->collection_id = 0;
 		return($a->findOne());
 	}
 
-	public function getCollection() {
+	public function getCollection()
+	{
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
 	}
 
-	function getHtmlInputType() {
+	function getHtmlInputType()
+	{
 		$inp = new Dase_DBO_HtmlInputType;
 		$inp->load($this->html_input_type_id);
 		$this->html_input_type = $inp;
 		return $inp;
 	}
 
-	function getAdminEquiv($mapped_id) {
+	function getAdminEquiv($mapped_id)
+	{
 		if ($this->mapped_admin_att_id) {
 			$mapped_id = $this->mapped_admin_att_id;
 		}
@@ -100,7 +107,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public static function getId($ascii_id) {
+	public static function getId($ascii_id)
+	{
 		$db = Dase_DB::get();
 		$sth = $db->prepare("SELECT id from attribute WHERE ascii_id = ?");
 		$sth->execute(array($ascii_id));
@@ -109,7 +117,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 
 	/*
-	function injectAtomEntryData(Dase_Atom_Entry $entry) {
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
+{
 		$this->collection || $this->getCollection();
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);

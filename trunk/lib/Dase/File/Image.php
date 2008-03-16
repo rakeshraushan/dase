@@ -4,11 +4,13 @@ class Dase_File_Image extends Dase_File
 {
 	protected $metadata = array();
 
-	function __construct($file) {
+	function __construct($file)
+	{
 		parent::__construct($file);
 	}
 
-	function getIptc() {   
+	function getIptc()
+	{   
 		$iptc_metadata = array();
 		$iptc_table['2#005'] = 'admin_iptc_object_name';
 		$iptc_table['2#015'] = 'admin_iptc_category';
@@ -56,7 +58,8 @@ class Dase_File_Image extends Dase_File
 		return $iptc_metadata;
 	}
 
-	function getMetadata() {
+	function getMetadata()
+	{
 		$this->metadata = parent::getMetadata();
 		$this->getIptc();
 		$this->getExif();
@@ -67,7 +70,8 @@ class Dase_File_Image extends Dase_File
 	}
 
 
-	function getExif() {
+	function getExif()
+	{
 
 		//exif_read_data only gooss w/ jpg & tif
 		if (strpos($this->mime_type,'jpg') ||
@@ -124,7 +128,8 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeThumbnail($item,$collection) {
+	function makeThumbnail($item,$collection)
+	{
 		$thumbnail = $collection->path_to_media_files . "/thumbnails/$item->serial_number" . '_100.jpg';  
 		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");
 		$file_info = getimagesize($thumbnail);
@@ -144,7 +149,8 @@ class Dase_File_Image extends Dase_File
 		return "created $media_file->size $media_file->filename\n";
 	}
 
-	function makeViewitem($item,$collection) {
+	function makeViewitem($item,$collection)
+	{
 		$viewitem = $collection->path_to_media_files . "/400/$item->serial_number" . '_400.jpg';  
 		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '400x400 >' -colorspace RGB $viewitem");
 		$file_info = getimagesize($viewitem);
@@ -164,7 +170,8 @@ class Dase_File_Image extends Dase_File
 		return "created $media_file->size $media_file->filename\n";
 	}
 
-	function makeSizes($item,$collection) {
+	function makeSizes($item,$collection)
+	{
 		$msg = '';
 		$image_properties = array(
 			'small' => array(

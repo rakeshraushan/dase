@@ -3,7 +3,8 @@
 class AttributeHandler
 {
 
-	public static function attributeValuesAsHtml() {
+	public static function attributeValuesAsHtml()
+	{
 		$params = Dase_Registry::get('params');
 		$att = $params['attribute_ascii_id'];
 		$coll = $params['collection_ascii_id'];

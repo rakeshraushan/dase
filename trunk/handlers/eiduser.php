@@ -2,7 +2,8 @@
 
 class EiduserModuleHandler {
 
-	public static function login() {
+	public static function login()
+	{
 		if (!extension_loaded("eid")) {
 			dl("eid.so");
 		}
@@ -11,7 +12,8 @@ class EiduserModuleHandler {
 			print_r (get_loaded_extensions());
 			exit;
 		}
-		if (!function_exists("eid_decode")) {
+		if (!function_exists("eid_decode"))
+		{
 			echo "The eid_decode function is not available in this eid extension!<p>\n";
 			print_r (get_extension_funcs ("eid"));
 			exit;
@@ -66,7 +68,8 @@ class EiduserModuleHandler {
 		}
 	}
 
-	public static function logoff() {
+	public static function logoff()
+	{
 		setcookie('DOC','',time()-86400,'/','.utexas.edu');
 		setcookie('FC','',time()-86400,'/','.utexas.edu');
 		setcookie('SC','',time()-86400,'/','.utexas.edu');

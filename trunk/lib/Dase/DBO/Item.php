@@ -20,12 +20,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public $viewitem;
 	public $viewitem_url = '';
 
-	public static function create($collection_ascii_id,$serial_number= null) {
+	public static function create($collection_ascii_id,$serial_number= null)
+	{
 		$c = Dase_DBO_Collection::get($collection_ascii_id);
 		return $c->createNewItem($serial_number);
 	}
 
-	public static function get($collection_ascii_id,$serial_number) {
+	public static function get($collection_ascii_id,$serial_number)
+	{
 		$c = Dase_DBO_Collection::get($collection_ascii_id);
 		if (!$c) {
 			return false;
@@ -36,7 +38,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
-	public function buildSearchIndex() {
+	public function buildSearchIndex()
+	{
 		$db = Dase_DB::get();
 		//todo: make sure item->id is an integer
 		$sql = "
@@ -96,13 +99,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return "built indexes for " . $this->serial_number . "\n";
 	}
 
-	public function getValues() {
+	public function getValues()
+	{
 		$val = new Dase_DBO_Value;
 		$val->item_id = $this->id;
 		return $val->find();
 	}
 
-	public function getMetadata() {
+	public function getMetadata()
+	{
 		//minimize memory consumption 
 		//as compared to getValues()
 		$metadata = array();
@@ -121,7 +126,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getChildren() {
+	public function getChildren()
+	{
 
 		//WORK ON THIS!!!!!!!!
 		$sql = "
@@ -138,7 +144,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	}
 
-	public function getAttVal($att_ascii_id) {
+	public function getAttVal($att_ascii_id)
+	{
 		//NOTE: repeat attributes will only get ONE value!!!!
 		$values = array();
 		$this->collection || $this->getCollection();
@@ -149,7 +156,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $val->value_text;
 	}
 
-	public function getCollection() {
+	public function getCollection()
+	{
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
@@ -159,7 +167,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $c;
 	}
 
-	public function getThumbnail() {
+	public function getThumbnail()
+	{
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
@@ -169,7 +178,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->thumbnail;
 	}
 
-	public function getViewitem() {
+	public function getViewitem()
+	{
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
@@ -179,7 +189,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->viewitem;
 	}
 
-	public function getItemType() {
+	public function getItemType()
+	{
 		$type = new Dase_DBO_ItemType;
 		if ($this->item_type_id) {
 			$type->load($this->item_type_id);
@@ -193,7 +204,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return false;
 	}
 
-	public function getItemStatus() {
+	public function getItemStatus()
+	{
 		$status = new Dase_DBO_ItemStatus;
 		$status->item_id = $this->id;
 		if ($status->findOne()) {
@@ -202,7 +214,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->item_status;
 	}
 
-	public function getMedia() {
+	public function getMedia()
+	{
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
@@ -210,7 +223,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $m->find();
 	}
 
-	public function getMediaUrl($size) {  //size really means type here
+	public function getMediaUrl($size)
+	{  //size really means type here
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
@@ -220,7 +234,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $url;
 	}
 
-	function getMediaCount() {
+	function getMediaCount()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
@@ -230,7 +245,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $db->query($sql)->fetchColumn();
 	}
 
-	function setType($type_ascii_id) {
+	function setType($type_ascii_id)
+	{
 		$type = new Dase_DBO_ItemType;
 		$type->ascii_id = $type_ascii_id;
 		$type->collection_id = $this->collection_id;
@@ -243,7 +259,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function setValue($att_ascii_id,$value_text) {
+	function setValue($att_ascii_id,$value_text)
+	{
 		$att = new Dase_DBO_Attribute;
 		$att->ascii_id = $att_ascii_id;
 		//allows for admin metadata, att_ascii for which
@@ -263,7 +280,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function deleteValues() {
+	function deleteValues()
+	{
 		//should sanity check and archive values
 		$v = new Dase_DBO_Value;
 		$v->item_id = $this->id;
@@ -282,7 +300,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function deleteAdminValues() {
+	function deleteAdminValues()
+	{
 		$a = new Dase_DBO_Attribute;
 		$a->collection_id = 0;
 		foreach ($a->find() as $aa) {
@@ -296,14 +315,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return "deleted admin metadata for " . $this->serial_number . "\n";
 	}
 
-	function expunge() {
+	function expunge()
+	{
 		$this->deleteMedia();
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->delete();
 	}
 
-	function deleteMedia() {
+	function deleteMedia()
+	{
 		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
@@ -311,7 +332,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function getAdminMetadata($att_ascii_id = null) {
+	function getAdminMetadata($att_ascii_id = null)
+	{
 		//admin is ONLY set once in the life of
 		//an item object.  user can specify which 
 		//one will be returned, otherwise array is returned
@@ -339,7 +361,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->admin;
 	}
 
-	function getTitle() {
+	function getTitle()
+	{
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT v.value_text 
@@ -356,7 +379,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $title;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry) {
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	{
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
@@ -428,7 +452,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $entry;
 	}
 
-	function injectAtomFeedData(Dase_Atom_Feed $feed) {
+	function injectAtomFeedData(Dase_Atom_Feed $feed)
+	{
 		$this->collection || $this->getCollection();
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
@@ -443,7 +468,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed;
 	}
 
-	function asAtom() {
+	function asAtom()
+	{
 		$feed = new Dase_Atom_Feed;
 		$this->injectAtomFeedData($feed);
 		$this->injectAtomEntryData($feed->addEntry());

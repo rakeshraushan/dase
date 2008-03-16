@@ -11,7 +11,8 @@ class Dase_Xslt
 	private $xslt;
 	private $params = array();
 
-	function __set($property,$value) {
+	function __set($property,$value)
+	{
 		if ('stylesheet' == $property) {
 			$this->xsl = new DOMDocument;
 			return $this->xsl->load($value);
@@ -27,7 +28,8 @@ class Dase_Xslt
 		}
 	}
 
-	private function init() {
+	private function init()
+	{
 		if (!$this->xsl) {
 			throw new Exception('no stylesheet set!');
 		}
@@ -48,7 +50,8 @@ class Dase_Xslt
 	 * as a parameter.
 	 */
 
-	function addSourceNode($simple_xml) {
+	function addSourceNode($simple_xml)
+	{
 		$this->init();
 		if ($this->xml) {
 			$domnode = dom_import_simplexml($simple_xml);
@@ -65,7 +68,8 @@ class Dase_Xslt
 	 * this function as well.
 	 */
 
-	function set($name,$value) {
+	function set($name,$value)
+	{
 		if ($this->xslt) {
 			$this->xslt->setParameter( null,$name,$value );
 		} else {
@@ -73,7 +77,8 @@ class Dase_Xslt
 		}
 	}
 
-	function transform() {
+	function transform()
+	{
 		$this->init();
 		if (!$this->xslt->getParameter(null,'msg')) {
 			$this->set('msg',Dase::filterGet('msg'));

@@ -2,11 +2,13 @@
 
 class Dase_File_Video extends Dase_File
 {
-	public function say() {
+	public function say()
+	{
 		print "hello world\n";
 	}
 
-	function makeThumbnail($item,$collection) {
+	function makeThumbnail($item,$collection)
+	{
 		if (!file_exists($collection->path_to_media_files . "/thumbnails/quicktime.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',$collection->path_to_media_files . '/thumbnails/quicktime.jpg');
 		}
@@ -23,7 +25,8 @@ class Dase_File_Video extends Dase_File
 		return "created $media_file->filename\n";
 	}
 
-	function makeViewitem($item,$collection) {
+	function makeViewitem($item,$collection)
+	{
 		if (!file_exists($collection->path_to_media_files . "/400/quicktime.jpg")) {
 			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',$collection->path_to_media_files . '/400/quicktime.jpg');
 		}
@@ -40,12 +43,14 @@ class Dase_File_Video extends Dase_File
 		return "created $media_file->filename\n";
 	}
 
-	function getMetadata() {
+	function getMetadata()
+	{
 		//figure out what other metadata we should get here
 		return parent::getMetadata();
 	}
 
-	function makeSizes($item,$collection) {
+	function makeSizes($item,$collection)
+	{
 		$dest = $collection->path_to_media_files . "/quicktime/" . $item->serial_number . '.mov';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;

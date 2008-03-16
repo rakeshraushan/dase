@@ -40,7 +40,8 @@ require_once 'Dase/DBO.php';
 
 class $db_class_name extends Dase_DBO 
 {
-	function __construct(\$assoc = false) {
+	function __construct(\$assoc = false) 
+	{
 		parent::__construct( '$table',  array($cols_list));
 		if (\$assoc) {
 			foreach ( \$assoc as \$key => \$value) {

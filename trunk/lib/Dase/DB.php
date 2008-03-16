@@ -7,10 +7,13 @@ class Dase_DB {
 	private static $name;
 	private static $type;
 	// No cloning or instantiating allowed
-	final private function __construct() { }
-	final private function __clone() { }
+	final private function __construct()
+	{ }
+	final private function __clone()
+	{ }
 
-	public static function get($dbname = null) {
+	public static function get($dbname = null)
+	{
 		// Connect if not already connected
 		if (is_null(self::$db)) {
 			$conf = Dase::getConf('db'); 
@@ -43,21 +46,25 @@ class Dase_DB {
 		return self::$db;
 	}
 
-	public static function getDbName() {
+	public static function getDbName()
+	{
 		self::get();
 		return self::$name;
 	}
 
-	public static function setDbName($dbname) {
+	public static function setDbName($dbname)
+	{
 		self::get($dbname);
 	}
 
-	public static function getDbType() {
+	public static function getDbType()
+	{
 		self::get();
 		return self::$type;
 	}
 
-	public static function listTables() {
+	public static function listTables()
+	{
 		$db = self::get();
 		if ('mysql' == self::$type) {
 			$sql = "SHOW TABLES";
@@ -89,7 +96,8 @@ class Dase_DB {
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
 
-	public static function listColumns($table) {
+	public static function listColumns($table)
+	{
 		$db = self::get();
 		if ('mysql' == self::$type) {
 			$sql = "SHOW FIELDS FROM $table";
@@ -116,7 +124,8 @@ class Dase_DB {
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
 
-	public static function getMetadata($table) {
+	public static function getMetadata($table)
+	{
 		$db = self::get();
 		if ('sqlite' == self::$type) {
 			$sql = "PRAGMA table_info($table)";
@@ -146,7 +155,8 @@ class Dase_DB {
 		return ($sth->fetchAll(PDO::FETCH_ASSOC));
 	}	
 
-	public static function getSchemaXml() {
+	public static function getSchemaXml()
+	{
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);

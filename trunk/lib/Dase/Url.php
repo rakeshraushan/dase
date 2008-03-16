@@ -3,11 +3,13 @@
 class Dase_Url
 {
 
-	public static function get() {
+	public static function get()
+	{
 		return Dase_Url::getRequestUrl() . '?' . Dase_Url::getQueryString();
 	}
 
-	public static function getQueryString() {
+	public static function getQueryString()
+	{
 		if (isset($_SERVER['QUERY_STRING'])) {
 			return $_SERVER['QUERY_STRING'];
 		} else {
@@ -15,7 +17,8 @@ class Dase_Url
 		}
 	}
 
-	public static function getRequestUrl() {
+	public static function getRequestUrl()
+	{
 		$request_url = '';
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$request_url = $_SERVER['REQUEST_URI'];

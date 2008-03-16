@@ -11,7 +11,8 @@ class Dase_Routes
 		'cache' => 'standard', //'standard','custom', or 'none'
 	);
 
-	public static function compile() {
+	public static function compile()
+	{
 		$cache = new Dase_Cache('routes');
 		$cached_routes = $cache->get();
 		if ($cached_routes) {
@@ -24,7 +25,8 @@ class Dase_Routes
 		}
 	}
 
-	public static function compileRoutes($config_file) {
+	public static function compileRoutes($config_file)
+	{
 		//route defaults can be overridden in routes.php
 		$route_defaults = self::$route_defaults;
 		$compiled_routes = array();
@@ -64,7 +66,8 @@ class Dase_Routes
 	}
 
 
-	public static function getModuleRoutes($modules_dir,$module) {
+	public static function getModuleRoutes($modules_dir,$module)
+	{
 		$routes = array();
 		//allows us to avoid polluting global namespace w/ $routes
 		$module_routes_file = $modules_dir.'/'.$module.'/routes.php';
@@ -77,7 +80,8 @@ class Dase_Routes
 		return $routes;
 	}
 
-	public static function compileModuleRoutes($modules_dir,$compiled_routes) {
+	public static function compileModuleRoutes($modules_dir,$compiled_routes)
+	{
 		//route defaults can be overridden in routes.php
 		$route_defaults = self::$route_defaults;
 		$dir = new DirectoryIterator($modules_dir);
