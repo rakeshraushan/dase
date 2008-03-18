@@ -2,16 +2,13 @@
 
 class CollectionHandler
 {
-	public static function asAtom() 
+	public static function asAtom($params) 
 	{
-		$c = Dase_Registry::get('collection');
-		if ($c) {
-			Dase::display($c->asAtom());
-		} 
-		Dase_Error::report(404);
+		$c = Dase_Collection::get($params);
+		Dase::display($c->asAtom());
 	}
 
-	public static function listAsAtom() 
+	public static function listAsAtom($params) 
 	{
 		if (Dase::filterGet('get_all')) {
 			$public_only = false;
@@ -21,16 +18,16 @@ class CollectionHandler
 		Dase::display(Dase_DBO_Collection::listAsAtom($public_only));
 	}
 
-	public static function browse() 
+	public static function browse($params) 
 	{
-		$params = Dase_Registry::get('params');
+		$c = Dase_Collection::get($params);
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'collection/browse.xsl';
-		$t->set('src',APP_ROOT. '/atom/collection/' . $params['collection_ascii_id']);
+		$t->set('src',APP_ROOT. '/atom/collection/' . $c->ascii_id);
 		Dase::display($t->transform());
 	}
 
-	public static function listAll() 
+	public static function listAll($params) 
 	{
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'collection/list.xsl';
@@ -46,7 +43,7 @@ class CollectionHandler
 		//Dase::display($t2->transform());
 	}
 
-	public static function itemTalliesAsJson() 
+	public static function itemTalliesAsJson($params) 
 	{
 		$db = Dase_DB::get();
 		$sql = "
@@ -66,18 +63,16 @@ class CollectionHandler
 		Dase::display(Dase_Json::get($tallies));
 	}
 
-	public static function rebuildIndexes() 
+	public static function rebuildIndexes($params) 
 	{
-		$c = Dase_Registry::get('collection');
-		if ($c) {
-			$c->buildSearchIndex();
-		} 
-		Dase::redirect('',"rebuilt indexes for $coll->collection_name");
+		$c = Dase_Collection::get($params);
+		$c->buildSearchIndex();
+		Dase::redirect('',"rebuilt indexes for $c->collection_name");
 	}
 
-	public static function attributesAsAtom() 
+	public static function attributesAsAtom($params) 
 	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $c->id;
 		$atts->is_public = 1;
@@ -87,9 +82,9 @@ class CollectionHandler
 		Dase::display();
 	}
 
-	public static function attributesAsHtml() 
+	public static function attributesAsHtml($params) 
 	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $c->id;
 		$atts->is_public = 1;
@@ -106,10 +101,9 @@ EOF;
 		Dase::display($html);
 	}
 
-	public static function attributesAsJson() 
+	public static function attributesAsJson($params) 
 	{
-		$params = Dase_Registry::get('params');
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$attribute = new Dase_DBO_Attribute;
 		$attribute->collection_id = $c->id;
 		$attribute->is_public = true;
@@ -127,9 +121,9 @@ EOF;
 		Dase::display(Dase_Json::get($att_array));
 	}
 
-	public static function adminAttributesAsHtml() 
+	public static function adminAttributesAsHtml($params) 
 	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = 0;
 
@@ -146,9 +140,9 @@ EOF;
 		Dase::display($html);
 	}
 
-	public static function attributeTalliesAsJson() 
+	public static function attributeTalliesAsJson($params) 
 	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$sql = "
 			SELECT id, ascii_id
 			FROM attribute
@@ -169,9 +163,9 @@ EOF;
 
 	}
 
-	public static function adminAttributeTalliesAsJson() 
+	public static function adminAttributeTalliesAsJson($params) 
 	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$sql = "
 			SELECT id, ascii_id
 			FROM attribute
@@ -197,16 +191,9 @@ EOF;
 
 	}
 
-	public static function methodTemplate() 
+	public static function buildIndex($params) 
 	{
-		$c = Dase_Registry::get('collection');
-		$params = Dase_Registry::get('params');
-
-	}
-
-	public static function buildIndex() 
-	{
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$c->buildSearchIndex();
 		Dase::redirect('',"rebuilt indexes for $c->collection_name");
 	}

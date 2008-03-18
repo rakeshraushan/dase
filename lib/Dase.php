@@ -1,4 +1,22 @@
 <?php
+/*
+ * Copyright 2008 The University of Texas at Austin
+ *
+ * This file is part of DASe.
+ * 
+ * DASe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * DASe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
+ */ 
 
 class Dase 
 {
@@ -88,7 +106,6 @@ class Dase
 
 	public static function run()
 	{
-
 		$request_url = Dase_Url::getRequestUrl(); 
 		Dase_Registry::set('request_url',$request_url);
 		$routes = Dase_Routes::compile();
@@ -140,15 +157,6 @@ class Dase
 					exit;
 				}
 
-				$collection_ascii_id = '';
-
-				//if collection_ascii_id is set, go ahead and instantiate collection!
-
-				if (isset($params['collection_ascii_id']) && $params['collection_ascii_id']) {
-					$collection_ascii_id = $params['collection_ascii_id'];
-					Dase_Registry::set('collection',Dase_DBO_Collection::get($collection_ascii_id));
-				}
-
 				if (isset($conf_array['mime'])) {
 					//note: firefox gives me all sorts of trouble when I send
 					//application/xhtml+xml.  this is a well-documented problem:
@@ -168,7 +176,7 @@ class Dase
 				}
 
 				//a simple authorization check roadblock
-				if (!Dase_Auth::authorize($conf_array['auth'],$collection_ascii_id,$params['eid'])) {
+				if (!Dase_Auth::authorize($conf_array['auth'],$params)) {
 					if ('text/html' == Dase_Registry::get('response_mime_type')) {
 						//guarantees cookies will be deleted:
 						Dase::redirect('logoff');
@@ -179,7 +187,6 @@ class Dase
 					//good to go
 				}
 
-				Dase_Registry::set('params',$params);
 				if ($module_prefix) {
 					//modules, by convention, have one handler in a file named
 					//'handler.php' with classname {Module}ModuleHandler
@@ -220,7 +227,8 @@ class Dase
 					//call the action on the handler
 					Dase_Registry::set('handler',$conf_array['handler']);
 					Dase_Registry::set('action',$conf_array['action']);
-					call_user_func(array($classname,$conf_array['action']));
+					//passes $params into static method
+					call_user_func(array($classname,$conf_array['action']),$params);
 					exit;
 				} else { 
 					//matched regex, but didn't find action
@@ -250,7 +258,7 @@ class Dase
 
 	public static function redirect($path='',$msg='',$code="303")
 	{
-		//SHOULD use 303 (redirect after put,post,delte)
+		//SHOULD use 303 (redirect after put,post,delete)
 		//OR 307 -- no go -- look here
 		$msg_qstring = '';
 		$msg = urlencode($msg);

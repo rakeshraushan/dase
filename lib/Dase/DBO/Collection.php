@@ -8,9 +8,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public static function get($ascii_id)
 	{
-		$c = new Dase_DBO_Collection;
-		$c->ascii_id = $ascii_id;
-		return($c->findOne());
+		//caches instance in registry
+		$collection = Dase_Registry::get($ascii_id.'_collection');
+		if (!$collection) {
+			$collection = new Dase_DBO_Collection;
+			$collection->ascii_id = $ascii_id;
+			$collection->findOne();
+			if ($collection->id) {
+				Dase_Registry::set($ascii_id.'_collection',$collection);
+			} else {
+				return false;
+			}
+		}
+		return $collection;
 	}
 
 	function asAtom()
@@ -359,4 +369,52 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		return Dase_Json::get($collection_data);
 	}
+
+	public function attributesAsSimpleXml() 
+	{
+		$sx = $this->asSimpleXml();
+		foreach ($this->getAttributes() as $a) {
+			$att = $sx->addChild('attribute');
+			foreach($a->getFieldNames() as $name) {
+				$att->addChild($name,$a->$name);
+			}
+		}
+		return $sx;
+	}
+
+	public function managersAsSimpleXml() 
+	{
+		$sx = $this->asSimpleXml();
+		foreach ($this->getManagers() as $m) {
+			$manager = $sx->addChild('manager');
+			foreach($m as $k => $v) {
+				$manager->addChild($k,$v);
+			}
+		}
+		return $sx;
+	}
+
+	public function itemTypesAsSimpleXml() 
+	{
+		$sx = $this->asSimpleXml();
+		foreach ($this->getItemTypes() as $it) {
+			$type = $sx->addChild('item_type');
+			foreach($it->getFieldNames() as $name) {
+				$type->addChild($name,$it->$name);
+			}
+			foreach ($it->getAttributes() as $a) {
+				$ax = $type->addChild('attribute');
+				$ax->addAttribute('name',$a->attribute_name);
+				$ax->addAttribute('ascii_id',$a->ascii_id);
+				if ($a->cardinality) {
+					$ax->addAttribute('cardinality',$a->cardinality);
+				}
+				if ($a->is_identifier) {
+					$ax->addAttribute('is_identifier',$a->is_identifier);
+				}
+			}
+		}
+		return $sx;
+	}
+
 }

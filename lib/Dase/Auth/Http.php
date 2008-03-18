@@ -3,7 +3,7 @@
 class Dase_Auth_Http
 {
 
-	public function authorize($collection_ascii_id = '',$eid = '')
+	public function authorize($params)
 	{
 		Dase_Auth_Http::basic();
 		return true;

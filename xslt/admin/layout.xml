@@ -54,46 +54,15 @@
 	  DASe Collection Builder
 	  <insert-collection-name/>
 	</div>
+
 	<div id="sidebar">
-
-	  <ul id="menu">
-		<li>
-		  <a href="home">
-			<img border="0" src="images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
-		  </a>
-		</li>
-		<li>
-		  <a href="admin/manage_attributes" id="collAttributes">
-			<img border="0" src="images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
-		  </a>
-		</li>
-		<li>
-		  <a href="admin/manage_item_types" id="collTypes">
-			<img border="0" src="images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
-		  </a>
-		</li>
-		<li>
-		  <a href="admin/manage_collection" id="collSettings">
-			<img border="0" src="images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
-		  </a>
-		</li>
-		<li>
-		  <a href="admin/manage_users" id="collManagers">
-			<img border="0" src="images/tango-icons/contact-new.png"/><sup>Users</sup>
-		  </a>
-		</li>
-		<li>
-		  <a href="admin/upload_form" id="collUpload">
-			<img border="0" src="images/tango-icons/list-add.png"/><sup>Create Item</sup>
-		  </a>
-		</li>
-	  </ul>
+	  <insert-menu/>
 	  <div class="loadingMsg" id="ajaxMsg"></div>
-	  </div> <!-- closes sidebar -->
+	</div> <!-- closes sidebar -->
 
-	  <div id="content" class="cb">
-		<insert-content/>
-	  </div>
+	<div id="content" class="cb">
+	  <insert-content/>
+	</div>
 
 	<div id="footer">
 	  <a href="apps/help" id="helpModule">FAQ</a> | 

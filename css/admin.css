@@ -36,7 +36,7 @@ table#dataDisplay {
 
 table#dataDisplay  td {
 	border: 1px solid #999;
-	padding: 8px;
+	padding: 7px;
 	text-align: center;
 }
 
@@ -48,7 +48,7 @@ table#dataDisplay  td.data {
 table#dataDisplay  th {
 	background-color: #f2dfc1;
 	border: 1px solid #999;
-	padding: 8px;
+	padding: 7px;
 	text-align: center;
 	font-weight: bold;
 }
@@ -57,12 +57,19 @@ table#dataDisplay  th.rows {
 	text-align: right;
 }
 
-table#dataDisplay dt {
-	font-weight: bold;
+#dataDisplay dl {
 }
 
-table#dataDisplay dd {
+#dataDisplay dt {
+	font-size: 1.3em;
+	color: #009;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#dataDisplay dd {
 	margin-left: 12px;
+	margin-top: 10px;
 }
 
 div.adminForm {
@@ -70,3 +77,5 @@ div.adminForm {
 	border: 1px solid #999;
 	padding: 8px;
 }
+
+

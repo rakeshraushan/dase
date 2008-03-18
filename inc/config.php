@@ -9,7 +9,7 @@ $conf['token'] = '
 	Let us go then, you and I,	
 	When the evening is spread out against the sky	
 	Like a patient etherised upon a table;	
-	Let us go, through certain half-deserted streets,	
+    Let us go, through certain half-deserted streets,	
 	The muttering retreats
 	Of restless nights in one-night cheap hotels	
 	And sawdust restaurants with oyster-shells:	
@@ -17,7 +17,15 @@ $conf['token'] = '
 	Of insidious intent	
 	To lead you to an overwhelming question 
 	Oh, do not ask, "What is it?"	
-	Let us go and make our visit.' . date('Ymd',time()); //changes every day
+	Let us go and make our visit.'
+   	. date('Ymd',time()); //changes every day
+
+
+//POST/PUT/DELETE token:	
+$conf['ppd_token'] = "
+	When you're lost in the rain in Juarez 
+	and it's Easter time, too." 
+	. date('Ymd',time()); //changes every day
 
 //model can be db, xml, or remote
 $conf['model'] = 'db';

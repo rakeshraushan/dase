@@ -2,10 +2,10 @@
 
 class Dase_Auth_Superuser
 {
-	public function authorize($collection_ascii_id,$eid)
+	public function authorize($params)
 	{
-		//the checkAuth methods use the collection manager
-		//table to look-up privilege level
+		//is this as secure as it needs to be?
+		//(susceptible to replay attack)
 		$user = new Dase_User();
 		if (in_array($user->eid,Dase::getConf('superuser'))) {
 			return true;

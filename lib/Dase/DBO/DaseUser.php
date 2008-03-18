@@ -137,6 +137,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$superuser = 1;
 		}
 		$sx->addChild('superuser',$superuser);
+		$sx->addchild('ppd',md5($this->eid . Dase::getConf('ppd_token')));
 		return $sx;
 	}
 }

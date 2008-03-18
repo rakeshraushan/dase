@@ -1,5 +1,7 @@
 <?php
+
 //adapted from O'Reilly ShortCut Ajax with PHP5
+
 class Dase_Json 
 { 
 	public $json = '';

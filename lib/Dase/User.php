@@ -1,4 +1,23 @@
 <?php
+/*
+ * Copyright 2008 The University of Texas at Austin
+ *
+ * This file is part of DASe.
+ * 
+ * DASe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * DASe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
+ */ 
+
 
 class Dase_User 
 {
@@ -12,6 +31,21 @@ class Dase_User
 		//check for current user (look to the cookie)
 		$eid = Dase_User::getCurrent();
 		if ($eid) {
+			$this->db_user = Dase_User::get($eid);
+		} 
+	}
+
+	//factory method
+	public static function get($eid)
+	{
+		//allows you to pass 'params' in
+		if (is_array($eid) && isset($eid['eid'])) {
+			$eid = $eid['eid'];
+		}
+
+		//caches instance in registry
+		$user = Dase_Registry::get($eid.'_user');
+		if (!$user) {
 			$db = Dase_DB::get();
 			$sql = "
 				SELECT * FROM dase_user
@@ -19,23 +53,11 @@ class Dase_User
 				";	
 			$sth = $db->prepare($sql);
 			if ($sth->execute(array(strtolower($eid)))) {
-				$this->db_user = new Dase_DBO_DaseUser($sth->fetch());
+				$user = new Dase_DBO_DaseUser($sth->fetch());
 			}
-		} 
-	}
-
-	//factory method
-	public static function get($eid)
-	{
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT * FROM dase_user
-			WHERE lower(eid) = ?
-			";	
-		$sth = $db->prepare($sql);
-		if ($sth->execute(array(strtolower($eid)))) {
-			return new Dase_DBO_DaseUser($sth->fetch());
+			Dase_Registry::set($eid.'_user',$user);
 		}
+		return $user;
 	}
 
 	public static function getCurrent()
@@ -95,10 +117,8 @@ class Dase_User
 			// we can short circuit if curr coll is public
 			// which is good, since this will be the case MOST
 			// of the time
-			if (Dase_Registry::get('collection')) {
-				if (Dase_Registry::get('collection')->is_public) {
-					return true;
-				}
+			if (Dase_DBO_Collection::get($collection_ascii_id)->is_public) {
+				return true;
 			}
 		}
 		$cm = new Dase_DBO_CollectionManager; 
