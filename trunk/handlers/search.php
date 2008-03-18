@@ -12,9 +12,9 @@ class SearchHandler
 			$result = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString())->getResult();
 		}
 
-		$start = Dase::filterGet('start');
+		$start = Dase_Filter::filterGet('start');
 		$start = $start ? $start : 1;
-		$max = Dase::filterGet('max');
+		$max = Dase_Filter::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
 
 		$request_url = $result['request_url'];
@@ -96,8 +96,8 @@ class SearchHandler
 	{
 
 		$search = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString());
-		$num = Dase::filterGet('num');
-		$max = Dase::filterGet('max');
+		$num = Dase_Filter::filterGet('num');
+		$max = Dase_Filter::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
 		if (!$num) {
 			$num = 1;
@@ -141,8 +141,8 @@ class SearchHandler
 		}
 		Dase_Error::report(404);
 		$search = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString());
-		$num = Dase::filterGet('num');
-		$max = Dase::filterGet('max');
+		$num = Dase_Filter::filterGet('num');
+		$max = Dase_Filter::filterGet('max');
 		$max = $max ? $max : MAX_ITEMS; 
 		if (!$num) {
 			$num = 1;

@@ -10,7 +10,7 @@ class AtomHandler
 		$parsed = array_pop($parser->feed->entries);
 		$post_title = $parsed->title[1];
 		$post_content = $parsed->content[1];
-		Dase::log('standard',$post_title . "\n" . $post_content);
+		Dase_Log::put('standard',$post_title . "\n" . $post_content);
 		echo "success!";
 	}
 
