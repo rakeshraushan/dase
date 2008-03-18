@@ -100,7 +100,7 @@ class Dase_Xslt
 	{
 		$this->init();
 		if (!$this->xslt->getParameter(null,'msg')) {
-			$this->set('msg',Dase::filterGet('msg'));
+			$this->set('msg',Dase_Filter::filterGet('msg'));
 		}
 		$page_hook = Dase_Registry::get('handler').'_'.Dase_Registry::get('action');
 		$this->set('page_hook',$page_hook);

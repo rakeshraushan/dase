@@ -168,7 +168,7 @@ class Dase_DBO implements IteratorAggregate
 			$last_id = $db->lastInsertId($seq);
 			$this->id = $last_id;
 			if (defined('DEBUG')) {
-				Dase::log('sql',"$sql /// last insert id = $last_id");
+				Dase_Log::put('sql',"$sql /// last insert id = $last_id");
 			}
 			return $last_id;
 		} else { 
@@ -229,7 +229,7 @@ class Dase_DBO implements IteratorAggregate
 		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
 		if (defined('DEBUG')) {
-			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
+			Dase_Log::put('sql',$sql . ' /// ' . join(',',$bind));
 		}
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
@@ -266,7 +266,7 @@ class Dase_DBO implements IteratorAggregate
 		$values[] = $this->id;
 		$sth = $db->prepare( $sql );
 		if (defined('DEBUG')) {
-			Dase::log('sql',$sql . ' /// ' . join(',',$values));
+			Dase_Log::put('sql',$sql . ' /// ' . join(',',$values));
 		}
 		if (!$sth->execute($values)) {
 			return $sth->errorInfo();
@@ -280,7 +280,7 @@ class Dase_DBO implements IteratorAggregate
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
 		if (defined('DEBUG')) {
-			Dase::log('sql',"deleting id $this->id from $this->table table");
+			Dase_Log::put('sql',"deleting id $this->id from $this->table table");
 		}
 		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here

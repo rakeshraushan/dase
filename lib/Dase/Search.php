@@ -639,8 +639,8 @@ class Dase_Search
 		$db = Dase_DB::get();
 		$sql = $this->createSql();	
 		if (defined('DEBUG')) {
-			Dase::log('sql',$sql);
-			Dase::log('sql',join(', ',$this->bound_params));
+			Dase_Log::put('sql',$sql);
+			Dase_Log::put('sql',join(', ',$this->bound_params));
 		}
 		$st = $db->prepare($sql);	
 		$st->execute($this->bound_params);
