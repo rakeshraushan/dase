@@ -5,7 +5,7 @@ class UserHandler
 	//rewrite/replace for alternate authentication
 	public static function initiateLogin($params)
 	{
-		$msg = Dase::filterGet('msg');
+		$msg = Dase_Filter::filterGet('msg');
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'login_form.xsl';
 		if ($msg) {
@@ -17,8 +17,8 @@ class UserHandler
 	//rewrite/replace for alternate authentication
 	public static function processLogin($params)
 	{
-		$user = Dase::filterPost('username');
-		$pass = Dase::filterPost('password');
+		$user = Dase_Filter::filterPost('username');
+		$pass = Dase_Filter::filterPost('password');
 		if ('tseliot' == $pass) {
 			Dase_Cookie::set($user);
 			//do this so cookie is passed along
@@ -83,7 +83,7 @@ class UserHandler
 		$tag->tag_type_id = CART;
 		$tag->findOne();
 		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->item_id = Dase::filterPost('item_id');
+		$tag_item->item_id = Dase_Filter::filterPost('item_id');
 		$tag_item->tag_id = $tag->id;
 		if ($tag_item->insert()) {
 			echo "added cart item $tag_item->id";
@@ -127,7 +127,7 @@ class UserHandler
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));
 		Dase::display($t->transform());
 	}
 
@@ -156,8 +156,8 @@ class UserHandler
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));
-		//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConf('token')));exit;
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));
+		//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));exit;
 		Dase::display($t->transform());
 	}
 

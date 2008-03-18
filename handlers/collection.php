@@ -10,7 +10,7 @@ class CollectionHandler
 
 	public static function listAsAtom($params) 
 	{
-		if (Dase::filterGet('get_all')) {
+		if (Dase_Filter::filterGet('get_all')) {
 			$public_only = false;
 		} else {
 			$public_only = true;
