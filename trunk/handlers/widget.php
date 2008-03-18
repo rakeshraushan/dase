@@ -2,7 +2,7 @@
 
 class WidgetHandler
 {
-	public static function init()
+	public static function init($params)
 	{
 
 		//needs to be given a LONG ttl

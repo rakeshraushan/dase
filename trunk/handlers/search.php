@@ -3,7 +3,7 @@
 class SearchHandler
 {
 
-	public static function opensearch()
+	public static function opensearch($params)
 	{
 
 		if (isset($params['md5_hash'])) {
@@ -92,7 +92,7 @@ class SearchHandler
 		Dase::display($feed->asXml());
 	}
 
-	public static function itemAsAtom()
+	public static function itemAsAtom($params)
 	{
 
 		$search = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString());
@@ -187,7 +187,7 @@ class SearchHandler
 		Dase_Error::report(404);
 	}
 
-	public static function item()
+	public static function item($params)
 	{
 		$request_url = Dase_Url::getRequestUrl();
 		$query_string = Dase_Url::getQueryString();
@@ -198,7 +198,7 @@ class SearchHandler
 		Dase::display($t->transform());
 	}
 
-	public static function search()
+	public static function search($params)
 	{
 		$request_url = Dase_Url::getRequestUrl();
 		$query_string = Dase_Url::getQueryString();
@@ -209,7 +209,7 @@ class SearchHandler
 		Dase::display($t->transform());
 	}
 
-	public static function sql()
+	public static function sql($params)
 	{
 		$result = htmlspecialchars(Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString())->getResult());
 		print "<pre>{$result['sql']}</pre>";

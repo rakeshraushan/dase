@@ -1,4 +1,22 @@
 <?php
+/*
+ * Copyright 2008 The University of Texas at Austin
+ *
+ * This file is part of DASe.
+ * 
+ * DASe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * DASe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
+ */ 
 
 Class Dase_Util 
 {
@@ -15,15 +33,6 @@ Class Dase_Util
 	{
 		$str = strtolower(preg_replace('/[^a-zA-Z0-9_]/','_',$str));
 		return preg_replace('/__*/','_',$str);
-	}
-
-	//from http://us.php.net/manual/en/function.simplexml-element-addChild.php:
-	public static function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child){
-		$node1 = dom_import_simplexml($parent);
-		$dom_sxe = dom_import_simplexml($new_child);
-		$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
-		$node1->appendChild($node2);
-		return simplexml_import_dom($node1);
 	}
 
 	public static function sortByLastUpdateSortable($b,$a)

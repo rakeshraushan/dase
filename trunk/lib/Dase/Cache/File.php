@@ -33,7 +33,7 @@ class Dase_Cache_File extends Dase_Cache
 	function expire()
 	{
 		//Dase::log('standard','expired ' . $this->getLoc());
-		unlink($this->getLoc());
+		@unlink($this->getLoc());
 	}
 
 	function getLoc()
@@ -52,7 +52,7 @@ class Dase_Cache_File extends Dase_Cache
 			$stat = @stat($filename);
 			if($stat[9]) {
 				if(time() > $stat[9] + $this->ttl) {
-					unlink($filename);
+					@unlink($filename);
 					return false;
 				}
 			}

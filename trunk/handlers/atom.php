@@ -2,7 +2,7 @@
 
 class AtomHandler
 {
-	public static function original()
+	public static function original($params)
 	{
 		require_once(DASE_PATH . '/lib/atomlib.php');
 		$parser = new AtomParser();
@@ -14,10 +14,9 @@ class AtomHandler
 		echo "success!";
 	}
 
-	function get_service()
+	function get_service($params)
 	{
-		$params = Dase_Registry::get('params');
-		$c = Dase_Registry::get('collection');
+		$c = Dase_Collection::get($params);
 		$entries_url = APP_ROOT . '/collection/' . $c->ascii_id . '/posts'; 
 		//$entries_url = APP_ROOT . '/collection/' . $c->ascii_id . '/attachments'; 
 		$media_url = APP_ROOT . '/collection/' . $c->ascii_id . '/attachments'; 

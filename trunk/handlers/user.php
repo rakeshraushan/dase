@@ -3,7 +3,7 @@
 class UserHandler
 {
 	//rewrite/replace for alternate authentication
-	public static function initiateLogin()
+	public static function initiateLogin($params)
 	{
 		$msg = Dase::filterGet('msg');
 		$t = new Dase_Xslt;
@@ -15,7 +15,7 @@ class UserHandler
 	}
 
 	//rewrite/replace for alternate authentication
-	public static function processLogin()
+	public static function processLogin($params)
 	{
 		$user = Dase::filterPost('username');
 		$pass = Dase::filterPost('password');
@@ -29,9 +29,8 @@ class UserHandler
 		}
 	}
 
-	public static function finishLogin()
+	public static function finishLogin($params)
 	{
-		$params = Dase_Registry::get('params');
 		if (isset($params['eid'])) {
 			if ($params['eid'] == Dase_User::getCurrent()) {
 				Dase::redirect('/',"welcome {$params['eid']} is logged in");
@@ -41,15 +40,14 @@ class UserHandler
 		}
 	}
 
-	public static function logoff()
+	public static function logoff($params)
 	{
 		Dase_User::logoff();
 		Dase::redirect('login');
 	}
 
-	public static function dataAsJson()
+	public static function dataAsJson($params)
 	{
-		$params = Dase_Registry::get('params');
 		//NOTE WELL!!!:
 		//note that we ONLY use the request_url so the IE cache-busting
 		//timestamp is ignored.  We can have a long ttl here because ALL
@@ -71,16 +69,14 @@ class UserHandler
 		Dase::display($page,false);
 	}
 
-	public static function cartAsJson()
+	public static function cartAsJson($params)
 	{
-		$params = Dase_Registry::get('params');
-		Dase::display(Dase_User::get($params['eid'])->getCart());
+		Dase::display(Dase_User::get($params)->getCart());
 	}
 
-	public static function addCartItem()
+	public static function addCartItem($params)
 	{
-		$params = Dase_Registry::get('params');
-		$u = Dase_User::get($params['eid']);
+		$u = Dase_User::get($params);
 		$u->expireDataCache();
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
@@ -96,10 +92,9 @@ class UserHandler
 		}
 	}
 
-	public static function deleteTagItem()
+	public static function deleteTagItem($params)
 	{
-		$params = Dase_Registry::get('params');
-		$u = Dase_User::get($params['eid']);
+		$u = Dase_User::get($params);
 		$u->expireDataCache();
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->load($params['tag_item_id']);
@@ -114,15 +109,14 @@ class UserHandler
 		}
 	}
 
-	public static function adminCollectionsAsJson()
+	public static function adminCollectionsAsJson($params)
 	{
-		Dase::display(Dase_User::get($params['eid'])->getCollections());
+		Dase::display(Dase_User::get($params)->getCollections());
 	}
 
-	public static function cart()
+	public static function cart($params)
 	{
-		$params = Dase_Registry::get('params');
-		$u = Dase_User::get($params['eid']);
+		$u = Dase_User::get($params);
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
@@ -137,11 +131,10 @@ class UserHandler
 		Dase::display($t->transform());
 	}
 
-	public static function tag()
+	public static function tag($params)
 	{
 		//this probably belongs in the tag handler!
-		$params = Dase_Registry::get('params');
-		$u = Dase_User::get($params['eid']);
+		$u = Dase_User::get($params);
 		$tag = new Dase_DBO_Tag;
 		if (isset($params['id'])) {
 			$tag->load($params['id']);
@@ -168,7 +161,7 @@ class UserHandler
 		Dase::display($t->transform());
 	}
 
-	public static function settings()
+	public static function settings($params)
 	{
 		print "user settings access not implemented";
 	}

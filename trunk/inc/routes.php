@@ -290,6 +290,22 @@ $routes['admin'] = array(
 		'uri_template' => 'admin/{eid}/{collection_ascii_id}',
 		'auth' => 'admin',
 	),
+	'settings' =>    array (
+		'uri_template' => 'admin/{eid}/{collection_ascii_id}/settings',
+		'auth' => 'admin',
+	),
+	'managers' =>    array (
+		'uri_template' => 'admin/{eid}/{collection_ascii_id}/managers',
+		'auth' => 'admin',
+	),
+	'item_types' =>    array (
+		'uri_template' => 'admin/{eid}/{collection_ascii_id}/item_types',
+		'auth' => 'admin',
+	),
+	'attributes' =>    array (
+		'uri_template' => 'admin/{eid}/{collection_ascii_id}/attributes',
+		'auth' => 'admin',
+	),
 	'dataAsJson' =>    array (
 		'uri_template' => 'json/collection/{collection_ascii_id}/data/{select}',
 		'auth' => 'read',

@@ -6,7 +6,7 @@ include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');
 define('MEDIA_ROOT', '/mnt/www-data/dase/media');
 
-$coll = new Dase_DB_Collection;
+$coll = new Dase_DBO_Collection;
 $coll->ascii_id = 'vrc';
 $coll->findOne();
 
@@ -42,7 +42,7 @@ while ($row = $st->fetch()) {
 
 function build($sernum,$coll) {
 	print "$sernum\n";	
-	$item = new Dase_DB_Item;
+	$item = new Dase_DBO_Item;
 	$item->serial_number = $sernum;
 	$item->collection_id = $coll->id;
 	if (!$item->findOne()) {
@@ -60,7 +60,7 @@ function build($sernum,$coll) {
 	$url = APP_ROOT . "/modules/vrc/$sernum";
 	$sxe = new SimpleXMLElement($url, NULL, TRUE);
 
-	$val = new Dase_DB_Value;
+	$val = new Dase_DBO_Value;
 	$val->item_id = $item->id;
 	foreach ($val->find() as $doomed) {
 		print "deleting $doomed->value_text\n";
@@ -69,11 +69,11 @@ function build($sernum,$coll) {
 
 	foreach ($sxe->item[0]->metadata as $m) {
 //	foreach ($sxe->xpath('//metadata') as $m) {
-		$a = new Dase_DB_Attribute;
+		$a = new Dase_DBO_Attribute;
 		$a->collection_id = $coll->id;
 		$a->ascii_id = $m['attribute_ascii_id'];
 		$a->findOne();
-		$v = new Dase_DB_Value;
+		$v = new Dase_DBO_Value;
 		$v->item_id = $item->id;
 		$v->attribute_id = $a->id;
 		$v->value_text = $m;
