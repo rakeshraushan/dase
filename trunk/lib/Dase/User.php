@@ -82,7 +82,7 @@ class Dase_User
 	{
 		//this method gets invoked when $user->eid is referenced
 		if (defined('DEBUG')) {
-			Dase::log('standard','__get from Dase_User prop: ' . $prop);
+			Dase_Log::put('standard','__get from Dase_User prop: ' . $prop);
 		}
 		//note that I cannot do an isset here since we are using __get
 		//magic method on db_user as well!!
@@ -96,7 +96,7 @@ class Dase_User
 	static function check_credentials($username,$password)
 	{
 		$auth_users = array();
-		if (md5($username . Dase::getConf('token')) == $password) {
+		if (md5($username . Dase_Config::get('token')) == $password) {
 			$user = new Dase_DBO_DaseUser();
 			//need to account for case here!!!!!!!!!!!!!!!!!
 			//needs to be case-insensitive

@@ -21,89 +21,6 @@
 class Dase 
 {
 
-	//this is the "application" class which holds the 
-	//static methods for the flow of the app
-
-	public static function getConf($key)
-	{
-		$conf = array();
-		include(DASE_CONFIG);
-		if (isset($conf[$key])) {
-			return $conf[$key];
-		} else {
-			throw new Exception("no such configuration key: $key");
-		}
-	}
-
-	public static function log($logfile,$msg)
-	{
-		$date = date(DATE_W3C);
-		$msg = "$date : $msg\n";
-		if(file_exists(LOG_DIR . "{$logfile}.log")) {
-			file_put_contents(LOG_DIR ."{$logfile}.log",$msg,FILE_APPEND);
-		}
-		if ('error' == $logfile) {
-			//include backtrace w/ errors
-			ob_start();
-			debug_print_backtrace();
-			$trace = ob_get_contents();
-			ob_end_clean();
-			file_put_contents(LOG_DIR ."error.log",$trace,FILE_APPEND);
-		}
-	}
-
-	public static function filterArray($ar)
-	{
-		if (Dase_Util::getVersion() >= 520) {
-			return filter_var_array($ar, FILTER_SANITIZE_STRING);
-		} else {
-			foreach ($ar as $k => $v) {
-				$ar[$k] = strip_tags($v);
-			}
-			return $ar;
-		}
-	}
-
-	public static function filterGetArray()
-	{
-		if (Dase_Util::getVersion() >= 520) {
-			return filter_input_array(INPUT_GET);
-		} else {
-			$ar = array();
-			foreach ($_GET as $k => $v) {
-				if (is_array($v)) {
-					$v = Dase::filterArray($v);
-					$ar[$k] = $v;
-				} else {
-					$ar[$k] = trim(strip_tags($v));
-				}
-			}
-			return $ar;
-		}
-	}
-
-	public static function filterGet($key)
-	{
-		if (Dase_Util::getVersion() >= 520) {
-			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
-		} else {
-			if (isset($_GET[$key])) {
-				return trim(strip_tags($_GET[$key]));
-			}
-		}
-	}
-
-	public static function filterPost($key)
-	{
-		if (Dase_Util::getVersion() >= 520) {
-			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
-		} else {
-			if (isset($_POST[$key])) {
-				return strip_tags($_POST[$key]);
-			}
-		}
-	}
-
 	public static function run()
 	{
 		$request_url = Dase_Url::getRequestUrl(); 
@@ -120,14 +37,14 @@ class Dase
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				//if debug in force, log action
 				if (defined('DEBUG')) {
-					Dase::log('standard','--------- beginning DASe route -------------');
-					Dase::log('standard',$regex . " => " . $conf_array['action']);
-					Dase::log('standard',"request_url => " . $request_url);
+					Dase_Log::put('standard','--------- beginning DASe route -------------');
+					Dase_Log::put('standard',$regex . " => " . $conf_array['action']);
+					Dase_Log::put('standard',"request_url => " . $request_url);
 				}
 				$params = array();
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
-					Dase::log('standard',"params => " . $conf_array['params']);
+					Dase_Log::put('standard',"params => " . $conf_array['params']);
 				}
 				$module_prefix = '';
 				//if prefix is set, it means this is a module request
@@ -141,7 +58,7 @@ class Dase
 				if (isset($matches[1])) { // i.e. at least one paramenter
 					//don't need matches[0] (see preg_match docs)
 					array_shift($matches);
-					$clean_matches = Dase::filterArray($matches);
+					$clean_matches = Dase_Filter::filterArray($matches);
 					//match param value to its param key
 					if (count($params) == count($clean_matches)) {
 						$params = array_combine($params,$clean_matches);
@@ -151,7 +68,7 @@ class Dase
 						die ("routes error");
 					}
 				}
-				if (Dase::filterGet('debug_route')) {
+				if (Dase_Filter::filterGet('debug_route')) {
 					//use this to make a handy debug bookmarklet!
 					echo "$regex => {$conf_array['action']}";
 					exit;
@@ -210,19 +127,19 @@ class Dase
 						$page = $cache->get();
 						if ($page) {
 							if (defined('DEBUG')) {
-								Dase::log('standard','------- using cache -------');
-								Dase::log('standard','using cached page '.$page);
-								Dase::log('standard','---------------------------');
+								Dase_Log::put('standard','------- using cache -------');
+								Dase_Log::put('standard','using cached page '.$page);
+								Dase_Log::put('standard','---------------------------');
 							}
 							Dase::display($page,false);
 							exit;
 						} 
 					}
-					$msg = Dase::filterGet('msg');
+					$msg = Dase_Filter::filterGet('msg');
 					if (defined('DEBUG')) {
-						Dase::log('standard','------ call_user_func -----');
-						Dase::log('standard',"calling method {$conf_array['action']} on class $classname");
-						Dase::log('standard','---------------------------');
+						Dase_Log::put('standard','------ call_user_func -----');
+						Dase_Log::put('standard',"calling method {$conf_array['action']} on class $classname");
+						Dase_Log::put('standard','---------------------------');
 					}
 					//call the action on the handler
 					Dase_Registry::set('handler',$conf_array['handler']);
@@ -232,14 +149,14 @@ class Dase
 					exit;
 				} else { 
 					//matched regex, but didn't find action
-					Dase::log('error',"no handler for $request_url ($method)");
+					Dase_Log::put('error',"no handler for $request_url ($method)");
 					Dase_Error::report(500);
 				}
 			} 
 		} 
 		//no routes match, so use default:
 		//having this "outlet" here guarantees only first match gets tested
-		Dase::log('error',"$request_url could not be located");
+		Dase_Log::put('error',"$request_url could not be located");
 		Dase_Error::report(404);
 		exit;
 	}
@@ -269,7 +186,7 @@ class Dase
 		//client expect something OTHER than html (e.g., json,text,xml)
 		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
 		if (defined('DEBUG')) {
-			Dase::log('standard','redirecting to '.$redirect_path);
+			Dase_Log::put('standard','redirecting to '.$redirect_path);
 		}
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;

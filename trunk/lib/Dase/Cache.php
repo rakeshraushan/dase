@@ -26,7 +26,7 @@ class Dase_Cache
 {
 	public function __construct($name='') 
 	{
-		$type = Dase::getConf('cache');
+		$type = Dase_Config::get('cache');
 		$class_name = 'Dase_Cache_'.ucfirst($type);
 		if (class_exists($class_name)) {
 			return new $class_name($name);
