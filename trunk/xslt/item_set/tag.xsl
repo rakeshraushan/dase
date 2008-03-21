@@ -32,16 +32,6 @@
 	<title>Item Set</title>
   </xsl:template>
 
-  <xsl:template match="ul[@id='menu']/li[position() = last()]">
-	<xsl:copy-of select="."/>
-	<li class="marked" id="markedList"><a href="" class="main">Marked Items</a>
-	  <ul class="hide" id="marked">
-		<li class="placeholder"></li>
-		<!-- ajax fills in here -->
-	  </ul>
-	</li>
-  </xsl:template>
-
   <xsl:template match="insert-content">
 	<div class="full browse">
 	  <a id="maincontent" name="maincontent"></a>

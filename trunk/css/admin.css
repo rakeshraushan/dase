@@ -4,16 +4,22 @@
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
 	margin-top: 2px;
-	padding:8px;
+	padding:4px;
 	padding-left: 15px;
 }
 
 .cbBanner p {
 	color: white;
 	margin:0;
-	font-size: 1.6em;
+	font-size: 1.8em;
 	padding:6px 0 0 0;
 }
+
+div.cb {
+	padding:15px;
+	background-color:#eef1f8;
+}
+
 
 div.cb h1 {
 	font-size: 1.2em;
@@ -24,6 +30,37 @@ div.cb h1 {
 /* overrrides style.css: */
 div.login {
 	padding-top: 1px;
+}
+
+#sidebar
+{
+	width: 16%;
+	background-color: #ffffff;
+	margin: 0px 3px;
+	float:left;
+	font-size: 94%;
+}
+
+ul#menu a {
+	display:block;
+	padding: 9px 9px 9px 18px;
+	margin: 5px 0px;
+}
+ul#menu img {
+	border: 0;
+}
+ul#menu  li  {
+	/* fixes ie problem */
+	background-color: #d5deed;
+	-moz-border-radius: 5px;
+}
+ul#menu li:hover {
+	background-color: #eef1f8;
+}
+
+sup {
+	margin-left: 10px;
+	font-size: 1em;
 }
 
 table#dataDisplay {
@@ -42,6 +79,7 @@ table#dataDisplay  td.data {
 }
 
 table#dataDisplay  th {
+	color: #333;
 	background-color: #f2dfc1;
 	border: 1px solid #999;
 	padding: 7px;
