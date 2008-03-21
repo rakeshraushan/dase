@@ -3,7 +3,8 @@
 class Dase_Collection
 {
 	//accepts a param array OR an ascii_id
-	public static function get($params_or_ascii_id) {
+	public static function get($params_or_ascii_id) 
+	{
 		if (
 			is_array($params_or_ascii_id) && isset($params_or_ascii_id['collection_ascii_id']) && $params_or_ascii_id['collection_ascii_id']
 		) {

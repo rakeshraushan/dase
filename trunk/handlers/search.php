@@ -94,7 +94,6 @@ class SearchHandler
 
 	public static function itemAsAtom($params)
 	{
-
 		$search = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString());
 		$num = Dase_Filter::filterGet('num');
 		$max = Dase_Filter::filterGet('max');

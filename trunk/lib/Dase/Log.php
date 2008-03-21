@@ -5,7 +5,7 @@ class Dase_Log
 	public static function put($logfile,$msg)
 	{
 		$date = date(DATE_W3C);
-		$msg = "$date : $msg\n";
+		$msg = $date.'| pid:'.getmypid().':'.$msg."\n";
 		if(file_exists(LOG_DIR . "{$logfile}.log")) {
 			file_put_contents(LOG_DIR ."{$logfile}.log",$msg,FILE_APPEND);
 		}

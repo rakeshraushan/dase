@@ -24,7 +24,9 @@ class Dase_Cache_Exception extends Exception {
 
 class Dase_Cache
 {
-	public function __construct($name='') 
+	private function __construct() {}
+
+	public function get($name='') 
 	{
 		$type = Dase_Config::get('cache');
 		$class_name = 'Dase_Cache_'.ucfirst($type);
@@ -36,8 +38,8 @@ class Dase_Cache
 	}
 
 	//must be overridden:
-	function get() {}
-	function set($data) {}
+	function getData() {}
+	function setData($data) {}
 	function setTimeToLive($exp) {}
 	function expire() {}
 }

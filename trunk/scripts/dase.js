@@ -260,7 +260,8 @@ Dase.initUser = function() {
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(eid);
 			Dase.placeUserCollections(eid);
-			Dase.checkAdminStatus(eid);
+			Dase.placeCollectionAdminLink(eid);
+			Dase.placeItemEditLink(eid);
 			Dase.placeUserSearchCollections();
 			Dase.initCart();
 			Dase.initAddToCart();
@@ -294,22 +295,48 @@ Dase.checkAdminStatus = function(eid) {
 	var current_coll = current_coll_elem.innerHTML;  
 	for (var i=0;i<Dase.user.collections.length;i++) {
 		var c = Dase.user.collections[i];
-		//display link to administer collection is user has privs
-		if (current_coll && (c.ascii_id == current_coll)  
-				&& ((c.auth_level == 'manager') || (c.auth_level == 'superuser'))
-		   ) {
-			var menu = Dase.$('menu');
-			var li = document.createElement('li');
-			li.setAttribute('class','admin');
-			li.setAttribute('className','admin');
-			var a = document.createElement('a');
-			a.setAttribute('href','admin/'+eid+'/'+c.ascii_id);
-			a.setAttribute('class','main');
-			a.setAttribute('className','main');
-			a.appendChild(document.createTextNode(c.collection_name+' Admin'));
-			li.appendChild(a);
-			menu.appendChild(li);
+		//display link to administer collection if user has privs
+		if (current_coll && (c.ascii_id == current_coll)) {  
+			var set = {
+				'collection_ascii_id':current_coll,
+				'eid':eid,
+				'auth_level':c.auth_level,
+				'collection_name':c.collection_name
+			}
+			return set;
 		}
+	}
+	return false;
+}
+
+Dase.placeItemEditLink = function(eid) {
+	var set = Dase.checkAdminStatus(eid);
+	if (!set) return;
+	var page_hook = Dase.$('pageHook').innerHTML;
+	if (
+			(page_hook == 'search_item') &&
+			(set.auth_level == 'manager' || set.auth_level == 'superuser' || set.auth_level == 'write')
+	   ) {
+		alert(eid+' can edit this item');
+	}
+	return;
+}
+
+Dase.placeCollectionAdminLink = function(eid) {
+	var set = Dase.checkAdminStatus(eid);
+	if (!set) return;
+	if (set.auth_level == 'manager' || set.auth_level == 'superuser') {
+		var menu = Dase.$('menu');
+		var li = document.createElement('li');
+		li.setAttribute('class','admin');
+		li.setAttribute('className','admin');
+		var a = document.createElement('a');
+		a.setAttribute('href','admin/'+eid+'/'+set.collection_ascii_id);
+		a.setAttribute('class','main');
+		a.setAttribute('className','main');
+		a.appendChild(document.createTextNode(set.collection_name+' Admin'));
+		li.appendChild(a);
+		menu.appendChild(li);
 	}
 }
 
@@ -1083,11 +1110,32 @@ Dase.initCart = function() {
 			});
 };
 
+/* Looks for any link w/ class 'toggle'.  That link should have
+ * an id that begins 'toggle_' and the remaining string is the
+ * id of the element-to-be-toggled.
+ * 
+ */
+
+Dase.initToggle = function() {
+	var links = document.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		if (Dase.hasClass(links[i],'toggle')) {
+			var toggle = links[i];
+			toggle.onclick = function() {
+				var target = this.id.substr(7);
+				Dase.toggle(Dase.$(target));
+				return false;
+			}
+		}
+	}
+}
+
 Dase.addLoadEvent(function() {
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
 		Dase.multicheckItems();
+		Dase.initToggle();
 //		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

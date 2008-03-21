@@ -35,7 +35,8 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="full item browse">
+	<div class="full browse">
+	  <div id="collectionAsciiId" class="hide"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
 	  <h2><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
 	  <h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>
 	  <div class="pageControls">
@@ -46,16 +47,20 @@
 	  <table class="itemDisplay">
 		<tr>
 		  <td class="image">
-			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:p[@class='collection_name']"/>
-			<xsl:copy-of select="$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']"/>
+			<img src="{$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']/@src}"/>
 			<h4>Media:</h4>
 			<ul id="mediaLinks">
 			  <xsl:apply-templates select="$it/atom:entry/atom:link" mode="media"/>
 			</ul>
 		  </td>
 		  <td class="metadata">
-			<dl>
-			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl" mode="keyvals"/>
+			<h3><a href="collection/{$coll}"><xsl:value-of select="$it/atom:entry/atom:content/h:div/h:p[@class='collection_name']"/></a></h3>
+			<dl id="metadata">
+			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='metadata']" mode="keyvals"/>
+			</dl>
+			<p class="toggleControl"><a href="view_admn_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a></p>
+			<dl id="adminMetadata" class="hide">
+			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='admin_metadata']" mode="keyvals"/>
 			</dl>
 		  </td>
 		</tr>

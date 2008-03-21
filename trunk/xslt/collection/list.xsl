@@ -41,7 +41,7 @@
 		  <input type="text" name="q" size="30"/>
 		  <input type="submit" value="Search" class="button"/>
 		</div>
-		<ul id="collectionList" class="pageList multicheck">
+		<ul id="collectionList" class="multicheck">
 		  <xsl:apply-templates select="$collections/atom:feed/atom:entry"/>
 		  <li id="specialAccessLabel" class="label hide">Special Access Collections</li>
 		</ul>

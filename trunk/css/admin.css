@@ -2,7 +2,6 @@
 	background-color: #263b5e;
 	color: #ccc;
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
-	font-size: 1.5em;
 	font-weight: bold;
 	margin-top: 2px;
 	padding:8px;
@@ -12,22 +11,19 @@
 .cbBanner p {
 	color: white;
 	margin:0;
-	font-size: 2em;
+	font-size: 1.6em;
 	padding:6px 0 0 0;
+}
+
+div.cb h1 {
+	font-size: 1.2em;
+	color: #666;
+	margin: 0 0 6px 0;
 }
 
 /* overrrides style.css: */
 div.login {
-	padding-top: 3px;
-}
-
-ul.collData {
-	list-style: disc;
-	margin-left: 20px;
-}
-ul.collData li {
-	list-style: disc;
-	margin-left: 20px;
+	padding-top: 1px;
 }
 
 table#dataDisplay {
@@ -50,32 +46,9 @@ table#dataDisplay  th {
 	border: 1px solid #999;
 	padding: 7px;
 	text-align: center;
-	font-weight: bold;
 }
 
 table#dataDisplay  th.rows {
 	text-align: right;
 }
-
-#dataDisplay dl {
-}
-
-#dataDisplay dt {
-	font-size: 1.3em;
-	color: #009;
-	font-weight: bold;
-	margin-top: 10px;
-}
-
-#dataDisplay dd {
-	margin-left: 12px;
-	margin-top: 10px;
-}
-
-div.adminForm {
-	background-color: #ffebcc;
-	border: 1px solid #999;
-	padding: 8px;
-}
-
 

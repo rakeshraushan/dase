@@ -3,6 +3,7 @@ define("APP_ROOT","http://dase.laits.utexas.edu");
 define("BIN_PATH", dirname(__FILE__));
 define("DEBUG",1);
 define("DASE_PATH",BIN_PATH . '/..');
+define('LOG_DIR', DASE_PATH . '/log/');
 define("DASE_CONFIG", DASE_PATH . '/../daseconf.php');
 define('CART',1);
 define('USER_COLLECTION',2);

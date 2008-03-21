@@ -123,13 +123,11 @@ class Dase
 					//use nocache="custom" to document custom cache in
 					//action file (here same as using 'yes')
 					if ('get' == $method && !isset($conf_array['nocache'])) {
-						$cache = new Dase_Cache();
-						$page = $cache->get();
+						$cache = Dase_Cache::get();
+						$page = $cache->getData();
 						if ($page) {
 							if (defined('DEBUG')) {
-								Dase_Log::put('standard','------- using cache -------');
-								Dase_Log::put('standard','using cached page '.$page);
-								Dase_Log::put('standard','---------------------------');
+								Dase_Log::put('standard','using cached page '.$cache->getLoc());
 							}
 							Dase::display($page,false);
 							exit;
@@ -137,9 +135,7 @@ class Dase
 					}
 					$msg = Dase_Filter::filterGet('msg');
 					if (defined('DEBUG')) {
-						Dase_Log::put('standard','------ call_user_func -----');
 						Dase_Log::put('standard',"calling method {$conf_array['action']} on class $classname");
-						Dase_Log::put('standard','---------------------------');
 					}
 					//call the action on the handler
 					Dase_Registry::set('handler',$conf_array['handler']);
@@ -164,8 +160,8 @@ class Dase
 	public static function display($content,$set_cache=true)
 	{
 		if ($set_cache) {
-			$cache = new Dase_Cache();
-			$cache->set($content);
+			$cache = Dase_Cache::get();
+			$cache->setData($content);
 		}
 		$mime = Dase_Registry::get('response_mime_type');
 		header("Content-Type: $mime; charset=utf-8");
