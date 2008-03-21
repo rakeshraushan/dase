@@ -10,12 +10,13 @@
 	width: 16%;
 	background-color: #ffffff;
 	margin: 0px 3px 0px 0px;
+	font-size: 92%;
 	float:left;
 	}
 
 	ul#menu a {
 	display:block;
-	padding: 6px;
+	padding: 5px;
 	margin: 2px 0px;
 	}
 	ul#menu  li  {

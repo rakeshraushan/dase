@@ -5,36 +5,8 @@
 	padding:0 12px;
 }
 
-.adminBanner p {
-	color:#fff;
-	font-size:2em;
-	margin:0;
-	padding:11px 0 0 12px;
-}
-
-.adminBanner abbr {
-	font-size:.85em;
-}
-
-.adminBanner p.label {
-	color:#fff;
-	font-family:arial, sans-serif;
-	font-size:11px;
-	left:12px;
-	letter-spacing:.2em;
-	position:absolute;
-	top:90px;
-}
-
 html #maincontent {
 	height:1%;
-}
-
-/* PAGE background */
-
-div.cb {
-	padding:15px;
-	background-color:#eef1f8;
 }
 
 div#content {
@@ -253,10 +225,6 @@ a.spill {
 	font-weight:400;
 }
 
-a.chk,a.unchk {
-	line-height:3em;
-}
-
 /*****  ITEM DISPLAY PAGE **************/
 
 table.itemDisplay td {
@@ -315,10 +283,6 @@ div#ajaxMsg {
 	font-weight: bold;
 }
 
-h3.browsePublicTags {
-	padding-top:20px;
-}
-
 h3.browsePublicTags a:link {
 	background-color:#fff0d9;
 	border:1px solid #e6d4b8;
@@ -349,10 +313,6 @@ div#checkItems .uncheck {
 	margin: 18px 0 8px 0;
 }
 
-ul#collectionList .check,.uncheck {
-	line-height:3em;
-	margin:8px;
-}
 
 div#jsAlert {
 	color:#a00;
@@ -397,7 +357,14 @@ ul#collectionList a.checkedCollection:hover,
 ul#collectionList a.checkedCollection:active {
 	color:#000;
 }
-
+ul#collectionList .uncheck {
+	line-height:3em;
+	margin:8px;
+}
+ul#collectionList .check {
+	line-height:3em;
+	margin:8px;
+}
 a.catLink,a.valLink {
 	display:block;
 	line-height:1.5em;
