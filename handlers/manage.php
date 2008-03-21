@@ -67,6 +67,12 @@ class ManageHandler
 		exit;
 	}
 
+	public static function monitor($params) {
+		$t = new Dase_Xslt;
+		$t->stylesheet = XSLT_PATH.'sandbox/index.xsl';
+		Dase::display($t->transform());
+	}
+
 	public static function phpinfo($params)
 	{
 		phpinfo();

@@ -41,7 +41,7 @@ class Dase_Cache_File extends Dase_Cache
 		return $this->cache_dir . $this->filename;
 	}
 
-	function get()
+	function getData()
 	{
 		//clean up this logic
 		$filename = $this->getLoc();
@@ -60,7 +60,7 @@ class Dase_Cache_File extends Dase_Cache
 		return @file_get_contents($filename);
 	}
 
-	function set($data)
+	function setData($data)
 	{ 
 		//avoids race condition
 		if ($data) {

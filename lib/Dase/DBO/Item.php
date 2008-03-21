@@ -5,7 +5,6 @@ require_once 'Dase/DBO/Autogen/Item.php';
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
-	public $admin = array();
 	public $collection_ascii_id = '';
 	public $collection_name = '';
 	public $collection = null;
@@ -99,28 +98,31 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return "built indexes for " . $this->serial_number . "\n";
 	}
 
-	public function getValues()
+	public function getMetadata($att_ascii_id = '')
 	{
-		$val = new Dase_DBO_Value;
-		$val->item_id = $this->id;
-		return $val->find();
-	}
-
-	public function getMetadata()
-	{
-		//minimize memory consumption 
-		//as compared to getValues()
 		$metadata = array();
+		$bound_params = array();
 		$db = Dase_DB::get();
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,v.value_text, v.value_text_md5
+			SELECT a.ascii_id, a.attribute_name,v.value_text, v.value_text_md5, a.collection_id, v.id
 			FROM attribute a, value v
-			WHERE v.item_id = $this->id
+			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
+			ORDER BY a.sort_order,v.value_text
 			";
+		$bound_params[] = $this->id;
+		if ($att_ascii_id) {
+			$sql .= "
+				AND a.ascii_id = ?
+				";
+			$bound_params[] = $att_ascii_id;
+		}
 		$st = $db->prepare($sql);
-		$st->execute();
+		$st->execute($bound_params);
 		while ($row = $st->fetch()) {
+			if (!$row['value_text_md5']) {
+				Dase_DBO_Value::updateValueTextMd5($row['id']);
+			}
 			$metadata[] = $row;
 		}
 		return $metadata;
@@ -332,35 +334,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function getAdminMetadata($att_ascii_id = null)
-	{
-		//admin is ONLY set once in the life of
-		//an item object.  user can specify which 
-		//one will be returned, otherwise array is returned
-		if (!count($this->admin)) {
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT a.ascii_id, v.value_text 
-				FROM attribute a, value v
-				WHERE a.id = v.attribute_id
-				AND v.item_id = $this->id
-				AND a.collection_id = 0
-				";
-			$st = $db->query($sql);
-			while ($row = $st->fetch()) {
-				$this->admin[$row['ascii_id']] = $row['value_text'];
-			}	
-		}
-		if ($att_ascii_id) {
-			if (isset($this->admin[$att_ascii_id])) {
-				return $this->admin[$att_ascii_id];
-			} else {
-				return false;
-			}
-		}
-		return $this->admin;
-	}
-
 	function getTitle()
 	{
 		$db = Dase_DB::get();
@@ -411,15 +384,34 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$div->addChild('p',htmlspecialchars($this->collection->collection_name))->addAttribute('class','collection_name');;
 		$dl = $div->addChild('dl');
 		$dl->addAttribute('class','metadata');
+		$admin_dl = $div->addChild('dl');
+		$admin_dl->addAttribute('class','admin_metadata');
+		$label_hash = array();
 		foreach ($this->getMetadata() as $row) {
-			//note: since this is used in archiving scripts
-			//I use getMetadata() rather than getValues() to
-			//conserve memory
-			$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
-			$dt->addAttribute('class',$row['ascii_id']);
-			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-			$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+			if ($row['value_text']) {
+				if ($row['collection_id']) {
+					if (!isset($label_hash[$row['ascii_id']])) {
+						$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+						$dt->addAttribute('class',$row['ascii_id']);
+						$label_hash[$row['ascii_id']] = 1;
+					}
+					$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
+					$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+				} else { //meaning collection_id is 0, so it is admin metadata
+					if (!isset($label_hash[$row['ascii_id']])) {
+						$dt = $admin_dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+						$dt->addAttribute('class',$row['ascii_id']);
+						$label_hash[$row['ascii_id']] = 1;
+					}
+					$dd = $admin_dl->addChild('dd',htmlspecialchars($row['value_text']));
+					$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+				}
+			}
 		}
+		$admin_dl->addChild('dt','DASe Item Id');
+		$admin_dl->addChild('dd',$this->id);
+		$admin_dl->addChild('dt','DASe Serial Number');
+		$admin_dl->addChild('dd',$this->serial_number);
 		$d = 'http://daseproject.org/media/';
 		//$media_ul = $div->addChild('ul');
 		//$media_ul->addAttribute('class','media');

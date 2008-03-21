@@ -68,6 +68,17 @@ $routes['atom'] = array (
 	),
 );
 
+$routes['sandbox'] = array (
+	'monitor' => array (
+		'uri_template' => 'sandbox/monitor',
+		'auth' => 'superuser',
+	),
+	'calendar' => array (
+		'uri_template' => 'sandbox/calendar',
+		'auth' => 'superuser',
+	),
+);
+
 $routes['test'] = array (
 	'first' => array (
 		'uri_template' => 'test/first',
@@ -149,7 +160,7 @@ $routes['search'] = array(
 	),
 	'item' =>    array (
 		'uri_template' => array('search_item','collection/{collection_ascii_id}/search_item'),
-		'auth' => 'user',
+		'auth' => 'none',
 	),
 	'search' =>    array (
 		'uri_template' => array('search','collection/{collection_ascii_id}/search'),
@@ -282,6 +293,11 @@ $routes['manage'] = array(
 	'stats' =>    array (
 		'uri_template' => 'manage/stats',
 		'auth' => 'superuser',
+	),
+	'monitor' =>    array (
+		'uri_template' => 'manage/monitor',
+		'auth' => 'superuser',
+		'mime' => 'application/xhtml+xml',
 	),
 );
 

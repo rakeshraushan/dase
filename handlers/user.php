@@ -57,12 +57,12 @@ class UserHandler
 		if (!isset($params['eid'])) {
 			echo "user data error"; exit;
 		}
-		$cache = new Dase_Cache($params['eid'] . '_data');
-		$page = $cache->get();
+		$cache = Dase_Cache::get($params['eid'] . '_data');
+		$page = $cache->getData();
 		if (!$page) {
 			$cache->setTimeToLive(300);
 			$page = Dase_User::get($params['eid'])->getData();
-			$cache->set($page);
+			$cache->setData($page);
 		}
 		//passing false as second param 
 		//means cache will NOT be reset

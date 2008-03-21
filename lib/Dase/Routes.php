@@ -32,14 +32,19 @@ class Dase_Routes
 
 	public static function compile()
 	{
-		$cache = new Dase_Cache('routes');
-		$cached_routes = $cache->get();
+		$cache = Dase_Cache::get('routes');
+		$cached_routes = $cache->getData();
 		if ($cached_routes) {
+			if (defined("DEBUG")) {
+				Dase_Log::put('standard','------- using cache -------');
+				Dase_Log::put('standard','routes cache hit');
+				Dase_Log::put('standard','---------------------------');
+			}
 			return unserialize($cached_routes);
 		} else {
 			$core_routes = Dase_Routes::compileRoutes(DASE_PATH.'/inc/routes.php');
 			$all_routes = Dase_Routes::compileModuleRoutes(DASE_PATH.'/modules',$core_routes);
-			$cache->set(serialize($all_routes));
+			$cache->setData(serialize($all_routes));
 			return $all_routes;
 		}
 	}

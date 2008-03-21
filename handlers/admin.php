@@ -66,13 +66,13 @@ class AdminHandler
 		} else {
 			$select = 'all';
 		}	
-		$cache = new Dase_Cache($c->ascii_id . '_' . $select);
-		$page = $cache->get();
+		$cache = Dase_Cache::get($c->ascii_id . '_' . $select);
+		$page = $cache->getData();
 		if (!$page) {
 			//long cache -- make sure that changes kill it
 			$cache->setTimeToLive(3);
 			$page = $c->getData($select);
-			$cache->set($page);
+			$cache->setData($page);
 		}
 		Dase::display($page,false);
 	}
@@ -80,7 +80,7 @@ class AdminHandler
 	public static function setAttributeSortOrder($params)
 	{
 		$c = Dase_Collection::get($params);
-		$cache = new Dase_Cache($c->ascii_id . '_attributes');
+		$cache = Dase_Cache::get($c->ascii_id . '_attributes');
 		$cache->expire();
 		$att_ascii_id = $params['attribute_ascii_id'];
 		$new_so = file_get_contents('php://input');

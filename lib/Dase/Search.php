@@ -268,7 +268,10 @@ class Dase_Search
 			foreach($val as $v) {
 				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'~')){
 					list($coll,$att) = explode(':',$k);
-					$echo['exact'][$k][] = Dase_DBO_Value::getValueTextByHash($coll,$v);
+					//do NOT make db call in this method! it is a waste if search is db cached
+					//echo should be "calculated" upon cache miss
+					//$echo['exact'][$k][] = Dase_DBO_Value::getValueTextByHash($coll,$v);
+					$echo['hash'][] = array('coll' => $coll,'k' => $k,'v' => $v);
 					$search['att'][$coll][$att]['value_text_md5'] = array();
 					$search['att'][$coll][$att]['value_text_md5'][] = $v;
 					$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
@@ -315,7 +318,19 @@ class Dase_Search
 			unset($search['or'][$remove_key]);
 		}
 
+		$search['echo'] = $echo;
+		$this->search = $search;
+
+		// DONE parsing search string!!
+	}
+
+	public static function constructEcho($echo) {
 		//construct echo
+		if (isset($echo['hash']) && is_array($echo['hash'])) {
+			foreach ($echo['hash'] as $set) {
+				$echo['exact'][$set['k']][] = Dase_DBO_Value::getValueTextByHash($set['coll'],$set['v']);
+			}
+		}
 		$echo_str = '';
 		if ($echo['query']) {
 			$echo_str .= " {$echo['query']} ";
@@ -353,10 +368,7 @@ class Dase_Search
 			}
 			$echo_str .= " item type {$echo['type']} ";
 		}
-		$search['echo'] = $echo_str;
-		$this->search = $search;
-
-		// DONE parsing search string!!
+		return $echo_str;
 	}
 
 	public function getXml()
@@ -702,6 +714,7 @@ class Dase_Search
 		$cache->refine = 'newdase'; 
 		if (!$cache->findOne()) {
 			$result = $this->_executeSearch($hash);
+			$result['echo'] = Dase_Search::constructEcho($result['echo']);
 			//for backward compatibilty this is called
 			//item_id_string, but it is actually the
 			//complete result data structure

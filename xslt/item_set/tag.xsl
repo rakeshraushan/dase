@@ -46,6 +46,7 @@
 	<div class="full browse">
 	  <a id="maincontent" name="maincontent"></a>
 	  <div id="msg" class="alert hide"></div>
+	  <a href="{$items/atom:link[@rel='self']/@href}">atom feed</a>
 	  <div id="searchResults">
 		<form method="post" action="xxxx">	
 		  <h1><xsl:value-of select="$items/atom:subtitle/text()"/></h1>

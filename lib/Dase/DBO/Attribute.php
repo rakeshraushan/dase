@@ -149,9 +149,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$dl = $div->addChild('dl');
 		$dl->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
-			//note: since this is used in archiving scripts
-			//I use getMetadata() rather than getValues() to
-			//conserve memory
 			$dl->addChild('dt',htmlspecialchars($row['attribute_name']));
 			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
 			$dd->addAttribute('class',$row['ascii_id']);

@@ -2,15 +2,12 @@
   <head>
 	<dynamic xml:id="dynamic"/>
 	<insert-title/>
-	<meta name="description" content="
-	  The Digital Archive Services project 
-	  is a lightweight digital content repository
-	  created by the College of Liberal Arts at 
-	  The University of Texas at Austin."/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<insert-base-href/>
 
+	<link rel="stylesheet" type="text/css" href="css/yui/reset-fonts.css"/>
+	<link rel="stylesheet" type="text/css" href="css/yui/base-min.css"/>
 	<link rel="stylesheet" type="text/css" href="css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="css/admin_menu.css"/>
 	<link rel="stylesheet" type="text/css" href="css/admin.css"/>
@@ -68,7 +65,6 @@
 	  <a href="apps/help" id="helpModule">FAQ</a> | 
 	  <a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 	  <a href="copyright">Copyright/Usage Statement</a>| 
-	  <insert-timer/> seconds |
 	  <img src="images/dasepowered.png" alt="DASePowered icon"/>
 	</div><!--closes footer-->
 	<div id="debugData" class="hide"></div>
