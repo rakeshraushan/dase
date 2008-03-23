@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-$days = 200;
+$days = 100;
 $database = 'dase_prod';
 include 'cli_setup.php';
 define('APP_ROOT', 'http://quickdraw.laits.utexas.edu/dase');

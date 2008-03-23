@@ -1,12 +1,20 @@
-.daseBanner {
+div#header {
 	background-image:url(../images/daseBanner.jpg);
 	height:70px;
-	margin-top:-4px;
+	margin-top:-1px;
 	padding:0 12px;
 }
 
 html #maincontent {
 	height:1%;
+}
+
+#sidebar {
+	width: 16%;
+	background-color: #ffffff;
+	margin: 0px 3px 0px 0px;
+	font-size: 92%;
+	float:left;
 }
 
 div#content {
@@ -28,7 +36,7 @@ div.full {
 	padding:10px 15px 15px 30px;
 }
 
-div.browse {
+div#browse {
 	background-color:#f2dfc1;
 }
 
@@ -82,7 +90,7 @@ form#searchCollections input,select {
 form#searchCollectionsAdv {
 	background-color: #e6d4b8;
 	padding: 3px;
-margin:0px 0px 10px 0px;
+	margin:0px 0px 10px 0px;
 }
 
 form#searchCollectionsAdv input,select {
@@ -340,6 +348,11 @@ div#browseColumns {
 	margin:10px 0;
 }
 
+ul#collectionList {
+	margin-top: 1em;
+	line-height: 1.4em;
+}
+
 ul#collectionList a:link,
 ul#collectionList a:visited,
 ul#collectionList a:hover,
@@ -365,6 +378,7 @@ ul#collectionList .check {
 	line-height:3em;
 	margin:8px;
 }
+
 a.catLink,a.valLink {
 	display:block;
 	line-height:1.5em;
@@ -392,7 +406,9 @@ a.catLink,a.valLink {
 	margin-top: 1.8em;
 }
 #searchResults div.caption {
-	padding: 10px 3px 0 0px;
+	font-size: .88em;
+	line-height: 1.4em;
+	color: #666;
 }
 #searchResults td.checked {
 	background-color: #fff0d9;
@@ -412,7 +428,6 @@ a.catLink,a.valLink {
 #searchResults div.caption .collection_name {
 	font-weight: normal;
 	color: #669;
-	font-size: .95em;
 }
 img.thumbnail {
 	border: 1px solid #ccf;
@@ -476,7 +491,7 @@ a.clickTarget:hover {
 }
 
 li#markedList {
-/*	display: none;*/
+	/*	display: none;*/
 }
 
 ul.searchTallies li {

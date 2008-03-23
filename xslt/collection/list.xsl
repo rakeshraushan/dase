@@ -32,8 +32,7 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="list browse">
-	  <a id="maincontent" name="maincontent"></a>
+	<div class="list" id="browse">
 	  <div id="msg" class="alert hide"></div>
 	  <div class="searchBoxLabel">Search selected collection(s):</div> 
 	  <form id="searchCollections" method="get" action="search">

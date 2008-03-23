@@ -44,8 +44,7 @@
   -->
 
   <xsl:template match="insert-content">
-	<div class="full browse">
-	  <a id="maincontent" name="maincontent"></a>
+	<div class="full" id="browse">
 	  <div id="msg" class="alert hide"></div>
 	  <!-- SEARCH FORM -->
 	  <form id="searchCollectionsAdv" method="get" action="search">
@@ -129,6 +128,7 @@
 	  <td>
 		<div class="checkNum">
 		  <input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
+		  <xsl:text> </xsl:text>
 		  <xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/item_set/index']/@label"/><xsl:text>.</xsl:text>
 		</div>
 		<div class="cartAdd">
@@ -155,6 +155,7 @@
 		<td>
 		  <div class="checkNum">
 			<input type="checkbox" name="item_id" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
+			<xsl:text> </xsl:text>
 			<xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/item_set/index']/@label"/><xsl:text>.</xsl:text>
 		  </div>
 		  <div class="cartAdd">

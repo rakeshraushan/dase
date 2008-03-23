@@ -4,15 +4,16 @@ $database = 'dase_prod';
 include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
-$coll = 'south_asia';
+//$coll = 'south_asia';
 //$coll = 'medieval';
-$c = Dase_DB_Collection::get($coll);
+$coll = 'efossils';
+$c = Dase_DBO_Collection::get($coll);
 
-$status = new Dase_DB_ItemStatus;
+$status = new Dase_DBO_ItemStatus;
 $status->status = 'marked_for_delete';
 $status->findOne();
 
-$item = new Dase_DB_Item;
+$item = new Dase_DBO_Item;
 $item->collection_id = $c->id;
 $item->status_id = $status->id;
 foreach ($item->find() as $doomed) {
