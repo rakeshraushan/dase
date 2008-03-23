@@ -33,9 +33,9 @@
 
   <xsl:template match="insert-content">
 	<div class="list" id="browse">
-	  <div id="msg" class="alert hide"></div>
-	  <div class="searchBoxLabel">Search selected collection(s):</div> 
-	  <form id="searchCollections" method="get" action="search">
+	  <xsl:call-template name="insert-msg"/>
+	  <h5>Search selected collection(s):</h5> 
+	  <form method="get" action="search">
 		<div>
 		  <input type="text" name="q" size="30"/>
 		  <input type="submit" value="Search" class="button"/>
@@ -44,9 +44,8 @@
 		  <xsl:apply-templates select="$collections/atom:feed/atom:entry"/>
 		  <li id="specialAccessLabel" class="hide"><h4>Special Access Collections</h4></li>
 		</ul>
+		<a href="" id="checkall">check/uncheck all</a>
 	  </form>
-
-	  <h3 class="browsePublicTags"><a href="action/list_public_tags/">Browse Public User Collections/Slideshows</a></h3>
 	</div>
   </xsl:template>
 
@@ -66,7 +65,7 @@
   </xsl:template>
 
   <!-- should probably be in common.xsl -->
-  <xsl:template match="insert-msg">
+  <xsl:template name="insert-msg">
 	<xsl:if test="string-length($msg) &gt; 0">
 	  <h3 class="msg"><xsl:value-of select="$msg"/></h3>
 	</xsl:if>

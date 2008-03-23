@@ -596,53 +596,16 @@ Dase.initMenu = function(id) {
 	}
 };
 
-/*
-Dase.initCheckImage = function() { 
-	Dase.marked = new Array();
-	var thumbs = Dase.$('searchResults');
-	if (!thumbs) { return; }
-	var formParent = Dase.$('saveMarkedToCollection');
-	var form = Dase.createElem(formParent,null,form);
-	var boxes = thumbs.getElementsByTagName('input');
-	for (var i=0; i<boxes.length; i++) {
-		boxes[i].onclick = function() {
-			var thumbTd = this.parentNode.parentNode;
-			var itemId = this.value;
-			var target = Dase.$('saveMarkedToCollection');
-			//var title = thumbTd.getElementsByTagName('h4')[0].innerHTML;
-			//	Dase.createElem(target,title,'li','item_'+itemId);
-			if (Dase.hasClass(thumbTd,'checked')) {
-				Dase.removeClass(thumbTd,'checked');
-				Dase.removeFromArray(Dase.marked,itemId);
-			} else {
-				Dase.marked[Dase.marked.length] = itemId;
-				Dase.addClass(thumbTd,'checked');
-			}
-			target.innerHTML = Dase.marked.length;
-		};
-	}	   
-};
-*/
-
 Dase.multicheckItems = function(className) {
 	if (!className) {
 		className = 'check';
 	}
 	var item_set = Dase.$('itemSet');
 	if (!item_set)  return; 
-	/* creates and initializes list check/uncheck toggle 
-	 */
-	var multi = document.createElement('a');
-	multi.setAttribute('href','');
-	multi.className = className;
-	multi.appendChild(document.createTextNode('check/uncheck all'));
-	target = Dase.$('checkItems');
-	target.innerHTML = '';
+	target = Dase.$('checkall');
+	target.className = className;
 	var boxes = item_set.getElementsByTagName('input');
-	if (boxes.length > 0) {
-		target.appendChild(multi);
-	}
-	multi.onclick = function() {
+	target.onclick = function() {
 		if ('uncheck' == this.className) {
 			for (var i=0; i<boxes.length; i++) {
 				boxes[i].checked = false;
@@ -662,15 +625,11 @@ Dase.multicheckItems = function(className) {
 Dase.multicheck = function(c) { 
 	var coll_list = Dase.$('collectionList');
 	if (!coll_list) { return; }
-	/* creates and initializes list check/uncheck toggle 
-	 */
-	var multi = document.createElement('a');
-	multi.setAttribute('href','');
-	multi.className = 'uncheck';
-	multi.appendChild(document.createTextNode('check/uncheck all'));
-	coll_list.appendChild(multi);
+	target = Dase.$('checkall');
+	//class of the link determines its behaviour
+	target.className = 'uncheck';
 	var boxes = coll_list.getElementsByTagName('input');
-	multi.onclick = function() {
+	target.onclick = function() {
 		for (var i=0; i<boxes.length; i++) {
 			var box = boxes[i];
 			if ('uncheck' == this.className) {
@@ -742,15 +701,15 @@ Dase.placeUserTags = function(eid) {
 	var tags={};
 	var cart_tally = 0;
 	var sets = {};
-	var saveToSelector = "<select class='plainSelect' name='collection_ascii_id'>";
-	saveToSelector += "<option value=''>save checked items to...</option>";
+	var saveCheckedSelect = "<select class='plainSelect' name='collection_ascii_id'>";
+	saveCheckedSelect += "<option value=''>save checked items to...</option>";
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
 			var jsonAscii = jsonType[ascii];
 			if ('subscription' != type) {
-				saveToSelector += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
+				saveCheckedSelect += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
 			}
 			if ('cart' != type) {
 				//we populate 'sets' as we go
@@ -785,15 +744,15 @@ Dase.placeUserTags = function(eid) {
 			}
 		} 
 	}
-	saveToSelector += "</select>";
+	saveCheckedSelect += "</select>";
 	//the select menu for "save checked items to...."
-	var target = Dase.$('saveToSelector');
+	var target = Dase.$('saveCheckedSelect');
 	var item_set = Dase.$('itemSet');
 	if (item_set) {
 		var items = item_set.getElementsByTagName('td');
 	}
 	if (target && item_set && items) {
-		target.innerHTML = saveToSelector;
+		target.innerHTML = saveCheckedSelect;
 		target.innerHTML += "<input type='submit' value='add'/>";
 	}
 	for (var type in sets) {

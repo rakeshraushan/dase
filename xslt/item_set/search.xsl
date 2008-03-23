@@ -47,7 +47,7 @@
 	<div class="full" id="browse">
 	  <div id="msg" class="alert hide"></div>
 	  <!-- SEARCH FORM -->
-	  <form id="searchCollectionsAdv" method="get" action="search">
+	  <form id="searchCollectionsDynamic" method="get" action="search">
 		<div>
 		  <input id="queryInput" type="text" name="q" size="30"/>
 		  <input type="submit" value="Search" class="button"/>
@@ -63,18 +63,18 @@
 	  <div id="searchResults">
 		<xsl:copy-of select="$items/atom:subtitle/h:div/h:h2[@class='searchEcho']"/>
 		<form method="post" action="xxxx">	
-		  <h1><xsl:value-of select="$items/atom:subtitle/text()"/></h1>
-		  <div class="pageControls">
+		  <h2><xsl:value-of select="$items/atom:subtitle/text()"/></h2>
+		  <h3>
 			<a href="{$items/atom:link[@rel='previous']/@href}">prev</a> |
 			<a href="{$items/atom:link[@rel='next']/@href}">next</a> 
-		  </div>
+		  </h3>
 		  <table id="itemSet">
 			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
 		  </table>
 		  <!-- we just need a place to stash the current url so our refine code can parse it -->
 		  <div id="self_url" class="hide"><xsl:value-of select="translate($items/atom:link[@rel='self']/@href,'+',' ')"/></div>
-		  <div id="checkItems"></div>
-		  <div id="saveToSelector"></div>
+		  <a href="" id="checkall">check/uncheck all</a>
+		  <div id="saveCheckedSelect"></div>
 		</form>
 	  </div>
 	</div>
@@ -85,8 +85,6 @@
 	  <h3>Search Results by Collection</h3>
 	  <!--the link to tallies is in the atom document-->
 	  <xsl:copy-of select="$items/atom:subtitle/h:div/h:ul"/>
-	</div>
-	<div id="saveMarkedToCollection">
 	</div>
 	<div class="spacer"/>
   </xsl:template>

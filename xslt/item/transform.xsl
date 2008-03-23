@@ -39,11 +39,11 @@
 	  <div id="collectionAsciiId" class="hide"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
 	  <h2><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
 	  <h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>
-	  <div class="pageControls">
+	  <h4>
 		<a href="{$it/atom:link[@rel='previous']/@href}">prev</a> |
 		<a href="{$it/atom:link[@rel='http://daseproject.org/relation/search-link']/@href}">up</a> |
 		<a href="{$it/atom:link[@rel='next']/@href}">next</a> 
-	  </div>
+	  </h4>
 	  <table id="singleItemTable">
 		<tr>
 		  <td class="image">
