@@ -9,7 +9,7 @@
 
 ul#menu a {
 display:block;
-padding: 7px;
+padding: 4px 7px;
 margin: 2px 0px;
 }
 ul#menu  li  {
@@ -20,7 +20,7 @@ ul#menu  li  ul {
 margin-left:18px;
 }
 ul#menu  li ul li ul {
-padding:6px;
+padding: 3px 6px;
 margin-left:0px;
 background-color: #eee;
 }
@@ -28,7 +28,7 @@ ul#menu  input {
 margin: 2px 0;
 }
 ul#menu li ul li a{
-padding:6px;
+padding:3px 6px;
 margin: 0px;
 border-top: 1px solid #fff;
 }
