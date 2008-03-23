@@ -45,18 +45,20 @@
 	  <a href="http://www.utexas.edu"><img src="images/ut.gif" alt="the university of texas"/></a>
 	</div>
 
-	<div class="cbBanner">
+	<div id="cb-header">
 	  DASe Collection Builder
 	  <insert-collection-name/>
 	</div>
 
 	<div id="sidebar">
 	  <insert-menu/>
-	  <div class="loadingMsg" id="ajaxMsg"></div>
+	  <h5 id="ajaxMsg"></h5>
 	</div> <!-- closes sidebar -->
 
-	<div id="content" class="cb">
-	  <insert-content/>
+	<div id="content">
+	  <div id="cb" class="full">
+		<insert-content/>
+	  </div>
 	</div>
 
 	<div id="footer">

@@ -102,6 +102,7 @@ Dase.toggle = function(el) {
 };
 
 //note: this isn't used anymore:
+/*
 Dase.formatDate = function() {
 	var d = new Date();
 	var mo;
@@ -135,6 +136,7 @@ Dase.createListFromObj = function(parent,set,cName) {
 		}
 	}
 };
+*/
 
 Dase.createHtmlSet = function(parent,set,tagName) {
 	for (var i=0;i<set.length;i++) {
@@ -328,12 +330,10 @@ Dase.placeCollectionAdminLink = function(eid) {
 	if (set.auth_level == 'manager' || set.auth_level == 'superuser') {
 		var menu = Dase.$('menu');
 		var li = document.createElement('li');
-		li.setAttribute('class','admin');
-		li.setAttribute('className','admin');
+		li.id = 'admin-menu';
 		var a = document.createElement('a');
 		a.setAttribute('href','admin/'+eid+'/'+set.collection_ascii_id);
-		a.setAttribute('class','main');
-		a.setAttribute('className','main');
+		a.className = "main";
 		a.appendChild(document.createTextNode(set.collection_name+' Admin'));
 		li.appendChild(a);
 		menu.appendChild(li);
@@ -424,6 +424,7 @@ Dase.searchRefine = function() {
 		return;
 	}
 
+	/* we look in search tallies list for collections */
 	var st = Dase.$('searchTallies');
 	var coll_tallies = st.getElementsByTagName('li');
 	var colls_array = [];
@@ -665,8 +666,7 @@ Dase.multicheck = function(c) {
 	 */
 	var multi = document.createElement('a');
 	multi.setAttribute('href','');
-	multi.setAttribute('class','uncheck');
-	multi.setAttribute('className','uncheck');
+	multi.className = 'uncheck';
 	multi.appendChild(document.createTextNode('check/uncheck all'));
 	coll_list.appendChild(multi);
 	var boxes = coll_list.getElementsByTagName('input');
@@ -727,7 +727,6 @@ Dase.loadingMsg = function(displayBool) {
 		loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
-		var loading = Dase.$('ajaxMsg');
 		loading.innerHTML = '';
 	}
 }

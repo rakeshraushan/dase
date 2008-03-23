@@ -107,13 +107,14 @@
 		</li>
 	  </ul>
 
-	  <div class="loadingMsg" id="ajaxMsg"></div>
+	  <h5 id="ajaxMsg"></h5>
 
 	</div> <!-- closes sidebar -->
 
 	<div id="content">
 	  <!-- accessibility -->
 	  <a id="maincontent" name="maincontent"></a>
+	  <insert-msg/>
 	  <insert-content/>
 	</div>
 

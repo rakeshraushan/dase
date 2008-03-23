@@ -44,7 +44,7 @@
 		<a href="{$it/atom:link[@rel='http://daseproject.org/relation/search-link']/@href}">up</a> |
 		<a href="{$it/atom:link[@rel='next']/@href}">next</a> 
 	  </div>
-	  <table class="itemDisplay">
+	  <table id="singleItemTable">
 		<tr>
 		  <td class="image">
 			<img src="{$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']/@src}"/>

@@ -371,63 +371,6 @@ class Dase_Search
 		return $echo_str;
 	}
 
-	public function getXml()
-	{
-		//print_r($this->search);exit;
-		$sx = new SimpleXMLElement("<search/>");
-		foreach ($this->search as $key => $val) {
-			if (!is_array($val)) {
-				$val = array($val);
-			}
-			if (in_array($key,array('find','omit','or'))) {
-				foreach($val as $v) {
-					$sx->addChild($key,htmlspecialchars($v));
-				}
-			}
-			if ('colls' == $key) {
-				foreach($val as $v) {
-					$sx->addChild('collection',htmlspecialchars($v));
-				}
-			}
-			if ('omit_colls' == $key) {
-				foreach($val as $v) {
-					$sx->addChild('omit_collection',htmlspecialchars($v));
-				}
-			}
-			if ('att' == $key) {
-				foreach($val as $coll => $ar) {
-					foreach($ar as $attr => $set) {
-						foreach($set as $section => $values) {
-							foreach($values as $vv) {
-								$at = $sx->addChild('filter',htmlspecialchars($vv));
-								$at->addAttribute('collection',$coll);
-								$at->addAttribute('attr',$attr);
-								$at->addAttribute('type',$section);
-							}
-						}
-					}
-				}
-			}
-			foreach($val as $v) {
-				foreach (array('.',':','~') as $sep) {
-					if (strpos($key,$sep)) {
-						list($coll,$att) = explode($sep,$key);
-						$c = $sx->addChild('collection');
-						$c->addAttribute('name',$coll);
-						$c->addChild($att,htmlspecialchars($v));
-					}
-				}
-			}
-		}
-		$doc = new DOMDocument('1.0');
-		$doc->formatOutput = true;
-		$domnode = dom_import_simplexml($sx);
-		$domnode = $doc->importNode($domnode, true);
-		$domnode = $doc->appendChild($domnode);
-		header("Content-Type: application/xml; charset=utf-8");
-		echo $doc->saveXML();
-	}
-
 	private function _tokenizeQuoted($string)
 	{
 		//from php.net:

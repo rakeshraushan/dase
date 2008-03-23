@@ -64,7 +64,6 @@ class SearchHandler
 		$h2 = $div->addChild('h2',htmlspecialchars($subtitle));
 		$h2->addAttribute('class','searchEcho');
 		$ul = $div->addChild('ul');
-		$ul->addAttribute('class','searchTallies');
 		foreach ($result['tallies'] as $coll => $tal) {
 			if ($tal['name'] && $tal['total']) {
 				$tally_elem = $ul->addChild('li');
