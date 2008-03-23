@@ -799,7 +799,7 @@ Dase.placeUserTags = function(eid) {
 	}
 	for (var type in sets) {
 		try{
-			Dase.$(type).innerHTML = sets[type];
+			Dase.$(type+'-submenu').innerHTML = sets[type];
 		} catch(e) {
 		//	alert('a friendly notice: ' +e);
 		}

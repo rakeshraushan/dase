@@ -27,7 +27,7 @@
 
   <xsl:template match="insert-content">
 	<content>
-	  <div class="content list" id="browse">
+	  <div class="list" id="browse">
 		<div class="alert"><xsl:value-of select="$msg"/></div>
 		<h1>Please Login to Dase:</h1>
 		<form class="login" action="login" method="post">

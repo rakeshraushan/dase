@@ -32,7 +32,7 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="full browse">
+	<div class="full" id="browse">
 	  <div id="msg" class="alert hide"></div>
 	  <xsl:call-template name="collection-label"/>
 	  <h3>Search:</h3>
@@ -62,10 +62,6 @@
 	<xsl:copy>
 	  <xsl:apply-templates select="@*|node()"/>
 	</xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="div[@id=browse]">
-	<xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template name="collection-label">

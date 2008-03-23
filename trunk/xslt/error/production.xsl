@@ -14,7 +14,6 @@
 
   <xsl:template match="insert-content">
 	<div class="standard">
-	  <a id="maincontent" name="maincontent"></a>
 	  <div id="msg" class="alert">An error has occurred.</div>
 	</div>
   </xsl:template>

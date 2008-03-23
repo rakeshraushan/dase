@@ -55,13 +55,15 @@
 	  <a href="http://www.utexas.edu"><img src="images/UTwordmark_02.jpg" alt="ut logo"/></a>
 	</div>
 
-	<div class="daseBanner"></div>
-	<div id="sidebar">
+	<div id="header">
+	  <!-- background image here-->	
+	</div>
 
+	<div id="sidebar">
 	  <ul id="menu">
-		<li class="home"><a href="" class="main">Home/Search</a></li>
-		<li class="cart"><a href="" class="main" id="cartLabel">My Cart</a>
-		  <ul class="hide" id="cart">
+		<li id="home-menu"><a href="" class="main">Home/Search</a></li>
+		<li id="cart-menu"><a href="" class="main" id="cartLabel">My Cart</a>
+		  <ul class="hide" id="cart-submenu">
 			<li><a href="" class="create" id="cartLink">view cart</a></li>
 			<li><a href="" class="create">empty cart</a></li>
 			<!--
@@ -80,8 +82,8 @@
 		  </ul>
 		</li>
 
-		<li class="user_collection"><a href="" class="main">My Collections</a>
-		  <ul class="hide" id="user_collection">
+		<li id="user_collection-menu"><a href="" class="main">My Collections</a>
+		  <ul class="hide" id="user_collection-submenu">
 			<li class="menuForm">
 			  <form action="sss" method="post">
 				<div><input type="text" name="coll_name"/></div>
@@ -92,14 +94,14 @@
 		  </ul>
 		</li>
 
-		<li class="slideshow"><a href="" class="main">My Slideshows</a>
-		  <ul class="hide" id="slideshow">
+		<li id="slideshow-menu"><a href="" class="main">My Slideshows</a>
+		  <ul class="hide" id="slideshow-submenu">
 			<li class="placeholder"></li>
 		  </ul>
 		</li>
 
-		<li class="subscription"><a href="" class="main">My Subscriptions</a>
-		  <ul class="hide" id="subscription">
+		<li id="subscription-menu"><a href="" class="main">My Subscriptions</a>
+		  <ul class="hide" id="subscription-submenu">
 			<li class="placeholder"></li>
 		  </ul>
 		</li>
@@ -110,6 +112,8 @@
 	</div> <!-- closes sidebar -->
 
 	<div id="content">
+	  <!-- accessibility -->
+	  <a id="maincontent" name="maincontent"></a>
 	  <insert-content/>
 	</div>
 

@@ -35,7 +35,7 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="full browse">
+	<div class="full" id="browse">
 	  <div id="collectionAsciiId" class="hide"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
 	  <h2><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
 	  <h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>

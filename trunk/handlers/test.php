@@ -14,7 +14,7 @@ class TestHandler
 		$c->expire();
 		$test->assertTrue(!file_exists(CACHE_DIR.md5('test')),'no cache file');
 		$c = new Dase_Cache_File('test');
-		$c->set('hello');
+		$c->setData('hello');
 		$test->assertTrue(file_exists(CACHE_DIR.md5('test')),'yes cache file');
 		$t->addSourceNode($test->asSimpleXml());
 		Dase::display($t->transform());
