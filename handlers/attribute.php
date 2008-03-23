@@ -16,7 +16,7 @@ class AttributeHandler
 		}
 		$html_coda = '</ul>';
 		if (is_array($values_array) && (count($values_array) == 400)) {
-			$html_coda = "<div class=\"alert\">Only the first 400 values are displayed.</div>";
+			$html_coda = "<h3 class=\"alert\">Only the first 400 values are displayed.</h3>";
 		}
 		$html ="<h4>Select <span class=\"attributeName\">$attr->attribute_name</span> Value:</h4>";
 		$html .="<ul>";

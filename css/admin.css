@@ -1,4 +1,4 @@
-.cbBanner {
+div#cb-header {
 	background-color: #263b5e;
 	color: #ccc;
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
@@ -8,37 +8,26 @@
 	padding-left: 15px;
 }
 
-.cbBanner p {
+div#cb-header p {
 	color: white;
 	margin:0;
 	font-size: 1.8em;
 	padding:6px 0 0 0;
 }
 
-div.cb {
-	padding:15px;
+div#cb {
 	background-color:#eef1f8;
 }
 
-
-div.cb h1 {
-	font-size: 1.2em;
-	color: #666;
-	margin: 0 0 6px 0;
-}
 
 /* overrrides style.css: */
 div.login {
 	padding-top: 1px;
 }
 
-#sidebar
+div#sidebar
 {
-	width: 16%;
-	background-color: #ffffff;
 	margin: 0px 3px;
-	float:left;
-	font-size: 94%;
 }
 
 ul#menu a {

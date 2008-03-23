@@ -42,7 +42,7 @@
 		</div>
 		<ul id="collectionList" class="multicheck">
 		  <xsl:apply-templates select="$collections/atom:feed/atom:entry"/>
-		  <li id="specialAccessLabel" class="label hide">Special Access Collections</li>
+		  <li id="specialAccessLabel" class="hide"><h4>Special Access Collections</h4></li>
 		</ul>
 	  </form>
 
@@ -65,10 +65,11 @@
 	</xsl:copy>
   </xsl:template>
 
-  <xsl:template match="div[@id='msg']">
-	<div class="alert">
-	  <xsl:value-of select="$msg"/>
-	</div>
+  <!-- should probably be in common.xsl -->
+  <xsl:template match="insert-msg">
+	<xsl:if test="string-length($msg) &gt; 0">
+	  <h3 class="msg"><xsl:value-of select="$msg"/></h3>
+	</xsl:if>
   </xsl:template>
 
   <xsl:template match="atom:entry">
