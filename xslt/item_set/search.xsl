@@ -60,33 +60,27 @@
 		</div>
 		<div id="refinements"/>
 	  </form>
-	  <div id="searchResults">
-		<xsl:copy-of select="$items/atom:subtitle/h:div/h:h2[@class='searchEcho']"/>
-		<form method="post" action="xxxx">	
-		  <h2><xsl:value-of select="$items/atom:subtitle/text()"/></h2>
-		  <h3>
-			<a href="{$items/atom:link[@rel='previous']/@href}">prev</a> |
-			<a href="{$items/atom:link[@rel='next']/@href}">next</a> 
-		  </h3>
-		  <table id="itemSet">
-			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
-		  </table>
-		  <!-- we just need a place to stash the current url so our refine code can parse it -->
-		  <div id="self_url" class="hide"><xsl:value-of select="translate($items/atom:link[@rel='self']/@href,'+',' ')"/></div>
-		  <a href="" id="checkall">check/uncheck all</a>
-		  <div id="saveCheckedSelect"></div>
-		</form>
-	  </div>
+	  <xsl:copy-of select="$items/atom:subtitle/h:div/h:h2[@class='searchEcho']"/>
+	  <form method="post" action="xxxx">	
+		<h2><xsl:value-of select="$items/atom:subtitle/text()"/></h2>
+		<h4>
+		  <a href="{$items/atom:link[@rel='previous']/@href}">prev</a> |
+		  <a href="{$items/atom:link[@rel='next']/@href}">next</a> 
+		</h4>
+		<table id="itemSet">
+		  <xsl:apply-templates select="$items/atom:entry" mode="items"/>
+		</table>
+		<!-- we just need a place to stash the current url so our refine code can parse it -->
+		<div id="self_url" class="hide"><xsl:value-of select="translate($items/atom:link[@rel='self']/@href,'+',' ')"/></div>
+		<a href="" id="checkall">check/uncheck all</a>
+		<div id="saveChecked"></div>
+	  </form>
 	</div>
-  </xsl:template>
-
-  <xsl:template match="insert-subcontent">
-	<div id="searchTallies">
+	<div class="full" id="searchTallies">
 	  <h3>Search Results by Collection</h3>
 	  <!--the link to tallies is in the atom document-->
 	  <xsl:copy-of select="$items/atom:subtitle/h:div/h:ul"/>
 	</div>
-	<div class="spacer"/>
   </xsl:template>
 
   <xsl:template match="dynamic"/>
@@ -134,18 +128,15 @@
 		</div>
 		<div class="image">
 		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			<xsl:copy-of select="atom:content/h:div/h:img[@class='thumbnail']"/>
+			<img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
 		  </a>
 		</div>
 		<div class="spacer"></div>
-		<div class="caption">
-		  <h4>
-			<xsl:value-of select="substring(atom:title,0,80)"/>
-			<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-		  </h4>
-		  <h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
-		</div>
-
+		<h5>
+		  <xsl:value-of select="substring(atom:title,0,80)"/>
+		  <xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
+		</h5>
+		<h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
 	  </td>
 	  <xsl:for-each select="following-sibling::atom:entry[position() &lt; $columns]">
 		<xsl:text>
@@ -161,17 +152,15 @@
 		  </div>
 		  <div class="image">
 			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			  <xsl:copy-of select="atom:content/h:div/h:img[@class='thumbnail']"/>
+			  <img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
 			</a>
 		  </div>
 		  <div class="spacer"></div>
-		  <div class="caption">
-			<h4>
-			  <xsl:value-of select="substring(atom:title,0,80)"/>
-			  <xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-			</h4>
-			<h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
-		  </div>
+		  <h5>
+			<xsl:value-of select="substring(atom:title,0,80)"/>
+			<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
+		  </h5>
+		  <h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
 		</td>
 		<!-- this will fill out blank cells in table-->
 		<xsl:if test="position() = last() and last() + 1 != $columns">

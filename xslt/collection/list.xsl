@@ -50,7 +50,6 @@
   </xsl:template>
 
   <xsl:template match="dynamic"/>
-  <xsl:template match="insert-subcontent"/>
 
   <xsl:template match="insert-timer">
 	<!--<xsl:value-of select="$timer"/>-->	

@@ -42,13 +42,13 @@
 	</noscript>
 
 
-	<div id="logoffControl" class="login controls hide">
-	  <div id="userName"> is logged in. (<a href="logoff" id="logoff-link" class="logoff">logoff</a>)</div>
+	<div id="logoffControl" class="login hide">
+	  <div id="userName"> is logged in. (<a href="logoff" id="logoff-link">logoff</a>)</div>
 	  <div id="eid" class="hide"></div>
 	</div>
 
-	<div id="loginControl" class="login controls hide">
-	  <div>Got a UT EID? <a href="login" class="login">login!</a></div>
+	<div id="loginControl" class="login hide">
+	  <div>Got a UT EID? <a href="login">login!</a></div>
 	</div>
 
 	<div id="wordmark">
@@ -112,9 +112,7 @@
 	  <insert-content/>
 	</div>
 
-	<div id="subcontent">
-	  <insert-subcontent/>
-	</div>
+	<div class="spacer"/>
 
 	<div id="footer">
 	  <a href="apps/help" id="helpModule">FAQ</a> | 

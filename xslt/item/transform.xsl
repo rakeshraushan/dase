@@ -44,7 +44,7 @@
 		<a href="{$it/atom:link[@rel='http://daseproject.org/relation/search-link']/@href}">up</a> |
 		<a href="{$it/atom:link[@rel='next']/@href}">next</a> 
 	  </h4>
-	  <table id="singleItemTable">
+	  <table id="item">
 		<tr>
 		  <td class="image">
 			<img src="{$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']/@src}"/>
@@ -58,7 +58,7 @@
 			<dl id="metadata">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='metadata']" mode="keyvals"/>
 			</dl>
-			<p class="toggleControl"><a href="view_admn_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a></p>
+			<a href="view_admn_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 			<dl id="adminMetadata" class="hide">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='admin_metadata']" mode="keyvals"/>
 			</dl>
