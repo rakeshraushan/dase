@@ -46,7 +46,7 @@
 		<div id="attColumn" class="collection/{$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term}/attributes/public"></div>
 		<div id="valColumn" class="hide"></div>
 	  </div> <!-- close browseColumns -->
-	  <div class="spacer"></div>
+	  <div class="spacer"/>
 	</div> <!-- close content -->
   </xsl:template>
 

@@ -33,6 +33,7 @@
   <column name="ascii_id" type="character varying" max_length="200"/>
  </table>
  <table name="attribute_item_type">
+  <column name="is_identifier" type="boolean"/>
   <column name="attribute_id" type="integer"/>
   <column name="item_type_id" type="integer"/>
   <column name="id" type="integer" is_primary_key="true"/>
@@ -54,6 +55,16 @@
   <column name="auth_level" type="character varying" max_length="20"/>
   <column name="dase_user_eid" type="character varying" max_length="20"/>
   <column name="collection_ascii_id" type="character varying" max_length="200"/>
+ </table>
+ <table name="content">
+  <column name="item_id" type="integer"/>
+  <column name="id" type="integer" is_primary_key="true"/>
+  <column name="text" type="text"/>
+  <column name="update_by_eid" type="character varying" max_length="100"/>
+  <column name="updated" type="character varying" max_length="100"/>
+  <column name="p_serial_number" type="character varying" max_length="100"/>
+  <column name="p_collection_ascii_id" type="character varying" max_length="100"/>
+  <column name="type" type="character varying" max_length="10"/>
  </table>
  <table name="dase_user">
   <column name="has_access_exception" type="boolean"/>
@@ -90,8 +101,6 @@
   <column name="status_id" type="integer"/>
   <column name="collection_id" type="integer"/>
   <column name="id" type="integer" is_primary_key="true"/>
-  <column name="xhtml_content" type="text"/>
-  <column name="text_content" type="text"/>
   <column name="updated" type="character varying" max_length="50"/>
   <column name="created" type="character varying" max_length="50"/>
   <column name="serial_number" type="character varying" max_length="200"/>
@@ -106,6 +115,11 @@
   <column name="description" type="character varying" max_length="2000"/>
   <column name="ascii_id" type="character varying" max_length="200"/>
   <column name="name" type="character varying" max_length="200"/>
+ </table>
+ <table name="item_type_relation">
+  <column name="parent_item_type_id" type="integer"/>
+  <column name="item_type_id" type="integer"/>
+  <column name="id" type="integer" is_primary_key="true"/>
  </table>
  <table name="media_file">
   <column name="file_size" type="integer"/>

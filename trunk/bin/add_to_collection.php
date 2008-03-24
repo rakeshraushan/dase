@@ -12,7 +12,7 @@ $REPOS = "/mnt/projects/bsls/DASE weekly upload/";
 
 
 include 'cli_setup.php';
-$collection = Dase_DB_Collection::get($collection_ascii_id);
+$collection = Dase_DBO_Collection::get($collection_ascii_id);
 
 $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($REPOS));
 foreach ($dir as $file) {

@@ -1,25 +1,19 @@
+html #maincontent {
+	height:1%;
+}
+div#skipnav {
+	left:-1000em;
+	position:absolute;
+	width:20em;
+}
+
+/********** PAGE SECTIONS ************************/
+
 div#header {
 	background-image:url(../images/daseBanner.jpg);
 	height:70px;
 	margin-top:-1px;
 	padding:0 12px;
-}
-
-html #maincontent {
-	height:1%;
-}
-
-a:link,a:visited {
-	background:transparent;
-	border:0;
-	color:#444;
-	font-weight:bold;
-	text-decoration:none;
-}
-
-ul a,
-dl a {
-	line-height: 1.4em;
 }
 
 div#sidebar {
@@ -28,23 +22,18 @@ div#sidebar {
 	float:left;
 }
 
-div#content,
-div#subcontent,
-div#footer {
-	margin-left:17%;
-}
-
 div#footer {
 	font-weight: normal;
 	color: #666;
 	margin-top:5px;
 }
 
-div#subcontent {
-	margin-top 0;
-	background-color: #e6d4b8;
-	padding:10px 15px 15px 30px;
+div#content,
+div#footer {
+	margin-left:17%;
 }
+
+/******************* PAGE FORMATS ************************/
 
 div.list {
 	padding:10px 15px 15px 100px;
@@ -54,205 +43,42 @@ div.full {
 	padding:10px 15px 15px 30px;
 }
 
+/************ PAGE STYLES **************************/ 
+
 div#browse {
 	background-color:#f2dfc1;
 }
+div#browse td {
+	border: 1px solid #d9c8ad;
+}
+
+div#tag {
+	background-color:#d5deed;
+}
+div#tag td {
+	border: 1px solid #9cacc6
+}
+
+
+div#searchTallies {
+	background-color: #e6d4b8;
+}
+
+/********** STANDARD CLASSES ********************/
 
 .spacer {
 	clear:both;
 }
 
-.hide,.tempHide {
+.hide {
 	display:none;
-}
-
-.tally {
-	color:#999;
-	font-size:.94em;
-	font-weight:normal;
 }
 
 .alert {
 	color:#c00;
 }
 
-div#skipnav {
-	left:-1000em;
-	position:absolute;
-	width:20em;
-}
-
-form#searchCollectionsDynamic {
-	background-color: #e6d4b8;
-	padding: 3px;
-	margin:0px 0px 10px 0px;
-}
-
-form#searchCollectionsDynamic input,select {
-	margin: 3px 4px;
-}
-
-/* split into separate file */
-
-form#loginForm {
-	background-color:#e6d4b8;
-	border:1px solid #aaa;
-	padding:.5em;
-	width:40%;
-}
-
-form#loginForm p {
-	margin:1em;
-}
-
-form#loginForm label {
-	color:#333;
-	font-size:1.2em;
-	font-weight:700;
-}
-
-form#loginForm label[for] {
-	float:left;
-	width:40%;
-}
-
-form#loginForm input[type=submit] {
-	margin-left:40%;
-}
-
-div.login {
-	float:right;
-	margin-right:20px;
-	padding-top:18px;
-}
-
-a.logoff:link,
-a.logoff:visited {
-	color:#c00;
-	font-size: .9em;
-}
-
-a.login:link,
-a.login:visited {
-	color:#c00;
-	font-size: 1.1em;
-}
-
-/* collection browse */
-
-div#browseColumns {
-	margin: 1em 0;
-}
-
-div#browseColumns a {
-	line-height:1.8em;
-}
-
-div#browseColumns h4 {
-	color:#173561;
-}
-
-a.catLink,
-a.valLink,
-a.attLink {
-	display:block;
-	line-height:1.4em;
-}
-
-a.spill {
-	display:block;
-	margin-left:-4px;
-	margin-right:-10px;
-	padding-left:4px;
-}
-
-#catColumn {
-	background-color:#d9c8ad;
-	float:left;
-	padding:10px;
-	width:16%;
-}
-
-#catColumn a.spill {
-	background-color:#ffebcc;
-}
-
-#attColumn {
-	background-color:#ffebcc;
-	float:left;
-	margin-right:1px;
-	padding:10px;
-	width:25%;
-}
-
-#attColumn a.spill {
-	background-color:#fff0d9;
-	border-bottom:1px solid #f2dfc1;
-	border-left:1px solid #f2dfc1;
-	border-top:1px solid #f2dfc1;
-	margin-right:-11px;
-}
-
-#valColumn {
-	background-color:#fff0d9;
-	float:left;
-	padding:10px;
-	width:45%;
-}
-
-#valColumn a.anchor {
-	background-color:#c9c8ad;
-}
-
-#valColumn.empty {
-	background-color:#f2dfc1;
-}
-
-/*****  ITEM DISPLAY PAGE **************/
-
-table#singleItemTable {
-	margin-top: .5em;
-}
-
-table#singleItemTable td {
-	border: 1px solid #d9c8ad;
-	vertical-align: top;
-}
-
-table#singleItemTable td.metadata {
-	width: 100%;
-	background-color:#fff;
-	padding-top: 10px;
-	padding-left: 1.2em;
-}
-
-td.metadata dl {
-	font-weight:bold;
-}
-
-td.metadata dt {
-	color:#339;
-	font-weight:bold;
-}
-
-td.metadata dd a {
-	font-weight: normal;
-}
-
-td.metadata a:hover {
-	text-decoration: underline;
-}
-
-ul#mediaLinks a {
-	font-weight: normal;
-	color: #336;
-}
-
-ul#mediaLinks a:hover {
-	text-decoration: underline;
-}
-
-/****************************************/
+/************ COLLECTION LIST ***************/
 
 ul#collectionList {
 	margin: .7em 0;
@@ -264,96 +90,214 @@ ul#collectionList h4 {
 	margin-left: 6px;
 }
 
-ul#collectionList a:link,
-ul#collectionList a:visited,
-ul#collectionList a:hover,
-ul#collectionList a:active {
-	background:transparent;
-	border:0;
-}
-
 ul#collectionList a.checkedCollection:link,
 ul#collectionList a.checkedCollection:visited {
 	color:#700c0c;
 }
-
 ul#collectionList a.checkedCollection:hover,
 ul#collectionList a.checkedCollection:active {
 	color:#000;
 }
 
-#searchResults td {
+/********* COLLECTION BROWSE ****************/
+
+div#browseColumns {
+	margin: 1em 0;
+}
+div#browseColumns a {
+	display:block;
+	line-height:1.7em;
+	font-weight: bold;
+}
+div#browseColumns a.hide {
+	display:none;
+}
+div#browseColumns h4 {
+	color:#173561;
+}
+div#browseColumns a.spill {
+	display:block;
+	margin-left:-4px;
+	margin-right:-10px;
+	padding-left:4px;
+}
+div#catColumn {
+	background-color:#d9c8ad;
+	float:left;
+	padding:10px;
+	width:16%;
+}
+div#catColumn a.spill {
+	background-color:#ffebcc;
+}
+div#attColumn {
+	background-color:#ffebcc;
+	float:left;
+	margin-right:1px;
+	padding:10px;
+	width:25%;
+}
+div#attColumn a.spill {
+	background-color:#fff0d9;
+	border-bottom:1px solid #f2dfc1;
+	border-left:1px solid #f2dfc1;
+	border-top:1px solid #f2dfc1;
+	margin-right:-11px;
+}
+div#valColumn {
+	background-color:#fff0d9;
+	float:left;
+	padding:10px;
+	width:45%;
+}
+div#valColumn a.anchor {
+	background-color:#c9c8ad;
+}
+div#valColumn.empty {
+	background-color:#f2dfc1;
+}
+
+/*****  ITEM DISPLAY PAGE **************/
+
+table#item td {
 	border: 1px solid #d9c8ad;
+	vertical-align: top;
+}
+table#item td.metadata {
+	width: 100%;
+	background-color:#fff;
+	padding-top: 10px;
+	padding-left: 1.2em;
+}
+table#item td.metadata dl {
+	margin-top: .5em;
+	margin-bottom: .5em;
+}
+table#item td.metadata dt {
+	color:#339;
+	font-weight:bold;
+}
+table#item td.metadata dd a {
+	font-weight: normal;
+}
+table#item td a:hover {
+	text-decoration: underline;
+}
+table#item td.metadata a.toggle {
+	color: #999;
+}
+table#item td ul#mediaLinks a {
+	font-weight: normal;
+	color: #336;
+}
+
+/*****  ITEM SET DISPLAY PAGE **************/
+
+table#itemSet td {
 	vertical-align: top;
 	text-align: center;
 	width: 180px;
 }
-#searchResults td.blank {
+table#itemSet td.blank {
 	border: 0;
 }
-#searchResults h2 {
-	color: #336;
-}
-#searchResults td div.checkNum {
+table#itemSet td div.checkNum {
 	float: left; 
 }
-#searchResults td div.cartAdd {
-	float: right; 
-	margin: 0 5px 0 0;
-}
-#searchResults div.image {
+table#itemSet td div.image {
 	margin-top: 1.8em;
 }
-#searchResults div.caption {
-	font-size: .88em;
-	line-height: 1.4em;
+table#itemSet td h5 {
+	line-height: 1.3em;
 	color: #666;
 }
-#searchResults td.checked {
-	background-color: #fff0d9;
-}
-#searchResults td div.cartAdd a {
-	font-weight: normal;
-	padding: 1px 5px;
-}
-#searchResults td div.cartAdd a:hover {
-	background-color:#fff0d9;
-	text-decoration: underline;
-}
-#searchResults td div.cartAdd span {
-	color: #700c0c;
-	font-weight: bold;
-}
-#searchResults div.caption .collection_name {
+table#itemSet td h5.collection_name {
 	font-weight: normal;
 	color: #669;
 }
-img.thumbnail {
+table#itemSet td img {
 	border: 1px solid #ccf;
 }
-
-img.thumbnail:hover {
+table#itemSet td img:hover {
 	border: 1px solid #999;
 }
+table#itemSet td div.cartAdd {
+	float: right; 
+	margin: 0 5px 0 0;
+}
+table#itemSet td div.cartAdd a {
+	font-weight: normal;
+	padding: 1px 5px;
+}
+table#itemSet td div.cartAdd a:hover {
+	text-decoration: underline;
+}
+table#itemSet td div.cartAdd span {
+	color: #700c0c;
+	font-weight: bold;
+}
 
-.success {
+/*********** FORM STYLES *********************/
+
+form#searchCollectionsDynamic {
+	background-color: #e6d4b8;
+	padding: 3px;
+	margin:0px 0px 10px 0px;
+}
+form#searchCollectionsDynamic input,select {
+	margin: 3px 4px;
+}
+
+form#loginForm {
+	background-color:#e6d4b8;
+	border:1px solid #aaa;
+	padding:.5em;
+	width:40%;
+}
+form#loginForm p {
+	margin:1em;
+}
+form#loginForm label {
+	color:#333;
+	font-size:1.2em;
+	font-weight:700;
+}
+form#loginForm label[for] {
+	float:left;
+	width:40%;
+}
+form#loginForm input[type=submit] {
+	margin-left:40%;
+}
+
+/************ MISCELLANEOUS STYLES ***************/
+
+div.login {
+	font-size: .9em;
+	float:right;
+	margin-right:20px;
+	padding-top:18px;
+}
+div.login a {
+	color:#c00;
+}
+
+.tally {
+	color:#999;
+	font-size:.94em;
+	font-weight:normal;
+}
+
+div#test-data .success {
 	color: #090;
 }
-.failure {
+div#test-data .failure {
 	color: #c00;
 }
 
-div#saveCheckedSelect {
-	margin: 1em 0 0px 0;
+div#saveChecked {
+	margin: 1em 0 0 0;
 }
-select.plainSelect {
+div#saveChecked select.plainSelect {
 	margin: 0 5px 0 0;
-}
-
-p.toggleControl {
-	margin: 10px 0;
-}
-
-p.toggleControl a {
-	color: #999;
 }

@@ -33,18 +33,15 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="full" id="browse">
+	<div class="full" id="tag">
 	  <div id="msg" class="alert hide"></div>
 	  <a href="{$items/atom:link[@rel='self']/@href}">atom feed</a>
-	  <div id="searchResults">
-		<form method="post" action="xxxx">	
-		  <h1><xsl:value-of select="$items/atom:subtitle/text()"/></h1>
-		  <table>
-			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
-		  </table>
-		</form>
-	  </div>
-	  <div class="spacer"/>
+	  <form method="post" action="xxxx">	
+		<h1><xsl:value-of select="$items/atom:subtitle/text()"/></h1>
+		<table id="itemSet">
+		  <xsl:apply-templates select="$items/atom:entry" mode="items"/>
+		</table>
+	  </form>
 	</div>
   </xsl:template>
 
@@ -93,18 +90,15 @@
 		</div>
 		<div class="image">
 		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			<xsl:copy-of select="atom:content/h:div/h:img[@class='thumbnail']"/>
+			<img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
 		  </a>
 		</div>
 		<div class="spacer"></div>
-		<div class="caption">
-		  <h4>
+		  <h5>
 			<xsl:value-of select="substring(atom:title,0,80)"/>
 			<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-		  </h4>
-		  <h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
-		</div>
-
+		  </h5>
+		  <h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
 	  </td>
 	  <xsl:for-each select="following-sibling::atom:entry[position() &lt; $columns]">
 		<xsl:text>
@@ -120,17 +114,15 @@
 		  </div>
 		  <div class="image">
 			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			  <xsl:copy-of select="atom:content/h:div/h:img[@class='thumbnail']"/>
+			  <img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
 			</a>
 		  </div>
 		  <div class="spacer"></div>
-		  <div class="caption">
-			<h4>
+			<h5>
 			  <xsl:value-of select="substring(atom:title,0,80)"/>
 			  <xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-			</h4>
-			<h4 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h4>
-		  </div>
+			</h5>
+			<h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
 		</td>
 		<!-- this will fill out blank cells in table-->
 		<xsl:if test="position() = last() and last() + 1 != $columns">

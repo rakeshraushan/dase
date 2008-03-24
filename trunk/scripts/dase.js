@@ -633,11 +633,9 @@ Dase.multicheck = function(c) {
 		for (var i=0; i<boxes.length; i++) {
 			var box = boxes[i];
 			if ('uncheck' == this.className) {
-				//box.removeAttribute('checked');
 				box.checked = null;
 				box.parentNode.getElementsByTagName('a')[0].className = '';
 			} else {
-				//box.setAttribute('checked',true);
 				box.checked = true;
 				box.parentNode.getElementsByTagName('a')[0].className = c;
 			}
@@ -701,15 +699,15 @@ Dase.placeUserTags = function(eid) {
 	var tags={};
 	var cart_tally = 0;
 	var sets = {};
-	var saveCheckedSelect = "<select class='plainSelect' name='collection_ascii_id'>";
-	saveCheckedSelect += "<option value=''>save checked items to...</option>";
+	var saveChecked = "<select class='plainSelect' name='collection_ascii_id'>";
+	saveChecked += "<option value=''>save checked items to...</option>";
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
 			var jsonAscii = jsonType[ascii];
 			if ('subscription' != type) {
-				saveCheckedSelect += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
+				saveChecked += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
 			}
 			if ('cart' != type) {
 				//we populate 'sets' as we go
@@ -744,15 +742,16 @@ Dase.placeUserTags = function(eid) {
 			}
 		} 
 	}
-	saveCheckedSelect += "</select>";
+	saveChecked += "</select>";
+	var target = Dase.$('saveChecked');
+	//if we are on an item set, also place
 	//the select menu for "save checked items to...."
-	var target = Dase.$('saveCheckedSelect');
 	var item_set = Dase.$('itemSet');
 	if (item_set) {
 		var items = item_set.getElementsByTagName('td');
 	}
 	if (target && item_set && items) {
-		target.innerHTML = saveCheckedSelect;
+		target.innerHTML = saveChecked;
 		target.innerHTML += "<input type='submit' value='add'/>";
 	}
 	for (var type in sets) {
@@ -856,6 +855,7 @@ Dase.getAttributeTallies = function(coll) {
 			}
 			if (is_admin) {
 			// makes admin atts appear ONLY after tallies are set
+			Dase.removeClass(Dase.$('get_admin_tallies'),'hide');
 			Dase.addClass(Dase.$('get_admin_tallies'),'hide');
 			Dase.removeClass(Dase.$('adminAttsLabel'),'hide');
 			Dase.removeClass(Dase.$('attList'),'hide');
@@ -998,7 +998,7 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 };
 
 Dase.initAddToCart = function() {
-	var sr = Dase.$('searchResults');
+	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	var anchors = sr.getElementsByTagName('a');
 	for (var i=0;i<anchors.length;i++) {
@@ -1022,7 +1022,7 @@ Dase.initAddToCart = function() {
 
 Dase.initCart = function() {
 	Dase.loadingMsg(true);
-	var sr = Dase.$('searchResults');
+	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
 			function(json) { 
