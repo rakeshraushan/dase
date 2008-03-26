@@ -123,41 +123,12 @@ class UserHandler
 		$tag->findOne();
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
+		$t->addSourceNode($u->asSimpleXml());
 
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
 		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));
-		Dase::display($t->transform());
-	}
-
-	public static function tag($params)
-	{
-		//this probably belongs in the tag handler!
-		$u = Dase_User::get($params);
-		$tag = new Dase_DBO_Tag;
-		if (isset($params['id'])) {
-			$tag->load($params['id']);
-			if ($tag->dase_user_id != $u->id) {
-				Dase_Error::report(401);
-			}
-		} elseif (isset($params['ascii_id'])) {
-			$tag->ascii_id = $params['ascii_id'];
-			$tag->dase_user_id = $u->id;
-			if (!$tag->findOne()) {
-				Dase_Error::report(401);
-			}
-		} else {
-			Dase_Error::report(404);
-		}
-
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
-		//THIS script is protected by eid auth, but how to protect restricted
-		//atom and xml documents that feed it? DASe requests AND serves the docs
-		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));
-		//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));exit;
 		Dase::display($t->transform());
 	}
 

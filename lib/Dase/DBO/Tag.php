@@ -37,8 +37,21 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			";
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));
-		$this->item_count = $st->fetchColumn();
-		return $this->item_count;
+		return $st->fetchColumn();
+	}
+
+	function getTagItemIds()
+	{
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT id 
+			FROM tag_item 
+			where tag_id = ?
+			ORDER BY sort_order
+			";
+		$st = $db->prepare($sql);
+		$st->execute(array($this->id));
+		return $st->fetchAll(PDO::FETCH_COLUMN);
 	}
 
 	function getItemIds()
@@ -68,6 +81,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
+		$tag_item->orderBy('sort_order');
 		return $tag_item->find();
 	}
 
@@ -85,12 +99,37 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $this->user;
 	}
 
+	function getLink() 
+	{
+		$this->user || $this->getUser(); 
+		return APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id;
+	}
+
+	function addItem($item_id)
+	{
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->tag_id = $this->id;
+		$tag_item->item_id = $item_id;
+		//I think this should be in a try-catch
+		return ($tag_item->insert());
+	}
+
+	function removeItem($item_id)
+	{
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->tag_id = $this->id;
+		$tag_item->item_id = $item_id;
+		if ($tag_item->findOne()) {
+			return ($tag_item->delete());
+		}
+	}
+
 	function asAtom()
 	{
 		$this->type || $this->getType(); 
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
-		$feed->setTitle($this->name);
+		$feed->setTitle($this->name.' ('.$this->getItemCount().' items)');
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
@@ -100,6 +139,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		//figure out public/private tag thing (and whether token is needed)
 		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/id/' . $this->id .'?token='.md5(Dase_Config::get('token')),'self');
 
+		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag_name",$this->name);
 		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
 		if ($this->is_public) {
 			$pub = "public";
@@ -114,7 +154,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$entry = $feed->addEntry();
 			$item = $tag_item->getItem();
 			$item->injectAtomEntryData($entry);
-			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag_item/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 			$entry->addCategory($index+1,'http://daseproject.org/category/item_set/index',$index+1);
 			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				$source = $sx->addChild('source');

@@ -60,6 +60,7 @@ body {font:12px/1em arial,helvetica,clean,sans-serif;*font-size:small;*font:x-sm
 h1,h2 {margin:0 0 1em 0;}
 h3,h4 {margin:0 0 .8em 0;}
 h5,h6 {margin:0 0 .6em 0;}
+h1,h2,h3,h4,h5,h6,strong{color: #223;}
 th,td{border:1px solid #999;padding:.5em;}
 a:link,a:visited { color:#444; text-decoration:none; }
 a:hover,a:active { color:#000; text-decoration:none; }

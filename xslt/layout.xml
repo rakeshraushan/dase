@@ -43,8 +43,8 @@
 
 
 	<div id="logoffControl" class="login hide">
-	  <div id="userName"> is logged in. (<a href="logoff" id="logoff-link">logoff</a>)</div>
-	  <div id="eid" class="hide"></div>
+	  <span id="userName"></span> is logged in. (<a href="logoff" id="logoff-link">logoff</a>)
+	  <div id="eid" class="data"></div>
 	</div>
 
 	<div id="loginControl" class="login hide">
@@ -121,7 +121,7 @@
 	  <insert-timer/> seconds |
 	  <img src="images/dasepowered.png" alt="DASePowered icon"/>
 	</div><!--closes footer-->
-	<div id="debugData" class="hide"></div>
-	<div id="pageHook" class="hide"><insert-page-hook/></div>
+	<div id="debugData" class="data"></div>
+	<div id="pageHook" class="data"><insert-page-hook/></div>
   </body>
 </html>

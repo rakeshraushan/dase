@@ -61,8 +61,8 @@ class SearchHandler
 		$feed->setOpensearchItemsPerPage($max);
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
-		$h2 = $div->addChild('h2',htmlspecialchars($subtitle));
-		$h2->addAttribute('class','searchEcho');
+		$se = $div->addChild('div',htmlspecialchars($subtitle));
+		$se->addAttribute('class','searchEcho');
 		$ul = $div->addChild('ul');
 		foreach ($result['tallies'] as $coll => $tal) {
 			if ($tal['name'] && $tal['total']) {
@@ -125,8 +125,9 @@ class SearchHandler
 			$feed = new Dase_Atom_Feed();
 			$item->injectAtomFeedData($feed);
 			$item->injectAtomEntryData($feed->addEntry());
+			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 			$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item-link');
-			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/search-link');
+			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/feed-link');
 			if (isset($next)) {
 				$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $next,'next','application/xhtml+xml');
 			}
@@ -171,7 +172,7 @@ class SearchHandler
 			$item->injectAtomFeedData($feed);
 			$item->injectAtomEntryData($feed->addEntry());
 			$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item-link');
-			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/search-link');
+			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/feed-link');
 			if (isset($next)) {
 				$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $next,'next','application/xhtml+xml');
 			}
