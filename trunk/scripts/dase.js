@@ -50,6 +50,11 @@ Dase.$ = function(id) {
 	return document.getElementById(id);
 };
 
+Dase.logoff = function() {
+	var logoff_url = Dase.base_href+'logoff';
+	window.location.href = logoff_url;
+}
+
 Dase.addClass = function(elem,cname) {
 	if (!elem || !cname) return false;
 	if (elem.className) {
@@ -101,43 +106,6 @@ Dase.toggle = function(el) {
 	}
 };
 
-//note: this isn't used anymore:
-/*
-Dase.formatDate = function() {
-	var d = new Date();
-	var mo;
-	var da;
-	if (1 == String(d.getMonth()+1).length) {
-		mo = "0" + String(d.getMonth()+1);
-	} else {
-		mo = String(d.getMonth()+1);
-	} 
-	if (1 == String(d.getDate()).length) {
-		da = "0" + String(d.getDate());
-	} else {
-		da = String(d.getDate());
-	} 
-	return String(d.getFullYear()) + mo + da; 
-}
-
-Dase.createListFromObj = function(parent,set,cName) {
-	parent.className = 'show';
-	var list = document.createElement('ul');
-	parent.appendChild(list);
-	if (cName) {
-		list.setAttribute('class',cName);
-	}
-	for (var member in set) {
-		var item = document.createElement('li');
-		item.appendChild(document.createTextNode(member+' '+set[member]));
-		list.appendChild(item);
-		if (set[member] instanceof Object) {
-			Dase.createListFromObj(item,set[member]);
-		}
-	}
-};
-*/
-
 Dase.createHtmlSet = function(parent,set,tagName) {
 	for (var i=0;i<set.length;i++) {
 		Dase.createElem(parent,set[i],tagName);
@@ -160,33 +128,6 @@ Dase.createElem = function(parent,value,tagName,className) {
 	}
 	element.style.visibility = 'visible';
 	return element;
-};
-
-Dase.createCheckbox = function(parent,value,name) {
-	/*
-	var element = document.createElement('input');
-	parent.appendChild(element);
-	//from http://alt-tag.com/blog/archives/2006/02/ie-dom-bugs/
-	//WORK ON THIS!
-	try {
-		element.setAttribute("type", "checkbox");
-	} catch (e) {
-		var newElement = null;
-		var tempStr = element.getAttribute("name");
-		try {
-			newElement = document.createElement("<input type=\"" +typeStr+ "\" name=\"" +tempStr+ "\">");
-		} catch (e) {}
-		if (!newElement) {
-			newElement = document.createElement("input");
-			newElement.setAttribute("type", "checkbox");
-			newElement.setAttribute("name", tempStr);
-		}
-		if (tempStr = element.getAttribute("value")) {
-			newElement.setAttribute("value", tempStr);
-		}
-		element.parentNode.replaceChild(newElement, element);
-	}
-	*/
 };
 
 Dase.removeChildren = function(target) {
@@ -285,7 +226,7 @@ Dase.loginControl = function(eid) {
 Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
 	if (nameElem) {
-		nameElem.innerHTML = Dase.user.name + " " + nameElem.innerHTML;
+		nameElem.innerHTML = Dase.user.name;
 		var eidElem = Dase.$('eid');
 		eidElem.innerHTML = eid;
 	}
@@ -312,6 +253,10 @@ Dase.checkAdminStatus = function(eid) {
 }
 
 Dase.placeItemEditLink = function(eid) {
+
+//currently OFF
+return;
+
 	var set = Dase.checkAdminStatus(eid);
 	if (!set) return;
 	var page_hook = Dase.$('pageHook').innerHTML;
@@ -531,28 +476,6 @@ Dase.setCollectionAtts = function(coll) {
 	}
 };
 
-//created for Persion Online & not used in DASe just yet
-Dase.initRowTable = function(id,new_class) {
-	var table = Dase.$(id);
-	if (!table) return;
-	var rows = table.getElementsByTagName('tr');
-	for (var i=0;i<rows.length;i++) {
-		var row = rows[i];
-		row.onmouseover = function() {
-			var cells = this.getElementsByTagName('td');
-			for (var i=0;i<cells.length;i++) {
-				cells[i].className = new_class;
-			}
-		};
-		row.onmouseout = function() {
-			var cells = this.getElementsByTagName('td');
-			for (var i=0;i<cells.length;i++) {
-				cells[i].className = "";
-			}
-		};
-	}
-};
-
 Dase.specifyQueryType = function() {
 	var opt = this.options[this.selectedIndex];
 	var query = Dase.$('queryInput');
@@ -579,9 +502,10 @@ Dase.initMenu = function(id) {
 				if (listItemLink) {
 					listItemLink.onclick = function() {
 						if (!Dase.user.eid) {
-							Dase.displayError('You need to be logged in'); 
+							//Dase.displayError('You need to be logged in'); 
+							Dase.logoff();
 							return false;
-						}
+						} 
 						var child_ul = this.parentNode.getElementsByTagName('ul')[0];
 						if (child_ul) {
 							Dase.toggle(child_ul);
@@ -603,8 +527,22 @@ Dase.multicheckItems = function(className) {
 	var item_set = Dase.$('itemSet');
 	if (!item_set)  return; 
 	target = Dase.$('checkall');
+	if (!target)  return; 
 	target.className = className;
 	var boxes = item_set.getElementsByTagName('input');
+	if (!boxes.length) {
+		target.className = 'hide';
+		var tag_name_el = Dase.$('tag_name');
+		if (tag_name_el) {
+			//todo: this should REALLY be implemented as a 
+			//'delete' request (using XHR to hijack form submit)
+			var button = Dase.$('removeFromSet');
+			button.name = 'delete_tag';
+			button.value = 'Delete '+tag_name_el.innerHTML;
+			button.onclick = null;
+		}
+		return;
+	}
 	target.onclick = function() {
 		if ('uncheck' == this.className) {
 			for (var i=0; i<boxes.length; i++) {
@@ -699,7 +637,7 @@ Dase.placeUserTags = function(eid) {
 	var tags={};
 	var cart_tally = 0;
 	var sets = {};
-	var saveChecked = "<select class='plainSelect' name='collection_ascii_id'>";
+	var saveChecked = "<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>";
 	saveChecked += "<option value=''>save checked items to...</option>";
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
@@ -750,7 +688,7 @@ Dase.placeUserTags = function(eid) {
 	if (item_set) {
 		var items = item_set.getElementsByTagName('td');
 	}
-	if (target && item_set && items) {
+	if (target && item_set && items.length) {
 		target.innerHTML = saveChecked;
 		target.innerHTML += "<input type='submit' value='add'/>";
 	}
@@ -998,6 +936,15 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 };
 
 Dase.initAddToCart = function() {
+	var tag_type_data = Dase.$('tag_type');
+	if (tag_type_data) {
+		var tag_type = tag_type_data.innerHTML;
+		//do not display 'add to cart' for user colls & slideshows
+		if ('slideshow' == tag_type || 'user_collection' == tag_type) {
+			Dase.initCart(); 
+			return;
+		}
+	}
 	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	var anchors = sr.getElementsByTagName('a');
@@ -1086,6 +1033,61 @@ Dase.initToggle = function() {
 			}
 		}
 	}
+};
+
+Dase.initSaveTo = function() {
+	var form = Dase.$('saveToForm');
+	if (!form) return;
+	var itemSet = Dase.$('itemSet');
+	if (!itemSet) return;
+	form.onsubmit = function() {
+		var saveToSelect = Dase.$('saveToSelect');
+		var tag_ascii_id = saveToSelect.options[saveToSelect.options.selectedIndex].value;
+		var item_id_array = [];
+		var inputs = itemSet.getElementsByTagName('input');
+		for (var i=0;i<inputs.length;i++) {
+			if ('item_id[]' == inputs[i].name && true == inputs[i].checked) {
+				item_id_array[item_id_array.length] = inputs[i].value;
+				inputs[i].checked = false;
+			}
+		}
+		if (!item_id_array.length) {
+			alert('Please check at least one item.');
+			return false;
+		}
+		if (!tag_ascii_id) {
+			alert('Please select a user collection/slideshow/cart to save items to.');
+			return false;
+		}
+		var data = {};
+		data.item_ids = item_id_array;
+		HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/tag/"+tag_ascii_id,data,
+				function(resp) { 
+				alert(resp); 
+				Dase.initUser();
+				Dase.initSaveTo();
+				});
+		return false;
+	};
+};
+
+Dase.initRemoveItems = function() {
+	var button = Dase.$('removeFromSet');
+	if (!button) return;
+	var itemSet = Dase.$('itemSet');
+	if (!itemSet) return;
+	button.onclick = function() {
+		var item_id_array = [];
+		var inputs = itemSet.getElementsByTagName('input');
+		if (!inputs.length) return true;
+		for (var i=0;i<inputs.length;i++) {
+			if ('item_id[]' == inputs[i].name && true == inputs[i].checked) {
+				return true;
+			}
+		}
+		alert('Please check at least one item.');
+		return false;
+	}
 }
 
 Dase.addLoadEvent(function() {
@@ -1094,6 +1096,8 @@ Dase.addLoadEvent(function() {
 		Dase.initBrowse();
 		Dase.multicheckItems();
 		Dase.initToggle();
+		Dase.initSaveTo();
+		Dase.initRemoveItems();
 //		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

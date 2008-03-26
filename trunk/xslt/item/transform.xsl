@@ -6,7 +6,7 @@
   xmlns:d="http://daseproject.org/media/"
   xmlns:php="http://php.net/xsl"
   xsl:extension-element-prefixes="php"
-  exclude-result-prefixes="atom h d"
+  exclude-result-prefixes="atom h d php"
   >
   <xsl:output method="xml" indent="yes"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -35,21 +35,26 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-	<div class="full" id="browse">
-	  <div id="collectionAsciiId" class="hide"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
-	  <h2><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h2>
-	  <h3><xsl:value-of select="$it/atom:subtitle/text()"/></h3>
-	  <h4>
-		<a href="{$it/atom:link[@rel='previous']/@href}">prev</a> |
-		<a href="{$it/atom:link[@rel='http://daseproject.org/relation/search-link']/@href}">up</a> |
-		<a href="{$it/atom:link[@rel='next']/@href}">next</a> 
-	  </h4>
+
+	<div class="full" id="{translate($it/atom:category[@scheme='http://daseproject.org/category/tag_type']/@term,'ABCDEFGHIJKLMNOPQRSTUVWXYZ_','abcdefghijklmnopqrstuvwxyz_')}">
+
+	  <div id="collectionAsciiId" class="data"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
+	  <div id="contentHeader">
+		<h1><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h1>
+		<h2><xsl:value-of select="$it/atom:title"/></h2>
+		<h3><xsl:value-of select="$it/atom:subtitle"/></h3>
+		<h4>
+		  <a href="{$it/atom:link[@rel='previous']/@href}">prev</a> |
+		  <a href="{$it/atom:link[@rel='http://daseproject.org/relation/feed-link']/@href}">up</a> |
+		  <a href="{$it/atom:link[@rel='next']/@href}">next</a> 
+		</h4>
+	  </div> <!-- close contentHeader -->
 	  <table id="item">
 		<tr>
 		  <td class="image">
 			<img src="{$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']/@src}"/>
 			<h4>Media:</h4>
-			<ul id="mediaLinks">
+			<ul>
 			  <xsl:apply-templates select="$it/atom:entry/atom:link" mode="media"/>
 			</ul>
 		  </td>

@@ -12,10 +12,12 @@
 	encoding="UTF-8"/>
 
   <xsl:template match="insert-content">
-	<h1>Collection Settings for <xsl:value-of select="$collection/collection_name/text()"/></h1>
-	<!--
-	<h2><xsl:value-of select="$user/ppd"/></h2>
-	-->
+	<div id="contentHeader">
+	  <h1>Collection Settings for <xsl:value-of select="$collection/collection_name/text()"/></h1>
+	  <!--
+	  <h2><xsl:value-of select="$user/ppd"/></h2>
+	  -->
+	</div>
 	<div id="collectionData">
 	  <table id="dataDisplay">
 		<tr>

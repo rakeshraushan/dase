@@ -151,7 +151,6 @@ class Dase
 			} 
 		} 
 		//no routes match, so use default:
-		//having this "outlet" here guarantees only first match gets tested
 		Dase_Log::put('error',"$request_url could not be located");
 		Dase_Error::report(404);
 		exit;

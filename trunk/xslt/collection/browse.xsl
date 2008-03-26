@@ -66,9 +66,15 @@
 
   <xsl:template name="collection-label">
 	<div id="collectionAsciiId" class="hide"><xsl:value-of select="$coll/atom:category[@scheme='http://daseproject.org/category/collection/ascii_id']/@term"/></div>
-	<h2><xsl:value-of select="$coll/atom:title/text()"/>
-	  <xsl:text> (</xsl:text><xsl:value-of select="$coll/atom:category[@scheme='http://daseproject.org/category/collection/item_count']/@term"/> items)</h2>
-	<div id="description"><xsl:value-of select="$coll/atom:subtitle/text()"/></div>
+	<div class="contentHeader">
+	  <h1>
+		<xsl:value-of select="$coll/atom:title/text()"/>
+		<xsl:text> (</xsl:text><xsl:value-of select="$coll/atom:category[@scheme='http://daseproject.org/category/collection/item_count']/@term"/> items)
+	  </h1>
+	  <h3>
+		<xsl:value-of select="$coll/atom:subtitle/text()"/>
+	  </h3>
+	</div>
   </xsl:template>
 
   <xsl:template name="collection-category-links">
