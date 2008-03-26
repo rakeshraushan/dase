@@ -1076,6 +1076,7 @@ Dase.initRemoveItems = function() {
 	if (!button) return;
 	var itemSet = Dase.$('itemSet');
 	if (!itemSet) return;
+	alert(Dase.$('content').width - Dase.$('itemSet').width);
 	button.onclick = function() {
 		var item_id_array = [];
 		var inputs = itemSet.getElementsByTagName('input');
