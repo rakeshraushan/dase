@@ -84,6 +84,7 @@ html #maincontent {
 .data { display:none; }
 .alert { color:#c00; }
 .msg { color:#c00; }
+a.edit { color: #00c; }
 
 /********* STANDARD STYLES *******************/
 

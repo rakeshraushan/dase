@@ -365,6 +365,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setUpdated($updated);
 		$entry->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
 		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
+		$entry->addCategory($this->serial_number,'http://daseproject.org/category/item/serial_number');
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		if ($this->item_type) {
 			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
