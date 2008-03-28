@@ -253,18 +253,17 @@ Dase.checkAdminStatus = function(eid) {
 }
 
 Dase.placeItemEditLink = function(eid) {
-
-//currently OFF
-return;
-
 	var set = Dase.checkAdminStatus(eid);
 	if (!set) return;
+	var link_div = Dase.$('adminLinkTarget');
+	if (!link_div) return;
 	var page_hook = Dase.$('pageHook').innerHTML;
 	if (
 			(page_hook == 'search_item') &&
 			(set.auth_level == 'manager' || set.auth_level == 'superuser' || set.auth_level == 'write')
 	   ) {
-		alert(eid+' can edit this item');
+		var href = Dase.base_href + 'user/'+eid+'/collection/'+link_div.className+'/form';
+		link_div.innerHTML = '<a class="edit" href="'+href+'"/>edit this item</a>';
 	}
 	return;
 }
@@ -1076,7 +1075,11 @@ Dase.initRemoveItems = function() {
 	if (!button) return;
 	var itemSet = Dase.$('itemSet');
 	if (!itemSet) return;
-	alert(Dase.$('content').width - Dase.$('itemSet').width);
+	var items = itemSet.getElementsByTagName('input');
+	if (items.length > 3) {
+		units = Dase.$('content').clientWidth - Dase.$('itemSet').clientWidth - 45;
+		button.style.marginRight =  units+'px';
+	}
 	button.onclick = function() {
 		var item_id_array = [];
 		var inputs = itemSet.getElementsByTagName('input');

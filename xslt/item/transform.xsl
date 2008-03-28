@@ -17,6 +17,7 @@
   <xsl:variable name="it" select="document($src)/atom:feed"/>
 
   <xsl:variable name="coll" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/>
+  <xsl:variable name="sernum" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/item/serial_number']/@term"/>
 
   <xsl:template match="/">
 	<xsl:apply-templates/>
@@ -70,6 +71,7 @@
 		  </td>
 		</tr>
 	  </table>
+	  <div class="{$coll}/{$sernum}" id="adminLinkTarget"></div>
 	</div> <!-- close content -->
   </xsl:template>
 

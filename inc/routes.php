@@ -221,6 +221,10 @@ $routes['item'] = array(
 		'uri_template' => 'collection/{collection_ascii_id}/{serial_number}',
 		'auth' => 'user',
 	),
+	'editForm' =>    array (
+		'uri_template' => 'user/{eid}/collection/{collection_ascii_id}/{serial_number}/form',
+		'auth' => 'eid',
+	),
 );
 
 $routes['user'] = array(
