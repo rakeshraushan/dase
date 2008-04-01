@@ -23,7 +23,7 @@ class Dase_Atom
 
 	//convenience class(es) to deal w/ Atom feeds
 
-	private $id_is_set;
+	private $id;
 	private $rights_is_set;
 	private $title_is_set;
 	private $updated_is_set;
@@ -41,10 +41,12 @@ class Dase_Atom
 	//convenience method for atom elements
 	function addElement($tagname,$text='',$ns='') 
 	{
-		if (!$ns) {
-			$ns = Dase_Atom::$ns['atom'];
+		if ($ns) {
+			$elem = $this->root->appendChild($this->dom->createElementNS($ns,$tagname));
+		} else {
+			//$elem = $this->root->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],$tagname));
+			$elem = $this->root->appendChild($this->dom->createElement($tagname));
 		}
-		$elem = $this->root->appendChild($this->dom->createElementNS($ns,$tagname));
 		if ($text) {
 			$elem->appendChild($this->dom->createTextNode($text));
 		}
@@ -105,12 +107,16 @@ class Dase_Atom
 		}
 	}
 
+	function getId() {
+		return $this->id;
+	}
+
 	function setId($text) 
 	{
-		if ($this->id_is_set) {
+		if ($this->id) {
 			throw new Dase_Atom_Exception('id is already set');
 		} else {
-			$this->id_is_set = true;
+			$this->id = $text;
 		}
 		$id_element = $this->addElement('id',$text);
 	}

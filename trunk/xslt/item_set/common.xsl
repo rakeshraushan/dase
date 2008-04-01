@@ -71,53 +71,9 @@
 	<xsl:text>
 	</xsl:text>
 	<tr>
-	  <xsl:text>
-	  </xsl:text>
-	  <td>
-		<div class="checkNum">
-		  <input type="checkbox" name="item_id[]" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
-		  <xsl:text> </xsl:text>
-		  <xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/item_set/index']/@label"/><xsl:text>.</xsl:text>
-		</div>
-		<div class="cartAdd">
-		  <span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}">add to cart</a>
-		</div>
-		<div class="image">
-		  <a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			<img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
-		  </a>
-		</div>
-		<div class="spacer"></div>
-		<h5>
-		  <xsl:value-of select="substring(atom:title,0,80)"/>
-		  <xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-		</h5>
-		<h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
-	  </td>
+	  <xsl:call-template name="item_record"/>
 	  <xsl:for-each select="following-sibling::atom:entry[position() &lt; $columns]">
-		<xsl:text>
-		</xsl:text>
-		<td>
-		  <div class="checkNum">
-			<input type="checkbox" name="item_id[]" value="{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}"/>
-			<xsl:text> </xsl:text>
-			<xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/item_set/index']/@label"/><xsl:text>.</xsl:text>
-		  </div>
-		  <div class="cartAdd">
-			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{atom:category[@scheme='http://daseproject.org/category/item/id']/@term}">add to cart</a>
-		  </div>
-		  <div class="image">
-			<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
-			  <img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
-			</a>
-		  </div>
-		  <div class="spacer"></div>
-		  <h5>
-			<xsl:value-of select="substring(atom:title,0,80)"/>
-			<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
-		  </h5>
-		  <h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
-		</td>
+		<xsl:call-template name="item_record"/>
 		<!-- this will fill out blank cells in table-->
 		<xsl:if test="position() = last() and last() + 1 != $columns">
 		  <td colspan="0" class="blank">
@@ -133,4 +89,34 @@
 	  </xsl:if>
 	</tr>
   </xsl:template>
+
+  <xsl:template name="item_record">
+	<xsl:param name="startIndex" select="1"/>
+	<xsl:text>
+	</xsl:text>
+	<td>
+	  <xsl:variable name="item_id" select="atom:content/h:div/h:dl/h:dt[@class='item_id']/following-sibling::h:dd[position()=1]"/>
+	  <div class="checkNum">
+		<input type="checkbox" name="item_id[]" value="{$item_id}"/>
+		<xsl:text> </xsl:text>
+		<!-- per Tennison XSLT and XPATH on edge p. 178 v. inefficient!!-->
+		<xsl:value-of select="count(preceding-sibling::atom:entry)+$startIndex"/><xsl:text>.</xsl:text>
+	  </div>
+	  <div class="cartAdd">
+		<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$item_id}">add to cart</a>
+	  </div>
+	  <div class="image">
+		<a href="{atom:link[@rel='http://daseproject.org/relation/search-item']/@href}">
+		  <img alt="" src="{atom:content/h:div/h:img[@class='thumbnail']/@src}"/>
+		</a>
+	  </div>
+	  <div class="spacer"></div>
+	  <h5>
+		<xsl:value-of select="substring(atom:title,0,80)"/>
+		<xsl:if test="string-length(atom:title) &gt; 80">...</xsl:if>
+	  </h5>
+	  <h5 class="collection_name"><xsl:value-of select="atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></h5>
+	</td>
+  </xsl:template>
+
 </xsl:stylesheet>

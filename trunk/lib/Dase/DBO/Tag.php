@@ -139,7 +139,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		//figure out public/private tag thing (and whether token is needed)
 		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/id/' . $this->id .'?token='.md5(Dase_Config::get('token')),'self');
 
-		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag_name",$this->name);
+		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag",$this->name);
 		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
 		if ($this->is_public) {
 			$pub = "public";
@@ -150,12 +150,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addCategory($this->background,"http://daseproject.org/category/tag_background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
-		foreach($this->getTagItems() as $index => $tag_item) {
+		foreach($this->getTagItems() as $tag_item) {
 			$entry = $feed->addEntry();
 			$item = $tag_item->getItem();
 			$item->injectAtomEntryData($entry);
 			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
-			$entry->addCategory($index+1,'http://daseproject.org/category/item_set/index',$index+1);
 			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				$source = $sx->addChild('source');
 			$source->addChild('title',htmlentities($this->item->collection_name));

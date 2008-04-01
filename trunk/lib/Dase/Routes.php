@@ -104,6 +104,16 @@ class Dase_Routes
 		return $routes;
 	}
 
+	public static function listModules($modules_dir)
+	{
+		$dir = new DirectoryIterator($modules_dir);
+		foreach ($dir as $module) {
+			if (!$module->isDot()) {
+				print "$module\n";
+			}
+		}
+	}
+
 	public static function compileModuleRoutes($modules_dir,$compiled_routes)
 	{
 		//route defaults can be overridden in routes.php

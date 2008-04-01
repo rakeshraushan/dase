@@ -4,6 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:d="http://daseproject.org"
+  xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
   xmlns:php="http://php.net/xsl"
   xsl:extension-element-prefixes="php"
   exclude-result-prefixes="atom h d php"
@@ -41,7 +42,10 @@
 	  </div> <!--close contentHeader -->
 	  <form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
-		  <xsl:apply-templates select="$items/atom:entry" mode="items"/>
+		  <xsl:apply-templates select="$items/atom:entry" mode="items">
+			<!-- pass along the opensearch startIndex -->
+			<xsl:with-param name="startIndex" select="$items/os:startIndex"/>
+		  </xsl:apply-templates>
 		</table>
 		<a href="" id="checkall">check/uncheck all</a>
 		<div id="saveChecked"></div>

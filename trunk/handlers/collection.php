@@ -191,6 +191,13 @@ EOF;
 
 	}
 
+	public static function itemsByTypeAsAtom($params) {
+		$item_type = new Dase_DBO_ItemType;
+		$item_type->ascii_id = $params['item_type_ascii_id'];
+		$item_type->findOne();
+		Dase::display($item_type->getItemsAsFeed());
+	}
+
 	public static function buildIndex($params) 
 	{
 		$c = Dase_Collection::get($params);

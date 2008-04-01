@@ -117,6 +117,11 @@ $routes['collection'] = array (
 		'uri_template' => 'collection/{collection_ascii_id}/attributes/admin',
 		'auth' => 'none',
 	),
+	'itemsByTypeAsAtom' =>    array (
+		'uri_template' => 'atom/collection/{collection_ascii_id}/item_type/{item_type_ascii_id}',
+		'auth' => 'none',
+		'mime' => 'application/atom+xml',
+	),
 	'browse' =>    array (
 		'uri_template' => 'collection/{collection_ascii_id}',
 		'auth' => 'user',

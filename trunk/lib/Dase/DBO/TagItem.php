@@ -47,8 +47,13 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 		$feed->addLink($tag->getLink().'/'.$prev_id,"previous");
 		$feed->addLink($tag->getLink().'/'.$next_id,"next");
+		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$place.' of '.count($tag_item_id_array));
-		$item->injectAtomEntryData($feed->addEntry());
+		$entry = $item->injectAtomEntryData($feed->addEntry());
+		//todo: atompub edit link.  for now (3/31/08) user must 'tag' an item
+		//in order for it to be eidtable
+		$edit_link = (str_replace(APP_ROOT,APP_ROOT.'/edit',$entry->getId()));
+		$entry->addLink($edit_link,'edit');
 		return $feed->asXml();
 	}
 

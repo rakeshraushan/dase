@@ -31,7 +31,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->getLastUpdated());
-		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/collection/ascii_id");
+		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
 		$feed->setId(APP_ROOT . '/' . $this->ascii_id);
 		$feed->addAuthor();
