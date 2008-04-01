@@ -17,7 +17,7 @@
   <xsl:variable name="it" select="document($src)/atom:feed"/>
 
   <xsl:variable name="coll" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/>
-  <xsl:variable name="sernum" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/item/serial_number']/@term"/>
+  <xsl:variable name="coll_name" select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/>
 
   <xsl:template match="/">
 	<xsl:apply-templates/>
@@ -36,12 +36,11 @@
   </xsl:template>
 
   <xsl:template match="insert-content">
-
+	<!-- tag_type determines 'id' and thus "look" of page -->
 	<div class="full" id="{translate($it/atom:category[@scheme='http://daseproject.org/category/tag_type']/@term,'ABCDEFGHIJKLMNOPQRSTUVWXYZ_','abcdefghijklmnopqrstuvwxyz_')}">
-
-	  <div id="collectionAsciiId" class="data"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term"/></div>
+	  <div id="collectionAsciiId" class="data"><xsl:value-of select="$coll"/></div>
 	  <div id="contentHeader">
-		<h1><a href="collection/{$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@term}"><xsl:value-of select="$it/atom:entry/atom:category[@scheme='http://daseproject.org/category/collection']/@label"/></a></h1>
+		<h1><a href="collection/{$coll}"><xsl:value-of select="$coll_name"/></a></h1>
 		<h2><xsl:value-of select="$it/atom:title"/></h2>
 		<h3><xsl:value-of select="$it/atom:subtitle"/></h3>
 		<h4>
@@ -60,19 +59,23 @@
 			</ul>
 		  </td>
 		  <td class="metadata">
-			<h3><a href="collection/{$coll}"><xsl:value-of select="$it/atom:entry/atom:content/h:div/h:p[@class='collection_name']"/></a></h3>
+			<h3><a href="collection/{$coll}"><xsl:value-of select="$coll_name"/></a></h3>
 			<dl id="metadata">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='metadata']" mode="keyvals"/>
 			</dl>
-			<a href="view_admn_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
+			<a href="view_admin_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 			<dl id="adminMetadata" class="hide">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='admin_metadata']" mode="keyvals"/>
 			</dl>
 		  </td>
 		</tr>
 	  </table>
-	  <div class="{$coll}/{$sernum}" id="adminLinkTarget"></div>
+	  <xsl:apply-templates select="$it/atom:entry/atom:link[@rel='edit']" mode="edit"/>
 	</div> <!-- close content -->
+  </xsl:template>
+
+  <xsl:template match="atom:link[@rel='edit']" mode="edit">
+	<div><a class="hide" id="editLink" href="{@href}">edit item</a></div>
   </xsl:template>
 
   <xsl:template match="h:dl/h:dt" mode="keyvals">
@@ -81,6 +84,11 @@
 
   <xsl:template match="h:dl/h:dd" mode="keyvals">
 	<dd><a href="search?{$coll}:{preceding-sibling::h:dt[position()=1]/@class}={@class}"><xsl:value-of select="text()"/></a></dd>
+  </xsl:template>
+
+  <xsl:template match="h:dl/h:dd[@class='nolink']" mode="keyvals">
+	<!-- sets 'item_id' and 'serial_number' as id, so js can grab values -->
+	<dd id="{preceding-sibling::h:dt[position()=1]/@class}"><xsl:value-of select="text()"/></dd>
   </xsl:template>
 
   <xsl:template match="dynamic"/>

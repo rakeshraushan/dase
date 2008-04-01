@@ -121,7 +121,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$st->execute($bound_params);
 		while ($row = $st->fetch()) {
 			if (!$row['value_text_md5']) {
-				Dase_DBO_Value::updateValueTextMd5($row['id']);
+				$row['value_text_md5'] = Dase_DBO_Value::updateValueTextMd5($row['id']);
 			}
 			$metadata[] = $row;
 		}
@@ -364,8 +364,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setTitle($this->getTitle());
 		$entry->setUpdated($updated);
 		$entry->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
-		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
-		$entry->addCategory($this->serial_number,'http://daseproject.org/category/item/serial_number');
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		if ($this->item_type) {
 			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
@@ -409,19 +407,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				}
 			}
 		}
-		$admin_dl->addChild('dt','DASe Item Id');
-		$admin_dl->addChild('dd',$this->id);
-		$admin_dl->addChild('dt','DASe Serial Number');
-		$admin_dl->addChild('dd',$this->serial_number);
+		//convenience item_id & serial_number but the will not link like other metadata
+		$dt = $admin_dl->addChild('dt','DASe Item Id');
+		$dt->addAttribute('class','item_id');
+		$dd = $admin_dl->addChild('dd',$this->id);
+		$dd->addAttribute('class','nolink');
+		$dt = $admin_dl->addChild('dt','DASe Serial Number');
+		$dt->addAttribute('class','serial_number');
+		$dd = $admin_dl->addChild('dd',htmlspecialchars($this->serial_number));
+		$dd->addAttribute('class','nolink');
 		$d = 'http://daseproject.org/media/';
-		//$media_ul = $div->addChild('ul');
-		//$media_ul->addAttribute('class','media');
 		foreach ($this->getMedia() as $med) {
-			//$media_li = $media_ul->addChild('li');
-			//$media_li->addAttribute('class',$med->size);
-			//$a = $media_li->addChild('a', $med->size . " (" . $med->width ."x" .$med->height .")");
-			//$a->addAttribute('href', APP_ROOT . "/media/" . $this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
-			//$a->addAttribute('class',$med->mime_type);
 			$link = $entry->addLink(
 				APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
 				'http://daseproject.org/relation/media',

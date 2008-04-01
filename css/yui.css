@@ -65,4 +65,5 @@ th,td{border:1px solid #999;padding:.5em;}
 a:link,a:visited { color:#444; text-decoration:none; }
 a:hover,a:active { color:#000; text-decoration:none; }
 ul a, dl a { font-weight: bold; line-height: 1.4em; }
+dd { color: #333; line-height: 1.4em; }
 

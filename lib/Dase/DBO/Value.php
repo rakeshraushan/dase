@@ -34,5 +34,6 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 			$v->value_text_md5 = md5($v->value_text);
 			$v->update();
 		}
+		return $v->value_text_md5;
 	}
 }

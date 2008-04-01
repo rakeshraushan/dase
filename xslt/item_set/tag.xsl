@@ -15,8 +15,8 @@
 	encoding="UTF-8"/>
 
   <xsl:variable name="tag_type" select="translate($items/atom:category[@scheme='http://daseproject.org/category/tag_type']/@term,'ABCDEFGHIJKLMNOPQRSTUVWXYZ_','abcdefghijklmnopqrstuvwxyz_')"/>
-  <xsl:variable name="tag_ascii_id" select="$items/atom:category[@scheme='http://daseproject.org/category/tag_name']/@term"/>
-  <xsl:variable name="tag_name" select="$items/atom:category[@scheme='http://daseproject.org/category/tag_name']/@label"/>
+  <xsl:variable name="tag_ascii_id" select="$items/atom:category[@scheme='http://daseproject.org/category/tag']/@term"/>
+  <xsl:variable name="tag_name" select="$items/atom:category[@scheme='http://daseproject.org/category/tag']/@label"/>
   <xsl:variable name="user" select="html/head/dynamic/user"/>
 
   <xsl:template match="insert-content">

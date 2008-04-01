@@ -240,45 +240,43 @@ Dase.checkAdminStatus = function(eid) {
 		var c = Dase.user.collections[i];
 		//display link to administer collection if user has privs
 		if (current_coll && (c.ascii_id == current_coll)) {  
-			var set = {
+			var auth_info = {
 				'collection_ascii_id':current_coll,
 				'eid':eid,
 				'auth_level':c.auth_level,
 				'collection_name':c.collection_name
 			}
-			return set;
+			return auth_info;
 		}
 	}
 	return false;
 }
 
 Dase.placeItemEditLink = function(eid) {
-	var set = Dase.checkAdminStatus(eid);
-	if (!set) return;
-	var link_div = Dase.$('adminLinkTarget');
-	if (!link_div) return;
-	var page_hook = Dase.$('pageHook').innerHTML;
-	if (
-			(page_hook == 'search_item') &&
-			(set.auth_level == 'manager' || set.auth_level == 'superuser' || set.auth_level == 'write')
-	   ) {
-		var href = Dase.base_href + 'user/'+eid+'/collection/'+link_div.className+'/form';
-		link_div.innerHTML = '<a class="edit" href="'+href+'"/>edit this item</a>';
+	//it's not a security check, just a convenience for users
+	//with proper credentials to see the edit link
+	var auth_info = Dase.checkAdminStatus(eid);
+	if (!auth_info) return;
+	var edit_link = Dase.$('editLink');
+	if (!edit_link || ('' == edit_link.href)) return;
+	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
+	{
+		Dase.removeClass(edit_link,'hide');
 	}
 	return;
 }
 
 Dase.placeCollectionAdminLink = function(eid) {
-	var set = Dase.checkAdminStatus(eid);
-	if (!set) return;
-	if (set.auth_level == 'manager' || set.auth_level == 'superuser') {
+	var auth_info = Dase.checkAdminStatus(eid);
+	if (!auth_info) return;
+	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
 		var menu = Dase.$('menu');
 		var li = document.createElement('li');
 		li.id = 'admin-menu';
 		var a = document.createElement('a');
-		a.setAttribute('href','admin/'+eid+'/'+set.collection_ascii_id);
+		a.setAttribute('href','admin/'+eid+'/'+auth_info.collection_ascii_id);
 		a.className = "main";
-		a.appendChild(document.createTextNode(set.collection_name+' Admin'));
+		a.appendChild(document.createTextNode(auth_info.collection_name+' Admin'));
 		li.appendChild(a);
 		menu.appendChild(li);
 	}
@@ -957,7 +955,8 @@ Dase.initAddToCart = function() {
 				item.item_id = inputElem.value;
 				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
 						function(resp) { 
-						Dase.initCart(); 
+						Dase.initUser(); 
+						Dase.initSaveTo();
 						});
 				return false;
 			};
@@ -1004,8 +1003,8 @@ Dase.initCart = function() {
 				this.href = '#';
 				Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
 				Dase.ajax(delete_url,'DELETE',function(resp) {
-						Dase.initCart();
-						Dase.initAddToCart();
+						Dase.initUser(); 
+						Dase.initSaveTo();
 						});
 				return false;
 			};

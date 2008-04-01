@@ -3,6 +3,8 @@
 class SearchHandler
 {
 
+	//MOST of this should be in Dase_Search!!
+
 	public static function opensearch($params)
 	{
 
@@ -61,14 +63,15 @@ class SearchHandler
 		$feed->setOpensearchItemsPerPage($max);
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
-		$se = $div->addChild('div',htmlspecialchars($subtitle));
-		$se->addAttribute('class','searchEcho');
+		$search_echo = $div->addChild('div',htmlspecialchars($subtitle));
+		$search_echo->addAttribute('class','searchEcho');
 		$ul = $div->addChild('ul');
 		foreach ($result['tallies'] as $coll => $tal) {
 			if ($tal['name'] && $tal['total']) {
 				$tally_elem = $ul->addChild('li');
 				$tally_elem->addAttribute('class',$coll);
 				$a = $tally_elem->addChild('a',htmlspecialchars($tal['name'] . ': ' . $tal['total']));
+				//adds collection filter (collection_ascii_id trumps 'c')
 				$a->addAttribute('href',APP_ROOT.'/'.$request_url.'?'.$query_string.'&collection_ascii_id='.$coll);
 			}
 		}
@@ -76,8 +79,9 @@ class SearchHandler
 		$item_request_url = str_replace('search_item','search',$request_url);
 		$item_request_url = str_replace('search','search_item',$item_request_url);
 		$num = 0;
-		foreach($item_ids as $search_index => $item_id) {
+		foreach($item_ids as $item_id) {
 			$num++;
+			$setnum = $num + $start - 1;
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
@@ -85,8 +89,7 @@ class SearchHandler
 			$item->item_status || $item->getItemStatus();
 			$entry = $feed->addEntry();
 			$item->injectAtomEntryData($entry);
-			$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item');
-			$entry->addCategory($search_index+$start,'http://daseproject.org/category/item_set/index',$search_index+$start);
+			$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
 		Dase::display($feed->asXml());
 	}
@@ -117,7 +120,10 @@ class SearchHandler
 			$previous = $num - 1;
 		}
 
-		$start = (floor($num/$max) * $max) + 1;
+		$start = Dase_Filter::filterGet('start');
+		if (!$start) {
+			$start = (floor($num/$max) * $max) + 1;
+		}
 
 		$item_id = $result['item_ids'][$num-1];
 		$item = new Dase_DBO_Item;
@@ -126,51 +132,6 @@ class SearchHandler
 			$item->injectAtomFeedData($feed);
 			$item->injectAtomEntryData($feed->addEntry());
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
-			$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item-link');
-			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/feed-link');
-			if (isset($next)) {
-				$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $next,'next','application/xhtml+xml');
-			}
-			if (isset($previous)) {
-				$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $previous,'previous','application/xhtml+xml');
-			}
-			$subtitle = 'Item ' . $num . ' of ' . $result['count'] . ' items for ' . $result['echo']; 
-			$feed->setSubtitle($subtitle);
-			Dase::display($feed->asXml());
-		}
-		Dase_Error::report(404);
-		$search = Dase_Search::get(Dase_Url::getRequestUrl(),Dase_Url::getQueryString());
-		$num = Dase_Filter::filterGet('num');
-		$max = Dase_Filter::filterGet('max');
-		$max = $max ? $max : MAX_ITEMS; 
-		if (!$num) {
-			$num = 1;
-		}
-		$result = $search->getResult();
-		//this will change:
-		$request_url = str_replace('atom/','',$result['request_url']);
-		//this prevents a 'search_item' becoming 'search_item_item':
-		$item_request_url = str_replace('search_item','search',$request_url);
-		$item_request_url = str_replace('search','search_item',$item_request_url);
-		$query_string = $result['query_string'];
-		$count = $result['count'];
-		$previous = 0;
-		$next = 0;
-		if ($num < $count) {
-			$next = $num + 1;
-		}
-		if ($num > 1) {
-			$previous = $num - 1;
-		}
-
-		$start = (floor($num/$max) * $max) + 1;
-
-		$item_id = $result['item_ids'][$num-1];
-		$item = new Dase_DBO_Item;
-		if ($item->load($item_id)) {
-			$feed = new Dase_Atom_Feed();
-			$item->injectAtomFeedData($feed);
-			$item->injectAtomEntryData($feed->addEntry());
 			$feed->addLink($item_request_url . '?' . $query_string . '&num=' . $num,'http://daseproject.org/relation/search-item-link');
 			$feed->addLink($request_url . '?' . $query_string . '&start=' . $start,'http://daseproject.org/relation/feed-link');
 			if (isset($next)) {
