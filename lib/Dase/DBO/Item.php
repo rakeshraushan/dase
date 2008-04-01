@@ -176,8 +176,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->item_id = $this->id;
 		$m->size = 'thumbnail';
 		$this->thumbnail = $m->findOne();
-		$this->thumbnail_url = APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/$m->filename";
-		return $this->thumbnail;
+		if ($this->thumbnail) {
+			$this->thumbnail_url = APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/$m->filename";
+			return $this->thumbnail;
+		}
 	}
 
 	public function getViewitem()
@@ -187,8 +189,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->item_id = $this->id;
 		$m->size = 'viewitem';
 		$this->viewitem = $m->findOne();
-		$this->viewitem_url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
-		return $this->viewitem;
+		if ($this->viewitem) {
+			$this->viewitem_url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
+			return $this->viewitem;
+		}
 	}
 
 	public function getItemType()
@@ -373,14 +377,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
 		$this->thumbnail || $this->getThumbnail();
-		$img = $div->addChild('img');
-		$img->addAttribute('src',$this->thumbnail_url);
-		$img->addAttribute('class','thumbnail');
+		if ($this->thumbnail) {
+			$img = $div->addChild('img');
+			$img->addAttribute('src',$this->thumbnail_url);
+			$img->addAttribute('class','thumbnail');
+		}
 		$this->viewitem || $this->getViewitem();
-		$img = $div->addChild('img');
-		$img->addAttribute('src',$this->viewitem_url);
-		$img->addAttribute('class','viewitem');
-		$div->addChild('p',htmlspecialchars($this->collection->collection_name))->addAttribute('class','collection_name');;
+		if ($this->viewitem) {
+			$img = $div->addChild('img');
+			$img->addAttribute('src',$this->viewitem_url);
+			$img->addAttribute('class','viewitem');
+		}
 		$dl = $div->addChild('dl');
 		$dl->addAttribute('class','metadata');
 		$admin_dl = $div->addChild('dl');
