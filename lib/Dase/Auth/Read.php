@@ -2,6 +2,7 @@
 
 class Dase_Auth_Read
 {
+	//assumes eid is included in URL (won't work for mle)
 	public function authorize($params)
 	{
 		if (isset($params['eid']) && 

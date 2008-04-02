@@ -632,7 +632,6 @@ Dase.placeUserTags = function(eid) {
 	};
 	var json = Dase.user.tags;
 	var tags={};
-	var cart_tally = 0;
 	var sets = {};
 	var saveChecked = "<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>";
 	saveChecked += "<option value=''>save checked items to...</option>";
@@ -672,9 +671,7 @@ Dase.placeUserTags = function(eid) {
 						sets[type] = "<li><a href='user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				}
-			} else { // cart tally
-				cart_tally = jsonType[ascii];
-			}
+			} 
 		} 
 	}
 	saveChecked += "</select>";
@@ -693,19 +690,9 @@ Dase.placeUserTags = function(eid) {
 		try{
 			Dase.$(type+'-submenu').innerHTML = sets[type];
 		} catch(e) {
-		//	alert('a friendly notice: ' +e);
+			//	alert('a friendly notice: ' +e);
 		}
 	}
-	var label = Dase.$('cartLabel');
-	if (label) {
-		label.innerHTML += " ("+cart_tally+")";
-	}
-	//UNsuccessful attempt to fix ie bug
-	//label.parentNode.style.display = 'inline';
-
-	//UNsuccessful attempt to fix ie bug
-	//see ie7-squish.js,ie7-recalc.js
-	//document.recalc();
 };
 
 Dase.initBrowse = function() {
@@ -1101,7 +1088,7 @@ Dase.addLoadEvent(function() {
 		Dase.initToggle();
 		Dase.initSaveTo();
 		Dase.initRemoveItems();
-//		Dase.initCheckImage();
+		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*
 		   Dase.prepareAddFileUpload();

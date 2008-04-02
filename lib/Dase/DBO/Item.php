@@ -427,7 +427,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getMedia() as $med) {
 			$link = $entry->addLink(
 				APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
-				'http://daseproject.org/relation/media',
+				'related',
 				$med->mime_type,$med->file_size
 			);
 			$link->setAttributeNS($d,'d:width',$med->width);
