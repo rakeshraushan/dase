@@ -105,11 +105,7 @@
 	</xsl:copy>
   </xsl:template>
 
-  <xsl:template match="atom:entry" mode="img">
-	<img src="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@href}" width="{atom:link[@rel='http://daseproject.org/relation/media/viewitem']/@d:width}" height="{atom:link[@rel='http://daseproject.org/relation/media/vewitem']/@d:height}" alt="{atom:title/text()}"/>
-  </xsl:template>
-
-  <xsl:template match="atom:link[@title]" mode="media">
+  <xsl:template match="atom:link[@rel='related'][@title]" mode="media">
 	<li><a href="{@href}"><xsl:value-of select="@title"/> (<xsl:value-of select="@d:width"/>x<xsl:value-of select="@d:height"/>)</a></li>
   </xsl:template>
 

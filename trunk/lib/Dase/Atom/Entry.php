@@ -44,6 +44,17 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	function setMediaContent($url,$mime) {
+		if ($this->content_is_set) {
+			throw new Dase_Atom_Exception('content is already set');
+		} else {
+			$this->content_is_set = true;
+		}
+		$content = $this->addElement('content');
+		$content->setAttribute('src',$url);
+		$content->setAttribute('type',$mime);
+	}
+
 	function setPublished()
 	{
 		if ($this->published_is_set) {

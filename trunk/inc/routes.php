@@ -216,6 +216,7 @@ $routes['tag'] = array(
 	),
 );
 
+//MAKE SURE THAT items are NOT created w/ serial numbers that could be URL filters ('attribute', etc.)
 $routes['item'] = array( 
 	'asAtom' =>    array (
 		'uri_template' => 'atom/collection/{collection_ascii_id}/{serial_number}',
@@ -290,6 +291,15 @@ $routes['attribute'] = array(
 	'attributeValuesAsHtml' =>    array (
 		'uri_template' => 'collection/{collection_ascii_id}/attribute/{attribute_ascii_id}',
 		'auth' => 'none',
+	),
+);
+
+$routes['media'] = array( 
+	'asAtom' =>    array (
+		//mle = 'media link entry'
+		'uri_template' => 'mle/{collection_ascii_id}/{serial_number}/{size}',
+		'auth' => 'none',
+		'mime' => 'application/atom+xml',
 	),
 );
 
