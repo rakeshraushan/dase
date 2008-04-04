@@ -15,7 +15,7 @@ class Dase_Atom_Entry extends Dase_Atom
 			$this->dom = $dom;
 		} else {
 			//if no $dom is passed in, this will be a freestanding entry document
-			$dom = new DOMDocument('1.0');
+			$dom = new DOMDocument('1.0','utf-8');
 			$this->dom = $dom;
 			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 		}

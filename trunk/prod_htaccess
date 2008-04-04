@@ -6,6 +6,7 @@ FileETag none
 RewriteEngine On
 #RewriteBase  /dase  
 RewriteBase  /dasetest  
+#RewriteBase  /dase_modules  
 
 # required for load-balancer keepalive (ladd)
 #RewriteCond %{REMOTE_ADDR} 10.0.0.250

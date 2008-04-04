@@ -3,6 +3,7 @@
 
 $working = dirname(__FILE__) . '/..';
 $target = '/var/www/html/dasetest/';
+//$target = '/mnt/projects/dase_modules/htdocs/';
 //$target = '/var/www/html/dase_efossils/';
 //$target = '/var/www/html/dase/';
 $httpd_group = 'apache';

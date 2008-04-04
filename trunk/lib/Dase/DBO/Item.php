@@ -367,12 +367,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$entry->setTitle($this->getTitle());
 		$entry->setUpdated($updated);
-		$entry->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
+		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		if ($this->item_type) {
 			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
 		}
-		$entry->addLink(APP_ROOT.'/collection/'.$this->collection_ascii_id.'/'.$this->serial_number,'alternate' );
+		$entry->addLink($this->getBaseUrl(),'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$div->addAttribute('class',$this->collection_ascii_id);
@@ -458,7 +458,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
-		$feed->setId(APP_ROOT . '/' . $this->collection_ascii_id . '/' . $this->serial_number);
+		$feed->setId($this->getBaseUrl());
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		return $feed;
@@ -470,5 +470,21 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->injectAtomFeedData($feed);
 		$this->injectAtomEntryData($feed->addEntry());
 		return $feed->asXml();
+	}
+
+	public function getBaseUrl() {
+		$this->collection || $this->getCollection();
+		return $this->collection->getBaseUrl() . '/' . $this->serial_number;
+	}
+
+	public function getAtompubServiceDoc() {
+		$this->collection || $this->getCollection();
+		$app = new Dase_Atom_Pub;
+		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
+		$media_coll = $workspace->addCollection($this->getBaseUrl().'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll->addAccept('image/*');
+		$media_coll->addAccept('audio/*');
+		$media_coll->addAccept('video/*');
+		return $app->asXml();
 	}
 }
