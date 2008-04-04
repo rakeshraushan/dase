@@ -1,72 +1,8 @@
 <?php
 
-$routes['atom'] = array (
-	'get_post' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/post',
-		'auth' => 'none',
-	),
-	'get_service' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/service',
-		'auth' => 'none',
-		'mime' => 'application/atomsvc+xml',
-	),
-	'get_categories_xml' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/categories',
-		'auth' => 'none',
-	),
-	'get_posts' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/posts',
-		'auth' => 'none',
-	),
-	'get_attachment' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment',
-		'auth' => 'none',
-	),
-	'get_file' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment/file',
-		'auth' => 'none',
-	),
-	'create_post' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/posts',
-		'auth' => 'none',
-		'method' => 'post',
-	),
-	'create_attachment' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachments',
-		'auth' => 'none',
-		'method' => 'post',
-	),
-	'put_post' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/post',
-		'auth' => 'none',
-		'method' => 'put',
-	),
-	'put_file' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment/file',
-		'auth' => 'none',
-		'method' => 'put',
-	),
-	'put_attachment' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment',
-		'auth' => 'none',
-		'method' => 'put',
-	),
-	'delete_post' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/post',
-		'auth' => 'none',
-		'method' => 'delete',
-	),
-	'delete_file' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment/file',
-		'auth' => 'none',
-		'method' => 'delete',
-	),
-	'delete_attachment' =>    array (
-		'uri_template' => 'app/collection/{collection_ascii_id}/attachment',
-		'auth' => 'none',
-		'method' => 'delete',
-	),
-);
+include 'routes/collection.php';
+include 'routes/item.php';
+include 'routes/atom.php';
 
 $routes['sandbox'] = array (
 	'monitor' => array (
@@ -87,68 +23,6 @@ $routes['test'] = array (
 	'search' => array (
 		'uri_template' => 'test/search',
 		'auth' => 'superuser',
-	),
-);
-
-$routes['collection'] = array (
-	'listAll' =>    array (
-		'uri_template' => array('collection/list','collections','home',''),
-		'auth' => 'none',
-	),
-	'asAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}',
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'listAsAtom' =>    array (
-		'uri_template' => array('atom/collections','atom'),
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'attributesAsAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}/attributes/public',
-		'auth' => 'none',
-	),
-	'attributesAsHtml' =>    array (
-		'uri_template' => 'collection/{collection_ascii_id}/attributes/public',
-		'auth' => 'none',
-	),
-	'adminAttributesAsHtml' =>    array (
-		'uri_template' => 'collection/{collection_ascii_id}/attributes/admin',
-		'auth' => 'none',
-	),
-	'itemsByTypeAsAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}/item_type/{item_type_ascii_id}',
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'browse' =>    array (
-		'uri_template' => 'collection/{collection_ascii_id}',
-		'auth' => 'user',
-	),
-	'itemTalliesAsJson' =>    array (
-		'uri_template' => 'json/item_tallies',
-		'auth' => 'none',
-		'mime' => 'application/json',
-	),
-	'attributeTalliesAsJson' =>    array (
-		'uri_template' => 'json/collection/{collection_ascii_id}/attribute_tallies',
-		'auth' => 'user',
-		'mime' => 'application/json',
-	),
-	'adminAttributeTalliesAsJson' =>    array (
-		'uri_template' => 'json/collection/{collection_ascii_id}/admin_attribute_tallies',
-		'auth' => 'user',
-		'mime' => 'application/json',
-	),
-	'buildIndex' =>    array (
-		'uri_template' => 'ollection/buildInde',
-		'auth' => 'admin',
-	),
-	'attributesAsJson' =>    array (
-		'uri_template' => 'json/collection/{collection_ascii_id}/attributes',
-		'auth' => 'user',
-		'mime' => 'application/json',
 	),
 );
 
@@ -216,22 +90,6 @@ $routes['tag'] = array(
 	),
 );
 
-//MAKE SURE THAT items are NOT created w/ serial numbers that could be URL filters ('attribute', etc.)
-$routes['item'] = array( 
-	'asAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}/{serial_number}',
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'display' =>    array (
-		'uri_template' => 'collection/{collection_ascii_id}/{serial_number}',
-		'auth' => 'user',
-	),
-	'editForm' =>    array (
-		'uri_template' => 'user/{eid}/collection/{collection_ascii_id}/{serial_number}/form',
-		'auth' => 'eid',
-	),
-);
 
 $routes['user'] = array(
 	'dataAsJson' =>    array (

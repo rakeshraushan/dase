@@ -9,7 +9,7 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	function __construct()
 	{
-		$dom = new DOMDocument('1.0');
+		$dom = new DOMDocument('1.0','utf-8');
 		$this->dom = $dom;
 		$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
 	}

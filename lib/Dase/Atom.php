@@ -29,6 +29,7 @@ class Dase_Atom
 	private $updated_is_set;
 	public static $ns = array(
 		'atom' => 'http://www.w3.org/2005/Atom',
+		'app' => 'http://www.w3.org/2007/app',
 		'dase' => 'http://daseproject.org/dase/',
 		'dc' => 'http://purl.org/dc/elements/1.1/',
 		'dcterms' => 'http://purl.org/dc/terms/',

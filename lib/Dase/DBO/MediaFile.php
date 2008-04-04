@@ -45,7 +45,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$entry->setId($this->getLink());
 		$entry->setTitle($item->getTitle());
 		$entry->addAuthor();
-		//todo: add updated column to media_file table
+		//todo: add 'updated' column to media_file table
 		$entry->setUpdated(date(DATE_ATOM));
 		$entry->setSummary('');
 		//todo: atompub edit & edit-media links
