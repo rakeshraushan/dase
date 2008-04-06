@@ -36,9 +36,9 @@ class Dase_Routes
 		$cached_routes = $cache->getData();
 		if ($cached_routes) {
 			if (defined("DEBUG")) {
-				Dase_Log::put('standard','------- using cache -------');
-				Dase_Log::put('standard','routes cache hit');
-				Dase_Log::put('standard','---------------------------');
+				Dase::log('standard','------- using cache -------');
+				Dase::log('standard','routes cache hit');
+				Dase::log('standard','---------------------------');
 			}
 			return unserialize($cached_routes);
 		} else {

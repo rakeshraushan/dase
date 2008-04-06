@@ -120,7 +120,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function isSuperuser()
 	{
-		if (in_array($this->eid,Dase_Config::get('superuser'))) {
+		if (in_array($this->eid,Dase::getConfig('superuser'))) {
 			return true;
 		}
 		return false;
@@ -137,7 +137,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$superuser = 1;
 		}
 		$sx->addChild('superuser',$superuser);
-		$sx->addchild('ppd',md5($this->eid . Dase_Config::get('ppd_token')));
+		$sx->addchild('ppd',md5($this->eid . Dase::getConfig('ppd_token')));
 		return $sx;
 	}
 }

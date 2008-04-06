@@ -59,4 +59,10 @@ class Dase_Registry
 		}
 	}
 
+	public static function dump() 
+	{
+		$reg = Dase_Registry::instance();
+		return $reg->members;
+	}
+
 }

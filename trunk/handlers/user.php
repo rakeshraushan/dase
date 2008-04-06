@@ -105,7 +105,7 @@ class UserHandler
 			echo "tag item {$params['tag_item_id']} deleted!";
 			exit;
 		} else {
-			Dase_Error::report(401);
+			Dase::error(401);
 		}
 	}
 
@@ -128,7 +128,7 @@ class UserHandler
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase_Config::get('token')));
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token')));
 		Dase::display($t->transform());
 	}
 

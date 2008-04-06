@@ -37,14 +37,14 @@ class Dase
 			if (preg_match("!$regex!",$request_url,$matches)) {
 				//if debug in force, log action
 				if (defined('DEBUG')) {
-					Dase_Log::put('standard','--------- beginning DASe route -------------');
-					Dase_Log::put('standard',$regex . " => " . $conf_array['action']);
-					Dase_Log::put('standard',"request_url => " . $request_url);
+					Dase::log('standard','--------- beginning DASe route -------------');
+					Dase::log('standard',$regex . " => " . $conf_array['action']);
+					Dase::log('standard',"request_url => " . $request_url);
 				}
 				$params = array();
 				if (isset($conf_array['params'])) {
 					$params = explode('/',$conf_array['params']);
-					Dase_Log::put('standard',"params => " . $conf_array['params']);
+					Dase::log('standard',"params => " . $conf_array['params']);
 				}
 				$module_prefix = '';
 				//if prefix is set, it means this is a module request
@@ -98,7 +98,7 @@ class Dase
 						//guarantees cookies will be deleted:
 						Dase::redirect('logoff');
 					} else {
-						Dase_Error::report(401);
+						Dase::error(401);
 					}
 				} else {
 					//good to go
@@ -127,7 +127,7 @@ class Dase
 						$page = $cache->getData();
 						if ($page) {
 							if (defined('DEBUG')) {
-								Dase_Log::put('standard','using cached page '.$cache->getLoc());
+								Dase::log('standard','using cached page '.$cache->getLoc());
 							}
 							Dase::display($page,false);
 							exit;
@@ -135,7 +135,7 @@ class Dase
 					}
 					$msg = Dase_Filter::filterGet('msg');
 					if (defined('DEBUG')) {
-						Dase_Log::put('standard',"calling method {$conf_array['action']} on class $classname");
+						Dase::log('standard',"calling method {$conf_array['action']} on class $classname");
 					}
 					//call the action on the handler
 					Dase_Registry::set('handler',$conf_array['handler']);
@@ -145,14 +145,14 @@ class Dase
 					exit;
 				} else { 
 					//matched regex, but didn't find action
-					Dase_Log::put('error',"no handler for $request_url ($method)");
-					Dase_Error::report(500);
+					Dase::log('error',"no handler for $request_url ($method)");
+					Dase::error(500);
 				}
 			} 
 		} 
 		//no routes match, so use default:
-		Dase_Log::put('error',"$request_url could not be located");
-		Dase_Error::report(404);
+		Dase::log('error',"$request_url could not be located");
+		Dase::error(404);
 		exit;
 	}
 
@@ -181,9 +181,90 @@ class Dase
 		//client expect something OTHER than html (e.g., json,text,xml)
 		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
 		if (defined('DEBUG')) {
-			Dase_Log::put('standard','redirecting to '.$redirect_path);
+			Dase::log('standard','redirecting to '.$redirect_path);
 		}
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
+	}
+
+	public static function error($code)
+	{
+		$msg = "";
+		if (400 == $code) {
+			header("HTTP/1.1 400 Bad Request");
+			$msg = 'Bad Request';
+		}
+		if (404 == $code) {
+			header("HTTP/1.1 404 Not Found");
+			$msg = '404 not found';
+		}
+		if (401 == $code) {
+			header('HTTP/1.1 401 Unauthorized');
+			$msg = 'Unauthorized';
+		}
+		if (500 == $code) {
+			header('HTTP/1.1 500 Internal Server Error');
+		}
+		if (411 == $code) {
+			header("HTTP/1.1 411 Length Required");
+		}
+		if (415 == $code) {
+			header("HTTP/1.1 415 Unsupported Media Type");
+		}
+
+		if (defined('DEBUG')) {
+			header("Content-Type: text/plain; charset=utf-8");
+			print "Registry Array:\n";
+			print "================================\n";
+			foreach (Dase_Registry::dump() as $k => $v) {
+				print "[$k] => $v\n";
+			}
+			print "\n";
+			print "Routes Array:\n";
+			print "================================\n";
+			foreach (Dase_Routes::compile() as $method => $routes) {
+				foreach ($routes as $regex => $atts) {
+					if (isset($atts['handler'])) {
+						print "$method: [$regex] => {$atts['handler']}::{$atts['action']}\n";
+					} else {
+						print "$method: [$regex] => handler::{$atts['action']}\n";
+					}
+				}
+			}
+		} else {
+			$t = new Dase_Xslt;
+			$t->stylesheet = XSLT_PATH.'error/production.xsl';
+			$t->set('msg',$msg);
+			echo $t->transform();
+		}
+		exit;
+	}
+
+	public static function getConfig($key)
+	{
+		$conf = array();
+		include(DASE_CONFIG);
+		if (isset($conf[$key])) {
+			return $conf[$key];
+		} else {
+			throw new Exception("no such configuration key: $key");
+		}
+	}
+
+	public static function log($logfile,$msg)
+	{
+		$date = date(DATE_W3C);
+		$msg = $date.'| pid:'.getmypid().':'.$msg."\n";
+		if(file_exists(LOG_DIR . "{$logfile}.log")) {
+			file_put_contents(LOG_DIR ."{$logfile}.log",$msg,FILE_APPEND);
+		}
+		if ('error' == $logfile) {
+			//include backtrace w/ errors
+			ob_start();
+			debug_print_backtrace();
+			$trace = ob_get_contents();
+			ob_end_clean();
+			file_put_contents(LOG_DIR ."error.log",$trace,FILE_APPEND);
+		}
 	}
 }
