@@ -1,8 +1,12 @@
 <?php
 
-include 'routes/collection.php';
+//create test suite for route dispatching
+include 'routes/search.php';
 include 'routes/item.php';
-include 'routes/atom.php';
+include 'routes/collection.php';
+include 'routes/app.php';
+include 'routes/user.php';
+include 'routes/tag.php';
 
 $routes['sandbox'] = array (
 	'monitor' => array (
@@ -26,138 +30,10 @@ $routes['test'] = array (
 	),
 );
 
-$routes['search'] = array(
-	'itemAsAtom' =>    array (
-		'uri_template' => array('atom/search_item','atom/collection/{collection_ascii_id}/search_item'),
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'opensearch' =>    array (
-		'uri_template' => array('atom/search','atom/search/md5/{md5_hash}','atom/collection/{collection_ascii_id}/search'),
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'item' =>    array (
-		'uri_template' => array('search_item','collection/{collection_ascii_id}/search_item'),
-		'auth' => 'none',
-	),
-	'search' =>    array (
-		'uri_template' => array('search','collection/{collection_ascii_id}/search'),
-		'auth' => 'user',
-	),
-	'sql' =>    array (
-		'uri_template' => 'sql/collection/{collection_ascii_id}/search',
-		'auth' => 'superuser',
-	),
-);
-
-//think about tag privacy here
-$routes['tag'] = array(
-	'asAtom' =>    array (
-		'uri_template' => array(
-			'atom/user/{eid}/tag/{ascii_id}',
-			'atom/user/{eid}/tag/id/{id}'
-		),
-		'auth' => 'none',
-		//'auth' => 'token',
-		'mime' => 'application/atom+xml',
-	),
-	'get' =>    array (
-		'uri_template' => 'user/{eid}/tag/{ascii_id}',
-		'auth' => 'eid',
-	),
-	'item' =>    array (
-		'uri_template' => 'user/{eid}/tag/{ascii_id}/{tag_item_id}',
-		'auth' => 'eid',
-	),
-	'itemAsAtom' =>    array (
-		'uri_template' => 'atom/user/{eid}/tag/{ascii_id}/{tag_item_id}',
-		//'auth' => 'token',
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
-	),
-	'saveToTag' =>    array (
-		'uri_template' => 'user/{eid}/tag/{tag_ascii_id}',
-		'auth' => 'eid',
-		'method' => 'post',
-		'mime' => 'text/plain',
-	),
-	'removeItems' => array (
-		'uri_template' => 'user/{eid}/tag/{tag_ascii_id}/remove_items',
-		'auth' => 'eid',
-		'method' => 'post',
-		'mime' => 'text/plain',
-	),
-);
-
-
-$routes['user'] = array(
-	'dataAsJson' =>    array (
-		'uri_template' => 'json/user/{eid}/data',
-		'auth' => 'eid',
-		'mime' => 'application/json',
-		'nocache' => 'custom',
-	),
-	'cartAsJson' =>    array (
-		'uri_template' => 'json/user/{eid}/cart',
-		'auth' => 'eid',
-		'mime' => 'application/json',
-	),
-	'adminCollectionsAsJson' =>    array (
-		'uri_template' => 'json/user/{eid}/collections',
-		'auth' => 'eid',
-		'mime' => 'application/json',
-	),
-	'initiateLogin' =>    array (
-		'uri_template' => 'login',
-		'auth' => 'none',
-	),
-	'processLogin' =>    array (
-		'uri_template' => 'login',
-		'method' => 'post',
-		'auth' => 'none',
-	),
-	'finishLogin' =>    array (
-		'uri_template' => 'login/{eid}',
-		'auth' => 'none',
-	),
-	'logoff' =>    array (
-		'uri_template' => 'logoff',
-		'auth' => 'none',
-	),
-	'cart' =>    array (
-		'uri_template' => 'user/{eid}/cart',
-		'auth' => 'eid',
-	),
-	'settings' =>    array (
-		'uri_template' => 'user/{eid}',
-		'auth' => 'eid',
-	),
-	'addCartItem' =>    array (
-		'uri_template' => 'user/{eid}/cart',
-		'auth' => 'eid',
-		'method' => 'post',
-	),
-	'deleteTagItem' =>    array (
-		'uri_template' => 'user/{eid}/tag_items/{tag_item_id}',
-		'auth' => 'eid',
-		'method' => 'delete',
-	),
-);
-
 $routes['attribute'] = array( 
 	'attributeValuesAsHtml' =>    array (
 		'uri_template' => 'collection/{collection_ascii_id}/attribute/{attribute_ascii_id}',
 		'auth' => 'none',
-	),
-);
-
-$routes['media'] = array( 
-	'asAtom' =>    array (
-		//mle = 'media link entry'
-		'uri_template' => 'mle/{collection_ascii_id}/{serial_number}/{size}',
-		'auth' => 'none',
-		'mime' => 'application/atom+xml',
 	),
 );
 

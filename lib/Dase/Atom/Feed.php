@@ -85,5 +85,4 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 		return parent::asXml();
 	}
-
 }

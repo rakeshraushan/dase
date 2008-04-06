@@ -47,9 +47,18 @@ class Dase_Upload
 		return $this->item->serial_number;
 	}
 
+	function setItem($item)
+	{
+		$this->item = $item;
+	}
+
 	function getItem()
 	{
 		return $this->item;
+	}
+
+	function getDaseFileSize() {
+		return $this->file->size;
 	}
 
 	function retrieveItem()
@@ -135,10 +144,12 @@ class Dase_Upload
 		return $this->item->deleteAdminValues();
 	}
 
-	function setTitle()
+	function setTitle($title='')
 	{
-		$name = $this->file->getFilename();
-		$this->item->setValue('title',$name);
+		if (!$title) {
+			$title = $this->file->getFilename();
+		}
+		$this->item->setValue('title',$title);
 	}
 
 	function setMetadata($att_ascii_id,$value)

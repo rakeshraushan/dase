@@ -49,7 +49,7 @@ abstract class Dase_File
 	protected $mime_type;
 
 	protected function __construct($file)
-	{  //can only be called by subclass
+	{  //can ONLY be called by subclass
 		$this->filepath = $file;
 		$this->file_size = filesize($file);
 		$path_parts = pathinfo($file);
@@ -98,9 +98,12 @@ abstract class Dase_File
 			if (!isset(self::$types_map[$mime])) {
 				throw new Exception("do not know about $mime mime type ($file)");
 			}
-			$df = new self::$types_map[$mime]['class']($file);
-			$df->mime_type = $mime;
-			return $df;
+			//creates proper subclass
+			$dasefile = new self::$types_map[$mime]['class']($file);
+			$dasefile->size = self::$types_map[$mime]['size'];
+			$dasefile->ext = self::$types_map[$mime]['ext'];
+			$dasefile->mime_type = $mime;
+			return $dasefile;
 		} else {
 			throw new Exception("cannot determin mime type for $file");
 		}

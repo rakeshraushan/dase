@@ -6,13 +6,6 @@ $routes['item'] = array(
 		'auth' => 'none',
 		'mime' => 'application/atomsvc+xml',
 	),
-	'addMedia' =>    array (
-		'uri_template' => 'collection/{collection_ascii_id}/{serial_number}/media',
-		//fix auth!!!!!!!!!!!
-		'auth' => 'none',
-		'method' => 'post',
-		'mime' => 'application/atom+xml',
-	),
 	'asAtom' =>    array (
 		'uri_template' => 'atom/collection/{collection_ascii_id}/{serial_number}',
 		'auth' => 'none',

@@ -10,6 +10,12 @@ $routes['collection'] = array (
 		'uri_template' => array('collection/list','collections','home',''),
 		'auth' => 'none',
 	),
+	'asArchive' =>    array (
+		'uri_template' => 'archive/collection/{collection_ascii_id}',
+		//to prevent DOS, needs high authorization
+		'auth' => 'none',
+		'mime' => 'application/atom+xml',
+	),
 	'asAtom' =>    array (
 		'uri_template' => 'atom/collection/{collection_ascii_id}',
 		'auth' => 'none',

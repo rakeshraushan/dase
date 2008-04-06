@@ -8,6 +8,13 @@ class CollectionHandler
 		Dase::display($c->asAtom());
 	}
 
+	public static function asArchive($params) 
+	{
+		$c = Dase_Collection::get($params);
+		$limit = Dase_Filter::filterGet('limit');
+		Dase::display($c->asAtomWithItems($limit));
+	}
+
 	public static function listAsAtom($params) 
 	{
 		if (Dase_Filter::filterGet('get_all')) {

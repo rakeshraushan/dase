@@ -43,8 +43,18 @@ class Dase_Error
 		if (500 == $code) {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
+		if (411 == $code) {
+			header("HTTP/1.1 411 Length Required");
+		}
+		if (415 == $code) {
+			header("HTTP/1.1 415 Unsupported Media Type");
+		}
+
 		$t = new Dase_Xslt;
 		if (defined('DEBUG')) {
+
+			//todo: make this ALL plain text!!
+
 			//create an XML doc w/ DASe members
 			//AND current routes
 			$sx = simplexml_load_string('<errors/>');

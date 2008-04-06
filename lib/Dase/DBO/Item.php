@@ -472,6 +472,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}
 
+	function mediaAsAtomFeed() 
+	{
+		$feed = new Dase_Atom_Feed;
+		$this->injectAtomFeedData($feed);
+		foreach ($this->getMedia() as $m) {
+			$entry = $feed->addEntry();
+			$m->injectAtomEntryData($entry);
+		}
+		return $feed->asXml();
+	}	
+
 	public function getBaseUrl() {
 		$this->collection || $this->getCollection();
 		return $this->collection->getBaseUrl() . '/' . $this->serial_number;
