@@ -34,7 +34,7 @@ class Dase_DB {
 	{
 		// Connect if not already connected
 		if (is_null(self::$db)) {
-			$conf = Dase_Config::get('db'); 
+			$conf = Dase::getConfig('db'); 
 			self::$type = $conf['type'];
 			if ($dbname) {
 				self::$name = $dbname;

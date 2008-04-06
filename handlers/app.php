@@ -13,7 +13,7 @@ class AppHandler
 				Dase::display($media_file->asAtom());
 			}
 		}
-		Dase_Error::report(404);
+		Dase::error(404);
 	}
 
 	public static function getMediaResource($params) 
@@ -28,15 +28,13 @@ class AppHandler
 				Dase::redirect($media_file->getRelativeLink());
 			}
 		}
-		Dase_Error::report(404);
+		Dase::error(404);
 	}
 
 	public static function deleteMediaFile($params) 
 	{
-
 		//until authorization is in place!
 		return;
-
 
 		//for now, only deletes the database entry
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
@@ -50,32 +48,44 @@ class AppHandler
 				exit;
 			}
 		}
-		Dase_Error::report(500);
+		Dase::error(500);
 	}
 
 	public static function listItemMedia($params) {
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
-			Dase_Error::report(404);
+			Dase::error(404);
 		}
 		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		if (!$item) {
-			Dase_Error::report(404);
+			Dase::error(404);
 		}
 		Dase::display($item->mediaAsAtomFeed());
+	}
+
+	public static function getItemServiceDoc($params) 
+	{
+		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
+		Dase::display($i->getAtompubServiceDoc());
+	}
+
+	public static function getCollectionServiceDoc($params) 
+	{
+		$c = Dase_Collection::get($params);
+		Dase::display($c->getAtompubServiceDoc());
 	}
 
 	public static function createMediaFile($params) 
 	{
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
-			Dase_Error::report(404);
+			Dase::error(404);
 		}
 		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		if (!$item) {
-			Dase_Error::report(404);
+			Dase::error(404);
 		}
 		$types = array('image/*','audio/*','video/*');
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
-			Dase_Error::report(411);
+			Dase::error(411);
 		}
 		$type = $_SERVER['CONTENT_TYPE'];
 		list($type,$subtype) = explode('/',$type);
@@ -102,9 +112,9 @@ class AppHandler
 		} else {
 			$slug = $item->serial_number;
 		}
-		$upload_dir = Dase_Config::get('path_to_media').'/'.$params['collection_ascii_id'].'/uploaded_files';
+		$upload_dir = Dase::getConfig('path_to_media').'/'.$params['collection_ascii_id'].'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			Dase_Error::report(401);
+			Dase::error(401);
 		}
 
 		$ext = preg_replace( '|.*/([a-z0-9]+)|', '$1', $_SERVER['CONTENT_TYPE'] );
@@ -112,7 +122,7 @@ class AppHandler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
-			Dase_Error::report(500);
+			Dase::error(500);
 		}
 
 		@fwrite( $ifp, $bits );
@@ -130,8 +140,8 @@ class AppHandler
 			$u->setTitle($slug);
 			$u->buildSearchIndex();
 		} catch(Exception $e) {
-			Dase_Log::put('error',$e->getMessage());
-			Dase_Error::report(500);
+			Dase::log('error',$e->getMessage());
+			Dase::error(500);
 		}
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $params['collection_ascii_id'];

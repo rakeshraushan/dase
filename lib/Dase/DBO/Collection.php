@@ -446,12 +446,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	public function getAtompubServiceDoc() {
 		$app = new Dase_Atom_Pub;
 		$workspace = $app->addWorkspace($this->collection_name.' Workspace');
-		$items_coll = $workspace->addCollection($this->getBaseUrl().'/items',$this->collection_name.' Items'); 
+		$items_coll = $workspace->addCollection('/edit/'.$this->ascii_id,$this->collection_name.' Items'); 
 		$items_coll->addAccept('application/atom+xml;type=entry');
-		$media_coll = $workspace->addCollection($this->getBaseUrl().'/uploads',$this->collection_name.' Uploads'); 
-		$media_coll->addAccept('image/*');
-		$media_coll->addAccept('audio/*');
-		$media_coll->addAccept('video/*');
 		return $app->asXml();
 	}
 

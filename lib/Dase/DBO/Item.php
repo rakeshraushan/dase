@@ -492,7 +492,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->collection || $this->getCollection();
 		$app = new Dase_Atom_Pub;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection($this->getBaseUrl().'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll = $workspace->addCollection('/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
 		$media_coll->addAccept('image/*');
 		$media_coll->addAccept('audio/*');
 		$media_coll->addAccept('video/*');

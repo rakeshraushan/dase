@@ -1,11 +1,6 @@
 <?php
 
 $routes['collection'] = array (
-	'getServiceDoc' => array (
-		'uri_template' => array('collection/{collection_ascii_id}/service'),
-		'auth' => 'none',
-		'mime' => 'application/atomsvc+xml',
-	),
 	'listAll' =>    array (
 		'uri_template' => array('collection/list','collections','home',''),
 		'auth' => 'none',

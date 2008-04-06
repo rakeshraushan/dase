@@ -10,7 +10,7 @@ class ItemHandler
 				Dase::display($item->asAtom());
 			}
 		}
-		Dase_Error::report(404);
+		Dase::error(404);
 	}
 
 	public static function display($params)
@@ -23,15 +23,9 @@ class ItemHandler
 				$t->set('src',APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
 				Dase::display($t->transform());
 			} else {
-				Dase_Error::report(404);
+				Dase::error(404);
 			}
 		}
-	}
-
-	public static function getServiceDoc($params) 
-	{
-		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
-		Dase::display($i->getAtompubServiceDoc());
 	}
 
 	public static function editForm($params)
@@ -45,7 +39,7 @@ class ItemHandler
 				$t->set('src',APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
 				Dase::display($t->transform());
 			} else {
-				Dase_Error::report(404);
+				Dase::error(404);
 			}
 		}
 	}

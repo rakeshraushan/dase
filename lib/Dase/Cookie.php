@@ -41,7 +41,7 @@ class Dase_Cookie {
 	public static function set($eid) 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		$key = md5(Dase_Config::get('token').$eid);
+		$key = md5(Dase::getConfig('token').$eid);
 		setcookie($pre . self::$user_cookiename,$eid,0,'/');
 		setcookie($pre . self::$auth_cookiename,$key,0,'/');
 	}
@@ -49,7 +49,7 @@ class Dase_Cookie {
 	public static function validate() 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		$token = Dase_Config::get('token');
+		$token = Dase::getConfig('token');
 		$key = '';
 		$eid = '';
 		if (isset($_COOKIE[$pre . self::$user_cookiename])) {

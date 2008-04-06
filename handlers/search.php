@@ -144,7 +144,7 @@ class SearchHandler
 			$feed->setSubtitle($subtitle);
 			Dase::display($feed->asXml());
 		}
-		Dase_Error::report(404);
+		Dase::error(404);
 	}
 
 	public static function item($params)

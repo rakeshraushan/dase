@@ -12,8 +12,8 @@ class Dase_Collection
 		} else if ($params_or_ascii_id && !is_array($params_or_ascii_id)) {
 			$ascii_id = $params_or_ascii_id;
 		} else {
-			Dase_Log::put('error','no collection found (no ascii_id)');
-			Dase_Error::report(500);
+			Dase::log('error','no collection found (no ascii_id)');
+			Dase::error(500);
 		}
 
 		$coll = Dase_DBO_Collection::get($ascii_id);
@@ -21,8 +21,8 @@ class Dase_Collection
 		if ($coll) {
 			return $coll;
 		} else {
-			Dase_Log::put('error',"no collection found ($ascii_id)");
-			Dase_Error::report(500);
+			Dase::log('error',"no collection found ($ascii_id)");
+			Dase::error(500);
 		}
 	}
 }

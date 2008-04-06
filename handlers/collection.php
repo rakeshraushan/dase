@@ -211,11 +211,5 @@ EOF;
 		$c->buildSearchIndex();
 		Dase::redirect('',"rebuilt indexes for $c->collection_name");
 	}
-
-	public static function getServiceDoc($params) 
-	{
-		$c = Dase_Collection::get($params);
-		Dase::display($c->getAtompubServiceDoc());
-	}
 }
 
