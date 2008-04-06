@@ -122,7 +122,7 @@ class Dase_Atom
 		$id_element = $this->addElement('id',$text);
 	}
 
-	function addLink($href,$rel='',$type='',$length='') 
+	function addLink($href,$rel='',$type='',$length='',$title='') 
 	{
 		$link = $this->addElement('link');
 		$link->setAttribute('href',$href);
@@ -134,6 +134,9 @@ class Dase_Atom
 		}
 		if ($length) {
 			$link->setAttribute('length',$length);
+		}
+		if ($title) {
+			$link->setAttribute('title',$title);
 		}
 		return $link;
 	}

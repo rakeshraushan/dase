@@ -67,6 +67,9 @@
 			<dl id="adminMetadata" class="hide">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='admin_metadata']" mode="keyvals"/>
 			</dl>
+			<ul id="itemLinks">
+			  <a href="atom/collection/{$coll}/{$it/atom:entry/atom:content/h:div/h:dl/h:dt[@class='serial_number']/following-sibling::h:dd[position()=1]}">atom</a>
+			</ul>
 		  </td>
 		</tr>
 	  </table>

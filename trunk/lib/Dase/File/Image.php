@@ -170,8 +170,33 @@ class Dase_File_Image extends Dase_File
 		return "created $media_file->size $media_file->filename\n";
 	}
 
+	function copyToMediaDir($item,$collection) {
+		$dest = $collection->path_to_media_files.'/'.$this->size.'/'.$item->serial_number.$this->ext;
+		$this->copyTo($dest);
+		$file_info = getimagesize($dest);
+		if ($file_info) {
+		$media_file = new Dase_DBO_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $item->serial_number.$this->ext;
+		$media_file->file_size = $this->file_size;
+		$media_file->mime_type = $this->mime_type;
+		$media_file->size = $this->size; 
+		$media_file->width = $file_info[0];
+		$media_file->height = $file_info[1];
+		$media_file->p_collection_ascii_id = $collection->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
+		$media_file->insert();
+		return "created $media_file->filename\n";
+		} else {
+			//report error??????
+		}
+	}
+
 	function makeSizes($item,$collection)
 	{
+		//todo: beware!!! this moves archival tifs into DASe!!
+		$this->copyToMediaDir($item,$collection);
+
 		$msg = '';
 		$image_properties = array(
 			'small' => array(
@@ -212,7 +237,7 @@ class Dase_File_Image extends Dase_File
 			}
 
 			if (($media_file->width <= $last_width) && ($media_file->height <= $last_height)) {
-				return;
+				return $msg;
 			}
 
 			$last_width = $media_file->width;

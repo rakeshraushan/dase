@@ -27,8 +27,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}
 
-	function asAtom()
-	{
+	function getAtomFeed() {
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);
 		if ($this->description) {
@@ -37,10 +36,33 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setUpdated($this->getLastUpdated());
 		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
-		$feed->setId(APP_ROOT . '/' . $this->ascii_id);
+		$feed->setId($this->getBaseUrl());
 		$feed->addAuthor();
-		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
 		$feed->addLink($this->getBaseUrl(),'alternate');
+		//$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
+		return $feed;
+	}
+
+	function asAtom()
+	{
+		$feed = $this->getAtomFeed();
+		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
+		return $feed->asXml();
+	}
+
+	function asAtomWithItems($limit=0) {
+		//todo: this needs ot be paged
+		$feed = $this->getAtomFeed();
+		$feed->addLink(APP_ROOT.'/archive/collection/'.$this->ascii_id,'self');
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->id;
+		if ($limit && is_numeric($limit)) {
+			$items->setLimit($limit);
+		}
+		foreach ($items->find() as $item) {
+			$item->injectAtomEntryData($feed->addEntry());
+		}
+		//returned XML will be VERY large
 		return $feed->asXml();
 	}
 
