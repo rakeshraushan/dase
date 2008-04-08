@@ -104,7 +104,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$bound_params = array();
 		$db = Dase_DB::get();
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,v.value_text, v.value_text_md5, a.collection_id, v.id
+			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id
 			FROM attribute a, value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -120,9 +120,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$st = $db->prepare($sql);
 		$st->execute($bound_params);
 		while ($row = $st->fetch()) {
-			if (!$row['value_text_md5']) {
-				$row['value_text_md5'] = Dase_DBO_Value::updateValueTextMd5($row['id']);
-			}
 			$metadata[] = $row;
 		}
 		return $metadata;
@@ -279,7 +276,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = $value_text;
-			$v->value_text_md5 = md5($value_text);
 			return($v->insert());
 		} else {
 			return false;
@@ -424,7 +420,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$label_hash[$row['ascii_id']] = 1;
 					}
 					$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-					//$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
 					$dd->addAttribute('class',urlencode($row['value_text']));
 				} else { //meaning collection_id is 0, so it is admin metadata
 					if (!isset($label_hash[$row['ascii_id']])) {
@@ -433,7 +428,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$label_hash[$row['ascii_id']] = 1;
 					}
 					$dd = $admin_dl->addChild('dd',htmlspecialchars($row['value_text']));
-					$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+					$dd->addAttribute('class',urlencode($row['value_text']));
 				}
 			}
 		}

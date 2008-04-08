@@ -43,7 +43,6 @@ foreach ($sxe->item[0]->metadata as $m) {
 	$v->item_id = $item->id;
 	$v->attribute_id = $a->id;
 	$v->value_text = $m;
-	$v->value_text_md5 = md5($m);
 	$v->insert();
 }
 

@@ -34,11 +34,11 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id IN (SELECT id FROM collection WHERE ascii_id = '$coll'))";
 		}
 		$sql = "
-			SELECT value_text, value_text_md5, count(value_text)
+			SELECT value_text, count(value_text)
 			FROM value
 			WHERE attribute_id = ?
 			$admin_sql
-			GROUP BY value_text, value_text_md5
+			GROUP BY value_text
 			ORDER BY value_text
 			";
 		$st = $db->prepare($sql);
@@ -48,8 +48,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$display_values_array[] = array(
 				'value_text' => $row[0],
 				'urlencoded_value_text' => urlencode($row[0]),
-				'value_text_md5' => $row[1],
-				'tally' => $row[2]
+				'tally' => $row[1]
 			);
 		}
 		$this->display_values = $display_values_array;

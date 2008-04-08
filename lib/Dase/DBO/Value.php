@@ -18,22 +18,4 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 		$this->attribute = $a;
 		return $a;
 	}
-
-	public static function getValueTextByHash($coll,$md5)
-	{
-		//let's assume md5 is unique enough
-		$v = new Dase_DBO_Value;
-		$v->value_text_md5 = $md5;
-		return $v->findOne()->value_text;
-	}
-
-	public static function updateValueTextMd5($value_id)
-	{
-		$v = new Dase_DBO_Value;
-		if ($v->load($value_id)) {
-			$v->value_text_md5 = md5($v->value_text);
-			$v->update();
-		}
-		return $v->value_text_md5;
-	}
 }
