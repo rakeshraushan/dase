@@ -23,14 +23,14 @@ class AttributeHandler
 
 		if (is_array($values_array)) {
 			foreach ($values_array as $value) {
-				$md5 = $value['value_text_md5'];
+				$encoded = urlencode($value['value_text']);
 				$text = $value['value_text'];
 				$tally = $value['tally'];
 				if (strlen($text) > 50) {
 					$text = substr_replace($text,'...',47);
 				}
 				$html .=<<<EOF
-		<li><a href="collection/$coll/search?$coll:$attr->ascii_id=$md5" class="val_link">$text <span class="tally">($tally)</span></a></li>
+		<li><a href="collection/$coll/search?$coll.$attr->ascii_id=$encoded" class="val_link">$text <span class="tally">($tally)</span></a></li>
 EOF;
 			}
 		}

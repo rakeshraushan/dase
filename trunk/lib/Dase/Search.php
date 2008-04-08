@@ -102,19 +102,15 @@ class Dase_Search
 		// use 'or' for Boolean OR between words or phrases
 		// for attribute searches, name is '<coll_ascii_id>~<attribute_ascii_id>'
 		// use tilde (as in example) for auto substring/phrase search
-		// use single colon to match md5 hash of exact value_text string
 		// use single period to match exact value_text string (case-insensitive)
 		// add more attribute searches (refinements) by adding them to
-		// the query string. Note that the use of '.' or ':' or '~' in
+		// the query string. Note that the use of '.' or '~' in
 		// a query parameter name that is NOT part of the search will
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
 		/*
 		 * exact match:
 		 * test.title=farewell+to+arms 
-		 *
-		 * match hash:
-		 * test:title=5045aca392ed260667b8489bfe7ccc03
 		 *
 		 * match substring:
 		 * test~title=farewell+to+a
@@ -258,27 +254,6 @@ class Dase_Search
 			}
 		}
 
-		//for attr exact value md5 searches (md5 hash of value_text) => att:val
-		foreach ($url_params as $k => $val) {
-			if (!is_array($val)) {
-				$val = array($val);
-			}
-			$coll = null;
-			$att = null;
-			foreach($val as $v) {
-				if (strpos($k,':') && !strpos($k,'.') && !strpos($k,'~')){
-					list($coll,$att) = explode(':',$k);
-					//do NOT make db call in this method! it is a waste if search is db cached
-					//echo should be "calculated" upon cache miss
-					//$echo['exact'][$k][] = Dase_DBO_Value::getValueTextByHash($coll,$v);
-					$echo['hash'][] = array('coll' => $coll,'k' => $k,'v' => $v);
-					$search['att'][$coll][$att]['value_text_md5'] = array();
-					$search['att'][$coll][$att]['value_text_md5'][] = $v;
-					$search['att'][$coll][$att]['value_text_md5'] = array_unique($search['att'][$coll][$att]['value_text_md5']);
-				}
-			}
-		}
-
 		//for item_type filter
 		foreach ($url_params as $k => $val) {
 			// for item type only take ONE 
@@ -326,11 +301,6 @@ class Dase_Search
 
 	public static function constructEcho($echo) {
 		//construct echo
-		if (isset($echo['hash']) && is_array($echo['hash'])) {
-			foreach ($echo['hash'] as $set) {
-				$echo['exact'][$set['k']][] = Dase_DBO_Value::getValueTextByHash($set['coll'],$set['v']);
-			}
-		}
 		$echo_str = '';
 		if ($echo['query']) {
 			$echo_str .= " {$echo['query']} ";
@@ -409,7 +379,7 @@ class Dase_Search
 			$att_names_array = array_keys($att_array[$coll_name]);
 			asort($att_names_array);
 			foreach ($att_names_array as $att_name) {
-				foreach(array('find','omit','or','value_text_md5','value_text') as $key) {
+				foreach(array('find','omit','or','value_text') as $key) {
 					$set = array();
 					if (isset($att_array[$coll_name][$att_name][$key])) {
 						$set = $att_array[$coll_name][$att_name][$key];
@@ -508,13 +478,6 @@ class Dase_Search
 						$value_table_params[] = strtolower($term);
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text']);
-				}
-				if ($this->_testArray($ar,'value_text_md5')) {
-					foreach ($ar['value_text_md5'] as $k => $term) {
-						$ar['value_text_md5'][$k] = "v.value_text_md5 = ?";
-						$value_table_params[] = $term;
-					}
-					$ar_table_sets[] = join(' AND ',$ar['value_text_md5']);
 				}
 				if (count($ar_table_sets)) {
 					if (false === strpos($att,'admin_')) {

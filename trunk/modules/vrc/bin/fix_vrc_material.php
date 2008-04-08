@@ -67,7 +67,6 @@ foreach ($full as $pk => $arr) {
 			$v->attribute_id = $a->id;
 			if (!$v->findOne()) {
 				print "inserted $material for $pk\n";
-				$v->value_text_md5 = md5($material);
 				$v->insert();
 			}
 		}

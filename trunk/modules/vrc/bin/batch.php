@@ -143,7 +143,6 @@ function build($sernum,$coll,$media_count) {
 		$v->item_id = $item->id;
 		$v->attribute_id = $a->id;
 		$v->value_text = $m;
-		$v->value_text_md5 = md5($m);
 		$v->insert();
 		print "inserted $a->attribute_name : $m\n";
 	}
