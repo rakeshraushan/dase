@@ -13,8 +13,8 @@
 	encoding="UTF-8"/>
 
   <xsl:template match="insert-content">
-	<div class="standard">
-	  <div id="msg" class="alert">An error has occurred.</div>
+	<div class="error" id="browse">
+	  <h1 id="msg" class="alert">An error has occurred.</h1>
 	</div>
   </xsl:template>
 

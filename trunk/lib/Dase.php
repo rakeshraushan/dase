@@ -216,6 +216,7 @@ class Dase
 			header("Content-Type: text/plain; charset=utf-8");
 			print "Registry Array:\n";
 			print "================================\n";
+			print "[http_error_code] => $code\n";
 			foreach (Dase_Registry::dump() as $k => $v) {
 				print "[$k] => $v\n";
 			}

@@ -52,6 +52,11 @@ $routes['user'] = array(
 		'auth' => 'eid',
 		'method' => 'delete',
 	),
+	'getHttpPassword' => array (
+		'uri_template' => 'user/{eid}/collection/{collection_ascii_id}/auth/{auth_level}',
+		'auth' => 'eid',
+		'method' => 'get',
+	),
 );
 
 

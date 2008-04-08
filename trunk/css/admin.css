@@ -1,4 +1,4 @@
-div#cb-header {
+div#adminHeader {
 	background-color: #263b5e;
 	color: #ccc;
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
@@ -8,14 +8,14 @@ div#cb-header {
 	padding-left: 15px;
 }
 
-div#cb-header p {
+div#adminHeader p {
 	color: white;
 	margin:0;
 	font-size: 1.8em;
 	padding:6px 0 0 0;
 }
 
-div#cb {
+div#admin {
 	background-color:#eef1f8;
 }
 

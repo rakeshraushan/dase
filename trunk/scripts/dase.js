@@ -226,7 +226,7 @@ Dase.loginControl = function(eid) {
 Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
 	if (nameElem) {
-		nameElem.innerHTML = Dase.user.name;
+		nameElem.innerHTML = '<a href="user/'+eid+'">'+Dase.user.name+'</a>';
 		var eidElem = Dase.$('eid');
 		eidElem.innerHTML = eid;
 	}

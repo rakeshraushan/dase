@@ -48,8 +48,7 @@ class TagHandler
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token')));
-		//print(APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token')));exit;
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token').$u->eid));
 		Dase::display($t->transform());
 	}
 
@@ -79,7 +78,7 @@ class TagHandler
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id.'?token='.md5(Dase::getConfig('token')));
+		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id.'?token='.md5(Dase::getConfig('token').$u->eid));
 		Dase::display($t->transform());
 	}
 

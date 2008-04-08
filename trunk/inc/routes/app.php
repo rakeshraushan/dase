@@ -3,50 +3,46 @@
 $routes['app'] = array (
 	'getMediaLinkEntry' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/{size}',
-		'auth' => 'none',
+		'auth' => 'http',
 		'mime' => 'application/atom+xml',
 	),
 	'getMediaResource' =>    array (
 		'uri_template' => 'edit-media/{collection_ascii_id}/{serial_number}/{size}',
-		'auth' => 'none',
+		'auth' => 'http',
 		'mime' => 'application/atom+xml',
 	),
 	'listCollectionEntries' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}',
-		//need authentication!!!!!!!
-		'auth' => 'none',
+		'auth' => 'http',
 		'method' => 'get',
 		'mime' => 'application/atom+xml',
 	),
 	'createCollectionEntry' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}',
-		//need authentication!!!!!!!
-		'auth' => 'none',
+		'auth' => 'http',
 		'method' => 'post',
 		'mime' => 'application/atom+xml',
 	),
 	'listItemMedia' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
-		//need authentication!!!!!!!
-		'auth' => 'none',
+		'auth' => 'http',
 		'method' => 'get',
 		'mime' => 'application/atom+xml',
 	),
 	'createMediaFile' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
-		//need authentication!!!!!!!
-		'auth' => 'none',
+		'auth' => 'http',
 		'method' => 'post',
 		'mime' => 'application/atom+xml',
 	),
 	'getItemServiceDoc' => array (
 		'uri_template' => 'service/{collection_ascii_id}/{serial_number}',
-		'auth' => 'none',
+		'auth' => 'http',
 		'mime' => 'application/atomsvc+xml',
 	),
 	'getCollectionServiceDoc' => array (
 		'uri_template' => 'service/{collection_ascii_id}',
-		'auth' => 'none',
+		'auth' => 'http',
 		'mime' => 'application/atomsvc+xml',
 	),
 	'deleteMediaFile' =>    array (
@@ -54,8 +50,7 @@ $routes['app'] = array (
 			'edit-media/{collection_ascii_id}/{serial_number}/{size}',
 			'edit/{collection_ascii_id}/{serial_number}/{size}',
 		),
-		//need authentication!!!!!!!
-		'auth' => 'none',
+		'auth' => 'http',
 		'method' => 'delete',
 		'mime' => 'application/atom+xml',
 	),

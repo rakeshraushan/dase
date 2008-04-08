@@ -186,7 +186,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->filename\n";
+		return "created $media_file->filename which is $this->file_size bytes in size\n";
 		} else {
 			//report error??????
 		}
@@ -195,9 +195,8 @@ class Dase_File_Image extends Dase_File
 	function makeSizes($item,$collection)
 	{
 		//todo: beware!!! this moves archival tifs into DASe!!
-		$this->copyToMediaDir($item,$collection);
+		$msg = $this->copyToMediaDir($item,$collection);
 
-		$msg = '';
 		$image_properties = array(
 			'small' => array(
 				'geometry'        => '640x480',
