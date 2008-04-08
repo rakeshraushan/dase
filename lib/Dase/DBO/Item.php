@@ -356,6 +356,28 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $title;
 	}
 
+	function injectAppEntryData(Dase_Atom_Entry $entry)
+	{
+		$this->collection || $this->getCollection();
+		$this->item_type || $this->getItemType();
+		if (is_numeric($this->updated)) {
+			$updated = date(DATE_ATOM,$this->updated);
+		} else {
+			$updated = $this->updated;
+		}
+		$entry->setTitle($this->getTitle());
+		$entry->setUpdated($updated);
+		$entry->setSummary('');
+		$entry->setId($this->getBaseUrl());
+		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
+		if ($this->item_type) {
+			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
+		}
+		$entry->addLink($this->getBaseUrl(),'alternate' );
+		$entry->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit' );
+		return $entry;
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$this->collection || $this->getCollection();
@@ -402,7 +424,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$label_hash[$row['ascii_id']] = 1;
 					}
 					$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-					$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+					//$dd->addAttribute('class',htmlspecialchars($row['value_text_md5']));
+					$dd->addAttribute('class',urlencode($row['value_text']));
 				} else { //meaning collection_id is 0, so it is admin metadata
 					if (!isset($label_hash[$row['ascii_id']])) {
 						$dt = $admin_dl->addChild('dt',htmlspecialchars($row['attribute_name']));
@@ -492,7 +515,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->collection || $this->getCollection();
 		$app = new Dase_Atom_Pub;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection('/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
 		$media_coll->addAccept('image/*');
 		$media_coll->addAccept('audio/*');
 		$media_coll->addAccept('video/*');

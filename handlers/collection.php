@@ -12,7 +12,7 @@ class CollectionHandler
 	{
 		$c = Dase_Collection::get($params);
 		$limit = Dase_Filter::filterGet('limit');
-		Dase::display($c->asAtomWithItems($limit));
+		Dase::display($c->asAtomArchive($limit));
 	}
 
 	public static function listAsAtom($params) 

@@ -126,7 +126,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return false;
 	}
 
-	public function asSimpleXml()
+	public function asSimpleXml($include_manager_privs = false)
 	{
 		$sx = simplexml_load_string("<user/>");
 		foreach($this as $k => $v) {
@@ -138,6 +138,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 		$sx->addChild('superuser',$superuser);
 		$sx->addchild('ppd',md5($this->eid . Dase::getConfig('ppd_token')));
+
+		if ($include_manager_privs) {
+			$managed = $sx->addChild('managed_collections');
+			foreach($this->getCollections() as $c) {
+				$coll_elem = $managed->addChild('collection',htmlspecialchars($c['collection_name']));
+				$coll_elem->addAttribute('ascii_id',$c['ascii_id']);
+				$coll_elem->addAttribute('auth_level',$c['auth_level']);
+			}
+		}
 		return $sx;
 	}
 }

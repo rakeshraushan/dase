@@ -4,6 +4,7 @@ class AppHandler
 {
 	public static function getMediaLinkEntry($params) 
 	{
+		Dase_Auth::authorize('read',$params);
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
 			$media_file = new Dase_DBO_MediaFile;
 			$media_file->p_collection_ascii_id = $params['collection_ascii_id'];
@@ -18,6 +19,7 @@ class AppHandler
 
 	public static function getMediaResource($params) 
 	{
+		Dase_Auth::authorize('read',$params);
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
 			$media_file = new Dase_DBO_MediaFile;
 			$media_file->p_collection_ascii_id = $params['collection_ascii_id'];
@@ -31,11 +33,21 @@ class AppHandler
 		Dase::error(404);
 	}
 
+	public static function listCollectionEntries($params) 
+	{
+		Dase_Auth::authorize('read',$params);
+		$start = Dase_Filter::filterGet('start');
+		if (!$start) {
+			$start = 1;
+		}
+		$c = Dase_Collection::get($params);
+		Dase::display($c->asAppCollection($start));
+
+	}
+
 	public static function deleteMediaFile($params) 
 	{
-		//until authorization is in place!
-		return;
-
+		Dase_Auth::authorize('write',$params);
 		//for now, only deletes the database entry
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
 			$media_file = new Dase_DBO_MediaFile;
@@ -51,7 +63,9 @@ class AppHandler
 		Dase::error(500);
 	}
 
-	public static function listItemMedia($params) {
+	public static function listItemMedia($params) 
+	{
+		Dase_Auth::authorize('read',$params);
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
 			Dase::error(404);
 		}
@@ -64,18 +78,21 @@ class AppHandler
 
 	public static function getItemServiceDoc($params) 
 	{
+		Dase_Auth::authorize('read',$params);
 		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		Dase::display($i->getAtompubServiceDoc());
 	}
 
 	public static function getCollectionServiceDoc($params) 
 	{
+		Dase_Auth::authorize('read',$params);
 		$c = Dase_Collection::get($params);
 		Dase::display($c->getAtompubServiceDoc());
 	}
 
 	public static function createMediaFile($params) 
 	{
+		Dase_Auth::authorize('write',$params);
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
 			Dase::error(404);
 		}

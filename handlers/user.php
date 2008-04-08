@@ -134,7 +134,27 @@ class UserHandler
 
 	public static function settings($params)
 	{
-		print "user settings access not implemented";
+		//use admin look, but NO collection specified!@!!!!!!!
+		$t = new Dase_Xslt;
+		$t->stylesheet = XSLT_PATH.'user/settings.xsl';
+		$user = Dase_User::get($params);
+		$t->addSourceNode($user->asSimpleXml(true));
+		Dase::display($t->transform());
+	}
+
+	public static function getHttpPassword($params) 
+	{
+		if (Dase_Auth::authorize($params['auth_level'],$params)) {
+			$eid = $params['eid'];
+			$coll = $params['collection_ascii_id'];
+			$auth_level = $params['auth_level'];
+			$password = substr(md5(Dase::getConfig('token').$eid.$coll.$auth_level),0,8);
+			header("Content-Type: text/plain; charset=utf-8");
+			echo $password;
+			exit;
+		} else {
+			Dase::error(401);
+		}
 	}
 }
 

@@ -7,8 +7,8 @@ $routes['tag'] = array(
 			'atom/user/{eid}/tag/{ascii_id}',
 			'atom/user/{eid}/tag/id/{id}'
 		),
-		'auth' => 'none',
-		//'auth' => 'token',
+		//'auth' => 'none',
+		'auth' => 'token',
 		'mime' => 'application/atom+xml',
 	),
 	'get' =>    array (
@@ -21,8 +21,8 @@ $routes['tag'] = array(
 	),
 	'itemAsAtom' =>    array (
 		'uri_template' => 'atom/user/{eid}/tag/{ascii_id}/{tag_item_id}',
-		//'auth' => 'token',
-		'auth' => 'none',
+		//'auth' => 'none',
+		'auth' => 'token',
 		'mime' => 'application/atom+xml',
 	),
 	'saveToTag' =>    array (

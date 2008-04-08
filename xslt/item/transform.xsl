@@ -86,7 +86,7 @@
   </xsl:template>
 
   <xsl:template match="h:dl/h:dd" mode="keyvals">
-	<dd><a href="search?{$coll}:{preceding-sibling::h:dt[position()=1]/@class}={@class}"><xsl:value-of select="text()"/></a></dd>
+	<dd><a href="search?{$coll}.{preceding-sibling::h:dt[position()=1]/@class}={@class}"><xsl:value-of select="text()"/></a></dd>
   </xsl:template>
 
   <xsl:template match="h:dl/h:dd[@class='nolink']" mode="keyvals">

@@ -43,12 +43,12 @@
 
 
 	<div id="logoffControl" class="login hide">
-	  <span id="userName"></span> is logged in. (<a href="logoff" id="logoff-link">logoff</a>)
+	  <span id="userName"></span> is logged in. (<a href="logoff" class="alert" id="logoff-link">logoff</a>)
 	  <div id="eid" class="data"></div>
 	</div>
 
 	<div id="loginControl" class="login hide">
-	  <div>Got a UT EID? <a href="login">login!</a></div>
+	  <div>Got a UT EID? <a href="login" class="alert">login!</a></div>
 	</div>
 
 	<div id="wordmark">
@@ -117,7 +117,7 @@
 	<div id="footer">
 	  <a href="apps/help" id="helpModule">FAQ</a> | 
 	  <a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-	  <a href="copyright">Copyright/Usage Statement</a>| 
+	  <a href="copyright">Copyright/Usage Statement</a> | 
 	  <insert-timer/> seconds |
 	  <img src="images/dasepowered.png" alt="DASePowered icon"/>
 	</div><!--closes footer-->

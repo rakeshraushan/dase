@@ -71,10 +71,6 @@
 	<div class="hide" id="collection_ascii_id"><xsl:value-of select="$collection/ascii-id"/></div>
   </xsl:template>
 
-  <xsl:template match="insert-breadcrumbs">
-	<a href="{$app_root}">DASe</a> :: <a href="manage">Manage</a>	
-  </xsl:template>
-
   <!-- Identity transformation -->
   <xsl:template match="@*|*">
 	<xsl:copy>

@@ -38,7 +38,9 @@ class Dase_Auth
 			$auth_class = new $class_name;
 			return $auth_class->authorize($params);
 		} else {
-			throw new Dase_Auth_Exception("Error: $class_name is not a valid class!");
+			//throw new Dase_Auth_Exception("Error: $class_name is not a valid class!");
+			Dase::log('error',"$class_name is not a valid Dase_Auth_ class!");
+			Dase::error(500);
 		}
 	}
 }

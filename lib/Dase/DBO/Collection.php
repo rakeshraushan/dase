@@ -50,7 +50,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	function asAtomWithItems($limit=0) {
+	function asAtomArchive($limit=0) {
 		//todo: this needs ot be paged
 		$feed = $this->getAtomFeed();
 		$feed->addLink(APP_ROOT.'/archive/collection/'.$this->ascii_id,'self');
@@ -63,6 +63,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->injectAtomEntryData($feed->addEntry());
 		}
 		//returned XML will be VERY large
+		return $feed->asXml();
+	}
+
+	function asAppCollection($start,$count=50) {
+		$feed = $this->getAtomFeed();
+		$feed->addLink(APP_ROOT.'/edit/'.$this->ascii_id,'self');
+		foreach ($this->getItemIdRange($start,$count) as $item_id) {
+			$i = new Dase_DBO_Item;
+			$i->load($item_id);
+			$i->injectAppEntryData($feed->addEntry());
+		}
 		return $feed->asXml();
 	}
 
@@ -227,6 +238,26 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $this->id;
 		return $item->find();
+	}
+
+	function getItemIdRange($start,$count)
+	{
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT id 
+			FROM item
+			WHERE collection_id = ?
+			ORDER BY updated DESC
+			";
+		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_COLUMN);
+		$sth->execute(array($this->id));
+		$rows = $sth->fetchAll();
+		$item_id_array_array = array_slice($rows,$start-1,$count);
+		foreach ($item_id_array_array as $item_id_result) {
+			$item_id_array[] = $item_id_result[0];
+		}
+		return $item_id_array;
 	}
 
 	function getItemTypes()
@@ -446,7 +477,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	public function getAtompubServiceDoc() {
 		$app = new Dase_Atom_Pub;
 		$workspace = $app->addWorkspace($this->collection_name.' Workspace');
-		$items_coll = $workspace->addCollection('/edit/'.$this->ascii_id,$this->collection_name.' Items'); 
+		$items_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->ascii_id,$this->collection_name.' Items'); 
 		$items_coll->addAccept('application/atom+xml;type=entry');
 		return $app->asXml();
 	}

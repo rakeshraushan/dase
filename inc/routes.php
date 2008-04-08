@@ -8,13 +8,17 @@ include 'routes/app.php';
 include 'routes/user.php';
 include 'routes/tag.php';
 
-$routes['sandbox'] = array (
+$routes['experimental'] = array (
 	'monitor' => array (
-		'uri_template' => 'sandbox/monitor',
+		'uri_template' => 'experimental/monitor',
 		'auth' => 'superuser',
 	),
 	'calendar' => array (
-		'uri_template' => 'sandbox/calendar',
+		'uri_template' => 'experimental/calendar',
+		'auth' => 'superuser',
+	),
+	'phpinfo' =>    array (
+		'uri_template' => 'phpinfo',
 		'auth' => 'superuser',
 	),
 );
@@ -60,10 +64,6 @@ $routes['manage'] = array(
 	),
 	'routes' =>    array (
 		'uri_template' => 'manage/routes',
-		'auth' => 'superuser',
-	),
-	'phpinfo' =>    array (
-		'uri_template' => 'phpinfo',
 		'auth' => 'superuser',
 	),
 	'stats' =>    array (
