@@ -1,7 +1,5 @@
 <?php
 
-$conf['path_to_media'] = '/mnt/www-data/dase/media';
-
 $conf['superuser'][] = 'pkeane';
 
 $conf['token'] = '
@@ -26,6 +24,10 @@ $conf['ppd_token'] = "
 	When you're lost in the rain in Juarez 
 	and it's Easter time, too." 
 	. date('Ymd',time()); //changes every day
+
+	
+//see also media/config.php
+$conf['path_to_media'] = '/mnt/www-data/dase/media/uploaded_files';
 
 //model can be db, xml, or remote
 $conf['model'] = 'db';

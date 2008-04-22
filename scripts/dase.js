@@ -1077,8 +1077,8 @@ Dase.initRemoveItems = function() {
 		}
 		alert('Please check at least one item.');
 		return false;
-	}
-}
+	};
+};
 
 Dase.addLoadEvent(function() {
 		Dase.initUser();

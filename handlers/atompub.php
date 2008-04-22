@@ -1,6 +1,6 @@
 <?php
 
-class AppHandler
+class AtompubHandler
 {
 	public static function getMediaLinkEntry($params) 
 	{

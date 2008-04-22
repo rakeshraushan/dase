@@ -60,7 +60,7 @@
 		  </td>
 		  <td class="metadata">
 			<h3><a href="collection/{$coll}"><xsl:value-of select="$coll_name"/></a></h3>
-			<dl id="metadata">
+			<dl id="metadata" class="{$coll}">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='metadata']" mode="keyvals"/>
 			</dl>
 			<a href="view_admin_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
@@ -92,6 +92,7 @@
   <xsl:template match="h:dl/h:dd[@class='nolink']" mode="keyvals">
 	<!-- sets 'item_id' and 'serial_number' as id, so js can grab values -->
 	<dd id="{preceding-sibling::h:dt[position()=1]/@class}"><xsl:value-of select="text()"/></dd>
+	<dd><xsl:value-of select="text()"/></dd>
   </xsl:template>
 
   <xsl:template match="dynamic"/>

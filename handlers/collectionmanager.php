@@ -1,6 +1,6 @@
 <?php
 
-class AdminHandler
+class CollectionmanagerHandler
 {
 
 	public static function index($params)

@@ -21,6 +21,30 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
+	{
+		$entry->setTitle('Attribute '.$this->attribute_name);
+		$entry->setId(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
+		$entry->addCategory($this->attribute_name,'http://daseproject.org/category/collection/attribute',$this->ascii_id);
+		$entry->addCategory('attribute','http://daseproject.org/category','Attribute');
+		if (is_numeric($this->updated)) {
+			$updated = date(DATE_ATOM,$this->updated);
+		} else {
+			$updated = $this->updated;
+		}
+		$entry->setUpdated($updated);
+		$entry->addAuthor('ss');
+		$div = simplexml_import_dom($entry->setContent());
+
+		$dl = $div->addChild('dl');
+		foreach ($this as $k => $v) {
+			$dt = $dl->addChild('dt',$k);
+			$dd = $dl->addChild('dd',$v);
+			$dd->addAttribute('class',$k);
+		}
+		return $entry;
+	}
+
 	function getDisplayValues($coll = null)
 	{
 		$admin_sql = '';

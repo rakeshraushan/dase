@@ -25,12 +25,3 @@ if (isset($database)) {
 	Dase_DB::get($database);
 }
 
-if (isset($messages)) {
-	echo "using database -> "; 
-	termcolored(strtoupper(Dase_DB::getDbName()));
-	echo "\npress enter to continue or 'q' to quit\n";
-	$char = fgetc(STDIN);
-	if ('q' == $char) {
-		exit;
-	}
-}

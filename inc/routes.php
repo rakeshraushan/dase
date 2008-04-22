@@ -4,17 +4,21 @@
 include 'routes/search.php';
 include 'routes/item.php';
 include 'routes/collection.php';
-include 'routes/app.php';
+include 'routes/atompub.php';
 include 'routes/user.php';
 include 'routes/tag.php';
 
-$routes['experimental'] = array (
+$routes['superuser'] = array (
+	'exec' =>    array (
+		'uri_template' => 'exec',
+		'auth' => 'superuser',
+	),
 	'monitor' => array (
-		'uri_template' => 'experimental/monitor',
+		'uri_template' => 'monitor',
 		'auth' => 'superuser',
 	),
 	'calendar' => array (
-		'uri_template' => 'experimental/calendar',
+		'uri_template' => 'calendar',
 		'auth' => 'superuser',
 	),
 	'phpinfo' =>    array (
@@ -41,13 +45,10 @@ $routes['attribute'] = array(
 	),
 );
 
+/*
 $routes['manage'] = array(
 	'checkRoutes' =>    array (
 		'uri_template' => 'badroutes',
-		'auth' => 'superuser',
-	),
-	'exec' =>    array (
-		'uri_template' => 'manage/exec',
 		'auth' => 'superuser',
 	),
 	'viewLog' =>    array (
@@ -76,8 +77,9 @@ $routes['manage'] = array(
 		'mime' => 'application/xhtml+xml',
 	),
 );
+ */
 
-$routes['admin'] = array(
+$routes['collectionmanager'] = array(
 	'index' =>    array (
 		'uri_template' => 'admin/{eid}/{collection_ascii_id}',
 		'auth' => 'admin',

@@ -1,3 +1,24 @@
+2008-04-10 08:01:06 
+
+current code organization:
+
+sdase/
+      inc/
+          routes.php
+          config.php
+      handlers/
+          collection.php
+          item.php
+          ...etc
+      xslt/
+          collection/
+                  list.xsl
+                  browse.xsl
+          item/
+                  transform.xsl
+          ...etc
+
+
 2007-12-26
 
 reorganize code into modules:
