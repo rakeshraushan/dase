@@ -35,27 +35,27 @@
 		  </a>
 		</li>
 		<li>
-		  <a href="admin/{$user/eid}/{$collection/ascii_id}/settings">
+		  <a href="cb/{$user/eid}/{$collection/ascii_id}/settings">
 			<img alt="icon" src="images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
 		  </a>
 		</li>
 		<li>
-		  <a href="admin/{$user/eid}/{$collection/ascii_id}/attributes">
+		  <a href="cb/{$user/eid}/{$collection/ascii_id}/attributes">
 			<img alt="icon" src="images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
 		  </a>
 		</li>
 		<li>
-		  <a href="admin/{$user/eid}/{$collection/ascii_id}/item_types">
+		  <a href="cb/{$user/eid}/{$collection/ascii_id}/item_types">
 			<img alt="icon" src="images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
 		  </a>
 		</li>
 		<li>
-		  <a href="admin/{$user/eid}/{$collection/ascii_id}/managers">
+		  <a href="cb/{$user/eid}/{$collection/ascii_id}/managers">
 			<img alt="icon" src="images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
 		  </a>
 		</li>
 		<li>
-		  <a href="admin/upload_form">
+		  <a href="cb/upload_form">
 			<img alt="icon" src="images/tango-icons/list-add.png"/><sup>Create Item</sup>
 		  </a>
 		</li>

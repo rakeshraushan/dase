@@ -1,6 +1,6 @@
 <?php
 
-class SuperuserHandler
+class AdminHandler
 {
 
 	public static function monitor($params) {
@@ -14,6 +14,16 @@ class SuperuserHandler
 		$t->stylesheet = XSLT_PATH.'experimental/calendar.xsl';
 		$t->source = XSLT_PATH.'experimental/calendar.xml';
 		Dase::display($t->transform());
+	}
+
+	public static function getAclAsJson($params)
+	{
+		$acl = array();
+		$cms = new Dase_DBO_CollectionManager;
+		foreach ($cms->find() as $cm) {
+			$acl[$cm->collection_ascii_id][$cm->dase_user_eid] = $cm->auth_level;
+		}
+		Dase::display(Dase_Json::get($acl));
 	}
 
 	public static function phpinfo($params)
