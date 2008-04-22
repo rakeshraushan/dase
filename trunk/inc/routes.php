@@ -8,7 +8,7 @@ include 'routes/atompub.php';
 include 'routes/user.php';
 include 'routes/tag.php';
 
-$routes['superuser'] = array (
+$routes['admin'] = array (
 	'exec' =>    array (
 		'uri_template' => 'exec',
 		'auth' => 'superuser',
@@ -24,6 +24,11 @@ $routes['superuser'] = array (
 	'phpinfo' =>    array (
 		'uri_template' => 'phpinfo',
 		'auth' => 'superuser',
+	),
+	'getAclAsJson' =>    array (
+		'uri_template' => 'acl',
+		'auth' => 'superuser',
+		'mime' => 'application/json',
 	),
 );
 
@@ -79,25 +84,25 @@ $routes['manage'] = array(
 );
  */
 
-$routes['collectionmanager'] = array(
+$routes['collectionbuilder'] = array(
 	'index' =>    array (
-		'uri_template' => 'admin/{eid}/{collection_ascii_id}',
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}',
 		'auth' => 'admin',
 	),
 	'settings' =>    array (
-		'uri_template' => 'admin/{eid}/{collection_ascii_id}/settings',
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/settings',
 		'auth' => 'admin',
 	),
 	'managers' =>    array (
-		'uri_template' => 'admin/{eid}/{collection_ascii_id}/managers',
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/managers',
 		'auth' => 'admin',
 	),
 	'item_types' =>    array (
-		'uri_template' => 'admin/{eid}/{collection_ascii_id}/item_types',
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/item_types',
 		'auth' => 'admin',
 	),
 	'attributes' =>    array (
-		'uri_template' => 'admin/{eid}/{collection_ascii_id}/attributes',
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/attributes',
 		'auth' => 'admin',
 	),
 	'dataAsJson' =>    array (
@@ -107,7 +112,7 @@ $routes['collectionmanager'] = array(
 		'nocache' => 'custom',
 	),
 	'setAttributeSortOrder' =>    array (
-		'uri_template' => 'admin/{eid/collection_ascii_id/attribute_ascii_id}/XXX/attribute/XXX/sort_order',
+		'uri_template' => 'cb/{eid/collection_ascii_id/attribute_ascii_id}/XXX/attribute/XXX/sort_order',
 		'auth' => 'admin',
 		'method' => 'put',
 	),
