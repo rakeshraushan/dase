@@ -1,6 +1,6 @@
 <?php
 
-$routes['app'] = array (
+$routes['atompub'] = array (
 	'getMediaLinkEntry' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/{size}',
 		'auth' => 'http',

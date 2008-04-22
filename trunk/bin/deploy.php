@@ -7,7 +7,11 @@
 
 /*********** CONFIGURATION ********************/
 
-$app = 'dasetest';
+if (isset($argv[1])) {
+	$app = $argv[1];
+} else {
+	$app = 'dase1';
+}
 $target = '/var/www/html/'.$app;
 $rewrite_base = $app; 
 $httpd_group = 'apache';
@@ -42,10 +46,8 @@ RewriteBase  /$rewrite_base
 
 php_flag magic_quotes_gpc off
 
-# media files go straight to media.php
-# todo: change this
-RewriteRule ^media/([0-9a-z_]*)/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
-RewriteRule ^([0-9a-z_]*)/media/([a-z]*)/([^/]*)$ media.php?collection=$1&size=$2&filename=$3 [PT]
+# media files go straight to media/server.php
+RewriteRule ^media/([0-9a-z_]*)/([a-z]*)/([^/]*)$ media/server.php?collection=$1&size=$2&filename=$3 [PT]
 
 RewriteCond %{REQUEST_FILENAME} !-f 
 RewriteCond %{REQUEST_FILENAME} !-d

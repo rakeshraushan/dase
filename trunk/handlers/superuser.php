@@ -1,6 +1,6 @@
 <?php
 
-class ExperimentalHandler
+class SuperuserHandler
 {
 
 	public static function monitor($params) {
@@ -22,6 +22,12 @@ class ExperimentalHandler
 		exit;
 	}
 
-
+	public static function exec($params) {
+		if (chmod('/mnt/www-data/dase/media/early_american_history_collection/400',0775)) {
+			echo "done!";
+		} else {
+			echo "did not work";
+		}
+	}
 }
 

@@ -15,9 +15,33 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $item_type->findOne();
 	}
 
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
+	{
+		$entry->setTitle('Item Type '.$this->name);
+		$entry->setId(APP_ROOT.'/item_type/'.$collection->ascii_id.'/'.$this->ascii_id);
+		$entry->addCategory($this->name,'http://daseproject.org/category/collection/item_type',$this->ascii_id);
+		$entry->addCategory('item_type','http://daseproject.org/category','Item Type');
+		if (is_numeric($this->updated)) {
+			$updated = date(DATE_ATOM,$this->updated);
+		} else {
+			$updated = $this->updated;
+		}
+		$entry->setUpdated($updated);
+		$entry->addAuthor('ss');
+		$div = simplexml_import_dom($entry->setContent());
+		$dl = $div->addChild('dl');
+		foreach ($this as $k => $v) {
+			$dt = $dl->addChild('dt',$k);
+			$dd = $dl->addChild('dd',$v);
+			$dd->addAttribute('class',$k);
+		}
+		return $entry;
+	}
+
 	function getCollection() {
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
+		$this->collection = $c;
 		return $c;
 	}
 

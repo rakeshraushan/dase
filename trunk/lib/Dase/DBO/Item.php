@@ -352,6 +352,24 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $title;
 	}
 
+	function getDescription()
+	{
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT v.value_text 
+			FROM attribute a, value v
+			WHERE a.id = v.attribute_id
+			AND a.ascii_id = 'description'
+			AND v.item_id = $this->id
+			";
+		$st = $db->query($sql);
+		$description = $st->fetchColumn();
+		if (!$description) {
+			$description = $this->getTitle();
+		}
+		return $description;
+	}
+
 	function injectAppEntryData(Dase_Atom_Entry $entry)
 	{
 		$this->collection || $this->getCollection();
@@ -376,6 +394,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
+		$dasens = "http://daseproject.org/ns/1.0";
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
@@ -406,12 +425,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('src',$this->viewitem_url);
 			$img->addAttribute('class','viewitem');
 		}
-		$dl = $div->addChild('dl');
-		$dl->addAttribute('class','metadata');
-		$admin_dl = $div->addChild('dl');
-		$admin_dl->addAttribute('class','admin_metadata');
-		$label_hash = array();
+		$div->addChild('p',$this->getDescription());
+		//$dl = $div->addChild('dl');
+		//$dl->addAttribute('class','metadata');
+		//$admin_dl = $div->addChild('dl');
+		//$admin_dl->addAttribute('class','admin_metadata');
+		//$label_hash = array();
 		foreach ($this->getMetadata() as $row) {
+			$meta = $entry->addElement('d:'.$row['ascii_id'],htmlspecialchars($row['value_text']),$dasens);
+			if ('description' != $row['ascii_id']) {
+				$meta->setAttribute('d:encoded',urlencode($row['value_text']));
+			}
+			/*
 			if ($row['value_text']) {
 				if ($row['collection_id']) {
 					if (!isset($label_hash[$row['ascii_id']])) {
@@ -420,6 +445,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$label_hash[$row['ascii_id']] = 1;
 					}
 					$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
+					//NOT always necessary!!!
 					$dd->addAttribute('class',urlencode($row['value_text']));
 				} else { //meaning collection_id is 0, so it is admin metadata
 					if (!isset($label_hash[$row['ascii_id']])) {
@@ -428,29 +454,31 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$label_hash[$row['ascii_id']] = 1;
 					}
 					$dd = $admin_dl->addChild('dd',htmlspecialchars($row['value_text']));
+					//NOT always necessary!!!
 					$dd->addAttribute('class',urlencode($row['value_text']));
 				}
 			}
+			 */
 		}
+		/*
 		//convenience item_id & serial_number but the will not link like other metadata
 		$dt = $admin_dl->addChild('dt','DASe Item Id');
-		$dt->addAttribute('class','item_id');
+		//$dt->addAttribute('class','item_id');
 		$dd = $admin_dl->addChild('dd',$this->id);
 		$dd->addAttribute('class','nolink');
 		$dt = $admin_dl->addChild('dt','DASe Serial Number');
-		$dt->addAttribute('class','serial_number');
+		//$dt->addAttribute('class','serial_number');
 		$dd = $admin_dl->addChild('dd',htmlspecialchars($this->serial_number));
 		$dd->addAttribute('class','nolink');
-		$d = 'http://daseproject.org/media/';
+		 */
+		$mrss = 'http://search.yahoo.com/mrss/';
+		$media_content = $entry->addElement('media:content',null,$mrss);
+		$media_content->setAttribute('url','sssssss');
 		foreach ($this->getMedia() as $med) {
-			$link = $entry->addLink(
-				APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename,
-				'related',
-				$med->mime_type,$med->file_size
-			);
-			$link->setAttributeNS($d,'d:width',$med->width);
-			$link->setAttributeNS($d,'d:height',$med->height);
-			$link->setAttribute('title',$med->size);
+			$thumb = $entry->addChildElement($media_content,'media:thumbnail',null,$mrss);
+			$thumb->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
+			$thumb->setAttribute('width',$med->width);
+			$thumb->setAttribute('height',$med->height);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	

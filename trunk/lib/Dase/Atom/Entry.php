@@ -21,7 +21,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	function setContent($text='')
+	function setContent($text='',$type='text')
 	{
 		if ($this->content_is_set) {
 			throw new Dase_Atom_Exception('content is already set');
@@ -29,8 +29,13 @@ class Dase_Atom_Entry extends Dase_Atom
 			$this->content_is_set = true;
 		}
 		if ($text) {
-			$content = $this->addElement('content',$text);
-			$content->setAttribute('type','text');
+			if ('html' == $type) {
+				$content = $this->addElement('content',htmlentities($text,ENT_COMPAT,'UTF-8'));
+				$content->setAttribute('type','html');
+			} else {
+				$content = $this->addElement('content',$text);
+				$content->setAttribute('type','text');
+			}
 		} else {
 			$content = $this->addElement('content');
 			$content->setAttribute('type','xhtml');

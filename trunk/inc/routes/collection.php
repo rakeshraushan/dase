@@ -5,14 +5,22 @@ $routes['collection'] = array (
 		'uri_template' => array('collection/list','collections','home',''),
 		'auth' => 'none',
 	),
-	'asArchive' =>    array (
-		'uri_template' => 'archive/collection/{collection_ascii_id}',
+	//just the facts ma'am:
+	'asAtom' =>    array (
+		'uri_template' => 'atom/collection/{collection_ascii_id}',
+		'auth' => 'none',
+		'mime' => 'application/atom+xml',
+	),
+	//includes items:
+	'asAtomArchive' =>    array (
+		'uri_template' => 'atom/collection/{collection_ascii_id}/archive',
 		//to prevent DOS, needs high authorization
 		'auth' => 'none',
 		'mime' => 'application/atom+xml',
 	),
-	'asAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}',
+	//includes managers, attributes, item_types:
+	'AsAtomFull' =>    array (
+		'uri_template' => 'atom/collections/{collection_ascii_id}/full',
 		'auth' => 'none',
 		'mime' => 'application/atom+xml',
 	),

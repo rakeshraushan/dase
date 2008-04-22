@@ -41,11 +41,12 @@ define('CACHE_DIR', DASE_PATH . '/cache/');
 define('LOG_DIR', DASE_PATH . '/log/');
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('XSLT_PATH', DASE_PATH . '/xslt/');
+define('MAX_ITEMS',30);
 
+//???????
 define('CART',1);
 define('USER_COLLECTION',2);
 define('SLIDESHOW',3);
-define('MAX_ITEMS',30);
 
 function __autoload($class_name) {
 	$class_file = preg_replace('/_/','/',$class_name) . '.php';

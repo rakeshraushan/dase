@@ -50,10 +50,27 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
+	function asAtomFull() {
+		$feed = $this->getAtomFeed();
+		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/full','self');
+		$cms = new Dase_DBO_CollectionManager;
+		$cms->collection_ascii_id = $this->ascii_id;
+		foreach ($cms->find() as $cm) {
+			$cm->injectAtomEntryData($feed->addEntry());
+		}
+		foreach ($this->getAttributes() as $att) {
+			$att->injectAtomEntryData($feed->addEntry(),$this);
+		}
+		foreach ($this->getItemTypes() as $type) {
+			$type->injectAtomEntryData($feed->addEntry(),$this);
+		}
+		return $feed->asXml();
+	}
+
 	function asAtomArchive($limit=0) {
 		//todo: this needs ot be paged
 		$feed = $this->getAtomFeed();
-		$feed->addLink(APP_ROOT.'/archive/collection/'.$this->ascii_id,'self');
+		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		if ($limit && is_numeric($limit)) {
