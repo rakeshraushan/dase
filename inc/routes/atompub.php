@@ -2,12 +2,12 @@
 
 $routes['atompub'] = array (
 	'getMediaLinkEntry' =>    array (
-		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/{size}',
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/media/{size}',
 		'auth' => 'http',
 		'mime' => 'application/atom+xml',
 	),
 	'getMediaResource' =>    array (
-		'uri_template' => 'edit-media/{collection_ascii_id}/{serial_number}/{size}',
+		'uri_template' => 'edit-media/{collection_ascii_id}/{serial_number}/media/{size}',
 		'auth' => 'http',
 		'mime' => 'application/atom+xml',
 	),
@@ -24,8 +24,9 @@ $routes['atompub'] = array (
 		'mime' => 'application/atom+xml',
 	),
 	'listItemMedia' =>    array (
-		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/media',
 		'auth' => 'http',
+		//'auth' => 'none',
 		'method' => 'get',
 		'mime' => 'application/atom+xml',
 	),
@@ -47,8 +48,8 @@ $routes['atompub'] = array (
 	),
 	'deleteMediaFile' =>    array (
 		'uri_template' => array(
-			'edit-media/{collection_ascii_id}/{serial_number}/{size}',
-			'edit/{collection_ascii_id}/{serial_number}/{size}',
+			'edit-media/{collection_ascii_id}/{serial_number}/media/{size}',
+			'edit/{collection_ascii_id}/{serial_number}/media/{size}',
 		),
 		'auth' => 'http',
 		'method' => 'delete',

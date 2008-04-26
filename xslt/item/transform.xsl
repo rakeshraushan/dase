@@ -2,11 +2,12 @@
 <xsl:stylesheet version="1.0" 
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:media="http://search.yahoo.com/mrss/"
   xmlns:h="http://www.w3.org/1999/xhtml"
-  xmlns:d="http://daseproject.org/media/"
+  xmlns:d="http://daseproject.org/ns/1.0"
   xmlns:php="http://php.net/xsl"
   xsl:extension-element-prefixes="php"
-  exclude-result-prefixes="atom h d php"
+  exclude-result-prefixes="atom h d php media"
   >
   <xsl:output method="xml" indent="yes"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -55,20 +56,23 @@
 			<img src="{$it/atom:entry/atom:content/h:div/h:img[@class='viewitem']/@src}"/>
 			<h4>Media:</h4>
 			<ul>
-			  <xsl:apply-templates select="$it/atom:entry/atom:link" mode="media"/>
+			  <xsl:apply-templates select="$it/atom:entry/media:content/media:thumbnail" mode="media"/>
+			  <xsl:apply-templates select="$it/atom:entry/media:content" mode="media"/>
 			</ul>
 		  </td>
 		  <td class="metadata">
 			<h3><a href="collection/{$coll}"><xsl:value-of select="$coll_name"/></a></h3>
 			<dl id="metadata" class="{$coll}">
-			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='metadata']" mode="keyvals"/>
+			  <xsl:apply-templates select="$it/atom:entry/d:*" mode="keyvals"/>
 			</dl>
+			<!--
 			<a href="view_admin_metadata" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 			<dl id="adminMetadata" class="hide">
 			  <xsl:apply-templates select="$it/atom:entry/atom:content/h:div/h:dl[@class='admin_metadata']" mode="keyvals"/>
 			</dl>
+			-->
 			<ul id="itemLinks">
-			  <a href="atom/collection/{$coll}/{$it/atom:entry/atom:content/h:div/h:dl/h:dt[@class='serial_number']/following-sibling::h:dd[position()=1]}">atom</a>
+			  <a href="atom/collection/{$coll}/{$it/atom:entry/d:admin_serial_number}">atom</a>
 			</ul>
 		  </td>
 		</tr>
@@ -81,14 +85,12 @@
 	<div><a class="hide" id="editLink" href="{@href}">edit item</a></div>
   </xsl:template>
 
-  <xsl:template match="h:dl/h:dt" mode="keyvals">
-	<dt><xsl:value-of select="text()"/></dt>
+  <xsl:template match="d:*" mode="keyvals">
+	<dt><xsl:value-of select="@d:label"/></dt>
+	<dd><a href="search?{$coll}.{local-name()}={@d:encoded}"><xsl:value-of select="text()"/></a></dd>
   </xsl:template>
 
-  <xsl:template match="h:dl/h:dd" mode="keyvals">
-	<dd><a href="search?{$coll}.{preceding-sibling::h:dt[position()=1]/@class}={@class}"><xsl:value-of select="text()"/></a></dd>
-  </xsl:template>
-
+  <!-- todo: fix this...js hook that no longer works-->
   <xsl:template match="h:dl/h:dd[@class='nolink']" mode="keyvals">
 	<!-- sets 'item_id' and 'serial_number' as id, so js can grab values -->
 	<dd id="{preceding-sibling::h:dt[position()=1]/@class}"><xsl:value-of select="text()"/></dd>
@@ -109,8 +111,8 @@
 	</xsl:copy>
   </xsl:template>
 
-  <xsl:template match="atom:link[@rel='related'][@title]" mode="media">
-	<li><a href="{@href}"><xsl:value-of select="@title"/> (<xsl:value-of select="@d:width"/>x<xsl:value-of select="@d:height"/>)</a></li>
+  <xsl:template match="media:thumbnail|media:content" mode="media">
+	<li><a href="{@url}"><xsl:value-of select="@width"/>x<xsl:value-of select="@height"/></a></li>
   </xsl:template>
 
   <xsl:template match="h:dl|h:ul">

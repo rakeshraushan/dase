@@ -3,10 +3,11 @@
   xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:h="http://www.w3.org/1999/xhtml"
-  xmlns:d="http://daseproject.org"
+  xmlns:d="http://daseproject.org/ns/1.0"
+  xmlns:dm="http://daseproject.org/ns-metadata/1.0"
   xmlns:php="http://php.net/xsl"
   xsl:extension-element-prefixes="php"
-  exclude-result-prefixes="atom h d php"
+  exclude-result-prefixes="atom h d dm php"
   >
   <xsl:output method="xml" indent="yes"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -95,7 +96,7 @@
 	<xsl:text>
 	</xsl:text>
 	<td>
-	  <xsl:variable name="item_id" select="atom:content/h:div/h:dl/h:dt[@class='item_id']/following-sibling::h:dd[position()=1]"/>
+	  <xsl:variable name="item_id" select="dm:item_id"/>
 	  <div class="checkNum">
 		<input type="checkbox" name="item_id[]" value="{$item_id}"/>
 		<xsl:text> </xsl:text>

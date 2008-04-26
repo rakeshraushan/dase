@@ -7,6 +7,7 @@ include 'routes/collection.php';
 include 'routes/atompub.php';
 include 'routes/user.php';
 include 'routes/tag.php';
+include 'routes/media.php';
 
 $routes['admin'] = array (
 	'exec' =>    array (

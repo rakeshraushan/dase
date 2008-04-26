@@ -1,19 +1,19 @@
 <?php
 
-class CollectionmanagerHandler
+class CollectionbuilderHandler
 {
 
 	public static function index($params)
 	{
 		//this is the best/easist way to implement redirect
-		AdminHandler::settings($params);
+		CollectionbuilderHandler::settings($params);
 	}
 
 	public static function settings($params)
 	{
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/settings.xsl';
-		$t->source = XSLT_PATH.'admin/layout.xml';
+		$t->stylesheet = XSLT_PATH.'collectionbuilder/settings.xsl';
+		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
 		$user = Dase_User::get($params);
 		$t->addSourceNode($user->asSimpleXml());
 		$c = Dase_Collection::get($params);
@@ -24,8 +24,8 @@ class CollectionmanagerHandler
 	public static function attributes($params)
 	{
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/attributes.xsl';
-		$t->source = XSLT_PATH.'admin/layout.xml';
+		$t->stylesheet = XSLT_PATH.'collectionbuilder/attributes.xsl';
+		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
 		$user = Dase_User::get($params);
 		$t->addSourceNode($user->asSimpleXml());
 		$c = Dase_Collection::get($params);
@@ -36,8 +36,8 @@ class CollectionmanagerHandler
 	public static function managers($params)
 	{
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/managers.xsl';
-		$t->source = XSLT_PATH.'admin/layout.xml';
+		$t->stylesheet = XSLT_PATH.'collectionbuilder/managers.xsl';
+		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
 		$user = Dase_User::get($params);
 		$t->addSourceNode($user->asSimpleXml());
 		$c = Dase_Collection::get($params);
@@ -48,8 +48,8 @@ class CollectionmanagerHandler
 	public static function item_types($params)
 	{
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/item_types.xsl';
-		$t->source = XSLT_PATH.'admin/layout.xml';
+		$t->stylesheet = XSLT_PATH.'collectionbuilder/item_types.xsl';
+		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
 		$user = Dase_User::get($params);
 		$t->addSourceNode($user->asSimpleXml());
 		$c = Dase_Collection::get($params);

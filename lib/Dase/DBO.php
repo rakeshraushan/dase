@@ -209,7 +209,12 @@ class Dase_DBO implements IteratorAggregate
 			foreach ($this->qualifiers as $qual) {
 				$f = $qual['field'];
 				$op = $qual['operator'];
-				$v = $db->quote($qual['value']);
+				//allows is to add 'is null' qualifier
+				if ('null' == $qual['value']) {
+					$v = $qual['value'];
+				} else {
+					$v = $db->quote($qual['value']);
+				}
 				$sets[] = "$f $op $v";
 			}
 		}
@@ -300,7 +305,7 @@ class Dase_DBO implements IteratorAggregate
 		foreach($this as $k => $v) {
 			$sx->addChild($k,htmlspecialchars($v));
 		}
-		$sx->addChild('id',$this->id);
+		$sx->addAttribute('id',$this->id);
 		return $sx;
 	}
 
