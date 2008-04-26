@@ -37,6 +37,23 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
+	public function deleteSearchIndexes()
+	{
+		$db = Dase_DB::get();
+		$sql = "
+			DELETE
+			FROM search_table 
+			WHERE item_id = $this->id
+			";
+		$db->query($sql);
+		$sql = "
+			DELETE
+			FROM admin_search_table 
+			WHERE item_id = $this->id
+			";
+		$db->query($sql);
+	}
+
 	public function buildSearchIndex()
 	{
 		$db = Dase_DB::get();
@@ -217,6 +234,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->item_status;
 	}
 
+	public function getPrimaryMediaFile()
+	{
+		$m = new Dase_DBO_MediaFile;
+		$m->item_id = $this->id;
+		$m->orderBy('file_size DESC');
+		$m->findOne();
+		return $m;
+	}
+
 	public function getMedia()
 	{
 		$this->collection || $this->getCollection();
@@ -290,16 +316,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($v->find() as $doomed) {
 			$doomed->delete();
 		}
-		$st = new Dase_DBO_SearchTable;
-		$st->item_id = $this->id;
-		foreach ($st->find() as $doomed) {
-			$doomed->delete();
-		}
-		$ast = new Dase_DBO_AdminSearchTable;
-		$ast->item_id = $this->id;
-		foreach ($ast->find() as $doomed) {
-			$doomed->delete();
-		}
 	}
 
 	function deleteAdminValues()
@@ -321,7 +337,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$this->deleteMedia();
 		$this->deleteValues();
-		$this->deleteAdminValues();
+		$this->deleteSearchIndexes();
 		$this->delete();
 	}
 
@@ -330,7 +346,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
-			$doomed->delete();
+			$doomed->expunge();
 		}
 	}
 
@@ -394,7 +410,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
-		$dasens = "http://daseproject.org/ns/1.0";
+		$d = "http://daseproject.org/ns/1.0";
+		$dm = "http://daseproject.org/ns-metadata/1.0";
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
@@ -431,8 +448,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//$admin_dl = $div->addChild('dl');
 		//$admin_dl->addAttribute('class','admin_metadata');
 		//$label_hash = array();
+		$entry->addElement('dm:item_id',$this->id,$dm);
+		$entry->addElement('dm:serial_number',$this->serial_number,$dm);
 		foreach ($this->getMetadata() as $row) {
-			$meta = $entry->addElement('d:'.$row['ascii_id'],htmlspecialchars($row['value_text']),$dasens);
+			//php dom will escape text for me here....
+			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
+			$meta->setAttribute('d:label',$row['attribute_name']);
 			if ('description' != $row['ascii_id']) {
 				$meta->setAttribute('d:encoded',urlencode($row['value_text']));
 			}
@@ -473,12 +494,25 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		 */
 		$mrss = 'http://search.yahoo.com/mrss/';
 		$media_content = $entry->addElement('media:content',null,$mrss);
-		$media_content->setAttribute('url','sssssss');
+		$mf = $this->getPrimaryMediaFile();
+		$media_content->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$mf->size.'/'.$mf->filename);
+		$media_content->setAttribute('type',$mf->mime_type);
+		$media_content->setAttribute('width',$mf->width);
+		$media_content->setAttribute('height',$mf->height);
 		foreach ($this->getMedia() as $med) {
-			$thumb = $entry->addChildElement($media_content,'media:thumbnail',null,$mrss);
-			$thumb->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
-			$thumb->setAttribute('width',$med->width);
-			$thumb->setAttribute('height',$med->height);
+			if ($med->size != $mf->size) {
+				if ($med->size == '400') {
+					$med->size = 'viewitem';
+				}
+				if ($med->size == 'thumbnails') {
+					$med->size = 'thumbnail';
+				}
+				$thumb = $entry->addChildElement($media_content,'media:thumbnail',null,$mrss);
+				$thumb->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
+				$thumb->setAttribute('width',$med->width);
+				$thumb->setAttribute('height',$med->height);
+		//		$thumb->setAttribute('type',$med->mime_type);
+			}
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
@@ -505,6 +539,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
 		$feed->setId($this->getBaseUrl());
+		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->collection->ascii_id.'/'.$this->serial_number,'self' );
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		return $feed;
@@ -538,7 +573,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->collection || $this->getCollection();
 		$app = new Dase_Atom_Pub;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
 		$media_coll->addAccept('image/*');
 		$media_coll->addAccept('audio/*');
 		$media_coll->addAccept('video/*');

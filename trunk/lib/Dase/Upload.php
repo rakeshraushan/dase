@@ -163,7 +163,6 @@ class Dase_Upload
 	{
 		$this->metadata = $this->file->getMetadata();
 		//$this->metadata['admin_corrected_image_upload_date'] = 
-		//$this->metadata['admin_project_name'] = 
 		//$this->metadata['admin_upload_eid'] = 
 		//$this->metadata['admin_upload_ip_address'] = 
 		$this->metadata['admin_serial_number'] = $this->item->serial_number; 

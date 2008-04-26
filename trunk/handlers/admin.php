@@ -5,14 +5,14 @@ class AdminHandler
 
 	public static function monitor($params) {
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'experimental/index.xsl';
+		$t->stylesheet = XSLT_PATH.'admin/index.xsl';
 		Dase::display($t->transform());
 	}
 
 	public static function calendar($params) {
 		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'experimental/calendar.xsl';
-		$t->source = XSLT_PATH.'experimental/calendar.xml';
+		$t->stylesheet = XSLT_PATH.'admin/calendar.xsl';
+		$t->source = XSLT_PATH.'admin/calendar.xml';
 		Dase::display($t->transform());
 	}
 

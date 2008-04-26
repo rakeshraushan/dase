@@ -1,4 +1,5 @@
 <?php
+$database = 'dase_prod';
 include 'cli_setup.php';
 
 $class_dir = '../lib/Dase';

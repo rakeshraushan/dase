@@ -138,9 +138,8 @@ if (!$media_conf[$size]['access_flag']) {
 	exit;
 }
 
-//$ut_user = null;
-$ut_user = true;
-/*
+$ut_user = null;
+//$ut_user = true;
 if (!extension_loaded("eid")) {
 	dl("eid.so");
 	if (!extension_loaded("eid")) {
@@ -160,7 +159,6 @@ if ($ut_user == NULL) {
 	serveFile($collection,$size,$filename,$download,$media_conf);
 	exit;
 }	
- */
 if ($ut_user) {
 	if (2 == $media_conf[$size]['access_flag']) {
 		require_once '../inc/media_acl.php';

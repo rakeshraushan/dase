@@ -274,7 +274,7 @@ Dase.placeCollectionAdminLink = function(eid) {
 		var li = document.createElement('li');
 		li.id = 'admin-menu';
 		var a = document.createElement('a');
-		a.setAttribute('href','admin/'+eid+'/'+auth_info.collection_ascii_id);
+		a.setAttribute('href','cb/'+eid+'/'+auth_info.collection_ascii_id);
 		a.className = "main";
 		a.appendChild(document.createTextNode(auth_info.collection_name+' Admin'));
 		li.appendChild(a);
