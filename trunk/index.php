@@ -43,6 +43,9 @@ define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('XSLT_PATH', DASE_PATH . '/xslt/');
 define('MAX_ITEMS',30);
 
+//for dase 'client' code
+define('DASE_URL',APP_ROOT);
+
 //???????
 define('CART',1);
 define('USER_COLLECTION',2);

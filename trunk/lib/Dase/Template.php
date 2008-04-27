@@ -34,6 +34,7 @@ class Dase_Template {
 		$this->smarty->security = false;
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
+		$this->smarty->assign('app_root', APP_ROOT.'/');
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
 		error_reporting($er);
 	}
@@ -62,6 +63,18 @@ class Dase_Template {
 		$ret = ($this->smarty->$var = $value);
 		error_reporting($er);
 		return $ret;
+	}
+
+	public function parseDaseAtom($url)
+	{
+		$ch = curl_init();
+		// set URL and other appropriate options
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		$content = curl_exec($ch);
+		curl_close($ch);
+		$this->smarty->assign('dase_atom',simplexml_load_string($content)); 
 	}
 
 	public function display($resource_name)

@@ -10,6 +10,10 @@ include 'routes/tag.php';
 include 'routes/media.php';
 
 $routes['admin'] = array (
+	'smarty' =>    array (
+		'uri_template' => 'smarty',
+		'auth' => 'superuser',
+	),
 	'exec' =>    array (
 		'uri_template' => 'exec',
 		'auth' => 'superuser',
