@@ -32,6 +32,13 @@ class AdminHandler
 		exit;
 	}
 
+	public static function smarty($params)
+	{
+		$tpl = new Dase_Template();
+		$tpl->parseDaseAtom(DASE_URL.'/atom');
+		Dase::display($tpl->fetch('collection/list.tpl'));
+	}
+
 	public static function exec($params) {
 		if (chmod('/mnt/www-data/dase/media/early_american_history_collection/400',0775)) {
 			echo "done!";
