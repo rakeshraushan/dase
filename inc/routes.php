@@ -12,7 +12,8 @@ include 'routes/media.php';
 $routes['admin'] = array (
 	'smarty' =>    array (
 		'uri_template' => 'smarty',
-		'auth' => 'superuser',
+		//'auth' => 'superuser',
+		'auth' => 'none',
 	),
 	'exec' =>    array (
 		'uri_template' => 'exec',

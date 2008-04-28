@@ -34,8 +34,13 @@ class Dase_Template {
 		$this->smarty->security = false;
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
-		$this->smarty->assign('app_root', APP_ROOT.'/');
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
+
+		$this->smarty->register_modifier('shift', 'array_shift');
+		$this->smarty->assign('app_root', APP_ROOT.'/');
+		$this->smarty->assign('msg', Dase_Filter::filterGet('msg'));
+		$this->smarty->assign('page_hook',Dase_Registry::get('handler').'_'.Dase_Registry::get('action'));
+
 		error_reporting($er);
 	}
 
@@ -65,7 +70,7 @@ class Dase_Template {
 		return $ret;
 	}
 
-	public function parseDaseAtom($url)
+	public function atomDoc($name,$url)
 	{
 		$ch = curl_init();
 		// set URL and other appropriate options
@@ -74,7 +79,13 @@ class Dase_Template {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$content = curl_exec($ch);
 		curl_close($ch);
-		$this->smarty->assign('dase_atom',simplexml_load_string($content)); 
+		$sx = simplexml_load_string($content);
+		$sx->registerXPathNamespace("atom","http://www.w3.org/2005/Atom");
+		$sx->registerXPathNamespace("d","http://daseproject.org/ns/1.0");
+		$sx->registerXPathNamespace("dm","http://daseproject.org/ns-metadata/1.0");
+		$sx->registerXPathNamespace("media","http://search.yahoo.com/mrss/");
+		$sx->registerXPathNamespace("h","http://www.w3.org/1999/xhtml");
+		$this->smarty->assign($name,$sx); 
 	}
 
 	public function display($resource_name)
@@ -97,6 +108,17 @@ class Dase_Template {
 	public $_derived = null;
 }
 
+function _smarty_dase_shift($params, $content, &$smarty, &$repeat)
+{
+	if($content===null)
+		return;
+	$name = $params['name'];
+	$ss = $smarty->get_template_vars('_swisdk_smarty_instance');
+	if(!isset($ss->_blocks[$name]))
+		$ss->_blocks[$name] = $content;
+	return $ss->_blocks[$name];
+}
+
 function _smarty_swisdk_process_block($params, $content, &$smarty, &$repeat)
 {
 	if($content===null)
@@ -113,4 +135,3 @@ function _smarty_swisdk_extends($params, &$smarty)
 	$ss = $smarty->get_template_vars('_swisdk_smarty_instance');
 	$ss->_derived = $params['file'];
 } 
-
