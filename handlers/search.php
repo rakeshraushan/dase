@@ -151,11 +151,16 @@ class SearchHandler
 	{
 		$request_url = Dase_Url::getRequestUrl();
 		$query_string = Dase_Url::getQueryString();
+		/*
 		$t = new Dase_Xslt;
 		$t->stylesheet = XSLT_PATH.'item/transform.xsl';
 		$t->set('local-layout',XSLT_PATH.'item/source.xml');
 		$t->set('src',APP_ROOT.'/atom/'. $request_url . '?' . $query_string);
 		Dase::display($t->transform());
+		 */
+		$tpl = new Dase_Template();
+		$tpl->atomDoc('item',DASE_URL.'/atom/'.$request_url.'?'.$query_string);
+		Dase::display($tpl->fetch('item/transform.tpl'));
 	}
 
 	public static function search($params)
