@@ -35,8 +35,12 @@ class AdminHandler
 	public static function smarty($params)
 	{
 		$tpl = new Dase_Template();
-		$tpl->parseDaseAtom(DASE_URL.'/atom');
-		Dase::display($tpl->fetch('collection/list.tpl'));
+		//$tpl->atomDoc('collections',DASE_URL.'/atom');
+		//Dase::display($tpl->fetch('collection/list.tpl'));
+		//$tpl->atomDoc('collection',DASE_URL.'/atom/collection/vrc');
+		//Dase::display($tpl->fetch('collection/browse.tpl'));
+		$tpl->atomDoc('item',DASE_URL.'/atom/collection/vrc/search_item?q=io&num=1');
+		Dase::display($tpl->fetch('item/transform.tpl'));
 	}
 
 	public static function exec($params) {

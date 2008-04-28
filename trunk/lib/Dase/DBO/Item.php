@@ -443,55 +443,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('class','viewitem');
 		}
 		$div->addChild('p',$this->getDescription());
-		//$dl = $div->addChild('dl');
-		//$dl->addAttribute('class','metadata');
-		//$admin_dl = $div->addChild('dl');
-		//$admin_dl->addAttribute('class','admin_metadata');
-		//$label_hash = array();
 		$entry->addElement('dm:item_id',$this->id,$dm);
 		$entry->addElement('dm:serial_number',$this->serial_number,$dm);
 		foreach ($this->getMetadata() as $row) {
 			//php dom will escape text for me here....
-			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
-			$meta->setAttribute('d:label',$row['attribute_name']);
-			if ('description' != $row['ascii_id']) {
-				$meta->setAttribute('d:encoded',urlencode($row['value_text']));
-			}
-			/*
-			if ($row['value_text']) {
-				if ($row['collection_id']) {
-					if (!isset($label_hash[$row['ascii_id']])) {
-						$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
-						$dt->addAttribute('class',$row['ascii_id']);
-						$label_hash[$row['ascii_id']] = 1;
-					}
-					$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-					//NOT always necessary!!!
-					$dd->addAttribute('class',urlencode($row['value_text']));
-				} else { //meaning collection_id is 0, so it is admin metadata
-					if (!isset($label_hash[$row['ascii_id']])) {
-						$dt = $admin_dl->addChild('dt',htmlspecialchars($row['attribute_name']));
-						$dt->addAttribute('class',$row['ascii_id']);
-						$label_hash[$row['ascii_id']] = 1;
-					}
-					$dd = $admin_dl->addChild('dd',htmlspecialchars($row['value_text']));
-					//NOT always necessary!!!
-					$dd->addAttribute('class',urlencode($row['value_text']));
-				}
-			}
-			 */
+			$meta = $entry->addElement('d:meta',$row['value_text'],$d);
+			$meta->setAttribute('term',$row['ascii_id']);
+			$meta->setAttribute('label',$row['attribute_name']);
 		}
-		/*
-		//convenience item_id & serial_number but the will not link like other metadata
-		$dt = $admin_dl->addChild('dt','DASe Item Id');
-		//$dt->addAttribute('class','item_id');
-		$dd = $admin_dl->addChild('dd',$this->id);
-		$dd->addAttribute('class','nolink');
-		$dt = $admin_dl->addChild('dt','DASe Serial Number');
-		//$dt->addAttribute('class','serial_number');
-		$dd = $admin_dl->addChild('dd',htmlspecialchars($this->serial_number));
-		$dd->addAttribute('class','nolink');
-		 */
 		$mrss = 'http://search.yahoo.com/mrss/';
 		$media_content = $entry->addElement('media:content',null,$mrss);
 		$mf = $this->getPrimaryMediaFile();
@@ -511,7 +470,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$thumb->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
 				$thumb->setAttribute('width',$med->width);
 				$thumb->setAttribute('height',$med->height);
-		//		$thumb->setAttribute('type',$med->mime_type);
 			}
 		}
 		if ($this->xhtml_content) {
