@@ -59,6 +59,12 @@ class Dase_Search
 						$url_params[$key][] = $temp;
 						$url_params[$key][] = $val;
 					}
+				} else { //deal with case of '&' in search term!
+					if (is_array($url_params[$key])) {
+						$last = array_pop($url_params[$key]);
+					} else {
+						$url_params[$key] = $url_params[$key].'&'.$pair;
+					}
 				}
 			}
 		}

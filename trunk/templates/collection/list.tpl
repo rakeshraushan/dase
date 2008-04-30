@@ -11,10 +11,10 @@
 			<input type="submit" value="Search" class="button"/>
 		</div>
 		<ul id="collectionList" class="multicheck">
-			{foreach item=ent from=$collections->entry}
-			<li id="{$ent->content}">
-			<input name="c" value="{$ent->content}" checked="checked" type="checkbox"/>
-			<a href="collection/{$ent->content}" class="checkedCollection">{$ent->title|escape}</a>
+			{foreach item=c from=$collections->entries}
+			<li id="{$c->ascii_id}">
+			<input name="c" value="{$c->ascii_id}" checked="checked" type="checkbox"/>
+			<a href="collection/{$c->ascii_id}" class="checkedCollection">{$c->name|escape}</a>
 			<span class="tally"></span>
 			</li>
 			{/foreach}

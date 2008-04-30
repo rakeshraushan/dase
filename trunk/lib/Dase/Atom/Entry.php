@@ -3,21 +3,38 @@ class Dase_Atom_Entry extends Dase_Atom
 {
 	public $dom;
 	public $root;
-	private $content_is_set;
-	private $published_is_set;
-	private $source_is_set;
-	private $summary_is_set;
+	protected $content_is_set;
+	protected $published_is_set;
+	protected $source_is_set;
+	protected $summary_is_set;
 
-	function __construct($dom=null)
+	function __construct($dom=null,$create_new = true,$root = null)
 	{
 		if ($dom) {
-			$this->root = $dom->createElement('entry');
 			$this->dom = $dom;
+			if ($create_new) {
+				$this->root = $dom->createElement('entry');
+			} else {
+				if ($root) {
+					$this->root = $root;
+				}
+			}
 		} else {
 			//if no $dom is passed in, this will be a freestanding entry document
 			$dom = new DOMDocument('1.0','utf-8');
 			$this->dom = $dom;
 			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
+		}
+	}
+
+	function __get($var) {
+		//allows smarty to invoke function as if getter
+		$classname = get_class($this);
+		$method = 'get'.ucfirst($var);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}();
+		} else {
+			return parent::__get($var);
 		}
 	}
 
@@ -42,7 +59,7 @@ class Dase_Atom_Entry extends Dase_Atom
 			//results in namespace prefixes which messes up some aggregators
 			//return $this->addChildElement($content,'xhtml:div','',Dase_Atom::$ns['xhtml']);
 			$div = $content->appendChild($this->dom->createElement('div'));
-			$div->setAttribute('xmlns',Dase_Atom::$ns['xhtml']);
+			$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
 			return $div;
 			//note that best practice here is to use simplexml 
 			//to add content to the returned div
@@ -89,4 +106,10 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		$summary = $this->addElement('summary',$text);
 	}
+
+	function getContent() 
+	{
+		return $this->getAtomElementText('content');
+	}
+
 }

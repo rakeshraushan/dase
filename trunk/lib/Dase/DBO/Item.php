@@ -234,15 +234,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->item_status;
 	}
 
-	public function getPrimaryMediaFile()
-	{
-		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
-		$m->orderBy('file_size DESC');
-		$m->findOne();
-		return $m;
-	}
-
 	public function getMedia()
 	{
 		$this->collection || $this->getCollection();
@@ -452,25 +443,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$meta->setAttribute('label',$row['attribute_name']);
 		}
 		$mrss = 'http://search.yahoo.com/mrss/';
-		$media_content = $entry->addElement('media:content',null,$mrss);
-		$mf = $this->getPrimaryMediaFile();
-		$media_content->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$mf->size.'/'.$mf->filename);
-		$media_content->setAttribute('type',$mf->mime_type);
-		$media_content->setAttribute('width',$mf->width);
-		$media_content->setAttribute('height',$mf->height);
+		$media_group = $entry->addElement('media:group',null,$mrss);
 		foreach ($this->getMedia() as $med) {
-			if ($med->size != $mf->size) {
-				if ($med->size == '400') {
-					$med->size = 'viewitem';
-				}
-				if ($med->size == 'thumbnails') {
-					$med->size = 'thumbnail';
-				}
-				$thumb = $entry->addChildElement($media_content,'media:thumbnail',null,$mrss);
-				$thumb->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
-				$thumb->setAttribute('width',$med->width);
-				$thumb->setAttribute('height',$med->height);
+			if ($med->size == '400') {
+				$med->size = 'viewitem';
 			}
+			if ($med->size == 'thumbnails') {
+				$med->size = 'thumbnail';
+			}
+			$media_content = $entry->addChildElement($media_group,'media:content',null,$mrss);
+			$media_content->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
+			$media_content->setAttribute('type',$med->mime_type);
+			$media_content->setAttribute('width',$med->width);
+			$media_content->setAttribute('height',$med->height);
+			$media_content->setAttributeNS($dm,'dm:size',$med->size);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
