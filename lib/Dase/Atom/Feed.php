@@ -24,6 +24,14 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed_Item',
 			'entry' => 'Dase_Atom_Entry_Item',
 		),
+		'tag' => array(
+			'feed' => 'Dase_Atom_Feed_Tag',
+			'entry' => 'Dase_Atom_Entry_Item',
+		),
+		'tagitem' => array(
+			'feed' => 'Dase_Atom_Feed_Item',
+			'entry' => 'Dase_Atom_Entry_Item',
+		),
 	);
 	protected $feedtype;
 

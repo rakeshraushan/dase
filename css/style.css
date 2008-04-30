@@ -203,6 +203,12 @@ table#item td a {
 table#item td a:hover {
 	text-decoration: underline;
 }
+table#item td.image h4 {
+	margin: .5em 0;
+	color: #666;
+	font-weight: bold;
+}
+
 table#item td.metadata {
 	width: 100%;
 	background-color:#fff;
