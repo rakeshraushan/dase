@@ -436,12 +436,26 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$div->addChild('p',$this->getDescription());
 		$entry->addElement('dm:item_id',$this->id,$dm);
 		$entry->addElement('dm:serial_number',$this->serial_number,$dm);
+
+		$dl = $div->addChild('dl');
+		$dl->addAttribute('class','metadata');
+		$label_hash = array();
+
 		foreach ($this->getMetadata() as $row) {
+			if (!isset($label_hash[$row['ascii_id']])) {
+				$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
+				$dt->addAttribute('class',$row['ascii_id']);
+				$label_hash[$row['ascii_id']] = 1;
+			}
+			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
+			$dd->addAttribute('class',$row['ascii_id']);
+
 			//php dom will escape text for me here....
-			$meta = $entry->addElement('d:meta',$row['value_text'],$d);
-			$meta->setAttribute('term',$row['ascii_id']);
-			$meta->setAttribute('label',$row['attribute_name']);
+			//$meta = $entry->addElement('d:meta',$row['value_text'],$d);
+			//$meta->setAttribute('term',$row['ascii_id']);
+			//$meta->setAttribute('label',$row['attribute_name']);
 		}
+
 		$mrss = 'http://search.yahoo.com/mrss/';
 		$media_group = $entry->addElement('media:group',null,$mrss);
 		foreach ($this->getMedia() as $med) {
