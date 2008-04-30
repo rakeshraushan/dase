@@ -23,21 +23,31 @@ class Dase_Atom
 
 	//convenience class(es) to deal w/ Atom feeds
 
-	private $id;
-	private $rights_is_set;
-	private $title_is_set;
-	private $updated_is_set;
+	protected $id;
+	protected $rights_is_set;
+	protected $title_is_set;
+	protected $updated_is_set;
 	public static $ns = array(
-		'atom' => 'http://www.w3.org/2005/Atom',
 		'app' => 'http://www.w3.org/2007/app',
-		'dase' => 'http://daseproject.org/dase/',
+		'atom' => 'http://www.w3.org/2005/Atom',
 		'dc' => 'http://purl.org/dc/elements/1.1/',
 		'dcterms' => 'http://purl.org/dc/terms/',
+		'd' => 'http://daseproject.org/ns/1.0',
+		'dm' => 'http://daseproject.org/ns-metadata/1.0',
+		'h' => 'http://www.w3.org/1999/xhtml',
+		'media' => 'http://search.yahoo.com/mrss/',
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',
 		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-		'xhtml' => 'http://www.w3.org/1999/xhtml',
-		'd' => 'http://daseproject.org/media/'
 	);
+
+	function __get($var) {
+		//allows smarty to invoke function as if getter
+		$classname = get_class($this);
+		$method = 'get'.ucfirst($var);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}();
+		}
+	}
 
 	//convenience method for atom elements
 	function addElement($tagname,$text='',$ns='') 
@@ -141,6 +151,25 @@ class Dase_Atom
 		return $link;
 	}
 
+	function getNext() 
+	{
+		return $this->getLink('next');
+	}
+
+	function getPrevious() 
+	{
+		return $this->getLink('previous');
+	}
+
+	function getLink($rel) 
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ($rel == $el->getAttribute('rel')) {
+				return $el->getAttribute('href');
+			}
+		}
+	}
+
 	function setRights($text) 
 	{
 		if ($this->rights_is_set) {
@@ -159,6 +188,35 @@ class Dase_Atom
 			$this->title_is_set = true;
 		}
 		$title = $this->addElement('title',$text);
+	}
+
+	function getAtomElementText($name,$ns_prefix='atom') 
+	{
+		//only works w/ simple string title
+		return $this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
+	}
+
+	function getXpathValue($xpath) 
+	{
+		if ('DOMDocument' != get_class($this->dom)) {
+			$c = get_class($this->dom);
+			throw new Dase_Atom_Exception("xpath must be performed on DOMDocument, not $c");
+		}
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		return $x->query($xpath)->item(0)->nodeValue;
+	}
+
+	function getTitle() 
+	{
+		return $this->getAtomElementText('title');
+	}
+
+	function getUpdated() 
+	{
+		return $this->getAtomElementText('content');
 	}
 
 	function setUpdated($text) 

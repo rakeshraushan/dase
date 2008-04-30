@@ -70,24 +70,6 @@ class Dase_Template {
 		return $ret;
 	}
 
-	public function atomDoc($name,$url)
-	{
-		$ch = curl_init();
-		// set URL and other appropriate options
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-		$content = curl_exec($ch);
-		curl_close($ch);
-		$sx = simplexml_load_string($content);
-		$sx->registerXPathNamespace("atom","http://www.w3.org/2005/Atom");
-		$sx->registerXPathNamespace("d","http://daseproject.org/ns/1.0");
-		$sx->registerXPathNamespace("dm","http://daseproject.org/ns-metadata/1.0");
-		$sx->registerXPathNamespace("media","http://search.yahoo.com/mrss/");
-		$sx->registerXPathNamespace("h","http://www.w3.org/1999/xhtml");
-		$this->smarty->assign($name,$sx); 
-	}
-
 	public function display($resource_name)
 	{
 		echo $this->fetch($resource_name);

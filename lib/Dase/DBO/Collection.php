@@ -46,6 +46,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function asAtom()
 	{
 		$feed = $this->getAtomFeed();
+		$feed->setFeedType('collection');
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
 		return $feed->asXml();
 	}
@@ -105,6 +106,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('DASe Collections');
 		$feed->setId(APP_ROOT);
+		$feed->setFeedType('collection_list');
 		$feed->setUpdated(Dase_DBO_Collection::getLastCreated());
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink(APP_ROOT.'/atom','self');

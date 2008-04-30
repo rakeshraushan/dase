@@ -14,7 +14,7 @@ $repo = $collection_ascii_id .'_collection';
 $REPOS = "/mnt/projects/dase_scanning/$repo";
 
 include 'cli_setup.php';
-$collection = Dase_DB_Collection::get($collection_ascii_id);
+$collection = Dase_DBO_Collection::get($collection_ascii_id);
 
 $logfile = $REPOS . '/dase_upload_' . date('Ymd') . '.log';
 
@@ -32,6 +32,7 @@ function processDir($REPOS,$collection,$logfile) {
 			false === strpos($file->getPathname(),'to_be_deleted') &&
 			false === strpos($file->getPathname(),'bad_file_format') &&
 			false === strpos($file->getPathname(),'dase_upload_') &&
+			(strpos($file->getPathname(),'metal_box') || strpos($file->getPathname(),'napoli') || strpos($file->getPathname(),'hardwick_late_antiquity')) &&
 			$file->isFile()
 		) {
 			try {

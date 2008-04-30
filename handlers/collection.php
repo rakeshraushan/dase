@@ -33,27 +33,16 @@ class CollectionHandler
 
 	public static function browse($params) 
 	{
-		$c = Dase_Collection::get($params);
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collection/browse.xsl';
-		$t->set('src',APP_ROOT. '/atom/collection/' . $c->ascii_id);
-		Dase::display($t->transform());
+		$tpl = new Dase_Template();
+		$tpl->assign('collection',Dase_Atom_Feed::retrieve(DASE_URL.'/atom/collection/'.$params['collection_ascii_id']));
+		Dase::display($tpl->fetch('collection/browse.tpl'));
 	}
 
 	public static function listAll($params) 
 	{
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collection/list.xsl';
-		$t->set('src',APP_ROOT. '/atom');
-
-		//xhtml output:
-		Dase::display($t->transform());
-
-		//html output:
-		//$t2 = new Dase_Xslt;
-		//$t2->stylesheet = XSLT_PATH.'xhtml2html.xsl;
-		//$t2->source = $t->transform();
-		//Dase::display($t2->transform());
+		$tpl = new Dase_Template();
+		$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
+		Dase::display($tpl->fetch('collection/list.tpl'));
 	}
 
 	public static function itemTalliesAsJson($params) 
