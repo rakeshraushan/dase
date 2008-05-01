@@ -402,7 +402,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$d = "http://daseproject.org/ns/1.0";
-		$dm = "http://daseproject.org/ns-metadata/1.0";
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
@@ -434,8 +433,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('class','viewitem');
 		}
 		$div->addChild('p',$this->getDescription());
-		$entry->addElement('dm:item_id',$this->id,$dm);
-		$entry->addElement('dm:serial_number',$this->serial_number,$dm);
+		$entry->addElement('d:item_id',$this->id,$d);
+		$entry->addElement('d:serial_number',$this->serial_number,$d);
 
 		$dl = $div->addChild('dl');
 		$dl->addAttribute('class','metadata');
@@ -470,7 +469,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$media_content->setAttribute('type',$med->mime_type);
 			$media_content->setAttribute('width',$med->width);
 			$media_content->setAttribute('height',$med->height);
-			$media_content->setAttributeNS($dm,'dm:size',$med->size);
+			$media_content->setAttributeNS($d,'d:size',$med->size);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	

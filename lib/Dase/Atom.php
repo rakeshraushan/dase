@@ -33,7 +33,6 @@ class Dase_Atom
 		'dc' => 'http://purl.org/dc/elements/1.1/',
 		'dcterms' => 'http://purl.org/dc/terms/',
 		'd' => 'http://daseproject.org/ns/1.0',
-		'dm' => 'http://daseproject.org/ns-metadata/1.0',
 		'h' => 'http://www.w3.org/1999/xhtml',
 		'media' => 'http://search.yahoo.com/mrss/',
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',

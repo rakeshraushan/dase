@@ -51,7 +51,7 @@ class SearchHandler
 		$feed->setTitle('DASe Search Result');
 		$feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string,'self');
 		$feed->setUpdated($result['timestamp']);
-		$feed->setFeedType('search_result');
+		$feed->setFeedType('search');
 		if (isset($next)) {
 			$feed->addLink(APP_ROOT.'/'.$request_url.'?'.$query_string.'&start='.$next,'next');
 		}
@@ -130,7 +130,7 @@ class SearchHandler
 		$item = new Dase_DBO_Item;
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
-			$feed->setFeedType('item');
+			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed);
 			$item->injectAtomEntryData($feed->addEntry());
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
@@ -153,13 +153,6 @@ class SearchHandler
 	{
 		$request_url = Dase_Url::getRequestUrl();
 		$query_string = Dase_Url::getQueryString();
-		/*
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'item/transform.xsl';
-		$t->set('local-layout',XSLT_PATH.'item/source.xml');
-		$t->set('src',APP_ROOT.'/atom/'. $request_url . '?' . $query_string);
-		Dase::display($t->transform());
-		 */
 		$tpl = new Dase_Template();
 		$tpl->assign('item',Dase_Atom_Feed::retrieve(DASE_URL.'/atom/'.$request_url.'?'.$query_string));
 		Dase::display($tpl->fetch('item/transform.tpl'));
