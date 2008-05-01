@@ -42,12 +42,6 @@ class TagHandler
 			Dase::error(404);
 		}
 
-		//$t = new Dase_Xslt;
-		//$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
-		//$t->addSourceNode($u->asSimpleXml());
-		//$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token').$u->eid));
-		//Dase::display($t->transform());
-		
 		$t = new Dase_Template;
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
@@ -77,13 +71,12 @@ class TagHandler
 		$tag_ascii_id = $params['ascii_id'];
 		$tag_item_id = $params['tag_item_id'];
 
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'item/transform.xsl';
+		$t = new Dase_Template;
 		//THIS script is protected by eid auth, but how to protect restricted
 		//atom and xml documents that feed it? DASe requests AND serves the docs
 		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id.'?token='.md5(Dase::getConfig('token').$u->eid));
-		Dase::display($t->transform());
+		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id.'?token='.md5(Dase::getConfig('token').$u->eid)));
+		Dase::display($t->fetch('item/transform.tpl'));
 	}
 
 	public static function saveToTag($params) 

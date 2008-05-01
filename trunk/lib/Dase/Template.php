@@ -90,17 +90,6 @@ class Dase_Template {
 	public $_derived = null;
 }
 
-function _smarty_dase_shift($params, $content, &$smarty, &$repeat)
-{
-	if($content===null)
-		return;
-	$name = $params['name'];
-	$ss = $smarty->get_template_vars('_swisdk_smarty_instance');
-	if(!isset($ss->_blocks[$name]))
-		$ss->_blocks[$name] = $content;
-	return $ss->_blocks[$name];
-}
-
 function _smarty_swisdk_process_block($params, $content, &$smarty, &$repeat)
 {
 	if($content===null)

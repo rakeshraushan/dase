@@ -3,19 +3,6 @@
 class AdminHandler
 {
 
-	public static function monitor($params) {
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/index.xsl';
-		Dase::display($t->transform());
-	}
-
-	public static function calendar($params) {
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'admin/calendar.xsl';
-		$t->source = XSLT_PATH.'admin/calendar.xml';
-		Dase::display($t->transform());
-	}
-
 	public static function getAclAsJson($params)
 	{
 		$acl = array();
@@ -30,13 +17,6 @@ class AdminHandler
 	{
 		phpinfo();
 		exit;
-	}
-
-	public static function smarty($params)
-	{
-		$tpl = new Dase_Template();
-		$tpl->atomDoc('item',DASE_URL.'/atom/collection/vrc/search?q=io&num=1');
-		Dase::display($tpl->fetch('item/transform.tpl'));
 	}
 
 	public static function exec($params) {

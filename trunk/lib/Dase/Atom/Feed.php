@@ -2,9 +2,8 @@
 class Dase_Atom_Feed extends Dase_Atom 
 {
 	public $dom;
-	protected $_entries = array();
-	protected $_entriesIndex = 0;
 	public $root;
+	protected $_entries;
 	protected $generator_is_set;
 	protected $subtitle_is_set;
 	private static $types_map = array(
@@ -16,11 +15,11 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed_Collection',
 			'entry' => 'Dase_Atom_Entry_Collection',
 		),
-		'search_result' => array(
-			'feed' => 'Dase_Atom_Feed_SearchResult',
+		'search' => array(
+			'feed' => 'Dase_Atom_Feed_Search',
 			'entry' => 'Dase_Atom_Entry_Item',
 		),
-		'item' => array(
+		'searchitem' => array(
 			'feed' => 'Dase_Atom_Feed_Item',
 			'entry' => 'Dase_Atom_Entry_Item',
 		),
@@ -54,6 +53,13 @@ class Dase_Atom_Feed extends Dase_Atom
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$xml = curl_exec($ch);
 		curl_close($ch);
+
+		//for debugging
+		if (Dase_Filter::filterGet('aaa')) {
+			print $xml;
+			exit;
+		}
+
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXML($xml);
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
@@ -169,9 +175,9 @@ class Dase_Atom_Feed extends Dase_Atom
 			} else {
 				$entry = new Dase_Atom_Entry($entry_dom,false,$this->dom);
 			}
-			$this->_entries[] = $entry;
+			$entries[] = $entry;
 		}
-		return $this->_entries;
+		return $entries;
 	}
 
 	protected function getSubtitle() {
