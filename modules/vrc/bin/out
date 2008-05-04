@@ -40,4 +40,74 @@ Type  :quit<Enter>  to exit Vim[42;105H[K[42;105H51,1          32%[41;1H[3
     [1m[33mif[m [1m[31m([m[1m[33misset[m[1m[31m([m[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[33m$[m[1m[36mdf[m[1m[31m]))[m [1m[31m{[m[36;9H[1m[36m//ok[m
     [1m[31m}[m [1m[33melse[m [1m[31m{[m[38;9H[1m[34mprint[m "[1m[35mno image for [m[1m[33m$[m[1m[36mdf[m[1m[35m ([m[1m[33m$[m[1m[36mac[m[1m[35m)[m[1m[31m\n[m";
     [1m[31m}
-}[m[42;1H[K[42;105H72,0-1        Bot[41;1H[34h[?25h
+}[m[42;1H[K[42;105H72,0-1        Bot[41;1H[34h[?25h[23m[24m[m[H[J[?25l[1;13H[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[36mbasename[m[1m[31m([m[1m[33m$[m[1m[36mfile[m[1m[31m)][m[1m[33m=[m [1m[33m$[m[1m[36mfile[m[1m[32m->[mgetPathname[1m[31m()[m;[2;13H[1m[33mif[m [1m[31m([m[1m[35m0[m [1m[33m==[m [1m[33m$[m[1m[36mi[m[1m[33m%[m[1m[35m1000[m[1m[31m)[m [1m[31m{[m[3;17H[1m[36m//print "hashed $i files\n";[m[4;13H[1m[31m}[m[5;13H[1m[36m//print $file->getFilename() . "\n";[m[6;9H[1m[31m}
+[m    [1m[31m}
+}[m
+
+[1m[36m/******* CREATE HASH OF IMAGES IN DAR ***********************************/[m
+[1m[33m$[m[1m[36mIMAGE_REPOS[m [1m[33m=[m "[1m[35m/mnt/dar/blanton/ART[m";
+[1m[33m$[m[1m[36mdir[m [1m[33m=[m [1m[34mnew[m [1m[36mRecursiveIteratorIterator[m[1m[31m([m[1m[34mnew[m [1m[36mRecursiveDirectoryIterator[m[1m[31m([m[1m[33m$[m[1m[36mIMAGE_REPOS[m[1m[31m))[m;
+[1m[33mforeach[m [1m[31m([m[1m[33m$[m[1m[36mdir[m [1m[33mas[m [1m[33m$[m[1m[36mfile[m[1m[31m)[m [1m[31m{[m
+    [1m[33mif[m [1m[31m([m[1m[33m![m[1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m/.[m'[1m[31m))[m [1m[31m{[m[15;9H[1m[33mif[m [1m[31m([m[1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m.jpg[m'[1m[31m)[m [1m[33m||[m [1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m.tif[m'[1m[31m))[m [1m[31m{[m[16;13H[1m[33m$[m[1m[36mi[m[1m[33m++[m;[17;13H[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[36mbasename[m[1m[31m([m[1m[33m$[m[1m[36mfile[m[1m[31m)][m[1m[33m=[m [1m[33m$[m[1m[36mfile[m[1m[32m->[mgetPathname[1m[31m()[m;[18;13H[1m[33mif[m [1m[31m([m[1m[35m0[m [1m[33m==[m [1m[33m$[m[1m[36mi[m[1m[33m%[m[1m[35m1000[m[1m[31m)[m [1m[31m{[m[19;13H[1m[36m//  print "hashed $i files\n";[m[20;13H[1m[31m}[m[21;13H[1m[36m//print $file->getFilename() . "\n";[m[22;9H[1m[31m}
+[m    [1m[31m}
+}[m
+
+
+[1m[33m$[m[1m[36mpdo[m [1m[33m=[m [1m[34mnew[m [1m[36mPDO[m[1m[31m([m"[1m[35mdblib:host=[m[1m[33m$[m[1m[36mhost[m[1m[35m;dbname=[m[1m[33m$[m[1m[36mname[m", [1m[33m$[m[1m[36muser[m, [1m[33m$[m[1m[36mpass[m[1m[31m)[m;
+
+[1m[33m$[m[1m[36msql[m [1m[33m=[m "
+[1m[35m    SELECT  
+    acc_digital_num, 
+    acc_num_PK
+    FROM tblAccession 
+    WHERE acc_digital_num != ''
+    [m";
+
+[1m[33m$[m[1m[36mst[m [1m[33m=[m [1m[33m$[m[1m[36mpdo[m[1m[32m->[mprepare[1m[31m([m[1m[33m$[m[1m[36msql[m[1m[31m)[m;
+[1m[33m$[m[1m[36mst[m[1m[32m->[msetFetchMode[1m[31m([m[1m[36mPDO[m[1m[33m::[mFETCH_ASSOC[1m[31m)[m;
+[1m[33m$[m[1m[36mst[m[1m[32m->[mexecute[1m[31m()[m;
+[1m[33mwhile[m [1m[31m([m[1m[33m$[m[1m[36mrow[m [1m[33m=[m [1m[33m$[m[1m[36mst[m[1m[32m->[mfetch[1m[31m())[m [1m[31m{[m
+    [1m[33m$[m[1m[36mdf[m [1m[33m=[m [1m[33m$[m[1m[36mrow[m[1m[31m[[m'[1m[35macc_digital_num[m'[1m[31m][m;
+    [1m[33m$[m[1m[36mac[m [1m[33m=[m [1m[33m$[m[1m[36mrow[m[1m[31m[[m'[1m[35macc_num_PK[m'[1m[31m][m;
+    [1m[36m//we'll only perform operations on items for which we have a file[m
+    [1m[33mif[m [1m[31m([m[1m[33misset[m[1m[31m([m[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[33m$[m[1m[36mdf[m[1m[31m]))[m [1m[31m{[m[45;9H[1m[36m//ok[m
+    [1m[31m}[m [1m[33melse[m [1m[31m{[m[47;9H[1m[34mprint[m "[1m[35mno image for [m[1m[33m$[m[1m[36mdf[m[1m[35m ([m[1m[33m$[m[1m[36mac[m[1m[35m)[m[1m[31m\n[m";
+    [1m[31m}
+}[m[51;128H72,0-1        Bot[50;1H[34h[?25h[23m[24m[m[H[J[?25l[1;13H[1m[33mif[m [1m[31m([m[1m[35m0[m [1m[33m==[m [1m[33m$[m[1m[36mi[m[1m[33m%[m[1m[35m1000[m[1m[31m)[m [1m[31m{[m[2;17H[1m[36m//print "hashed $i files\n";[m[3;13H[1m[31m}[m[4;13H[1m[36m//print $file->getFilename() . "\n";[m[5;9H[1m[31m}
+[m    [1m[31m}
+}[m
+
+[1m[36m/******* CREATE HASH OF IMAGES IN DAR ***********************************/[m
+[1m[33m$[m[1m[36mIMAGE_REPOS[m [1m[33m=[m "[1m[35m/mnt/dar/blanton/ART[m";
+[1m[33m$[m[1m[36mdir[m [1m[33m=[m [1m[34mnew[m [1m[36mRecursiveIteratorIterator[m[1m[31m([m[1m[34mnew[m [1m[36mRecursiveDirectoryIterator[m[1m[31m([m[1m[33m$[m[1m[36mIMAGE_REPOS[m[1m[31m))[m;
+[1m[33mforeach[m [1m[31m([m[1m[33m$[m[1m[36mdir[m [1m[33mas[m [1m[33m$[m[1m[36mfile[m[1m[31m)[m [1m[31m{[m
+    [1m[33mif[m [1m[31m([m[1m[33m![m[1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m/.[m'[1m[31m))[m [1m[31m{[m[14;9H[1m[33mif[m [1m[31m([m[1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m.jpg[m'[1m[31m)[m [1m[33m||[m [1m[36mstrpos[m[1m[31m([m[1m[33m$[m[1m[36mfile[m,'[1m[35m.tif[m'[1m[31m))[m [1m[31m{[m[15;13H[1m[33m$[m[1m[36mi[m[1m[33m++[m;[16;13H[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[36mbasename[m[1m[31m([m[1m[33m$[m[1m[36mfile[m[1m[31m)][m[1m[33m=[m [1m[33m$[m[1m[36mfile[m[1m[32m->[mgetPathname[1m[31m()[m;[17;13H[1m[33mif[m [1m[31m([m[1m[35m0[m [1m[33m==[m [1m[33m$[m[1m[36mi[m[1m[33m%[m[1m[35m1000[m[1m[31m)[m [1m[31m{[m[18;13H[1m[36m//  print "hashed $i files\n";[m[19;13H[1m[31m}[m[20;13H[1m[36m//print $file->getFilename() . "\n";[m[21;9H[1m[31m}
+[m    [1m[31m}
+}[m
+
+
+[1m[33m$[m[1m[36mpdo[m [1m[33m=[m [1m[34mnew[m [1m[36mPDO[m[1m[31m([m"[1m[35mdblib:host=[m[1m[33m$[m[1m[36mhost[m[1m[35m;dbname=[m[1m[33m$[m[1m[36mname[m", [1m[33m$[m[1m[36muser[m, [1m[33m$[m[1m[36mpass[m[1m[31m)[m;
+
+[1m[33m$[m[1m[36msql[m [1m[33m=[m "
+[1m[35m    SELECT  
+    acc_digital_num, 
+    acc_num_PK
+    FROM tblAccession 
+    WHERE acc_digital_num != ''
+    [m";
+
+[1m[33m$[m[1m[36mst[m [1m[33m=[m [1m[33m$[m[1m[36mpdo[m[1m[32m->[mprepare[1m[31m([m[1m[33m$[m[1m[36msql[m[1m[31m)[m;
+[1m[33m$[m[1m[36mst[m[1m[32m->[msetFetchMode[1m[31m([m[1m[36mPDO[m[1m[33m::[mFETCH_ASSOC[1m[31m)[m;
+[1m[33m$[m[1m[36mst[m[1m[32m->[mexecute[1m[31m()[m;
+[1m[33mwhile[m [1m[31m([m[1m[33m$[m[1m[36mrow[m [1m[33m=[m [1m[33m$[m[1m[36mst[m[1m[32m->[mfetch[1m[31m())[m [1m[31m{[m
+    [1m[33m$[m[1m[36mdf[m [1m[33m=[m [1m[33m$[m[1m[36mrow[m[1m[31m[[m'[1m[35macc_digital_num[m'[1m[31m][m;
+    [1m[33m$[m[1m[36mac[m [1m[33m=[m [1m[33m$[m[1m[36mrow[m[1m[31m[[m'[1m[35macc_num_PK[m'[1m[31m][m;
+    [1m[36m//we'll only perform operations on items for which we have a file[m
+    [1m[33mif[m [1m[31m([m[1m[33misset[m[1m[31m([m[1m[33m$[m[1m[36mimages[m[1m[31m[[m[1m[33m$[m[1m[36mdf[m[1m[31m]))[m [1m[31m{[m[44;9H[1m[36m//ok[m
+    [1m[31m}[m [1m[33melse[m [1m[31m{[m[46;9H[1m[34mprint[m "[1m[35mno image for [m[1m[33m$[m[1m[36mdf[m[1m[35m ([m[1m[33m$[m[1m[36mac[m[1m[35m)[m[1m[31m\n[m";
+    [1m[31m}
+}[m[50;128H72,0-1        Bot[49;1H[34h[?25h[?25l[39;29H[1m[31m[46m{[48;1H}[m[50;128H71,1          Bot[48;1H[34h[?25h[?25l[39;29H[1m[31m{[m[45;12H[1m[31m[46m{[47;5H}[m
+[1m[31m}[m[50;128H70,2-5        Bot[47;5H[34h[?25h[?25l[45;12H[1m[31m{[47;5H}[m[50;128H70,1-4        Bot[47;4H[34h[?25h[?25l[39;29H[1m[31m[46m{[48;1H}[m[50;128H71,1          Bot[48;1H[34h[?25h[?25l[39;29H[1m[31m{[m[45;12H[1m[31m[46m{[47;5H}[m
+[1m[31m}[m[50;128H70,2-5        Bot[47;5H[34h[?25h[?25l[45;12H[1m[31m{[47;5H}[m[50;128H70,1-4        Bot[47;4H[34h[?25h[?25l[50;128H69,35-41      Bot[46;41H[34h[?25h[?25l[50;128H69,34-40      Bot[46;40H[34h[?25h[?25l[50;128H69,33-39      Bot[46;39H[34h[?25h[50;1H[?1l>[?1049lVim: Caught deadly signal TERM
+Vim: Finished.
+[50;1H

@@ -413,63 +413,39 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setUpdated($updated);
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		if ($this->item_type) {
-			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
+		if (!$this->item_type) {
+			$this->item_type_ascii = 'default';
+			$this->item_type_label = 'default';
 		}
+		$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
-		$div->addAttribute('class',$this->collection_ascii_id);
 		$this->thumbnail || $this->getThumbnail();
 		if ($this->thumbnail) {
 			$img = $div->addChild('img');
 			$img->addAttribute('src',$this->thumbnail_url);
 			$img->addAttribute('class','thumbnail');
 		}
-		$this->viewitem || $this->getViewitem();
-		if ($this->viewitem) {
-			$img = $div->addChild('img');
-			$img->addAttribute('src',$this->viewitem_url);
-			$img->addAttribute('class','viewitem');
-		}
 		$div->addChild('p',$this->getDescription());
-		$entry->addElement('d:item_id',$this->id,$d);
-		$entry->addElement('d:serial_number',$this->serial_number,$d);
-
-		$dl = $div->addChild('dl');
-		$dl->addAttribute('class','metadata');
-		$label_hash = array();
 
 		foreach ($this->getMetadata() as $row) {
-			if (!isset($label_hash[$row['ascii_id']])) {
-				$dt = $dl->addChild('dt',htmlspecialchars($row['attribute_name']));
-				$dt->addAttribute('class',$row['ascii_id']);
-				$label_hash[$row['ascii_id']] = 1;
-			}
-			$dd = $dl->addChild('dd',htmlspecialchars($row['value_text']));
-			$dd->addAttribute('class',$row['ascii_id']);
-
 			//php dom will escape text for me here....
-			//$meta = $entry->addElement('d:meta',$row['value_text'],$d);
-			//$meta->setAttribute('term',$row['ascii_id']);
-			//$meta->setAttribute('label',$row['attribute_name']);
+			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
+			$meta->setAttribute('d:label',$row['attribute_name']);
 		}
 
-		$mrss = 'http://search.yahoo.com/mrss/';
-		$media_group = $entry->addElement('media:group',null,$mrss);
+		$entry->addElement('d:item_id',$this->id,$d)->setAttribute('d:label','Item ID');
+		$entry->addElement('d:serial_number',$this->serial_number,$d)->setAttribute('d:label','Serial Number');
+		$entry->addElement('d:item_type',$this->item_type_ascii,$d)->setAttribute('d:label','Item Type');
+
 		foreach ($this->getMedia() as $med) {
-			if ($med->size == '400') {
-				$med->size = 'viewitem';
-			}
-			if ($med->size == 'thumbnails') {
-				$med->size = 'thumbnail';
-			}
-			$media_content = $entry->addChildElement($media_group,'media:content',null,$mrss);
-			$media_content->setAttribute('url',APP_ROOT.'/media/'.$this->collection_ascii_id.'/'.$med->size.'/'.$med->filename);
-			$media_content->setAttribute('type',$med->mime_type);
-			$media_content->setAttribute('width',$med->width);
-			$media_content->setAttribute('height',$med->height);
-			$media_content->setAttributeNS($d,'d:size',$med->size);
+			$link = $entry->addLink($med->getLink(),'http://daseproject.org/relation/media/'.$med->size );
+			$link->setAttribute('d:height',$med->height);
+			$link->setAttribute('d:width',$med->width);
+			$link->setAttribute('type',$med->mime_type);
+			$link->setAttribute('length',$med->file_size);
+			$link->setAttribute('title',$med->size);
 		}
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	

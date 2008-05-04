@@ -3,7 +3,7 @@ class Dase_Atom_Feed extends Dase_Atom
 {
 	public $dom;
 	public $root;
-	protected $_entries;
+	protected $_entries = array();
 	protected $generator_is_set;
 	protected $subtitle_is_set;
 	private static $types_map = array(
@@ -59,7 +59,16 @@ class Dase_Atom_Feed extends Dase_Atom
 			print $xml;
 			exit;
 		}
+		return self::_domify($xml);
+	}
 
+	public static function load($xml_file) {
+		$xml = file_get_contents($xml_file);
+		return self::_domify($xml);
+	}
+
+	private static function _domify($xml)
+	{
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXML($xml);
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
@@ -165,8 +174,45 @@ class Dase_Atom_Feed extends Dase_Atom
 		return parent::asXml();
 	}
 
+	public function filter($att,$val) 
+	{
+		$entries = array();
+		foreach ($this->getEntries() as $entry) {
+			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
+				if ($att == $att_ascii) {
+					if (in_array($val,$keyval['values'])) {
+						$entries[] = $entry;
+					}
+				}
+			} 
+		}
+		$this->_entries = $entries;
+		return $this;
+	}
+
+	public function sortBy($att) 
+	{
+		$entries_deep = array();
+		$entries = array();
+		foreach ($this->getEntries() as $entry) {
+			$entries_deep[$entry->select($att)][] = $entry;
+		}
+		ksort($entries_deep);
+		foreach ($entries_deep as $k => $set) {
+			foreach ($set as $e) {
+				$entries[] = $e;
+			}
+		}
+		$this->_entries = $entries;
+		return $this;
+	}
+
 	protected function getEntries()
 	{
+		if (count($this->_entries)) {
+			return $this->_entries;
+		}
+		$entries = array();
 		$class = self::$types_map[$this->feedtype]['entry'];
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
 			if ($class) {
@@ -177,6 +223,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			}
 			$entries[] = $entry;
 		}
+		$this->_entries = $entries;
 		return $entries;
 	}
 

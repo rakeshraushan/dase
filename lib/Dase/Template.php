@@ -18,22 +18,27 @@ class Dase_Template {
 
 	protected $smarty;
 
-	public function __construct($compile_id = '')
+	public function __construct($module = '')
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
 		require_once DASE_PATH . '/lib/smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
 		$this->smarty->compile_dir = CACHE_DIR;
-		if (!$compile_id) {
-			$compile_id = 'smarty';
+		$this->smarty->compile_id = $module ? $module : 'smarty';
+		if ($module) {
+			$this->smarty->template_dir = DASE_PATH . '/modules/'.$module.'/templates';
+		} else {
+			$this->smarty->template_dir = DASE_PATH . '/templates';
 		}
-		$this->smarty->compile_id = $comple_id;
-		$this->smarty->template_dir = DASE_PATH . '/templates';
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
+		$this->smarty->register_modifier('filter', '_smarty_dase_atom_feed_filter');
+		$this->smarty->register_modifier('sortby', '_smarty_dase_atom_feed_sortby');
+		$this->smarty->register_modifier('select', '_smarty_dase_atom_entry_select');
+		$this->smarty->register_modifier('media', '_smarty_dase_atom_entry_select_media');
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
 
 		$this->smarty->register_modifier('shift', 'array_shift');
@@ -88,6 +93,29 @@ class Dase_Template {
 	// template inheritance
 	public $_blocks = array();
 	public $_derived = null;
+}
+
+function _smarty_dase_atom_feed_filter(Dase_Atom_Feed $feed,$att,$val)
+{
+	//returns an array of entries that match 
+	return $feed->filter($att,$val);
+}
+
+function _smarty_dase_atom_feed_sortby(Dase_Atom_Feed $feed,$att)
+{
+	return $feed->sortBy($att);
+}
+
+function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)
+{
+	//returns value of attribute 
+	return $entry->select($att);
+}
+
+function _smarty_dase_atom_entry_select_media(Dase_Atom_Entry $entry,$size)
+{
+	//returns media url 
+	return $entry->selectMedia($size);
 }
 
 function _smarty_swisdk_process_block($params, $content, &$smarty, &$repeat)
