@@ -42,7 +42,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 				$file['type'] = $el->getAttribute('type');
 				$file['width'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'width');
 				$file['height'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'height');
-				$file['label'] = str_replace('http://daseproject.org/relation/media/','',$el->getAttribute('rel'));
+				$file['label'] = $el->getAttribute('title');
 				$media_array[] = $file;
 			}
 		}

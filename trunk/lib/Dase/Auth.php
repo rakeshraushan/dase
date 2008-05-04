@@ -32,11 +32,27 @@ class Dase_Auth
 	public static function authorize($auth_type,$params) 
 	{
 		//auth type comes from routes.php
-		//and there needs to be a corresponding Auth class
+		//and there needs to be a corresponding Auth class.
+		//Depends on whether params have collection_ascii_id 
+		//or tag_ascii_id whether it authorizes for collection
+		//or tag.  If param has *both* ascii ids, request is rejected
 		$class_name = 'Dase_Auth_'.ucfirst($auth_type);
+
+		$type = 'default';
+
+		if (isset($params['collection_ascii_id']) && isset($params['tag_ascii_id'])) {
+			return false;
+		} elseif (isset($params['collection_ascii_id'])) {
+			$type = 'collection';
+		} elseif (isset($params['tag_ascii_id'])) {
+			$type = 'tag';
+		} else {
+			return false;
+		}
+
 		if (class_exists($class_name)) {
 			$auth_class = new $class_name;
-			return $auth_class->authorize($params);
+			return $auth_class->authorize($params,$type);
 		} else {
 			//throw new Dase_Auth_Exception("Error: $class_name is not a valid class!");
 			Dase::log('error',"$class_name is not a valid Dase_Auth_ class!");

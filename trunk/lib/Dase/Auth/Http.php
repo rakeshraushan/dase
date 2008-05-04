@@ -3,13 +3,13 @@
 class Dase_Auth_Http
 {
 
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
-		Dase_Auth_Http::basic($params);
+		Dase_Auth_Http::basic($params,$type);
 		return true;
 	}
 
-	public static function basic($params)
+	public static function basic($params,$type)
 	{
 		/* how this works:
 		 * a UA wanting to make a request using basic http auth
@@ -18,18 +18,34 @@ class Dase_Auth_Http
 		 * to use an EID auth cookie request to get their password,
 		 * which is good until midnight server time. (Susceptible to replay
 		 * attack, so should ideally use HTTPS). The request is:
-		 * http://<dase_url>/user/<eid>/collection<collection_ascii_id>/auth/<auth_level>
+		 * http://<dase_url>/user/<eid>/collection/<collection_ascii_id>/auth/<auth_level>
 		 * which will return an 8 character password to be used for Basic Auth
 		 * request.  THIS method will check to see if the password is one of the 
-		 * 3 possible.
+		 * 3 possible -- handler re-checks auth level for given route.
 		 */
+
+		//make methods for other sorts of requests (like for restricted Atom Feeds)
 
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
-			$coll = $params['collection_ascii_id'];
-			$read_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'read'),0,8);
-			$write_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'write'),0,8);
-			$admin_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'admin'),0,8);
+
+			//note that a user would NOT have been able to even *discover* the password
+			//for the auth level they seek unless they had that auth level (determined
+			//with a cookie-based discovery transaction (with caveats for the limitations
+			//of *any* authorization scheme, blah, blah...) 
+
+			if ('collection' == $type) {
+				$coll = $params['collection_ascii_id'];
+				$read_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'read'),0,8);
+				$write_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'write'),0,8);
+				$admin_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'admin'),0,8);
+			}
+			if ('tag' == $type) {
+				$tag = $params['tag_ascii_id'];
+				$read_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'read'),0,8);
+				$write_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'write'),0,8);
+				$admin_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'admin'),0,8);
+			}
 			if (in_array($_SERVER['PHP_AUTH_PW'],array($read_pw,$write_pw,$admin_pw,'skeletonkey'))) {
 				Dase_Registry::set('eid',$eid); //since handler needs to re-check auth_level
 				return;

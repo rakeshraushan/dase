@@ -191,8 +191,10 @@ class Dase_Atom
 
 	function getAtomElementText($name,$ns_prefix='atom') 
 	{
-		//only works w/ simple string title
-		return $this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
+		//only works w/ simple string
+		if ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)) {
+			return $this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
+		}
 	}
 
 	function getXpathValue($xpath) 

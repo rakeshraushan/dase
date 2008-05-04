@@ -46,11 +46,14 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	public static function retrieve($url) {
+	public static function retrieve($url,$user='',$pwd='') {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		if ($user && $pwd) {
+			curl_setopt($ch, CURLOPT_USERPWD,"$user:$pwd");
+		}
 		$xml = curl_exec($ch);
 		curl_close($ch);
 

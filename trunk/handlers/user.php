@@ -144,11 +144,21 @@ class UserHandler
 
 	public static function getHttpPassword($params) 
 	{
+		//tag_ascii_ids are not unique
+		//but that will not matter since
+		//eid is included in hash
+
 		if (Dase_Auth::authorize($params['auth_level'],$params)) {
 			$eid = $params['eid'];
-			$coll = $params['collection_ascii_id'];
+			if (isset($params['collection_ascii_id'])) {
+				$ascii_id = $params['collection_ascii_id'];
+			} elseif (isset($params['tag_ascii_id'])) {
+				$ascii_id = $params['tag_ascii_id'];
+			} else {
+				Dase::error(401);
+			}
 			$auth_level = $params['auth_level'];
-			$password = substr(md5(Dase::getConfig('token').$eid.$coll.$auth_level),0,8);
+			$password = substr(md5(Dase::getConfig('token').$eid.$ascii_id.$auth_level),0,8);
 			header("Content-Type: text/plain; charset=utf-8");
 			echo $password;
 			exit;

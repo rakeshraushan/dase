@@ -2,7 +2,7 @@
 
 class Dase_Auth_Superuser
 {
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
 		//is this as secure as it needs to be?
 		//(susceptible to replay attack)

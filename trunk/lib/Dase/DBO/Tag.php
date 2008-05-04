@@ -27,6 +27,18 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $sth;
 	}
 
+	public static function get($ascii_id)
+	{
+		$tag = new Dase_DBO_Tag;
+		$tag->ascii_id = $ascii_id;
+		$tag->findOne();
+		if ($tag->id) {
+			return $tag;
+		} else {
+			return false;
+		}
+	}
+
 	function getItemCount()
 	{
 		$db = Dase_DB::get();

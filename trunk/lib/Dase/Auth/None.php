@@ -2,7 +2,7 @@
 
 class Dase_Auth_None
 {
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
 		return true;
 	}

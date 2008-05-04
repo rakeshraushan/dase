@@ -11,8 +11,8 @@ class TagHandler
 			if ($tag->dase_user_id != $u->id) {
 				Dase::error(401);
 			}
-		} elseif (isset($params['ascii_id'])) {
-			$tag->ascii_id = $params['ascii_id'];
+		} elseif (isset($params['tag_ascii_id'])) {
+			$tag->ascii_id = $params['tag_ascii_id'];
 			$tag->dase_user_id = $u->id;
 			if (!$tag->findOne()) {
 				Dase::error(401);
@@ -32,8 +32,8 @@ class TagHandler
 			if ($tag->dase_user_id != $u->id) {
 				Dase::error(401);
 			}
-		} elseif (isset($params['ascii_id'])) {
-			$tag->ascii_id = $params['ascii_id'];
+		} elseif (isset($params['tag_ascii_id'])) {
+			$tag->ascii_id = $params['tag_ascii_id'];
 			$tag->dase_user_id = $u->id;
 			if (!$tag->findOne()) {
 				Dase::error(401);
@@ -53,7 +53,7 @@ class TagHandler
 	public static function itemAsAtom($params)
 	{
 		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $params['ascii_id'];
+		$tag->ascii_id = $params['tag_ascii_id'];
 		if (!$tag->findOne()) {
 			Dase::error(401);
 		}
@@ -68,14 +68,11 @@ class TagHandler
 	public static function item($params)
 	{
 		$u = Dase_User::get($params);
-		$tag_ascii_id = $params['ascii_id'];
+		$tag_ascii_id = $params['tag_ascii_id'];
 		$tag_item_id = $params['tag_item_id'];
 
 		$t = new Dase_Template;
-		//THIS script is protected by eid auth, but how to protect restricted
-		//atom and xml documents that feed it? DASe requests AND serves the docs
-		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id.'?token='.md5(Dase::getConfig('token').$u->eid)));
+		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id,$u->eid,$u->http_pwd)));
 		Dase::display($t->fetch('item/transform.tpl'));
 	}
 
