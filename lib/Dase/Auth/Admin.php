@@ -2,16 +2,19 @@
 
 class Dase_Auth_Admin
 {
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
-		if (!isset($params['eid'])) {
-			//in some cases (basic http auth), eid will not be in url
-			$params['eid'] = $_SERVER['PHP_AUTH_USER'];
-		}
-		if ($params['eid'] && isset($params['collection_ascii_id'])) {
+		if ('collection' == $type && isset($params['eid'])) {
 			$user = new Dase_User;
 			if ($user->eid == $params['eid'] && 
-				$user->checkAuth($params['collection_ascii_id'],'admin')) {
+				$user->checkCollectionAuth($params['collection_ascii_id'],'admin')) {
+					return true;
+				}
+		}
+		if ('tag' == $type && isset($params['eid'])) {
+			$user = new Dase_User;
+			if ($user->eid == $params['eid'] && 
+				$user->checkTagAuth($params['tag_ascii_id'],'admin')) {
 					return true;
 				}
 		}

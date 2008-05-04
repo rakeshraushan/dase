@@ -440,7 +440,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addElement('d:item_type',$this->item_type_ascii,$d)->setAttribute('d:label','Item Type');
 
 		foreach ($this->getMedia() as $med) {
-			$link = $entry->addLink($med->getLink(),'http://daseproject.org/relation/media/'.$med->size );
+			$link = $entry->addLink($med->getLink(),'http://daseproject.org/relation/media');
 			$link->setAttribute('d:height',$med->height);
 			$link->setAttribute('d:width',$med->width);
 			$link->setAttribute('type',$med->mime_type);

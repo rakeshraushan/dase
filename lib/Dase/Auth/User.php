@@ -2,11 +2,15 @@
 
 class Dase_Auth_User
 {
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
 		$user = new Dase_User();
-		if (isset($params['collection_ascii_id']) && $params['collection_ascii_id']) {
-			if ($user->checkAuth($params['collection_ascii_id'],'read')) {
+		if ('collection' == $type) {
+			if ($user->checkCollectionAuth($params['collection_ascii_id'],'read')) {
+				return true;
+			}
+		} elseif ('tag' == $type) {
+			if ($user->checkTagAuth($params['tag_ascii_id'],'read')) {
 				return true;
 			}
 		} else {

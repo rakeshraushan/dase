@@ -2,7 +2,7 @@
 
 class Dase_Auth_Eid
 {
-	public function authorize($params)
+	public function authorize($params,$type)
 	{
 		if (isset($params['eid']) && $params['eid']) {
 			$user = new Dase_User();

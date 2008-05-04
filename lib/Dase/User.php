@@ -28,6 +28,9 @@ class Dase_User
 
 	public function __construct()
 	{
+
+		//will only set db_user if there is a valid user cookie
+
 		//check for current user (look to the cookie)
 		$eid = Dase_User::getCurrent();
 		if ($eid) {
@@ -43,6 +46,8 @@ class Dase_User
 			$eid = $eid['eid'];
 		}
 
+		$eid = strtolower($eid);
+
 		//caches instance in registry
 		$user = Dase_Registry::get($eid.'_user');
 		if (!$user) {
@@ -52,7 +57,7 @@ class Dase_User
 				WHERE lower(eid) = ?
 				";	
 			$sth = $db->prepare($sql);
-			if ($sth->execute(array(strtolower($eid)))) {
+			if ($sth->execute(array($eid))) {
 				$user = new Dase_DBO_DaseUser($sth->fetch());
 			}
 			Dase_Registry::set($eid.'_user',$user);
@@ -93,33 +98,19 @@ class Dase_User
 		}
 	}
 
-	static function check_credentials($username,$password)
+	function checkCollectionAuth($collection_ascii_id,$auth_level)
 	{
-		$auth_users = array();
-		if (md5($username . Dase::getConfig('token')) == $password) {
-			$user = new Dase_DBO_DaseUser();
-			//need to account for case here!!!!!!!!!!!!!!!!!
-			//needs to be case-insensitive
-			$user->eid = $username;
-			if ($user->findOne()) {
-				return $user;
-			}
-		}
-		return false;
-	}
-
-	function checkAuth($collection_ascii_id = null,$auth_level)
-	{
-		if (!$collection_ascii_id || !isset($this->db_user)) {
+		if (!isset($this->db_user)) {
 			return false;
 		}
-		if ('read' == $auth_level) {
-			// we can short circuit if curr coll is public
-			// which is good, since this will be the case MOST
-			// of the time
-			if (Dase_DBO_Collection::get($collection_ascii_id)->is_public) {
-				return true;
-			}
+		$coll = Dase_DBO_Collection::get($collection_ascii_id);
+		if (!$coll) {
+			return false;
+		}
+		//todo: see what postgres considers 'is_public' when false
+		//if it's 'f' this won't work
+		if ('read' == $auth_level && $coll->is_public) {
+			return true;
 		}
 		$cm = new Dase_DBO_CollectionManager; 
 		$cm->collection_ascii_id = $collection_ascii_id;
@@ -137,6 +128,27 @@ class Dase_User
 			} else {
 				return false;
 			}
+		} else {
+			return false;
+		}	
+	}
+
+	function checkTagAuth($tag_ascii_id,$auth_level)
+	{
+		if (!isset($this->db_user)) {
+			return false;
+		}
+		$tag = Dase_DBO_Tag::get($tag_ascii_id);
+		if (!$tag) {
+			return false;
+		}
+		//todo: see what postgres considers 'is_public' when false
+		//if it's 'f' this won't work
+		if ('read' == $auth_level && $tag->is_public) {
+			return true;
+		} 
+		if ($tag->dase_user_id == $this->db_user->id) {
+			return true;
 		} else {
 			return false;
 		}	
