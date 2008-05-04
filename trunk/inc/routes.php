@@ -54,6 +54,10 @@ $routes['attribute'] = array(
 		'uri_template' => 'collection/{collection_ascii_id}/attribute/{attribute_ascii_id}',
 		'auth' => 'none',
 	),
+	'attributeListAsAtom' =>    array (
+		'uri_template' => 'atom/attributes',
+		'auth' => 'none',
+	),
 );
 
 /*

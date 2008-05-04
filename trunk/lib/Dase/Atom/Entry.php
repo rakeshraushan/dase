@@ -112,4 +112,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getAtomElementText('content');
 	}
 
+	function getId() 
+	{
+		return $this->getAtomElementText('id');
+	}
 }

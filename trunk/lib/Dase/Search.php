@@ -122,7 +122,7 @@ class Dase_Search
 		 * test~title=farewell+to+a
 		 *
 		 * match item_type:
-		 * type=test:picture
+		 * type=test:picture 
 		 */
 
 		if (isset($url_params['c'])) {

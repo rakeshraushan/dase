@@ -3,6 +3,16 @@
 class AttributeHandler
 {
 
+	public static function attributeListAsAtom($params) 
+	{
+		$atts = new Dase_DBO_Attribute;
+		$feed = new Dase_Atom_Feed;
+		foreach ($atts->find() as $att) {
+			$att->injectAtomEntryData($feed->addEntry(),$att->getCollection());
+		}
+		Dase::display($feed->asXml());
+	}
+
 	public static function attributeValuesAsHtml($params)
 	{
 		$att = $params['attribute_ascii_id'];
