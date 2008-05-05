@@ -1,3 +1,12 @@
+2008-05-04 19:25:04 
+
+the Dase_Atom libraries
+have essentially replaced the
+need for alternative persistence models
+(Atom *is* the alternative persistence model)
+Feed::load represents xml model
+Feed::retrieve represents remote model
+
 2008-04-10 08:01:06 
 
 current code organization:

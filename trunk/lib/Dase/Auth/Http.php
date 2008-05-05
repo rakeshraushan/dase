@@ -32,22 +32,26 @@ class Dase_Auth_Http
 			//note that a user would NOT have been able to even *discover* the password
 			//for the auth level they seek unless they had that auth level (determined
 			//with a cookie-based discovery transaction (with caveats for the limitations
-			//of *any* authorization scheme, blah, blah...) 
+			//of *any* authorization scheme, blah, blah...)
+			//
+			//the point of this http auth is really just to establish that 
+			//this eid (http_user) is authentic. Individual actions still
+			//need to be authorized using that eid 
 
+			$passwords = array();
 			if ('collection' == $type) {
-				$coll = $params['collection_ascii_id'];
-				$read_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'read'),0,8);
-				$write_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'write'),0,8);
-				$admin_pw = substr(md5(Dase::getConfig('token').$eid.$coll.'admin'),0,8);
+				foreach (array('read','write','admin') as $level) {
+					$passwords[] = Dase_DBO_Collection::getHttpPassword($params['collection_ascii_id'],$eid,$level);
+				}
 			}
 			if ('tag' == $type) {
-				$tag = $params['tag_ascii_id'];
-				$read_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'read'),0,8);
-				$write_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'write'),0,8);
-				$admin_pw = substr(md5(Dase::getConfig('token').$eid.$tag.'admin'),0,8);
+				foreach (array('read','write','admin') as $level) {
+					$passwords[] = Dase_DBO_Tag::getHttpPassword($params['tag_ascii_id'],$eid,$level);
+				}
 			}
-			if (in_array($_SERVER['PHP_AUTH_PW'],array($read_pw,$write_pw,$admin_pw,'skeletonkey'))) {
+			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {
 				Dase_Registry::set('eid',$eid); //since handler needs to re-check auth_level
+				//Dase::log('standard','authenticated '.$eid.' with password '.$_SERVER['PHP_AUTH_PW']);
 				return;
 			}
 		}
@@ -56,6 +60,5 @@ class Dase_Auth_Http
 		echo "sorry, authorized users only";
 		exit;
 	}
-
 }
 

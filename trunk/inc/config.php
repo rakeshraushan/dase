@@ -25,12 +25,8 @@ $conf['ppd_token'] = "
 	and it's Easter time, too." 
 	. date('Ymd',time()); //changes every day
 
-	
 //see also media/config.php
 $conf['path_to_media'] = '/mnt/www-data/dase/media/uploaded_files';
-
-//model can be db, xml, or remote
-$conf['model'] = 'db';
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';
@@ -43,10 +39,6 @@ $conf['db']['host'] = 'localhost';
 $conf['db']['name'] = 'dase';
 $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
-
-$conf['remote']['laits']['url'] = 'http://dase.laits.utexas.edu/api/v1/';
-$conf['remote']['laits']['username'] = 'http://dase.laits.utexas.edu/api/v1/';
-$conf['remote']['laits']['password'] = 'http://dase.laits.utexas.edu/api/v1/';
 
 //local_config CAN OVERRIDE any of the above values
 //this is useful for build scripts to hold db

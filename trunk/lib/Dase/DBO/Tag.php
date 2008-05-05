@@ -27,16 +27,23 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $sth;
 	}
 
-	public static function get($ascii_id)
+	public static function get($ascii_id,$eid)
 	{
+		$user = Dase_User::get($eid);
 		$tag = new Dase_DBO_Tag;
 		$tag->ascii_id = $ascii_id;
+		$tag->dase_user_id = $user->id;
 		$tag->findOne();
 		if ($tag->id) {
 			return $tag;
 		} else {
 			return false;
 		}
+	}
+
+	public static function getHttpPassword($ascii_id,$eid,$auth_level)
+	{
+		return substr(md5(Dase::getConfig('token').$eid.$ascii_id.$auth_level),0,8);
 	}
 
 	function getItemCount()

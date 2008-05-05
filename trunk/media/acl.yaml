@@ -1,0 +1,496 @@
+---
+ica: 
+  djadja: none
+  atr253: superuser
+  lrr375: manager
+  criswill: manager
+  apr8to: manager
+  achoate: none
+  pk2268: manager
+  mrw1964: superuser
+  pkeane: superuser
+  carterjc: manager
+  bergd: manager
+  jcn55: manager
+tbh: 
+  slb: metadata
+  soods: superuser
+  tenbarge: superuser
+  escutiac: superuser
+  pkeane: superuser
+kerkhoff: 
+  jbk: superuser
+  carrbm1: superuser
+  gloydrl: none
+  pkeane: superuser
+  bkr347: none
+sayers: 
+  sayersmr: superuser
+  tenbarge: none
+  pkeane: superuser
+test: 
+  welchle2: superuser
+  garzadr6: superuser
+  mjs2768: superuser
+  smn65: superuser
+  hensonjr: superuser
+  pitpat: superuser
+  nixon358: superuser
+  pkeane: superuser
+  cygnus83: superuser
+  wardjr6: superuser
+canzoni: 
+  rhodess: superuser
+  tenbarge: none
+  ie63: superuser
+  arthurhc: none
+  hf4847: none
+  aci55: none
+  kec352: none
+  cem536: none
+  dl654: none
+  jmd678: none
+  ckr226: none
+  klp429: none
+  jmm2634: none
+  amw596: none
+  az436: none
+  wtb228: none
+  lda276: none
+  jrp822: none
+  bpw: none
+  mss599: none
+  epayan: none
+  ruizcr: none
+  lapatram: none
+  sem538: none
+  jam2625: none
+  crf273: none
+  mcg394: none
+  cla377: none
+  jmg965: none
+  kar436: none
+  jmp727: none
+  mjg542: none
+  ch2525: none
+  dcc365: none
+  bs2736: none
+  dml458: none
+  mmb722: none
+  frizzia: none
+  pkeane: superuser
+dase_todo: 
+  timf: superuser
+  tenbarge: superuser
+  rhodess: superuser
+  mouserak: superuser
+  pkeane: superuser
+biodoc: 
+  rhodess: superuser
+  tenbarge: none
+  xzy: metadata
+  ks3232: manager
+  pkeane: superuser
+friesen: 
+  tenbarge: none
+  drboin: superuser
+  sjf365: superuser
+  pkeane: superuser
+germans_from_russia: 
+  tenbarge: none
+  pkeane: superuser
+anthropology: 
+  tenbarge: none
+  pstrong: superuser
+  coupalmb: superuser
+  pkeane: superuser
+constitution: 
+  tenbarge: none
+  pkeane: superuser
+tarl: 
+  tenbarge: none
+  pkeane: superuser
+spanish: 
+  tenbarge: none
+  pkeane: superuser
+mes: 
+  tenbarge: none
+  pkeane: superuser
+germanic: 
+  tenbarge: none
+  pkeane: superuser
+  k.arens: superuser
+american_west: 
+  tenbarge: none
+  pkeane: superuser
+costume: 
+  tenbarge: none
+  sem677: superuser
+  rhodess: superuser
+  kdb697: superuser
+  snl82: superuser
+  wellscl1: superuser
+  pkeane: superuser
+english: 
+  tenbarge: none
+  bji65: superuser
+  ffw: superuser
+  ebc: manager
+  pkeane: superuser
+vrc: 
+  tenbarge: none
+  sk4543: superuser
+  jbk: manager
+  pkeane: superuser
+asian_studies: 
+  tenbarge: none
+  sayersmr: superuser
+  cec657: superuser
+  pkeane: superuser
+  hvo: superuser
+texpol_utopia: 
+  tenbarge: none
+  timf: superuser
+  pkeane: superuser
+video_catalog: 
+  tenbarge: none
+  garzadr6: superuser
+  hensonjr: superuser
+  pkeane: superuser
+zamora: 
+  tenbarge: none
+  pkeane: superuser
+twinam: 
+  tenbarge: none
+  pkeane: superuser
+nicolopulos: 
+  tenbarge: none
+  nicolojr: superuser
+  pkeane: superuser
+dase_help: 
+  tenbarge: superuser
+  rhodess: superuser
+  pkeane: superuser
+american_politics: 
+  tenbarge: none
+  timf: superuser
+  pkeane: superuser
+gov310: 
+  tenbarge: none
+  timf: superuser
+  pkeane: superuser
+plan2: 
+  mtv62: superuser
+  dillman: superuser
+  pkeane: superuser
+  did73: superuser
+  kme345: superuser
+texpol_image: 
+  timf: superuser
+  hensonjr: superuser
+  dg925: manager
+  wardjr6: manager
+  wellscl1: manager
+  welchle2: superuser
+  pkeane: superuser
+  ebc65: manager
+tenbarge: 
+  tenbarge: superuser
+  pkeane: superuser
+early_american_history: 
+  olwellra: superuser
+  eastmanc: superuser
+  jjh642: superuser
+  pkeane: superuser
+  millergh: none
+mouserak: 
+  mouserak: superuser
+  pkeane: superuser
+atr253: 
+  atr253: superuser
+  mooretj: none
+  pkeane: superuser
+vvaliav: 
+  vvaliav: superuser
+  pkeane: superuser
+psychology_video: 
+  jlh51373: superuser
+  llorrac: superuser
+  chawk: superuser
+  hensonjr: superuser
+  garzadr6: superuser
+  pkeane: superuser
+soa_vrc: 
+  es: superuser
+  rankincm: superuser
+  kah2277: superuser
+  seh429: superuser
+  rbc323: superuser
+  pkeane: superuser
+ancient_meso: 
+  lt7662: superuser
+  valdezf: superuser
+  pkeane: superuser
+  sms2249: superuser
+  apw227: superuser
+  scr298: superuser
+  spk56: superuser
+  vm962: superuser
+efossils: 
+  lt7662: superuser
+  apw227: superuser
+  soods: superuser
+  pkeane: superuser
+  sms2249: superuser
+  spk56: superuser
+  scr298: superuser
+  jbk: none
+  vm962: superuser
+  pjc58: superuser
+asl: 
+  escutiac: superuser
+  pkeane: superuser
+mooretj: 
+  wellscl1: superuser
+  mooretj: superuser
+  mouserak: superuser
+  atr253: none
+  pkeane: superuser
+suicide_terrorism: 
+  escutiac: superuser
+  soods: superuser
+  timf: superuser
+  ap2976: manager
+  pkeane: superuser
+eskeletons: 
+  apw227: superuser
+  lt7662: superuser
+  pkeane: superuser
+  scr298: superuser
+pk2268: 
+  pk2268: superuser
+  pkeane: manager
+ekids: 
+  lt7662: superuser
+  apw227: superuser
+  pkeane: superuser
+  scr298: superuser
+mjbailey: 
+  mjbailey: superuser
+  pkeane: superuser
+cup: 
+  timf: superuser
+  ebc65: superuser
+  tenbarge: superuser
+  soods: superuser
+  escutiac: superuser
+  pkeane: superuser
+facilities: 
+  tenbarge: superuser
+  pkeane: superuser
+textiles: 
+  rhodess: superuser
+  mm485: superuser
+  smb998: superuser
+  pkeane: superuser
+  delocadl: superuser
+aem246: 
+  aem246: superuser
+  pkeane: superuser
+bsls: 
+  pitpat: superuser
+  mr2379: superuser
+  harpergh: superuser
+  hensonjr: superuser
+  timf: superuser
+  pkeane: superuser
+timf: 
+  timf: superuser
+  pkeane: superuser
+rbc323: 
+  rbc323: superuser
+  maw2634: superuser
+  acp537: none
+  adamdk1: none
+  aib223: none
+  ajk484: none
+  arf274: none
+  bkc283: none
+  chapaja: none
+  clcdrum: none
+  harpergk: none
+  jg185004: none
+  jjm969: none
+  jorgebl: none
+  jrh2866: none
+  kap594: none
+  kateb: none
+  kej97: none
+  llg549: none
+  lse224: none
+  murraycc: none
+  raf15: none
+  sb5928: none
+  sjm726: none
+  wesch: none
+  wmo72: none
+  tt2425: none
+  pkeane: superuser
+soa_india: 
+  es: superuser
+  seh429: superuser
+  rbc323: superuser
+  pkeane: superuser
+dnr266: 
+  dnr266: superuser
+  pkeane: superuser
+  wab536: manager
+texpol_cms: 
+  tm9635: superuser
+  hensonjr: superuser
+  timf: superuser
+  pkeane: superuser
+akohl: 
+  sk4543: superuser
+  es: superuser
+  lschwart: superuser
+  pkeane: superuser
+eng: 
+  gloydrl: superuser
+  pkeane: superuser
+classics: 
+  pkeane: superuser
+dase_scanning: 
+  pkeane: superuser
+keanepj: 
+  pkeane: superuser
+american_photography: 
+  pkeane: superuser
+  wardjr6: superuser
+  hoelsch: superuser
+chinese_506: 
+  pkeane: superuser
+chinese_507: 
+  pkeane: superuser
+french_312n: 
+  pkeane: superuser
+french_322e: 
+  pkeane: superuser
+germanic_multimedia: 
+  pkeane: superuser
+  k.arens: superuser
+classics_test: 
+  pkeane: superuser
+  atr253: superuser
+  wittcm: superuser
+  tenbarge: superuser
+  cwshelm: superuser
+ccc: 
+  pkeane: superuser
+neubert: 
+  pkeane: superuser
+  neubert: superuser
+llorrac: 
+  pkeane: superuser
+  llorrac: superuser
+smallda: 
+  pkeane: superuser
+  smallda: superuser
+dellanto: 
+  pkeane: superuser
+  dellanto: superuser
+salcedo: 
+  pkeane: superuser
+  salcedo: superuser
+mdj325: 
+  pkeane: superuser
+  mdj325: superuser
+ddd: 
+  pkeane: superuser
+eee: 
+  pkeane: superuser
+wileydc: 
+  pkeane: superuser
+  wileydc: superuser
+medieval: 
+  pkeane: superuser
+  scs749: superuser
+  jholwell: superuser
+  av4487: metadata
+  newmanmg: none
+  akf7035: none
+  wellscl1: superuser
+cumbojd: 
+  pkeane: superuser
+  cumbojd: superuser
+  jbk: superuser
+  giavedon: superuser
+  grickle: none
+  kn: superuser
+pktodo_archive: 
+  pkeane: superuser
+wittcm: 
+  pkeane: superuser
+blanton: 
+  pkeane: superuser
+  sk4543: superuser
+brucerg: 
+  pkeane: superuser
+  brucerg: superuser
+halekj: 
+  pkeane: superuser
+  halekj: superuser
+  jbk: superuser
+  weemsbj: superuser
+textiles_backup: 
+  pkeane: superuser
+  smb998: superuser
+sk4543: 
+  pkeane: superuser
+  sk4543: superuser
+ut: 
+  pkeane: superuser
+  jbk: superuser
+  arc254: superuser
+  hymelam1: superuser
+amazonian_survey: 
+  pkeane: superuser
+  ple92: superuser
+  bkr264: superuser
+  dai66: superuser
+  dj584: superuser
+  gf283: superuser
+utunes: 
+  pkeane: superuser
+  jbk: superuser
+  bkr347: manager
+video_production: 
+  pkeane: superuser
+  hensonjr: superuser
+  soods: superuser
+  welchle2: superuser
+  garzadr6: superuser
+arabic_dialects: 
+  pkeane: superuser
+  ebc65: superuser
+  soods: manager
+  kb6796: manager
+  ktk254: manager
+rm7233: 
+  pkeane: superuser
+  rm7233: superuser
+  wellscl1: superuser
+south_asia: 
+  pkeane: superuser
+  da727: superuser
+mjc228: 
+  pkeane: superuser
+  sk4543: superuser
+yoruba: 
+  pkeane: superuser
+  wardjr6: superuser
+  wellscl1: superuser
+  garzadr6: superuser
+plan2_multimedia: 
+  pkeane: superuser
+  mtv62: superuser

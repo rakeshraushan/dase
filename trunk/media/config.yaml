@@ -1,0 +1,79 @@
+---
+aiff: 
+  access_flag: 2
+  mime_type: audio/x-aiff
+css: 
+  access_flag: 0
+  mime_type: text/css
+deleted: 
+  access_flag: 2
+  mime_type: application/octet-stream
+doc: 
+  access_flag: 1
+  mime_type: application/msword
+full: 
+  access_flag: 1
+  mime_type: image/jpeg
+gif: 
+  access_flag: 1
+  mime_type: image/gif
+html: 
+  access_flag: 0
+  mime_type: text/html
+jpeg: 
+  access_flag: 1
+  mime_type: image/jpeg
+large: 
+  access_flag: 1
+  mime_type: image/jpeg
+medium: 
+  access_flag: 1
+  mime_type: image/jpeg
+midi: 
+  access_flag: 1
+  mime_type: application/octet-stream
+mp3: 
+  access_flag: 2
+  mime_type: audio/mpeg
+pdf: 
+  access_flag: 1
+  mime_type: application/pdf
+png: 
+  access_flag: 1
+  mime_type: image/png
+quicktime: 
+  access_flag: 2
+  mime_type: video/quicktime
+quicktime_stream: 
+  access_flag: 1
+  mime_type: video/quicktime
+raw: 
+  access_flag: 2
+  mime_type: application/octet-stream
+small: 
+  access_flag: 1
+  mime_type: image/jpeg
+text: 
+  access_flag: 0
+  mime_type: text/plain
+thumbnail: 
+  access_flag: 0
+  mime_type: image/jpeg
+thumbnails: 
+  access_flag: 0
+  mime_type: image/jpeg
+tiff: 
+  access_flag: 1
+  mime_type: image/tiff
+viewitem: 
+  access_flag: 0
+  mime_type: image/jpeg
+wav: 
+  access_flag: 2
+  mime_type: audio/x-wav
+xml: 
+  access_flag: 0
+  mime_type: application/xml
+xslt: 
+  access_flag: 0
+  mime_type: application/xslt+xml
