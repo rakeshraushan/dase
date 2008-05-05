@@ -28,18 +28,18 @@ class Dase_Auth_Exception extends Exception {
 
 class Dase_Auth
 {
-
 	public static function authorize($auth_type,$params) 
 	{
 		//auth type comes from routes.php
 		//and there needs to be a corresponding Auth class.
-		//Depends on whether params have collection_ascii_id 
+		//It depends on whether params have collection_ascii_id 
 		//or tag_ascii_id whether it authorizes for collection
 		//or tag.  If param has *both* ascii ids, request is rejected
+		//(seems like a hack -- probably could rework whole auth system)
+		
 		$class_name = 'Dase_Auth_'.ucfirst($auth_type);
 
-		$type = 'default';
-
+		//can be extended
 		if (isset($params['collection_ascii_id']) && isset($params['tag_ascii_id'])) {
 			return false;
 		} elseif (isset($params['collection_ascii_id'])) {
@@ -47,7 +47,7 @@ class Dase_Auth
 		} elseif (isset($params['tag_ascii_id'])) {
 			$type = 'tag';
 		} else {
-			return false;
+			$type = 'default';
 		}
 
 		if (class_exists($class_name)) {

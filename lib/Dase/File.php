@@ -22,7 +22,6 @@
 abstract class Dase_File
 {
 	private static $types_map = array(
-		//store in xml??
 		'image/jpeg' => array('size' => 'jpeg', 'ext' => '.jpg','class'=>'Dase_File_Image'),
 		'image/gif' => array('size' => 'gif', 'ext' => '.gif','class'=>'Dase_File_Image'),
 		'image/png' => array('size' => 'png', 'ext' => '.png','class'=>'Dase_File_Image'),

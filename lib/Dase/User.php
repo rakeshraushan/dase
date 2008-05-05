@@ -138,7 +138,7 @@ class Dase_User
 		if (!isset($this->db_user)) {
 			return false;
 		}
-		$tag = Dase_DBO_Tag::get($tag_ascii_id);
+		$tag = Dase_DBO_Tag::get($tag_ascii_id,$this->db_user->eid);
 		if (!$tag) {
 			return false;
 		}

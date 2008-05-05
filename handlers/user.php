@@ -144,21 +144,21 @@ class UserHandler
 
 	public static function getHttpPassword($params) 
 	{
-		//tag_ascii_ids are not unique
-		//but that will not matter since
-		//eid is included in hash
+		//this handler required eid authentication,
+		//meaning the url eid matches the cookie eid
 
+		//first, is *this* user authorized to do what
+		//they are asking for an http password to do.
 		if (Dase_Auth::authorize($params['auth_level'],$params)) {
-			$eid = $params['eid'];
+			//If so, generate password
+			$password = '';
 			if (isset($params['collection_ascii_id'])) {
-				$ascii_id = $params['collection_ascii_id'];
+				$password = Dase_DBO_Collection::getHttpPassword($params['collection_ascii_id'],$params['eid'],$params['auth_level']);
 			} elseif (isset($params['tag_ascii_id'])) {
-				$ascii_id = $params['tag_ascii_id'];
+				$password = Dase_DBO_Tag::getHttpPassword($params['tag_ascii_id'],$params['eid'],$params['auth_level']);
 			} else {
 				Dase::error(401);
 			}
-			$auth_level = $params['auth_level'];
-			$password = substr(md5(Dase::getConfig('token').$eid.$ascii_id.$auth_level),0,8);
 			header("Content-Type: text/plain; charset=utf-8");
 			echo $password;
 			exit;
