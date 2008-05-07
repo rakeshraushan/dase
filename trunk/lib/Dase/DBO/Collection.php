@@ -112,7 +112,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setTitle('DASe Collections');
 		$feed->setId(APP_ROOT);
 		$feed->setFeedType('collection_list');
-		$feed->setUpdated(Dase_DBO_Collection::getLastCreated());
+		//todo:fix this to *not* simply be a time stamp
+		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink(APP_ROOT.'/atom','self');
 		foreach ($cs as $coll) {
@@ -392,7 +393,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$id = $this->id ? $this->id : $id;
 		$item = new Dase_DBO_Item;
-		$item->collection_id = $id;
 		$item->orderBy('updated DESC');
 		$item->setLimit(1);
 		$item->findOne();

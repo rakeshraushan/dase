@@ -42,6 +42,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$this->dom->loadXML($xml);
 			$this->root = $this->dom;
 		} else {
+			//meaning this a brand new (no xml yet) feed:
 			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
 		}
 	}
@@ -65,6 +66,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		return self::_domify($xml);
 	}
 
+	public function validate() {
+		return $this->dom->relaxNGValidate(DASE_PATH.'/atom.rng');
+	}
+
 	public static function load($xml_file) {
 		$xml = file_get_contents($xml_file);
 		return self::_domify($xml);
@@ -74,6 +79,8 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXML($xml);
+		//note: dom is used *only* to get feed type. 
+		//feed constuctor creates dom which will represent feed
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/feedtype' == $el->getAttribute('scheme')) {
 				$feedtype = $el->getAttribute('term');

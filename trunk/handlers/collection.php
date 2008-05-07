@@ -41,7 +41,19 @@ class CollectionHandler
 	public static function listAll($params) 
 	{
 		$tpl = new Dase_Template();
-		$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
+		$feed = Dase_Atom_Feed::retrieve(DASE_URL.'/atom');
+		//$er = error_reporting(E_ALL^E_NOTICE);
+		$er = error_reporting(E_ERROR);
+		if ($feed->validate()) {
+			//print "valid!";
+		} else {
+			print "not valid!";
+			exit;
+		}
+		error_reporting($er);
+
+		$tpl->assign('collections',$feed);
+		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
 		Dase::display($tpl->fetch('collection/list.tpl'));
 	}
 

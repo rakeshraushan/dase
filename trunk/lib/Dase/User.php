@@ -67,6 +67,12 @@ class Dase_User
 
 	public static function getCurrent()
 	{
+		//covers case when only http auth is
+		//being used and thus no cookie
+		$eid = Dase_Registry::get('eid');
+		if  ($eid) {
+			return $eid;
+		}
 		//attempt to validate cookie
 		//since token changes every day, it'll be
 		//invalidated overnight
