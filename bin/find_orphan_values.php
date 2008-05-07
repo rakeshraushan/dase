@@ -44,7 +44,7 @@ while ($row = $sth->fetch()) {
 			} elseif ('all' == $read) {
 				$deleted++;
 				print "\ndeleting {$row['value_text']} (deleted: $deleted, skipped: $skipped, [total:$total])\n";
-				$doomed = new Dase_DB_Value;
+				$doomed = new Dase_DBO_Value;
 				$doomed->load($row['id']);
 				if ($doomed->value_text) {
 					$doomed->delete();
@@ -54,7 +54,7 @@ while ($row = $sth->fetch()) {
 			} else {
 				$deleted++;
 				print "\ndeleting {$row['value_text']} (deleted: $deleted, skipped: $skipped, [total:$total])\n";
-				$doomed = new Dase_DB_Value;
+				$doomed = new Dase_DBO_Value;
 				$doomed->load($row['id']);
 				if ($doomed->value_text) {
 					$doomed->delete();
@@ -65,7 +65,7 @@ while ($row = $sth->fetch()) {
 	} else {
 		$deleted++;
 		print "\ndeleting {$row['value_text']} (deleted: $deleted, skipped: $skipped, [total:$total])\n";
-		$doomed = new Dase_DB_Value;
+		$doomed = new Dase_DBO_Value;
 		$doomed->load($row['id']);
 		if ($doomed->value_text) {
 			$doomed->delete();

@@ -404,13 +404,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$d = "http://daseproject.org/ns/1.0";
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
+		//I think this can be simplified when DASe 1.0 is retired
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {
 			$updated = $this->updated;
 		}
+		if (is_numeric($this->created)) {
+			$created = date(DATE_ATOM,$this->created);
+		} else {
+			$created = $this->created;
+		}
 		$entry->setTitle($this->getTitle());
 		$entry->setUpdated($updated);
+		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		if (!$this->item_type) {

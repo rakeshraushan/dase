@@ -51,6 +51,7 @@ class Dase_Auth_Http
 			}
 			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {
 				Dase_Registry::set('eid',$eid); //since handler needs to re-check auth_level
+				//and will *not* be able to verify eid based on cookie
 				//Dase::log('standard','authenticated '.$eid.' with password '.$_SERVER['PHP_AUTH_PW']);
 				return;
 			}

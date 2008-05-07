@@ -25,8 +25,8 @@ $routes['atompub'] = array (
 	),
 	'listItemMedia' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/media',
-		'auth' => 'http',
-		//'auth' => 'none',
+		//'auth' => 'http',
+		'auth' => 'none',
 		'method' => 'get',
 		'mime' => 'application/atom+xml',
 	),

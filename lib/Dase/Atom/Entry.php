@@ -77,14 +77,14 @@ class Dase_Atom_Entry extends Dase_Atom
 		$content->setAttribute('type',$mime);
 	}
 
-	function setPublished()
+	function setPublished($text)
 	{
 		if ($this->published_is_set) {
 			throw new Dase_Atom_Exception('published is already set');
 		} else {
 			$this->published_is_set = true;
 		}
-		//finish!!!!!!!!!!
+		$published = $this->addElement('published',$text);
 	}
 
 	function setSource()

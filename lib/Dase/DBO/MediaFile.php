@@ -115,8 +115,36 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		}
 	}
 
+	public function getMetadata($term = '')
+	{
+		$metadata = array();
+		$bound_params = array();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT a.term, a.label,v.text,v.id
+			FROM media_attribute a, media_value v
+			WHERE v.media_file_id = ?
+			AND v.media_attribute_id = a.id
+			ORDER BY a.sort_order,v.text
+			";
+		$bound_params[] = $this->id;
+		if ($term) {
+			$sql .= "
+				AND a.term = ?
+				";
+			$bound_params[] = $att_ascii_id;
+		}
+		$st = $db->prepare($sql);
+		$st->execute($bound_params);
+		while ($row = $st->fetch()) {
+			$metadata[] = $row;
+		}
+		return $metadata;
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
+		$d = "http://daseproject.org/ns/1.0";
 		//this function assumes p_collection_ascii_id & p_serial_number are set
 		$item = $this->getItem();
 		$entry->setId($this->getLink());
@@ -126,6 +154,12 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		//todo: add 'updated' column to media_file table
 		$entry->setUpdated($this->updated);
 		$entry->setSummary('');
+
+		foreach ($this->getMetadata() as $row) {
+			//php dom will escape text for me here....
+			$meta = $entry->addElement('d:'.$row['term'],$row['text'],$d);
+			$meta->setAttribute('d:label',$row['label']);
+		}
 
 		//todo: atompub edit & edit-media links
 		$edit_media_url = APP_ROOT .'/edit-media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/media/'.$this->size;
