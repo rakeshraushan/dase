@@ -1,7 +1,7 @@
 <?php
 class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 {
-	function __construct($dom = null,$root = null)
+	function __construct($dom=null,$root=null)
 	{
 		parent::__construct($dom,false,$root);
 	}

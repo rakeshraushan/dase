@@ -17,12 +17,6 @@ $routes['atompub'] = array (
 		'method' => 'get',
 		'mime' => 'application/atom+xml',
 	),
-	'createCollectionEntry' =>    array (
-		'uri_template' => 'edit/{collection_ascii_id}',
-		'auth' => 'http',
-		'method' => 'post',
-		'mime' => 'application/atom+xml',
-	),
 	'listItemMedia' =>    array (
 		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/media',
 		//'auth' => 'http',
@@ -45,6 +39,33 @@ $routes['atompub'] = array (
 		'uri_template' => 'service/{collection_ascii_id}',
 		'auth' => 'http',
 		'mime' => 'application/atomsvc+xml',
+	),
+	'validate' => array (
+		'uri_template' => 'validate/{collection_ascii_id}',
+		'auth' => 'http',
+		'method' => 'post',
+		'mime' => 'text/plain',
+	),
+	'getItem' =>    array (
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
+		'auth' => 'http',
+		'mime' => 'application/atom+xml',
+	),
+	'createItem' =>    array (
+		'uri_template' => 'edit/{collection_ascii_id}',
+		'auth' => 'http',
+		'method' => 'post',
+		'mime' => 'application/atom+xml',
+	),
+	'updateItem' => array (
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
+		'auth' => 'http',
+		'method' => 'put',
+	),
+	'deleteItem' => array (
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
+		'auth' => 'http',
+		'method' => 'delete',
 	),
 	'deleteMediaFile' =>    array (
 		'uri_template' => array(

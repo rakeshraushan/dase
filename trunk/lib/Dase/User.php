@@ -28,10 +28,7 @@ class Dase_User
 
 	public function __construct()
 	{
-
-		//will only set db_user if there is a valid user cookie
-
-		//check for current user (look to the cookie)
+		//check for current user (look to the cookie *or* registry for http_auth)
 		$eid = Dase_User::getCurrent();
 		if ($eid) {
 			$this->db_user = Dase_User::get($eid);

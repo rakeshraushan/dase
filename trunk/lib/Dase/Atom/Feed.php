@@ -66,10 +66,6 @@ class Dase_Atom_Feed extends Dase_Atom
 		return self::_domify($xml);
 	}
 
-	public function validate() {
-		return $this->dom->relaxNGValidate(DASE_PATH.'/atom.rng');
-	}
-
 	public static function load($xml_file) {
 		$xml = file_get_contents($xml_file);
 		return self::_domify($xml);

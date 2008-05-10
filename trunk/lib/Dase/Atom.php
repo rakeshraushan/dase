@@ -33,6 +33,7 @@ class Dase_Atom
 		'dc' => 'http://purl.org/dc/elements/1.1/',
 		'dcterms' => 'http://purl.org/dc/terms/',
 		'd' => 'http://daseproject.org/ns/1.0',
+		'gd' =>'http://schemas.google.com/g/2005',
 		'h' => 'http://www.w3.org/1999/xhtml',
 		'media' => 'http://search.yahoo.com/mrss/',
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',
@@ -46,6 +47,19 @@ class Dase_Atom
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
 		}
+	}
+
+	public function validate() {
+
+		//do not show non-fatal errors
+        $er = error_reporting(E_ERROR);
+
+		$bool = $this->dom->relaxNGValidate(DASE_PATH.'/atom.rng');
+
+		//back to original error reporting
+		error_reporting($er);
+
+		return $bool;
 	}
 
 	//convenience method for atom elements
@@ -236,6 +250,4 @@ class Dase_Atom
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();
 	}
-
-
 }

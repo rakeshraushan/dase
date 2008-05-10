@@ -1,5 +1,5 @@
 <?php
-class Dase_Atom_Pub extends Dase_Atom
+class Dase_Atom_Service extends Dase_Atom
 {
 	function __construct()
 	{
@@ -10,7 +10,7 @@ class Dase_Atom_Pub extends Dase_Atom
 
 	function addWorkspace($title)
 	{
-		$workspace = new Dase_Atom_Pub_Workspace($this->dom,$title);
+		$workspace = new Dase_Atom_Service_Workspace($this->dom,$title);
 		$this->root->appendChild($workspace->root);
 		return $workspace;
 	}
