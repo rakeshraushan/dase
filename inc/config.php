@@ -27,6 +27,7 @@ $conf['ppd_token'] = "
 
 //see also media/config.php
 $conf['path_to_media'] = '/mnt/www-data/dase/media/uploaded_files';
+$conf['graveyard'] = "/mnt/home/pkeane/dase_graveyard";
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';

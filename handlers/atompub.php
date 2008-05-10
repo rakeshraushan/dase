@@ -76,6 +76,13 @@ class AtompubHandler
 		Dase::display($item->mediaAsAtomFeed());
 	}
 
+	public static function getCollectionServiceDoc($params) 
+	{
+		Dase_Auth::authorize('read',$params);
+		$c = Dase_Collection::get($params);
+		Dase::display($c->getAtompubServiceDoc());
+	}
+
 	public static function getItemServiceDoc($params) 
 	{
 		Dase_Auth::authorize('read',$params);
@@ -83,11 +90,72 @@ class AtompubHandler
 		Dase::display($i->getAtompubServiceDoc());
 	}
 
-	public static function getCollectionServiceDoc($params) 
+	public static function getItem($params)
 	{
 		Dase_Auth::authorize('read',$params);
-		$c = Dase_Collection::get($params);
-		Dase::display($c->getAtompubServiceDoc());
+		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
+		if ($item) {
+			Dase::display($item->asAppMember());
+		} else {
+			Dase::error(401);
+		}
+	}
+
+	public static function updateItem($params)
+	{
+		Dase_Auth::authorize('write',$params);
+		$entry = Dase_Atom_Entry_MemberItem::load("php://input");
+		$metadata = "";
+		if ($entry->validate()) {
+			$item = $entry->replace($params);
+			header("HTTP/1.1 200 Ok");
+			exit;
+		} else {
+			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
+			Dase::error(422);
+		}
+	}
+
+	public static function validate($params)
+	{
+		$entry = Dase_Atom_Entry::load("php://input");
+		if ($entry->validate()) {
+			print "valid!";
+			exit;
+		} else {
+			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
+			Dase::error(422);
+		}
+	}
+
+	public static function createItem($params)
+	{
+		Dase_Auth::authorize('write',$params);
+		$entry = Dase_Atom_Entry_MemberItem::load("php://input",false);
+		$metadata = "";
+		if ($entry->validate()) {
+			$item = $entry->insert($params);
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/edit/".$params['collection_ascii_id']."/".$item->serial_number);
+			Dase::display($item->asAppMember());
+		} else {
+			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
+			Dase::error(422);
+		}
+	}
+
+	public static function deleteItem($params)
+	{
+		Dase_Auth::authorize('write',$params);
+		$doomed = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
+		if ($doomed) {
+			$doomed->expunge();
+			header("HTTP/1.1 200 Ok");
+			exit;
+		} else {
+			Dase::error(404);
+		}
 	}
 
 	public static function createMediaFile($params) 

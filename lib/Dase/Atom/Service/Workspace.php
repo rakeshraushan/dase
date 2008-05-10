@@ -1,5 +1,5 @@
 <?php
-class Dase_Atom_Pub_Workspace extends Dase_Atom_Pub
+class Dase_Atom_Service_Workspace extends Dase_Atom_Service
 {
 	function __construct($dom,$title)
 	{
@@ -11,7 +11,7 @@ class Dase_Atom_Pub_Workspace extends Dase_Atom_Pub
 
 	function addCollection($url,$title)
 	{
-		$collection = new Dase_Atom_Pub_Collection($this->dom,$url,$title);
+		$collection = new Dase_Atom_Service_Collection($this->dom,$url,$title);
 		$this->root->appendChild($collection->root);
 		return $collection;
 	}

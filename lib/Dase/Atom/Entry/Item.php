@@ -4,9 +4,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	protected $collection;
 	protected $collectionAsciiId;
 
-	function __construct($dom = null,$root = null)
+	function __construct($dom = null,$create_new = false,$root = null)
 	{
-		parent::__construct($dom,false,$root);
+		parent::__construct($dom,$create_new,$root);
 	}
 
 	function getItemId() 

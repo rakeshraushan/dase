@@ -8,16 +8,25 @@ class Dase_Atom_Entry extends Dase_Atom
 	protected $source_is_set;
 	protected $summary_is_set;
 
-	function __construct($dom=null,$create_new = true,$root = null)
+	//note: dom is the dom object and root is the root
+	//element of the document.  If this entry is part of
+	//a feed, then the root means the root of the feed. If
+	//this is a free-standing entry document, it means the
+	//'entry' element
+	
+	function __construct($dom=null,$create_new=true,$root=null)
 	{
 		if ($dom) {
 			$this->dom = $dom;
 			if ($create_new) {
-				$this->root = $dom->createElement('entry');
+				//used when *writing* a feed
+				//$this->root = $dom->createElement('entry');
+				$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 			} else {
+				//used when *reading* a feed
 				if ($root) {
 					$this->root = $root;
-				}
+				} 
 			}
 		} else {
 			//if no $dom is passed in, this will be a freestanding entry document
@@ -25,6 +34,14 @@ class Dase_Atom_Entry extends Dase_Atom
 			$this->dom = $dom;
 			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 		}
+	}
+
+	public static function load($xml_file) {
+		$xml = file_get_contents($xml_file);
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->loadXML($xml);
+		$entry = new Dase_Atom_Entry($dom,false);
+		return $entry;
 	}
 
 	function __get($var) {

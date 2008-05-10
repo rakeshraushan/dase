@@ -90,7 +90,20 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	}
 
 	function asAppCollection($start,$count=50) {
-		$feed = $this->getAtomFeed();
+		$feed = new Dase_Atom_Feed_AppCollection;
+		$feed->setTitle($this->collection_name);
+		if ($this->description) {
+			$feed->setSubtitle($this->description);
+		}
+		//todo:fix this to *not* simply be a time stamp
+		$feed->setUpdated(date(DATE_ATOM));
+		//$feed->setUpdated($this->getLastUpdated());
+		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
+		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
+		$feed->setId($this->getBaseUrl());
+		$feed->addAuthor();
+		$feed->addLink($this->getBaseUrl(),'alternate');
+		$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
 		$feed->addLink(APP_ROOT.'/edit/'.$this->ascii_id,'self');
 		foreach ($this->getItemIdRange($start,$count) as $item_id) {
 			$i = new Dase_DBO_Item;
@@ -377,13 +390,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			}
 			$item->status_id = 0;
 			$item->item_type_id = 0;
+			$item->created = date(DATE_ATOM);
+			$item->updated = date(DATE_ATOM);
 			$item->insert();
 			return $item;
 		} else {
 			$item->status_id = 0;
 			$item->item_type_id = 0;
+			$item->created = date(DATE_ATOM);
 			$item->insert();
 			$item->serial_number = sprintf("%09d",$item->id);
+			$item->updated = date(DATE_ATOM);
 			$item->update();
 			return $item;
 		}
@@ -499,11 +516,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	}
 
 	public function getAtompubServiceDoc() {
-		$app = new Dase_Atom_Pub;
-		$workspace = $app->addWorkspace($this->collection_name.' Workspace');
-		$items_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->ascii_id,$this->collection_name.' Items'); 
-		$items_coll->addAccept('application/atom+xml;type=entry');
-		return $app->asXml();
+		$svc = new Dase_Atom_Service;	
+		$svc->addWorkspace($this->collection_name.' Workspace')
+			->addCollection(APP_ROOT.'/edit/'.$this->ascii_id,$this->collection_name.' Items')
+			->addAccept('application/atom+xml;type=entry');
+		return $svc->asXml();
 	}
 
 }

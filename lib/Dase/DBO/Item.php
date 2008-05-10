@@ -326,6 +326,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function expunge()
 	{
+		$this->collection || $this->getCollection();
+		$graveyard = Dase::getConfig('graveyard');
+		$filename = $this->collection->ascii_id .'_'.$this->serial_number;
+		file_put_contents($graveyard.'/'.$filename,$this->asAtom());
+		
 		$this->deleteMedia();
 		$this->deleteValues();
 		$this->deleteSearchIndexes();
@@ -379,6 +384,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAppEntryData(Dase_Atom_Entry $entry)
 	{
+		$app = "http://www.w3.org/2007/app";
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		if (is_numeric($this->updated)) {
@@ -388,6 +394,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$entry->setTitle($this->getTitle());
 		$entry->setUpdated($updated);
+		$entry->setEdited($updated);
 		$entry->setSummary('');
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
@@ -493,6 +500,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}
 
+	function asAppMember()
+	{
+		$member = new Dase_Atom_Entry_MemberItem;
+		$member->setEdited($this->updated);
+		$this->injectAtomEntryData($member);
+		$member->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit');
+		$elem = $member->addElement('gd:feedLink',null,'http://schemas.google.com/g/2005');
+		$elem->setAttribute('rel','media');
+		$elem->setAttribute('href',APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media');
+		return $member->asXml();
+	}
+
 	function mediaAsAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;
@@ -511,7 +530,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getAtompubServiceDoc() {
 		$this->collection || $this->getCollection();
-		$app = new Dase_Atom_Pub;
+		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
 		$media_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
 		$media_coll->addAccept('image/*');

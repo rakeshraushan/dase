@@ -1,5 +1,5 @@
 <?php
-class Dase_Atom_Pub_Collection extends Dase_Atom_Pub
+class Dase_Atom_Service_Collection extends Dase_Atom_Service
 {
 	function __construct($dom,$url,$title)
 	{
