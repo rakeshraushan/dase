@@ -6,7 +6,8 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 {
 	public $attributes;
 
-	public static function get($ascii_id) {
+	public static function get($ascii_id) 
+	{
 		if (!$ascii_id) {
 			return false;
 		}
@@ -43,6 +44,11 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
+	}
+
+	function getAtts() {
+		//for lazy load from smarty (since there is an 'attributes' member
+		return $this->getAttributes();
 	}
 
 	function getAttributes()

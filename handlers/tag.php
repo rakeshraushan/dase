@@ -69,9 +69,7 @@ class TagHandler
 		$u = Dase_User::get($params);
 		$tag_ascii_id = $params['tag_ascii_id'];
 		$tag_item_id = $params['tag_item_id'];
-
 		$http_pw = Dase_DBO_Tag::getHttpPassword($tag_ascii_id,$u->eid,'read');
-
 		$t = new Dase_Template;
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id,$u->eid,$http_pw));
 		Dase::display($t->fetch('item/transform.tpl'));

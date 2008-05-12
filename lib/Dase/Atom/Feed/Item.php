@@ -6,9 +6,9 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	protected $collectionAsciiId;
 	protected $entry_dom = null;
 
-	function __construct($xml = null)
+	function __construct($dom = null)
 	{
-		parent::__construct($xml);
+		parent::__construct($dom);
 	}
 
 	function getFeedLink()
@@ -28,7 +28,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getTagType()
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/tag_type' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
@@ -36,7 +36,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	}
 
 	function getMedia() {
-		foreach ($this->dom->getElementsByTagName('link') as $el) {
+		foreach ($this->root->getElementsByTagName('link') as $el) {
 			if (strpos($el->getAttribute('rel'),'relation/media')) {
 				$file['href'] = $el->getAttribute('href');
 				$file['type'] = $el->getAttribute('type');
@@ -51,7 +51,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getMetadata() {
 		$metadata = array();
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
 			$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
 			$metadata[$dd->localName]['values'][] = $dd->nodeValue;
 		}
@@ -66,7 +66,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getCollection()
 	{
 		if (!$this->collection) {
-			foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
 					$this->collection =  $el->getAttribute('label');
 					break;
@@ -79,7 +79,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getCollectionAsciiId()
 	{
 		if (!$this->collectionAscii_id) {
-			foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
 					$this->collectionAsciiId = $el->getAttribute('term');
 					break;
@@ -91,7 +91,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getViewitemLink()
 	{
-		foreach ($this->dom->getElementsByTagName('link') as $el) {
+		foreach ($this->root->getElementsByTagName('link') as $el) {
 			if ('viewitem' == $el->getAttribute('title')) {
 				return $el->getAttribute('href');
 			}
@@ -100,7 +100,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getThumbnailLink()
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['h'],'img') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['h'],'img') as $el) {
 			if ('thumbnail' == $el->getAttribute('title')) {
 				return $el->getAttribute('href');
 			}
@@ -120,9 +120,9 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getEntry()
 	{
 		if (!$this->entry_dom) {
-			$this->entry_dom = $this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry')->item(0);
+			$this->entry_dom = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry')->item(0);
 		}
-		return new Dase_Atom_Entry_Item($this->entry_dom,$this->dom);
+		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
 	}
 
 	function getEditLink() {

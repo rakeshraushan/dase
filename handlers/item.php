@@ -18,10 +18,10 @@ class ItemHandler
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 			//see if it exists
 			if (Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number'])) {
-				$t = new Dase_Xslt;
-				$t->stylesheet = XSLT_PATH.'item/transform.xsl';
-				$t->set('src',APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
-				Dase::display($t->transform());
+				$t = new Dase_Template;
+				$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
+				$t->assign('item',$feed);
+				Dase::display($t->fetch('item/transform.tpl'));
 			} else {
 				Dase::error(404);
 			}
@@ -29,19 +29,8 @@ class ItemHandler
 	}
 
 	public static function editForm($params)
-		//create this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	{
-		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
-			//see if it exists
-			if (Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number'])) {
-				$t = new Dase_Xslt;
-				$t->stylesheet = XSLT_PATH.'item/transform.xsl';
-				$t->set('src',APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
-				Dase::display($t->transform());
-			} else {
-				Dase::error(404);
-			}
-		}
+		//create this
 	}
 }
 

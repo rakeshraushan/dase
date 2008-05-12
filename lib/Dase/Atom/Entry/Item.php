@@ -4,9 +4,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	protected $collection;
 	protected $collectionAsciiId;
 
-	function __construct($dom = null,$create_new = false,$root = null)
+	function __construct($dom = null,$root = null)
 	{
-		parent::__construct($dom,$create_new,$root);
+		parent::__construct($dom,$root);
 	}
 
 	function getItemId() 
@@ -37,7 +37,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getThumbnailLink()
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ('thumbnail' == $el->getAttribute('title')) {
 				return $el->getAttribute('href');
 			}
@@ -59,7 +59,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getMedia() {
 		$media_array = array();
-		foreach ($this->dom->getElementsByTagName('link') as $el) {
+		foreach ($this->root->getElementsByTagName('link') as $el) {
 			if (strpos($el->getAttribute('rel'),'relation/media')) {
 				$file['href'] = $el->getAttribute('href');
 				$file['type'] = $el->getAttribute('type');
@@ -84,7 +84,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getCollection()
 	{
 		if (!$this->collection) {
-			foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
 					$this->collection =  $el->getAttribute('label');
 					break;
@@ -97,7 +97,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getCollectionAsciiId()
 	{
 		if (!$this->collectionAscii_id) {
-			foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
 					$this->collectionAsciiId = $el->getAttribute('term');
 					break;
@@ -109,7 +109,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getMetadata() {
 		$metadata = array();
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
 			$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
 			$metadata[$dd->localName]['values'][] = $dd->nodeValue;
 		}

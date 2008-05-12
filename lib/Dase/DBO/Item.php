@@ -496,6 +496,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$feed = new Dase_Atom_Feed;
 		$this->injectAtomFeedData($feed);
+		$feed->setFeedType('item');
 		$this->injectAtomEntryData($feed->addEntry());
 		return $feed->asXml();
 	}

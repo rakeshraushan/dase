@@ -10,18 +10,8 @@ include 'routes/tag.php';
 include 'routes/media.php';
 include 'routes/admin.php';
 include 'routes/collectionbuilder.php';
+include 'routes/test.php';
 
-
-$routes['test'] = array (
-	'first' => array (
-		'uri_template' => 'test/first',
-		'auth' => 'superuser',
-	),
-	'search' => array (
-		'uri_template' => 'test/search',
-		'auth' => 'superuser',
-	),
-);
 
 $routes['attribute'] = array( 
 	'attributeValuesAsHtml' =>    array (

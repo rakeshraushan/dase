@@ -95,7 +95,7 @@ html #maincontent {
 
 .spacer { clear:both; }
 .hide { display:none; }
-.data { display:none; }
+.pagedata { display:none; }
 .alert { color:#c00; }
 .msg { color:#c00; }
 a.edit { color: #00c; }

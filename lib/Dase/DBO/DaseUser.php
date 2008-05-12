@@ -4,6 +4,8 @@ require_once 'Dase/DBO/Autogen/DaseUser.php';
 
 class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser 
 {
+	public $is_superuser=0;
+	public $ppd;
 
 	public function getTags()
 	{
@@ -126,27 +128,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return false;
 	}
 
-	public function asSimpleXml($include_manager_privs = false)
+	public function getSettings()
 	{
-		$sx = simplexml_load_string("<user/>");
-		foreach($this as $k => $v) {
-			$sx->addChild($k,htmlspecialchars($v));
-		}
-		$superuser = 0;
 		if ($this->isSuperuser()) {
-			$superuser = 1;
+			$this->is_superuser = 1;
 		}
-		$sx->addChild('superuser',$superuser);
-		$sx->addchild('ppd',md5($this->eid . Dase::getConfig('ppd_token')));
-
-		if ($include_manager_privs) {
-			$managed = $sx->addChild('managed_collections');
-			foreach($this->getCollections() as $c) {
-				$coll_elem = $managed->addChild('collection',htmlspecialchars($c['collection_name']));
-				$coll_elem->addAttribute('ascii_id',$c['ascii_id']);
-				$coll_elem->addAttribute('auth_level',$c['auth_level']);
-			}
-		}
-		return $sx;
+		$this->ppd = md5($this->eid . Dase::getConfig('ppd_token'));
 	}
 }

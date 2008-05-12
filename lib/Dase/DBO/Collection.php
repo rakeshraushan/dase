@@ -468,53 +468,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($collection_data);
 	}
 
-	public function attributesAsSimpleXml() 
-	{
-		$sx = $this->asSimpleXml();
-		foreach ($this->getAttributes() as $a) {
-			$att = $sx->addChild('attribute');
-			foreach($a->getFieldNames() as $name) {
-				$att->addChild($name,$a->$name);
-			}
-		}
-		return $sx;
-	}
-
-	public function managersAsSimpleXml() 
-	{
-		$sx = $this->asSimpleXml();
-		foreach ($this->getManagers() as $m) {
-			$manager = $sx->addChild('manager');
-			foreach($m as $k => $v) {
-				$manager->addChild($k,$v);
-			}
-		}
-		return $sx;
-	}
-
-	public function itemTypesAsSimpleXml() 
-	{
-		$sx = $this->asSimpleXml();
-		foreach ($this->getItemTypes() as $it) {
-			$type = $sx->addChild('item_type');
-			foreach($it->getFieldNames() as $name) {
-				$type->addChild($name,$it->$name);
-			}
-			foreach ($it->getAttributes() as $a) {
-				$ax = $type->addChild('attribute');
-				$ax->addAttribute('name',$a->attribute_name);
-				$ax->addAttribute('ascii_id',$a->ascii_id);
-				if ($a->cardinality) {
-					$ax->addAttribute('cardinality',$a->cardinality);
-				}
-				if ($a->is_identifier) {
-					$ax->addAttribute('is_identifier',$a->is_identifier);
-				}
-			}
-		}
-		return $sx;
-	}
-
 	public function getAtompubServiceDoc() {
 		$svc = new Dase_Atom_Service;	
 		$svc->addWorkspace($this->collection_name.' Workspace')
