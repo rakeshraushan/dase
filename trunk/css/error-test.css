@@ -1,0 +1,113 @@
+#error-data h2 {
+	color: #888;
+	font-size: 1.2em;
+	margin: 12px 0;
+	padding: 0;
+}
+
+#error-data div.masthead {
+	background-color: #900;
+	padding: 16px;
+	font-weight: bold;
+	color: #fff;
+}
+
+#error-data div.masthead h1 {
+	padding: 0px;
+	margin: 0px;
+}
+
+#error-data table {
+	border-collapse:collapse;
+	border-spacing:0;
+	font-size: .8em;
+}
+
+#error-data table th{
+	color: #900;
+	width: 40%;
+	text-align: right;
+	padding: 5px 15px;
+	border: 1px solid #ddd;
+}
+
+#error-data table.routes th{
+	color: #666;
+}
+
+#error-data table td {
+	text-align: left;
+	padding: 2px 15px;
+	border: 1px solid #ddd;
+}
+
+#error-data table td p {
+	padding: 0px;
+	margin: 0px;
+}
+
+#test-data h2 {
+	color: #888;
+	font-size: 1.2em;
+	margin: 12px 0;
+	padding: 0;
+}
+
+#test-data div.masthead {
+	padding: 16px;
+	font-weight: bold;
+	color: #fff;
+}
+
+#test-data div.masthead h1 {
+	padding: 0px;
+	margin: 0px;
+}
+
+#test-data table {
+	border-collapse:collapse;
+	border-spacing:0;
+	font-size: .8em;
+}
+
+#test-data table th{
+	color: #900;
+	width: 40%;
+	text-align: right;
+	padding: 5px 15px;
+	border: 1px solid #ddd;
+}
+
+#test-data table.routes th{
+	color: #666;
+}
+
+#test-data table td {
+	text-align: left;
+	padding: 2px 15px;
+	border: 1px solid #ddd;
+}
+
+#test-data table td p {
+	padding: 0px;
+	margin: 0px;
+}
+
+h5 {
+	margin: 5px 10px;
+}
+
+div.success {
+	background-color: #0c0;
+}
+div.failed {
+	background-color: #c00;
+}
+
+h5.success {
+	color: green;
+}
+h5.failed {
+	color: red;
+}
+
