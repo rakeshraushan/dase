@@ -21,43 +21,24 @@
 
 class Dase_Test
 {
-	private $succeeded = 0;
-	private $failed = 0;
-	private $sx;
-	public $results_xml;
-
-	//might need to reimplement this as a singleton
-	//how about as an Atom feed???????
-	public function __construct()
-	{
-		$this->sx = simplexml_load_string('<tests/>');
-	}
+	public $succeeded = 0;
+	public $failed = 0;
+	public $total = 0;
+	public $result;
+	public $name;
 
 	function assertTrue($test,$name)
 	{
-		$test_xml = $this->sx->addChild('test');
-		$test_xml->addAttribute('name',$name);
+		$this->name = $name;
 		if ($test) {
-			$test_xml->addAttribute('result','success');
+			$this->result = 'succeeded';
 			$this->succeeded++;
+			$this->total++;
 		} else {
-			$test_xml->addAttribute('result','failed');
+			$this->result = 'failed';
 			$this->failed++;
+			$this->total++;
 		}	
-	}
-
-	function asXml()
-	{
-		return $this->asSimpleXml()->asXml();
-	}
-
-	function asSimpleXml()
-	{
-		$result = $this->sx->addChild('result');
-		$result->addChild('failed',$this->failed);
-		$result->addChild('succeeded',$this->succeeded);
-		$result->addChild('total',$this->succeeded+$this->failed);
-		return $this->sx;
 	}
 
 	//todo: work on text-only tests also

@@ -2,7 +2,7 @@
 {block name="title"}View Item{/block}
 {block name="content"}
 <div class="full" id="{$item->tagType}">
-	<div id="collectionAsciiId" class="data">{$item->collectionAsciiId}</div>
+	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="contentHeader">
 		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h1>
 		<h2>{$item->title}</h2>

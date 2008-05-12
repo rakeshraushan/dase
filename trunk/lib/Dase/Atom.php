@@ -21,7 +21,11 @@
 class Dase_Atom
 {
 
-	//convenience class(es) to deal w/ Atom feeds
+	//these need to be public
+	//so Feed can access Entry's root
+	//upon serialization
+	public $dom;
+	public $root;
 
 	protected $id;
 	protected $rights_is_set;
@@ -176,7 +180,7 @@ class Dase_Atom
 
 	function getLink($rel) 
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ($rel == $el->getAttribute('rel')) {
 				return $el->getAttribute('href');
 			}
@@ -206,8 +210,8 @@ class Dase_Atom
 	function getAtomElementText($name,$ns_prefix='atom') 
 	{
 		//only works w/ simple string
-		if ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)) {
-			return $this->dom->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
+		if ($this->root->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)) {
+			return $this->root->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
 		}
 	}
 

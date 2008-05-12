@@ -47,6 +47,12 @@ class Dase_DBO implements IteratorAggregate
 		if ( array_key_exists( $key, $this->fields ) ) {
 			return $this->fields[ $key ];
 		}
+		//automatically call accessor method is it exists
+		$classname = get_class($this);
+		$method = 'get'.ucfirst($key);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}();
+		}	
 	}
 
 	function __set( $key, $value )
@@ -298,15 +304,4 @@ class Dase_DBO implements IteratorAggregate
 	{
 		return new ArrayObject($this->fields);
 	}
-
-	function asSimpleXml()
-	{
-		$sx = simplexml_load_string("<$this->table/>");
-		foreach($this as $k => $v) {
-			$sx->addChild($k,htmlspecialchars($v));
-		}
-		$sx->addAttribute('id',$this->id);
-		return $sx;
-	}
-
 }

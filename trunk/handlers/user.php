@@ -5,13 +5,8 @@ class UserHandler
 	//rewrite/replace for alternate authentication
 	public static function initiateLogin($params)
 	{
-		$msg = Dase_Filter::filterGet('msg');
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'login_form.xsl';
-		if ($msg) {
-			$t->set('msg',$msg);
-		}
-		Dase::display($t->transform());
+		$t = new Dase_Template;
+		Dase::display($t->fetch('login_form.tpl'));
 	}
 
 	//rewrite/replace for alternate authentication
@@ -121,25 +116,17 @@ class UserHandler
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
 		$tag->findOne();
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'item_set/tag.xsl';
-		$t->addSourceNode($u->asSimpleXml());
-
-		//THIS script is protected by eid auth, but how to protect restricted
-		//atom and xml documents that feed it? DASe requests AND serves the docs
-		//so we can hash a secret in the url and read that for the 'token' auth (see Dase.php)
-		$t->set('src',APP_ROOT.'/atom/user/'.$u->eid.'/tag/id/'.$tag->id.'?token='.md5(Dase::getConfig('token')));
-		Dase::display($t->transform());
+		$http_pw = Dase_DBO_Tag::getHttpPassword($tag->ascii_id,$u->eid,'read');
+		$t = new Dase_Template;
+		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag->ascii_id,$u->eid,$http_pw));
+		Dase::display($t->fetch('item_set/tag.tpl'));
 	}
 
 	public static function settings($params)
 	{
-		//use admin look, but NO collection specified!@!!!!!!!
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'user/settings.xsl';
-		$user = Dase_User::get($params);
-		$t->addSourceNode($user->asSimpleXml(true));
-		Dase::display($t->transform());
+		$t = new Dase_Template;
+		$t->assign('user',Dase_User::get($params));
+		Dase::display($t->fetch('user/settings.tpl'));
 	}
 
 	public static function getHttpPassword($params) 

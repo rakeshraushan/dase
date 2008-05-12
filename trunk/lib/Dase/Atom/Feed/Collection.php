@@ -1,9 +1,9 @@
 <?php
 class Dase_Atom_Feed_Collection extends Dase_Atom_Feed 
 {
-	function __construct($xml = null)
+	function __construct($dom = null)
 	{
-		parent::__construct($xml);
+		parent::__construct($dom);
 	}
 
 	function __get($var) {
@@ -29,7 +29,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 
 	function getAscii_id()
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
@@ -38,7 +38,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 
 	function getItem_count()
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/collection/item_count' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}

@@ -1,9 +1,9 @@
 <?php
 class Dase_Atom_Feed_Search extends Dase_Atom_Feed 
 {
-	function __construct($xml = null)
+	function __construct($dom = null)
 	{
-		parent::__construct($xml);
+		parent::__construct($dom);
 	}
 
 	function __get($var) 

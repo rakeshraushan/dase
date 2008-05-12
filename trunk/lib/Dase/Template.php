@@ -52,9 +52,7 @@ class Dase_Template {
 	public function __call($method, $args)
 	{
 		$er = error_reporting(E_ALL^E_NOTICE);
-		$ret = call_user_func_array(
-			array(&$this->smarty, $method),
-			$args);
+		$ret = call_user_func_array( array(&$this->smarty, $method), $args);
 		error_reporting($er);
 		return $ret;
 	}

@@ -11,50 +11,39 @@ class CollectionbuilderHandler
 
 	public static function settings($params)
 	{
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collectionbuilder/settings.xsl';
-		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
-		$user = Dase_User::get($params);
-		$t->addSourceNode($user->asSimpleXml());
-		$c = Dase_Collection::get($params);
-		$t->addSourceNode($c->asSimpleXml());
-		Dase::display($t->transform());
+		$tpl = new Dase_Template();
+		$tpl->assign('user',Dase_User::get($params));
+		$tpl->assign('collection',Dase_Collection::get($params));
+		Dase::display($tpl->fetch('collectionbuilder/settings.tpl'));
 	}
 
 	public static function attributes($params)
 	{
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collectionbuilder/attributes.xsl';
-		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
-		$user = Dase_User::get($params);
-		$t->addSourceNode($user->asSimpleXml());
+		$tpl = new Dase_Template();
+		$tpl->assign('user',Dase_User::get($params));
 		$c = Dase_Collection::get($params);
-		$t->addSourceNode($c->attributesAsSimpleXml());
-		Dase::display($t->transform());
+		$tpl->assign('collection',Dase_Collection::get($params));
+		$tpl->assign('attributes',Dase_Collection::get($params)->getAttributes());
+		Dase::display($tpl->fetch('collectionbuilder/attributes.tpl'));
 	}
 
 	public static function managers($params)
 	{
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collectionbuilder/managers.xsl';
-		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
-		$user = Dase_User::get($params);
-		$t->addSourceNode($user->asSimpleXml());
-		$c = Dase_Collection::get($params);
-		$t->addSourceNode($c->managersAsSimpleXml());
-		Dase::display($t->transform());
+		$tpl = new Dase_Template();
+		$tpl->assign('user',Dase_User::get($params));
+		$tpl->assign('collection',Dase_Collection::get($params));
+		$tpl->assign('managers',Dase_Collection::get($params)->getManagers());
+		Dase::display($tpl->fetch('collectionbuilder/managers.tpl'));
 	}
 
 	public static function item_types($params)
 	{
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'collectionbuilder/item_types.xsl';
-		$t->source = XSLT_PATH.'collectionbuilder/layout.xml';
-		$user = Dase_User::get($params);
-		$t->addSourceNode($user->asSimpleXml());
+		$tpl = new Dase_Template();
+		$tpl->assign('user',Dase_User::get($params));
 		$c = Dase_Collection::get($params);
-		$t->addSourceNode($c->itemTypesAsSimpleXml());
-		Dase::display($t->transform());
+		$tpl->assign('collection',Dase_Collection::get($params));
+		$tpl->assign('item_types',Dase_Collection::get($params)->getItemTypes());
+		Dase::display($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
 	public static function dataAsJson($params)

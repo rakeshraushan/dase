@@ -47,7 +47,7 @@
 
 		<div id="logoffControl" class="login hide">
 			<span id="userName"></span> is logged in. (<a href="logoff" class="alert" id="logoff-link">logoff</a>)
-			<div id="eid" class="data"></div>
+			<div id="eid" class="pagedata"></div>
 		</div>
 
 		<div id="loginControl" class="login hide">
@@ -126,7 +126,7 @@
 				-->
 				<img src="images/dasepowered.png" alt="DASePowered icon"/>
 			</div><!--closes footer-->
-			<div id="debugData" class="data"></div>
-			<div id="pageHook" class="data">{$page_hook}</div>
+			<div id="debugData" class="pagedata"></div>
+			<div id="pageHook" class="pagedata">{$page_hook}</div>
 		</body>
 	</html>

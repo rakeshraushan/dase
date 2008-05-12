@@ -6,13 +6,9 @@ class MediaHandler
 	{
 		$media_atts = new Dase_DBO_MediaAttribute;
 		$media_atts->orderBy('label');
-
-		$t = new Dase_Xslt;
-		$t->stylesheet = XSLT_PATH.'media/attributes.xsl';
-		foreach ($media_atts->find() as $ma) { 
-			$t->addSourceNode($ma->asSimpleXml());
-		}
-		Dase::display($t->transform());
+		$t = new Dase_Template;
+		$t->assign('attributes',$media_atts->find());  
+		Dase::display($t->fetch('media/attributes.tpl'));
 	}
 
 	public static function updateMediaAttribute($params)

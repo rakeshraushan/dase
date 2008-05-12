@@ -1,8 +1,6 @@
 <?php
 class Dase_Atom_Feed extends Dase_Atom 
 {
-	public $dom;
-	public $root;
 	protected $_entries = array();
 	protected $generator_is_set;
 	protected $subtitle_is_set;
@@ -14,6 +12,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		'collection' => array(
 			'feed' => 'Dase_Atom_Feed_Collection',
 			'entry' => 'Dase_Atom_Entry_Collection',
+		),
+		'item' => array(
+			'feed' => 'Dase_Atom_Feed_Item',
+			'entry' => 'Dase_Atom_Entry_Item',
 		),
 		'search' => array(
 			'feed' => 'Dase_Atom_Feed_Search',
@@ -34,16 +36,17 @@ class Dase_Atom_Feed extends Dase_Atom
 	);
 	protected $feedtype;
 
-	function __construct($xml = null)
+	function __construct($dom = null)
 	{
-		$dom = new DOMDocument('1.0','utf-8');
-		$this->dom = $dom;
-		if ($xml) {
-			$this->dom->loadXML($xml);
-			$this->root = $this->dom;
-		} else {
-			//meaning this a brand new (no xml yet) feed:
-			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
+		if ($dom) {
+			//reader object
+			$this->root = $dom;
+			$this->dom = $dom;
+		}  else {
+			//creator object
+			$dom = new DOMDocument('1.0','utf-8');
+			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
+			$this->dom = $dom;
 		}
 	}
 
@@ -63,35 +66,39 @@ class Dase_Atom_Feed extends Dase_Atom
 			print $xml;
 			exit;
 		}
-		return self::_domify($xml);
-	}
-
-	public static function load($xml_file) {
-		$xml = file_get_contents($xml_file);
-		return self::_domify($xml);
-	}
-
-	private static function _domify($xml)
-	{
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXML($xml);
-		//note: dom is used *only* to get feed type. 
-		//feed constuctor creates dom which will represent feed
+		return self::_init($dom);
+	}
+
+	public static function load($xml) {
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->load($xml);
+		return self::_init($dom);
+	}
+
+	private static function _init($dom)
+	{
+		//reader object
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/feedtype' == $el->getAttribute('scheme')) {
 				$feedtype = $el->getAttribute('term');
 				$class = self::$types_map[$feedtype]['feed'];
 				if ($class) {
-					$obj = new $class($xml);
+					$obj = new $class($dom);
 					$obj->feedtype = $feedtype;
 					return $obj;
 				} else {
-					$feed = new Dase_Atom_Feed($xml);
+					$feed = new Dase_Atom_Feed($dom);
 					$feed->feedtype = 'none';
 					return $feed;
 				}
 			}
 		}
+		//in case no category element
+		$feed = new Dase_Atom_Feed($dom);
+		$feed->feedtype = 'none';
+		return $feed;
 	}
 
 	function setFeedType($type) 
@@ -111,6 +118,7 @@ class Dase_Atom_Feed extends Dase_Atom
 	function addEntry()
 	{
 		$entry = new Dase_Atom_Entry($this->dom);
+		//entries will be appended in asXml method
 		$this->_entries[] = $entry;
 		return $entry;
 	}
@@ -223,9 +231,9 @@ class Dase_Atom_Feed extends Dase_Atom
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
 			if ($class) {
 				//entry subclass
-				$entry = new $class($entry_dom,$this->dom);
+				$entry = new $class($this->dom,$entry_dom);
 			} else {
-				$entry = new Dase_Atom_Entry($entry_dom,false,$this->dom);
+				$entry = new Dase_Atom_Entry($this->dom,$entry_dom);
 			}
 			$entries[] = $entry;
 		}

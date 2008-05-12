@@ -3,7 +3,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 {
 	function __construct($dom=null,$root=null)
 	{
-		parent::__construct($dom,false,$root);
+		parent::__construct($dom,$root);
 	}
 
 	function getName() 

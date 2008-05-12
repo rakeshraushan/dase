@@ -1,8 +1,6 @@
 <?php
 class Dase_Atom_Entry extends Dase_Atom
 {
-	public $dom;
-	public $root;
 	protected $content_is_set;
 	protected $published_is_set;
 	protected $source_is_set;
@@ -14,34 +12,31 @@ class Dase_Atom_Entry extends Dase_Atom
 	//this is a free-standing entry document, it means the
 	//'entry' element
 	
-	function __construct($dom=null,$create_new=true,$root=null)
+	function __construct(DOMDocument $dom=null,DOMElement $root=null)
 	{
+		if (!$dom && $root) {
+			throw new Dase_Atom_Exception('dom doc needs to be passed into constructor with domnode');
+		}
 		if ($dom) {
 			$this->dom = $dom;
-			if ($create_new) {
-				//used when *writing* a feed
-				//$this->root = $dom->createElement('entry');
-				$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
+			if ($root) {
+				$this->root = $root;
 			} else {
-				//used when *reading* a feed
-				if ($root) {
-					$this->root = $root;
-				} 
+				$this->root = $dom->createElementNS(Dase_Atom::$ns['atom'],'entry');
 			}
 		} else {
-			//if no $dom is passed in, this will be a freestanding entry document
+			//creator object (standalone entry document)
 			$dom = new DOMDocument('1.0','utf-8');
+			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 			$this->dom = $dom;
-			$this->root = $this->dom->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 		}
 	}
 
-	public static function load($xml_file) {
-		$xml = file_get_contents($xml_file);
+	public static function load($xml) {
+		//reader object
 		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXML($xml);
-		$entry = new Dase_Atom_Entry($dom,false);
-		return $entry;
+		$dom->load($xml);
+		return new Dase_Atom_Entry($dom);
 	}
 
 	function __get($var) {
