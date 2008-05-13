@@ -53,20 +53,19 @@ class UserHandler
 			echo "user data error"; exit;
 		}
 		$cache = Dase_Cache::get($params['eid'] . '_data');
-		$page = $cache->getData();
-		if (!$page) {
-			$cache->setTimeToLive(300);
-			$page = Dase_User::get($params['eid'])->getData();
-			$cache->setData($page);
+		$data = $cache->getData(); //if successful, headers will be sent 
+		if (!$data) {
+			$data = Dase_User::get($params['eid'])->getData();
+			$headers = array("Content-Type: application/json; charset=utf-8");
+			$cache->setData($data,$headers);
+			header($headers[0]);
 		}
-		//passing false as second param 
-		//means cache will NOT be reset
-		Dase::display($page,false);
+		echo $data;
 	}
 
 	public static function cartAsJson($params)
 	{
-		Dase::display(Dase_User::get($params)->getCart());
+		Dase::display(Dase_User::get($params)->getCart(),'application/json');
 	}
 
 	public static function addCartItem($params)
@@ -106,7 +105,7 @@ class UserHandler
 
 	public static function adminCollectionsAsJson($params)
 	{
-		Dase::display(Dase_User::get($params)->getCollections());
+		Dase::display(Dase_User::get($params)->getCollections(),'application/json');
 	}
 
 	public static function cart($params)

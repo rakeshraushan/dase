@@ -24,19 +24,10 @@ $routes['attribute'] = array(
 	),
 );
 
-$routes['widget'] = array (
-	'init' =>    array (
-		'uri_template' => 'scripts/widgets.js',
-		'auth' => 'none',
-		'mime' => 'application/x-javascript',
-	),
-);
-
 $routes['css'] = array(
 	'init' =>    array (
 		'uri_template' => 'css/dynamic.css',
 		'auth' => 'none',
-		'mime' => 'text/css',
 	),
 );
 

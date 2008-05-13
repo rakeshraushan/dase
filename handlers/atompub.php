@@ -11,7 +11,7 @@ class AtompubHandler
 			$media_file->p_serial_number = $params['serial_number'];
 			$media_file->size = $params['size'];
 			if ($media_file->findOne()) {
-				Dase::display($media_file->asAtom());
+				Dase::display($media_file->asAtom(),'application/atom+xml');
 			}
 		}
 		Dase::error(404);
@@ -41,7 +41,7 @@ class AtompubHandler
 			$start = 1;
 		}
 		$c = Dase_Collection::get($params);
-		Dase::display($c->asAppCollection($start));
+		Dase::display($c->asAppCollection($start),'application/atom+xml');
 
 	}
 
@@ -73,21 +73,21 @@ class AtompubHandler
 		if (!$item) {
 			Dase::error(404);
 		}
-		Dase::display($item->mediaAsAtomFeed());
+		Dase::display($item->mediaAsAtomFeed(),'application/atom+xml');
 	}
 
 	public static function getCollectionServiceDoc($params) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$c = Dase_Collection::get($params);
-		Dase::display($c->getAtompubServiceDoc());
+		Dase::display($c->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
 	public static function getItemServiceDoc($params) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
-		Dase::display($i->getAtompubServiceDoc());
+		Dase::display($i->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
 	public static function getItem($params)
@@ -95,7 +95,7 @@ class AtompubHandler
 		Dase_Auth::authorize('read',$params);
 		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		if ($item) {
-			Dase::display($item->asAppMember());
+			Dase::display($item->asAppMember(),'application/atom+xml');
 		} else {
 			Dase::error(401);
 		}
@@ -138,7 +138,7 @@ class AtompubHandler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".APP_ROOT."/edit/".$params['collection_ascii_id']."/".$item->serial_number);
-			Dase::display($item->asAppMember());
+			echo $item->asAppMember();
 		} else {
 			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
 			Dase::error(422);
@@ -235,7 +235,7 @@ class AtompubHandler
 		if ($m->findOne()) {
 			$mle_url = APP_ROOT .'/edit/'.$m->p_collection_ascii_id.'/'.$m->p_serial_number.'/'.$m->size;
 			header("Location:". $mle_url,TRUE,201);
-			Dase::display($m->asAtom(),false); //false means DO NOT CACHE (important!)
+			Dase::display($m->asAtom(),'application/atom+xml',false);
 		}
 	}
 }

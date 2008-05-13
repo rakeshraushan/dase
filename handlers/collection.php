@@ -5,20 +5,20 @@ class CollectionHandler
 	public static function asAtom($params) 
 	{
 		$c = Dase_Collection::get($params);
-		Dase::display($c->asAtom());
+		Dase::display($c->asAtom(),'application/atom+xml');
 	}
 
 	public static function asAtomArchive($params) 
 	{
 		$c = Dase_Collection::get($params);
 		$limit = Dase_Filter::filterGet('limit');
-		Dase::display($c->asAtomArchive($limit));
+		Dase::display($c->asAtomArchive($limit),'application/atom+xml');
 	}
 
 	public static function asAtomFull($params) 
 	{
 		$c = Dase_Collection::get($params);
-		Dase::display($c->asAtomFull());
+		Dase::display($c->asAtomFull(),'application/atom+xml');
 	}
 
 	public static function listAsAtom($params) 
@@ -28,7 +28,7 @@ class CollectionHandler
 		} else {
 			$public_only = true;
 		}
-		Dase::display(Dase_DBO_Collection::listAsAtom($public_only));
+		Dase::display(Dase_DBO_Collection::listAsAtom($public_only),'application/atom+xml');
 	}
 
 	public static function browse($params) 
@@ -74,7 +74,7 @@ class CollectionHandler
 		foreach ($st->fetchAll() as $row) {
 			$tallies[$row['ascii_id']] = $row['count'];
 		}
-		Dase::display(Dase_Json::get($tallies));
+		Dase::display(Dase_Json::get($tallies),'application/json');
 	}
 
 	public static function rebuildIndexes($params) 
@@ -93,6 +93,7 @@ class CollectionHandler
 		$atts->orderBy('sort_order');
 		foreach ($atts->find() as $attribute) {
 		}
+		//?????????????????????????????????????????????????????
 		Dase::display();
 	}
 
@@ -132,7 +133,7 @@ EOF;
 					'collection' => $params['collection_ascii_id']
 				);
 		}
-		Dase::display(Dase_Json::get($att_array));
+		Dase::display(Dase_Json::get($att_array),'application/json');
 	}
 
 	public static function adminAttributesAsHtml($params) 
@@ -173,7 +174,7 @@ EOF;
 			$sth->execute(array($row['id']));
 			$tallies[$row['ascii_id']] = $sth->fetchColumn();
 		}
-		Dase::display(Dase_Json::get($tallies));
+		Dase::display(Dase_Json::get($tallies),'application/json');
 
 	}
 
@@ -201,7 +202,7 @@ EOF;
 			$sth->execute(array($row['id']));
 			$tallies[$row['ascii_id']] = $sth->fetchColumn();
 		}
-		Dase::display(Dase_Json::get($tallies));
+		Dase::display(Dase_Json::get($tallies),'application/json');
 
 	}
 
@@ -209,7 +210,7 @@ EOF;
 		$item_type = new Dase_DBO_ItemType;
 		$item_type->ascii_id = $params['item_type_ascii_id'];
 		$item_type->findOne();
-		Dase::display($item_type->getItemsAsFeed());
+		Dase::display($item_type->getItemsAsFeed(),'application/atom');
 	}
 
 	public static function buildIndex($params) 

@@ -74,15 +74,6 @@ class Dase
 					exit;
 				}
 
-				if (isset($conf_array['mime'])) {
-					//note: firefox gives me all sorts of trouble when I send
-					//application/xhtml+xml.  this is a well-documented problem:
-					//http://groups.google.com/group/habari-dev/msg/91d736688ee445ad
-					Dase_Registry::set('response_mime_type',$conf_array['mime']);
-				} else {
-					Dase_Registry::set('response_mime_type','text/html');
-				}	
-
 				//AUTHORIZATION:
 				if (!isset($params['eid'])) {
 					$params['eid'] = '';
@@ -116,20 +107,14 @@ class Dase
 				}
 				if(method_exists($classname,$conf_array['action'])) {
 					//check cache, but only for 'get' method
-					//NOTE that using the cache means you use the mime
-					//type specified in routes config, so to set mime at
-					//runtime, nocache="yes" should be set in routes config
-					//for the particular route
-					//use nocache="custom" to document custom cache in
-					//action file (here same as using 'yes')
-					if ('get' == $method && !isset($conf_array['nocache'])) {
+					if ('get' == $method) {
 						$cache = Dase_Cache::get();
-						$page = $cache->getData();
-						if ($page) {
+						$content = $cache->getData(); //if cache exists, this sends cached headers also
+						if ($content) {
 							if (defined('DEBUG')) {
 								Dase::log('standard','using cached page '.$cache->getLoc());
 							}
-							Dase::display($page,false);
+							echo $content;
 							exit;
 						} 
 					}
@@ -156,14 +141,14 @@ class Dase
 		exit;
 	}
 
-	public static function display($content,$set_cache=true)
+	public static function display($content,$mime_type='text/html',$set_cache=true)
 	{
+		$headers = array("Content-Type: $mime_type; charset=utf-8");
 		if ($set_cache) {
 			$cache = Dase_Cache::get();
-			$cache->setData($content);
+			$cache->setData($content,$headers);
 		}
-		$mime = Dase_Registry::get('response_mime_type');
-		header("Content-Type: $mime; charset=utf-8");
+		header($headers[0]);
 		echo $content;
 		exit;
 	}

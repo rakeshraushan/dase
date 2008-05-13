@@ -26,8 +26,6 @@ class Dase_Routes
 {
 	public static $route_defaults = array(
 		'method' => 'get',
-		'mime' => 'text/html',
-		'cache' => 'standard', //'standard','custom', or 'none'
 	);
 
 	public static function compile()

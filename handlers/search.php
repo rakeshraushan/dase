@@ -92,7 +92,7 @@ class SearchHandler
 			$item->injectAtomEntryData($entry);
 			$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		Dase::display($feed->asXml());
+		Dase::display($feed->asXml(),'application/atom+xml');
 	}
 
 	public static function itemAsAtom($params)
@@ -144,7 +144,7 @@ class SearchHandler
 			}
 			$subtitle = 'Item ' . $num . ' of ' . $result['count'] . ' items for ' . $result['echo']; 
 			$feed->setSubtitle($subtitle);
-			Dase::display($feed->asXml());
+			Dase::display($feed->asXml(),'application/atom+xml');
 		}
 		Dase::error(404);
 	}

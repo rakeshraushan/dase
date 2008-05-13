@@ -7,7 +7,7 @@ class ItemHandler
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
 			$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 			if ($item) {
-				Dase::display($item->asAtom());
+				Dase::display($item->asAtom(),'application/atom+xml');
 			}
 		}
 		Dase::error(404);

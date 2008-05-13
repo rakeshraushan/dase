@@ -4,18 +4,14 @@ $routes['user'] = array(
 	'dataAsJson' =>    array (
 		'uri_template' => 'json/user/{eid}/data',
 		'auth' => 'eid',
-		'mime' => 'application/json',
-		'nocache' => 'custom',
 	),
 	'cartAsJson' =>    array (
 		'uri_template' => 'json/user/{eid}/cart',
 		'auth' => 'eid',
-		'mime' => 'application/json',
 	),
 	'adminCollectionsAsJson' =>    array (
 		'uri_template' => 'json/user/{eid}/collections',
 		'auth' => 'eid',
-		'mime' => 'application/json',
 	),
 	'initiateLogin' =>    array (
 		'uri_template' => 'login',
@@ -58,7 +54,6 @@ $routes['user'] = array(
 			'user/{eid}/tag/{tag_ascii_id}/auth/{auth_level}',
 		),
 		'auth' => 'eid',
-		'method' => 'get',
 	),
 );
 

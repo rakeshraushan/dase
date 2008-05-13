@@ -10,7 +10,7 @@ class AttributeHandler
 		foreach ($atts->find() as $att) {
 			$att->injectAtomEntryData($feed->addEntry(),$att->getCollection());
 		}
-		Dase::display($feed->asXml());
+		Dase::display($feed->asXml(),'application/atom+xml');
 	}
 
 	public static function attributeValuesAsHtml($params)

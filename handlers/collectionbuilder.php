@@ -56,14 +56,16 @@ class CollectionbuilderHandler
 			$select = 'all';
 		}	
 		$cache = Dase_Cache::get($c->ascii_id . '_' . $select);
-		$page = $cache->getData();
+		$page = $cache->getData(); //if successful, sends headers
 		if (!$page) {
-			//long cache -- make sure that changes kill it
+			//todo: make long cache -- *and* make sure that changes kill it
 			$cache->setTimeToLive(3);
-			$page = $c->getData($select);
-			$cache->setData($page);
+			$page = $c->getData();
+			$headers = array("Content-Type: application/json; charset=utf-8");
+			$cache->setData($page,$headers);
+			header($headers[0]);
 		}
-		Dase::display($page,false);
+		echo $page;
 	}
 
 	public static function setAttributeSortOrder($params)

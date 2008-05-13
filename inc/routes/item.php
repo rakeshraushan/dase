@@ -4,7 +4,6 @@ $routes['item'] = array(
 	'asAtom' =>    array (
 		'uri_template' => 'atom/collection/{collection_ascii_id}/{serial_number}',
 		'auth' => 'none',
-		'mime' => 'application/atom+xml',
 	),
 	'display' =>    array (
 		'uri_template' => 'collection/{collection_ascii_id}/{serial_number}',
