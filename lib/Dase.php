@@ -109,13 +109,11 @@ class Dase
 					//check cache, but only for 'get' method
 					if ('get' == $method) {
 						$cache = Dase_Cache::get();
-						$content = $cache->getData(); //if cache exists, this sends cached headers also
-						if ($content) {
+						if ($cache->isFresh()) {
 							if (defined('DEBUG')) {
 								Dase::log('standard','using cached page '.$cache->getLoc());
 							}
-							echo $content;
-							exit;
+							$cache->display();
 						} 
 					}
 					$msg = Dase_Filter::filterGet('msg');

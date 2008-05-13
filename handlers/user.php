@@ -53,14 +53,12 @@ class UserHandler
 			echo "user data error"; exit;
 		}
 		$cache = Dase_Cache::get($params['eid'] . '_data');
-		$data = $cache->getData(); //if successful, headers will be sent 
-		if (!$data) {
+		if (!$cache->isFresh()) {
 			$data = Dase_User::get($params['eid'])->getData();
 			$headers = array("Content-Type: application/json; charset=utf-8");
 			$cache->setData($data,$headers);
-			header($headers[0]);
 		}
-		echo $data;
+		$cache->display();
 	}
 
 	public static function cartAsJson($params)

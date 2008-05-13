@@ -4,10 +4,11 @@
 
 class Dase_Cache_File extends Dase_Cache 
 {
+	private $cache_dir = CACHE_DIR;
+	private $contents;
 	private $filename;
 	private $tempfilename;
 	private $ttl = CACHE_TTL;
-	private $cache_dir = CACHE_DIR;
 
 	function __construct($filename='')
 	{
@@ -25,11 +26,6 @@ class Dase_Cache_File extends Dase_Cache
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
-	function setTimeToLive($exp)
-	{
-		$this->ttl = $exp;
-	}
-
 	function expire()
 	{
 		//Dase::log('standard','expired ' . $this->getLoc());
@@ -41,26 +37,40 @@ class Dase_Cache_File extends Dase_Cache
 		return $this->cache_dir . $this->filename;
 	}
 
-	function getData($send_headers=true)
+	function isFresh($ttl=null)
 	{
 		//clean up this logic
 		$filename = $this->getLoc();
 		if (!file_exists($filename)) {
 			return false;
 		}
-		if($this->ttl) {
-			$stat = @stat($filename);
-			if($stat[9]) {
-				if(time() > $stat[9] + $this->ttl) {
-					@unlink($filename);
-					return false;
-				}
+
+		$time_to_live = $ttl ? $ttl : $this->ttl;
+
+		$stat = @stat($filename);
+		if($stat[9]) {
+			if(time() > $stat[9] + $time_to_live) {
+				@unlink($filename);
+				return false;
 			}
 		}
-		if ($send_headers) {
-			$this->sendHeaders();
+
+		$this->contents = @file_get_contents($filename);
+		return true;
+	}
+
+	function display()
+	{
+		$this->sendHeaders();
+		echo $this->contents;
+		exit;
+	}
+
+	function getData()
+	{
+		if ($this->isFresh()) {
+			return $this->contents;
 		}
-		return @file_get_contents($filename);
 	}
 
 	function sendHeaders() 
@@ -89,6 +99,7 @@ class Dase_Cache_File extends Dase_Cache
 				file_put_contents($this->tempfilename.'.meta',serialize($headers));
 				rename($this->tempfilename.'.meta', $this->getLoc().'.meta');
 			}
+			$this->contents = $data;
 		}
 	}
 }

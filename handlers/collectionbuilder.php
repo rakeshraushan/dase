@@ -48,7 +48,7 @@ class CollectionbuilderHandler
 
 	public static function dataAsJson($params)
 	{
-		$c = Dase_Collection::get($params);
+		$coll = Dase_Collection::get($params);
 		if (isset($params['select'])) {
 			//attributes, settings, types, managers are possible values
 			$select = $params['select'];
@@ -56,16 +56,13 @@ class CollectionbuilderHandler
 			$select = 'all';
 		}	
 		$cache = Dase_Cache::get($c->ascii_id . '_' . $select);
-		$page = $cache->getData(); //if successful, sends headers
-		if (!$page) {
-			//todo: make long cache -- *and* make sure that changes kill it
-			$cache->setTimeToLive(3);
-			$page = $c->getData();
+		//ttl can be long, but make sure that changes expire the cache!
+		if (!$cache->isFresh(333)) {
+			$data = $coll->getJsonData();
 			$headers = array("Content-Type: application/json; charset=utf-8");
-			$cache->setData($page,$headers);
-			header($headers[0]);
+			$cache->setData($data,$headers);
 		}
-		echo $page;
+		$cache->display();
 	}
 
 	public static function setAttributeSortOrder($params)
