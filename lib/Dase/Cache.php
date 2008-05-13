@@ -37,10 +37,27 @@ class Dase_Cache
 		}
 	}
 
+	//from WP-Cache    http://mnm.uib.es/gallir/wp-cache-2/
+	function getResponseHeaders() {
+		if(function_exists('apache_response_headers')) {
+			$headers = apache_response_headers();
+		} else if(function_exists('headers_list')) {
+			$headers = array();
+			foreach(headers_list() as $hdr) {
+				list($header_name, $header_value) = explode(': ', $hdr, 2);
+				$headers[$header_name] = $header_value;
+			}
+		} else {
+			$headers = null;
+		}
+		return $headers;
+	}
+
 	//must be overridden:
 	function getData() {}
 	function setData($data) {}
 	function setTimeToLive($exp) {}
 	function expire() {}
 }
+
 

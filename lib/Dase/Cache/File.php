@@ -6,7 +6,7 @@ class Dase_Cache_File extends Dase_Cache
 {
 	private $filename;
 	private $tempfilename;
-	private $ttl = 3;
+	private $ttl = CACHE_TTL;
 	private $cache_dir = CACHE_DIR;
 
 	function __construct($file='')

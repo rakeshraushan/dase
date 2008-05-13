@@ -233,10 +233,10 @@ class Dase
 				}
 			}
 		} else {
-			$t = new Dase_Xslt;
-			$t->stylesheet = XSLT_PATH.'error/production.xsl';
-			$t->set('msg',$msg);
-			echo $t->transform();
+			//todo: pretty error message for production
+			header("Content-Type: text/plain; charset=utf-8");
+			print "DASe Error Report\n\n";
+			print "[http_error_code] => $code\n";
 		}
 		exit;
 	}
