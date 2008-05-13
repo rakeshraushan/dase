@@ -412,7 +412,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $sth->fetchColumn();
 	}
 
-	public function getData($select = 'all')
+	public function getJsonData($select = 'all')
 	{
 		$collection_data = array();
 		if (('attributes' == $select) || ('all' == $select)) {
