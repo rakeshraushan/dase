@@ -28,7 +28,6 @@
 		<script type="text/javascript" src="scripts/http.js"></script>
 		<script type="text/javascript" src="scripts/json2.js"></script>
 		<script type="text/javascript" src="scripts/dase.js"></script>
-		<script type="text/javascript" src="scripts/widgets.js"></script>
 		<script type="text/javascript" src="scripts/firebug/firebug.js"></script>
 
 		<!--[if lt IE 8]>

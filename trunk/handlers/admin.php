@@ -10,7 +10,7 @@ class AdminHandler
 		foreach ($cms->find() as $cm) {
 			$acl[$cm->collection_ascii_id][$cm->dase_user_eid] = $cm->auth_level;
 		}
-		Dase::display(Dase_Json::get($acl));
+		Dase::display(Dase_Json::get($acl),'application/json');
 	}
 
 	public static function phpinfo($params)

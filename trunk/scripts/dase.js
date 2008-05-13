@@ -154,21 +154,6 @@ Dase.removeFromArray = function(ar,val) {
 
 /* end utilities */
 
-Dase.initWidget = function(widget,hooks) {
-	var ph = Dase.$('pageHook').innerHTML;
-	for (var i=0;i<hooks.length;i++) {
-		if (ph == hooks[i]) {
-			widget.run();
-		}
-	}
-}
-
-Dase.registerWidget = function(widget,hooks) {
-	Dase.addLoadEvent(function() {
-			Dase.initWidget(widget,hooks);
-			});
-}
-
 Dase.getEid = function() {
 	var base = Dase.base_href;
 	var d = new Date();

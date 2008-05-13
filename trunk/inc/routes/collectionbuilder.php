@@ -24,8 +24,6 @@ $routes['collectionbuilder'] = array(
 	'dataAsJson' =>    array (
 		'uri_template' => 'json/collection/{collection_ascii_id}/data/{select}',
 		'auth' => 'read',
-		'mime' => 'application/json',
-		'nocache' => 'custom',
 	),
 	'setAttributeSortOrder' =>    array (
 		'uri_template' => 'cb/{eid/collection_ascii_id/attribute_ascii_id}/XXX/attribute/XXX/sort_order',

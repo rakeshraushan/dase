@@ -7,7 +7,7 @@
 	{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 	<div id="collectionAsciiId" class="hide">{$collection->ascii_id}</div>
 	<div class="contentHeader">
-		<h1>{$collection->name|escape} ({$collection->item_count})</h1>
+		<h1>{$collection->name|escape} ({$collection->item_count} items)</h1>
 		<h3>{$collection->description|escape}</h3>
 	</div>
 	<h3>Search:</h3>

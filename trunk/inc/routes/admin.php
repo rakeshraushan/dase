@@ -25,6 +25,5 @@ $routes['admin'] = array (
 	'getAclAsJson' =>    array (
 		'uri_template' => 'acl',
 		'auth' => 'superuser',
-		'mime' => 'application/json',
 	),
 );

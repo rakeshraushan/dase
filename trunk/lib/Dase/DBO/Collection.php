@@ -38,7 +38,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		$feed->setUpdated($this->getLastUpdated());
+		$feed->setUpdated($this->updated);
 		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
 		$feed->setId($this->getBaseUrl());
@@ -95,9 +95,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		//todo:fix this to *not* simply be a time stamp
-		$feed->setUpdated(date(DATE_ATOM));
-		//$feed->setUpdated($this->getLastUpdated());
+		$feed->setUpdated($this->updated);
 		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
 		$feed->setId($this->getBaseUrl());
@@ -404,26 +402,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->update();
 			return $item;
 		}
-	}
-
-	function getLastUpdated($id = '')
-	{
-		$id = $this->id ? $this->id : $id;
-		$item = new Dase_DBO_Item;
-		$item->orderBy('updated DESC');
-		$item->setLimit(1);
-		$item->findOne();
-		return $item->updated;
-	}
-
-	function staticGetLastUpdated($id)
-	{
-		$item = new Dase_DBO_Item;
-		$item->collection_id = $id;
-		$item->orderBy('updated DESC');
-		$item->setLimit(1);
-		$item->findOne();
-		return $item->updated;
 	}
 
 	public static function getId($ascii_id)

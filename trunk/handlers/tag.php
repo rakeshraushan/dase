@@ -20,7 +20,7 @@ class TagHandler
 		} else {
 			Dase::error(404);
 		}
-		Dase::display($tag->asAtom());
+		Dase::display($tag->asAtom(),'application/atom+xml');
 	}
 
 	public static function get($params)
@@ -61,7 +61,7 @@ class TagHandler
 		if ($tag_item->tag_id != $tag->id) {
 			Dase::error(404);
 		} 
-		Dase::display($tag_item->asAtom());
+		Dase::display($tag_item->asAtom(),'application/atom+xml');
 	}
 
 	public static function item($params)
@@ -87,6 +87,7 @@ class TagHandler
 		foreach ($item_id_array as $item_id) {
 			$tag->addItem($item_id);
 		}
+		header("Content-type: text/plain");
 		echo "added $num items to $tag->name";
 		exit;
 	}
