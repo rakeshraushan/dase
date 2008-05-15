@@ -157,9 +157,13 @@ class FMXMLReader {
        $output_dir = './fmxml_atom/'.date('Ymd_U').'/';
        if(!file_exists($output_dir)) if(!mkdir($output_dir, 0777, true)) die('Could not make ouput directory: '.$output_dir."\n");
        if(!is_writeable($output_dir)) die('Cannot write to '.$output_dir."\n");
+       $orphaned_rows = 0;
+       $migrated = 0;
        foreach($recs as $rec) {
            if(!$rec->{$this->id_col_name}) {
                print "--Skipping row without id: \n".print_r($rec, true)."\n";
+               file_put_contents($output_dir.'00_ORPHANED.txt', print_r($rec, true), FILE_APPEND);
+               $orphaned_rows++;
                continue;
            }
            $filename = preg_replace('/[^A-Za-z0-9_-]+/', '', $rec->{$this->id_col_name});
@@ -180,7 +184,17 @@ class FMXMLReader {
            //print $entry->asXML();
            print "Writing file {$output_dir}{$rec->{$this->id_col_name}}.atom.entry...\n";
            file_put_contents($output_dir.$rec->{$this->id_col_name}.'.atom.entry', $entry->asXML());
+           $manifest .= 'Details follow:'."\n";
+           $migrated++;
        }
+       $manifest = '--- '.date('Y.m.d@H:i:s').': '.$this->filename."\n";
+       $manifest .= 'Generated '.$migrated.' atom documents from FileMaker XML.'."\n";
+       if($orphaned_rows > 0) {
+           $manifest .= $orphaned_rows.' rows could not be moved.'."\n";
+           $manifest .= 'Find details of orphaned rows in 00_ORPHANED.txt.'."\n";
+       }
+       file_put_contents($output_dir.'00_MANIFEST.txt', $manifest);
+       return true;
    }
 
    public static function open($filename) {
@@ -191,7 +205,7 @@ class FMXMLReader {
                die($e->getMessage());
            }
        } else {
-           return false;
+           die('Could not read file '.$filename."\n");
        }
    }
 }
@@ -205,7 +219,7 @@ if(isset($argv[1]) && isset($argv[2])) {
     if($title_field) $fmxml->setTitleField($title_field);
     print "Title field set to {$fmxml->getTitleField()}.\n";
     print "ID field set to {$fmxml->getIdField()}.\n";
-    print_r($fmxml->parse());
+    $fmxml->parse();
 } else {
     die('Usage: php -f class.fmxmlreader.php file.xml http://collection/url ["idfield"] ["titlefield"].'."\n");
 }
