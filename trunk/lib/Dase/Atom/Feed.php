@@ -55,6 +55,8 @@ class Dase_Atom_Feed extends Dase_Atom
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		//this will NOT work in safemode
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
 		if ($user && $pwd) {
 			curl_setopt($ch, CURLOPT_USERPWD,"$user:$pwd");
 		}
@@ -62,7 +64,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		curl_close($ch);
 
 		//for debugging
-		if (Dase_Filter::filterGet('aaa')) {
+		if (isset($_GET['showfeed'])) {
 			print $xml;
 			exit;
 		}

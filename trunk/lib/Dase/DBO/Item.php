@@ -441,7 +441,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('src',$this->thumbnail_url);
 			$img->addAttribute('class','thumbnail');
 		}
-		$div->addChild('p',$this->getDescription());
+		$div->addChild('p',htmlspecialchars($this->getDescription()));
 
 		foreach ($this->getMetadata() as $row) {
 			//php dom will escape text for me here....
@@ -503,13 +503,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function asAppMember()
 	{
+		$d = "http://daseproject.org/ns/1.0";
 		$member = new Dase_Atom_Entry_MemberItem;
 		$member->setEdited($this->updated);
 		$this->injectAtomEntryData($member);
 		$member->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit');
-		$elem = $member->addElement('gd:feedLink',null,'http://schemas.google.com/g/2005');
-		$elem->setAttribute('rel','media');
-		$elem->setAttribute('href',APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media');
+		$link = $member->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media','http://daseproject.org/relation/media_collection');
+		//$elem = $member->addElement('d:feedLink',null,'http://schemas.google.com/g/2005');
+		//$elem->setAttribute('rel','media');
+		//$elem->setAttribute('href',APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media');
 		return $member->asXml();
 	}
 
@@ -524,7 +526,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}	
 
-	public function getBaseUrl() {
+	public function getBaseUrl() 
+	{
 		$this->collection || $this->getCollection();
 		return $this->collection->getBaseUrl() . '/' . $this->serial_number;
 	}
@@ -538,5 +541,29 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$media_coll->addAccept('audio/*');
 		$media_coll->addAccept('video/*');
 		return $app->asXml();
+	}
+
+	public function asJson()
+	{
+		$j = array();
+		$this->collection || $this->getCollection();
+		$item_array['serial_number'] = $this->serial_number;
+		$item_array['created'] = $this->created;
+		$item_array['updated'] = $this->updated;
+		$item_array['collection']['ascii_id'] = $this->collection->ascii_id;
+		$item_array['collection']['name'] = $this->collection->collection_name;
+		$item_array['media'] = array();
+		foreach ($this->getMedia() as $m) {
+			foreach ($m as $k => $v) {
+				$media_file[$k] = $v;
+			}
+			$item_array['media'][] = $media_file;
+		}
+		$item_array['metadata'] = array();
+		foreach ($this->getMetadata() as $row) {
+			$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
+		}
+		$json = new Services_JSON;
+		return $json->encode($item_array,true);
 	}
 }

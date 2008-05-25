@@ -7,23 +7,27 @@ $routes['collection'] = array (
 	),
 	//just the facts ma'am:
 	'asAtom' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}',
+		'uri_template' => 'collection/{collection_ascii_id}',
 		'auth' => 'none',
+		'format' => 'atom',
 	),
 	//includes items:
 	'asAtomArchive' =>    array (
-		'uri_template' => 'atom/collection/{collection_ascii_id}/archive',
+		'uri_template' => 'collection/{collection_ascii_id}/archive',
 		//to prevent DOS, needs high authorization
 		'auth' => 'none',
+		'format' => 'atom',
 	),
 	//includes managers, attributes, item_types:
 	'AsAtomFull' =>    array (
-		'uri_template' => 'atom/collections/{collection_ascii_id}/full',
+		'uri_template' => 'collections/{collection_ascii_id}/full',
 		'auth' => 'none',
+		'format' => 'atom',
 	),
 	'listAsAtom' =>    array (
-		'uri_template' => array('atom/collections','atom'),
+		'uri_template' => array('collections',''),
 		'auth' => 'none',
+		'format' => 'atom'
 	),
 	'attributesAsAtom' =>    array (
 		'uri_template' => 'atom/collection/{collection_ascii_id}/attributes/public',
@@ -64,6 +68,10 @@ $routes['collection'] = array (
 	'attributesAsJson' =>    array (
 		'uri_template' => 'json/collection/{collection_ascii_id}/attributes',
 		'auth' => 'user',
+	),
+	'asJsonCollection' =>    array (
+		'uri_template' => 'json/{collection_ascii_id}',
+		'auth' => 'none',
 	),
 );
 

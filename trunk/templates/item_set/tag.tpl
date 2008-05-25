@@ -13,6 +13,16 @@
 		<a href="" id="checkall">check/uncheck all</a>
 		<div id="saveChecked"></div>
 	</form>
+	<!--
+	left over from xslt
+	<form method="post" action="user/{$user/eid}/tag/{$tag_ascii_id}/remove_items">
+		<table id="itemSet">
+			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
+		</table>
+		<a href="" id="checkall">check/uncheck all</a>
+		<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items from set"/>
+	</form>
+	-->
 	<div class="spacer"></div>
 </div>
 {/block}

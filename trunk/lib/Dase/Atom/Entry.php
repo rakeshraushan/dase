@@ -11,7 +11,7 @@ class Dase_Atom_Entry extends Dase_Atom
 	//a feed, then the root means the root of the feed. If
 	//this is a free-standing entry document, it means the
 	//'entry' element
-	
+
 	function __construct(DOMDocument $dom=null,DOMElement $root=null)
 	{
 		if (!$dom && $root) {
@@ -32,14 +32,18 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	public static function load($xml) {
+	public static function load($xml) 
+	{
 		//reader object
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->load($xml);
-		return new Dase_Atom_Entry($dom);
+		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
+		$root = $entry->item(0);
+		return new Dase_Atom_Entry($dom,$root);
 	}
 
-	function __get($var) {
+	function __get($var) 
+	{
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);
 		$method = 'get'.ucfirst($var);
@@ -78,7 +82,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	function setMediaContent($url,$mime) {
+	function setMediaContent($url,$mime) 
+	{
 		if ($this->content_is_set) {
 			throw new Dase_Atom_Exception('content is already set');
 		} else {

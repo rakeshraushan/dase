@@ -18,7 +18,12 @@
  * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-define('MEDIA_ROOT','/mnt/www-data/dase/media');
+include 'sources.php';
+include 'media_config.php';
+
+//choose authentication to set eid:
+//include 'uteid_authentication.php';
+include 'dase_cookie_authentication.php';
 
 //need to filter these
 $collection = $_GET['collection'];
@@ -27,88 +32,6 @@ $filename = $_GET['filename'];
 $download = $_GET['force_download'];
 //ini_set('display_errors',1);
 //error_reporting(E_ALL);
-//0 means all access, 1 means EID only, 2 means collection owner
-
-$media_conf['400']['access_flag'] = 0;
-$media_conf['400']['mime_type'] = 'image/jpeg';
-
-$media_conf['aiff']['access_flag'] = 2;
-$media_conf['aiff']['mime_type'] = 'audio/x-aiff';
-
-$media_conf['css']['access_flag'] = 0;
-$media_conf['css']['mime_type'] = 'text/css';
-
-$media_conf['deleted']['access_flag'] = 2;
-$media_conf['deleted']['mime_type'] = 'application/octet-stream';
-
-$media_conf['doc']['access_flag'] = 1;
-$media_conf['doc']['mime_type'] = 'application/msword';
-
-$media_conf['full']['access_flag'] = 1;
-$media_conf['full']['mime_type'] = 'image/jpeg';
-
-$media_conf['gif']['access_flag'] = 1;
-$media_conf['gif']['mime_type'] = 'image/gif';
-
-$media_conf['html']['access_flag'] = 0;
-$media_conf['html']['mime_type'] = 'text/html';
-
-$media_conf['jpeg']['access_flag'] = 1;
-$media_conf['jpeg']['mime_type'] = 'image/jpeg';
-
-$media_conf['large']['access_flag'] = 1;
-$media_conf['large']['mime_type'] = 'image/jpeg';
-
-$media_conf['medium']['access_flag'] = 1;
-$media_conf['medium']['mime_type'] = 'image/jpeg';
-
-$media_conf['midi']['access_flag'] = 1;
-$media_conf['midi']['mime_type'] = 'application/octet-stream';
-
-$media_conf['mp3']['access_flag'] = 2;
-$media_conf['mp3']['mime_type'] = 'audio/mpeg';
-
-$media_conf['pdf']['access_flag'] = 1;
-$media_conf['pdf']['mime_type'] = 'application/pdf';
-
-$media_conf['png']['access_flag'] = 1;
-$media_conf['png']['mime_type'] = 'image/png';
-
-$media_conf['quicktime']['access_flag'] = 2;
-$media_conf['quicktime']['mime_type'] = 'video/quicktime';
-
-$media_conf['quicktime_stream']['access_flag'] = 1;
-$media_conf['quicktime_stream']['mime_type'] = 'video/quicktime';
-
-$media_conf['raw']['access_flag'] = 2;
-$media_conf['raw']['mime_type'] = 'application/octet-stream';
-
-$media_conf['small']['access_flag'] = 1;
-$media_conf['small']['mime_type'] = 'image/jpeg';
-
-$media_conf['text']['access_flag'] = 0;
-$media_conf['text']['mime_type'] = 'text/plain';
-
-$media_conf['thumbnail']['access_flag'] = 0;
-$media_conf['thumbnail']['mime_type'] = 'image/jpeg';
-
-$media_conf['thumbnails']['access_flag'] = 0;
-$media_conf['thumbnails']['mime_type'] = 'image/jpeg';
-
-$media_conf['tiff']['access_flag'] = 1;
-$media_conf['tiff']['mime_type'] = 'image/tiff';
-
-$media_conf['viewitem']['access_flag'] = 0;
-$media_conf['viewitem']['mime_type'] = 'image/jpeg';
-
-$media_conf['wav']['access_flag'] = 2;
-$media_conf['wav']['mime_type'] = 'audio/x-wav';
-
-$media_conf['xml']['access_flag'] = 0;
-$media_conf['xml']['mime_type'] = 'application/xml';
-
-$media_conf['xslt']['access_flag'] = 0;
-$media_conf['xslt']['mime_type'] = 'application/xslt+xml';
 
 //should be generated into acl from db
 $public_access_collections = array(
@@ -128,54 +51,39 @@ if (stristr($filename,'..')) { //prevent hacker from going up dir tree
 
 //public collection, so give 'em what they want
 if (in_array($collection,$public_access_collections)) {
-	serveFile($collection,$size,$filename,$download,$media_conf);
+	serveFile($collection,$size,$filename,$download,$media_conf,$sources);
 	exit;
 }
 
 //unrestricted filetype, so give 'em what they want
 if (!$media_conf[$size]['access_flag']) {
-	serveFile($collection,$size,$filename,$download,$media_conf);
+	serveFile($collection,$size,$filename,$download,$media_conf,$sources);
 	exit;
 }
 
-$ut_user = null;
-//$ut_user = true;
-if (!extension_loaded("eid")) {
-	dl("eid.so");
-	if (!extension_loaded("eid")) {
-		die('no go eid module');
-	}
-}
 
-$ut_user = eid_decode(); 
-if (EID_ERR_OK != $ut_user->status) {
-	unset($ut_user);
-}
-
-if ($ut_user == NULL) {
+if (!$eid) {
 	unset($download);
 	$size = 'thumbnail';
 	$filename = getThumb($filename);
-	serveFile($collection,$size,$filename,$download,$media_conf);
+	serveFile($collection,$size,$filename,$download,$media_conf,$sources);
 	exit;
-}	
-if ($ut_user) {
+} else {	
 	if (2 == $media_conf[$size]['access_flag']) {
-		require_once '../inc/media_acl.php';
-		$eid = $ut_user->eid;
-		if (!$acl[$collection][$eid]) {
+		include 'acl.php';
+		if (!$acl['collections'][$collection][$eid]) {
 			unset($download);
 			$size = 'thumbnail';
 			$filename = getThumb($filename);
 		}
 	}
-	serveFile($collection,$size,$filename,$download,$media_conf);
+	serveFile($collection,$size,$filename,$download,$media_conf,$sources);
 	exit;
 }
 
 function getThumb($filename)
 {
-	$ext = array('_100.jpg','_400.jpg','_640.jpg','_800.jpg','_1024.jpg','_4800.jpg');
+	$ext = array('_100.jpg','_400.jpg','_640.jpg','_800.jpg','_1024.jpg','_4800.jpg','.pdf');
 	$filename = str_replace($ext,'_100.jpg',$filename);
 	//really these others should be determined by 'size' param
 	if (strpos($filename,'.mp3')) {
@@ -187,9 +95,18 @@ function getThumb($filename)
 	return $filename;
 }
 
-function serveFile($collection,$size,$filename,$download,$media_conf)
+function serveFile($collection,$size,$filename,$download,$media_conf,$sources)
 {
-	$media_root = MEDIA_ROOT;
+	$media_root = $sources[$collection];
+	if (!$media_root) {
+		$media_root = '/mnt/www-data/dase/media/'.$collection;
+	}
+
+	$content_type = $media_conf[$size]['mime_type'];
+	if (!$content_type) {
+		$content_type = 'application/octet-stream';
+	}
+
 	//when I get around to it, I need to rename image directories to match "size" attribute
 	//of media_file exactly (AND strip off directory name part of filename)
 	//but it'll have to wait 'til I redo collection builder
@@ -199,16 +116,16 @@ function serveFile($collection,$size,$filename,$download,$media_conf)
 	if ('viewitem' == $size) {
 		$size = '400';
 	}
-	$path = "$media_root/{$collection}_collection/$size/$filename";
+	//$path = "$media_root/{$collection}_collection/$size/$filename";
+	$path = "$media_root/$size/$filename";
+	if (!file_exists($path)) {
+		$path = "{$media_root}_collection/$size/$filename";
+	}
 
 	if ((!file_exists($path)) || (!$filename) || (!$size)) {
 		header('Content-Type: image/jpeg');
 		readfile('../images/unavail.jpg');
 		exit;
-	}
-	$content_type = $media_conf[$size]['mime_type'];
-	if (!$content_type) {
-		$content_type = 'application/octet-stream';
 	}
 	//from php.net
 	$headers = apache_request_headers();

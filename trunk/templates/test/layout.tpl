@@ -25,7 +25,9 @@
 	<body>
 		<div id="container">
 			{block name="test-data"}default text{/block}
-			<insert-test-data/>
 		</div><!-- closes id=container-->
+		<div id="tests">
+			{block name="tests"}default text{/block}
+		</div>
 	</body>
 </html>

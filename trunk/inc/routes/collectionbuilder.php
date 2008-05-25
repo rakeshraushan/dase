@@ -30,5 +30,14 @@ $routes['collectionbuilder'] = array(
 		'auth' => 'admin',
 		'method' => 'put',
 	),
+	'uploadForm' =>    array (
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/upload',
+		'auth' => 'admin',
+	),
+	'checkAtom' =>    array (
+		'uri_template' => 'cb/{eid}/{collection_ascii_id}/check_atom',
+		'auth' => 'admin',
+		'method' => 'post',
+	),
 );
 

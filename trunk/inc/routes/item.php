@@ -5,6 +5,10 @@ $routes['item'] = array(
 		'uri_template' => 'atom/collection/{collection_ascii_id}/{serial_number}',
 		'auth' => 'none',
 	),
+	'asJson' =>    array (
+		'uri_template' => 'json/{collection_ascii_id}/{serial_number}',
+		'auth' => 'none',
+	),
 	'display' =>    array (
 		'uri_template' => 'collection/{collection_ascii_id}/{serial_number}',
 		'auth' => 'user',

@@ -32,7 +32,7 @@ abstract class Dase_File
 		'application/pdf' => array('size' => 'pdf', 'ext' => '.pdf','class'=>'Dase_File_Pdf'),
 		'application/xml' => array('size' => 'xml', 'ext' => '.xml','class'=>'Dase_File_Image'),
 		'text/xml' => array('size' => 'xml', 'ext' => '.xml','class'=>'Dase_File_Image'),
-		'application/xml+xslt' => array('size' => 'xslt', 'ext' => '.xsl','class'=>'Dase_File_Image'),
+		'application/xslt+xml' => array('size' => 'xslt', 'ext' => '.xsl','class'=>'Dase_File_Image'),
 		'application/msword' => array('size' => 'doc', 'ext' => '.doc','class'=>'Dase_File_Doc'),
 		'text/css' => array('size' => 'css', 'ext' => '.css','class'=>'Dase_File_Image'),
 		'text/html' => array('size' => 'html', 'ext' => '.html','class'=>'Dase_File_Image'),

@@ -3,45 +3,45 @@
 class UserHandler
 {
 	//rewrite/replace for alternate authentication
-	public static function initiateLogin($params)
+	public static function initiateLogin($request)
 	{
-		$t = new Dase_Template;
-		Dase::display($t->fetch('login_form.tpl'));
+		$t = new Dase_Template($request);
+		Dase::display($t->fetch('login_form.tpl'),$request);
 	}
 
 	//rewrite/replace for alternate authentication
-	public static function processLogin($params)
+	public static function processLogin($request)
 	{
-		$user = Dase_Filter::filterPost('username');
-		$pass = Dase_Filter::filterPost('password');
+		$username = $request->get('username');
+		$pass = $request->get('password');
 		if ('tseliot' == $pass) {
-			Dase_Cookie::set($user);
+			Dase_Cookie::set($username);
 			//do this so cookie is passed along
-			Dase::redirect("login/$user");
+			Dase::redirect("login/$username");
 		} else {
 			//I could probably just display here instead of redirect
 			Dase::redirect("login",'incorrect username/password');
 		}
 	}
 
-	public static function finishLogin($params)
+	public static function finishLogin($request)
 	{
-		if (isset($params['eid'])) {
-			if ($params['eid'] == Dase_User::getCurrent()) {
-				Dase::redirect('/',"welcome {$params['eid']} is logged in");
-			} else {
-				Dase::redirect('login');
-			}
+		//$user = $request->currentUser;
+
+		if ($request->get('eid') == Dase_User::getCurrent()) {
+			Dase::redirect('/',"welcome ". $request->get('eid')." is logged in");
+		} else {
+			Dase::redirect('login');
 		}
 	}
 
-	public static function logoff($params)
+	public static function logoff($request)
 	{
 		Dase_User::logoff();
 		Dase::redirect('login');
 	}
 
-	public static function dataAsJson($params)
+	public static function dataAsJson($request)
 	{
 		//NOTE WELL!!!:
 		//note that we ONLY use the request_url so the IE cache-busting
@@ -49,26 +49,23 @@ class UserHandler
 		//operations that change user date are required to expire this cache
 		//NOTE: request_url is 'json/user/{eid}/data'
 		//need to have SOME data returned if there is no user
-		if (!isset($params['eid'])) {
-			echo "user data error"; exit;
-		}
-		$cache = Dase_Cache::get($params['eid'] . '_data');
+		$cache = Dase_Cache::get($request->eid . '_data');
 		if (!$cache->isFresh()) {
-			$data = Dase_User::get($params['eid'])->getData();
-			$headers = array("Content-Type: application/json; charset=utf-8");
-			$cache->setData($data,$headers);
+			$data = Dase_User::get($request->get('eid'))->getData();
+			$cache->setData($data);
 		}
+		header("Content-Type: application/json; charset=utf-8");
 		$cache->display();
 	}
 
-	public static function cartAsJson($params)
+	public static function cartAsJson($request)
 	{
-		Dase::display(Dase_User::get($params)->getCart(),'application/json');
+		Dase::display(Dase_User::get($request)->getCart(),$request);
 	}
 
-	public static function addCartItem($params)
+	public static function addCartItem($request)
 	{
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$u->expireDataCache();
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
@@ -84,9 +81,9 @@ class UserHandler
 		}
 	}
 
-	public static function deleteTagItem($params)
+	public static function deleteTagItem($request)
 	{
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$u->expireDataCache();
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->load($params['tag_item_id']);
@@ -101,32 +98,32 @@ class UserHandler
 		}
 	}
 
-	public static function adminCollectionsAsJson($params)
+	public static function adminCollectionsAsJson($request)
 	{
-		Dase::display(Dase_User::get($params)->getCollections(),'application/json');
+		Dase::display(Dase_User::get($request)->getCollections(),$request);
 	}
 
-	public static function cart($params)
+	public static function cart($request)
 	{
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
 		$tag->findOne();
 		$http_pw = Dase_DBO_Tag::getHttpPassword($tag->ascii_id,$u->eid,'read');
-		$t = new Dase_Template;
+		$t = new Dase_Template($request);
 		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag->ascii_id,$u->eid,$http_pw));
-		Dase::display($t->fetch('item_set/tag.tpl'));
+		Dase::display($t->fetch('item_set/tag.tpl'),$request);
 	}
 
-	public static function settings($params)
+	public static function settings($request)
 	{
-		$t = new Dase_Template;
-		$t->assign('user',Dase_User::get($params));
-		Dase::display($t->fetch('user/settings.tpl'));
+		$t = new Dase_Template($request);
+		$t->assign('user',Dase_User::get($request));
+		Dase::display($t->fetch('user/settings.tpl'),$request);
 	}
 
-	public static function getHttpPassword($params) 
+	public static function getHttpPassword($request) 
 	{
 		//this handler required eid authentication,
 		//meaning the url eid matches the cookie eid

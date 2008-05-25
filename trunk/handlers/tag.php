@@ -2,17 +2,17 @@
 
 class TagHandler
 {
-	public static function asAtom($params)
+	public static function asAtom($request)
 	{
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
-		if (isset($params['id'])) {
-			$tag->load($params['id']);
+		if ($request->has('id')) {
+			$tag->load($request->get('id'));
 			if ($tag->dase_user_id != $u->id) {
 				Dase::error(401);
 			}
-		} elseif (isset($params['tag_ascii_id'])) {
-			$tag->ascii_id = $params['tag_ascii_id'];
+		} elseif ($request->has('tag_ascii_id')) {
+			$tag->ascii_id = $request->get('tag_ascii_id');
 			$tag->dase_user_id = $u->id;
 			if (!$tag->findOne()) {
 				Dase::error(401);
@@ -23,17 +23,17 @@ class TagHandler
 		Dase::display($tag->asAtom(),'application/atom+xml');
 	}
 
-	public static function get($params)
+	public static function get($request)
 	{
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
-		if (isset($params['id'])) {
-			$tag->load($params['id']);
+		if ($request->has('id')) {
+			$tag->load($request->get('id'));
 			if ($tag->dase_user_id != $u->id) {
 				Dase::error(401);
 			}
-		} elseif (isset($params['tag_ascii_id'])) {
-			$tag->ascii_id = $params['tag_ascii_id'];
+		} elseif ($request->has('tag_ascii_id')) {
+			$tag->ascii_id = $request->get('tag_ascii_id');
 			$tag->dase_user_id = $u->id;
 			if (!$tag->findOne()) {
 				Dase::error(401);
@@ -44,43 +44,43 @@ class TagHandler
 
 		$http_pw = Dase_DBO_Tag::getHttpPassword($tag->ascii_id,$u->eid,'read');
 
-		$t = new Dase_Template;
+		$t = new Dase_Template($request);
 		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag->ascii_id,$u->eid,$http_pw));
 		Dase::display($t->fetch('item_set/tag.tpl'));
 	}
 
-	public static function itemAsAtom($params)
+	public static function itemAsAtom($request)
 	{
 		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $params['tag_ascii_id'];
+		$tag->ascii_id = $request->get('tag_ascii_id');
 		if (!$tag->findOne()) {
 			Dase::error(401);
 		}
 		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->load($params['tag_item_id']);
+		$tag_item->load($request->get('tag_item_id'));
 		if ($tag_item->tag_id != $tag->id) {
 			Dase::error(404);
 		} 
 		Dase::display($tag_item->asAtom(),'application/atom+xml');
 	}
 
-	public static function item($params)
+	public static function item($request)
 	{
-		$u = Dase_User::get($params);
-		$tag_ascii_id = $params['tag_ascii_id'];
-		$tag_item_id = $params['tag_item_id'];
+		$u = Dase_User::get($request);
+		$tag_ascii_id = $request->get('tag_ascii_id');
+		$tag_item_id = $request->get('tag_item_id');
 		$http_pw = Dase_DBO_Tag::getHttpPassword($tag_ascii_id,$u->eid,'read');
-		$t = new Dase_Template;
+		$t = new Dase_Template($request);
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id,$u->eid,$http_pw));
 		Dase::display($t->fetch('item/transform.tpl'));
 	}
 
-	public static function saveToTag($params) 
+	public static function saveToTag($request) 
 	{
 		$item_id_array = explode(',',Dase_Filter::filterPost('item_ids'));
-		$u = Dase_User::get($params);
+		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $params['tag_ascii_id'];
+		$tag->ascii_id = $request->get('tag_ascii_id');
 		$tag->dase_user_id = $u->id;
 		$tag->findOne();
 		$num = count($item_id_array);
@@ -92,13 +92,13 @@ class TagHandler
 		exit;
 	}
 
-	public static function removeItems($params) 
+	public static function removeItems($request) 
 	{
-		$delete = Dase_Filter::filterPost('delete_tag');
-		$item_id_array = Dase_Filter::filterArray($_POST['item_id']);
-		$u = Dase_User::get($params);
+		$delete = $request->get('delete_tag');
+		$item_id_array = $request->get('item_id',true);
+		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $params['tag_ascii_id'];
+		$tag->ascii_id = $request->get('tag_ascii_id');
 		$tag->dase_user_id = $u->id;
 		$tag->findOne();
 		if ($delete && !$tag->getItemCount()) {

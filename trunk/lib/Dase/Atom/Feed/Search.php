@@ -40,6 +40,8 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 
 	function getSearchTallies()
 	{
+		//may want to adjust this to use atom related links
+		//but keep in mind search refine javascript
 		$x = new DomXPath($this->dom);
 		foreach (Dase_Atom::$ns as $k => $v) {
 			$x->registerNamespace($k,$v);

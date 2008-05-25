@@ -22,8 +22,16 @@ $routes['admin'] = array (
 		'uri_template' => 'phpinfo',
 		'auth' => 'superuser',
 	),
-	'getAclAsJson' =>    array (
+	'getAcl' =>    array (
 		'uri_template' => 'acl',
-		'auth' => 'superuser',
+		'auth' => 'http',
+	),
+	'getMediaSourceList' =>    array (
+		'uri_template' => 'sources',
+		'auth' => 'http',
+	),
+	'testMimeParser' =>    array (
+		'uri_template' => 'mime',
+		'auth' => 'none',
 	),
 );

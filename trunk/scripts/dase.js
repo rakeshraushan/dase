@@ -645,7 +645,7 @@ Dase.placeUserTags = function(eid) {
 						var id = ascii.substring(1);
 						sets[type] = sets[type] + "<li><a href='tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
 					} else {
-						sets[type] = sets[type] + "<li><a href='user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = sets[type] + "<li><a href='tag/" + eid + "/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				} else {
 					//first time through...
@@ -653,7 +653,7 @@ Dase.placeUserTags = function(eid) {
 						id = ascii.substring(1);
 						sets[type] = "<li><a href='tag/" + id + "'>" + jsonAscii + "</a></li>\n";
 					} else {
-						sets[type] = "<li><a href='user/" + eid + "/tag/" + ascii + "'>" + jsonAscii + "</a></li>\n";
+						sets[type] = "<li><a href='tag/" + eid + "/" + ascii + "'>" + jsonAscii + "</a></li>\n";
 					}
 				}
 			} 

@@ -3,7 +3,7 @@
 class AttributeHandler
 {
 
-	public static function attributeListAsAtom($params) 
+	public static function attributeListAsAtom($request) 
 	{
 		$atts = new Dase_DBO_Attribute;
 		$feed = new Dase_Atom_Feed;
@@ -13,10 +13,10 @@ class AttributeHandler
 		Dase::display($feed->asXml(),'application/atom+xml');
 	}
 
-	public static function attributeValuesAsHtml($params)
+	public static function attributeValuesAsHtml($request)
 	{
-		$att = $params['attribute_ascii_id'];
-		$coll = $params['collection_ascii_id'];
+		$att = $request->get('attribute_ascii_id');
+		$coll = $request->get('collection_ascii_id');
 		$attr = Dase_DBO_Attribute::get($coll,$att);
 		if (0 == $attr->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
