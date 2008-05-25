@@ -32,7 +32,26 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}
 
-	function getAtomFeed() {
+	function asJson() 
+	{
+		$json = array();
+		$json['collection'] = array(
+			'name' => $this->collection_name,
+			'ascii_id' => $this->ascii_id,
+			'path_to_media_file' => $this->path_to_media_files,
+		);
+		$json['collection']['attributes'] = array();
+		foreach ($this->getAttributes() as $att) {
+			$att_array['name'] = $att->attribute_name;
+			$att_array['ascii_id'] = $att->ascii_id;
+			$json['collection']['attributes'][] = $att_array;
+		}
+		$sj = new Services_JSON;
+		return $sj->json_format($json);
+	}
+
+	function getAtomFeed() 
+	{
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);
 		if ($this->description) {
@@ -56,7 +75,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	function asAtomFull() {
+	function asAtomFull() 
+	{
 		$feed = $this->getAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/full','self');
 		$cms = new Dase_DBO_CollectionManager;
@@ -89,7 +109,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	function asAppCollection($start,$count=50) {
+	function asAppCollection($start,$count=50) 
+	{
 		$feed = new Dase_Atom_Feed_AppCollection;
 		$feed->setTitle($this->collection_name);
 		if ($this->description) {
@@ -109,6 +130,42 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$i->injectAppEntryData($feed->addEntry());
 		}
 		return $feed->asXml();
+	}
+
+	function asJsonCollection($page=1,$limit=50)
+	{
+		$offset = $limit * ($page-1);
+		if ($offset < 0) {
+			$offset = 0;
+		}
+		$coll_array = array();
+		$coll_array['name'] = $this->collection_name;
+		$coll_array['ascii_id'] = $this->ascii_id;
+		$coll_array['item_count'] = $this->getItemCount();
+		/*
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT serial_number
+			FROM item 
+			WHERE collection_id = ?
+			ORDER BY serial_number
+			LIMIT ? 
+			OFFSET ?
+			";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($this->id,$limit,$offset));
+		$item_array = array();
+		 */
+		//while ($sernum = $sth->fetchColumn()) {
+		foreach ($this->getItems() as $item) {
+			$item_array['href'] = 'https://dase.laits.utexas.edu/'.$this->ascii_id.'/'.$item->serial_number;
+			$item_array['title'] = $item->getTitle();
+			$coll_array['members'][] = $item_array;
+		}
+		$next = $page+1;
+		$coll_array['next'] = $this->getBaseUrl().'.json?page='. $next;
+		$json = new Services_JSON;
+		return $json->encode($coll_array,true);
 	}
 
 	static function listAsAtom($public_only = false)
@@ -446,7 +503,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($collection_data);
 	}
 
-	public function getAtompubServiceDoc() {
+	public function getAtompubServiceDoc() 
+	{
 		$svc = new Dase_Atom_Service;	
 		$svc->addWorkspace($this->collection_name.' Workspace')
 			->addCollection(APP_ROOT.'/edit/'.$this->ascii_id,$this->collection_name.' Items')
@@ -454,4 +512,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $svc->asXml();
 	}
 
+	public static function getMediaSources()
+	{
+		$sources = array();
+		$colls = new Dase_DBO_Collection;
+		foreach ($colls->find() as $coll) {
+			$sources[$coll->ascii_id] = $coll->path_to_media_files;
+		}
+		return $sources;
+	}
 }

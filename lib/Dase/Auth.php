@@ -41,6 +41,7 @@ class Dase_Auth
 
 		//can be extended
 		if (isset($params['collection_ascii_id']) && isset($params['tag_ascii_id'])) {
+			//both should never be set
 			return false;
 		} elseif (isset($params['collection_ascii_id'])) {
 			$type = 'collection';
@@ -48,6 +49,11 @@ class Dase_Auth
 			$type = 'tag';
 		} else {
 			$type = 'default';
+		}
+
+		if (!isset($params['eid']) || !$params['eid']) {
+			//if this same request was authorized w/ http basic, registry would have set eid
+			$params['eid'] = Dase_Registry::get('eid');
 		}
 
 		if (class_exists($class_name)) {

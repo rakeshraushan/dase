@@ -95,9 +95,3 @@ $media_conf['xml']['mime_type'] = 'application/xml';
 
 $media_conf['xslt']['access_flag'] = 0;
 $media_conf['xslt']['mime_type'] = 'application/xslt+xml';
-
-include '../lib/spyc/spyc.php';
-
-$yaml = Spyc::YAMLDump($media_conf);
-
-print_r($yaml);

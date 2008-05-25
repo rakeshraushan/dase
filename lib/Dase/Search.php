@@ -27,67 +27,15 @@ class Dase_Search
 	private $request_uri;
 	private $query_string;
 
-	public static function get($request_uri,$query_string)
+	public static function get($request)
 	{
 		$search_obj = new Dase_Search();
-		$search_obj->parse($request_uri,$query_string);
+		$search_obj->parse($request);
 		return $search_obj;
 	}
 
-	public static function parseQueryString($query_string)
+	function parse($request)
 	{
-		//split params into key value pairs AND allow multiple 
-		//params w/ same key as an array (like standard CGI)
-		$url_params = array();
-		//NOTE: urldecode is NOT UTF-8 compatible
-		$qs = html_entity_decode(urldecode($query_string));
-		$pairs = explode('&',$qs);
-		if (count($pairs)) {
-			foreach ($pairs as $pair) {
-				if (false !== strpos($pair,'=')) {	
-					list($key,$val) = explode('=',$pair);
-					if (!isset($url_params[$key])) {
-						//not an array
-						$url_params[$key] = $val;
-					} elseif(is_array($url_params[$key])) {
-						//IS an array
-						$url_params[$key][] = $val;
-					} else {
-						//key is set, but it is NOT an array, so make it one!!
-						$temp = $url_params[$key];
-						$url_params[$key] = array();
-						$url_params[$key][] = $temp;
-						$url_params[$key][] = $val;
-					}
-				} else { //deal with case of '&' in search term!
-					if (is_array($url_params[$key])) {
-						$last = array_pop($url_params[$key]);
-					} else {
-						$url_params[$key] = $url_params[$key].'&'.$pair;
-					}
-				}
-			}
-		}
-		return $url_params;
-	}
-
-	public static function getCollectionAsciiId($request_uri)
-	{
-		//NOTE: this ASSUMES the uri pattern for collection
-		if (preg_match('/collection\/([^\/]*)\/search/',$request_uri,$matches)) {
-			$collection_ascii_id = $matches[1];
-			return $collection_ascii_id;
-		} else {
-			return false;
-		}
-	}
-
-	function parse($request_uri,$query_string)
-	{
-		$url_params = Dase_Search::parseQueryString($query_string);
-		$this->url_params = $url_params;
-		$this->request_uri = $request_uri;
-		$this->query_string = $query_string;
 		$search['type'] = null;
 		$search['colls'] = array();
 		$search['omit_colls'] = array();
@@ -125,65 +73,38 @@ class Dase_Search
 		 * type=test:picture 
 		 */
 
-		if (isset($url_params['c'])) {
-			if (!is_array($url_params['c'])) {
-				$url_params['c'] = array($url_params['c']);
-			}
-			foreach ($url_params['c'] as $c) {
-				$search['colls'][] = $c;
-			}
-			$search['colls'] = array_unique($search['colls']);
+		foreach ($request->get('c',true) as $c) {
+			$search['colls'][] = $c;
 		}
+		$search['colls'] = array_unique($search['colls']);
+
 		//url parameter 'nc' means "NOT collection..."
-		if (isset($url_params['nc'])) {
-			if (!is_array($url_params['nc'])) {
-				$url_params['nc'] = array($url_params['nc']);
-			}
-			foreach ($url_params['nc'] as $nc) {
-				$search['omit_colls'][] = $nc;
-			}
-			$search['omit_colls'] = array_unique($search['omit_colls']);
+		foreach ($request->get('nc',true) as $c) {
+			$search['omit_colls'][] = $c;
 		}
+		$search['omit_colls'] = array_unique($search['omit_colls']);
 
-		//collection_ascii_id in uri_string trumps coll in get array
-		$collection_ascii_id = Dase_Search::getCollectionAsciiId($request_uri);
-
-		//'collection_ascii_id' in query string trumps both
-		if (isset($url_params['collection_ascii_id'])) {
-			if (is_array($url_params['collection_ascii_id'])) {
-				//take the last one
-				$collection_ascii_id = array_pop($url_params['collection_ascii_id']);
-			} else {
-				$collection_ascii_id = $url_params['collection_ascii_id'];
-			}
-		}
+		//collection_ascii_id trumps
+		$collection_ascii_id = Dase_Search::getCollectionAsciiId($request);
 		if ($collection_ascii_id) {
 			$search['colls'] = array($collection_ascii_id);
 			$echo['collection_ascii_id'] = $collection_ascii_id;
 		}
 
 		//populate general find and omit array
-		if (isset($url_params['q'])) {
-			$query = $url_params['q'];
-			if (!is_array($query)) {
-				$query = array($query);
-			}
-			$echo['query'] = join(' AND ',$query);
-			foreach ($query as $q) {
-				foreach ($this->_tokenizeQuoted($q) as $t) {
-					if ('-' == substr($t,0,1)) {
-						$search['omit'][] = substr($t,1);
-					} else {
-						$search['find'][] = $t;
-					}
+		$query = $request->get('q',true);
+		$echo['query'] = join(' AND ',$query);
+		foreach ($query as $q) {
+			foreach ($this->_tokenizeQuoted($q) as $t) {
+				if ('-' == substr($t,0,1)) {
+					$search['omit'][] = substr($t,1);
+				} else {
+					$search['find'][] = $t;
 				}
 			}
 		}
 		//for substring att searches  => att~val
-		foreach ($url_params as $k => $val) {
-			if (!is_array($val)) {
-				$val = array($val);
-			}
+		foreach ($request->urlParams as $k => $val) {
 			if (('q' != $k) && ('type' != $k) && strpos($k,'~')){
 				//$echo['sub'][$k] = join(' ',$val);
 				$echo['sub'][$k] = $val;
@@ -243,10 +164,7 @@ class Dase_Search
 			}
 		}
 		//for attr exact value searches => att.val
-		foreach ($url_params as $k => $val) {
-			if (!is_array($val)) {
-				$val = array($val);
-			}
+		foreach ($request->urlParams as $k => $val) {
 			foreach($val as $v) {
 				$coll = null;
 				$att = null;
@@ -261,10 +179,11 @@ class Dase_Search
 		}
 
 		//for item_type filter
-		foreach ($url_params as $k => $val) {
-			// for item type only take ONE 
-			$val = is_array($val) ? $val[0] : $val;
+		foreach ($request->urlParams as $k => $val) {
 			if (('type' == $k) && $val) {
+				if (is_array($val)) {
+					$val = array_pop($val);
+				}
 				$echo['type'] = $val;
 				list($coll,$type) = explode(':',$val);
 				$search['type']['coll'] = $coll;
@@ -303,6 +222,17 @@ class Dase_Search
 		$this->search = $search;
 
 		// DONE parsing search string!!
+	}
+
+	public static function getCollectionAsciiId($request)
+	{
+		//NOTE: this ASSUMES the uri pattern for collection
+		if (preg_match('/collection\/([^\/]*)\/search/',$request->path,$matches)) {
+			$collection_ascii_id = $matches[1];
+			return $collection_ascii_id;
+		} else {
+			return $request->get('collection_ascii_id');
+		}
 	}
 
 	public static function constructEcho($echo) {
@@ -588,31 +518,11 @@ class Dase_Search
 		$result['count'] = count($result['item_ids']);
 		$result['search'] = $this->search;
 		$result['sql'] = $sql;
-		$result['link'] = $this->getLink($this->query_string);
+		$result['link'] = $this->query_string;
 		$result['echo'] = $this->search['echo'];
 		$result['request_url'] = $this->request_uri;
 		$result['query_string'] = $this->query_string;
 		return $result;
-	}
-
-	public function getLink($query_string)
-	{
-		$link = '';
-		$url_params = Dase_Search::parseQueryString($query_string);;
-		foreach ($url_params as $k => $v) {
-			if (is_array($v)) {
-				foreach($v as $val) {
-					if (!in_array($val,array('max','start'))) {
-						$link .= "&$k=$val";
-					}
-				}
-			} else {
-				if (!in_array($v,array('max','start'))) {
-					$link .= "&$k=$v";
-				}
-			}
-		}
-		return "search?" . $link;
 	}
 
 	public function getResult()

@@ -175,18 +175,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$item = $tag_item->getItem();
 			$item->injectAtomEntryData($entry);
 			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
-			/* WORK ON SOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				$source = $sx->addChild('source');
-			$source->addChild('title',htmlentities($this->item->collection_name));
-			if (is_numeric($this->item->updated)) {
-				$updated = date(DATE_ATOM,$this->item->updated);
-			} else {
-				$updated = $this->item->updated;
-			}
-
-			$source->addChild('updated',$updated);
-			$source->addChild('id',APP_ROOT . '/collection/'. substr($this->item->collection_ascii_id,0,-11));
-			 */
 		}
 		return $feed->asXml();
 	}

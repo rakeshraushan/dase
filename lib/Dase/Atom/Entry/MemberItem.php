@@ -14,8 +14,9 @@ class Dase_Atom_Entry_MemberItem extends Dase_Atom_Entry_Item
 		$xml = file_get_contents($xml_file);
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXML($xml);
-		$entry = new Dase_Atom_Entry_MemberItem($dom);
-		return $entry;
+		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
+		$root = $entry->item(0);
+		return new Dase_Atom_Entry_MemberItem($dom,$root);
 	}
 
 	function insert($params) 

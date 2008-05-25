@@ -2,33 +2,38 @@
 
 class ItemHandler
 {
-	public static function asAtom($params)
+	public static function asAtom($request)
 	{
-		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
-			$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
-			if ($item) {
-				Dase::display($item->asAtom(),'application/atom+xml');
-			}
+		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		if ($item) {
+			Dase::display($item->asAtom(),'application/atom+xml');
 		}
 		Dase::error(404);
 	}
 
-	public static function display($params)
+	public static function asJson($request)
 	{
-		if (isset($params['collection_ascii_id']) && ($params['serial_number'])) {
-			//see if it exists
-			if (Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number'])) {
-				$t = new Dase_Template;
-				$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/collection/'. $params['collection_ascii_id'] . '/' . $params['serial_number']);
-				$t->assign('item',$feed);
-				Dase::display($t->fetch('item/transform.tpl'));
-			} else {
-				Dase::error(404);
-			}
+		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		if ($item) {
+			Dase::display($item->asJson(),'text/plain');
+		}
+		Dase::error(404);
+	}
+
+	public static function display($request)
+	{
+		//see if it exists
+		if (Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'))) {
+			$t = new Dase_Template($request);
+			$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/collection/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number'));
+			$t->assign('item',$feed);
+			Dase::display($t->fetch('item/transform.tpl'));
+		} else {
+			Dase::error(404);
 		}
 	}
 
-	public static function editForm($params)
+	public static function editForm($request)
 	{
 		//create this
 	}

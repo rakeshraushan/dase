@@ -18,39 +18,34 @@
  * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-class Dase_Timer 
+class Dase_Admin 
 {
 
-	private $_start;
-	private static $instance;
-
-	private function __construct()
+	public static function getAcl() 
 	{
-		$this->_start = self::microtime_float();
-	}
-
-	public static function start()
-	{
-		if (empty (self::$instance)) {
-			self::$instance = new Dase_Timer();
-		} else {
-			throw new Exception( 'timer was already started' ); 
+		$acl = array();
+		$cms = new Dase_DBO_CollectionManager;
+		foreach ($cms->find() as $cm) {
+			$cm->dase_user_eid = strtolower($cm->dase_user_eid);
+			$acl['collections'][$cm->collection_ascii_id][$cm->dase_user_eid] = $cm->auth_level;
 		}
-		return self::$instance;
-	}
-
-	static function microtime_float()
-	{
-		list($usec, $sec) = explode(" ", microtime());
-		return ((float)$usec + (float)$sec);
-	} 
-
-	public static function getElapsed()
-	{
-		if (empty (self::$instance)) {
-			throw new Exception( 'timer was not started' ); 
+		$users = new Dase_DBO_DaseUser;
+		foreach ($users->find() as $user) {
+			$user->eid = strtolower($user->eid);
+			$acl['users'][$user->eid] = $user->id;
 		}
-		return round(self::microtime_float() - self::$instance->_start,4);
+		/*
+		$tags = new Dase_DBO_Tag;
+		foreach ($tags->find() as $tag) {
+			if ($tag->getUser()) {
+				$eid = strtolower($tag->user->eid);
+			} else {
+				$eid = 'no eid on record';
+			}
+			$acl['tags'][$tag->ascii_id][$eid] = $tag->id;
+		}
+		 */
+		return $acl;
 	}
 }
 

@@ -26,19 +26,19 @@ class Dase_Routes
 {
 	public static $route_defaults = array(
 		'method' => 'get',
+		'format' => 'html',
 	);
 
 	public static function compile()
 	{
 		$cache = Dase_Cache::get('routes');
-		$cached_routes = $cache->getData();
-		if ($cached_routes) {
+		if ($cache->isFresh()) {
 			if (defined("DEBUG")) {
 				Dase::log('standard','------- using cache -------');
 				Dase::log('standard','routes cache hit');
 				Dase::log('standard','---------------------------');
 			}
-			return unserialize($cached_routes);
+			return unserialize($cache->getData());
 		} else {
 			$core_routes = Dase_Routes::compileRoutes(DASE_PATH.'/inc/routes.php');
 			$all_routes = Dase_Routes::compileModuleRoutes(DASE_PATH.'/modules',$core_routes);
@@ -54,30 +54,31 @@ class Dase_Routes
 		$compiled_routes = array();
 		include $config_file;
 		foreach (array('get','post','put','delete') as $method) {
-			$compiled_routes[$method] = array();
-			foreach ($routes as $handler => $methods) {
-				foreach ($methods as $action => $params) {
-					if (!is_array($params['uri_template'])) {
-						$params['uri_template'] = array($params['uri_template']);
-					}
-					foreach ($params['uri_template'] as $uri_template) {
-						$num = preg_match_all("/{([^{]*)}/",$uri_template,$matches);
-						$regex = "^".$uri_template."$";
-						if ($num) {
-							$params['params'] = join('/',$matches[1]);
-							$regex = preg_replace("/{[^{]*}/","([^/]*)",$regex);
+			foreach (Dase_Http_Request::$types as $format => $mime) {
+				foreach ($routes as $handler => $methods) {
+					foreach ($methods as $action => $params) {
+						if (!is_array($params['uri_template'])) {
+							$params['uri_template'] = array($params['uri_template']);
 						}
-						foreach ($route_defaults as $key => $default_value) {
-							if (!isset($params[$key])) {
-								$params[$key] = $default_value;
+						foreach ($params['uri_template'] as $uri_template) {
+							$num = preg_match_all("/{([\w]*)}/",$uri_template,$matches);
+							$regex = "^".$uri_template."$";
+							if ($num) {
+								$params['params'] = join('/',$matches[1]);
+								$regex = preg_replace("/{[\w]*}/","([\w]*)",$regex);
 							}
-						}
-						if ($params['method'] == $method) {
-							$params['handler'] = $handler;
-							$params['action'] = $action;
-							foreach ($params as $k => $v) {
-								if ('uri_template' == $k) { continue; }
-								$compiled_routes[$method][$regex][$k] = $v;
+							foreach ($route_defaults as $key => $default_value) {
+								if (!isset($params[$key])) {
+									$params[$key] = $default_value;
+								}
+							}
+							if ($params['method'] == $method && $params['format'] == $format) {
+								$params['handler'] = $handler;
+								$params['action'] = $action;
+								foreach ($params as $k => $v) {
+									if ('uri_template' == $k) { continue; }
+									$compiled_routes[$method][$format][$regex][$k] = $v;
+								}
 							}
 						}
 					}
@@ -126,32 +127,34 @@ class Dase_Routes
 					$routes['collection'] = '';
 				}
 				foreach (array('get','post','put','delete') as $method) {
-					foreach ($routes as $action => $params) {
-						if ('collection' == $action) { continue; }
-						if (!is_array($params['uri_template'])) {
-							$params['uri_template'] = array($params['uri_template']);
-						}
-						foreach ($params['uri_template'] as $uri_template) {
-							$num = preg_match_all("/{([^{]*)}/",$uri_template,$matches);
-							//trim so that an empty uri_template does not have trailing slash
-							$regex = trim("^modules/$module/".$uri_template,'/').'$';
-							if ($num) {
-								$params['params'] = join('/',$matches[1]);
-								$regex = preg_replace("/{[^{]*}/","([^/]*)",$regex);
+					foreach (Dase_Http_Request::$types as $format => $mime) {
+						foreach ($routes as $action => $params) {
+							if ('collection' == $action) { continue; }
+							if (!is_array($params['uri_template'])) {
+								$params['uri_template'] = array($params['uri_template']);
 							}
-							foreach ($route_defaults as $key => $default_value) {
-								if (!isset($params[$key])) {
-									$params[$key] = $default_value;
+							foreach ($params['uri_template'] as $uri_template) {
+								$num = preg_match_all("/{([\w]*)}/",$uri_template,$matches);
+								//trim so that an empty uri_template does not have trailing slash
+								$regex = trim("^modules/$module/".$uri_template,'/').'$';
+								if ($num) {
+									$params['params'] = join('/',$matches[1]);
+									$regex = preg_replace("/{[\w]*}/","([\w]*)",$regex);
 								}
-							}
-							if ($params['method'] == $method) {
-								$params['action'] = $action;
-								$params['name'] = $module->getFilename();
-								$params['prefix'] = '/modules/'.$module;
-								$params['collection_ascii_id'] = $routes['collection'];
-								foreach ($params as $k => $v) {
-									if ('uri_template' == $k) { continue; }
-									$compiled_routes[$method][$regex][$k] = $v;
+								foreach ($route_defaults as $key => $default_value) {
+									if (!isset($params[$key])) {
+										$params[$key] = $default_value;
+									}
+								}
+								if ($params['method'] == $method && $params['format'] == $format) {
+									$params['action'] = $action;
+									$params['name'] = $module->getFilename();
+									$params['prefix'] = '/modules/'.$module;
+									$params['collection_ascii_id'] = $routes['collection'];
+									foreach ($params as $k => $v) {
+										if ('uri_template' == $k) { continue; }
+										$compiled_routes[$method][$format][$regex][$k] = $v;
+									}
 								}
 							}
 						}

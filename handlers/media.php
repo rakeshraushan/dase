@@ -2,16 +2,16 @@
 
 class MediaHandler
 {
-	public static function getMediaAttributes($params)
+	public static function getMediaAttributes($request)
 	{
 		$media_atts = new Dase_DBO_MediaAttribute;
 		$media_atts->orderBy('label');
-		$t = new Dase_Template;
+		$t = new Dase_Template($request);
 		$t->assign('attributes',$media_atts->find());  
 		Dase::display($t->fetch('media/attributes.tpl'));
 	}
 
-	public static function updateMediaAttribute($params)
+	public static function updateMediaAttribute($request)
 	{
 		$media_att = new Dase_DBO_MediaAttribute;
 		$media_att->load($params['id']);
@@ -20,6 +20,12 @@ class MediaHandler
 		$media_att->update();
 		$msg = "updated media attribute";
 		Dase::redirect('media/attributes',$msg);
+	}
+
+	public static function get($request) {
+		Dase_Auth::authorize('read',$params);
+
+
 	}
 }
 

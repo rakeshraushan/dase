@@ -2,12 +2,14 @@
 
 $routes['search'] = array(
 	'itemAsAtom' =>    array (
-		'uri_template' => array('atom/search_item','atom/collection/{collection_ascii_id}/search_item'),
+		'uri_template' => array('search_item','collection/{collection_ascii_id}/search_item'),
 		'auth' => 'none',
+		'format' => 'atom'
 	),
 	'opensearch' =>    array (
-		'uri_template' => array('atom/search','atom/search/md5/{md5_hash}','atom/collection/{collection_ascii_id}/search'),
+		'uri_template' => array('search','search/md5/{md5_hash}','collection/{collection_ascii_id}/search'),
 		'auth' => 'none',
+		'format' => 'atom'
 	),
 	'item' =>    array (
 		'uri_template' => array('search_item','collection/{collection_ascii_id}/search_item'),
@@ -17,7 +19,7 @@ $routes['search'] = array(
 		'uri_template' => array('search','collection/{collection_ascii_id}/search'),
 		'auth' => 'user',
 	),
-	'sql' =>    array (
+	'showSql' =>    array (
 		'uri_template' => 'sql/collection/{collection_ascii_id}/search',
 		'auth' => 'superuser',
 	),

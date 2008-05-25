@@ -2,7 +2,7 @@
 
 class AtompubHandler
 {
-	public static function getMediaLinkEntry($params) 
+	public static function getMediaLinkEntry($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
@@ -17,7 +17,7 @@ class AtompubHandler
 		Dase::error(404);
 	}
 
-	public static function getMediaResource($params) 
+	public static function getMediaResource($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		if (isset($params['collection_ascii_id']) && ($params['serial_number'] && $params['size'])) {
@@ -33,19 +33,23 @@ class AtompubHandler
 		Dase::error(404);
 	}
 
-	public static function listCollectionEntries($params) 
+	public static function listCollectionEntries($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$start = Dase_Filter::filterGet('start');
+		$count = Dase_Filter::filterGet('count');
 		if (!$start) {
 			$start = 1;
 		}
-		$c = Dase_Collection::get($params);
-		Dase::display($c->asAppCollection($start),'application/atom+xml');
+		if (!$count) {
+			$count = 100;
+		}
+		$c = Dase_Collection::get($request);
+		Dase::display($c->asAppCollection($start,$count),'application/atom+xml');
 
 	}
 
-	public static function deleteMediaFile($params) 
+	public static function deleteMediaFile($request) 
 	{
 		Dase_Auth::authorize('write',$params);
 		//for now, only deletes the database entry
@@ -63,7 +67,7 @@ class AtompubHandler
 		Dase::error(500);
 	}
 
-	public static function listItemMedia($params) 
+	public static function listItemMedia($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
@@ -76,21 +80,21 @@ class AtompubHandler
 		Dase::display($item->mediaAsAtomFeed(),'application/atom+xml');
 	}
 
-	public static function getCollectionServiceDoc($params) 
+	public static function getCollectionServiceDoc($request) 
 	{
 		Dase_Auth::authorize('read',$params);
-		$c = Dase_Collection::get($params);
+		$c = Dase_Collection::get($request);
 		Dase::display($c->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
-	public static function getItemServiceDoc($params) 
+	public static function getItemServiceDoc($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		Dase::display($i->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
-	public static function getItem($params)
+	public static function getItem($request)
 	{
 		Dase_Auth::authorize('read',$params);
 		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
@@ -101,13 +105,13 @@ class AtompubHandler
 		}
 	}
 
-	public static function updateItem($params)
+	public static function updateItem($request)
 	{
 		Dase_Auth::authorize('write',$params);
 		$entry = Dase_Atom_Entry_MemberItem::load("php://input");
 		$metadata = "";
 		if ($entry->validate()) {
-			$item = $entry->replace($params);
+			$item = $entry->replace($request);
 			header("HTTP/1.1 200 Ok");
 			exit;
 		} else {
@@ -116,7 +120,7 @@ class AtompubHandler
 		}
 	}
 
-	public static function validate($params)
+	public static function validate($request)
 	{
 		$entry = Dase_Atom_Entry::load("php://input");
 		if ($entry->validate()) {
@@ -128,13 +132,13 @@ class AtompubHandler
 		}
 	}
 
-	public static function createItem($params)
+	public static function createItem($request)
 	{
 		Dase_Auth::authorize('write',$params);
 		$entry = Dase_Atom_Entry_MemberItem::load("php://input",false);
 		$metadata = "";
 		if ($entry->validate()) {
-			$item = $entry->insert($params);
+			$item = $entry->insert($request);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".APP_ROOT."/edit/".$params['collection_ascii_id']."/".$item->serial_number);
@@ -145,7 +149,7 @@ class AtompubHandler
 		}
 	}
 
-	public static function deleteItem($params)
+	public static function deleteItem($request)
 	{
 		Dase_Auth::authorize('write',$params);
 		$doomed = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
@@ -158,17 +162,18 @@ class AtompubHandler
 		}
 	}
 
-	public static function createMediaFile($params) 
+	public static function createMediaFile($request) 
 	{
 		Dase_Auth::authorize('write',$params);
 		if (!isset($params['collection_ascii_id']) || !isset($params['serial_number'])) {
 			Dase::error(404);
 		}
-		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
+		$coll = Dase_Collection::get($request);
+		$item = Dase_DBO_Item::get($coll->ascii_id,$params['serial_number']);
 		if (!$item) {
 			Dase::error(404);
 		}
-		$types = array('image/*','audio/*','video/*');
+		$types = array('image/*','audio/*','video/*','application/pdf');
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
 			Dase::error(411);
 		}
@@ -197,7 +202,7 @@ class AtompubHandler
 		} else {
 			$slug = $item->serial_number;
 		}
-		$upload_dir = Dase::getConfig('path_to_media').'/'.$params['collection_ascii_id'].'/uploaded_files';
+		$upload_dir = $coll->path_to_media_files.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			Dase::error(401);
 		}
@@ -217,7 +222,8 @@ class AtompubHandler
 
 		//NOW do a 'file upload' a la DASe
 		try {
-			$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),false); //false means do NOT check for dup
+			//$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),false); //false means do NOT check for dup
+			$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),true); //false means do NOT check for dup
 			//may need to account for multi-tiff
 			//$u->checkForMultiTiff();
 			$u->setItem($item);

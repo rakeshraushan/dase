@@ -18,7 +18,7 @@ class Dase_Template {
 
 	protected $smarty;
 
-	public function __construct($module = '')
+	public function __construct($request,$module = '')
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
@@ -43,8 +43,8 @@ class Dase_Template {
 
 		$this->smarty->register_modifier('shift', 'array_shift');
 		$this->smarty->assign('app_root', APP_ROOT.'/');
-		$this->smarty->assign('msg', Dase_Filter::filterGet('msg'));
-		$this->smarty->assign('page_hook',Dase_Registry::get('handler').'_'.Dase_Registry::get('action'));
+		$this->smarty->assign('msg', $request->get('msg'));
+		$this->smarty->assign('page_hook',$request->get('handler').'_'.$request->get('action'));
 
 		error_reporting($er);
 	}

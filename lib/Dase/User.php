@@ -103,6 +103,8 @@ class Dase_User
 
 	function checkCollectionAuth($collection_ascii_id,$auth_level)
 	{
+		//*could* simply use an acl here
+	
 		if (!isset($this->db_user)) {
 			return false;
 		}
@@ -112,6 +114,7 @@ class Dase_User
 		}
 		//todo: see what postgres considers 'is_public' when false
 		//if it's 'f' this won't work
+		//note: ok -- pdo has things covered and false is '0'
 		if ('read' == $auth_level && $coll->is_public) {
 			return true;
 		}

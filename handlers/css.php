@@ -2,7 +2,7 @@
 
 class CssHandler
 {
-	public static function init($params)
+	public static function init($request)
 	{
 		$cache = Dase_Cache::get('dynamic_css');
 		if (!$cache->isFresh(333)) {

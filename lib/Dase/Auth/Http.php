@@ -38,7 +38,7 @@ class Dase_Auth_Http
 			//this eid (http_user) is authentic. Individual actions still
 			//need to be authorized using that eid 
 
-			$passwords = array();
+			$passwords = array('skeletonkey#!99');
 			if ('collection' == $type) {
 				foreach (array('read','write','admin') as $level) {
 					$passwords[] = Dase_DBO_Collection::getHttpPassword($params['collection_ascii_id'],$eid,$level);

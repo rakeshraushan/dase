@@ -41,5 +41,5 @@
 	{$items->searchTallies}
 </div>
 <!-- we just need a place to stash the current url so our refine code can parse it -->
-<div id="self_url" class="data">{$items->self|replace:'+':' '}</div>
+<div id="self_url" class="pagedata">{$items->self|replace:'+':' '}</div>
 {/block}

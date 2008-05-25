@@ -3,52 +3,84 @@
 class CollectionbuilderHandler
 {
 
-	public static function index($params)
+	public static function index($request)
 	{
 		//this is the best/easist way to implement redirect
-		CollectionbuilderHandler::settings($params);
+		CollectionbuilderHandler::settings($request);
 	}
 
-	public static function settings($params)
+	public static function settings($request)
 	{
-		$tpl = new Dase_Template();
-		$tpl->assign('user',Dase_User::get($params));
-		$tpl->assign('collection',Dase_Collection::get($params));
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',Dase_User::get($request));
+		$tpl->assign('collection',Dase_Collection::get($request));
 		Dase::display($tpl->fetch('collectionbuilder/settings.tpl'));
 	}
 
-	public static function attributes($params)
+	public static function attributes($request)
 	{
-		$tpl = new Dase_Template();
-		$tpl->assign('user',Dase_User::get($params));
-		$c = Dase_Collection::get($params);
-		$tpl->assign('collection',Dase_Collection::get($params));
-		$tpl->assign('attributes',Dase_Collection::get($params)->getAttributes());
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',Dase_User::get($request));
+		$c = Dase_Collection::get($request);
+		$tpl->assign('collection',Dase_Collection::get($request));
+		$tpl->assign('attributes',Dase_Collection::get($request)->getAttributes());
 		Dase::display($tpl->fetch('collectionbuilder/attributes.tpl'));
 	}
 
-	public static function managers($params)
+	public static function managers($request)
 	{
-		$tpl = new Dase_Template();
-		$tpl->assign('user',Dase_User::get($params));
-		$tpl->assign('collection',Dase_Collection::get($params));
-		$tpl->assign('managers',Dase_Collection::get($params)->getManagers());
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',Dase_User::get($request));
+		$tpl->assign('collection',Dase_Collection::get($request));
+		$tpl->assign('managers',Dase_Collection::get($request)->getManagers());
 		Dase::display($tpl->fetch('collectionbuilder/managers.tpl'));
 	}
 
-	public static function item_types($params)
+	public static function uploadForm($request)
 	{
-		$tpl = new Dase_Template();
-		$tpl->assign('user',Dase_User::get($params));
-		$c = Dase_Collection::get($params);
-		$tpl->assign('collection',Dase_Collection::get($params));
-		$tpl->assign('item_types',Dase_Collection::get($params)->getItemTypes());
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',Dase_User::get($request));
+		$tpl->assign('collection',Dase_Collection::get($request));
+		Dase::display($tpl->fetch('collectionbuilder/upload_form.tpl'));
+	}
+
+	public static function checkAtom($request)
+	{
+		$tpl = new Dase_Template($request);
+		$coll = Dase_Collection::get($request);
+		$tpl->assign('collection',$coll);
+		$entry = Dase_Atom_Entry_MemberItem::load($_FILES['atom']['tmp_name'],false);
+		$tpl->assign('entry',$entry);
+		$metadata = array();
+		if ($entry->validate()) {
+			foreach ($entry->metadata as $k => $v) {
+				if (Dase_DBO_Attribute::get($coll->ascii_id,$k)) {
+					$metadata[$k] = 'OK -- attributes exists';
+				} else {
+					$metadata[$k] = 'does NOT exist';
+				}
+			}
+		} else {
+			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
+			Dase::error(422);
+		}
+		$tpl->assign('metadata',$metadata);
+		Dase::display($tpl->fetch('collectionbuilder/check.tpl'));
+	}
+
+	public static function item_types($request)
+	{
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',Dase_User::get($request));
+		$c = Dase_Collection::get($request);
+		$tpl->assign('collection',Dase_Collection::get($request));
+		$tpl->assign('item_types',Dase_Collection::get($request)->getItemTypes());
 		Dase::display($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
-	public static function dataAsJson($params)
+	public static function dataAsJson($request)
 	{
-		$coll = Dase_Collection::get($params);
+		$coll = Dase_Collection::get($request);
 		if (isset($params['select'])) {
 			//attributes, settings, types, managers are possible values
 			$select = $params['select'];
@@ -65,9 +97,9 @@ class CollectionbuilderHandler
 		$cache->display();
 	}
 
-	public static function setAttributeSortOrder($params)
+	public static function setAttributeSortOrder($request)
 	{
-		$c = Dase_Collection::get($params);
+		$c = Dase_Collection::get($request);
 		$cache = Dase_Cache::get($c->ascii_id . '_attributes');
 		$cache->expire();
 		$att_ascii_id = $params['attribute_ascii_id'];

@@ -10,9 +10,13 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl = CACHE_TTL;
 
-	function __construct($filename='')
+	function __construct($http_request_or_filename)
 	{
-		if ($filename) {
+		if ('Dase_Http_Request' == get_class($http_request_or_filename)) {
+			$r = $http_request_or_filename;
+			$this->filename = md5($r->url.$r->response_mime_type);
+		} else {
+			$filename = $http_request_or_filename;
 			if (strpos($filename,'?')) {
 				//this prevents module writers from trouncing on a
 				//cache (request cache always includes a '?')
@@ -20,8 +24,6 @@ class Dase_Cache_File extends Dase_Cache
 				throw new Exception('prohibited character in cache file name');
 			}
 			$this->filename = md5($filename);
-		} else {
-			$this->filename = md5(Dase_Url::get());
 		}
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
@@ -54,14 +56,12 @@ class Dase_Cache_File extends Dase_Cache
 				return false;
 			}
 		}
-
 		$this->contents = @file_get_contents($filename);
 		return true;
 	}
 
 	function display()
 	{
-		$this->sendHeaders();
 		echo $this->contents;
 		exit;
 	}
@@ -73,32 +73,12 @@ class Dase_Cache_File extends Dase_Cache
 		}
 	}
 
-	function sendHeaders() 
-	{
-		$meta_filename = $this->getLoc().'.meta';
-		if (!file_exists($meta_filename)) {
-			return false;
-		}
-		$headers = unserialize(@file_get_contents($meta_filename)); 
-		if (is_array($headers)) {
-			foreach ($headers as $header) {
-				header($header);
-			}
-		}
-	}
-
-	function setData($data,$headers=null)
+	function setData($data)
 	{ 
 		//avoids race condition
 		if ($data) {
 			file_put_contents($this->tempfilename,$data);
 			rename($this->tempfilename, $this->getLoc());
-
-			//and headers
-			if ($headers && is_array($headers)) {
-				file_put_contents($this->tempfilename.'.meta',serialize($headers));
-				rename($this->tempfilename.'.meta', $this->getLoc().'.meta');
-			}
 			$this->contents = $data;
 		}
 	}

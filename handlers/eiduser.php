@@ -2,7 +2,7 @@
 
 class EiduserModuleHandler {
 
-	public static function login($params)
+	public static function login($request)
 	{
 		if (!extension_loaded("eid")) {
 			dl("eid.so");
@@ -68,7 +68,7 @@ class EiduserModuleHandler {
 		}
 	}
 
-	public static function logoff($params)
+	public static function logoff($request)
 	{
 		setcookie('DOC','',time()-86400,'/','.utexas.edu');
 		setcookie('FC','',time()-86400,'/','.utexas.edu');

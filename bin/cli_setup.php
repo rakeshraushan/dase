@@ -9,6 +9,7 @@ define("DASE_CONFIG", DASE_PATH . '/../daseconf.php');
 define('CART',1);
 define('USER_COLLECTION',2);
 define('SLIDESHOW',3);
+define('CACHE_TTL',10);
 ini_set('include_path',ini_get('include_path').':'. DASE_PATH .'/lib:'); 
 
 function __autoload($class_name) {

@@ -21,7 +21,7 @@ $routes['atompub'] = array (
 		'method' => 'get',
 	),
 	'createMediaFile' =>    array (
-		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}',
+		'uri_template' => 'edit/{collection_ascii_id}/{serial_number}/media',
 		'auth' => 'http',
 		'method' => 'post',
 	),
@@ -58,10 +58,7 @@ $routes['atompub'] = array (
 		'method' => 'delete',
 	),
 	'deleteMediaFile' =>    array (
-		'uri_template' => array(
-			'edit-media/{collection_ascii_id}/{serial_number}/media/{size}',
-			'edit/{collection_ascii_id}/{serial_number}/media/{size}',
-		),
+		'uri_template' => array( 'edit-media/{collection_ascii_id}/{serial_number}/media/{size}', 'edit/{collection_ascii_id}/{serial_number}/media/{size}',),
 		'auth' => 'http',
 		'method' => 'delete',
 	),

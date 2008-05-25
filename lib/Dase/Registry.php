@@ -27,8 +27,7 @@ class Dase_Registry
 	private static $instance;
 	private $members = array();
 
-	private function __construct()
-	{}
+	private function __construct() {}
 
 	//singleton
 	private static function instance()
