@@ -5,7 +5,7 @@
 <div class="list" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Please Login to Dase:</h1>
-	<form id="loginForm" action="login" method="post">
+	<form id="loginForm" action="user/login" method="post">
 		<p>
 		<label for="username-input">username:</label>
 		<input type="text" id="username-input" name="username"/>

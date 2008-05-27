@@ -20,111 +20,24 @@
 
 class Dase 
 {
-
 	public static function run()
 	{
 		$request = new Dase_Http_Request;
-		$routes = Dase_Routes::compile();
-
-		//dispatch table is filtered by method & format
-		if (!isset($routes[$request->method][$request->format])) {
-			Dase::log('error','missing route for '.$request->method.' '.$request->format);
-			Dase::error(500);
+		if ($request->module) {
+			//modules, by convention, have one handler in a file named
+			//'handler.php' with classname {Module}ModuleHandler
+			$handler_file = DASE_PATH.'/modules/'.$request->module.'/handler.php';
+			$classname = ucfirst($request->module) . 'ModuleHandler';
+		} else {
+			include(DASE_PATH.'/handlers/'.$request->handler.'.php');
+			$classname = ucfirst($request->handler).'Handler';
 		}
-		foreach ($routes[$request->method][$request->format] as $regex => $conf_array) {
-			$matches = array();
-			if (preg_match("!$regex!",$request->path,$matches)) {
-				//if debug in force, log action
-				if (defined('DEBUG')) {
-					Dase::log('standard','--------- beginning DASe route -------------');
-					Dase::log('standard',$regex . " => " . $conf_array['action']);
-					Dase::log('standard',"path => " . $request->path);
-				}
-				$params = array();
-				if (isset($conf_array['params'])) {
-					$params = explode('/',$conf_array['params']);
-					Dase::log('standard',"params => " . $conf_array['params']);
-				}
-				$module_prefix = '';
-				//if prefix is set, it means this is a module request
-				if (isset($conf_array['prefix'])) {
-					$module_prefix = $conf_array['prefix'];
-					define('MODULE_PATH',DASE_PATH . $module_prefix);
-					define('MODULE_ROOT',APP_ROOT . $module_prefix);
-					//modules can include class files in 'lib' dir
-					ini_set('include_path',ini_get('include_path').':'.MODULE_PATH.'/lib');
-				}
-				if (isset($matches[1])) { // i.e. at least one paramenter
-					//don't need matches[0] (see preg_match docs)
-					array_shift($matches);
-					//match param value to its param key
-					//this is safe, since we are matching '\w'
-					if (count($params) == count($matches)) {
-						$params = array_combine($params,$matches);
-					} else {
-						print_r($params);
-						print_r($matches);
-						die ("routes error");
-					}
-					$request->setParams($params);
-				}
-
-				//AUTHORIZATION:
-				if (!isset($params['eid'])) {
-					$params['eid'] = '';
-				}
-				if (!isset($conf_array['auth']) || !$conf_array['auth']) {
-					//default required auth is 'user' (i.e., ANY valid user
-					$conf_array['auth'] = 'user';
-				}
-				//a simple authorization check roadblock
-				if (!Dase_Auth::authorize($conf_array['auth'],$params)) {
-					header("Location:".APP_ROOT.'/logoff',TRUE,401);
-				} else {
-					//good to go
-				}
-
-				if ($module_prefix) {
-					//modules, by convention, have one handler in a file named
-					//'handler.php' with classname {Module}ModuleHandler
-					include(DASE_PATH . $module_prefix . '/handler.php');
-					$conf_array['handler'] = $conf_array['name'] . '_module'; // so we can set this->handler 
-					$classname = ucfirst($conf_array['name']) . 'ModuleHandler';
-				} else {
-					include(DASE_PATH .  '/handlers/' . $conf_array['handler'] . '.php');
-					$classname = ucfirst($conf_array['handler']) . 'Handler';
-				}
-				if(method_exists($classname,$conf_array['action'])) {
-					if ('get' == $request->method) {
-						$cache = Dase_Cache::get($request);
-						if ($cache->isFresh()) {
-							if (defined('DEBUG')) {
-								Dase::log('standard','using cached page '.$cache->getLoc());
-							}
-							$cache->display(); //this method exits
-						} 
-					}
-					if (defined('DEBUG')) {
-						Dase::log('standard',"calling method {$conf_array['action']} on class $classname");
-					}
-
-					$request->set('handler',$conf_array['handler']);
-					$request->set('action',$conf_array['action']);
-
-					//call static method, passing in request obj
-					call_user_func(array($classname,$conf_array['action']),$request);
-					exit;
-				} else { 
-					//matched regex, but didn't find action
-					Dase::log('error',"no handler for $request->path ($method)");
-					Dase::error(500);
-				}
-			} 
-		} 
-		//no routes match, so use default:
-		Dase::log('error',"$request->path could not be located");
-		Dase::error(404);
-		exit;
+		if (class_exists($classname,false)) {
+			$handler = new $classname;
+			$handler->dispatch($request);
+		} else {
+			Dase::error(404);
+		}
 	}
 
 	public static function display($content,$request,$set_cache=true)
@@ -150,56 +63,38 @@ class Dase
 		//NOTE that this redirect may be innapropriate when
 		//client expect something OTHER than html (e.g., json,text,xml)
 		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
-		if (defined('DEBUG')) {
-			Dase::log('standard','redirecting to '.$redirect_path);
-		}
+		Dase_Log::info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
 	}
 
 	public static function error($code,$msg='')
 	{
-		if (400 == $code) {
+		switch ($code) {
+		case 400:
 			header("HTTP/1.1 400 Bad Request");
 			$msg = 'Bad Request';
-		}
-		if (404 == $code) {
+		case 404:
 			header("HTTP/1.1 404 Not Found");
 			$msg = '404 not found';
-		}
-		if (401 == $code) {
+		case 401:
 			header('HTTP/1.1 401 Unauthorized');
 			$msg = 'Unauthorized';
-		}
-		if (500 == $code) {
+		case 500:
 			header('HTTP/1.1 500 Internal Server Error');
-		}
-		if (411 == $code) {
+		case 411:
 			header("HTTP/1.1 411 Length Required");
-		}
-		if (415 == $code) {
+		case 415:
 			header("HTTP/1.1 415 Unsupported Media Type");
 		}
 
 		if (defined('DEBUG')) {
+			$request = new Dase_Http_Request;
 			header("Content-Type: text/plain; charset=utf-8");
-			print "Registry Array:\n";
 			print "================================\n";
 			print "[http_error_code] => $code\n";
-			print "\n";
-			print "Routes Array:\n";
+			print $request;
 			print "================================\n";
-			foreach (Dase_Routes::compile() as $method => $formats) {
-				foreach ($formats as $format => $routes) {
-				foreach ($routes as $regex => $atts) {
-					if (isset($atts['handler'])) {
-						print "($format) $method: [$regex] => {$atts['handler']}::{$atts['action']}\n";
-					} else {
-						print "($format) $method: [$regex] => handler::{$atts['action']}\n";
-					}
-				}
-				}
-			}
 		} else {
 			//todo: pretty error message for production
 			header("Content-Type: text/plain; charset=utf-8");
@@ -217,23 +112,6 @@ class Dase
 			return $conf[$key];
 		} else {
 			throw new Exception("no such configuration key: $key");
-		}
-	}
-
-	public static function log($logfile,$msg)
-	{
-		$date = date(DATE_W3C);
-		$msg = $date.'| pid:'.getmypid().':'.$msg."\n";
-		if(file_exists(LOG_DIR . "{$logfile}.log")) {
-			file_put_contents(LOG_DIR ."{$logfile}.log",$msg,FILE_APPEND);
-		}
-		if ('error' == $logfile) {
-			//include backtrace w/ errors
-			ob_start();
-			debug_print_backtrace();
-			$trace = ob_get_contents();
-			ob_end_clean();
-			file_put_contents(LOG_DIR ."error.log",$trace,FILE_APPEND);
 		}
 	}
 }
