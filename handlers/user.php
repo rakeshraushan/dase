@@ -1,47 +1,51 @@
 <?php
 
-class UserHandler
+class UserHandler extends Dase_Handler
 {
+	public $resource_map = array(
+		'login' => 'login',
+		'login/{eid}' => 'finishlogin',
+	);
+
 	//rewrite/replace for alternate authentication
-	public static function initiateLogin($request)
+	public function getLogin($request)
 	{
 		$t = new Dase_Template($request);
 		Dase::display($t->fetch('login_form.tpl'),$request);
 	}
 
 	//rewrite/replace for alternate authentication
-	public static function processLogin($request)
+	public function postLogin($request)
 	{
+		print_r($_SERVER);exit;
 		$username = $request->get('username');
 		$pass = $request->get('password');
 		if ('tseliot' == $pass) {
 			Dase_Cookie::set($username);
 			//do this so cookie is passed along
-			Dase::redirect("login/$username");
+			Dase::redirect("user/login/$username");
 		} else {
 			//I could probably just display here instead of redirect
-			Dase::redirect("login",'incorrect username/password');
+			Dase::redirect("user/login",'incorrect username/password');
 		}
 	}
 
-	public static function finishLogin($request)
+	public function getFinishLogin($request)
 	{
-		//$user = $request->currentUser;
-
 		if ($request->get('eid') == Dase_User::getCurrent()) {
 			Dase::redirect('/',"welcome ". $request->get('eid')." is logged in");
 		} else {
-			Dase::redirect('login');
+			Dase::redirect('user/login');
 		}
 	}
 
-	public static function logoff($request)
+	public function logoff($request)
 	{
 		Dase_User::logoff();
 		Dase::redirect('login');
 	}
 
-	public static function dataAsJson($request)
+	public function dataAsJson($request)
 	{
 		//NOTE WELL!!!:
 		//note that we ONLY use the request_url so the IE cache-busting
@@ -58,12 +62,12 @@ class UserHandler
 		$cache->display();
 	}
 
-	public static function cartAsJson($request)
+	public function cartAsJson($request)
 	{
 		Dase::display(Dase_User::get($request)->getCart(),$request);
 	}
 
-	public static function addCartItem($request)
+	public function addCartItem($request)
 	{
 		$u = Dase_User::get($request);
 		$u->expireDataCache();
@@ -81,7 +85,7 @@ class UserHandler
 		}
 	}
 
-	public static function deleteTagItem($request)
+	public function deleteTagItem($request)
 	{
 		$u = Dase_User::get($request);
 		$u->expireDataCache();
@@ -98,12 +102,12 @@ class UserHandler
 		}
 	}
 
-	public static function adminCollectionsAsJson($request)
+	public function adminCollectionsAsJson($request)
 	{
 		Dase::display(Dase_User::get($request)->getCollections(),$request);
 	}
 
-	public static function cart($request)
+	public function cart($request)
 	{
 		$u = Dase_User::get($request);
 		$tag = new Dase_DBO_Tag;
@@ -116,14 +120,14 @@ class UserHandler
 		Dase::display($t->fetch('item_set/tag.tpl'),$request);
 	}
 
-	public static function settings($request)
+	public function settings($request)
 	{
 		$t = new Dase_Template($request);
 		$t->assign('user',Dase_User::get($request));
 		Dase::display($t->fetch('user/settings.tpl'),$request);
 	}
 
-	public static function getHttpPassword($request) 
+	public function getHttpPassword($request) 
 	{
 		//this handler required eid authentication,
 		//meaning the url eid matches the cookie eid

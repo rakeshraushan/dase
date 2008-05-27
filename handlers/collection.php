@@ -1,90 +1,54 @@
 <?php
 
-class CollectionHandler
+class CollectionHandler extends Dase_Handler
 {
-	public static function asAtom($request) 
+	public $collection;
+	public $resource_map = array(
+		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/attributes' => 'attributes',
+		'item_tallies' => 'itemtallies',
+		"pk/{id}/{ddd}" => 'test',
+	);
+
+	public function setup($r)
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		Dase::display($c->asAtom(),$request);
+		if ($r->has('collection_ascii_id')) {
+			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		}
 	}
 
-	public static function asAtomArchive($request) 
+	public function getCollectionAtom($request) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		$limit = Dase_Filter::filterGet('limit');
-		Dase::display($c->asAtomArchive($limit),$request);
+		Dase::display($this->collection->asAtom(),$request);
 	}
 
-	public static function asAtomFull($request) 
+	public function asAtomArchive($r) 
+	{
+		$limit = $r->get('limit');
+		Dase::display($this->collection->asAtomArchive($limit),$r);
+	}
+
+	public function asAtomFull($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		Dase::display($c->asAtomFull(),$request);
 	}
 
-	public static function listAsAtom($request) 
-	{
-		if ($request->get('get_all')) {
-			$public_only = false;
-		} else {
-			$public_only = true;
-		}
-		Dase::display(Dase_DBO_Collection::listAsAtom($public_only),$request);
-	}
-
-	public static function browse($request) 
+	public function getCollection($request) 
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('collection',Dase_Atom_Feed::retrieve(DASE_URL.'/collection/'.$request->get('collection_ascii_id').'.atom'));
 		Dase::display($tpl->fetch('collection/browse.tpl'),$request);
 	}
 
-	public static function listAll($request) 
-	{
-		$tpl = new Dase_Template($request);
-		$feed = Dase_Atom_Feed::retrieve(DASE_URL.'?format=atom');
-		//$er = error_reporting(E_ALL^E_NOTICE);
-		$er = error_reporting(E_ERROR);
-		if ($feed->validate()) {
-			//print "valid!";
-		} else {
-			print "not valid!";
-			exit;
-		}
-		error_reporting($er);
-
-		$tpl->assign('collections',$feed);
-		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
-		Dase::display($tpl->fetch('collection/list.tpl'),$request);
-	}
-
-	public static function itemTalliesAsJson($request) 
-	{
-		$db = Dase_DB::get();
-		$sql = "
-			select collection.ascii_id,count(item.id) 
-			as count
-			from
-			collection, item
-			where collection.id = item.collection_id
-			and item.status_id = 0
-			group by collection.id, collection.ascii_id
-			";
-		$st = $db->query($sql);
-		$tallies = array();
-		foreach ($st->fetchAll() as $row) {
-			$tallies[$row['ascii_id']] = $row['count'];
-		}
-		Dase::display(Dase_Json::get($tallies),$request);
-	}
-
-	public static function rebuildIndexes($request) 
+	public function rebuildIndexes($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$c->buildSearchIndex();
 		Dase::redirect('',"rebuilt indexes for $c->collection_name");
 	}
 
-	public static function attributesAsAtom($request) 
+	public function attributesAsAtom($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$atts = new Dase_DBO_Attribute;
@@ -97,7 +61,7 @@ class CollectionHandler
 		Dase::display();
 	}
 
-	public static function attributesAsHtml($request) 
+	public function attributesAsHtml($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$atts = new Dase_DBO_Attribute;
@@ -116,27 +80,27 @@ EOF;
 		Dase::display($html,$request);
 	}
 
-	public static function attributesAsJson($request) 
+	public function getAttributesJson($request) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		$attribute = new Dase_DBO_Attribute;
-		$attribute->collection_id = $c->id;
-		$attribute->is_public = true;
-		$attribute->orderBy('sort_order');
+		$c = $this->collection;
+		$attributes = new Dase_DBO_Attribute;
+		$attributes->collection_id = $c->id;
+		$attributes->is_public = true;
+		$attributes->orderBy('sort_order');
 		$att_array = array();
-		foreach($attribute->find() as $att) {
+		foreach($attributes->find() as $att) {
 			$att_array[] =
 				array(
 					'id' => $att->id,
 					'ascii_id' => $att->ascii_id,
 					'attribute_name' => $att->attribute_name,
-					'collection' => $params['collection_ascii_id']
+					'collection' => $request->get('collection_ascii_id')
 				);
 		}
 		Dase::display(Dase_Json::get($att_array),$request);
 	}
 
-	public static function adminAttributesAsHtml($request) 
+	public function adminAttributesAsHtml($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$atts = new Dase_DBO_Attribute;
@@ -155,7 +119,7 @@ EOF;
 		Dase::display($html,$request);
 	}
 
-	public static function attributeTalliesAsJson($request) 
+	public function attributeTalliesAsJson($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$sql = "
@@ -178,7 +142,7 @@ EOF;
 
 	}
 
-	public static function adminAttributeTalliesAsJson($request) 
+	public function adminAttributeTalliesAsJson($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$sql = "
@@ -206,21 +170,21 @@ EOF;
 
 	}
 
-	public static function itemsByTypeAsAtom($request) {
+	public function itemsByTypeAsAtom($request) {
 		$item_type = new Dase_DBO_ItemType;
-		$item_type->ascii_id = $params['item_type_ascii_id'];
+		$item_type->ascii_id = $request->get('item_type_ascii_id');
 		$item_type->findOne();
 		Dase::display($item_type->getItemsAsFeed(),$request);
 	}
 
-	public static function buildIndex($request) 
+	public function buildIndex($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$c->buildSearchIndex();
 		Dase::redirect('',"rebuilt indexes for $c->collection_name");
 	}
 
-	public static function asJsonCollection($request) 
+	public function asJsonCollection($request) 
 	{
 		$page = $request->get('page');
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));

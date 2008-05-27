@@ -2,6 +2,22 @@
 
 class AttributeHandler
 {
+	public $attribute;
+	public $collection;
+	public $resource_map = array(
+		'{collection_ascii_id}' => 'attributes',
+		'{collection_ascii_id}/{att_ascii_id}' => 'attribute',
+	);
+
+	public function setup($r)
+	{
+		if ($r->has('collection_ascii_id')) {
+			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		}
+		if ($r->has('att_ascii_id')) {
+			$this->attribute = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		}
+	}
 
 	public static function attributeListAsAtom($request) 
 	{
@@ -15,9 +31,7 @@ class AttributeHandler
 
 	public static function attributeValuesAsHtml($request)
 	{
-		$att = $request->get('attribute_ascii_id');
-		$coll = $request->get('collection_ascii_id');
-		$attr = Dase_DBO_Attribute::get($coll,$att);
+		$attr = $this->attribute;
 		if (0 == $attr->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
 			$values_array = $attr->getDisplayValues($coll);

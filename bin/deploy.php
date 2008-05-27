@@ -63,9 +63,7 @@ if ($bytes) {
 
 apacheWrite("$working/cache", $httpd_group);
 apacheWrite("$working/log/error.log", $httpd_group);
-apacheWrite("$working/log/sql.log", $httpd_group);
-apacheWrite("$working/log/remote.log", $httpd_group);
-apacheWrite("$working/log/standard.log", $httpd_group);
+apacheWrite("$working/log/dase.log", $httpd_group);
 apacheWrite("$local_config", $httpd_group,0750);
 
 print "done!\n";
