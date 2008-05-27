@@ -19,9 +19,9 @@ class Dase_Atom_Entry_MemberItem extends Dase_Atom_Entry_Item
 		return new Dase_Atom_Entry_MemberItem($dom,$root);
 	}
 
-	function insert($params) 
+	function insert($request) 
 	{
-		$c = Dase_Collection::get($params);
+		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
 		$item = Dase_DBO_Item::create($c->ascii_id);
 		foreach ($this->metadata as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
@@ -32,9 +32,9 @@ class Dase_Atom_Entry_MemberItem extends Dase_Atom_Entry_Item
 		return $item;
 	}
 
-	function replace($params) 
+	function replace($request) 
 	{
-		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
+		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
 		$item->deleteValues();
 		foreach ($this->metadata as $att => $keyval) {

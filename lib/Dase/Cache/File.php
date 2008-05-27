@@ -30,7 +30,7 @@ class Dase_Cache_File extends Dase_Cache
 
 	function expire()
 	{
-		//Dase::log('standard','expired ' . $this->getLoc());
+		Dase_Log::debug('expired ' . $this->getLoc());
 		@unlink($this->getLoc());
 	}
 
@@ -66,10 +66,12 @@ class Dase_Cache_File extends Dase_Cache
 		exit;
 	}
 
-	function getData()
+	function getData($ttl=null)
 	{
-		if ($this->isFresh()) {
+		if ($this->isFresh($ttl)) {
 			return $this->contents;
+		} else {
+			return false;
 		}
 	}
 

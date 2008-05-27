@@ -2,9 +2,11 @@
 
 class Dase_Http_Request
 {
-	private $url_params = array();
-	private $params;
 	private $members = array();
+	private $params;
+	private $url_params = array();
+	private $user;
+
 	public static $types = array(
 		'atom' =>'application/atom+xml',
 		'json' =>'application/json',
@@ -12,19 +14,40 @@ class Dase_Http_Request
 		'css' =>'text/css',
 		'txt' =>'text/plain',
 	);
-	public $method;
+	public $content_type;
 	public $format;
+	public $handler;
+	public $method;
+	public $module;
+	public $path;
 	public $response_mime_type;
 
 	function __construct()
 	{
 		$this->format = $this->getFormat();
-		$this->response_mime_type = self::$types[$this->format];
+		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
 		$this->method = strtolower($_SERVER['REQUEST_METHOD']);
+		$this->path = $this->getPath();
+		$this->response_mime_type = self::$types[$this->format];
+		$this->content_type = $this->getContentType();
+	}
+
+	function __toString()
+	{
+		$string = "format: $this->format\n";
+		$string .= "handler: $this->handler\n";
+		$string .= "method: $this->method\n";
+		$string .= "module: $this->module\n";
+		$string .= "path: $this->path\n";
+		$string .= "response_mime_type: $this->response_mime_type\n";
+		return $string;
 	}
 
 	function __get($var) 
 	{
+		if ( array_key_exists( $var, $this->members ) ) {
+			return $this->members[ $var ];
+		}
 		$classname = get_class($this);
 		$method = 'get'.ucfirst($var);
 		if (method_exists($classname,$method)) {
@@ -32,15 +55,39 @@ class Dase_Http_Request
 		} 
 	}
 
-	function getFormat()
+	function getHandler()
+	{
+		$parts = explode('/',trim($this->getPath(),'/'));
+		$first = array_shift($parts);
+		if ('modules' != $first) {
+			return $first ? $first : 'index';
+		} else {
+			$this->module = $parts[0];
+			if (isset($parts[1])) {
+				return $parts[1];
+			} else {
+				return 'index';
+			}
+		}
+	}
+
+	function getContentType() 
+	{
+		if (isset($_SERVER['CONTENT_TYPE'])) {
+			return $SERVER['CONTENT_TYPE'];
+		}
+		if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+			return $SERVER['HTTP_CONTENT_TYPE'];
+		}
+	}
+
+	function getFormat($types = null)
 	{
 		//first check extension
-		$pathinfo = pathinfo($this->getPath());
+		$pathinfo = pathinfo($this->getPath(false));
 		if (isset($pathinfo['extension']) && $pathinfo['extension']) {
 			$ext = $pathinfo['extension'];
 			if (isset(self::$types[$ext])) {
-				//changes path!  a side effect!
-				$this->path = str_replace('.'.$ext,'',$this->path);
 				return $ext;
 			}
 		}
@@ -51,9 +98,13 @@ class Dase_Http_Request
 			}
 		}	
 		//lastly, look at accept header (conneg)
+		//really, this should wait and the resource
+		//should offer format options (instead, as we do
+		//here, of just supplying a pre-defined set)
 		$mimeparse = new Mimeparse;
-		$mime_match = $mimeparse->best_match(self::$types,$_SERVER['HTTP_ACCEPT']);
-		if (in_array($mime_match,self::$types)) {
+		$types = $types ? $types : self::$types;
+		$mime_match = $mimeparse->best_match($types,$_SERVER['HTTP_ACCEPT']);
+		if (in_array($mime_match,$types)) {
 			return array_search($mime_match,self::$types); //returns format
 		}
 		//default is html
@@ -152,35 +203,85 @@ class Dase_Http_Request
 		return $_SERVER['QUERY_STRING'];
 	}
 
-	public function getPath()
+	public function getPath($strip_extension=true)
 	{
 		//returns full path w/o domain & w/o query string
-		$path = '';
-		if (isset($_SERVER['REQUEST_URI'])) {
-			$path = $_SERVER['REQUEST_URI'];
-			if ('/' != APP_BASE) {
-				$path= str_replace(APP_BASE,'',$path);
-			}
-			$path= trim($path, '/');
-			/* Remove the query_string from the URL */
-			if ( strpos($path, '?') !== FALSE ) {
-				list($path,$query_string )= explode('?', $path);
+		$path = $_SERVER['REQUEST_URI'];
+		if (strpos($path,'..')) { //thwart the wily hacker
+			//note: php does this already (??)
+			Dase::error(401);
+		}
+		if ('/' != APP_BASE) {
+			$path= str_replace(APP_BASE,'',$path);
+		}
+		$path= trim($path, '/');
+		/* Remove the query_string from the URL */
+		if ( strpos($path, '?') !== FALSE ) {
+			list($path,$query_string )= explode('?', $path);
+		}
+		if ($strip_extension) {
+			if (strpos($path,'.') !== false) {
+				list($path,$ext )= explode('.', $path);
 			}
 		}
 		return $path;
 	}
 
-	private function getUser()
+	public function setUser($user)
 	{
-		//return user - if none return 'guest'
+		$this->user = $user;
+	}
 
-		//figure out how to get user here.  
-		//it's OK for this to trigger a login screen
+	public function getHttpUser($entity)
+	{
+		//note: entity needs to have a method 'getHttpPassword'
+		//that accepts an eid as parameter
+		if ($this->user) {
+			return $this->user;
+		}
+		$eid = Dase_Http_Auth::getEid($entity);
+		if ($eid) {
+			$db = Dase_DB::get();
+			$sql = "
+				SELECT * FROM dase_user
+				WHERE lower(eid) = ?
+				";	
+			$sth = $db->prepare($sql);
+			if ($sth->execute(array($eid))) {
+				$this->user = new Dase_DBO_DaseUser($sth->fetch());
+				return $this->user;
+			} 
+		} else {
+			return false;
+		}
+	}
 
-		//-http auth?
-		//-eid?
-		//-cookie?
+	public function getUser()
+	{
+		if ($this->user) {
+			return $this->user;
+		}
+		$eid = Dase_Cookie::getEid();
+		if ($eid) {
+			return $this->getDbUser($eid);
+		} else {
+			Dase::redirect('user/login');
+		}
+	}
 
+	private function getDbUser($eid) {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT * FROM dase_user
+			WHERE lower(eid) = ?
+			";	
+		$sth = $db->prepare($sql);
+		if ($sth->execute(array($eid))) {
+			$this->user = new Dase_DBO_DaseUser($sth->fetch());
+			return $this->user;
+		} else {
+			return false;
+		}
 	}
 
 	private function _filterArray($ar)

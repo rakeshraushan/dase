@@ -8,24 +8,18 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public static function get($ascii_id)
 	{
-		//caches instance in registry
-		$collection = Dase_Registry::get($ascii_id.'_collection');
-		if (!$collection) {
-			$collection = new Dase_DBO_Collection;
-			$collection->ascii_id = $ascii_id;
-			$collection->findOne();
-			if ($collection->id) {
-				Dase_Registry::set($ascii_id.'_collection',$collection);
-			} else {
-				return false;
-			}
+		$collection = new Dase_DBO_Collection;
+		$collection->ascii_id = $ascii_id;
+		if ($collection->findOne()) {
+			return $collection;
+		} else {
+			return false;
 		}
-		return $collection;
 	}
 
-	public static function getHttpPassword($ascii_id,$eid,$auth_level)
+	public function getHttpPassword($eid)
 	{
-		return substr(md5(Dase::getConfig('token').$eid.$ascii_id.$auth_level),0,8);
+		return substr(md5(Dase::getConfig('token').$eid.$this->ascii_id),0,8);
 	}
 
 	public function getBaseUrl() {
@@ -50,7 +44,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $sj->json_format($json);
 	}
 
-	function getAtomFeed() 
+	function getBaseAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);
@@ -69,7 +63,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function asAtom()
 	{
-		$feed = $this->getAtomFeed();
+		$feed = $this->getBaseAtomFeed();
 		$feed->setFeedType('collection');
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
 		return $feed->asXml();
@@ -77,7 +71,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function asAtomFull() 
 	{
-		$feed = $this->getAtomFeed();
+		$feed = $this->getBaseAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/full','self');
 		$cms = new Dase_DBO_CollectionManager;
 		$cms->collection_ascii_id = $this->ascii_id;
@@ -95,7 +89,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function asAtomArchive($limit=0) {
 		//todo: this needs ot be paged
-		$feed = $this->getAtomFeed();
+		$feed = $this->getBaseAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
