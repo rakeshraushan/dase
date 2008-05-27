@@ -73,7 +73,7 @@ class Dase_User
 		//attempt to validate cookie
 		//since token changes every day, it'll be
 		//invalidated overnight
-		$eid = Dase_Cookie::validate();
+		$eid = Dase_Cookie::getEid();
 		if ($eid) {
 			return $eid;
 		} else {
@@ -89,9 +89,7 @@ class Dase_User
 	public function __get($prop)
 	{
 		//this method gets invoked when $user->eid is referenced
-		if (defined('DEBUG')) {
-			Dase::log('standard','__get from Dase_User prop: ' . $prop);
-		}
+		Dase_Log::debug('__get from Dase_User prop: ' . $prop);
 		//note that I cannot do an isset here since we are using __get
 		//magic method on db_user as well!!
 		if (isset($this->db_user)) {

@@ -1,58 +1,66 @@
 <?php
 
-/*
- * based on Handler class from redberry toolkit:
- * http://redberry.googlecode.com
- *
- */
-
 class Dase_Handler {
 
-    private $request;
-    
-    function __construct($request) {
-        $this->request = $request;
-    }
+	protected $request;
 
-    public static function get($handler = false, $args = array(), $request = false) {
-        $request = $request === false ? new Request() : $request;
-        if(is_array($handler)) {
-            if(count($handler) == 0) return new Handler($request);
-            $args = is_array($handler[1]) ? $handler[1] : array();
-            $handler = $handler[0];
-        }
-        Log::debug(__CLASS__.': Getting handler "'.$handler.'" with args: '.implode(', ', $args));
-        $handler = $handler === false || !$handler ? 'Handler' : $handler;
-        if($reflector = new ReflectionClass($handler)) {
-            if($h = $reflector->newInstanceArgs(array_merge(array($request), $args))) return $h;
-        }
-        //if($h = new $handler($request)) return $h;
-        else return new Handler($request);
-    }
+	public function dispatch($request)
+	{
+		foreach ($this->resource_map as $uri_template => $resource) {
+			//first, translate resource map uri template to a regex
+			$uri_template = trim($request->handler.'/'.$uri_template,'/');
+			$uri_regex = $uri_template;
 
-    public function go() {
-        $handler_method = 'do'.ucwords($this->getRequest()->getMethod());
-        return $this->$handler_method();
-    }
+			//skip regex template stuff if uri_template is a plain string
+			if (false !== strpos($uri_template,'{')) {
+				//stash param names into $template_matches
+				$num = preg_match_all("/{([\w]*)}/",$uri_template,$template_matches);
+				if ($num) {
+					$uri_regex = preg_replace("/{[\w]*}/","([\w]*)",$uri_template);
+				}
+			}
 
-    public function getRequest() {
-        return $this->request;
-    }
+			//second, see if it matches the request uri (a.k.a. path)
+			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
 
-    public function doGet() {
-       return new Response('Not Found'."\n", Response::NOTFOUND); 
-    }
+				//create parameters based on uri template and request matches
+				if (isset($template_matches[1]) && isset($uri_matches[1])) { 
+					array_shift($uri_matches);
+					$params = array_combine($template_matches[1],$uri_matches);
+					$request->setParams($params);
+				}
 
-    public function doPost() {
-        return new Response('Not Found'."\n", Response::NOTFOUND);
-    }
+				//given the method, resource, and format, try and call proper method
+				if ('html' == $request->format) {
+					//html is default
+					$method = $request->method.ucfirst($resource);
+				} else {
+					$method = $request->method.ucfirst($resource).ucfirst($request->format);
+				}
+				if (method_exists($this,$method)) {
+					$this->setup($request);
+					$this->{$method}($request);
+				} else {
+					print $method;
+					Dase::error(404);
+				}
+			}
+		}
+		Dase::error(404);
+	}
 
-    public function doPut() {
-        return new Response('Not Found'."\n", Response::NOTFOUND);
-    }
-
-    public function doDelete() {
-        return new Response('Not Found'."\n", Response::NOTFOUND);
-    }
+	public function setup($request)
+	{
+		return;
+	}
+			
+	public function checkCache($request,$ttl=null)
+	{
+		$cache = Dase_Cache::get($request);
+		$content = $cache->getData($ttl);
+		if ($content) {
+			Dase::display($content,$request,false);
+		}
+	}
 }
-?>
+

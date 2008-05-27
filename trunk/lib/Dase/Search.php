@@ -492,10 +492,8 @@ class Dase_Search
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$db = Dase_DB::get();
 		$sql = $this->createSql();	
-		if (defined('DEBUG')) {
-			Dase::log('sql',$sql);
-			Dase::log('sql',join(', ',$this->bound_params));
-		}
+		Dase_Log::debug('search sql: '.$sql);
+		Dase_Log::debug(join(', ',$this->bound_params));
 		$st = $db->prepare($sql);	
 		$st->execute($this->bound_params);
 		$result = array();

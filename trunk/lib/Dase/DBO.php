@@ -173,9 +173,7 @@ class Dase_DBO implements IteratorAggregate
 		if ($sth->execute($bind)) {
 			$last_id = $db->lastInsertId($seq);
 			$this->id = $last_id;
-			if (defined('DEBUG')) {
-				Dase::log('sql',"$sql /// last insert id = $last_id");
-			}
+			Dase_Log::all($sql." /// last insert id = $last_id");
 			return $last_id;
 		} else { 
 			$error = $sth->errorInfo();
@@ -239,9 +237,7 @@ class Dase_DBO implements IteratorAggregate
 		$this->sql = $sql;
 		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
-		if (defined('DEBUG')) {
-			Dase::log('sql',$sql . ' /// ' . join(',',$bind));
-		}
+		Dase_Log::all($sql . ' /// ' . join(',',$bind));
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
 		//NOTE: PDOStatement implements Traversable. 
@@ -276,9 +272,7 @@ class Dase_DBO implements IteratorAggregate
 		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
 		$values[] = $this->id;
 		$sth = $db->prepare( $sql );
-		if (defined('DEBUG')) {
-			Dase::log('sql',$sql . ' /// ' . join(',',$values));
-		}
+		Dase_Log::all($sql . ' /// ' . join(',',$values));
 		if (!$sth->execute($values)) {
 			return $sth->errorInfo();
 		}
@@ -290,9 +284,7 @@ class Dase_DBO implements IteratorAggregate
 		$sth = $db->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
-		if (defined('DEBUG')) {
-			Dase::log('sql',"deleting id $this->id from $this->table table");
-		}
+		Dase_Log::all("deleting id $this->id from $this->table table");
 		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
 	}
