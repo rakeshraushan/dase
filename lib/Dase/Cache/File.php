@@ -10,21 +10,14 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl = CACHE_TTL;
 
-	function __construct($http_request_or_filename)
+	function __construct($filename)
 	{
-		if ('Dase_Http_Request' == get_class($http_request_or_filename)) {
-			$r = $http_request_or_filename;
-			$this->filename = md5($r->url.$r->response_mime_type);
-		} else {
-			$filename = $http_request_or_filename;
-			if (strpos($filename,'?')) {
-				//this prevents module writers from trouncing on a
-				//cache (request cache always includes a '?')
-				//beware: module writer could break app w/ cache named 'routes'
-				throw new Exception('prohibited character in cache file name');
-			}
-			$this->filename = md5($filename);
+		if (!$filename) {
+			throw new Exception('missing cache file name');
 		}
+
+		Dase_Log::debug('cache construct '.$filename);
+		$this->filename = md5($filename);
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
@@ -44,6 +37,7 @@ class Dase_Cache_File extends Dase_Cache
 		//clean up this logic
 		$filename = $this->getLoc();
 		if (!file_exists($filename)) {
+			Dase_Log::debug('cache cannot find '.$filename);
 			return false;
 		}
 
@@ -69,8 +63,10 @@ class Dase_Cache_File extends Dase_Cache
 	function getData($ttl=null)
 	{
 		if ($this->isFresh($ttl)) {
+			Dase_Log::debug('cache hit '.$this->getLoc().' ttl ='.$ttl);
 			return $this->contents;
 		} else {
+			Dase_Log::debug('cache miss '.$this->getLoc().' ttl='.$ttl);
 			return false;
 		}
 	}

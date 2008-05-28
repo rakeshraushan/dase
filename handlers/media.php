@@ -8,7 +8,7 @@ class MediaHandler
 		$media_atts->orderBy('label');
 		$t = new Dase_Template($request);
 		$t->assign('attributes',$media_atts->find());  
-		Dase::display($t->fetch('media/attributes.tpl'));
+		$request->renderResponse($t->fetch('media/attributes.tpl'));
 	}
 
 	public static function updateMediaAttribute($request)
@@ -19,7 +19,7 @@ class MediaHandler
 		$media_att->label = Dase_Filter::filterPost('label');
 		$media_att->update();
 		$msg = "updated media attribute";
-		Dase::redirect('media/attributes',$msg);
+		$request->renderRedirect('media/attributes',$msg);
 	}
 
 	public static function get($request) {

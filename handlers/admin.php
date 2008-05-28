@@ -7,9 +7,9 @@ class AdminHandler
 	{
 		$acl = Dase_Admin::getAcl();
 		if (Dase_Filter::filterGet('as_php')) {
-			Dase::display(var_export($acl,1),'text/plain');
+			$request->renderResponse(var_export($acl,1),'text/plain');
 		} else {
-			Dase::display(Dase_Json::get($acl),'application/json');
+			$request->renderResponse(Dase_Json::get($acl),'application/json');
 		}
 	}
 
@@ -17,9 +17,9 @@ class AdminHandler
 	{
 		$media_sources = Dase_DBO_Collection::getMediaSources();
 		if (Dase_Filter::filterGet('as_php')) {
-			Dase::display(var_export($media_sources,1),'text/plain');
+			$request->renderResponse(var_export($media_sources,1),'text/plain');
 		} else {
-			Dase::display(Dase_Json::get($media_sources),'application/json');
+			$request->renderResponse(Dase_Json::get($media_sources),'application/json');
 		}
 	}
 

@@ -23,6 +23,8 @@ class Dase
 	public static function run()
 	{
 		$request = new Dase_Http_Request;
+		//http://www.jcinacio.com/2007/04/19/phps-__tostring-magic-method-not-so-magic-before-520/
+		Dase_Log::debug($request->__toString());
 		if ($request->module) {
 			//modules, by convention, have one handler in a file named
 			//'handler.php' with classname {Module}ModuleHandler
@@ -38,70 +40,6 @@ class Dase
 		} else {
 			Dase::error(404);
 		}
-	}
-
-	public static function display($content,$request,$set_cache=true)
-	{
-		if ($set_cache) {
-			$cache = Dase_Cache::get($request);
-			$cache->setData($content);
-		}
-		header("Content-Type: ".$request->response_mime_type."; charset=utf-8");
-		echo $content;
-		exit;
-	}
-
-	public static function redirect($path='',$msg='',$code="303")
-	{
-		//SHOULD use 303 (redirect after put,post,delete)
-		//OR 307 -- no go -- look here
-		$msg_qstring = '';
-		$msg = urlencode($msg);
-		if ($msg) {
-			$msg_qstring = "?msg=$msg";
-		}
-		//NOTE that this redirect may be innapropriate when
-		//client expect something OTHER than html (e.g., json,text,xml)
-		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
-		Dase_Log::info('redirecting to '.$redirect_path);
-		header("Location:". $redirect_path,TRUE,$code);
-		exit;
-	}
-
-	public static function error($code,$msg='')
-	{
-		switch ($code) {
-		case 400:
-			header("HTTP/1.1 400 Bad Request");
-			$msg = 'Bad Request';
-		case 404:
-			header("HTTP/1.1 404 Not Found");
-			$msg = '404 not found';
-		case 401:
-			header('HTTP/1.1 401 Unauthorized');
-			$msg = 'Unauthorized';
-		case 500:
-			header('HTTP/1.1 500 Internal Server Error');
-		case 411:
-			header("HTTP/1.1 411 Length Required");
-		case 415:
-			header("HTTP/1.1 415 Unsupported Media Type");
-		}
-
-		if (defined('DEBUG')) {
-			$request = new Dase_Http_Request;
-			header("Content-Type: text/plain; charset=utf-8");
-			print "================================\n";
-			print "[http_error_code] => $code\n";
-			print $request;
-			print "================================\n";
-		} else {
-			//todo: pretty error message for production
-			header("Content-Type: text/plain; charset=utf-8");
-			print "DASe Error Report\n\n";
-			print "[http_error_code] => $code\n";
-		}
-		exit;
 	}
 
 	public static function getConfig($key)

@@ -26,12 +26,12 @@ class Dase_Cache
 {
 	private function __construct() {}
 
-	public function get($http_request_or_filename) 
+	public function get($filename) 
 	{
 		$type = Dase::getConfig('cache');
 		$class_name = 'Dase_Cache_'.ucfirst($type);
 		if (class_exists($class_name)) {
-			return new $class_name($http_request_or_filename);
+			return new $class_name($filename);
 		} else {
 			throw new Dase_Cache_Exception("Error: $class_name is not a valid class!");
 		}

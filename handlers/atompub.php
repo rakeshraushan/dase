@@ -11,7 +11,7 @@ class AtompubHandler
 			$media_file->p_serial_number = $params['serial_number'];
 			$media_file->size = $params['size'];
 			if ($media_file->findOne()) {
-				Dase::display($media_file->asAtom(),'application/atom+xml');
+				$request->renderResponse($media_file->asAtom(),'application/atom+xml');
 			}
 		}
 		Dase::error(404);
@@ -45,7 +45,7 @@ class AtompubHandler
 			$count = 100;
 		}
 		$c = Dase_Collection::get($request);
-		Dase::display($c->asAppCollection($start,$count),'application/atom+xml');
+		$request->renderResponse($c->asAppCollection($start,$count),'application/atom+xml');
 
 	}
 
@@ -77,21 +77,21 @@ class AtompubHandler
 		if (!$item) {
 			Dase::error(404);
 		}
-		Dase::display($item->mediaAsAtomFeed(),'application/atom+xml');
+		$request->renderResponse($item->mediaAsAtomFeed(),'application/atom+xml');
 	}
 
 	public static function getCollectionServiceDoc($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$c = Dase_Collection::get($request);
-		Dase::display($c->getAtompubServiceDoc(),'application/atomsvc+xml');
+		$request->renderResponse($c->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
 	public static function getItemServiceDoc($request) 
 	{
 		Dase_Auth::authorize('read',$params);
 		$i = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
-		Dase::display($i->getAtompubServiceDoc(),'application/atomsvc+xml');
+		$request->renderResponse($i->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
 	public static function getItem($request)
@@ -99,7 +99,7 @@ class AtompubHandler
 		Dase_Auth::authorize('read',$params);
 		$item = Dase_DBO_Item::get($params['collection_ascii_id'],$params['serial_number']);
 		if ($item) {
-			Dase::display($item->asAppMember(),'application/atom+xml');
+			$request->renderResponse($item->asAppMember(),'application/atom+xml');
 		} else {
 			Dase::error(401);
 		}
@@ -241,7 +241,7 @@ class AtompubHandler
 		if ($m->findOne()) {
 			$mle_url = APP_ROOT .'/edit/'.$m->p_collection_ascii_id.'/'.$m->p_serial_number.'/'.$m->size;
 			header("Location:". $mle_url,TRUE,201);
-			Dase::display($m->asAtom(),'application/atom+xml',false);
+			$request->renderResponse($m->asAtom(),'application/atom+xml',false);
 		}
 	}
 }

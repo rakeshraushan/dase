@@ -45,12 +45,12 @@
 
 
 		<div id="logoffControl" class="login hide">
-			<span id="userName"></span> is logged in. (<a href="logoff" class="alert" id="logoff-link">logoff</a>)
+			<span id="userName"></span> is logged in. (<a href="user/logoff" class="alert" id="logoff-link">logoff</a>)
 			<div id="eid" class="pagedata"></div>
 		</div>
 
 		<div id="loginControl" class="login hide">
-			<div>Got a UT EID? <a href="login" class="alert">login!</a></div>
+			<div>Got a UT EID? <a href="user/login" class="alert">login!</a></div>
 		</div>
 
 		<div id="wordmark">

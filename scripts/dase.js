@@ -51,8 +51,7 @@ Dase.$ = function(id) {
 };
 
 Dase.logoff = function() {
-	var logoff_url = Dase.base_href+'logoff';
-	window.location.href = logoff_url;
+	window.location.href = Dase.base_href+'user/logoff';
 }
 
 Dase.addClass = function(elem,cname) {
@@ -179,7 +178,7 @@ Dase.initUser = function() {
 		return;
 	}
 	Dase.loadingMsg(true);
-	Dase.getJSON(Dase.base_href + "json/user/"+eid+ "/data",function(json){
+	Dase.getJSON(Dase.base_href + "user/"+eid+ "/data",function(json){
 			for (var eid in json) {
 			Dase.user.eid = eid;
 			Dase.user.name = json[eid].name;
@@ -197,7 +196,7 @@ Dase.initUser = function() {
 			Dase.loginControl(Dase.user.eid);
 			Dase.multicheck("checkedCollection");
 			Dase.getItemTallies();
-			});
+			},null,'format=json');
 };
 
 Dase.loginControl = function(eid) {
@@ -705,48 +704,64 @@ Dase.initBrowse = function() {
 };
 
 Dase.getAttributes = function(url) {
-	Dase.getHtml(url,'attColumn',function() {
+	/* takes attributes json and makes html out of it */
+	Dase.getJSON(url,function(json) {
+			var html ='<h4>Select Attribute:</h4>';
+			html += '<ul id="attList">';
+			for (var i=0;i<json.length;i++) {
+			var coll_ascii = json[i].collection;
+			var att_ascii = json[i].ascii_id;
+			var att_name = json[i].attribute_name;
+			html += '<li><a href="collection/'+coll_ascii+'/attribute/'+att_ascii+'/values.json" id="'+att_ascii+'" class="att_link '+att_ascii+'"><span class="att_name">'+att_name+'</span> <span class="tally" id="tally-'+att_ascii+'"></span></a></li>';
+			}
+			html +="</ul></div>";
+			Dase.$('attColumn').innerHTML = html;
+			Dase.getAttributeTallies(url+'/tallies');
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			});
+			},null,'format=json');
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
 	val_coll.innerHTML = '';
 };
 
-
 Dase.bindGetValues = function(coll) {
-	Dase.getAttributeTallies(coll);
 	var atts = Dase.$('attColumn').getElementsByTagName('a');
 	for (var i=0;i<atts.length;i++) {
 		var att_link = atts[i];
-		if ('att_link' == att_link.className) {
+		if (Dase.hasClass(att_link,'att_link')) {
 			att_link.onclick = function() {
-				Dase.getHtml(this.href,'valColumn');	
+				var att_name = this.getElementsByTagName('span')[0].innerHTML;
+				var att_ascii = this.className.split(" ")[1];
+				Dase.getAttributeValues(this.href,att_name,att_ascii,coll,'valColumn');	
 				Dase.removeClass(Dase.$('valColumn'),'hide');
 				window.scroll(0,0);
 				for (var j=0;j<atts.length;j++) {
-					atts[j].className = 'att_link';
+					Dase.removeClass(atts[j],'spill');
 				}
-				this.className = 'spill';
+				Dase.addClass(this,'spill');
 				return false;
 			};
 		}
 	}
 };
 
-Dase.getAttributeTallies = function(coll) {
-	var url;
-	var is_admin = 0;
-	if (Dase.$('get_admin_tallies')) {
-		url = "json/collection/" + coll + "/admin_attribute_tallies";
-		is_admin = 1;
-	}
-	if (Dase.$('get_public_tallies')) {
-		url = "json/collection/" + coll + "/attribute_tallies";
-	}
-	if (Dase.$('get_cb_tallies')) {
-		url = "json/collection/" + coll + "/cb_attribute_tallies";
-	}
+Dase.getAttributeValues = function(url,att_name,att_ascii,coll,target) {
+	Dase.getJSON(url,function(json) {
+			var html ='<h4>Select '+att_name+'</span> Value:</h4>';
+			html +="<ul>";
+			for (var i=0;i<json.length;i++) {
+			var text = json[i].v;
+			var tally = json[i].t;
+			html +='<li><a href="collection/'+coll+'/search?'+coll+'.'+att_ascii+'='+encodeURIComponent(text)+'" class="val_link">'+text+' <span class="tally">('+tally+')</span></a></li>';
+			}
+			html +="</ul>";
+			Dase.$(target).innerHTML = html;
+			Dase.getAttributeTallies(url+'/tallies');
+			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
+			},null,'format=json');
+}
+
+Dase.getAttributeTallies = function(url) {
 	Dase.getJSON(url,function(json) {
 			for(var ascii_id in json) {
 			var	att_link = Dase.$(ascii_id);
@@ -754,12 +769,13 @@ Dase.getAttributeTallies = function(coll) {
 			//var tally = Dase.$('tally-'+ascii_id).parentNode.getElementsByTagName('span')[0];
 			var tally = Dase.$('tally-'+ascii_id);
 			if (tally) {
-			if (is_admin && 0 == json[ascii_id]) {
+			if (0 == json[ascii_id]) {
 			//make admin atts w/ no values disappear
-			tally.parentNode.className = 'hide';
+			//tally.parentNode.className = 'hide';
 			} else {
 			tally.innerHTML = '(' + json[ascii_id] + ')';
 			}
+			/*
 			if (is_admin) {
 			// makes admin atts appear ONLY after tallies are set
 			Dase.removeClass(Dase.$('get_admin_tallies'),'hide');
@@ -767,9 +783,10 @@ Dase.getAttributeTallies = function(coll) {
 			Dase.removeClass(Dase.$('adminAttsLabel'),'hide');
 			Dase.removeClass(Dase.$('attList'),'hide');
 			}
+			*/
 			} } }
 			Dase.loadingMsg(false);
-	});
+	},null,'format=json');
 };
 
 Dase.createXMLHttpRequest = function() {
@@ -871,9 +888,9 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 	// accurate given the way we currently do deletes!
 	var date = new Date();
 	if (params) {
-		url = url + '?' + params + '&' + date.getTime();
+		url = url + '?' + params + '&cache_buster=' + date.getTime();
 	} else {
-		url = url + '?' + date.getTime();
+		url = url + '?cache_buster=' + date.getTime();
 	}
 
 	xmlhttp.open('GET', url, true);
@@ -883,7 +900,12 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 			if (xmlhttp.status == 200 && xmlhttp.responseText) {
 				//alert(xmlhttp.responseText);
 				var jsonObj = JSON.parse(xmlhttp.responseText);
-				var json = jsonObj.json;
+				//todo: decide on whether to wrap json in 'json' or not
+				if (jsonObj.json){ 
+					var json = jsonObj.json;
+				} else {
+					var json = jsonObj;
+				}
 				if (my_func) {
 					my_func(json);
 				} else {

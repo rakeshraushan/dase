@@ -33,6 +33,7 @@ $conf['graveyard'] = "/mnt/home/pkeane/dase_graveyard";
 $conf['cache'] = 'file';
 
 $conf['login_module'] = 'auth';
+$conf['default_handler'] = 'collections';
 
 $conf['db']['type'] = 'sqlite';
 $conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only
