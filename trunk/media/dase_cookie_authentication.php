@@ -26,4 +26,4 @@ function __autoload($class_name) {
 	}
 }
 
-$eid = Dase_User::getCurrent();
+$eid = Dase_Cookie::getEid();

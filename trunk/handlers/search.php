@@ -97,7 +97,7 @@ class SearchHandler
 			$item->injectAtomEntryData($entry);
 			$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		Dase::display($feed->asXml(),$request);
+		$request->renderResponse($feed->asXml(),$request);
 	}
 
 	public static function itemAsAtom($request)
@@ -149,23 +149,23 @@ class SearchHandler
 			}
 			$subtitle = 'Item ' . $num . ' of ' . $result['count'] . ' items for ' . $result['echo']; 
 			$feed->setSubtitle($subtitle);
-			Dase::display($feed->asXml(),$request);
+			$request->renderResponse($feed->asXml(),$request);
 		}
-		Dase::error(404);
+		$request->renderError(404);
 	}
 
 	public static function item($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom'));
-		Dase::display($tpl->fetch('item/transform.tpl'),$request);
+		$request->renderResponse($tpl->fetch('item/transform.tpl'),$request);
 	}
 
 	public static function search($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom'));
-		Dase::display($tpl->fetch('item_set/search.tpl'),$request);
+		$request->renderResponse($tpl->fetch('item_set/search.tpl'),$request);
 	}
 
 	public static function showSql($request)

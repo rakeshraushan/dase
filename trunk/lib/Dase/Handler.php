@@ -20,6 +20,7 @@ class Dase_Handler {
 				}
 			}
 
+			Dase_Log::all("$request->path | $uri_regex");
 			//second, see if it matches the request uri (a.k.a. path)
 			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
 
@@ -30,7 +31,10 @@ class Dase_Handler {
 					$request->setParams($params);
 				}
 
-				//given the method, resource, and format, try and call proper method
+				//camel case
+				$resource = str_replace(' ','',ucwords(str_replace('_',' ',$resource)));
+
+				//given the http_method, resource, and format, try and call proper method
 				if ('html' == $request->format) {
 					//html is default
 					$method = $request->method.ucfirst($resource);
@@ -41,26 +45,17 @@ class Dase_Handler {
 					$this->setup($request);
 					$this->{$method}($request);
 				} else {
-					print $method;
-					Dase::error(404);
+					$request->renderError(404);
 				}
 			}
 		}
-		Dase::error(404);
+		$request->renderError(404);
 	}
 
-	public function setup($request)
+	protected function setup($request)
 	{
 		return;
 	}
 			
-	public function checkCache($request,$ttl=null)
-	{
-		$cache = Dase_Cache::get($request);
-		$content = $cache->getData($ttl);
-		if ($content) {
-			Dase::display($content,$request,false);
-		}
-	}
 }
 

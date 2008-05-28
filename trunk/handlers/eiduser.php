@@ -64,7 +64,7 @@ class EiduserModuleHandler {
 				$db_user->insert();
 			}
 			Dase_Cookie::set($db_user->eid);
-			Dase::redirect("login/$db_user->eid");
+			$request->renderRedirect("login/$db_user->eid");
 		}
 	}
 
@@ -74,6 +74,6 @@ class EiduserModuleHandler {
 		setcookie('FC','',time()-86400,'/','.utexas.edu');
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
-		Dase::redirect('/');
+		$request->renderRedirect('/');
 	}
 }

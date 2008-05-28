@@ -135,4 +135,61 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 		$this->ppd = md5($this->eid . Dase::getConfig('ppd_token'));
 	}
+
+
+	function checkCollectionAuth($collection_ascii_id,$auth_level)
+	{
+		$coll = Dase_DBO_Collection::get($collection_ascii_id);
+		if (!$coll) {
+			return false;
+		}
+		if ('read' == $auth_level && $coll->is_public) {
+			return true;
+		}
+		$cm = new Dase_DBO_CollectionManager; 
+		$cm->collection_ascii_id = $collection_ascii_id;
+		//need to account for case here!!!!!!!!!!!!!!!!!
+		//needs to be case-insensitive
+		$cm->dase_user_eid = $this->eid;
+		$cm->findOne();
+		if ($cm->auth_level) {
+			if ('read' == $auth_level) {
+				return true;
+			} elseif ('write' == $auth_level && in_array($cm->auth_level,array('write','admin','manager','superuser'))) {
+				return true;
+			} elseif ('admin' == $auth_level && in_array($cm->auth_level,array('admin','manager','superuser'))) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}	
+	}
+
+	function checkTagAuth($tag_ascii_id,$auth_level)
+	{
+		$tag = Dase_DBO_Tag::get($tag_ascii_id,$this->eid);
+		if (!$tag) {
+			return false;
+		}
+		if ('read' == $auth_level && $tag->is_public) {
+			return true;
+		} 
+		if ($tag->dase_user_id == $this->id) {
+			return true;
+		} else {
+			return false;
+		}	
+	}
+
+	function can($auth_level,$type,$ascii_id)
+	{
+		if ('tag' == $type) {
+			return $this->checkTagAuth($ascii_id,$auth_level);
+		}
+		if ('collection' == $type) {
+			return $this->checkCollectionAuth($ascii_id,$auth_level);
+		}
+	}
 }

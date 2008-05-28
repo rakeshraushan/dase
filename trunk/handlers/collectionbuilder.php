@@ -14,7 +14,7 @@ class CollectionbuilderHandler
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
 		$tpl->assign('collection',Dase_Collection::get($request));
-		Dase::display($tpl->fetch('collectionbuilder/settings.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/settings.tpl'));
 	}
 
 	public static function attributes($request)
@@ -24,7 +24,7 @@ class CollectionbuilderHandler
 		$c = Dase_Collection::get($request);
 		$tpl->assign('collection',Dase_Collection::get($request));
 		$tpl->assign('attributes',Dase_Collection::get($request)->getAttributes());
-		Dase::display($tpl->fetch('collectionbuilder/attributes.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/attributes.tpl'));
 	}
 
 	public static function managers($request)
@@ -33,7 +33,7 @@ class CollectionbuilderHandler
 		$tpl->assign('user',Dase_User::get($request));
 		$tpl->assign('collection',Dase_Collection::get($request));
 		$tpl->assign('managers',Dase_Collection::get($request)->getManagers());
-		Dase::display($tpl->fetch('collectionbuilder/managers.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/managers.tpl'));
 	}
 
 	public static function uploadForm($request)
@@ -41,7 +41,7 @@ class CollectionbuilderHandler
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
 		$tpl->assign('collection',Dase_Collection::get($request));
-		Dase::display($tpl->fetch('collectionbuilder/upload_form.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/upload_form.tpl'));
 	}
 
 	public static function checkAtom($request)
@@ -65,7 +65,7 @@ class CollectionbuilderHandler
 			Dase::error(422);
 		}
 		$tpl->assign('metadata',$metadata);
-		Dase::display($tpl->fetch('collectionbuilder/check.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/check.tpl'));
 	}
 
 	public static function item_types($request)
@@ -75,7 +75,7 @@ class CollectionbuilderHandler
 		$c = Dase_Collection::get($request);
 		$tpl->assign('collection',Dase_Collection::get($request));
 		$tpl->assign('item_types',Dase_Collection::get($request)->getItemTypes());
-		Dase::display($tpl->fetch('collectionbuilder/item_types.tpl'));
+		$request->renderResponse($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
 	public static function dataAsJson($request)
@@ -108,7 +108,7 @@ class CollectionbuilderHandler
 			$new_so = intval($new_so);
 			$c->changeAttributeSort($att_ascii_id,$new_so);
 		}
-		Dase::display('success '.$att_ascii_id.' -> '.$new_so);
+		$request->renderResponse('success '.$att_ascii_id.' -> '.$new_so);
 	}
 }
 

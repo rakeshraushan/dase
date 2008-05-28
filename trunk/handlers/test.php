@@ -14,7 +14,7 @@ class TestHandler
 		$test->assertTrue(file_exists(CACHE_DIR.md5('test')),'yes cache file');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		Dase::display($t->fetch('test/index.tpl'));
+		$request->renderResponse($t->fetch('test/index.tpl'));
 	}
 
 	public static function search($request)
@@ -31,7 +31,7 @@ class TestHandler
 		$test->assertTrue($placeholder_count == $param_count,'placeholder count eq params count');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		Dase::display($t->fetch('test/index.tpl'));
+		$request->renderResponse($t->fetch('test/index.tpl'));
 	}
 
 	public static function fail($request)
@@ -41,6 +41,6 @@ class TestHandler
 		$test->assertTrue(false,'fail');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		Dase::display($t->fetch('test/index.tpl'));
+		$request->renderResponse($t->fetch('test/index.tpl'));
 	}
 }

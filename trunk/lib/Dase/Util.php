@@ -20,8 +20,7 @@
 
 Class Dase_Util 
 {
-	function __construct()
-	{}
+	function __construct() {}
 
 	public static function getVersion()
 	{

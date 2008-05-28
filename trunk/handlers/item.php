@@ -6,18 +6,18 @@ class ItemHandler
 	{
 		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
-			Dase::display($item->asAtom(),'application/atom+xml');
+			$request->renderResponse($item->asAtom(),'application/atom+xml');
 		}
-		Dase::error(404);
+		$request->renderError(404);
 	}
 
 	public static function asJson($request)
 	{
 		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
-			Dase::display($item->asJson(),'text/plain');
+			$request->renderResponse($item->asJson(),'text/plain');
 		}
-		Dase::error(404);
+		$request->renderError(404);
 	}
 
 	public static function display($request)
@@ -27,9 +27,9 @@ class ItemHandler
 			$t = new Dase_Template($request);
 			$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/collection/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number'));
 			$t->assign('item',$feed);
-			Dase::display($t->fetch('item/transform.tpl'));
+			$request->renderResponse($t->fetch('item/transform.tpl'));
 		} else {
-			Dase::error(404);
+			$request->renderError(404);
 		}
 	}
 

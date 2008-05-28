@@ -30,16 +30,20 @@ class Dase_Http_Request
 		$this->path = $this->getPath();
 		$this->response_mime_type = self::$types[$this->format];
 		$this->content_type = $this->getContentType();
+
+		if (!$this->handler) {
+			$this->renderRedirect(Dase::getConfig('default_handler'));
+		}
 	}
 
 	function __toString()
 	{
-		$string = "format: $this->format\n";
-		$string .= "handler: $this->handler\n";
-		$string .= "method: $this->method\n";
-		$string .= "module: $this->module\n";
-		$string .= "path: $this->path\n";
-		$string .= "response_mime_type: $this->response_mime_type\n";
+		$string = "[format] => $this->format\n";
+		$string .= "[handler] => $this->handler\n";
+		$string .= "[method] => $this->method\n";
+		$string .= "[module] => $this->module\n";
+		$string .= "[path] => $this->path\n";
+		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		return $string;
 	}
 
@@ -55,12 +59,33 @@ class Dase_Http_Request
 		} 
 	}
 
+	public function getCacheId()
+	{
+		$params = '';
+		foreach ($_GET as $k => $v) {
+			//cache_busing is for client javascript in IE6
+			if ('cache_buster' != $k) {
+				$params .= $k.'='.$v.';';
+			}
+		}
+		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$params;
+	}
+
+	public function checkCache($ttl=null)
+	{
+		$cache = Dase_Cache::get($this->getCacheId());
+		$content = $cache->getData($ttl);
+		if ($content) {
+			$this->renderResponse($content,false);
+		}
+	}
+
 	function getHandler()
 	{
 		$parts = explode('/',trim($this->getPath(),'/'));
 		$first = array_shift($parts);
 		if ('modules' != $first) {
-			return $first ? $first : 'index';
+			return $first;
 		} else {
 			$this->module = $parts[0];
 			if (isset($parts[1])) {
@@ -74,10 +99,10 @@ class Dase_Http_Request
 	function getContentType() 
 	{
 		if (isset($_SERVER['CONTENT_TYPE'])) {
-			return $SERVER['CONTENT_TYPE'];
+			return $_SERVER['CONTENT_TYPE'];
 		}
 		if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
-			return $SERVER['HTTP_CONTENT_TYPE'];
+			return $_SERVER['HTTP_CONTENT_TYPE'];
 		}
 	}
 
@@ -318,6 +343,27 @@ class Dase_Http_Request
 			}
 		}
 		return false;
+	}
+
+	public function renderResponse($content,$set_cache=true)
+	{
+		$response = new Dase_Http_Response($this);
+		$response->render($content,$set_cache);
+		exit;
+	}
+
+	public function renderRedirect($path='',$msg='',$code='303')
+	{
+		$response = new Dase_Http_Response($this);
+		$response->redirect($path,$msg,$code);
+		exit;
+	}
+
+	public function renderError($code,$msg='')
+	{
+		$response = new Dase_Http_Response($this);
+		$response->error($code,$msg='');
+		exit;
 	}
 }
 
