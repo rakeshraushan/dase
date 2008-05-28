@@ -17,21 +17,21 @@
 
 		<base href="{$app_root}"/>
 
-		<link rel="stylesheet" type="text/css" href="css/yui.css"/>
-		<link rel="stylesheet" type="text/css" href="css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="css/menu.css"/>
-		<link rel="stylesheet" type="text/css" href="css/dynamic.css"/>
-		<link rel="shortcut icon" href="images/favicon.ico"/>
+		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/dynamic.css"/>
+		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<!--[if lt IE 7]>
 		<script type="text/javascript" src="scripts/ie7/IE7.js"></script>
 		<script type="text/javascript" src="scripts/ie7/ie7-squish.js"></script>
 		<script type="text/javascript" src="scripts/ie7/ie7-recalc.js"></script>
 		<![endif]-->
-		<script type="text/javascript" src="scripts/http.js"></script>
-		<script type="text/javascript" src="scripts/json2.js"></script>
-		<script type="text/javascript" src="scripts/dase.js"></script>
-		<script type="text/javascript" src="scripts/firebug/firebug.js"></script>
+		<script type="text/javascript" src="www/scripts/http.js"></script>
+		<script type="text/javascript" src="www/scripts/json2.js"></script>
+		<script type="text/javascript" src="www/scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/firebug/firebug.js"></script>
 
 		<!--[if lt IE 8]>
 		<link rel="stylesheet" type="text/css" href="css/ie.css"/>

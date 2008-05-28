@@ -58,7 +58,7 @@ class Dase_Atom
 		//do not show non-fatal errors
         $er = error_reporting(E_ERROR);
 
-		$bool = $this->dom->relaxNGValidate(DASE_PATH.'/atom.rng');
+		$bool = $this->dom->relaxNGValidate(SCHEMA_PATH.'atom.rng');
 
 		//back to original error reporting
 		error_reporting($er);
