@@ -72,5 +72,10 @@ class Dase_Http_Response
 		}
 		exit;
 	}
+
+	function __destruct() 
+	{
+		Dase_Log::debug('finished request '.Dase_Timer::getElapsed());
+	}
 }
 

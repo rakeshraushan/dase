@@ -24,7 +24,7 @@ class Dase
 	{
 		$request = new Dase_Http_Request;
 		//http://www.jcinacio.com/2007/04/19/phps-__tostring-magic-method-not-so-magic-before-520/
-		Dase_Log::debug($request->__toString());
+		Dase_Log::all($request->__toString());
 		if ($request->module) {
 			//modules, by convention, have one handler in a file named
 			//'handler.php' with classname {Module}ModuleHandler
