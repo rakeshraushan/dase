@@ -1,3 +1,26 @@
+from http://blog.php-security.org/archives/94-Suhosin-0.9.21-XSS-Protection.html
+
+suhosin.server.encode
+
+When activated (which is the default) the SERVER variables REQUEST_URI
+and QUERY_STRING will be scanned for the characters < > ' " and `. All
+these characters are usually encoded by the browser before they are sent
+and therefore many applications consider REQUEST_URI and QUERY_STRING
+safe. However some browsers like Internet Explorer will not encode
+these characters which results in lots of XSS vulnerabilities. Suhosin
+will protect applications that wrongly put too much trust into these
+variables by URL-encoding them within the variables.
+
+2008-03-16 10:13:32 
+
+[DASe note: this escaping ALWAYS happens with xslt transforms]
+But...prefer "value-of" rather than "copy-of" if/when possible since
+"copy-of" makes a deep copy and could conceivably copy in javascript
+
+2008-03-16 10:13:55 
+
+todo: create one-time "key" for all post, put & delete operations
+
 2008-05-04 19:25:04 
 
 the Dase_Atom libraries

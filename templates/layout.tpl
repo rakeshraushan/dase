@@ -6,6 +6,9 @@
 		<title>
 			{block name="title"}DASe: Digital Archive Services{/block}
 		</title>
+		<style type="text/css">
+			{block name="style"}{/block}
+		</style>
 		<meta name="description" content="
 		The Digital Archive Services project 
 		is a lightweight digital content repository
