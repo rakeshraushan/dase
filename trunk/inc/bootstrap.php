@@ -4,7 +4,7 @@ ini_set('include_path','.:lib');
 //PHP ERROR REPORTING
 ini_set('display_errors','on');
 ini_set('log_errors','on');
-ini_set('error_log',DASE_PATH . '/log/error.log');
+ini_set('error_log',DASE_PATH . '/var/log/error.log');
 //error_reporting(E_STRICT);
 error_reporting(E_ALL);
 
@@ -19,12 +19,13 @@ define('APP_ROOT',trim($protocol . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_
 define('APP_HTTP_ROOT','http://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_HTTPS_ROOT','https://' . $_SERVER['HTTP_HOST'] . '/' . trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
-define('CACHE_DIR', DASE_PATH . '/cache/');
+define('CACHE_DIR', DASE_PATH . '/var/cache/');
+define('SCHEMA_DIR', DASE_PATH . '/var/schema/');
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 define('MAX_ITEMS',30);
 define('CACHE_TTL',10);
 
-define('DASE_LOG', DASE_PATH . '/log/dase.log');
+define('DASE_LOG', DASE_PATH . '/var/log/dase.log');
 define('DASE_LOG_INFO',1);
 define('DASE_LOG_DEBUG',2);
 define('DASE_LOG_ALL',3);
