@@ -16,7 +16,7 @@ class Dase_Cache_File extends Dase_Cache
 			throw new Exception('missing cache file name');
 		}
 
-		Dase_Log::debug('cache construct '.$filename);
+		Dase_Log::all('cache construct '.$filename);
 		$this->filename = md5($filename);
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
