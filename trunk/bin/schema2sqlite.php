@@ -39,4 +39,5 @@ if ('sqlite' == Dase_DB::getDbType()) {
 	}
 } else {
 	print "sorry, this script is for sqlite ONLY\n";
+	print "do not attempt to use with another DB!\n";
 }

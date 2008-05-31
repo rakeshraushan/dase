@@ -54,12 +54,6 @@ class Dase_Cache_File extends Dase_Cache
 		return true;
 	}
 
-	function display()
-	{
-		echo $this->contents;
-		exit;
-	}
-
 	function getData($ttl=null)
 	{
 		if ($this->isFresh($ttl)) {

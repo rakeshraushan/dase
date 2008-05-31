@@ -38,7 +38,7 @@ class Dase
 			$handler = new $classname;
 			$handler->dispatch($request);
 		} else {
-			Dase::error(404);
+			$request->renderError(404);
 		}
 	}
 

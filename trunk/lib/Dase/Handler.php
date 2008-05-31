@@ -16,31 +16,22 @@ class Dase_Handler {
 				//stash param names into $template_matches
 				$num = preg_match_all("/{([\w]*)}/",$uri_template,$template_matches);
 				if ($num) {
-					$uri_regex = preg_replace("/{[\w]*}/","([\w]*)",$uri_template);
+					$uri_regex = preg_replace("/{[\w]*}/","([\w-]*)",$uri_template);
 				}
 			}
 
 			Dase_Log::all("$request->path | $uri_regex");
 			//second, see if it matches the request uri (a.k.a. path)
 			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
-
+				Dase_Log::all("matched resource $resource");
 				//create parameters based on uri template and request matches
 				if (isset($template_matches[1]) && isset($uri_matches[1])) { 
 					array_shift($uri_matches);
 					$params = array_combine($template_matches[1],$uri_matches);
 					$request->setParams($params);
 				}
-
-				//camel case
-				$resource = str_replace(' ','',ucwords(str_replace('_',' ',$resource)));
-
-				//given the http_method, resource, and format, try and call proper method
-				if ('html' == $request->format) {
-					//html is default
-					$method = $request->method.ucfirst($resource);
-				} else {
-					$method = $request->method.ucfirst($resource).ucfirst($request->format);
-				}
+				$method = $this->determineMethod($resource,$request);
+				Dase_Log::all("try method $method");
 				if (method_exists($this,$method)) {
 					$this->setup($request);
 					$this->{$method}($request);
@@ -50,6 +41,25 @@ class Dase_Handler {
 			}
 		}
 		$request->renderError(404);
+	}
+
+	protected function determineMethod($resource,$request)
+	{
+		if ('post' == $request->method) {
+			$method = 'postTo';
+		} else {
+			$method = $request->method;
+		}
+		if (('html'==$request->format) || ('get' != $request->method)) {
+			$format = '';
+		} else {
+			$format = ucfirst($request->format);
+		}
+		//camel case
+		$resource = str_replace(' ','',ucwords(str_replace('_',' ',$resource)));
+
+		$handler_method = $method.$resource.$format;
+		return $handler_method;
 	}
 
 	protected function setup($request)

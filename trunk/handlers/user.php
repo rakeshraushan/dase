@@ -3,48 +3,16 @@
 class UserHandler extends Dase_Handler
 {
 	public $resource_map = array(
-		'login' => 'login',
-		'login/{eid}' => 'finish_login',
-		'logoff' => 'logoff',
-		'{eid}/data' => 'data'
+		'{eid}/data' => 'data',
+		'{eid}/cart' => 'cart',
+		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
 	);
 
-	//rewrite/replace for alternate authentication
-	public function getLogin($request)
+	protected function setup($request)
 	{
-		$t = new Dase_Template($request);
-		$request->renderResponse($t->fetch('login_form.tpl'),$request);
-	}
-
-	//rewrite/replace for alternate authentication
-	public function postLogin($request)
-	{
-		$username = $request->get('username');
-		$pass = $request->get('password');
-		if ('tseliot' == $pass) {
-			Dase_Cookie::set($username);
-			//do this so cookie is passed along
-			$request->renderRedirect("user/login/$username");
-		} else {
-			//I could probably just display here instead of redirect
-			$request->renderRedirect("user/login",'incorrect username/password');
+		if ($request->has('eid')) {
+			$this->user = Dase_DBO_DaseUser::get($request->get('eid'));
 		}
-	}
-
-	public function getFinishLogin($request)
-	{
-		$user = $request->getUser();
-		if ($request->get('eid') == $user->eid) {
-			$request->renderRedirect('/',"welcome ". $request->get('eid')." is logged in");
-		} else {
-			$request->renderRedirect('user/login');
-		}
-	}
-
-	public function getLogoff($request)
-	{
-		Dase_Cookie::clear();
-		$request->renderRedirect('user/login');
 	}
 
 	public function getDataJson($request)
@@ -60,44 +28,43 @@ class UserHandler extends Dase_Handler
 			$data = $request->getUser()->getData();
 			$cache->setData($data);
 		}
-		header("Content-Type: application/json; charset=utf-8");
-		$cache->display();
+		$request->renderResponse($cache->getData(3000));
 	}
 
-	public function cartAsJson($request)
+	public function getCartJson($request)
 	{
-		$request->renderResponse(Dase_User::get($request)->getCart(),$request);
+		$request->renderResponse($this->user->getCart());
 	}
 
-	public function addCartItem($request)
+	public function postToCart($request)
 	{
-		$u = Dase_User::get($request);
+		$u = $this->user;
 		$u->expireDataCache();
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
 		$tag->tag_type_id = CART;
 		$tag->findOne();
 		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->item_id = Dase_Filter::filterPost('item_id');
+		$tag_item->item_id = $request->get('item_id');
 		$tag_item->tag_id = $tag->id;
 		if ($tag_item->insert()) {
-			echo "added cart item $tag_item->id";
+			$request->renderResponse("added cart item $tag_item->id");
 		} else {
-			echo "add to cart failed";
+			$request->renderResponse("add to cart failed");
 		}
 	}
 
 	public function deleteTagItem($request)
 	{
-		$u = Dase_User::get($request);
+		$u = $this->user;
 		$u->expireDataCache();
 		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->load($params['tag_item_id']);
+		$tag_item->load($request->get('tag_item_id'));
 		$tag = new Dase_DBO_Tag;
 		$tag->load($tag_item->tag_id);
 		if ($tag->dase_user_id == $u->id) {
 			$tag_item->delete();
-			echo "tag item {$params['tag_item_id']} deleted!";
+			$request->renderResponse("tag item ".$request->get('tag_item_id')." deleted!");
 			exit;
 		} else {
 			$request->renderError(401);
