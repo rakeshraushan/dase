@@ -51,7 +51,14 @@ Dase.$ = function(id) {
 };
 
 Dase.logoff = function() {
-	window.location.href = Dase.base_href+'user/logoff';
+	if (Dase.user.eid) {
+	Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
+			function(resp) { 
+			window.location.href = Dase.base_href+'login/form';
+			});
+	} else {
+		window.location.href = Dase.base_href+'login/form';
+	}
 }
 
 Dase.addClass = function(elem,cname) {
@@ -196,7 +203,7 @@ Dase.initUser = function() {
 			Dase.loginControl(Dase.user.eid);
 			Dase.multicheck("checkedCollection");
 			Dase.getItemTallies();
-			},null,'format=json');
+			});
 };
 
 Dase.loginControl = function(eid) {
@@ -205,7 +212,15 @@ Dase.loginControl = function(eid) {
 	} else {
 		Dase.removeClass(Dase.$('loginControl'),'hide');
 	}
-}
+};
+
+Dase.initLogoff = function() {
+	var link = Dase.$('logoff-link');
+	link.onclick = function() {
+		Dase.logoff();
+		return false;
+	};
+};
 
 Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
@@ -583,7 +598,7 @@ Dase.multicheck = function(c) {
 
 Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
-		Dase.getJSON(Dase.base_href+"json/item_tallies", function(json){
+		Dase.getJSON(Dase.base_href+"collections/item_tallies", function(json){
 				for(var ascii_id in json) {
 				var asc = Dase.$(ascii_id);
 				if (asc) {
@@ -629,14 +644,6 @@ Dase.placeUserTags = function(eid) {
 			}
 			if ('cart' != type) {
 				//we populate 'sets' as we go
-				//populate list of ALL tags that can be copied to from cart
-				//concat...
-				if (sets.allTags) {
-					sets.allTags = sets.allTags + "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
-				} else {
-					//first time through...
-					sets.allTags = "<input type='checkbox' name='" + ascii + "'> " + jsonAscii + "</input><br>\n";
-				}
 				if (sets[type]) {
 					//concat...
 					//note that subscriptions don't REALLY use the ascii_id -- it's actually the tag id
@@ -718,7 +725,7 @@ Dase.getAttributes = function(url) {
 			Dase.$('attColumn').innerHTML = html;
 			Dase.getAttributeTallies(url+'/tallies');
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			},null,'format=json');
+			});
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
 	val_coll.innerHTML = '';
@@ -752,13 +759,13 @@ Dase.getAttributeValues = function(url,att_name,att_ascii,coll,target) {
 			for (var i=0;i<json.length;i++) {
 			var text = json[i].v;
 			var tally = json[i].t;
-			html +='<li><a href="collection/'+coll+'/search?'+coll+'.'+att_ascii+'='+encodeURIComponent(text)+'" class="val_link">'+text+' <span class="tally">('+tally+')</span></a></li>';
+			html +='<li><a href="search?'+coll+'.'+att_ascii+'='+encodeURIComponent(text)+'" class="val_link">'+text+' <span class="tally">('+tally+')</span></a></li>';
 			}
 			html +="</ul>";
 			Dase.$(target).innerHTML = html;
 			Dase.getAttributeTallies(url+'/tallies');
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			},null,'format=json');
+			});
 }
 
 Dase.getAttributeTallies = function(url) {
@@ -786,7 +793,7 @@ Dase.getAttributeTallies = function(url) {
 			*/
 			} } }
 			Dase.loadingMsg(false);
-	},null,'format=json');
+	});
 };
 
 Dase.createXMLHttpRequest = function() {
@@ -888,9 +895,9 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 	// accurate given the way we currently do deletes!
 	var date = new Date();
 	if (params) {
-		url = url + '?' + params + '&cache_buster=' + date.getTime();
+		url = url + '?' + params + '&cache_buster=' + date.getTime()+'&format=json';
 	} else {
-		url = url + '?cache_buster=' + date.getTime();
+		url = url + '?cache_buster=' + date.getTime()+'&format=json';
 	}
 
 	xmlhttp.open('GET', url, true);
@@ -963,7 +970,7 @@ Dase.initCart = function() {
 	Dase.loadingMsg(true);
 	var sr = Dase.$('itemSet');
 	if (!sr) return;
-	Dase.getJSON(Dase.base_href + 'json/user/' + Dase.user.eid + "/cart",
+	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
 			function(json) { 
 			var label = Dase.$('cartLabel');
 			if (label) {
@@ -1095,6 +1102,7 @@ Dase.addLoadEvent(function() {
 		Dase.initToggle();
 		Dase.initSaveTo();
 		Dase.initRemoveItems();
+		Dase.initLogoff();
 		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

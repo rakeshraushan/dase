@@ -56,6 +56,8 @@ p,fieldset,table,pre{margin-bottom:1em;}
 
 /* changes/additions by peter keane for daseproject.org */
 
+/* force scroll bar */
+html {height:100%; margin-bottom: 1px;}
 body {font:12px/1em arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}
 h1,h2 {margin:0 0 1em 0;}
 h3,h4 {margin:0 0 .8em 0;}

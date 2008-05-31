@@ -29,7 +29,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function get($ascii_id,$eid)
 	{
-		$user = Dase_User::get($eid);
+		$user = Dase_DBO_DaseUser::get($eid);
 		$tag = new Dase_DBO_Tag;
 		$tag->ascii_id = $ascii_id;
 		$tag->dase_user_id = $user->id;

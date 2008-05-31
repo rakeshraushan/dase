@@ -13,6 +13,8 @@ class Dase_Http_Request
 		'html' =>'text/html',
 		'css' =>'text/css',
 		'txt' =>'text/plain',
+		'jpg' =>'image/jpeg',
+		'gif' =>'image/gif',
 	);
 	public $content_type;
 	public $format;
@@ -44,6 +46,7 @@ class Dase_Http_Request
 		$string .= "[module] => $this->module\n";
 		$string .= "[path] => $this->path\n";
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
+		$string .= "[content_type] => $this->content_type\n";
 		return $string;
 	}
 
@@ -99,10 +102,15 @@ class Dase_Http_Request
 	function getContentType() 
 	{
 		if (isset($_SERVER['CONTENT_TYPE'])) {
-			return $_SERVER['CONTENT_TYPE'];
+			$header = $_SERVER['CONTENT_TYPE'];
 		}
 		if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
-			return $_SERVER['HTTP_CONTENT_TYPE'];
+			$header = $_SERVER['HTTP_CONTENT_TYPE'];
+		}
+		if (isset($header)) {
+			$parser = new Mimeparse;
+			list($type,$subtype,$params) = $parser->parse_mime_type($header);
+			return $type.'/'.$subtype;
 		}
 	}
 
@@ -290,7 +298,12 @@ class Dase_Http_Request
 		if ($eid) {
 			return $this->getDbUser($eid);
 		} else {
-			Dase::redirect('user/login');
+			if ('html' == $this->format) {
+				$target = urlencode($this->url);
+				$this->renderRedirect("login/form?target=$target");
+			} else {
+				$this->renderError(401);
+			}
 		}
 	}
 
@@ -352,10 +365,17 @@ class Dase_Http_Request
 		exit;
 	}
 
+	public function serveFile($path,$mime_type,$download=false)
+	{
+		$response = new Dase_Http_Response($this);
+		$response->serveFile($path,$mime_type,$download);
+		exit;
+	}
+
 	public function renderRedirect($path='',$msg='',$code='303')
 	{
 		$response = new Dase_Http_Response($this);
-		$response->redirect($path,$msg,$code);
+		$response->redirect($path,$msg,$code,$this->format);
 		exit;
 	}
 

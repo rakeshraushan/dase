@@ -20,18 +20,44 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function redirect($path='',$msg='',$code="303")
+	public function serveFile($path,$mime_type,$download=false)
+	{
+		if (!file_exists($path)) {
+			header('Content-Type: image/jpeg');
+			readfile(DASE_PATH.'/www/images/unavail.jpg');
+			exit;
+		}
+		$filename = basename($path);
+		//from php.net
+		$headers = apache_request_headers();
+		// Checking if the client is validating its cache and if it is current.
+		if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($path))) {
+			// Client's cache IS current, so we just respond '304 Not Modified'.
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($path)).' GMT', true, 304);
+		} else {
+			// Image not cached or cache outdated, we respond '200 OK' and output the image.
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($path)).' GMT', true, 200);
+			header('Content-Length: '.filesize($path));
+			header('Content-Type: '.$mime_type);
+			if ($download) {
+				header("Content-Disposition: attachment; filename=$filename");
+			} else {
+				header("Content-Disposition: inline; filename=$filename");
+			}
+			print file_get_contents($path);
+		}
+		exit;
+	}
+
+	public function redirect($path='',$msg='',$code="303",$format='html')
 	{
 		//SHOULD use 303 (redirect after put,post,delete)
 		//OR 307 -- no go -- look here
 		$msg_qstring = '';
 		$msg = urlencode($msg);
-		if ($msg) {
-			$msg_qstring = "?msg=$msg";
-		}
 		//NOTE that this redirect may be innapropriate when
 		//client expect something OTHER than html (e.g., json,text,xml)
-		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/') . $msg_qstring;
+		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?msg='.$msg_qstring.'&format='.$format;
 		Dase_Log::info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;

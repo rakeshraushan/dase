@@ -165,7 +165,7 @@ class Dase_DB {
 			}
 			return $result;
 		}
-		$sql = "SELECT column_name, data_type, character_maximum_length 
+		$sql = "SELECT column_name, data_type, character_maximum_length, is_nullable,column_default
 			FROM information_schema.columns 
 			WHERE table_name = '$table'";
 		$sth = $db->prepare($sql);
@@ -188,6 +188,10 @@ class Dase_DB {
 				$writer->startElement('column');
 				$writer->writeAttribute('name',$col['column_name']);
 				$writer->writeAttribute('type',$col['data_type']);
+				$writer->writeAttribute('null',$col['is_nullable']);
+				if (false === strpos($col['column_default'],'nextval')) {
+					$writer->writeAttribute('default',$col['column_default']);
+				}
 				if ('id' == $col['column_name']) {
 					$writer->writeAttribute('is_primary_key','true');
 				}

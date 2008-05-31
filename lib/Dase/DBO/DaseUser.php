@@ -7,6 +7,13 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public $is_superuser=0;
 	public $ppd;
 
+	public static function get($eid)
+	{
+		$user = new Dase_DBO_DaseUser;
+		$user->eid = $eid;
+		return $user->findOne();
+	}
+
 	public function getTags()
 	{
 		$tag_array = array();

@@ -1,11 +1,20 @@
 <?php
 
-class SearchHandler
+class SearchHandler extends Dase_Handler
 {
+
+	public $resource_map = array(
+		'/' => 'search',
+		'item' => 'search_item',
+	);
+
+	protected function setup($request)
+	{
+	}
 
 	//MOST of this should be in Dase_Search!!
 
-	public static function opensearch($request)
+	public function getSearchAtom($request)
 	{
 
 		if ($request->has('md5_hash')) {
@@ -81,9 +90,9 @@ class SearchHandler
 				);
 			}
 		}
-		//this prevents a 'search_item' becoming 'search_item_item':
-		$item_request_url = str_replace('search_item','search',$request_path);
-		$item_request_url = str_replace('search','search_item',$item_request_url);
+		//this prevents a 'search/item' becoming 'search/item/item':
+		$item_request_url = str_replace('search/item','search',$request_path);
+		$item_request_url = str_replace('search','search/item',$item_request_url);
 		$num = 0;
 		foreach($item_ids as $item_id) {
 			$num++;
@@ -97,10 +106,10 @@ class SearchHandler
 			$item->injectAtomEntryData($entry);
 			$entry->addLink($item_request_url . '?' . $query_string . '&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		$request->renderResponse($feed->asXml(),$request);
+		$request->renderResponse($feed->asXml());
 	}
 
-	public static function itemAsAtom($request)
+	public function getSearchItemAtom($request)
 	{
 		$search = Dase_Search::get($request);
 		$num = $request->get('num');
@@ -126,7 +135,7 @@ class SearchHandler
 			$previous = $num - 1;
 		}
 
-		$start = Dase_Filter::filterGet('start');
+		$start = $request->get('start');
 		if (!$start) {
 			$start = (floor($num/$max) * $max) + 1;
 		}
@@ -149,26 +158,26 @@ class SearchHandler
 			}
 			$subtitle = 'Item ' . $num . ' of ' . $result['count'] . ' items for ' . $result['echo']; 
 			$feed->setSubtitle($subtitle);
-			$request->renderResponse($feed->asXml(),$request);
+			$request->renderResponse($feed->asXml());
 		}
 		$request->renderError(404);
 	}
 
-	public static function item($request)
+	public function getSearchItem($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom'));
-		$request->renderResponse($tpl->fetch('item/transform.tpl'),$request);
+		$request->renderResponse($tpl->fetch('item/transform.tpl'));
 	}
 
-	public static function search($request)
+	public function getSearch($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom'));
-		$request->renderResponse($tpl->fetch('item_set/search.tpl'),$request);
+		$request->renderResponse($tpl->fetch('item_set/search.tpl'));
 	}
 
-	public static function showSql($request)
+	public function showSql($request)
 	{
 		$result = htmlspecialchars(Dase_Search::get($request)->getResult());
 		print "<pre>{$result['sql']}</pre>";

@@ -30,7 +30,7 @@ define('DASE_LOG_INFO',1);
 define('DASE_LOG_DEBUG',2);
 define('DASE_LOG_ALL',3);
 
-define('LOG_LEVEL',DASE_LOG_DEBUG);
+define('LOG_LEVEL',DASE_LOG_ALL);
 
 //for dase 'client' code
 define('DASE_URL',APP_ROOT);

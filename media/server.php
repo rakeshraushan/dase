@@ -124,7 +124,7 @@ function serveFile($collection,$size,$filename,$download,$media_conf,$sources)
 
 	if ((!file_exists($path)) || (!$filename) || (!$size)) {
 		header('Content-Type: image/jpeg');
-		readfile('../images/unavail.jpg');
+		readfile(DASE_PATH.'/www/images/unavail.jpg');
 		exit;
 	}
 	//from php.net

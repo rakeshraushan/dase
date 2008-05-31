@@ -20,7 +20,6 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/dynamic.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<!--[if lt IE 7]>
@@ -48,16 +47,16 @@
 
 
 		<div id="logoffControl" class="login hide">
-			<span id="userName"></span> is logged in. (<a href="user/logoff" class="alert" id="logoff-link">logoff</a>)
+			<span id="userName"></span> is logged in. (<a href="logoff" class="alert" id="logoff-link">logoff</a>)
 			<div id="eid" class="pagedata"></div>
 		</div>
 
 		<div id="loginControl" class="login hide">
-			<div>Got a UT EID? <a href="user/login" class="alert">login!</a></div>
+			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
 		<div id="wordmark">
-			<a href="http://www.utexas.edu"><img src="images/UTwordmark_02.jpg" alt="ut logo"/></a>
+			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark_02.jpg" alt="ut logo"/></a>
 		</div>
 
 		<div id="header">
@@ -126,7 +125,7 @@
 				<!--
 				<insert-timer/> seconds |
 				-->
-				<img src="images/dasepowered.png" alt="DASePowered icon"/>
+				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 			</div><!--closes footer-->
 			<div id="debugData" class="pagedata"></div>
 			<div id="pageHook" class="pagedata">{$page_hook}</div>
