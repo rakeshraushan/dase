@@ -22,6 +22,7 @@ class Dase_Http_Request
 	public $method;
 	public $module;
 	public $path;
+	public $query_string;
 	public $response_mime_type;
 
 	function __construct()
@@ -31,6 +32,7 @@ class Dase_Http_Request
 		$this->method = strtolower($_SERVER['REQUEST_METHOD']);
 		$this->path = $this->getPath();
 		$this->response_mime_type = self::$types[$this->format];
+		$this->query_string = $this->getQueryString();
 		$this->content_type = $this->getContentType();
 
 		if (!$this->handler) {
@@ -40,12 +42,14 @@ class Dase_Http_Request
 
 	function __toString()
 	{
-		$string = "[format] => $this->format\n";
+		$string = "\nREQUEST:\n";
+		$string .= "[format] => $this->format\n";
 		$string .= "[handler] => $this->handler\n";
 		$string .= "[method] => $this->method\n";
 		$string .= "[module] => $this->module\n";
 		$string .= "[path] => $this->path\n";
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
+		$string .= "[query_string] => $this->content_type\n";
 		$string .= "[content_type] => $this->content_type\n";
 		return $string;
 	}

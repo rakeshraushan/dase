@@ -1,6 +1,6 @@
 <?php
 
-class AttributeHandler
+class AttributeHandler extends Dase_Handler
 {
 	public $attribute;
 	public $collection;
@@ -9,13 +9,13 @@ class AttributeHandler
 		'{collection_ascii_id}/{att_ascii_id}' => 'attribute',
 	);
 
-	public function setup($r)
+	public function setup($request)
 	{
-		if ($r->has('collection_ascii_id')) {
-			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		if ($request->has('collection_ascii_id')) {
+			$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
 		}
-		if ($r->has('att_ascii_id')) {
-			$this->attribute = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		if ($request->has('att_ascii_id')) {
+			$this->attribute = Dase_DBO_Attribute::get($request->get('collection_ascii_id'),$request->get('att_ascii_id'));
 		}
 	}
 

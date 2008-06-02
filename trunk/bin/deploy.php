@@ -46,9 +46,6 @@ RewriteBase  /$rewrite_base
 
 php_flag magic_quotes_gpc off
 
-# media files go straight to media/server.php
-#RewriteRule ^media/([0-9a-z_]*)/([a-z3]*)/([^/]*)$ media/server.php?collection=$1&size=$2&filename=$3 [PT]
-
 RewriteCond %{REQUEST_FILENAME} !-f 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php [PT] 

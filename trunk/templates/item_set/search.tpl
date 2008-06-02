@@ -22,8 +22,17 @@
 		</form>
 		<h3>{$items->searchEcho}</h3>
 		<h4>
-			<a href="{$items->previous}">prev</a> |
+			{if $items->previous}
+			<a href="{$items->previous}">prev</a> 
+			{else}
+			<span class="nolink">prev</span>
+			{/if}
+			|
+			{if $items->next}
 			<a href="{$items->next}">next</a> 
+			{else}
+			<span class="nolink">next</span>
+			{/if}
 		</h4>
 	</div> <!--close contentHeader -->
 	<form id="saveToForm" method="post" action="save">	
