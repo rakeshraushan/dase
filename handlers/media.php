@@ -27,6 +27,7 @@ class MediaHandler extends Dase_Handler
 			'small' => array( 'dir' => 'small'),
 			'medium' => array( 'dir' => 'medium'),
 			'large' => array( 'dir' => 'large'),
+			'full' => array( 'dir' => 'full'),
 		);
 		$path = '/mnt/www-data/dase/media/'.
 			$collection_ascii_id.'/'.
@@ -48,8 +49,8 @@ class MediaHandler extends Dase_Handler
 	{
 		$media_att = new Dase_DBO_MediaAttribute;
 		$media_att->load($params['id']);
-		$media_att->term = Dase_Filter::filterPost('term');
-		$media_att->label = Dase_Filter::filterPost('label');
+		$media_att->term = $request->get('term');
+		$media_att->label = $request->get('label');
 		$media_att->update();
 		$msg = "updated media attribute";
 		$request->renderRedirect('media/attributes',$msg);

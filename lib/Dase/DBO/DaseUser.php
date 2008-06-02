@@ -174,9 +174,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}	
 	}
 
-	function checkTagAuth($tag_ascii_id,$auth_level)
+	function checkTagAuth($tag,$auth_level)
 	{
-		$tag = Dase_DBO_Tag::get($tag_ascii_id,$this->eid);
 		if (!$tag) {
 			return false;
 		}
@@ -190,12 +189,13 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}	
 	}
 
-	function can($auth_level,$type,$ascii_id)
+	function can($auth_level,$entity)
 	{
-		if ('tag' == $type) {
-			return $this->checkTagAuth($ascii_id,$auth_level);
+		$class = get_class($entity);
+		if ('Dase_DBO_Tag' == $class) {
+			return $this->checkTagAuth($entity,$auth_level);
 		}
-		if ('collection' == $type) {
+		if ('Dase_DBO_Collection' == $class) {
 			return $this->checkCollectionAuth($ascii_id,$auth_level);
 		}
 	}

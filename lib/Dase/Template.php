@@ -88,6 +88,10 @@ class Dase_Template {
 		return $ret;
 	}
 
+	function __destruct() 
+	{
+		Dase_Log::debug('finished templating '.Dase_Timer::getElapsed());
+	}
 	// template inheritance
 	public $_blocks = array();
 	public $_derived = null;

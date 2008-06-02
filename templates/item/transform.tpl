@@ -6,7 +6,7 @@
 	<div id="contentHeader">
 		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h1>
 		<h2>{$item->title}</h2>
-		<h3>{$item->description}</h3>
+		<h3>{$item->subtitle}</h3>
 		<h4>
 			<a href="{$item->previous}">prev</a> |
 			<a href="{$item->feedLink}">up</a> |
@@ -35,7 +35,7 @@
 					{/foreach}
 				</dl>
 				<ul id="itemLinks">
-					<a href="atom/collection/{$item->collectionAsciiId}/{$item->serialNumber}">atom</a>
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom">atom</a>
 				</ul>
 			</td>
 		</tr>

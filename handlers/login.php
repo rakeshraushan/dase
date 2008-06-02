@@ -20,6 +20,7 @@ class LoginHandler extends Dase_Handler
 		$request->renderResponse($t->fetch('login_form.tpl'),$request);
 	}
 
+	//used only in *this* login scheme
 	public function getLoginForm($request)
 	{
 		$t = new Dase_Template($request);
@@ -42,6 +43,11 @@ class LoginHandler extends Dase_Handler
 		}
 	}
 
+	/**
+	 * this method will be called
+	 * w/ an http delete to '/login' *or* '/login/{eid}'
+	 *
+	 */
 	public function deleteLogin($request)
 	{
 		Dase_Cookie::clear();

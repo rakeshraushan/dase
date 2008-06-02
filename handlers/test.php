@@ -1,8 +1,16 @@
 <?php
 
-class TestHandler
+class TestHandler extends Dase_Handler
 {
-	public static function first($request)
+	public $resource_map = array(
+		'/' => 'test'
+	);
+
+	protected function setup($request)
+	{
+	}
+
+	public function first($request)
 	{
 		$t = new Dase_Template($request);
 		$test = new Dase_Test;
@@ -17,7 +25,7 @@ class TestHandler
 		$request->renderResponse($t->fetch('test/index.tpl'));
 	}
 
-	public static function search($request)
+	public function search($request)
 	{
 		$url = '';
 		$qs = urlencode('q=dd -ddd kl or opl  ff -g&c=vrc&c=test&c=fine');
@@ -34,7 +42,7 @@ class TestHandler
 		$request->renderResponse($t->fetch('test/index.tpl'));
 	}
 
-	public static function fail($request)
+	public function fail($request)
 	{
 		$t = new Dase_Template($request);
 		$test = new Dase_Test;

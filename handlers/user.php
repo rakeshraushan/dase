@@ -23,12 +23,13 @@ class UserHandler extends Dase_Handler
 		//operations that change user date are required to expire this cache
 		//NOTE: request_url is '/user/{eid}/data'
 		//need to have SOME data returned if there is no user
-		$cache = Dase_Cache::get($request->eid . '_data');
-		if (!$cache->isFresh()) {
+		$cache = Dase_Cache::get($request->get('eid') . '_data');
+		$data = $cache->getData(3000);
+		if (!$data) {
 			$data = $request->getUser()->getData();
 			$cache->setData($data);
 		}
-		$request->renderResponse($cache->getData(3000));
+		$request->renderResponse($data);
 	}
 
 	public function getCartJson($request)

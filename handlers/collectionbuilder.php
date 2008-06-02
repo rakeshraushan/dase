@@ -1,15 +1,33 @@
 <?php
 
-class CollectionbuilderHandler
+class CollectionbuilderHandler extends Dase_Handler
 {
 
-	public static function index($request)
+	public $collection;
+	public $resource_map = array(
+		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/attributes' => 'attributes',
+		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
+		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
+		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
+		'{collection_ascii_id}/attribute/{att_ascii_id}/values' => 'attribute_values',
+	);
+
+	protected function setup($request)
+	{
+		if ($request->has('collection_ascii_id')) {
+			$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		}
+	}
+
+
+	public function index($request)
 	{
 		//this is the best/easist way to implement redirect
 		CollectionbuilderHandler::settings($request);
 	}
 
-	public static function settings($request)
+	public function settings($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
@@ -17,7 +35,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/settings.tpl'));
 	}
 
-	public static function attributes($request)
+	public function attributes($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
@@ -27,7 +45,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/attributes.tpl'));
 	}
 
-	public static function managers($request)
+	public function managers($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
@@ -36,7 +54,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/managers.tpl'));
 	}
 
-	public static function uploadForm($request)
+	public function uploadForm($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
@@ -44,7 +62,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/upload_form.tpl'));
 	}
 
-	public static function checkAtom($request)
+	public function checkAtom($request)
 	{
 		$tpl = new Dase_Template($request);
 		$coll = Dase_Collection::get($request);
@@ -68,7 +86,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/check.tpl'));
 	}
 
-	public static function item_types($request)
+	public function item_types($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',Dase_User::get($request));
@@ -78,7 +96,7 @@ class CollectionbuilderHandler
 		$request->renderResponse($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
-	public static function dataAsJson($request)
+	public function dataAsJson($request)
 	{
 		$coll = Dase_Collection::get($request);
 		if (isset($params['select'])) {
@@ -88,16 +106,15 @@ class CollectionbuilderHandler
 			$select = 'all';
 		}	
 		$cache = Dase_Cache::get($c->ascii_id . '_' . $select);
-		//ttl can be long, but make sure that changes expire the cache!
-		if (!$cache->isFresh(333)) {
+		$data = $cache->getData(333);
+		if (!$data) {
 			$data = $coll->getJsonData();
-			$headers = array("Content-Type: application/json; charset=utf-8");
-			$cache->setData($data,$headers);
+			$cache->setData($data);
 		}
-		$cache->display();
+		$request->renderResponse($data);
 	}
 
-	public static function setAttributeSortOrder($request)
+	public function setAttributeSortOrder($request)
 	{
 		$c = Dase_Collection::get($request);
 		$cache = Dase_Cache::get($c->ascii_id . '_attributes');

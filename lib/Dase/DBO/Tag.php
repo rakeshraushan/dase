@@ -174,7 +174,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$entry = $feed->addEntry();
 			$item = $tag_item->getItem();
 			$item->injectAtomEntryData($entry);
-			$entry->addLink(APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 		}
 		return $feed->asXml();
 	}

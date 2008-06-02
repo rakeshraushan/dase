@@ -53,11 +53,10 @@ class Dase_Http_Response
 	{
 		//SHOULD use 303 (redirect after put,post,delete)
 		//OR 307 -- no go -- look here
-		$msg_qstring = '';
 		$msg = urlencode($msg);
 		//NOTE that this redirect may be innapropriate when
 		//client expect something OTHER than html (e.g., json,text,xml)
-		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?msg='.$msg_qstring.'&format='.$format;
+		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?msg='.$msg.'&format='.$format;
 		Dase_Log::info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;

@@ -94,6 +94,15 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->collection;
 	}
 
+	function getNumberInSet()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/number_in_set' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 	function getCollectionAsciiId()
 	{
 		if (!$this->collectionAscii_id) {

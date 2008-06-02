@@ -1,8 +1,18 @@
 <?php
 
-class EiduserModuleHandler {
+class EiduserModuleHandler extends Dase_Handler
+{
+	public $resource_map = array(
+		'/' => 'login',
+		'form' => 'login_form',
+		'{eid}' => 'login',
+	);
 
-	public static function login($request)
+	protected function setup($request)
+	{
+	}
+
+	public function login($request)
 	{
 		if (!extension_loaded("eid")) {
 			dl("eid.so");
@@ -68,7 +78,7 @@ class EiduserModuleHandler {
 		}
 	}
 
-	public static function logoff($request)
+	public function logoff($request)
 	{
 		setcookie('DOC','',time()-86400,'/','.utexas.edu');
 		setcookie('FC','',time()-86400,'/','.utexas.edu');

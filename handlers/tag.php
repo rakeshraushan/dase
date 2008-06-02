@@ -4,7 +4,9 @@ class TagHandler extends Dase_Handler
 {
 
 	public $resource_map = array( 
+		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
 	);
 
 	protected function setup($request)
@@ -21,7 +23,7 @@ class TagHandler extends Dase_Handler
 	public function getTagAtom($request)
 	{
 		$u = $request->getHttpUser($this->tag);
-		if (!$u->can('read','tag',$this->tag->ascii_id)) {
+		if (!$u->can('read',$this->tag)) {
 			$request->renderError(401);
 		}
 		$request->renderResponse($this->tag->asAtom());
@@ -30,16 +32,17 @@ class TagHandler extends Dase_Handler
 	public function getTag($request)
 	{
 		$u = $request->getUser();
-		if (!$u->can('read','tag',$this->tag->ascii_id)) {
+		if (!$u->can('read',$this->tag)) {
 			$request->renderError(401);
 		}
 		$http_pw = $this->tag->getHttpPassword($u->eid);
 		$t = new Dase_Template($request);
-		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$this->tag->ascii_id.'.atom',$u->eid,$http_pw));
+		//cannot use eid/ascii since it'll sometimes be anotehr user's tag
+		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$this->tag->id.'.atom',$u->eid,$http_pw));
 		$request->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 
-	public function itemAsAtom($request)
+	public function getTagItemAtom($request)
 	{
 		$tag = new Dase_DBO_Tag;
 		$tag->ascii_id = $request->get('tag_ascii_id');
@@ -51,28 +54,28 @@ class TagHandler extends Dase_Handler
 		if ($tag_item->tag_id != $tag->id) {
 			$request->renderError(404);
 		} 
-		$request->renderResponse($tag_item->asAtom(),'application/atom+xml');
+		$request->renderResponse($tag_item->asAtom());
 	}
 
-	public function item($request)
+	public function getTagItem($request)
 	{
-		$u = Dase_User::get($request);
+		$u = $request->getUser();
 		$tag_ascii_id = $request->get('tag_ascii_id');
 		$tag_item_id = $request->get('tag_item_id');
 		$http_pw = Dase_DBO_Tag::getHttpPassword($tag_ascii_id,$u->eid,'read');
 		$t = new Dase_Template($request);
-		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag_ascii_id.'/'.$tag_item_id,$u->eid,$http_pw));
+		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
 
 	public function saveToTag($request) 
 	{
-		$item_id_array = explode(',',Dase_Filter::filterPost('item_ids'));
-		$u = Dase_User::get($request);
-		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $request->get('tag_ascii_id');
-		$tag->dase_user_id = $u->id;
-		$tag->findOne();
+		$tag = $this->tag;
+		$u = $request->getUser();
+		if (!$u->can('write',$tag)) {
+			$request->renderError(401);
+		}
+		$item_id_array = explode(',',$request->get('item_ids'));
 		$num = count($item_id_array);
 		foreach ($item_id_array as $item_id) {
 			$tag->addItem($item_id);
@@ -84,13 +87,13 @@ class TagHandler extends Dase_Handler
 
 	public function removeItems($request) 
 	{
+		$tag = $this->tag;
+		$u = $request->getUser();
+		if (!$u->can('write',$tag)) {
+			$request->renderError(401);
+		}
 		$delete = $request->get('delete_tag');
 		$item_id_array = $request->get('item_id',true);
-		$u = Dase_User::get($request);
-		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $request->get('tag_ascii_id');
-		$tag->dase_user_id = $u->id;
-		$tag->findOne();
 		if ($delete && !$tag->getItemCount()) {
 			//this means we are DELETING tag
 			$name = $tag->name;

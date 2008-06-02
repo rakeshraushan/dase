@@ -1,17 +1,25 @@
 <?php
 
-class ItemHandler
+class ItemHandler extends Dase_Handler
 {
-	public static function asAtom($request)
+	public $resource_map = array( 
+		'{collection_ascii_id}/{serial_number}' => 'item',
+	);
+
+	protected function setup($request)
+	{
+	}	
+
+	public function getItemAtom($request)
 	{
 		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
-			$request->renderResponse($item->asAtom(),'application/atom+xml');
+			$request->renderResponse($item->asAtom());
 		}
 		$request->renderError(404);
 	}
 
-	public static function asJson($request)
+	public function asJson($request)
 	{
 		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
@@ -20,12 +28,12 @@ class ItemHandler
 		$request->renderError(404);
 	}
 
-	public static function display($request)
+	public function getItem($request)
 	{
 		//see if it exists
 		if (Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'))) {
 			$t = new Dase_Template($request);
-			$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/collection/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number'));
+			$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/item/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number').'.atom');
 			$t->assign('item',$feed);
 			$request->renderResponse($t->fetch('item/transform.tpl'));
 		} else {
@@ -33,7 +41,7 @@ class ItemHandler
 		}
 	}
 
-	public static function editForm($request)
+	public function editForm($request)
 	{
 		//create this
 	}

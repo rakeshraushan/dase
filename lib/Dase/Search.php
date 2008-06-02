@@ -20,22 +20,52 @@
 
 class Dase_Search 
 {
+	private $bound_params;
+	private $echo_array;		
+	private $search_result = null;
+	private $request;
+	private $search_array;		
+	private $sql;
+	private $url;
 
-	public $search;		
-	public $bound_params = array();
-	private $url_params;
-	private $request_uri;
-	private $query_string;
-
-	public static function get($request)
+	public function __construct($request)
 	{
-		$search_obj = new Dase_Search();
-		$search_obj->parse($request);
-		return $search_obj;
+		$this->request = $request;
 	}
 
-	function parse($request)
+	public function getResult()
 	{
+		if ($this->search_result) {
+			return $this->search_result;
+		}
+		//omit start & max & format params
+		$url = preg_replace('/(\?|&|&amp;)start=[0-9]+/i','',$this->request->getUrl());
+		$url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$url);
+		$this->url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
+		Dase_Log::debug('url per search '.$this->url);
+		$cache = Dase_Cache::get(md5($this->url));
+		$data = $cache->getData(60*30);
+		if ($data) { //30 minutes
+			$this->search_result = unserialize($data);
+			return $this->search_result;
+		} else {
+
+			//sets search_array and echo_array:
+			$this->_parseRequest();
+
+			//sets sql and bound_params
+			$this->_createSql();
+
+			$this->search_result = $this->_executeSearch();
+			$cache->setData(serialize($this->search_result));
+			return $this->search_result;
+		}
+	}
+
+	private function _parseRequest()
+	{
+		$request = $this->request;
 		$search['type'] = null;
 		$search['colls'] = array();
 		$search['omit_colls'] = array();
@@ -84,9 +114,9 @@ class Dase_Search
 		}
 		$search['omit_colls'] = array_unique($search['omit_colls']);
 
-		//collection_ascii_id trumps
-		$collection_ascii_id = Dase_Search::getCollectionAsciiId($request);
-		if ($collection_ascii_id) {
+		//collection_ascii_id trumps (indicated by 'collection' query parameter)
+		if ($request->has('collection_ascii_id')) {
+			$collection_ascii_id = $request->get('collection_ascii_id');
 			$search['colls'] = array($collection_ascii_id);
 			$echo['collection_ascii_id'] = $collection_ascii_id;
 		}
@@ -218,65 +248,11 @@ class Dase_Search
 			unset($search['or'][$remove_key]);
 		}
 
-		$search['echo'] = $echo;
-		$this->search = $search;
+		$this->echo_array = $echo;
+		$this->search_array = $search;
 
 		// DONE parsing search string!!
 	}
-
-	public static function getCollectionAsciiId($request)
-	{
-		//NOTE: this ASSUMES the uri pattern for collection
-		if (preg_match('/collection\/([^\/]*)\/search/',$request->path,$matches)) {
-			$collection_ascii_id = $matches[1];
-			return $collection_ascii_id;
-		} else {
-			return $request->get('collection_ascii_id');
-		}
-	}
-
-	public static function constructEcho($echo) {
-		//construct echo
-		$echo_str = '';
-		if ($echo['query']) {
-			$echo_str .= " {$echo['query']} ";
-		} 
-		if ($echo['exact']) {
-			$echo_arr = array();
-			foreach ($echo['exact'] as $k => $v) {
-				foreach( $v as $val) {
-					$echo_arr[] = "$val in $k";
-				}
-			}
-			if ($echo_str) {
-				$echo_str .= " AND ";
-			}
-			$echo_str .= join(' AND ',$echo_arr);
-		}
-		if ($echo['sub']) {
-			$echo_arr = array();
-			foreach ($echo['sub'] as $k => $v) {
-				foreach( $v as $val) {
-					$echo_arr[] = "$val in $k";
-				}
-			}
-			if ($echo_str) {
-				$echo_str .= " AND ";
-			}
-			$echo_str .= join(' AND ',$echo_arr);
-		}
-		if ($echo['collection_ascii_id']) {
-			$echo_str .= " in {$echo['collection_ascii_id']} ";
-		}
-		if ($echo['type']) {
-			if ($echo_str) {
-				$echo_str .= " WITH ";
-			}
-			$echo_str .= " item type {$echo['type']} ";
-		}
-		return $echo_str;
-	}
-
 	private function _tokenizeQuoted($string)
 	{
 		//from php.net:
@@ -297,57 +273,12 @@ class Dase_Search
 		return false;
 	}
 
-	private function _normalizeSearch($search)
+	private function _createSql()
 	{
-		$search_string = '';
-		foreach(array('find','omit','or') as $key) {
-			$search_string .= "$key:";
-			if (isset($search[$key])) {
-				$set = $search[$key];
-				asort($set);
-				$search_string .= join(',',$set) . ";";
-			}
-		}
-		$att_array = $search['att'];
-		$coll_array = array_keys($search['att']);
-		asort($coll_array);
-		foreach ($coll_array as $coll_name) {
-			$att_names_array = array_keys($att_array[$coll_name]);
-			asort($att_names_array);
-			foreach ($att_names_array as $att_name) {
-				foreach(array('find','omit','or','value_text') as $key) {
-					$set = array();
-					if (isset($att_array[$coll_name][$att_name][$key])) {
-						$set = $att_array[$coll_name][$att_name][$key];
-						asort($set);
-						if (count($set)) {
-							$search_string .= "$coll_name.$att_name.$key:" .  join(',',$set) . ";";
-						}
-					}
-				}
-			}
-		}
-		if (isset($search['colls'])) {
-			$c_array = $search['colls'];
-			asort($c_array);
-			$search_string .= "collections:" .  join(',',$c_array) . ";";
-		}
-		if (isset($search['omit_colls'])) {
-			$nc_array = $search['omit_colls'];
-			asort($nc_array);
-			$search_string .= "omit_collections:" .  join(',',$nc_array) . ";";
-		}
-		if (isset($search['type']) && isset($search['type']['coll']) && isset($search['type']['name'])) {
-			$search_string .= 'type=:' .  $search['type']['coll'] . $search['type']['name'];
-		}
-		return $search_string;
-	}
-
-	public function createSql()
-	{
-		$search = $this->search;
+		$search = $this->search_array;
 		$search_table_params = array();
 		$value_table_params = array();
+		$bound_params = array();
 
 		//compile sql for queries of search_table (i.e. search index)
 		$search_table_sets = array();
@@ -456,23 +387,23 @@ class Dase_Search
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = 
 				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql) AND " . join(' AND ',$value_table_search_sets);
-			$this->bound_params = array_merge($this->bound_params,$search_table_params);
-			$this->bound_params = array_merge($this->bound_params,$value_table_params);
+			$bound_params = array_merge($bound_params,$search_table_params);
+			$bound_params = array_merge($bound_params,$value_table_params);
 		} elseif (isset($search_table_sql)) {
 			$sql = 
 				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql)";
-			$this->bound_params = array_merge($this->bound_params,$search_table_params);
+			$bound_params = array_merge($bound_params,$search_table_params);
 		} elseif (count($value_table_search_sets)) {
 			$sql = 
 				"SELECT id, collection_id FROM item WHERE " . join(' AND ',$value_table_search_sets);
-			$this->bound_params = array_merge($this->bound_params,$value_table_params);
+			$bound_params = array_merge($bound_params,$value_table_params);
 			//if searching ONLY for item type (NOT simply as filter)
 			//as indicated by lack of other queries (i.e., we got to this point in decision tree)
 		} elseif (isset($search['type']['coll']) && isset($search['type']['name'])) {
 			$sql =
 				"SELECT id, collection_id FROM item WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
-			$this->bound_params[] = $search['type']['name'];
-			$this->bound_params[] = $search['type']['coll'];
+			$bound_params[] = $search['type']['name'];
+			$bound_params[] = $search['type']['coll'];
 		} else {
 			$sql = 'no query';
 		}
@@ -481,24 +412,23 @@ class Dase_Search
 			(isset($search_table_sql) || count($value_table_search_sets))) {
 				$sql .=
 					"AND WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
-				$this->bound_params[] = $search['type']['name'];
-				$this->bound_params[] = $search['type']['coll'];
+				$bound_params[] = $search['type']['name'];
+				$bound_params[] = $search['type']['coll'];
 			}
-		return $sql;
+		$this->sql = $sql;
+		$this->bound_params = $bound_params;
 	}
 
-	private function _executeSearch($hash)
+	private function _executeSearch()
 	{
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$db = Dase_DB::get();
-		$sql = $this->createSql();	
-		Dase_Log::debug('search sql: '.$sql);
+		Dase_Log::debug('search sql: '.$this->sql);
 		Dase_Log::debug(join(', ',$this->bound_params));
-		$st = $db->prepare($sql);	
+		$st = $db->prepare($this->sql);	
 		$st->execute($this->bound_params);
-		$result = array();
-		$result['tallies'] = array();
-		$result['item_ids'] = array();
+		$tallies = array();
+		$item_ids = array();
 		$items = array();
 		//create hit tally per collection:
 		while ($row = $st->fetch()) {
@@ -507,49 +437,11 @@ class Dase_Search
 		uasort($items, array('Dase_Util','sortByCount'));
 		foreach ($items as $coll_id => $set) {
 			$ascii_id = $collection_lookup[$coll_id]['ascii_id'];
-			$name = $collection_lookup[$coll_id]['collection_name'];
-			$result['tallies'][$ascii_id]['total'] = count($set);
-			$result['tallies'][$ascii_id]['name'] = $name;
-			$result['item_ids'] = array_merge($result['item_ids'],$set);
+			$tallies[$ascii_id]['total'] = count($set);
+			$tallies[$ascii_id]['name'] = $collection_lookup[$coll_id]['collection_name'];
+			$item_ids = array_merge($item_ids,$set);
 		}
-		$result['hash'] = $hash;
-		$result['count'] = count($result['item_ids']);
-		$result['search'] = $this->search;
-		$result['sql'] = $sql;
-		$result['link'] = $this->query_string;
-		$result['echo'] = $this->search['echo'];
-		$result['request_url'] = $this->request_uri;
-		$result['query_string'] = $this->query_string;
-		return $result;
+		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->echo_array);
 	}
-
-	public function getResult()
-	{
-		//by the way, no easy way to grab a 
-		//particular user's recent searches
-		$result = array();
-		$cache = new Dase_DBO_SearchCache();
-		$hash = md5($this->_normalizeSearch($this->search));
-		$cache->search_md5 = $hash;
-		$cache->refine = 'newdase'; 
-		if (!$cache->findOne()) {
-			$result = $this->_executeSearch($hash);
-			$result['echo'] = Dase_Search::constructEcho($result['echo']);
-			//for backward compatibilty this is called
-			//item_id_string, but it is actually the
-			//complete result data structure
-			$cache->item_id_string = serialize($result); 
-			$cache->search_md5 = $hash; 
-			$cache->refine = 'newdase'; 
-			$cache->timestamp = date(DATE_ATOM,time()); 
-			$cache->insert();
-		} else {
-			$result = unserialize($cache->item_id_string);
-		}
-		$result['timestamp'] = $cache->timestamp;
-		$result['hash'] = $hash;
-		return $result;
-	}
-
 }
 

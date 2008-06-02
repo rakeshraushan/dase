@@ -38,13 +38,9 @@ class Dase_Cache
 	}
 
 	//must be overridden:
-	function display($ttl) {}
 	function expire() {}
 	function getData() {}
-	function isFresh($ttl) {}
-	function sendHeaders() {}
 	function setData($data) {}
-
 }
 
 

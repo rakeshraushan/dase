@@ -7,6 +7,7 @@
 	<td>
 		<div class="checkNum">
 			<input type="checkbox" name="item_id[]" value="{$it->itemId}"/>
+			<span class="numberInSet">{$it->numberInSet}.</span>
 		</div>
 		<div class="cartAdd">
 			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$it->itemId}">add to cart</a>
