@@ -156,8 +156,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->setUpdated($this->getUpdated());
 		$feed->addAuthor($this->user->eid);
 		$feed->setFeedType('tag');
-		//figure out public/private tag thing (and whether token is needed)
-		$feed->addLink(APP_ROOT . '/atom/user/' . $this->user->eid . '/tag/id/' . $this->id .'?token='.md5(Dase::getConfig('token')),'self');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->id .'?format=atom','self');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->id,'http://daseproject.org/relation/tag');
 
 		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag",$this->name);
 		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);

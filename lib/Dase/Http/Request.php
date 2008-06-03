@@ -49,7 +49,7 @@ class Dase_Http_Request
 		$string .= "[module] => $this->module\n";
 		$string .= "[path] => $this->path\n";
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
-		$string .= "[query_string] => $this->content_type\n";
+		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
 		return $string;
 	}
@@ -183,6 +183,16 @@ class Dase_Http_Request
 		$this->members[$key] = $val;
 	}
 
+	//allows multiple values for a key
+	public function setUrlParam($key,$val)
+	{
+		$this->_getUrlParamsArray($key); //presetting avoids trouncing 
+		if (!isset($this->url_params[$key])) {
+			$this->url_params[$key] = array();
+		} 
+		$this->url_params[$key][] = $val;
+	}
+
 	public function setParams($params)
 	{
 		$this->params = $params;
@@ -232,12 +242,25 @@ class Dase_Http_Request
 	public function getUrl() 
 	{
 		$this->path = $this->path ? $this->path : $this->getPath();
-		return $this->path . '?' . $_SERVER['QUERY_STRING'];
+		return $this->path . '?' . $this->getQueryString();
 	}
 
 	public function getQueryString() 
 	{
-		return $_SERVER['QUERY_STRING'];
+		if (!$this->query_string) {
+			$this->query_string = $_SERVER['QUERY_STRING'];
+		}
+		return $this->query_string;
+	}
+
+	public function addQueryString($pairs_string)
+	{
+		$this->query_string = $this->getQueryString();
+		if ($this->query_string) {
+			$this->query_string .= "&".$pairs_string;
+		} else {
+			$this->query_string = "?".$pairs_string;
+		}
 	}
 
 	public function getPath($strip_extension=true)

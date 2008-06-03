@@ -298,13 +298,8 @@ form.adminForm label {
 	color: #666;
 }
 
-form#searchCollectionsDynamic {
-	background-color: #e6d4b8;
-	padding: 3px;
-	margin:0px 0px 10px 0px;
-}
-form#searchCollectionsDynamic input,select {
-	margin: 3px 4px;
+form#searchRefine {
+	margin: .8em 0;
 }
 
 form#loginForm {

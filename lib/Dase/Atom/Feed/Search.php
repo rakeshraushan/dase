@@ -33,6 +33,11 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		return $this->getLink('self');
 	}
 
+	function getSearchLink()
+	{
+		return $this->getLink('alternate');
+	}
+
 	function getSearchEcho()
 	{
 		return $this->getXpathValue("atom:subtitle/h:div/h:div[@class='searchEcho']");

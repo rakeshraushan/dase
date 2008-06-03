@@ -7,6 +7,7 @@ class TagHandler extends Dase_Handler
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
+		'{eid}/{tag_ascii_id}/items/{item_ids}' => 'tag_items',
 	);
 
 	protected function setup($request)
@@ -62,16 +63,17 @@ class TagHandler extends Dase_Handler
 		$u = $request->getUser();
 		$tag_ascii_id = $request->get('tag_ascii_id');
 		$tag_item_id = $request->get('tag_item_id');
-		$http_pw = Dase_DBO_Tag::getHttpPassword($tag_ascii_id,$u->eid,'read');
+		$http_pw = $this->tag->getHttpPassword($u->eid);
 		$t = new Dase_Template($request);
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
 
-	public function saveToTag($request) 
+	public function postToTag($request) 
 	{
 		$tag = $this->tag;
 		$u = $request->getUser();
+		$u->expireDataCache();
 		if (!$u->can('write',$tag)) {
 			$request->renderError(401);
 		}
@@ -80,31 +82,25 @@ class TagHandler extends Dase_Handler
 		foreach ($item_id_array as $item_id) {
 			$tag->addItem($item_id);
 		}
-		header("Content-type: text/plain");
-		echo "added $num items to $tag->name";
-		exit;
+		$request->response_mime_type = 'text/plain';
+		$request->renderResponse("added $num items to $tag->name");
 	}
 
-	public function removeItems($request) 
+	public function deleteTagItems($request) 
 	{
 		$tag = $this->tag;
 		$u = $request->getUser();
+		$u->expireDataCache();
 		if (!$u->can('write',$tag)) {
 			$request->renderError(401);
 		}
-		$delete = $request->get('delete_tag');
-		$item_id_array = $request->get('item_id',true);
-		if ($delete && !$tag->getItemCount()) {
-			//this means we are DELETING tag
-			$name = $tag->name;
-			$tag->delete();
-			$request->renderRedirect("/","Deleted $name");
-		}
+		$item_id_array = explode(',',$request->get('item_ids'));
 		$num = count($item_id_array);
 		foreach ($item_id_array as $item_id) {
 			$tag->removeItem($item_id);
 		}
-		$request->renderRedirect("user/$u->eid/tag/$tag->ascii_id","$num items removed");
+		$request->response_mime_type = 'text/plain';
+		$request->renderResponse("removed $num items from $tag->name");
 	}
 }
 

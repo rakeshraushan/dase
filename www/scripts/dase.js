@@ -52,10 +52,10 @@ Dase.$ = function(id) {
 
 Dase.logoff = function() {
 	if (Dase.user.eid) {
-	Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
-			function(resp) { 
-			window.location.href = Dase.base_href+'login/form';
-			});
+		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
+				function(resp) { 
+				window.location.href = Dase.base_href+'login/form';
+				});
 	} else {
 		window.location.href = Dase.base_href+'login/form';
 	}
@@ -350,8 +350,9 @@ Dase.placeUserSearchCollections = function() {
 
 Dase.searchRefine = function() {
 	var formDiv = Dase.$('refinements');
+	if (!formDiv) return;
 	if (formDiv.hasChildNodes()) {
-		//means this is UNchecking the box
+		//means this is UNchecking the refine box
 		while (formDiv.childNodes[0]) {
 			formDiv.removeChild(formDiv.childNodes[0]);
 		}
@@ -444,7 +445,7 @@ Dase.setCollectionAtts = function(coll) {
 		Dase.addClass(Dase.$('preposition'),'hide');
 		Dase.addClass(sel,'hide');
 	} else {
-		Dase.getJSON(Dase.base_href + "json/collection/" + coll + "/attributes",function(json){
+		Dase.getJSON(Dase.base_href + "collection/" + coll + "/attributes",function(json){
 				//fixes problem in which search string defined a collection_ascii
 				//AND refinement to THIS collection did also and for some reason the att
 				//list got populated twice
@@ -1060,7 +1061,7 @@ Dase.initSaveTo = function() {
 		}
 		var data = {};
 		data.item_ids = item_id_array;
-		HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/tag/"+tag_ascii_id,data,
+		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
 				function(resp) { 
 				alert(resp); 
 				Dase.initUser();
@@ -1071,11 +1072,21 @@ Dase.initSaveTo = function() {
 };
 
 Dase.initRemoveItems = function() {
+	var tag_name_el = Dase.$('tagName');
+	if (tag_name_el) {
+		tag_name = tag_name_el.innerHTML;
+	}
+	var tag_ascii_id_el = Dase.$('tagAsciiId');
+	if (tag_ascii_id_el) {
+		tag_ascii_id = tag_ascii_id_el.innerHTML;
+	}
+	var remove_form = Dase.$('removeFromForm');
 	var button = Dase.$('removeFromSet');
 	if (!button) return;
 	var itemSet = Dase.$('itemSet');
 	if (!itemSet) return;
 	var items = itemSet.getElementsByTagName('input');
+	//place the button on the page
 	if (items.length > 3) {
 		units = Dase.$('content').clientWidth - Dase.$('itemSet').clientWidth - 45;
 		button.style.marginRight =  units+'px';
@@ -1083,13 +1094,24 @@ Dase.initRemoveItems = function() {
 	button.onclick = function() {
 		var item_id_array = [];
 		var inputs = itemSet.getElementsByTagName('input');
-		if (!inputs.length) return true;
+		if (!inputs.length) return false;
 		for (var i=0;i<inputs.length;i++) {
 			if ('item_id[]' == inputs[i].name && true == inputs[i].checked) {
-				return true;
+				item_id_array[item_id_array.length] = inputs[i].value;
 			}
 		}
-		alert('Please check at least one item.');
+		if (!item_id_array.length) {
+			alert('Please check at least one item.');
+			return false;
+		}
+		if (confirm('Delete '+item_id_array.length+' item(s) from '+tag_ascii_id+'?')) {
+			var item_ids = item_id_array.join(',');
+			var url = Dase.base_href + 'tag/'+Dase.user.eid+'/'+tag_ascii_id+'/items/'+item_ids;
+			Dase.ajax(url,'DELETE',function(resp) {
+					alert(resp);
+					remove_form.submit();
+					});
+		}
 		return false;
 	};
 };
