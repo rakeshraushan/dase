@@ -5,6 +5,7 @@ class SearchHandler extends Dase_Handler
 
 	public $resource_map = array(
 		'/' => 'search',
+		'refine' => 'search_refined',
 		'{md5_hash}' => 'search_by_hash',
 		'item' => 'search_item',
 	);

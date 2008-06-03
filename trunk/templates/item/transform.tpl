@@ -1,7 +1,7 @@
 {extends file="layout.tpl"}
 {block name="title"}View Item{/block}
 {block name="content"}
-<div class="full" id="{$item->tagType}">
+<div class="full" id="{$item->tagType|lower}">
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="contentHeader">
 		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h1>

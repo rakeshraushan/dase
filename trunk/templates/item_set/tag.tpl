@@ -5,6 +5,8 @@
 {block name="content"}
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
+	<h2>{$items->title}</h2>
+	<h3>{$items->subtitle}</h3>
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}
@@ -13,16 +15,11 @@
 		<a href="" id="checkall">check/uncheck all</a>
 		<div id="saveChecked"></div>
 	</form>
-	<!--
-	left over from xslt
-	<form method="post" action="user/{$user/eid}/tag/{$tag_ascii_id}/remove_items">
-		<table id="itemSet">
-			<xsl:apply-templates select="$items/atom:entry" mode="items"/>
-		</table>
-		<a href="" id="checkall">check/uncheck all</a>
+	<form method="get" id="removeFromForm" action="{$items->tagLink}">
 		<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items from set"/>
 	</form>
-	-->
+	<div id="tagName" class="pagedata">{$items->tagName}</div>
+	<div id="tagAsciiId" class="pagedata">{$items->tagAsciiId}</div>
 	<div class="spacer"></div>
 </div>
 {/block}

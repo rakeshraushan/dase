@@ -30,6 +30,18 @@ class Dase_Search
 
 	public function __construct($request)
 	{
+		if ($request->has('original_search')) {
+			$orig = preg_replace('/&amp;/','&',urldecode($request->get('original_search')));
+			$orig = preg_replace('/original_search=/','',$orig);
+			foreach (explode('&',$orig) as $pair) {
+				list($k,$v) = explode('=',$pair);
+				//make sure it won't be a repeat
+				if (!$request->has($k) || !in_array($v,$request->get($k,true))) {
+					$request->setUrlParam($k,$v);
+				}
+			}
+			$request->addQueryString($orig);
+		}
 		$this->request = $request;
 	}
 
@@ -42,6 +54,7 @@ class Dase_Search
 		$url = preg_replace('/(\?|&|&amp;)start=[0-9]+/i','',$this->request->getUrl());
 		$url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$url);
 		$url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)original_search=[^&]+/i','',$url);
 		$this->url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
 		Dase_Log::debug('url per search '.$this->url);
 		$cache = Dase_Cache::get(md5($this->url));
@@ -347,14 +360,15 @@ class Dase_Search
 					$ar_table_sets[] = join(' AND ',$ar['value_text']);
 				}
 				if (count($ar_table_sets)) {
-					if (false === strpos($att,'admin_')) {
+					//if (false === strpos($att,'admin_')) {
 						$value_table_search_sets[] = 
-							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-					} else {
+							//"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
+							"id IN (SELECT item_id FROM value_search_table v WHERE ".join(' AND ', $ar_table_sets)." AND v.collection_ascii_id = ? AND v.attribute_ascii_id = ?)";
+					//} else {
 						//it's an admin attribute, so collection_id is 0
-						$value_table_search_sets[] = 
-							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-					}
+					//	$value_table_search_sets[] = 
+					//		"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
+					//}
 				}
 				$value_table_params[] = $coll;
 				$value_table_params[] = $att;
@@ -373,7 +387,7 @@ class Dase_Search
 		//if not explicitly requested, non-public collecitons will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
 			//make sure this boolean query is portable!!!
-			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
+			//$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
 		}
 		if (count($search['omit_colls']) && isset($search_table_sql)) {
 			foreach ($search['omit_colls'] as $ccc) {
@@ -433,6 +447,9 @@ class Dase_Search
 		//create hit tally per collection:
 		while ($row = $st->fetch()) {
 			$items[$row['collection_id']][] = $row['id'];
+		}
+		if ($st->errorCode()) {
+			Dase_Log::debug('db error '.$st->errorInfo()); 
 		}
 		uasort($items, array('Dase_Util','sortByCount'));
 		foreach ($items as $coll_id => $set) {

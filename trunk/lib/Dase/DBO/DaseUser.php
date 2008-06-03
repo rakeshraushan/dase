@@ -123,7 +123,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function expireDataCache()
 	{
-		$cache = Dase_Cache::get("json/user/$this->eid/data");
+		$cache = Dase_Cache::get($this->eid."_data");
 		$cache->expire();
 	}
 

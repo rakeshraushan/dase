@@ -6,21 +6,16 @@
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	<div id="contentHeader">
+		<h3>{$items->searchEcho}</h3>
 		<!-- SEARCH FORM -->
-		<form id="searchCollectionsDynamic" method="get" action="search">
+		<form id="searchRefine" method="get" action="search">
 			<div>
 				<input id="queryInput" type="text" name="q" size="30"/>
-				<input type="submit" value="Search" class="button"/>
-				<select id="collectionsSelect" name="collection_ascii_id">
-				</select>
-				<span id="preposition" class="hide">in</span>
-				<select id="attributesSelect" class="hide">
-				</select>
-				<input id="refineCheckbox" type="checkbox"/>refine current result
+				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
+				<input type="submit" value="Refine Search" class="button"/>
 			</div>
 			<div id="refinements"></div>
 		</form>
-		<h3>{$items->searchEcho}</h3>
 		<h4>
 			{if $items->previous}
 			<a href="{$items->previous}">prev</a> 
@@ -50,5 +45,5 @@
 	{$items->searchTallies}
 </div>
 <!-- we just need a place to stash the current url so our refine code can parse it -->
-<div id="self_url" class="pagedata">{$items->self|replace:'+':' '}</div>
+<div id="self_url" class="pagedata">{$items->searchLink|replace:'+':' '}</div>
 {/block}

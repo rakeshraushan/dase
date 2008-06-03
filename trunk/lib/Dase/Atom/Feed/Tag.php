@@ -22,4 +22,27 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 	{
 		return $this->getLink('self');
 	}
+
+	function getTagLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/tag');
+	}
+
+	function getTagName()
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/tag' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('label');
+			}
+		}
+	}
+
+	function getTagAsciiId()
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/tag' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
 }
