@@ -57,10 +57,12 @@ class Dase_Search
 		$url = preg_replace('/(\?|&|&amp;)original_search=[^&]+/i','',$url);
 		$this->url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
 		Dase_Log::debug('url per search '.$this->url);
-		$cache = Dase_Cache::get(md5($this->url));
+		$cache_url = preg_replace('!^search(/item)?!','',$this->url);
+		$cache = Dase_Cache::get($cache_url);
 		$data = $cache->getData(60*30);
 		if ($data) { //30 minutes
 			$this->search_result = unserialize($data);
+			$this->search_result->url = $this->url;  //so we do not take the cached url
 			return $this->search_result;
 		} else {
 
@@ -81,7 +83,6 @@ class Dase_Search
 		$request = $this->request;
 		$search['type'] = null;
 		$search['colls'] = array();
-		$search['omit_colls'] = array();
 		$search['att'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
@@ -120,12 +121,6 @@ class Dase_Search
 			$search['colls'][] = $c;
 		}
 		$search['colls'] = array_unique($search['colls']);
-
-		//url parameter 'nc' means "NOT collection..."
-		foreach ($request->get('nc',true) as $c) {
-			$search['omit_colls'][] = $c;
-		}
-		$search['omit_colls'] = array_unique($search['omit_colls']);
 
 		//collection_ascii_id trumps (indicated by 'collection' query parameter)
 		if ($request->has('collection_ascii_id')) {
@@ -300,28 +295,30 @@ class Dase_Search
 			//(it is just the number index) to make sure it overwrites 
 			//(rather than appends) to the array
 			foreach ($search['find'] as $k => $term) {
-				$search['find'][$k] = "lower(value_text) LIKE ?";
+				$search['find'][$k] = "lower(s.value_text) LIKE ?";
 				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['find']);
 		}
 		if (count($search['omit'])) {
 			foreach ($search['omit'] as $k => $term) {
-				$search['omit'][$k] = "lower(value_text) NOT LIKE ?";
+				$search['omit'][$k] = "lower(s.value_text) NOT LIKE ?";
 				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['omit']);
 		}
 		if (count($search['or'])) {
 			foreach ($search['or'] as $k => $term) {
-				$search['or'][$k] = "lower(value_text) LIKE ?";
+				$search['or'][$k] = "lower(s.value_text) LIKE ?";
 				$search_table_params[] = "%".strtolower($term)."%";
 			}
 			$search_table_sets[] = "(" . join(' OR ',$search['or']) . ")";
 		}
 		if (count($search_table_sets)) {
-			$search_table_sql = "SELECT item_id FROM search_table WHERE " . join(' AND ', $search_table_sets);
+			$search_table_sql = "SELECT s.item_id FROM search_table s WHERE " . join(' AND ', $search_table_sets);
 		}
+
+		//at this point I have my search_table_sql AND search_table_params
 
 		//compile sql for queries of value table 
 		$value_table_search_sets = array();
@@ -360,15 +357,16 @@ class Dase_Search
 					$ar_table_sets[] = join(' AND ',$ar['value_text']);
 				}
 				if (count($ar_table_sets)) {
-					//if (false === strpos($att,'admin_')) {
+					if (false === strpos($att,'admin_')) {
 						$value_table_search_sets[] = 
 							//"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-							"id IN (SELECT item_id FROM value_search_table v WHERE ".join(' AND ', $ar_table_sets)." AND v.collection_ascii_id = ? AND v.attribute_ascii_id = ?)";
-					//} else {
+							"id IN (SELECT v.item_id FROM value v WHERE ".join(' AND ', $ar_table_sets)." AND v.p_collection_ascii_id = ? AND v.p_attribute_ascii_id = ?)";
+					} else {
 						//it's an admin attribute, so collection_id is 0
-					//	$value_table_search_sets[] = 
-					//		"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-					//}
+						$value_table_search_sets[] = 
+							//"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
+							"id IN (SELECT v.item_id FROM value v WHERE ".join(' AND ', $ar_table_sets)." AND v.p_collection_ascii_id = ? AND v.p_attribute_ascii_id = ?)";
+					}
 				}
 				$value_table_params[] = $coll;
 				$value_table_params[] = $att;
@@ -388,15 +386,6 @@ class Dase_Search
 		if (!count($search['colls']) && isset($search_table_sql)) {
 			//make sure this boolean query is portable!!!
 			//$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
-		}
-		if (count($search['omit_colls']) && isset($search_table_sql)) {
-			foreach ($search['omit_colls'] as $ccc) {
-				$placeholders[] = '?'; 
-			}
-			$ph = join(",",$placeholders);
-			unset($placeholders);
-			$search_table_params = array_merge($search_table_params,$search['omit_colls']);
-			$search_table_sql .= " AND collection_id NOT IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = 

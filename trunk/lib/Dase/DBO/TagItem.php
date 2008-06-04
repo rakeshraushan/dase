@@ -45,8 +45,10 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 			$next_id = $tag_item_id_array[0];
 		}
 
-		$feed->addLink($tag->getLink().'/'.$prev_id,"previous");
-		$feed->addLink($tag->getLink().'/'.$next_id,"next");
+		//$feed->addLink($tag->getLink().'/'.$prev_id,"previous");
+		//$feed->addLink($tag->getLink().'/'.$next_id,"next");
+		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$prev_id,"previous");
+		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$next_id,"next");
 		$feed->setFeedType('tagitem');
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$place.' of '.count($tag_item_id_array));

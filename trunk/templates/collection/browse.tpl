@@ -11,9 +11,11 @@
 		<h3>{$collection->description|escape}</h3>
 	</div>
 	<h3>Search:</h3>
-	<form method="get" action="collection/{$collection->ascii_id}/search">
+	<form method="get" action="search">
 		<div>
-			<input type="text" name="q" size="30"/>
+			<input type="text" id="queryInput" name="q" size="30"/>
+			<input type="hidden" name="collection_ascii_id" value="{$collection->ascii_id}"/>
+			<select id="attributesSelect" class="hide"></select>
 			<input type="submit" value="go" class="button"/>
 		</div>
 	</form>

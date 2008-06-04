@@ -36,6 +36,19 @@
 				</dl>
 				<ul id="itemLinks">
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom">atom</a>
+					|
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a>
+				</ul>
+				<div id="notesForm" class="hide">
+					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" name="notes_form" id="notesForm" method="post">
+						<textarea rows="7" cols="60" id="note" name="note"></textarea>
+						<input type="submit" value="add note"/>
+					</form>
+				</div>
+				<ul id="notes">
+					{foreach item=note from=$item->notes}
+					<li>{$note.text}</li>
+					{/foreach}
 				</ul>
 			</td>
 		</tr>
