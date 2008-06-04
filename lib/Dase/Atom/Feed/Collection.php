@@ -44,4 +44,24 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			}
 		}
 	}
+
+	function getAttributes() {
+		$attributes = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+			if ('admin_' != substr($dd->localName,0,6)) {
+				$attributes[$dd->localName] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
+			}
+		}
+		return $attributes;
+	}
+
+	function getAdminAttributes() {
+		$admin_attributes = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+			if ('admin_' == substr($dd->localName,0,6)) {
+				$admin_attributes[$dd->localName] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
+			}
+		}
+		return $admin_attributes;
+	}
 }

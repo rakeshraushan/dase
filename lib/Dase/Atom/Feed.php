@@ -5,6 +5,10 @@ class Dase_Atom_Feed extends Dase_Atom
 	protected $generator_is_set;
 	protected $subtitle_is_set;
 	private static $types_map = array(
+		'archive' => array(
+			'feed' => 'Dase_Atom_Feed_Collection',
+			'entry' => 'Dase_Atom_Entry_Item',
+		),
 		'collection_list' => array(
 			'feed' => 'Dase_Atom_Feed_CollectionList', 
 			'entry' => 'Dase_Atom_Entry_Collection'
