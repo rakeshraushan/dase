@@ -42,7 +42,9 @@
 				<div id="notesForm" class="hide">
 					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" name="notes_form" id="notesForm" method="post">
 						<textarea rows="7" cols="60" id="note" name="note"></textarea>
+						<p>
 						<input type="submit" value="add note"/>
+						</p>
 					</form>
 				</div>
 				<ul id="notes">
