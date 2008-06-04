@@ -5,6 +5,7 @@ class CollectionHandler extends Dase_Handler
 	public $collection;
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
@@ -22,6 +23,13 @@ class CollectionHandler extends Dase_Handler
 	public function getCollectionAtom($request) 
 	{
 		$request->renderResponse($this->collection->asAtom());
+	}
+
+	public function getArchive($request) 
+	{
+		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
+		file_put_contents($archive,$this->collection->asAtomArchive());
+		$request->serveFile($archive,'text/plain',true);
 	}
 
 	public function asAtomArchive($request) 

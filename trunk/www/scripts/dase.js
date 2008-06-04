@@ -1130,9 +1130,7 @@ Dase.initContentNotes = function() {
 	notes_link.onclick = function() {
 		if (notesForm) {
 			Dase.toggle(notesForm);
-		}
-		if (notes) {
-			Dase.toggle(notes);
+			Dase.$('note').value = '';
 		}
 		return false;
 	};
@@ -1141,7 +1139,6 @@ Dase.initContentNotes = function() {
 		Dase.ajax(document.notes_form.action,'POST',
 				function(resp) { 
 				Dase.toggle(notesForm);
-				Dase.toggle(notes);
 				Dase.getNotes();
 				},note);
 		return false;
