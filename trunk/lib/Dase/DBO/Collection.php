@@ -91,6 +91,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		//todo: this needs ot be paged
 		$feed = $this->getBaseAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
+		$feed->setFeedType('archive');
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		if ($limit && is_numeric($limit)) {
