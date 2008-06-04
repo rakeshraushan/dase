@@ -19,7 +19,7 @@
 		</div>
 		<div class="spacer"></div>
 		<h5>
-			{$it->title}
+			{$it->title|truncate:80:"..."}
 		</h5>
 		<h5 class="collection_name">{$it->collection}</h5>
 	</td>

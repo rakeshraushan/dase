@@ -199,6 +199,9 @@
   <column name="item_id" type="integer" null="YES" default=""/>
   <column name="id" type="integer" null="NO" is_primary_key="true"/>
   <column name="value_text" type="text" null="YES" default=""/>
+  <column name="p_serial_number" type="character varying" null="YES" default="" max_length="100"/>
+  <column name="p_attribute_ascii_id" type="character varying" null="YES" default="" max_length="100"/>
+  <column name="p_collection_ascii_id" type="character varying" null="YES" default="" max_length="100"/>
  </table>
  <table name="value_revision_history">
   <column name="id" type="integer" null="NO" is_primary_key="true"/>

@@ -85,6 +85,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}
+		foreach ($this->getContents() as $c) {
+			$composite_value_text .= $c->text . " ";
+		}
 		$search_table = new Dase_DBO_SearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
@@ -442,7 +445,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('class','thumbnail');
 		}
 		$div->addChild('p',htmlspecialchars($this->getDescription()));
-
+		$contents = $div->addChild('ul');
+		foreach ($this->getContents() as $cont) {
+			$content_note = $contents->addChild('li',htmlspecialchars($cont->text));
+			$content_note->addAttribute('eid',$cont->updated_by_eid);
+			$content_note->addAttribute('date',$cont->updated);
+		}
 		foreach ($this->getMetadata() as $row) {
 			//php dom will escape text for me here....
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
@@ -559,11 +567,50 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 			$item_array['media'][] = $media_file;
 		}
+		foreach ($this->getContents() as $c) {
+			$content[$c->id]['updated'] = $c->updated;
+			$content[$c->id]['eid'] = $c->updated_by_eid;
+			$content[$c->id]['text'] = $c->text;
+			$item_array['content'][] = $content;
+		}
 		$item_array['metadata'] = array();
 		foreach ($this->getMetadata() as $row) {
 			$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
 		}
 		$json = new Services_JSON;
 		return $json->encode($item_array,true);
+	}
+
+	public function getContents()
+	{
+		$contents = new Dase_DBO_Content;
+		$contents->item_id = $this->id;
+		return $contents->find();
+	}
+
+	public function getContentsJson()
+	{
+		$content = '';
+		foreach ($this->getContents() as $c_obj) {
+			$c['id'] = $c_obj->id;
+			$c['updated'] = $c_obj->updated;
+			$c['eid'] = $c_obj->updated_by_eid;
+			$c['text'] = $c_obj->text;
+			$content[] = $c;
+		}
+		return Dase_Json::get($content);
+	}
+
+	public function addContent($text,$eid)
+	{
+		$this->collection || $this->getCollection();
+		$note = new Dase_DBO_Content;
+		$note->item_id = $this->id;
+		$note->text = $text;
+		$note->p_collection_ascii_id = $this->collection->ascii_id;
+		$note->p_serial_number = $this->serial_number;
+		$note->updated = date(DATE_ATOM);
+		$note->updated_by_eid = $eid;
+		$note->insert();
 	}
 }

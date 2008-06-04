@@ -175,7 +175,10 @@ class Dase_Http_Request
 
 	public function has($key)
 	{
-		return $this->_filterPost($key) || $this->_filterGet($key) || isset($this->params[$key]);
+		return $this->_filterPost($key) || 
+			$this->_filterGet($key) || 
+			isset($this->params[$key]) ||
+			isset($this->url_params[$key]); //necessary for late-set url_params
 	}
 
 	public function set($key,$val)

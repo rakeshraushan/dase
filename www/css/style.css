@@ -96,6 +96,7 @@ html #maincontent {
 .spacer { clear:both; }
 .hide { display:none; }
 .pagedata { display:none; }
+a.delete { color:#c00; }
 .alert { color:#c00; }
 .msg { color:#c00; }
 a.edit { color: #00c; }
@@ -108,10 +109,19 @@ a.edit { color: #00c; }
 #contentHeader h4 {
 	color: #333;
 	width: 70%;
-	line-height: 1.7em; 
-	margin: 0;
+	line-height: 1.1em; 
+	margin: 0 0 .8em 0;
 }
-
+#contentHeader h1 a {
+	color: #666;
+}
+#contentHeader h2 {
+}
+#contentHeader h3 {
+	color: #777;
+}
+#contentHeader h4 {
+}
 /************ COLLECTION LIST ***************/
 
 ul#collectionList {
@@ -226,6 +236,16 @@ table#item td.metadata a.toggle {
 	color: #999;
 }
 
+table#item td.metadata textarea {
+	font-size: 1.4em;
+	padding: 3px;
+}
+
+table#item td.metadata ul#notes {
+	line-height: 1.8em;
+	margin: 1em 0;
+}
+
 /*****  ITEM SET DISPLAY PAGE **************/
 
 table#itemSet td {
@@ -243,12 +263,13 @@ table#itemSet td div.image {
 	margin-top: 1.8em;
 }
 table#itemSet td h5 {
-	line-height: 1.3em;
+	line-height: 1.2em;
 	color: #666;
 }
 table#itemSet td h5.collection_name {
 	font-weight: normal;
 	color: #669;
+	margin-bottom: 0;
 }
 table#itemSet td img {
 	border: 1px solid #ccf;

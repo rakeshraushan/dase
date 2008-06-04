@@ -6,6 +6,7 @@ class TagHandler extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'item/{tag_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/items/{item_ids}' => 'tag_items',
 	);
@@ -17,6 +18,8 @@ class TagHandler extends Dase_Handler
 		} elseif ($request->has('tag_id')) {
 			$this->tag = new Dase_DBO_Tag;
 			$this->tag->load($request->get('tag_id'));
+		} else {
+			$request->renderError(404);
 		}
 		//todo: authorize access to tag!!!!!
 	}	
@@ -45,14 +48,9 @@ class TagHandler extends Dase_Handler
 
 	public function getTagItemAtom($request)
 	{
-		$tag = new Dase_DBO_Tag;
-		$tag->ascii_id = $request->get('tag_ascii_id');
-		if (!$tag->findOne()) {
-			$request->renderError(401);
-		}
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->load($request->get('tag_item_id'));
-		if ($tag_item->tag_id != $tag->id) {
+		if ($tag_item->tag_id != $this->tag->id) {
 			$request->renderError(404);
 		} 
 		$request->renderResponse($tag_item->asAtom());
@@ -65,7 +63,8 @@ class TagHandler extends Dase_Handler
 		$tag_item_id = $request->get('tag_item_id');
 		$http_pw = $this->tag->getHttpPassword($u->eid);
 		$t = new Dase_Template($request);
-		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
+		//$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
+		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
 

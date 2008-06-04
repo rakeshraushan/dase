@@ -28,8 +28,11 @@ pre,code,kbd,samp,tt{font-family:monospace;*font-size:108%;line-height:100%;}
 
 /* base.css */
 
-h1{font-size:138.5%;}
+/*h1{font-size:138.5%;}
 h2{font-size:123.1%;}
+*/
+h1{font-size:125%;}
+h2{font-size:116%;}
 h3{font-size:108%;}
 h4{font-size:96%;}
 h5{font-size:86%;}

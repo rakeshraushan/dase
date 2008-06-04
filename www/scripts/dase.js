@@ -431,8 +431,13 @@ Dase.limitSearchToCollection = function(c_ascii_array) {
 	}
 };
 
-Dase.setCollectionAtts = function(coll) {
+/*Dase.setCollectionAtts = function(coll) {*/
+Dase.setCollectionAtts = function() {
 	//you can pass in a coll OR use as an event handler
+	var coll_el = Dase.$('collectionAsciiId');
+	if (coll_el) {
+		coll = coll_el.innerHTML;
+	}
 	var sel = Dase.$('attributesSelect');
 	if (!sel) return; 
 	sel.onchange = Dase.specifyQueryType;
@@ -1116,7 +1121,66 @@ Dase.initRemoveItems = function() {
 	};
 };
 
+Dase.initContentNotes = function() {
+	Dase.getNotes();
+	var notes = Dase.$('notes');
+	var notes_link = Dase.$('notesLink');
+	if (!notes_link) return;
+	var notesForm = Dase.$('notesForm');
+	notes_link.onclick = function() {
+		if (notesForm) {
+			Dase.toggle(notesForm);
+		}
+		if (notes) {
+			Dase.toggle(notes);
+		}
+		return false;
+	};
+	notesForm.onsubmit = function() {
+		var note = Dase.$('note').value;
+		Dase.ajax(document.notes_form.action,'POST',
+				function(resp) { 
+				Dase.toggle(notesForm);
+				Dase.toggle(notes);
+				Dase.getNotes();
+				},note);
+		return false;
+	};
+};
+
+Dase.getNotes = function() {
+	var notes = Dase.$('notes');
+	var notesLink = Dase.$('notesLink');
+	if (!notesLink) return;
+	Dase.getJSON(notesLink.href,
+			function(resp) {
+			var html = '';
+			for (var i=0;i<resp.length;i++) {
+			html += '<li>'+resp[i].text;
+			html += ' <a href="'+notesLink.href+'/'+resp[i].id+'" class="delete note">(x)</a>';
+			html += '</li>';
+			}
+			Dase.$('notes').innerHTML = html;
+			var delete_links = notes.getElementsByTagName('a');
+			for (var i=0;i<delete_links.length;i++) {
+			if ('delete note' == delete_links[i].className) {
+			delete_links[i].onclick = function() {
+			if (!confirm('delete this note?')) {
+			return false;
+			}
+			Dase.ajax(this.href,'DELETE',
+				function(resp) {
+				Dase.getNotes();
+				},null);
+			return false;
+			};
+			}
+			}
+			});
+};
+
 Dase.addLoadEvent(function() {
+		Dase.setCollectionAtts();
 		Dase.initUser();
 		Dase.initMenu('menu');
 		Dase.initBrowse();
@@ -1125,6 +1189,7 @@ Dase.addLoadEvent(function() {
 		Dase.initSaveTo();
 		Dase.initRemoveItems();
 		Dase.initLogoff();
+		Dase.initContentNotes();
 		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*
