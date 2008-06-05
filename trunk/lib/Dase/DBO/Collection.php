@@ -61,6 +61,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed;
 	}
 
+	function getAttributesAtom() {
+		$feed = $this->getBaseAtomFeed();
+		$feed->setFeedType('attributes');
+		foreach ($this->getAttributes() as $att) {
+			$att->injectAtomEntryData($feed->addEntry());
+		}
+		return $feed;
+	}
+
 	function asAtom()
 	{
 		$feed = $this->getBaseAtomFeed();
