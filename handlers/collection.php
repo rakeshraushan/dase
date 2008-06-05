@@ -58,17 +58,9 @@ class CollectionHandler extends Dase_Handler
 		$request->renderRedirect('',"rebuilt indexes for $c->collection_name");
 	}
 
-	public function attributesAsAtom($request) 
+	public function getAttributesAtom($request) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		$atts = new Dase_DBO_Attribute;
-		$atts->collection_id = $c->id;
-		$atts->is_public = 1;
-		$atts->orderBy('sort_order');
-		foreach ($atts->find() as $attribute) {
-		}
-		//?????????????????????????????????????????????????????
-		$request->renderResponse();
+		$request->renderResponse($this->collection->getAttributesAtom()->asXml());
 	}
 
 	public function getAttributesJson($request) 

@@ -21,11 +21,12 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
+		$collection = $this->getCollection();
 		$entry->setTitle('Attribute '.$this->attribute_name);
 		$entry->setId(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
-		$entry->addCategory($this->attribute_name,'http://daseproject.org/category/collection/attribute',$this->ascii_id);
+		$entry->addCategory($this->ascii_id,'http://daseproject.org/category/collection/attribute',$this->attribute_name);
 		$entry->addCategory('attribute','http://daseproject.org/category','Attribute');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
