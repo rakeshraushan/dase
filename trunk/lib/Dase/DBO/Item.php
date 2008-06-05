@@ -93,7 +93,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
 		$search_table->updated = date(DATE_ATOM);
-		$search_table->insert();
+		if ($composite_value_text) {
+			$search_table->insert();
+		}
 
 		//admin search table
 		$composite_value_text = '';
@@ -106,6 +108,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$st->execute();
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
+		}
+		foreach ($this->getContents() as $c) {
+			$composite_value_text .= $c->text . " ";
 		}
 		$search_table = new Dase_DBO_AdminSearchTable;
 		$search_table->value_text = $composite_value_text;
