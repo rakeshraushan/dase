@@ -410,6 +410,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
+			foreach ($item->getContents() as $c) {
+				$composite_value_text .= $c->text . " ";
+			}
 			$search_table = new Dase_DBO_SearchTable;
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
