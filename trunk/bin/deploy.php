@@ -1,17 +1,9 @@
 #!/usr/bin/php
 <?php
 
-//$target = '/mnt/projects/dase_modules/htdocs/';
-//$target = '/var/www/html/dase_efossils/';
-//$target = '/var/www/html/dase/';
-
 /*********** CONFIGURATION ********************/
 
-if (isset($argv[1])) {
-	$app = $argv[1];
-} else {
-	$app = 'dase1';
-}
+$app = 'dase1';
 $target = '/var/www/html/'.$app;
 $rewrite_base = $app; 
 $httpd_group = 'apache';
@@ -20,19 +12,10 @@ $httpd_group = 'apache';
 
 $working = dirname(__FILE__) . '/..';
 
-$local_config = "$working/../{$app}_conf.php";
-
-if (!file_exists($local_config)) {
-	print "no local config file ($local_config)!\n";
-	exit;
-}
-
 print "copying $working/* to $target\n";
 print "...\n";
 
 system("rsync -ar --delete --exclude='.svn' -e ssh $working/* $target");
-print "copying $local_config to $target/inc/local_config.php\n";
-system("rsync -ar  -e ssh $local_config $target/inc/local_config.php");
 
 //create and write out .htaccess file
 $htaccess =<<<EOD
@@ -61,7 +44,6 @@ if ($bytes) {
 apacheWrite("$working/var/cache", $httpd_group);
 apacheWrite("$working/var/log/error.log", $httpd_group);
 apacheWrite("$working/var/log/dase.log", $httpd_group);
-apacheWrite("$local_config", $httpd_group,0750);
 
 print "done!\n";
 

@@ -5,6 +5,12 @@ class Dase_Atom_Entry extends Dase_Atom
 	protected $published_is_set;
 	protected $source_is_set;
 	protected $summary_is_set;
+	public static $types_map = array(
+		'item' => 'Dase_Atom_Entry_Item',
+		'member' => 'Dase_Atom_Entry_MemberItem',
+		'attribute' => 'Dase_Atom_Entry_Attribute',
+		'collection' => 'Dase_Atom_Entry_Collection',
+	);
 
 	//note: dom is the dom object and root is the root
 	//element of the document.  If this entry is part of
@@ -133,4 +139,20 @@ class Dase_Atom_Entry extends Dase_Atom
 	{
 		return $this->getAtomElementText('id');
 	}
+
+	function setEntryType($type) 
+	{
+		$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
+	}
+
+	function getEntryType($type) 
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
+
 }

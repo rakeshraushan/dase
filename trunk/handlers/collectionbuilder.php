@@ -70,17 +70,12 @@ class CollectionbuilderHandler extends Dase_Handler
 		$entry = Dase_Atom_Entry_MemberItem::load($_FILES['atom']['tmp_name'],false);
 		$tpl->assign('entry',$entry);
 		$metadata = array();
-		if ($entry->validate()) {
-			foreach ($entry->metadata as $k => $v) {
-				if (Dase_DBO_Attribute::get($coll->ascii_id,$k)) {
-					$metadata[$k] = 'OK -- attributes exists';
-				} else {
-					$metadata[$k] = 'does NOT exist';
-				}
+		foreach ($entry->metadata as $k => $v) {
+			if (Dase_DBO_Attribute::get($coll->ascii_id,$k)) {
+				$metadata[$k] = 'OK -- attributes exists';
+			} else {
+				$metadata[$k] = 'does NOT exist';
 			}
-		} else {
-			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
-			Dase::error(422);
 		}
 		$tpl->assign('metadata',$metadata);
 		$request->renderResponse($tpl->fetch('collectionbuilder/check.tpl'));
