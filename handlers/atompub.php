@@ -118,20 +118,15 @@ class AtompubHandler extends Dase_Handler
 		Dase_Auth::authorize('write',$params);
 		$entry = Dase_Atom_Entry_MemberItem::load("php://input");
 		$metadata = "";
-		if ($entry->validate()) {
-			$item = $entry->replace($request);
-			header("HTTP/1.1 200 Ok");
-			exit;
-		} else {
-			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
-			Dase::error(422);
-		}
+		$item = $entry->replace($request);
+		header("HTTP/1.1 200 Ok");
+		exit;
 	}
 
 	public function validate($request)
 	{
 		$entry = Dase_Atom_Entry::load("php://input");
-		if ($entry->validate()) {
+		if ($entry) {
 			print "valid!";
 			exit;
 		} else {
@@ -143,18 +138,14 @@ class AtompubHandler extends Dase_Handler
 	public function createItem($request)
 	{
 		Dase_Auth::authorize('write',$params);
+		//validate in load method
 		$entry = Dase_Atom_Entry_MemberItem::load("php://input",false);
 		$metadata = "";
-		if ($entry->validate()) {
-			$item = $entry->insert($request);
-			header("HTTP/1.1 201 Created");
-			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/edit/".$params['collection_ascii_id']."/".$item->serial_number);
-			echo $item->asAppMember();
-		} else {
-			//see http://www.imc.org/atom-protocol/mail-archive/msg10901.html
-			Dase::error(422);
-		}
+		$item = $entry->insert($request);
+		header("HTTP/1.1 201 Created");
+		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+		header("Location: ".APP_ROOT."/edit/".$params['collection_ascii_id']."/".$item->serial_number);
+		echo $item->asAppMember();
 	}
 
 	public function deleteItem($request)

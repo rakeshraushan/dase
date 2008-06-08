@@ -101,13 +101,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed = $this->getBaseAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
 		$feed->setFeedType('archive');
+		foreach ($this->getAttributes() as $att) {
+			$att->injectAtomEntryData($feed->addEntry('attribute'));
+		}
+		foreach ($this->getAdminAttributes() as $att) {
+			$att->injectAtomEntryData($feed->addEntry('attribute'));
+		}
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		if ($limit && is_numeric($limit)) {
 			$items->setLimit($limit);
 		}
 		foreach ($items->find() as $item) {
-			$item->injectAtomEntryData($feed->addEntry());
+			$item->injectAtomEntryData($feed->addEntry('item'));
 		}
 		//returned XML will be VERY large
 		return $feed->asXml();

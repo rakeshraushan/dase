@@ -53,19 +53,6 @@ class Dase_Atom
 		}
 	}
 
-	public function validate() {
-
-		//do not show non-fatal errors
-        $er = error_reporting(E_ERROR);
-
-		$bool = $this->dom->relaxNGValidate(SCHEMA_DIR.'atom.rng');
-
-		//back to original error reporting
-		error_reporting($er);
-
-		return $bool;
-	}
-
 	//convenience method for atom elements
 	function addElement($tagname,$text='',$ns='') 
 	{

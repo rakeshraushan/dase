@@ -39,16 +39,6 @@ class CollectionsHandler extends Dase_Handler
 	{
 		$tpl = new Dase_Template($request);
 		$feed = Dase_Atom_Feed::retrieve(DASE_URL.'/collections?format=atom');
-		//$er = error_reporting(E_ALL^E_NOTICE);
-		$er = error_reporting(E_ERROR);
-		if ($feed->validate()) {
-			//print "valid!";
-		} else {
-			print "not valid!";
-			exit;
-		}
-		error_reporting($er);
-
 		$tpl->assign('collections',$feed);
 		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
 		$request->renderResponse($tpl->fetch('collection/list.tpl'),$request);

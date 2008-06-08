@@ -126,9 +126,12 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function addEntry()
+	function addEntry($type = '')
 	{
 		$entry = new Dase_Atom_Entry($this->dom);
+		if ($type) {
+			$entry->setEntryType($type);
+		}
 		//entries will be appended in asXml method
 		$this->_entries[] = $entry;
 		return $entry;
@@ -240,6 +243,13 @@ class Dase_Atom_Feed extends Dase_Atom
 		$entries = array();
 		$class = self::$types_map[$this->feedtype]['entry'];
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
+			foreach ($entry_dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
+					if (Dase_Atom_Entry::$types_map[$el->getAttribute('term')]) {
+						$class = Dase_Atom_Entry::$types_map[$el->getAttribute('term')];
+					}
+				}
+			}
 			if ($class) {
 				//entry subclass
 				$entry = new $class($this->dom,$entry_dom);
