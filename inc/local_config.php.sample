@@ -1,0 +1,8 @@
+<?php
+
+$conf['db']['type'] = 'mysql'; //mysql || pgsql || sqlite
+$conf['db']['host'] = '';
+$conf['db']['name'] = '';
+$conf['db']['user'] = '';
+$conf['db']['pass'] = '';
+
