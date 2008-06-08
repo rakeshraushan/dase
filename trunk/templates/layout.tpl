@@ -30,7 +30,6 @@
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
-		<script type="text/javascript" src="www/scripts/firebug/firebug.js"></script>
 
 		<!--[if lt IE 8]>
 		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
