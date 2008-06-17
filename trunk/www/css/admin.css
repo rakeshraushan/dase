@@ -45,6 +45,7 @@ ul#menu  li  {
 }
 ul#menu li:hover {
 	background-color: #eef1f8;
+	background-color: #f4f6fc;
 }
 
 sup {
@@ -52,25 +53,25 @@ sup {
 	font-size: 1em;
 }
 
-table#dataDisplay {
+table.dataDisplay {
 	background-color: #ffebcc;
 }
 
-table#dataDisplay  td {
+table.dataDisplay  td {
 	text-align: center;
 }
 
 /* allows some cells to be left-aligned */
-table#dataDisplay  td.data {
+table.dataDisplay  td.data {
 	text-align: left;
 }
 
-table#dataDisplay  th {
+table.dataDisplay  th {
 	color: #333;
 	background-color: #f2dfc1;
 }
 
-table#dataDisplay  th.rows {
+table.dataDisplay  th.rows {
 	text-align: right;
 }
 

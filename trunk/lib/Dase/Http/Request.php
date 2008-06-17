@@ -24,6 +24,7 @@ class Dase_Http_Request
 	public $path;
 	public $query_string;
 	public $response_mime_type;
+	public $resource;
 
 	function __construct()
 	{
@@ -51,6 +52,7 @@ class Dase_Http_Request
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
+		$string .= "[resource] => $this->resource\n";
 		return $string;
 	}
 

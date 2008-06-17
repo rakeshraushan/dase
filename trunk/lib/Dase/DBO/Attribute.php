@@ -8,7 +8,15 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	public $is_identifier;
 	public $collection = null;
 	public $display_values = array();
-	public $html_input_type = null;
+
+	const INPUT_TEXT = 'text';
+	const INPUT_TEXTAREA = 'textarea';
+	const INPUT_RADIO = 'radio';
+	const INPUT_CHECKBOX = 'checkbox';
+	const INPUT_SELECT = 'select';
+	const INPUT_LISTBOX = 'listbox';
+	const INPUT_NOEDIT = 'no_edit';
+	const INPUT_DYNAMIC = 'text_with_menu';
 
 	function getValueCount()
 	{
@@ -19,6 +27,27 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$st = $db->prepare('SELECT count(*) FROM value WHERE attribute_id = ?');
 		$st->execute(array($this->id));	
 		return $st->fetchColumn();
+	}
+
+	public static function findOrCreate($collection_ascii_id,$attribute_ascii_id) 
+	{
+		$att = new Dase_DBO_Attribute;
+		$att->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+		$att->ascii_id = $attribute_ascii_id;
+		if (!$att->findOne()) {
+			$att->attribute_name = ucwords(str_replace('_',' ',$attribute_ascii_id));
+			$att->sort_order = 9999;
+			$att->in_basic_search = 1;
+			$att->is_on_list_display = 1;
+			$att->is_public = 1;
+			//todo: will be deprecated
+			$att->html_input_type_id = 5;
+			$att->mapped_admin_att_id = 0;
+			$att->updated = date(DATE_ATOM);
+			$att->html_input_type = 'text';
+			$att->insert();
+		}
+		return $att;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
@@ -81,6 +110,30 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $display_values_array;
 	}
 
+	public function getFormValues($input_type) 
+	{
+		//todo: this could use some optimization
+		$values = array();
+		if (in_array($input_type,array('radio','checkbox','select'))) {
+			$dv = new Dase_DBO_DefinedValue();
+			$dv->attribute_id = $this->id;
+			foreach ($dv->find() as $defval) {
+				$values[] = $defval->value_text;
+			}
+		} elseif ('text_with_menu' == $input_type) {
+			$v = new Dase_DBO_Value;
+			$v->attribute_id = $this->id;
+			foreach ($v->find() as $value) {
+				$values[] = $value->value_text;
+			}
+			$values = array_unique($values);
+			asort($values);
+		} else {
+			//nothin'
+		}
+		$values;
+	}
+
 	public static function get($collection_ascii_id,$ascii_id)
 	{
 		if ($collection_ascii_id && $ascii_id) {
@@ -115,9 +168,29 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	{
 		$inp = new Dase_DBO_HtmlInputType;
 		$inp->load($this->html_input_type_id);
-		$this->html_input_type = $inp;
 		return $inp;
 	}
+
+	function getDefinedValues() {
+		$defined = array();
+		$dvs = new Dase_DBO_DefinedValue;
+		$dvs->attribute_id = $this->id;
+		foreach ($dvs->find() as $dv) {
+			$defined[] = $dv->value_text;
+		}
+		return $defined;
+	}
+
+	function getCurrentValues() {
+		$current = array();
+		$vals = new Dase_DBO_Value;
+		$vals->attribute_id = $this->id;
+		foreach ($vals->find() as $val) {
+			$current[] = $val->value_text;
+		}
+		return $current;
+	}
+
 
 	function getAdminEquiv($mapped_id)
 	{
@@ -138,6 +211,28 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$sth = $db->prepare("SELECT id from attribute WHERE ascii_id = ?");
 		$sth->execute(array($ascii_id));
 		return $sth->fetchColumn();
+	}
+
+	public function asJson() {
+		$att_array = array();
+		foreach ($this as $k => $v) {
+			$att_array[$k] = $v;
+		}
+		return Dase_Json::get($att_array);
+	}
+
+	public function fixBools()
+	{
+		//the purpose here is to prepare for update
+		if (!$this->is_public) {
+			$this->is_public = 0;
+		}
+		if (!$this->is_on_list_display) {
+			$this->is_on_list_display = 0;
+		}
+		if (!$this->in_basic_search) {
+			$this->in_basic_search = 0;
+		}
 	}
 }
 

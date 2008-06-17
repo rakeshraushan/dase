@@ -196,7 +196,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			return $this->checkTagAuth($entity,$auth_level);
 		}
 		if ('Dase_DBO_Collection' == $class) {
-			return $this->checkCollectionAuth($ascii_id,$auth_level);
+			return $this->checkCollectionAuth($entity->ascii_id,$auth_level);
 		}
 	}
 }

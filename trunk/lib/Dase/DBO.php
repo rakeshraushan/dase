@@ -274,7 +274,10 @@ class Dase_DBO implements IteratorAggregate
 		$sth = $db->prepare( $sql );
 		Dase_Log::all($sql . ' /// ' . join(',',$values));
 		if (!$sth->execute($values)) {
-			return $sth->errorInfo();
+			$errs = $sth->errorInfo();
+			if (isset($errs[2])) {
+				Dase_Log::debug($errs[2]);
+			}
 		}
 	}
 

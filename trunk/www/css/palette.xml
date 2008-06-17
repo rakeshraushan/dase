@@ -86,5 +86,13 @@
 		<hex level="5">eef1f8</hex>
 		<hex level="5">f1f6fe</hex>
 	</hue>
+	<hue id="blue" section="shared">
+		<hex level="1">263b5e</hex>
+		<hex level="2">6480ae</hex>
+		<hex level="3">9cacc6</hex>
+		<hex level="4">d5deed</hex>
+		<hex level="5">eef1f8</hex>
+		<hex level="5">f1f6fe</hex>
+	</hue>
 </palette>
 

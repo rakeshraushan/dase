@@ -6,9 +6,6 @@
 		<title>
 			{block name="title"}DASe: Digital Archive Services{/block}
 		</title>
-		<style type="text/css">
-			{block name="style"}{/block}
-		</style>
 		<meta name="description" content="
 		The Digital Archive Services project 
 		is a lightweight digital content repository
@@ -19,7 +16,7 @@
 
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/admin.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<!--[if lt IE 7]>
@@ -30,6 +27,12 @@
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
+
+		<style type="text/css">
+			ul#menu li.{$request->resource}-tab {literal}{{/literal}
+				background-color: #eef1f8;
+			{literal}{{/literal}
+		</style>
 
 		<!--[if lt IE 8]>
 		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
@@ -61,81 +64,68 @@
 		</div>
 
 		<div id="wordmark">
-			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark_02.jpg" alt="ut logo"/></a>
+			<a href="http://www.utexas.edu"><img src="www/images/ut.gif" alt="the university of texas"/></a>
 		</div>
 
-		<div id="header">
-			<!-- background image here-->	
+		<div id="adminHeader">
+			DASe Collection Builder
+			<p id="collection_name">{$collection->collection_name}</p>
+			<div class="hide" id="collection_ascii_id">{$collection->ascii_id}</div>
 		</div>
 
 		<div id="sidebar">
 			<ul id="menu">
-				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
-				<li id="cart-menu"><a href="" class="main" id="cartLabel">My Cart</a>
-				<ul class="hide" id="cart-submenu">
-					<li><a href="" class="create" id="cartLink">view cart</a></li>
-					<li><a href="" class="create">empty cart</a></li>
-					<!--
-					<li><a href="" class="create" id="moveCartTo">move cart items to...</a>
-					<ul class="hide">
-						<li>
-						<form action="sss" method="post">
-							<div id="allTags">
-							</div>
-							<div><input type="submit" value="move items"/></div>
-						</form>
-						</li>
-					</ul>
-					</li>
-					-->
-				</ul>
+				<li>
+				<a href="collection/{$collection->ascii_id}">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to {$collection->collection_name}</sup>
+				</a>
 				</li>
-				<li id="shared-menu"><a href="" class="main">Shared Collections &amp; Slideshows</a>
-				<ul class="hide" id="shared-submenu">
-					<li class="placeholder"></li>
-				</ul>
+				<li class="settings-tab">
+				<a href="admin/{$collection->ascii_id}/settings">
+					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
+				</a>
 				</li>
-
-				<li id="user_collection-menu"><a href="" class="main">My Collections</a>
-				<ul class="hide" id="user_collection-submenu">
-					<li class="placeholder"></li>
-				</ul>
+				<li class="attributes-tab">
+				<a href="admin/{$collection->ascii_id}/attributes">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
+				</a>
 				</li>
-
-				<li id="slideshow-menu"><a href="" class="main">My Slideshows</a>
-				<ul class="hide" id="slideshow-submenu">
-					<li class="placeholder"></li>
-				</ul>
+				<li class="item_types-tab">
+				<a href="admin/{$collection->ascii_id}/item_types">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
+				</a>
 				</li>
-
-				<li id="subscription-menu"><a href="" class="main">My Subscriptions</a>
-				<ul class="hide" id="subscription-submenu">
-					<li class="placeholder"></li>
-				</ul>
+				<li class="managers-tab">
+				<a href="admin/{$collection->ascii_id}/managers">
+					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
+				</a>
+				</li>
+				<li class="upload-tab">
+				<a href="admin/{$collection->ascii_id}/upload">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
+				</a>
 				</li>
 			</ul>
-
 			<h5 id="ajaxMsg"></h5>
-
 		</div> <!-- closes sidebar -->
 
 		<div id="content">
-			<!-- accessibility -->
-			<a id="maincontent" name="maincontent"></a>
-			{block name="content"}default content{/block}
+			<div id="admin" class="full">
+				{block name="content"}default content{/block}
+			</div>
 		</div>
 
-		<div class="spacer"/>
+		<div class="spacer"></div>
 
-			<div id="footer">
-				<a href="apps/help" id="helpModule">FAQ</a> | 
-				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-				<a href="copyright">Copyright/Usage Statement</a> | 
-				<!--
-				<insert-timer/> seconds |
-				-->
-				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
-			</div><!--closes footer-->
-			<div id="debugData" class="pagedata"></div>
-		</body>
-	</html>
+		<div id="footer">
+			<a href="apps/help" id="helpModule">FAQ</a> | 
+			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
+			<a href="copyright">Copyright/Usage Statement</a> | 
+			<!--
+			{$timer} seconds |
+			-->
+			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
+		</div><!--closes footer-->
+		<div id="debugData" class="pagedata"></div>
+	</body>
+</html>

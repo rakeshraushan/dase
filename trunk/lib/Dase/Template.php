@@ -39,13 +39,14 @@ class Dase_Template {
 		$this->smarty->register_modifier('sortby', '_smarty_dase_atom_feed_sortby');
 		$this->smarty->register_modifier('select', '_smarty_dase_atom_entry_select');
 		$this->smarty->register_modifier('media', '_smarty_dase_atom_entry_select_media');
+		$this->smarty->register_modifier('modifiers','_smarty_documenter_modifiers');
+		$this->smarty->register_modifier('params','_smarty_documenter_get_params');
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
 
 		$this->smarty->register_modifier('shift', 'array_shift');
 		$this->smarty->assign('app_root', APP_ROOT.'/');
 		$this->smarty->assign('msg', $request->get('msg'));
-		$this->smarty->assign('page_hook',$request->get('handler').'_'.$request->get('action'));
-
+		$this->smarty->assign('request', $request);
 		error_reporting($er);
 	}
 
@@ -114,10 +115,32 @@ function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)
 	return $entry->select($att);
 }
 
-function _smarty_dase_atom_entry_select_media(Dase_Atom_Entry $entry,$size)
+function _smarty_documenter_modifiers(Documenter $d,$value)
 {
-	//returns media url 
-	return $entry->selectMedia($size);
+	//used in documentation 
+	return $d->getModifiers($value);
+}
+
+function _smarty_documenter_get_params(ReflectionParameter $p)
+{
+	//from no starch oo php book
+	$description = "";
+	//is it an object?
+	$c = $p->getClass();
+	if(is_object($c)){
+		$description .= $c->getName() . " ";
+	}
+	$description .= "\$" . $p->getName();
+	//check default
+	if ($p->isDefaultValueAvailable()){
+		$val = $p->getDefaultValue();
+		//could be empty string
+		if($val == ""){
+			$val = "\"\"";
+		}
+		$description .= " = $val";
+	}
+	return $description;
 }
 
 function _smarty_swisdk_process_block($params, $content, &$smarty, &$repeat)

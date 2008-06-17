@@ -235,6 +235,11 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $this;
 	}
 
+	protected function getCount()
+	{
+		return count($this->getEntries());
+	}
+
 	protected function getEntries()
 	{
 		if (count($this->_entries)) {
