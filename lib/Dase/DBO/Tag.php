@@ -4,8 +4,12 @@ require_once 'Dase/DBO/Autogen/Tag.php';
 
 class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag 
 {
-	private $type;
 	private $user;
+
+	const TYPE_CART = 'cart';
+	const TYPE_SET = 'set';
+	const TYPE_SLIDESHOW = 'slideshow';
+	const TYPE_ADMIN = 'admin';
 
 	public static function getByUser($user)
 	{
@@ -25,6 +29,27 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$sth = $db->prepare($sql);
 		$sth->execute(array($user->id,$user->id));
 		return $sth;
+	}
+
+	public static function create($tag_name,$user)
+	{
+		$tag = new Dase_DBO_Tag;
+		$tag->ascii_id = Dase_Util::dirify($tag_name);
+		$tag->dase_user_id = $user->id;
+		if ($tag->findOne()) {
+			return false;
+		} else {
+			$user->expireDataCache();
+			$tag->name = $tag_name;
+			$tag->type = self::TYPE_SET;
+			$tag->background = 'white';
+			$tag->is_public = 0;
+			$tag->created = date(DATE_ATOM);
+			//todo: for backward compat -- get rid of this in DASe 2:
+			$tag->tag_type_id = 2;
+			$tag->insert();
+			return $tag;
+		}
 	}
 
 	public static function get($ascii_id,$eid)
@@ -107,8 +132,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	function getType()
 	{
 		$type = new Dase_DBO_TagType;
-		$this->type = $type->load($this->tag_type_id);
-		return $this->type;
+		return $type->load($this->tag_type_id);
 	}
 
 	function getUser()
@@ -143,12 +167,46 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
+	function asJson()
+	{
+		$json_tag;
+		$json_tag['uri'] = $this->getLink();
+		if ($this->created) {
+			$json_tag['updated'] = $this->created;
+		} else {
+			$json_tag['updated'] = date(DATE_ATOM);
+		}
+		$json_tag['name'] = $this->name;
+		$json_tag['description'] = $this->description;
+		$json_tag['background'] = $this->background;
+		$json_tag['is_public'] = $this->is_public;
+		$json_tag['type'] = $this->type;
+		$json_tag['eid'] = $this->getUser()->eid;
+		foreach($this->getTagItems() as $tag_item) {
+			$item = $tag_item->getItem();
+			$json_item = array();
+			$json_item['url'] = APP_ROOT.'/tag/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
+			$json_item['sort_order'] = $tag_item->sort_order;
+			$json_item['size'] = $tag_item->size;
+			$json_item['updated'] = $tag_item->updated;
+			$json_item['annotation'] = $tag_item->annotation;
+
+			foreach ($item->getMedia() as $m) {
+				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+			}
+			$json_tag['items'][] = $json_item;
+		}
+		$js = new  Services_JSON;	
+		return $js->json_format($json_tag);	
+	}
+
+
 	function asAtom()
 	{
-		$this->type || $this->getType(); 
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
-		$feed->setTitle($this->name.' ('.$this->getItemCount().' items)');
+		//$feed->setTitle($this->name.' ('.$this->getItemCount().' items)');
+		$feed->setTitle($this->name);
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
@@ -160,14 +218,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink(APP_ROOT.'/tag/'.$this->id,'http://daseproject.org/relation/tag');
 
 		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag",$this->name);
-		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag_type",$this->type->name);
+		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {
 			$pub = "public";
 		} else {
 			$pub = "private";
 		}
 		$feed->addCategory($pub,"http://daseproject.org/category/visibility");
-		$feed->addCategory($this->background,"http://daseproject.org/category/tag_background");
+		$feed->addCategory($this->background,"http://daseproject.org/category/tag/background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		foreach($this->getTagItems() as $tag_item) {

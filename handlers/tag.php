@@ -5,9 +5,13 @@ class TagHandler extends Dase_Handler
 
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
+		'{tag_id}/slideshow' => 'slideshow',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/slideshow' => 'slideshow',
 		'item/{tag_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
+		'{eid}/{tag_ascii_id}/item/{collection_ascii_id}/{serial_number}' => 'tag_item',
+		//for set delete:
 		'{eid}/{tag_ascii_id}/items/{item_ids}' => 'tag_items',
 	);
 
@@ -31,6 +35,27 @@ class TagHandler extends Dase_Handler
 			$request->renderError(401);
 		}
 		$request->renderResponse($this->tag->asAtom());
+	}
+
+	public function getSlideshow($request)
+	{
+		$u = $request->getUser();
+		$t = new Dase_Template($request);
+		//cannot use eid/ascii since it'll sometimes be anotehr user's tag
+		$t->assign('json_url',APP_ROOT.'/tag/'.$this->tag->id.'.json');
+		$t->assign('eid',$u->eid);
+		$t->assign('http_pw',$this->tag->getHttpPassword($u->eid));
+		$request->renderResponse($t->fetch('item_set/slideshow.tpl'));
+
+	}
+
+	public function getTagJson($request)
+	{
+		$u = $request->getHttpUser($this->tag);
+		if (!$u->can('read',$this->tag)) {
+			$request->renderError(401);
+		}
+		$request->renderResponse($this->tag->asJson());
 	}
 
 	public function getTag($request)

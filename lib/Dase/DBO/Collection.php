@@ -28,20 +28,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function asJson() 
 	{
-		$json = array();
-		$json['collection'] = array(
+		$coll_array = array();
+		$coll_array['collection'] = array(
 			'name' => $this->collection_name,
 			'ascii_id' => $this->ascii_id,
 			'path_to_media_file' => $this->path_to_media_files,
 		);
-		$json['collection']['attributes'] = array();
+		$coll_array['collection']['attributes'] = array();
 		foreach ($this->getAttributes() as $att) {
 			$att_array['name'] = $att->attribute_name;
 			$att_array['ascii_id'] = $att->ascii_id;
-			$json['collection']['attributes'][] = $att_array;
+			$coll_array['collection']['attributes'][] = $att_array;
 		}
-		$sj = new Services_JSON;
-		return $sj->json_format($json);
+		return Dase_Json::get($coll_array,true);
 	}
 
 	function getBaseAtomFeed() 
@@ -117,6 +116,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		//returned XML will be VERY large
 		return $feed->asXml();
+	}
+
+	function asJsonArchive($limit=0) {
+		//todo: this needs ot be paged
 	}
 
 	function asAppCollection($start,$count=50) 

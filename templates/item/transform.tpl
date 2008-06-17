@@ -13,6 +13,13 @@
 			<a href="{$item->next}">next</a> 
 		</h4>
 	</div> <!-- close contentHeader -->
+	<div id="adminPageControls" class="hide">
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
+		|
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
+		|
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
+	</div>
 	<table id="item">
 		<tr>
 			<td class="image">
@@ -26,6 +33,8 @@
 			</td>
 			<td class="metadata">
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
+
+
 				<dl id="metadata" class="{$item->collectionAsciiId}">
 					{foreach item=set key=ascii_id from=$item->metadata}
 					<dt>{$set.attribute_name}</dt>
@@ -34,11 +43,15 @@
 					{/foreach}
 					{/foreach}
 				</dl>
-				<ul id="itemLinks">
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom">atom</a>
+				<div id="metadata_form_div" class="hide"></div>
+
+
+				<div id="itemLinks">
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom">atom</a> 
 					|
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a>
-				</ul>
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a> 
+				</div>
+				<div class="spacer"></div>
 				<div id="notesForm" class="hide">
 					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" name="notes_form" id="notesForm" method="post">
 						<textarea rows="7" cols="60" id="note" name="note"></textarea>

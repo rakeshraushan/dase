@@ -97,3 +97,10 @@ border-top: 1px solid #fff;
 #menu ul#tools-submenu a:hover { background-color: #eef1f8; }
 
   
+#menu li#shared-menu a.main { border: 1px solid #263b5e; border-left: 18px solid #263b5e; background-color: #ffffff; }
+#menu li#shared-menu a:hover , a:active { background-color: #d5deed; }
+#menu ul#shared-submenu { background-color: #d5deed; }
+#menu ul#shared-submenu a { background-color: #d5deed; }
+#menu ul#shared-submenu a:hover { background-color: #eef1f8; }
+
+  

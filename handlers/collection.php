@@ -15,8 +15,23 @@ class CollectionHandler extends Dase_Handler
 
 	protected function setup($request)
 	{
-		if ($request->has('collection_ascii_id')) {
-			$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if ('html' == $request->format) {
+			$this->user = $request->getUser();
+		   	if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'read')) {
+			$request->renderError(401);
+			}
+		}
+		/*
+		if ('atom' == $request->format) {
+			$this->user = $request->getHttpUser();
+		   	if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'read')) {
+			$request->renderError(401);
+			}
+		}
+		 */
+		$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if (!$this->collection) {
+			$request->renderError(404);
 		}
 	}
 
@@ -29,6 +44,13 @@ class CollectionHandler extends Dase_Handler
 	{
 		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
 		file_put_contents($archive,$this->collection->asAtomArchive());
+		$request->serveFile($archive,'text/plain',true);
+	}
+
+	public function getArchiveJson($request) 
+	{
+		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time().'.json';
+		file_put_contents($archive,$this->collection->asJsonArchive());
 		$request->serveFile($archive,'text/plain',true);
 	}
 
@@ -49,6 +71,22 @@ class CollectionHandler extends Dase_Handler
 		$tpl = new Dase_Template($request);
 		$tpl->assign('collection',Dase_Atom_Feed::retrieve(DASE_URL.'/collection/'.$request->get('collection_ascii_id').'.atom'));
 		$request->renderResponse($tpl->fetch('collection/browse.tpl'));
+	}
+
+	public function postToCollection($request) 
+	{
+		$this->user = $request->getHttpUser($this->collection);
+		if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'write')) {
+			$request->renderError(401);
+		}
+		$entry = Dase_Atom_Entry_MemberItem::load("php://input",false);
+		$metadata = "";
+		$item = $entry->insert($request);
+		header("HTTP/1.1 201 Created");
+		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+		header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number);
+		echo $item->asAppMember();
+		exit;
 	}
 
 	public function rebuildIndexes($request) 
@@ -84,6 +122,7 @@ class CollectionHandler extends Dase_Handler
 					'id' => $att->id,
 					'ascii_id' => $att->ascii_id,
 					'attribute_name' => $att->attribute_name,
+					'input_type' => $att->getHtmlInputType()->name,
 					'collection' => $request->get('collection_ascii_id')
 				);
 		}

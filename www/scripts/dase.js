@@ -8,26 +8,7 @@ Dase = {};
 Dase.NAME = "Dase";    // The name of this namespace
 Dase.VERSION = 1.0;    // The version of this namespace
 Dase.user = {};
-Dase.registry = {};
 Dase.base_href = document.getElementsByTagName('base')[0].href;
-Dase.htmlInputTypes = {};
-Dase.htmlInputTypeLabel = {};
-Dase.htmlInputTypes.RADIO = 1;
-Dase.htmlInputTypes.CHECKBOX = 2;
-Dase.htmlInputTypes.SELECTMENU = 3;
-Dase.htmlInputTypes.DYNAMICBOX = 4;
-Dase.htmlInputTypes.TEXT = 5;
-Dase.htmlInputTypes.TEXTAREA = 6;
-Dase.htmlInputTypes.LISTINPUT = 7;
-Dase.htmlInputTypes.NOEDIT = 8;
-Dase.htmlInputTypeLabel[1] = "Radio Buttons";
-Dase.htmlInputTypeLabel[2] = "Checkboxes";
-Dase.htmlInputTypeLabel[3] = "Select Menu";
-Dase.htmlInputTypeLabel[4] = "Text Box w/ Menu";
-Dase.htmlInputTypeLabel[5] = "Text Box";
-Dase.htmlInputTypeLabel[6] = "Text Area";
-Dase.htmlInputTypeLabel[7] = "List Input";
-Dase.htmlInputTypeLabel[8] = "Non-Editable";
 
 /* utilities */
 
@@ -225,7 +206,11 @@ Dase.initLogoff = function() {
 Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
 	if (nameElem) {
-		nameElem.innerHTML = '<a href="user/'+eid+'">'+Dase.user.name+'</a>';
+	/*	nameElem.innerHTML = Dase.user.name;
+		*/
+		nameElem.innerHTML = eid;
+		var settingsElem = Dase.$('settings-link');
+		settingsElem.href = 'user/'+eid+'/settings';
 		var eidElem = Dase.$('eid');
 		eidElem.innerHTML = eid;
 	}
@@ -257,10 +242,12 @@ Dase.placeItemEditLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');
+	var controls = Dase.$('adminPageControls');
 	if (!edit_link || ('' == edit_link.href)) return;
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
-		Dase.removeClass(edit_link,'hide');
+		Dase.removeClass(controls,'hide');
+		Dase.initEditLink(edit_link);
 	}
 	return;
 }
@@ -273,7 +260,7 @@ Dase.placeCollectionAdminLink = function(eid) {
 		var li = document.createElement('li');
 		li.id = 'admin-menu';
 		var a = document.createElement('a');
-		a.setAttribute('href','cb/'+eid+'/'+auth_info.collection_ascii_id);
+		a.setAttribute('href','admin/'+auth_info.collection_ascii_id);
 		a.className = "main";
 		a.appendChild(document.createTextNode(auth_info.collection_name+' Admin'));
 		li.appendChild(a);
@@ -638,10 +625,14 @@ Dase.placeUserTags = function(eid) {
 	var json = Dase.user.tags;
 	var tags={};
 	var sets = {};
+	//this creates the select menu for tags the user can copy to
 	var saveChecked = "<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>";
 	saveChecked += "<option value=''>save checked items to...</option>";
 	tags.allTags = Dase.$('allTags');
 	for (var type in json) {
+		if ('user_collection' == type) {
+			sets[type] = "<li><a href='new' id='createUserCollection' class='edit'>create new collection</a></li>\n";
+		}
 		var jsonType = json[type];
 		for (var ascii in jsonType) {
 			var jsonAscii = jsonType[ascii];
@@ -689,6 +680,27 @@ Dase.placeUserTags = function(eid) {
 		} catch(e) {
 			//	alert('a friendly notice: ' +e);
 		}
+	}
+	Dase.initCreateNewUserCollection();
+};
+
+Dase.initCreateNewUserCollection = function() {
+	var createUserCollectionLink = Dase.$('createUserCollection');
+	if (createUserCollectionLink) {
+		createUserCollectionLink.onclick = function() {
+			var tag = {};
+			tag.tag_name = prompt("Enter name of collection","");
+			HTTP.post(Dase.base_href + 'tags',tag,
+					function(resp) { 
+					Dase.initUser(); 
+					Dase.initSaveTo();
+					alert(resp);
+					},
+					function(code,resp) {
+					alert(resp);
+					});
+			return false;
+		};
 	}
 };
 
@@ -1176,6 +1188,95 @@ Dase.getNotes = function() {
 			});
 };
 
+Dase.initEditLink = function(el) {
+	var metadata = Dase.$('metadata');
+	var form_div = Dase.$('metadata_form_div');
+	if (!metadata) return;
+	if (!form_div) return;
+	el.onclick = function() {
+		Dase.toggle(metadata);
+		Dase.toggle(form_div);
+		Dase.getJSON(el.href,function(json) {
+				//build form and insert it into page
+				form_div.innerHTML = Dase.buildForm(json,el.href);
+				});
+		return false;
+	}
+};
+
+Dase.buildForm = function(json,href) {
+	var html_form = '<form id="metadata_form" method="post" action="'+href+'">';
+	html_form += '<p><input type="submit" value="save changes"></p>';
+	for (var i=0;i<json.length;i++) {
+		html_form += '<label for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
+		/*html_form += '<label for="'+json[i].att_ascii_id+'">'+json[i].html_input_type+'</label>';*/
+		html_form += '<p>'+Dase.getFormElement(json[i])+'</p>';
+	}
+	html_form += '<p><input type="submit" value="save changes"></p>';
+	html_form += "</form>";
+	return html_form;
+};
+
+Dase.getFormElement = function(set) {
+	var element_html = '';
+	var type = set.html_input_type;
+	var name = set.att_ascii_id;
+	var value = set.value_text;
+	var values = set.values;
+	if (value.length > 50) {
+		type = 'textarea';
+	}
+	//NOTE: on form submit, use jquery serialize!
+	switch (type) {
+	case 'radio':
+		break;
+	case 'checkbox':
+		break;
+	case 'select':
+		break;
+	case 'text': 
+		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		break;
+	case 'textarea': 
+		element_html += '<textarea name="'+name+'" rows="5">'+value+'"</textarea>';
+		break;
+	case 'no_edit': 
+		element_html += value;
+		break;
+	case 'listbox': 
+		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		break;
+	case 'text_with_menu':
+		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		break;
+	default:
+		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+	}
+	return element_html;
+};
+
+Dase.initAttributeEdit = function() {
+	var table = Dase.$('attributesTable');
+	if (!table) return;
+	var links = table.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		var classes = links[i].className.split(" ");
+		if (classes && classes[1] && 'attribute' == classes[0]) {
+			links[i].onclick = function() {
+				var att_ascii = this.className.split(" ")[1];
+				var editRow = Dase.$('editRow-'+att_ascii);
+				Dase.getJSON(this.href,function(json) {
+						//build form and insert it into page
+						//editRow.innerHTML = Dase.buildForm(json,el.href);
+						editRow.innerHTML = '<td colspan="0"><h1>'+json.attribute_name+'</h1></td>';
+						});
+				Dase.toggle(editRow);
+				return false;
+			};
+		}
+	}
+};
+
 Dase.addLoadEvent(function() {
 		Dase.setCollectionAtts();
 		Dase.initUser();
@@ -1187,6 +1288,7 @@ Dase.addLoadEvent(function() {
 		Dase.initRemoveItems();
 		Dase.initLogoff();
 		Dase.initContentNotes();
+		Dase.initAttributeEdit();
 		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

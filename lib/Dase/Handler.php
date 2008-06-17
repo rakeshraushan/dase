@@ -33,6 +33,7 @@ class Dase_Handler {
 				$method = $this->determineMethod($resource,$request);
 				Dase_Log::all("try method $method");
 				if (method_exists($this,$method)) {
+					$request->resource = $resource;
 					$this->setup($request);
 					$this->{$method}($request);
 				} else {

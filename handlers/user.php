@@ -4,6 +4,7 @@ class UserHandler extends Dase_Handler
 {
 	public $resource_map = array(
 		'{eid}/data' => 'data',
+		'{eid}/settings' => 'settings',
 		'{eid}/cart' => 'cart',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
 	);
@@ -53,6 +54,10 @@ class UserHandler extends Dase_Handler
 		} else {
 			$request->renderResponse("add to cart failed");
 		}
+	}
+	public function getSettings($request)
+	{
+		$request->renderResponse("settings for ".$this->user->name);
 	}
 
 	public function deleteTagItem($request)

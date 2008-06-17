@@ -2,61 +2,86 @@
 
 class AdminHandler extends Dase_Handler
 {
+	public $collection;
 	public $resource_map = array(
-		'/' => 'xxxxxx'
+		'{collection_ascii_id}' => 'settings',
+		'{collection_ascii_id}/archive' => 'archive',
+		'{collection_ascii_id}/attributes' => 'attributes',
+		'{collection_ascii_id}/item_types' => 'item_types',
+		'{collection_ascii_id}/managers' => 'managers',
+		'{collection_ascii_id}/settings' => 'settings',
+		'{collection_ascii_id}/upload' => 'upload',
+		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 	);
 
 	protected function setup($request)
 	{
-	}
-
-	public function getAcl($request)
-	{
-		$acl = Dase_Admin::getAcl();
-		if (Dase_Filter::filterGet('as_php')) {
-			$request->renderResponse(var_export($acl,1),'text/plain');
-		} else {
-			$request->renderResponse(Dase_Json::get($acl),'application/json');
+		$this->user = $request->getUser();
+		if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'admin')) {
+			$request->renderError(401);
+		}
+		$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if (!$this->collection) {
+			$request->renderError(404);
 		}
 	}
 
-	public function getMediaSourceList($request)
+	public function getSettings($request)
 	{
-		$media_sources = Dase_DBO_Collection::getMediaSources();
-		if (Dase_Filter::filterGet('as_php')) {
-			$request->renderResponse(var_export($media_sources,1),'text/plain');
-		} else {
-			$request->renderResponse(Dase_Json::get($media_sources),'application/json');
-		}
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('collection',$this->collection);
+		$request->renderResponse($tpl->fetch('admin/settings.tpl'));
 	}
 
-	public function phpinfo($request)
+	public function getAttributes($request)
 	{
-		phpinfo();
-		exit;
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('attributes',$this->collection->getAttributes());
+		$request->renderResponse($tpl->fetch('admin/attributes.tpl'));
 	}
 
-	public function exec($request) {
-		if (chmod('/mnt/www-data/dase/media/early_american_history_collection/400',0775)) {
-			echo "done!";
-		} else {
-			echo "did not work";
-		}
+	public function getItemTypes($request)
+	{
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('item_types',$this->collection->getItemTypes());
+		$request->renderResponse($tpl->fetch('admin/item_types.tpl'));
 	}
 
-	public function testMimeParser($request) {
-		$supported = array(
-			'text/html',
-			'application/xhtml+xml',
-			'application/atom+xml',
-			'application/json',
-			'application/atomsvc+xml',
-			'application/xml'
-		);
-
-		$header = $_SERVER['HTTP_ACCEPT'];
-		$mp = new Mimeparse;
-		print $mp->best_match($supported,$header);
+	public function getManagers($request)
+	{
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('managers',$this->collection->getManagers());
+		$request->renderResponse($tpl->fetch('admin/managers.tpl'));
 	}
+
+	public function getUpload($request)
+	{
+		$tpl = new Dase_Template($request);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('collection',$this->collection);
+		$request->renderResponse($tpl->fetch('admin/upload_form.tpl'));
+	}
+
+	public function getArchive($request) 
+	{
+		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
+		file_put_contents($archive,$this->collection->asAtomArchive());
+		$request->serveFile($archive,'text/plain',true);
+	}
+
+	public function rebuildIndexes($request) 
+	{
+		$c = Dase_Collection::get($request->get('collection_ascii_id'));
+		$c->buildSearchIndex();
+		$request->renderRedirect('',"rebuilt indexes for $c->collection_name");
+	}
+
 }
 

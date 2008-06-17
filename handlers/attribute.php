@@ -28,5 +28,13 @@ class AttributeHandler extends Dase_Handler
 		}
 		$request->renderResponse($feed->asXml());
 	}
+
+	public function getAttributeJson($request) 
+	{
+		$att = new Dase_DBO_Attribute;
+		$att->ascii_id = $request->get('att_ascii_id');
+		$att->findOne();
+		$request->renderResponse($att->asJson());
+	}
 }
 

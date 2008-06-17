@@ -15,6 +15,7 @@ define('DASE_LOG_INFO',1);
 define('DASE_LOG_DEBUG',2);
 define('DASE_LOG_ALL',3);
 
+define("LOG_LEVEL",DASE_LOG_DEBUG);
 ini_set('include_path',ini_get('include_path').':'. DASE_PATH .'/lib:'); 
 
 function __autoload($class_name) {

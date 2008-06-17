@@ -12,12 +12,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public $item_type_ascii = '';
 	public $item_type_label = '';
 	public $media;
-	public $status = '';
 	public $thumbnail;
 	public $thumbnail_url = '';
 	public $values = array();
 	public $viewitem;
 	public $viewitem_url = '';
+
+	const STATUS_PUBLIC = 'public';
+	const STATUS_DRAFT = 'draft';
+	const STATUS_DELETE = 'delete';
+	const STATUS_ARCHIVE = 'archive';
 
 	public static function create($collection_ascii_id,$serial_number= null)
 	{
@@ -150,6 +154,37 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
+	public function getEditJson()
+	{
+		$metadata = array();
+		$bound_params = array();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT a.id as att_id,a.ascii_id,a.attribute_name,a.html_input_type,v.value_text
+			FROM attribute a, value v
+			WHERE v.item_id = ?
+			AND v.attribute_id = a.id
+			ORDER BY a.sort_order,v.value_text
+			";
+		$bound_params[] = $this->id;
+		$st = $db->prepare($sql);
+		$st->execute($bound_params);
+		while ($row = $st->fetch()) {
+			$set = array();
+			if (in_array($row['html_input_type'],array('radio','checkbox','select','text_with_menu'))) {
+				$att = new Dase_DBO_Attribute;
+				$att->load($row['att_id']);
+				$set['values'] = $att->getFormValues($row['html_input_type']);
+			}
+			$set['att_ascii_id'] = $row['ascii_id'];
+			$set['attribute_name'] = $row['attribute_name'];
+			$set['html_input_type'] = $row['html_input_type'];
+			$set['value_text'] = $row['value_text'];
+			$metadata[] = $set;
+		}
+		return Dase_Json::get($metadata);
+	}
+
 	public function getChildren()
 	{
 
@@ -235,11 +270,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getItemStatus()
 	{
 		$status = new Dase_DBO_ItemStatus;
-		$status->item_id = $this->id;
-		if ($status->findOne()) {
-			$this->item_status = $status->status;
-		}
-		return $this->item_status;
+		$status->load($this->status_id);
+		return $status->status;
 	}
 
 	public function getMedia()
@@ -289,6 +321,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function setValue($att_ascii_id,$value_text)
 	{
+		$this->collection || $this->getCollection();
 		$att = new Dase_DBO_Attribute;
 		$att->ascii_id = $att_ascii_id;
 		//allows for admin metadata, att_ascii for which
@@ -301,6 +334,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = $value_text;
+			$v->p_attribute_ascii_id = $att->ascii_id;
+			$v->p_collection_ascii_id = $this->collection->ascii_id;
+			$v->p_serial_number = $this->serial_number;
 			return($v->insert());
 		} else {
 			return false;
@@ -556,7 +592,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $app->asXml();
 	}
 
-	public function asJson()
+	public function asArray()
 	{
 		$j = array();
 		$this->collection || $this->getCollection();
@@ -582,8 +618,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getMetadata() as $row) {
 			$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
 		}
-		$json = new Services_JSON;
-		return $json->encode($item_array,true);
+		return $item_array;
+	}
+
+	public function asJson()
+	{
+		return Dase_Json::get($this->asArray(),true);
 	}
 
 	public function getContents()

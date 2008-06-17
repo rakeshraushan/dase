@@ -4,60 +4,55 @@ class ItemHandler extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
+		'{collection_ascii_id}/{serial_number}/edit' => 'edit',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
 	);
 
 	protected function setup($request)
 	{
+		$this->user = $request->getUser();
+		if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'read')) {
+			$request->renderError(401);
+		}
+		$this->item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		if (!$this->item) {
+			$request->renderError(404);
+		}
 	}	
 
 	public function getItemAtom($request)
 	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		if ($item) {
-			$request->renderResponse($item->asAtom());
-		}
-		$request->renderError(404);
+		$request->renderResponse($this->item->asAtom());
 	}
 
 	public function asJson($request)
 	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		if ($item) {
-			$request->renderResponse($item->asJson(),'text/plain');
-		}
-		$request->renderError(404);
+		$request->renderResponse($this->item->asJson(),'text/plain');
 	}
 
 	public function getItem($request)
 	{
-		//see if it exists
-		if (Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'))) {
-			$t = new Dase_Template($request);
-			$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/item/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number').'.atom');
-			$t->assign('item',$feed);
-			$request->renderResponse($t->fetch('item/transform.tpl'));
-		} else {
-			$request->renderError(404);
-		}
+		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
+		$t = new Dase_Template($request);
+		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/item/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number').'.atom');
+		$t->assign('item',$feed);
+		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
 
-	public function editForm($request)
+	public function getEditJson($request)
 	{
-		//create this
+		$request->renderResponse($this->item->getEditJson());
 	}
 
 	public function deleteNote($request)
 	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		$user = $request->getUser();
 		$note = new Dase_DBO_Content;
 		$note->load($request->get('note_id'));
-		if ($user->eid == $note->updated_by_eid) {
+		if ($this->user->eid == $note->updated_by_eid) {
 			$note->delete();
 		}
-		$item->buildSearchIndex();
+		$this->item->buildSearchIndex();
 		$request->renderResponse('deleted note '.$note->id);
 	}
 
@@ -69,17 +64,14 @@ class ItemHandler extends Dase_Handler
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		$user = $request->getUser();
-		$item->addContent($bits,$user->eid);
-		$item->buildSearchIndex();
+		$this->item->addContent($bits,$this->user->eid);
+		$this->item->buildSearchIndex();
 		$request->renderResponse('added content: '.$bits);
 	}
 
 	public function getNotesJson($request)
 	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		$request->renderResponse($item->getContentsJson());
+		$request->renderResponse($this->item->getContentsJson());
 	}
 }
 

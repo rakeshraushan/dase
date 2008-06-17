@@ -12,7 +12,8 @@ html #maincontent {
 #header {
 	background-image:url(../images/daseBanner.jpg);
 	height:70px;
-	margin-top:-1px;
+/*	margin-top:-1px;*/
+	margin-top:-4px;
 	padding:0 12px;
 }
 
@@ -203,6 +204,8 @@ div#valColumn.empty {
 }
 
 /*****  ITEM DISPLAY PAGE **************/
+table#item {
+}
 
 table#item td {
 	vertical-align: top;
@@ -237,13 +240,33 @@ table#item td.metadata a.toggle {
 }
 
 table#item td.metadata textarea {
-	font-size: 1.4em;
+/*	font-size: 1.4em;*/
+	width: 90%;
 	padding: 3px;
 }
 
 table#item td.metadata ul#notes {
 	line-height: 1.8em;
 	margin: 1em 0;
+}
+
+div#itemLinks {
+	margin: 2em 0;
+}
+
+div#itemLinks a {
+}
+
+div#adminPageControls {
+	text-align: right;
+	margin-top: -10px;
+	margin-right: 10px;
+	min-height: 18px;
+}
+
+#metadata_form label {
+	color:#339;
+	font-weight:bold;
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/
@@ -347,6 +370,11 @@ form#loginForm input[type=submit] {
 
 /************ MISCELLANEOUS STYLES ***************/
 
+span#userName {
+	color: #333;
+	font-weight: bold;
+}
+
 div.login {
 	font-size: .9em;
 	float:right;
@@ -385,4 +413,9 @@ span.nolink {
 span.numberInSet {
 	color: #666;
 	font-size: .9em; 
+}
+
+#ajaxMsg {
+	padding: 1em 2em;
+	color: #966;
 }
