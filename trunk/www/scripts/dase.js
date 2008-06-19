@@ -1291,9 +1291,7 @@ Function.prototype.bind = function() {
     }
 }
 
-Dase.util = function() {
-    return {};
-}();
+Dase.util = {};
 
 Dase.util.zip = function() {
     var d = {};
@@ -1305,9 +1303,7 @@ Dase.util.zip = function() {
     return d;
 }
 
-Dase.widget = function() {
-    return {};
-}();
+Dase.widget = {};
 
 Dase.addLoadEvent(function() {
 		Dase.setCollectionAtts();
