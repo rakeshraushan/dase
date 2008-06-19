@@ -1277,6 +1277,38 @@ Dase.initAttributeEdit = function() {
 	}
 };
 
+
+// todo: reorganize these additions once it's clear it's not breaking things.
+
+Function.prototype.bind = function() {
+    // http://developer.mozilla.org/en/docs/
+    // Core_JavaScript_1.5_Reference:Functions:arguments
+    var _$A = function(a){return Array.prototype.slice.call(a);}
+    if(arguments.length < 2 && (typeof arguments[0] == "undefined")) return this;
+    var __method = this, args = _$A(arguments), object = args.shift();
+    return function() {
+        return __method.apply(object, args.concat(_$A(arguments)));
+    }
+}
+
+Dase.util = function() {
+    return {};
+}();
+
+Dase.util.zip = function() {
+    var d = {};
+    if(arguments.lenth < 2) return d;
+    var arr = arguments[0];
+    for(var a = 0; a <= arguments.length; a++) {
+        if(a > 0 && arr[a - 1]) d[arguments[a]] = arr[a-1];
+    }
+    return d;
+}
+
+Dase.widget = function() {
+    return {};
+}();
+
 Dase.addLoadEvent(function() {
 		Dase.setCollectionAtts();
 		Dase.initUser();
