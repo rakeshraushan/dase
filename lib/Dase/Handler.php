@@ -20,8 +20,8 @@ class Dase_Handler {
 				}
 			}
 
-			Dase_Log::all("$request->path | $uri_regex");
-			//second, see if it matches the request uri (a.k.a. path)
+			Dase_Log::all(" (regex) $uri_regex | (path) $request->path [resource: $resource]");
+			//second, see if uri_regex matches the request uri (a.k.a. path)
 			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
 				Dase_Log::all("matched resource $resource");
 				//create parameters based on uri template and request matches
@@ -37,11 +37,11 @@ class Dase_Handler {
 					$this->setup($request);
 					$this->{$method}($request);
 				} else {
-					$request->renderError(404);
+					$request->renderError(404,'no handler method');
 				}
 			}
 		}
-		$request->renderError(404);
+		$request->renderError(404,'no such resource');
 	}
 
 	protected function determineMethod($resource,$request)

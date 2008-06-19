@@ -33,8 +33,8 @@ class Documenter extends ReflectionClass
 		$method = 'get'.ucfirst($var);
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
-		} else {
-			return parent::__get($var);
+		//} else {
+		//	return parent::__get($var);
 		}
 	}
 

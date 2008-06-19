@@ -68,13 +68,17 @@ class ManageHandler extends Dase_Handler
 
 	public function getDocs($request)
 	{
+		// note: doc comments are only displayed
+		// on first web view after a file is updated,
+		// indicating that a bytecode cache is removing comments
+
 		$tpl = new Dase_Template($request);
 		$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DASE_PATH.'/lib'));
 		foreach ($dir as $file) {
 			$matches = array();
 			if ( 
-				//omit a couple big 3rd party libs
 				false === strpos($file->getPathname(),'smarty') &&
+				false === strpos($file->getPathname(),'Smarty') &&
 				false === strpos($file->getPathname(),'getid3') &&
 				$file->isFile()
 			) {
@@ -88,68 +92,20 @@ class ManageHandler extends Dase_Handler
 		}
 		$arr = get_declared_classes();
 		natcasesort($arr);
+		//include only
 		$filter = create_function('$filename', 'return preg_match("/(dase|mimeparse|service|utlookup)/i",$filename);');
 		$class_list = array_filter($arr,$filter);
+		//except
+		$filter = create_function('$filename', 'return !preg_match("/autogen/i",$filename);');
+		$class_list = array_filter($class_list,$filter);
 		$tpl->assign('class_list',$class_list);
-		$tpl->assign('phpversion',phpversion()); 
-		$documenter = new Documenter($class_list[$request->get('id')]);
-		$tpl->assign('default_properties',$documenter->getDefaultProperties());
-		$tpl->assign('doc',$documenter);
+		if ($request->has('id')) {
+			$tpl->assign('phpversion',phpversion()); 
+			$documenter = new Documenter($class_list[$request->get('id')]);
+			$tpl->assign('default_properties',$documenter->getDefaultProperties());
+			$tpl->assign('doc',$documenter);
+		}
 		$request->renderResponse($tpl->fetch('manage/docs.tpl'));
-
-				/*
-				$classname = '';
-				if ($request->has('class')) {
-					$classname = $request->get('class');
-					$class = new Documenter($classname);
-					echo "<h2>Name: ". $class->getName() . "</h2>\n";
-					if(function_exists('date_default_timezone_set')){
-						date_default_timezone_set("Canada/Eastern");
-					}
-					$today = date("M-d-Y");
-					echo "<p> Date: $today<br />";
-					echo "PHP version: ". phpversion() . "<br />";
-					echo "Type: ". $class->getClassType() . "<br /><br />\n";
-					echo "<span class=\"fulldescription\">". $class->getFullDescription().
-						"</span><br /><br />\n";
-					echo "<span class=\"comment\">";
-					echo $class->getDocComment() . "</span></p>\n";
-					$arr = $class->getPublicMethods();
-					if (count ($arr) > 0){
-						show_methods($class, "Public Methods", $arr);
-					}
-					$arr = $class->getProtectedMethods();
-					if (count($arr) > 0){
-						show_methods($class, "Protected Methods", $arr);
-					}
-					$arr = $class->getPrivateMethods();
-					if (count($arr) > 0){
-						show_methods($class, "Private Methods", $arr);
-					}
-					//now do data members
-					$arr = $class->getPublicDataMembers();
-					if (count($arr) > 0){
-						show_data_members($class, "Public Data Members", $arr);
-					}
-					$arr = $class->getProtectedDataMembers();
-					if (count($arr) > 0){
-						show_data_members($class, "Protected Data Members", $arr);
-					}
-					$arr = $class->getPrivateDataMembers();
-					if (count($arr) > 0){
-						show_data_members($class, "Private Data Members", $arr);
-					}
-					$arr = $class->getConstants();
-					if (count($arr) > 0){
-						echo "<h3>Constants</h3>\n";
-						foreach ($arr as $key => $value){
-							echo "<p><span class=\"keyword\">const</span> ".
-								"<span class=\"name\">$key</span> = $value <br /></p>\n";
-						}
-					}
-			}
-				 */
-			exit;
 		}
 	}
 

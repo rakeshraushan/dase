@@ -18,6 +18,11 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	const INPUT_NOEDIT = 'no_edit';
 	const INPUT_DYNAMIC = 'text_with_menu';
 
+	public function getHttpPassword($eid)
+	{
+		return substr(md5(Dase::getConfig('token').$eid.$this->getCollection()->ascii_id),0,8);
+	}
+
 	function getValueCount()
 	{
 		if (!$this->id) {
@@ -158,6 +163,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	public function getCollection()
 	{
+		//avoids another db lookup
+		if ($this->collection) {
+			return $this->collection;
+		}
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
@@ -205,20 +214,16 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public static function getId($ascii_id)
-	{
-		$db = Dase_DB::get();
-		$sth = $db->prepare("SELECT id from attribute WHERE ascii_id = ?");
-		$sth->execute(array($ascii_id));
-		return $sth->fetchColumn();
-	}
-
-	public function asJson() {
+	public function asArray() {
 		$att_array = array();
 		foreach ($this as $k => $v) {
 			$att_array[$k] = $v;
 		}
-		return Dase_Json::get($att_array);
+		return $att_array;
+	}
+
+	public function asJson() {
+		return Dase_Json::get($this->asArray());
 	}
 
 	public function fixBools()

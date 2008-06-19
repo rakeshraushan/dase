@@ -24,8 +24,8 @@
 			</ul>
 		</div>
 		<div id="content">
-			{assign var=defaults value=$doc->defaultproperties}
 			<div id="classInfo">
+			{if $doc}
 				<h1>{$doc->name}</h1>
 				<p>
 				<h3>Date: {$smarty.now|date_format}</h3>
@@ -36,8 +36,11 @@
 				<h2>Public Methods</h2>
 				<ul>
 					{foreach key=meth item=method_info from=$doc->publicMethods}
-					<li><span class="mods">{$doc|modifiers:$method_info}</span> 
-					{$meth} 
+					<li>
+					{assign var=decl value=$method_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$method_info}</span> 
+					<span class="method">{$meth}</span> 
 					(
 					{foreach item=param name=param_set from=$method_info->getParameters()}
 					{$param|params}
@@ -47,14 +50,21 @@
 					{/if}
 					{/foreach}
 					)
+					{assign var=comment value=$method_info->getDocComment()}
+					{if $comment}
+					<p class="comment">{$comment}</p>
+					{/if}
 					</li>
 					{/foreach}
 				</ul>
 				<h2>Protected Methods</h2>
 				<ul>
 					{foreach key=meth item=method_info from=$doc->protectedMethods}
-					<li><span class="mods">{$doc|modifiers:$method_info}</span> 
-					{$meth} 
+					<li>
+					{assign var=decl value=$method_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$method_info}</span> 
+					<span class="method">{$meth}</span> 
 					(
 					{foreach item=param name=param_set from=$method_info->getParameters()}
 					{$param|params}
@@ -64,14 +74,21 @@
 					{/if}
 					{/foreach}
 					)
+					{assign var=comment value=$method_info->getDocComment()}
+					{if $comment}
+					<p class="comment">{$comment}</p>
+					{/if}
 					</li>
 					{/foreach}
 				</ul>
 				<h2>Private Methods</h2>
 				<ul>
 					{foreach key=meth item=method_info from=$doc->privateMethods}
-					<li><span class="mods">{$doc|modifiers:$method_info}</span> 
-					{$meth} 
+					<li>
+					{assign var=decl value=$method_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$method_info}</span> 
+					<span class="method">{$meth}</span> 
 					(
 					{foreach item=param name=param_set from=$method_info->getParameters()}
 					{$param|params}
@@ -81,17 +98,24 @@
 					{/if}
 					{/foreach}
 					)
+					{assign var=comment value=$method_info->getDocComment()}
+					{if $comment}
+					<p class="comment">{$comment}</p>
+					{/if}
 					</li>
 					{/foreach}
 				</ul>
 				<h2>Public Members</h2>
 				<ul>
 					{foreach key=mem item=mem_info from=$doc->publicDataMembers}
-					<li><span class="mods">{$doc|modifiers:$mem_info}</span> 
+					<li>
+					{assign var=decl value=$mem_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$mem_info}</span> 
 					{if $default_properties.$mem|@is_array}
 					{$mem} = array(); 
 					{else}
-					{$mem} = {$default_properties.$mem}; 
+					{$mem}; 
 					{/if}
 					</li>
 					{/foreach}
@@ -99,11 +123,14 @@
 				<h2>Protected Members</h2>
 				<ul>
 					{foreach key=mem item=mem_info from=$doc->protectedDataMembers}
-					<li><span class="mods">{$doc|modifiers:$mem_info}</span> 
+					<li>
+					{assign var=decl value=$mem_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$mem_info}</span> 
 					{if $default_properties.$mem|@is_array}
 					{$mem} = array(); 
 					{else}
-					{$mem} = {$default_properties.$mem}; 
+					{$mem}; 
 					{/if}
 					</li>
 					{/foreach}
@@ -111,11 +138,14 @@
 				<h2>Private Members</h2>
 				<ul>
 					{foreach key=mem item=mem_info from=$doc->privateDataMembers}
-					<li><span class="mods">{$doc|modifiers:$mem_info}</span> 
+					<li>
+					{assign var=decl value=$mem_info->getDeclaringClass()}
+					<span class="declaring">[{$decl->getName()}]</span>
+					<span class="mods">{$doc|modifiers:$mem_info}</span> 
 					{if $default_properties.$mem|@is_array}
 					{$mem} = array(); 
 					{else}
-					{$mem} = {$default_properties.$mem}; 
+					{$mem}; 
 					{/if}
 					</li>
 					{/foreach}
@@ -128,6 +158,9 @@
 					</li>
 					{/foreach}
 				</ul>
+			{else}
+			<h1>select a class from the sidebar</h1>
+			{/if}
 			</div>
 		</div>
 

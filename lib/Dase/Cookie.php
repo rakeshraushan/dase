@@ -46,6 +46,7 @@ class Dase_Cookie {
 		setcookie($pre . self::$auth_cookiename,$key,0,'/');
 	}
 
+	/** simply checks the cookie */
 	public static function getEid() 
 	{
 		$pre = Dase_Cookie::getPrefix();

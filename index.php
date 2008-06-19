@@ -23,4 +23,5 @@ define('DASE_PATH', dirname(__FILE__));
 include 'inc/bootstrap.php';
 
 Dase_Timer::start();
+Dase_Log::start();
 Dase::run();

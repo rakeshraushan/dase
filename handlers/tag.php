@@ -25,7 +25,10 @@ class TagHandler extends Dase_Handler
 		} else {
 			$request->renderError(404);
 		}
-		//todo: authorize access to tag!!!!!
+		$this->user = $request->getUser();
+		if (!$this->user->can('read','tag',$this->tag)) {
+			$request->renderError(401);
+		}
 	}	
 
 	public function getTagAtom($request)
@@ -41,7 +44,7 @@ class TagHandler extends Dase_Handler
 	{
 		$u = $request->getUser();
 		$t = new Dase_Template($request);
-		//cannot use eid/ascii since it'll sometimes be anotehr user's tag
+		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$t->assign('json_url',APP_ROOT.'/tag/'.$this->tag->id.'.json');
 		$t->assign('eid',$u->eid);
 		$t->assign('http_pw',$this->tag->getHttpPassword($u->eid));

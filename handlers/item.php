@@ -4,20 +4,20 @@ class ItemHandler extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
-		'{collection_ascii_id}/{serial_number}/edit' => 'edit',
+		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
 	);
 
 	protected function setup($request)
 	{
-		$this->user = $request->getUser();
-		if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'read')) {
-			$request->renderError(401);
-		}
 		$this->item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if (!$this->item) {
 			$request->renderError(404);
+		}
+		$this->user = $request->getUser();
+		if (!$this->user->can('read','item',$this->item)) {
+			$request->renderError(401);
 		}
 	}	
 
@@ -40,9 +40,9 @@ class ItemHandler extends Dase_Handler
 		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
 
-	public function getEditJson($request)
+	public function getEditFormJson($request)
 	{
-		$request->renderResponse($this->item->getEditJson());
+		$request->renderResponse($this->item->getEditFormJson());
 	}
 
 	public function deleteNote($request)
@@ -58,6 +58,7 @@ class ItemHandler extends Dase_Handler
 
 	public function postToNotes($request)
 	{
+		//auth: anyone can post to an item they can read
 		$fp = fopen("php://input", "rb");
 		$bits = NULL;
 		while(!feof($fp)) {

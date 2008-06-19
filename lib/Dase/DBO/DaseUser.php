@@ -144,18 +144,27 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	}
 
 
-	function checkCollectionAuth($collection_ascii_id,$auth_level)
+	function checkAttributeAuth($attribute,$auth_level)
 	{
-		$coll = Dase_DBO_Collection::get($collection_ascii_id);
-		if (!$coll) {
+		return $this->checkCollectionAuth($attribute->getCollection(),$auth_level);
+	}
+
+	function checkItemAuth($item,$auth_level)
+	{
+		return $this->checkCollectionAuth($item->getCollection(),$auth_level);
+	}
+
+	function checkCollectionAuth($collection,$auth_level)
+	{
+		if (!$collection) {
 			return false;
 		}
-		if ('read' == $auth_level && $coll->is_public) {
+		if ('read' == $auth_level && $collection->is_public) {
 			return true;
 		}
 		$cm = new Dase_DBO_CollectionManager; 
-		$cm->collection_ascii_id = $collection_ascii_id;
-		//need to account for case here!!!!!!!!!!!!!!!!!
+		$cm->collection_ascii_id = $collection->ascii_id;
+		//todo: need to account for case here!
 		//needs to be case-insensitive
 		$cm->dase_user_eid = $this->eid;
 		$cm->findOne();
@@ -189,14 +198,20 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}	
 	}
 
-	function can($auth_level,$entity)
+	function can($auth_level,$entity_type,$entity)
 	{
-		$class = get_class($entity);
-		if ('Dase_DBO_Tag' == $class) {
+		switch ($entity_type) {
+		case 'attribute':
+			return $this->checkAttributeAuth($entity,$auth_level);
+		case 'collection':
+			return $this->checkCollectionAuth($entity,$auth_level);
+		case 'item':
+			return $this->checkItemAuth($entity,$auth_level);
+		case 'tag':
 			return $this->checkTagAuth($entity,$auth_level);
-		}
-		if ('Dase_DBO_Collection' == $class) {
-			return $this->checkCollectionAuth($entity->ascii_id,$auth_level);
+		default:
+			return false;
 		}
 	}
+
 }

@@ -20,8 +20,8 @@
 
 class Dase_Log 
 {
-    private static $logfile = DASE_LOG;
-    private static $log_level = LOG_LEVEL;
+	private static $logfile = DASE_LOG;
+	private static $log_level = LOG_LEVEL;
 
 	private static function write($msg,$backtrace)
 	{
@@ -38,6 +38,13 @@ class Dase_Log
 			ob_end_clean();
 			file_put_contents(self::$logfile,$trace,FILE_APPEND);
 		}
+	}
+
+	/** this is simply to make sure the class is loaded,
+		since it is not properly loaded when called from a destructor
+	 */
+	public static function start()
+	{
 	}
 
 	public static function debug($msg,$backtrace = false)

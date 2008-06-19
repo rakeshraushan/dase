@@ -5,18 +5,10 @@ require_once 'Dase/DBO/Autogen/Item.php';
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
-	public $collection_ascii_id = '';
-	public $collection_name = '';
 	public $collection = null;
 	public $item_type;
-	public $item_type_ascii = '';
-	public $item_type_label = '';
-	public $media;
-	public $thumbnail;
-	public $thumbnail_url = '';
+	public $media = array();
 	public $values = array();
-	public $viewitem;
-	public $viewitem_url = '';
 
 	const STATUS_PUBLIC = 'public';
 	const STATUS_DRAFT = 'draft';
@@ -39,6 +31,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item->collection_id = $c->id;
 		$item->serial_number = $serial_number;
 		return $item->findOne();
+	}
+
+	public function getHttpPassword($eid)
+	{
+		return substr(md5(Dase::getConfig('token').$eid.$this->getCollection()->ascii_id),0,8);
 	}
 
 	public function deleteSearchIndexes()
@@ -154,7 +151,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getEditJson()
+	public function getEditFormJson()
 	{
 		$metadata = array();
 		$bound_params = array();
@@ -203,75 +200,36 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	}
 
-	public function getAttVal($att_ascii_id)
+	public function getValues()
 	{
-		//NOTE: repeat attributes will only get ONE value!!!!
-		$values = array();
-		$this->collection || $this->getCollection();
 		$val = new Dase_DBO_Value;
 		$val->item_id = $this->id;
-		$val->attribute_id = Dase_DBO_Attribute::get($this->collection->ascii_id,$att_ascii_id)->id;
-		$val->findOne();
-		return $val->value_text;
+		return $val->find();
 	}
 
 	public function getCollection()
 	{
+		//avoids another db lookup
+		if ($this->collection) {
+			return $this->collection;
+		}
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
-		$this->collection_ascii_id = $c->ascii_id;
-		$this->collection_name = $c->collection_name;
-		//$this->coll = substr($c->ascii_idi,0,-11);
 		return $c;
-	}
-
-	public function getThumbnail()
-	{
-		$this->collection || $this->getCollection();
-		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
-		$m->size = 'thumbnail';
-		$this->thumbnail = $m->findOne();
-		if ($this->thumbnail) {
-			$this->thumbnail_url = APP_ROOT . "/media/{$this->collection->ascii_id}/thumbnail/$m->filename";
-			return $this->thumbnail;
-		}
-	}
-
-	public function getViewitem()
-	{
-		$this->collection || $this->getCollection();
-		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
-		$m->size = 'viewitem';
-		$this->viewitem = $m->findOne();
-		if ($this->viewitem) {
-			$this->viewitem_url = APP_ROOT . "/media/{$this->collection->ascii_id}/viewitem/$m->filename";
-			return $this->viewitem;
-		}
 	}
 
 	public function getItemType()
 	{
-		$type = new Dase_DBO_ItemType;
+		$item_type = new Dase_DBO_ItemType;
 		if ($this->item_type_id) {
-			$type->load($this->item_type_id);
-			$this->item_type = $type->findOne();
-			if ($this->item_type) {
-				$this->item_type_ascii = $type->ascii_id;
-				$this->item_type_label = $type->name;
-				return $this->item_type;
-			} 
+			$item_type->load($this->item_type_id);
+		} else {
+			$item_type->label = 'default';
+			$item_type->ascii_id = 'default';
 		}
-		return false;
-	}
-
-	public function getItemStatus()
-	{
-		$status = new Dase_DBO_ItemStatus;
-		$status->load($this->status_id);
-		return $status->status;
+		$this->item_type = $item_type;
+		return $this->item_type;
 	}
 
 	public function getMedia()
@@ -289,7 +247,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m = new Dase_DBO_MediaFile;
 		$m->item_id = $this->id;
 		$m->size = $size;
-		$this->media = $m->findOne();
+		$m->findOne();
 		$url = APP_ROOT . "/media/{$this->collection->ascii_id}/$size/$m->filename";
 		return $url;
 	}
@@ -441,10 +399,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setEdited($updated);
 		$entry->setSummary('');
 		$entry->setId($this->getBaseUrl());
-		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		if ($this->item_type) {
-			$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
-		}
+		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
+		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->label);
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 		$entry->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit' );
 		return $entry;
@@ -470,21 +426,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setUpdated($updated);
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
-		$entry->addCategory($this->collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		if (!$this->item_type) {
-			$this->item_type_ascii = 'default';
-			$this->item_type_label = 'default';
-		}
-		$entry->addCategory($this->item_type_ascii,'http://daseproject.org/category/item_type',$this->item_type_label);
+		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
+		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->label);
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
-		$this->thumbnail || $this->getThumbnail();
-		if ($this->thumbnail) {
-			$img = $div->addChild('img');
-			$img->addAttribute('src',$this->thumbnail_url);
-			$img->addAttribute('class','thumbnail');
-		}
+		$img = $div->addChild('img');
+		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
+		$img->addAttribute('class','thumbnail');
 		$div->addChild('p',htmlspecialchars($this->getDescription()));
 		$contents = $div->addChild('ul');
 		foreach ($this->getContents() as $cont) {

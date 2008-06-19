@@ -31,6 +31,7 @@
 		<style type="text/css">
 			ul#menu li.{$request->resource}-tab {literal}{{/literal}
 				background-color: #eef1f8;
+				background-color: #bbccdd;
 			{literal}{{/literal}
 		</style>
 

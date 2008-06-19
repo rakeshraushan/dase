@@ -1,6 +1,6 @@
 <?php
 
-class CollectionHandler extends Dase_Handler
+class Dase_Handler_Collection extends Dase_Handler
 {
 	public $collection;
 	public $resource_map = array(

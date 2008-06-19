@@ -91,24 +91,6 @@ class CollectionbuilderHandler extends Dase_Handler
 		$request->renderResponse($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
-	public function dataAsJson($request)
-	{
-		$coll = Dase_Collection::get($request);
-		if (isset($params['select'])) {
-			//attributes, settings, types, managers are possible values
-			$select = $params['select'];
-		} else {
-			$select = 'all';
-		}	
-		$cache = Dase_Cache::get($c->ascii_id . '_' . $select);
-		$data = $cache->getData(333);
-		if (!$data) {
-			$data = $coll->getJsonData();
-			$cache->setData($data);
-		}
-		$request->renderResponse($data);
-	}
-
 	public function setAttributeSortOrder($request)
 	{
 		$c = Dase_Collection::get($request);
