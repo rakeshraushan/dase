@@ -31,14 +31,19 @@ class Dase
 			$handler_file = DASE_PATH.'/modules/'.$request->module.'/handler.php';
 			$classname = ucfirst($request->module) . 'ModuleHandler';
 		} else {
-			include(DASE_PATH.'/handlers/'.$request->handler.'.php');
+			$handler_file = DASE_PATH.'/handlers/'.$request->handler.'.php';
 			$classname = ucfirst($request->handler).'Handler';
+		}
+		if (file_exists($handler_file)) {
+			include "$handler_file";
+		} else {
+			$request->renderError(404,"no such handler: $handler_file");
 		}
 		if (class_exists($classname,false)) {
 			$handler = new $classname;
 			$handler->dispatch($request);
 		} else {
-			$request->renderError(404);
+			$request->renderError(404,'no such handler class');
 		}
 	}
 

@@ -7,6 +7,7 @@ class UserHandler extends Dase_Handler
 		'{eid}/settings' => 'settings',
 		'{eid}/cart' => 'cart',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
+		'{eid}/collection/{collection_ascii_id}/auth/{auth_level}' => 'http_password',
 	);
 
 	protected function setup($request)
@@ -55,10 +56,6 @@ class UserHandler extends Dase_Handler
 			$request->renderResponse("add to cart failed");
 		}
 	}
-	public function getSettings($request)
-	{
-		$request->renderResponse("settings for ".$this->user->name);
-	}
 
 	public function deleteTagItem($request)
 	{
@@ -95,18 +92,16 @@ class UserHandler extends Dase_Handler
 		$request->renderResponse($t->fetch('item_set/tag.tpl'),$request);
 	}
 
-	public function settings($request)
+	public function getSettings($request)
 	{
 		$t = new Dase_Template($request);
-		$t->assign('user',Dase_User::get($request));
+		$t->assign('user',$this->user);
 		$request->renderResponse($t->fetch('user/settings.tpl'),$request);
 	}
 
 	public function getHttpPassword($request) 
 	{
-		//this handler required eid authentication,
-		//meaning the url eid matches the cookie eid
-
+		//this handler required eid authentication
 		//first, is *this* user authorized to do what
 		//they are asking for an http password to do.
 		if (Dase_Auth::authorize($params['auth_level'],$params)) {

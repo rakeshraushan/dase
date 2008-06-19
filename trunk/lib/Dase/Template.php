@@ -98,6 +98,7 @@ class Dase_Template {
 	public $_derived = null;
 }
 
+/** free-floating functions! */
 function _smarty_dase_atom_feed_filter(Dase_Atom_Feed $feed,$att,$val)
 {
 	//returns an array of entries that match 
@@ -121,6 +122,7 @@ function _smarty_documenter_modifiers(Documenter $d,$value)
 	return $d->getModifiers($value);
 }
 
+/** here is a function used in docs */
 function _smarty_documenter_get_params(ReflectionParameter $p)
 {
 	//from no starch oo php book

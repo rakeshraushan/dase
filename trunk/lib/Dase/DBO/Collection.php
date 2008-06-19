@@ -118,8 +118,21 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	function asJsonArchive($limit=0) {
-		//todo: this needs ot be paged
+	function asJsonArchive($limit=0) 
+	{
+		$coll_array['managers'] = array();
+		$coll_array['attributes'] = array();
+		$coll_array['items'] = array();
+		foreach ($this->getItems() as $item) {
+			$coll_array['items'][] = $item->asArray();
+		}
+		foreach ($this->getManagers() as $manager) {
+			$coll_array['managers'][] = $manager;
+		}
+		foreach ($this->getAttributes() as $attribute) {
+			$coll_array['attributes'][] = $attribute->asArray();
+		}
+		return Dase_Json::get($coll_array);
 	}
 
 	function asAppCollection($start,$count=50) 
@@ -242,10 +255,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $hash;
 	}
 
+	/**  note: this returns an array of arrays
+		NOT an array of manager objects
+	 */
 	function getManagers()
 	{
-		//note: this returns an array of arrays
-		//NOT an array of manager objects
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
@@ -475,48 +489,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->update();
 			return $item;
 		}
-	}
-
-	public static function getId($ascii_id)
-	{
-		$db = Dase_DB::get();
-		$sth = $db->prepare("SELECT id from collection WHERE ascii_id = ?");
-		$sth->execute(array($ascii_id));
-		return $sth->fetchColumn();
-	}
-
-	public function getJsonData($select = 'all')
-	{
-		$collection_data = array();
-		if (('attributes' == $select) || ('all' == $select)) {
-			$collection_data['attributes'] = $this->getAttributesData();
-		}
-		if (('types' == $select) || ('all' == $select)) {
-			foreach ($this->getItemTypes() as $type) {
-				foreach ($type as $k => $v) {
-					$collection_data['item_types'][$type->ascii_id][$k] = $v;
-				}
-				foreach ($type->getAttributes() as $type_att) {
-					$type_att_as_array = array();
-					$type_att_as_array['ascii_id'] = $type_att->ascii_id;
-					$type_att_as_array['attribute_name'] = $type_att->attribute_name;
-					$type_att_as_array['cardinality'] = $type_att->cardinality;
-					$type_att_as_array['is_identifier'] = $type_att->is_identifier;
-					$collection_data['item_types'][$type->ascii_id]['attributes'][] = $type_att_as_array;
-				}
-			}
-		}
-		if (('settings' == $select) || ('all' == $select)) {
-			foreach ($this as $k => $v) {
-				$collection_data['settings'][$k] = $v;
-			}
-		}
-		if (('managers' == $select) || ('all' == $select)) {
-			foreach ($this->getManagers() as $manager) {
-				$collection_data['managers'][] = $manager;
-			}
-		}
-		return Dase_Json::get($collection_data);
 	}
 
 	public function getAtompubServiceDoc() 

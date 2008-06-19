@@ -1,4 +1,4 @@
-{extends file="layout.tpl"}
+{extends file="admin/layout.tpl"}
 
 {block name="content"}
 <div class="full" id="settings">

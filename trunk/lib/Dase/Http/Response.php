@@ -126,19 +126,28 @@ class Dase_Http_Response
 		switch ($code) {
 		case 400:
 			header("HTTP/1.1 400 Bad Request");
-			$msg = 'Bad Request';
+			break;
 		case 404:
 			header("HTTP/1.1 404 Not Found");
-			$msg = '404 not found';
+			break;
 		case 401:
 			header('HTTP/1.1 401 Unauthorized');
-			$msg = 'Unauthorized';
+			break;
 		case 500:
 			header('HTTP/1.1 500 Internal Server Error');
+			break;
 		case 411:
 			header("HTTP/1.1 411 Length Required");
+			break;
 		case 415:
 			header("HTTP/1.1 415 Unsupported Media Type");
+			break;
+		default:
+			header('HTTP/1.1 500 Internal Server Error');
+		}
+
+		if ($msg) {
+			$this->request->error_message = $msg;
 		}
 
 		if (defined('DEBUG')) {
@@ -159,6 +168,8 @@ class Dase_Http_Response
 
 	function __destruct() 
 	{
+		//see http://bugs.php.net/bug.php?id=34206
+		// if strange 'failed to open stream' messages appear
 		Dase_Log::debug('finished request '.Dase_Timer::getElapsed());
 	}
 }

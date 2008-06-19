@@ -1,6 +1,7 @@
 <?php
 
 $conf['superuser'][] = 'pkeane';
+$conf['superuser'][] = 'rru62';
 
 $conf['token'] = '
 	---

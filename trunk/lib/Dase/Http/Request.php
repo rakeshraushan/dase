@@ -17,6 +17,7 @@ class Dase_Http_Request
 		'gif' =>'image/gif',
 	);
 	public $content_type;
+	public $error_message;
 	public $format;
 	public $handler;
 	public $method;
@@ -53,6 +54,9 @@ class Dase_Http_Request
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
 		$string .= "[resource] => $this->resource\n";
+		if ($this->error_message) {
+			$string .= "[error message] => $this->error_message\n";
+		}
 		return $string;
 	}
 
@@ -93,15 +97,18 @@ class Dase_Http_Request
 	{
 		$parts = explode('/',trim($this->getPath(),'/'));
 		$first = array_shift($parts);
-		if ('modules' != $first) {
-			return $first;
-		} else {
-			$this->module = $parts[0];
-			if (isset($parts[1])) {
-				return $parts[1];
-			} else {
-				return 'index';
+		if ('modules' == $first) {
+			if(!isset($parts[0])) {
+				$this->renderError(404,'no module specified');
 			}
+			if(!file_exists(DASE_PATH.'/modules/'.$parts[0])) {
+				$this->renderError(404,'no such module');
+			}
+			$this->module = $parts[0];
+			//so dispatch matching works
+			return 'modules/'.$this->module;
+		} else {
+			return $first;
 		}
 	}
 
@@ -414,7 +421,7 @@ class Dase_Http_Request
 	public function renderError($code,$msg='')
 	{
 		$response = new Dase_Http_Response($this);
-		$response->error($code,$msg='');
+		$response->error($code,$msg);
 		exit;
 	}
 }

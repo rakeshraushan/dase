@@ -2,8 +2,8 @@
 class Dase_Atom_Feed_Item extends Dase_Atom_Feed 
 {
 
-	protected $collection;
-	protected $collectionAsciiId;
+	protected $_collection;
+	protected $_collectionAsciiId;
 	protected $entry_dom = null;
 
 	function __construct($dom = null)
@@ -78,28 +78,28 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getCollection()
 	{
-		if (!$this->collection) {
+		if (!$this->_collection) {
 			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
-					$this->collection =  $el->getAttribute('label');
+					$this->_collection =  $el->getAttribute('label');
 					break;
 				}
 			}
 		}
-		return $this->collection;
+		return $this->_collection;
 	}
 
 	function getCollectionAsciiId()
 	{
-		if (!$this->collectionAscii_id) {
+		if (!$this->_collectionAsciiId) {
 			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
-					$this->collectionAsciiId = $el->getAttribute('term');
+					$this->_collectionAsciiId = $el->getAttribute('term');
 					break;
 				}
 			}
 		}
-		return $this->collectionAsciiId;
+		return $this->_collectionAsciiId;
 	}
 
 	function getViewitemLink()

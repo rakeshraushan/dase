@@ -135,7 +135,6 @@ class Dase_Search_Result
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
-			$item->item_status || $item->getItemStatus();
 			$entry = $feed->addEntry();
 			$item->injectAtomEntryData($entry);
 			$entry->addCategory($setnum,'http://daseproject.org/category/number_in_set');
