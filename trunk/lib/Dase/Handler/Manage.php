@@ -1,6 +1,6 @@
 <?php
 
-class ManageHandler extends Dase_Handler
+class Dase_Handler_Manage extends Dase_Handler
 {
 	public $resource_map = array(
 		'phpinfo' => 'phpinfo',

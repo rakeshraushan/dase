@@ -1,6 +1,6 @@
 <?php
 
-class UserHandler extends Dase_Handler
+class Dase_Handler_User extends Dase_Handler
 {
 	public $resource_map = array(
 		'{eid}/data' => 'data',

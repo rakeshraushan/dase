@@ -1,6 +1,6 @@
 <?php
 
-class CollectionsHandler extends Dase_Handler
+class Dase_Handler_Collections extends Dase_Handler
 {
 	//map uri_templates to resources
 	//and create parameters based on templates

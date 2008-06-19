@@ -1,0 +1,78 @@
+div#manageHeader {
+	background-color: #263b5e;
+	color: #ccc;
+	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
+	font-weight: bold;
+	margin-top: 2px;
+	padding:8px;
+	padding-left: 15px;
+}
+
+div#manageHeader p {
+	color: white;
+	margin:0;
+	font-size: 1.8em;
+	padding:6px 0 0 0;
+}
+
+div#manage {
+	background-color:#eef1f8;
+}
+
+
+/* overrrides style.css: */
+div.login {
+	padding-top: 1px;
+}
+
+div#sidebar
+{
+	margin: 0px 3px;
+}
+
+div#classInfo {
+	padding: 1em;
+	margin-left: 4em;
+	width: 70%;
+}
+
+div#classInfo h1 {
+	padding: 10px;
+	background-color: #eef;
+}
+
+div#classInfo h2 {
+	padding: 5px 10px;
+	background-color: #eee;
+}
+div#classInfo h3 {
+	margin: 10px;
+}
+
+div#classInfo p {
+	margin: 10px;
+	font-size: 1.1em;
+}
+
+div#classInfo ul {
+	margin: 10px;
+	line-height: 1.3em;
+}
+
+span.mods {
+	color: #669;
+	margin-right: .5em;
+}
+
+span.declaring {
+	color: #999;
+	margin-right: .5em;
+}
+
+span.method {
+	color: #333;
+	font-weight: bold;
+	margin-right: .5em;
+}
+
+

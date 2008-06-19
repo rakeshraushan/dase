@@ -1,6 +1,6 @@
 <?php
 
-class MediaHandler extends Dase_Handler
+class Dase_Handler_Media extends Dase_Handler
 {
 	public $resource_map = array(
 		'attributes' => 'attributes',

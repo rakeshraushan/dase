@@ -1,6 +1,6 @@
 <?php
 
-class TagsHandler extends Dase_Handler
+class Dase_Handler_Tags extends Dase_Handler
 {
 
 	public $resource_map = array( 

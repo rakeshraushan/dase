@@ -1,6 +1,6 @@
 <?php
 
-class EiduserModuleHandler extends Dase_Handler
+class Dase_Handler_Eiduser extends Dase_Handler
 {
 	public $resource_map = array(
 		'/' => 'login',

@@ -29,17 +29,16 @@ class Dase
 			//modules, by convention, have one handler in a file named
 			//'handler.php' with classname {Module}ModuleHandler
 			$handler_file = DASE_PATH.'/modules/'.$request->module.'/handler.php';
-			$classname = ucfirst($request->module) . 'ModuleHandler';
+			if (file_exists($handler_file)) {
+				include "$handler_file";
+			} else {
+				$request->renderError(404,"no such handler: $handler_file");
+			}
+			$classname = 'Dase_ModuleHandler_'.ucfirst($request->module);
 		} else {
-			$handler_file = DASE_PATH.'/handlers/'.$request->handler.'.php';
-			$classname = ucfirst($request->handler).'Handler';
+			$classname = 'Dase_Handler_'.ucfirst($request->handler);
 		}
-		if (file_exists($handler_file)) {
-			include "$handler_file";
-		} else {
-			$request->renderError(404,"no such handler: $handler_file");
-		}
-		if (class_exists($classname,false)) {
+		if (class_exists($classname,true)) {
 			$handler = new $classname;
 			$handler->dispatch($request);
 		} else {
