@@ -34,9 +34,8 @@ Dase.widget.uploader.prototype.send = function() {
         this.callback(r, this);
     }).bind(this))
 
-    this._input.disabled = true;
- 
     this._form.submit();
+    this._input.disabled = true;
 }
 
 Dase.widget.uploader.init = function(e, callback) {
