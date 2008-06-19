@@ -1,6 +1,6 @@
 <?php
 
-class ItemHandler extends Dase_Handler
+class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',

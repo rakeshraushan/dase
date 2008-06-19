@@ -1,6 +1,6 @@
 <?php
 
-class TestHandler extends Dase_Handler
+class Dase_Handler_Test extends Dase_Handler
 {
 	public $resource_map = array(
 		'/' => 'test'

@@ -1,6 +1,6 @@
 <?php
 
-class AttributeHandler extends Dase_Handler
+class Dase_Handler_Attribute extends Dase_Handler
 {
 	public $attribute;
 	public $collection;

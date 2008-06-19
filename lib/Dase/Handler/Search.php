@@ -1,6 +1,6 @@
 <?php
 
-class SearchHandler extends Dase_Handler
+class Dase_Handler_Search extends Dase_Handler
 {
 
 	public $resource_map = array(
