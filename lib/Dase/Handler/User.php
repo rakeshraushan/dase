@@ -14,6 +14,7 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		if ($request->has('eid')) {
 			$this->user = Dase_DBO_DaseUser::get($request->get('eid'));
+			$this->user->getHttpPassword();
 		}
 	}
 

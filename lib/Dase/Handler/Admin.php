@@ -16,13 +16,13 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	protected function setup($request)
 	{
-		$this->user = $request->getUser();
-		if (!$this->user->checkCollectionAuth($request->get('collection_ascii_id'),'admin')) {
-			$request->renderError(401);
-		}
 		$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
 		if (!$this->collection) {
 			$request->renderError(404);
+		}
+		$this->user = $request->getUser();
+		if (!$this->user->can('admin','collection',$this->collection)) {
+			$request->renderError(401);
 		}
 	}
 

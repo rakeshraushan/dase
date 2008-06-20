@@ -25,17 +25,17 @@ class Dase_Handler_Tag extends Dase_Handler
 		} else {
 			$request->renderError(404);
 		}
-		$this->user = $request->getUser();
-		if (!$this->user->can('read','tag',$this->tag)) {
-			$request->renderError(401);
-		}
+		//$this->user = $request->getUser();
+		//if (!$this->user->can('read','tag',$this->tag)) {
+		//	$request->renderError(401);
+		//}
 	}	
 
 	public function getTagAtom($request)
 	{
-		$u = $request->getHttpUser($this->tag);
-		if (!$u->can('read',$this->tag)) {
-			$request->renderError(401);
+		$u = $request->getHttpUser();
+		if (!$u->can('read','tag',$this->tag)) {
+			$request->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
 		$request->renderResponse($this->tag->asAtom());
 	}
@@ -64,10 +64,10 @@ class Dase_Handler_Tag extends Dase_Handler
 	public function getTag($request)
 	{
 		$u = $request->getUser();
-		if (!$u->can('read',$this->tag)) {
+		if (!$u->can('read','tag',$this->tag)) {
 			$request->renderError(401);
 		}
-		$http_pw = $this->tag->getHttpPassword($u->eid);
+		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($request);
 		//cannot use eid/ascii since it'll sometimes be anotehr user's tag
 		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$this->tag->id.'.atom',$u->eid,$http_pw));
@@ -89,7 +89,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$u = $request->getUser();
 		$tag_ascii_id = $request->get('tag_ascii_id');
 		$tag_item_id = $request->get('tag_item_id');
-		$http_pw = $this->tag->getHttpPassword($u->eid);
+		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($request);
 		//$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
