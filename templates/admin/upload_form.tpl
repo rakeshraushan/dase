@@ -3,233 +3,63 @@
 
 {block name="content"}
 <div class="list" id="browse">
+
+<!-- set up uploader widgets -->
+<script language="Javascript">
+$(document).ready(function() {
+    result_queue = new Dase.widget.messagequeue(document.getElementById('results'));
+    $('div.uploader').each(function() {
+        Dase.widget.uploader.init(
+            this, 
+            function(parsed_result, uploader) {
+                if(parsed_result.status == 'ok') {
+                    if(parsed_result.filesize > 1000000) var filesize = Math.ceil(parseInt(parsed_result.filesize)/1000000)+'MB';
+                    else var filesize = Math.ceil(parseInt(parsed_result.filesize)/1000)+'KB';
+                    var message = parsed_result.filename+' ['+filesize+']'+'<a target="view_ul" href="'+parsed_result.href+'">saved</a>';
+                } else {
+                    var message = parsed_result.message;
+                    if(parsed_result.filename) message = message + ': ' + parsed_result.filename;
+                    if(parsed_result.filesize) message = message + ' [' + parsed_result.filesize + ']';
+                }
+                result_queue.push(message, parsed_result.status);
+                $('div#'+uploader._form.id.replace(/_form/, '')+' > *').hide();
+            },
+            function(uploader) {
+                $('div#'+uploader._form.id.replace(/_form/, '')+' > *').hide();
+                var spinner = new Image();
+                spinner.src = 'images/spinner.gif';
+                var filename = document.createElement('span');
+                filename.innerHTML = uploader._input.value;
+                $('div#'+uploader._form.id.replace(/_form/, '')).append(spinner).append(filename);
+                var pos = parseInt(uploader._form.id.replace(/uploader_([0-9]+)_form/, '$1')) - 1;
+                $('div#uploader_'+pos).show();
+            }
+        )
+    });
+    $('div.uploader:first').show();
+});
+</script>
+
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 
+        <!-- start cranking out uploaders with hidden iframes -->
+        <!-- that skeleton wearing his bones like a broiler -->
+        {section name=uploader loop=30}
+            <div class="uploader" id="uploader_{$fi}">
+            <form name="uploader_{$fi}_form" id="uploader_{$fi}_form" method="post" class="uploader" enctype="multipart/form-data">
+            <input type="file" id="uploader_{$fi}_file" name="uploader_{$fi}_file" class="uploader_file" />
+            <br /><!--span class="status" id="uploader_{$fi}_status"></span-->
+            </form>
+            <iframe name="uploader_{$fi}_target" id="uploader_{$fi}_target" class="uploader_target" style="display: none;">
+            </iframe>
+            </div>
+        {/section}
 
-	<div id="container">
-		<div id="results_container">
-			<div id="forms_container">
+        <div id="results">
 
-				<form name="asynchul_30" id="asynchul_30" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_30_file" name="asynchul_30_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_30_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_30_status"></span>
-				</form>
-				<iframe name="asynchul_30_target" id="asynchul_30_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_29" id="asynchul_29" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
+        </div>
 
-					<div class="inputs">
-						<input type="file" id="asynchul_29_file" name="asynchul_29_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_29_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_29_status"></span>
-				</form>
-				<iframe name="asynchul_29_target" id="asynchul_29_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_28" id="asynchul_28" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
 
-						<input type="file" id="asynchul_28_file" name="asynchul_28_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_28_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_28_status"></span>
-				</form>
-				<iframe name="asynchul_28_target" id="asynchul_28_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_27" id="asynchul_27" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_27_file" name="asynchul_27_file" class="asynchul_file" />
-
-						<!--div class="dresser">
-						<input id="asynchul_27_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_27_status"></span>
-				</form>
-				<iframe name="asynchul_27_target" id="asynchul_27_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_26" id="asynchul_26" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_26_file" name="asynchul_26_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_26_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-
-					</div>
-					<br /><span class="status" id="asynchul_26_status"></span>
-				</form>
-				<iframe name="asynchul_26_target" id="asynchul_26_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_25" id="asynchul_25" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_25_file" name="asynchul_25_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_25_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-
-					<br /><span class="status" id="asynchul_25_status"></span>
-				</form>
-				<iframe name="asynchul_25_target" id="asynchul_25_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_24" id="asynchul_24" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_24_file" name="asynchul_24_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_24_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_24_status"></span>
-
-				</form>
-				<iframe name="asynchul_24_target" id="asynchul_24_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_23" id="asynchul_23" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_23_file" name="asynchul_23_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_23_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_23_status"></span>
-				</form>
-
-				<iframe name="asynchul_23_target" id="asynchul_23_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_22" id="asynchul_22" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_22_file" name="asynchul_22_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_22_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_22_status"></span>
-				</form>
-				<iframe name="asynchul_22_target" id="asynchul_22_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_21" id="asynchul_21" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-
-					<div class="inputs">
-						<input type="file" id="asynchul_21_file" name="asynchul_21_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_21_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_21_status"></span>
-				</form>
-				<iframe name="asynchul_21_target" id="asynchul_21_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_20" id="asynchul_20" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-
-						<input type="file" id="asynchul_20_file" name="asynchul_20_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_20_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_20_status"></span>
-				</form>
-				<iframe name="asynchul_20_target" id="asynchul_20_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_19" id="asynchul_19" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_19_file" name="asynchul_19_file" class="asynchul_file" />
-
-						<!--div class="dresser">
-						<input id="asynchul_19_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_19_status"></span>
-				</form>
-				<iframe name="asynchul_19_target" id="asynchul_19_target" clclass="status" id="asynchul_18_status"></span>
-			</form>
-			<iframe name="asynchul_18_target" id="asynchul_18_target" class="asynchul_target">
-				</iframe>            <form name="asynchul_17" id="asynchul_17" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-				<div class="inputs">
-					<input type="file" id="asynchul_17_file" name="asynchul_17_file" class="asynchul_file" />
-					<!--div class="dresser">
-					<input id="asynchul_17_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-					<img src="/asynchul/upload_button.gif" />
-					</div-->
-				</div>
-
-				<br /><span class="status" id="asynchul_17_status"></span>
-			</form>
-			<iframe name="asynchul_17_target" id="asynchul_17_target" class="asynchul_target">
-				</iframe>            <form name="asynchul_16" id="asynchul_16" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-				<div class="inputs">
-					<input type="file" id="asynchul_16_file" name="asynchul_16_file" class="asynchul_file" />
-					<!--div class="dresser">
-					<input id="asynchul_16_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-					<img src="/asynchul/upload_button.gif" />
-					</div-->
-				</div>
-				<br /><span class="status" id="asynchul_16_status"></span>
-
-			</form>
-			<iframe name="asynchul_16_target" id="asynchul_16_target" class="asynchul_target">
-				</iframe>            <form name="asynchul_15" id="asynchul_15" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-				<div class="inputs">
-					<input type="file" id="asynchul_15_file" name="asynchul_15_file" class="asynchul_file" />
-					<!--div class="dresser">
-					<input id="asynchul_15_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-					<img src="/asynchul/upload_button.gif" />
-					</div-->
-				</div>
-				<br /><span class="status" id="asynchul_15_status"></span>
-			</form>
-
-			<iframe name="asynchue>            <form name="asynchul_9" id="asynchul_9" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_9_file" name="asynchul_9_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_9_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-
-					<br /><span class="status" id="asynchul_9_status"></span>
-				</form>
-				<iframe name="asynchul_9_target" id="asynchul_9_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_8" id="asynchul_8" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_8_file" name="asynchul_8_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_8_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_8_status"></span>
-
-				</form>
-				<iframe name="asynchul_8_target" id="asynchul_8_target" class="asynchul_target">
-					</iframe>            <form name="asynchul_7" id="asynchul_7" method="post" action="upload.php" class="asynchul" enctype="multipart/form-data" encoding="multipart/form-data">
-					<div class="inputs">
-						<input type="file" id="asynchul_7_file" name="asynchul_7_file" class="asynchul_file" />
-						<!--div class="dresser">
-						<input id="asynchul_7_dresser_file" class="asynchul_dresser_file" value="click here to upload"/>
-						<img src="/asynchul/upload_button.gif" />
-						</div-->
-					</div>
-					<br /><span class="status" id="asynchul_7_status"></span>
-				</form>
-<iframe name="asynchul_1_target" id="asynchul_1_target" class="asynchul_target">
-    </iframe>        </div>
-    <h3>uploads:</h3>
-    <ul class="uploads_list" id="asynchul_results">
-    </ul>
-</div>
-</div>
 
 					<h1>Check your Atom Document:</h1>
 					<form action="cb/{$user->eid}/{$collection->ascii_id}/check_atom" method="post" enctype="multipart/form-data">
