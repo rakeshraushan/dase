@@ -6,12 +6,19 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 {
 	public $is_superuser=0;
 	public $ppd;
+	public $http_password;
 
 	public static function get($eid)
 	{
 		$user = new Dase_DBO_DaseUser;
 		$user->eid = $eid;
 		return $user->findOne();
+	}
+
+	public function getHttpPassword()
+	{
+		$this->http_password = substr(md5(Dase::getConfig('token').$this->eid.'httpbasic'),0,8);
+		return $this->http_password;
 	}
 
 	public function getTags()

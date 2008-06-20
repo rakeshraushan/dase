@@ -17,11 +17,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	public function getHttpPassword($eid)
-	{
-		return substr(md5(Dase::getConfig('token').$eid.$this->ascii_id),0,8);
-	}
-
 	public function getBaseUrl() {
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}

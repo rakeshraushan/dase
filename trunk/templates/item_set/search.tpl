@@ -16,7 +16,7 @@
 			</div>
 			<div id="refinements"></div>
 		</form>
-		<h4>
+		<h4 class="pagerControl">
 			{if $items->previous}
 			<a href="{$items->previous}">prev</a> 
 			{else}
@@ -35,6 +35,19 @@
 			{assign var=startIndex value=$items->startIndex}
 			{include file='item_set/common.tpl' start=$startIndex}
 		</table>
+		<h4 class="pagerControl">
+			{if $items->previous}
+			<a href="{$items->previous}">prev</a> 
+			{else}
+			<span class="nolink">prev</span>
+			{/if}
+			|
+			{if $items->next}
+			<a href="{$items->next}">next</a> 
+			{else}
+			<span class="nolink">next</span>
+			{/if}
+		</h4>
 		<a href="" id="checkall">check/uncheck all</a>
 		<div id="saveChecked"></div>
 	</form>
