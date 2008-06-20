@@ -75,3 +75,27 @@ table.dataDisplay  th.rows {
 	text-align: right;
 }
 
+/* uploader widget styles */
+input.uploader_file {
+    font-size: 18px;
+}
+
+div.uploader { display: none; }
+
+.messagequeue li {
+    font-size: .75em;
+    padding: 1em;
+    margin: .5em;
+    list-style-type: none;
+    -moz-border-radius: 5%;
+}
+
+.messagequeue li.ok {
+    background-color: #ce9;
+    color: #7b2;
+}
+.messagequeue li.error {
+    background-color: #e9c;
+    color: #b72;
+}
+
