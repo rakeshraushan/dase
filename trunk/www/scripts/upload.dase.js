@@ -1,6 +1,6 @@
 /* Requires jQuery */
 
-Dase.widget.uploader = function(form_, iframe_, status_, callback) {
+Dase.widget.uploader = function(form_, iframe_, status_, onload, onsend) {
     this._form = form_;
     this._input = this._form.getElementsByTagName('input')[0];
     $(this._input).bind('change', (function() {
@@ -9,7 +9,8 @@ Dase.widget.uploader = function(form_, iframe_, status_, callback) {
     this._iframe = iframe_;
     $(this._iframe).hide();
     this._status = status_;
-    this.callback = callback;
+    this.onload = onload;
+    this.onsend = onsend;
     this._form.target = this._iframe.id;
 
     return;
