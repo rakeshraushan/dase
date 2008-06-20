@@ -147,11 +147,13 @@ class Dase_Http_Request
 		//really, this should wait and the resource
 		//should offer format options (instead, as we do
 		//here, of just supplying a pre-defined set)
-		$mimeparse = new Mimeparse;
-		$types = $types ? $types : self::$types;
-		$mime_match = $mimeparse->best_match($types,$_SERVER['HTTP_ACCEPT']);
-		if (in_array($mime_match,$types)) {
-			return array_search($mime_match,self::$types); //returns format
+		if (isset($_SERVER['HTTP_ACCEPT'])) {
+			$mimeparse = new Mimeparse;
+			$types = $types ? $types : self::$types;
+			$mime_match = $mimeparse->best_match($types,$_SERVER['HTTP_ACCEPT']);
+			if (in_array($mime_match,$types)) {
+				return array_search($mime_match,self::$types); //returns format
+			}
 		}
 		//default is html
 		return 'html';
@@ -304,14 +306,12 @@ class Dase_Http_Request
 		$this->user = $user;
 	}
 
-	public function getHttpUser($entity)
+	public function getHttpUser()
 	{
-		//note: entity needs to have a method 'getHttpPassword'
-		//that accepts an eid as parameter
 		if ($this->user) {
 			return $this->user;
 		}
-		$eid = Dase_Http_Auth::getEid($entity);
+		$eid = Dase_Http_Auth::getEid();
 		if ($eid) {
 			$db = Dase_DB::get();
 			$sql = "

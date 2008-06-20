@@ -18,11 +18,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	const INPUT_NOEDIT = 'no_edit';
 	const INPUT_DYNAMIC = 'text_with_menu';
 
-	public function getHttpPassword($eid)
-	{
-		return substr(md5(Dase::getConfig('token').$eid.$this->getCollection()->ascii_id),0,8);
-	}
-
 	function getValueCount()
 	{
 		if (!$this->id) {

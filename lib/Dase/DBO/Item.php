@@ -33,11 +33,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
-	public function getHttpPassword($eid)
-	{
-		return substr(md5(Dase::getConfig('token').$eid.$this->getCollection()->ascii_id),0,8);
-	}
-
 	public function deleteSearchIndexes()
 	{
 		$db = Dase_DB::get();

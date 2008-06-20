@@ -66,11 +66,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
-	public function getHttpPassword($eid)
-	{
-		return substr(md5(Dase::getConfig('token').$eid.$this->ascii_id.$this->tag_type_id),0,8);
-	}
-
 	function getItemCount()
 	{
 		$db = Dase_DB::get();

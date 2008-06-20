@@ -7,13 +7,16 @@ class Dase_Http_Auth
 	 * authorization happens after the eid is verified.  After that,
 	 * authorization level will be determined based on other criteria
 	 */
-	public static function getEid($entity)
+	public static function getEid()
 	{
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
-			$password = $entity->getHttpPassword($eid);
+			$password = substr(md5(Dase::getConfig('token').$eid.'httpbasic'),0,8);
 			if (in_array($_SERVER['PHP_AUTH_PW'],array('skeletonkey',$password))) {
+				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_USER']);
 				return $eid;
+			} else {
+				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_USER']);
 			}
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');

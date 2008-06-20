@@ -271,13 +271,19 @@ div#adminPageControls {
 
 /*****  ITEM SET DISPLAY PAGE **************/
 
+table#itemSet {
+	margin-bottom: 0;
+}
 table#itemSet td {
 	vertical-align: top;
 	text-align: center;
 	width: 180px;
 }
 table#itemSet td.blank {
+	height: 1px;
 	border: 0;
+	padding: 0;
+	line-height: 0;
 }
 table#itemSet td div.checkNum {
 	float: left; 
@@ -369,6 +375,10 @@ form#loginForm input[type=submit] {
 }
 
 /************ MISCELLANEOUS STYLES ***************/
+
+.pagerControl {
+	margin: 1em 0;
+}
 
 span#userName {
 	color: #333;
