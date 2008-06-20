@@ -31,14 +31,14 @@ Dase.widget.uploader.prototype.send = function() {
         var response = this._iframe.contentDocument.body.innerHTML;
         //alert(this.parse_response(response).toSource());
         var r = this.parse_response(response);
-        this.callback(r, this);
+        this.onload(r, this);
     }).bind(this))
 
     this._form.submit();
-    this._input.disabled = true;
+    if(this.onsend) this.onsend(this);
 }
 
-Dase.widget.uploader.init = function(e, callback) {
+Dase.widget.uploader.init = function(e, onload, onsend) {
     if(e.tagName) {
         container = e;
         e = {
@@ -48,7 +48,8 @@ Dase.widget.uploader.init = function(e, callback) {
         }
     }
     var du = new Dase.widget.uploader(e.form_, e.iframe_, e.status_);
-    du.callback = callback;
+    du.onload = onload;
+    du.onsend = onsend;
     return du;
 }
 
