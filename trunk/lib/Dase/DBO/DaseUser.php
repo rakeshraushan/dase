@@ -15,6 +15,29 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user->findOne();
 	}
 
+	public static function init($eid)
+	{
+		$user = new Dase_DBO_DaseUser;
+		$user->eid = $eid;
+		if (!$user->findOne()) {
+			//todo: this should trigger (in calling function) a redirect to settings/register page
+			return false;
+		} else {
+			$user->initCart();
+		}
+	}
+
+	public function initCart()
+	{
+		$tag = new Dase_DBO_Tag;
+		$tag->dase_user_id = $this->id;
+		$tag->type = 'cart';
+		if (!$tag->findOne()) {
+			$tag->created = date(DATE_ATOM);
+			$tag->insert();
+		}
+	}
+
 	public function getHttpPassword()
 	{
 		$this->http_password = substr(md5(Dase::getConfig('token').$this->eid.'httpbasic'),0,8);
@@ -85,6 +108,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data = array();
 		//this is taking too long:
 		$user_data[$this->eid]['tags'] = $this->getTags();
+		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
 
@@ -105,7 +129,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_data);
 	}
 
-	public function getCart()
+	public function getCartJson()
 	{
 		$item_id_array = array();
 		$db = Dase_DB::get();
@@ -113,11 +137,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			SELECT ti.id,ti.item_id,t.id
 			FROM tag t, tag_item ti
 			WHERE t.id = ti.tag_id
+			AND t.type = 'cart' 
 			AND t.dase_user_id = ?
-			AND t.tag_type_id = ?
 			";
 		$sth = $db->prepare($sql);	
-		$sth->execute(array($this->id,CART));
+		$sth->execute(array($this->id));
 		while (list($tag_item_id,$item_id,$tag_id) = $sth->fetch()) {
 			$item_id_array[] = array(
 				'tag_item_id' => $tag_item_id,

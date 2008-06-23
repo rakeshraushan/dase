@@ -169,6 +169,7 @@ Dase.initUser = function() {
 	Dase.getJSON(Dase.base_href + "user/"+eid+ "/data",function(json){
 			for (var eid in json) {
 			Dase.user.eid = eid;
+			Dase.user.htpasswd = json[eid].htpasswd;
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
@@ -255,23 +256,18 @@ Dase.placeItemEditLink = function(eid) {
 Dase.placeCollectionAdminLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
+	var adminLink = Dase.$('adminLink');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
-		var menu = Dase.$('menu');
-		var li = document.createElement('li');
-		li.id = 'admin-menu';
-		var a = document.createElement('a');
-		a.setAttribute('href','admin/'+auth_info.collection_ascii_id);
-		a.className = "main";
-		a.appendChild(document.createTextNode(auth_info.collection_name+' Admin'));
-		li.appendChild(a);
-		menu.appendChild(li);
+		adminLink.setAttribute('href','admin/'+auth_info.collection_ascii_id);
+		adminLink.innerHTML = auth_info.collection_name+' Admin';
+		Dase.removeClass(adminLink,'hide');
 	}
 }
 
 Dase.placeUserCollections = function(eid) {
 	var cartLink = Dase.$('cartLink');
 	if (cartLink) {
-		cartLink.setAttribute('href','user/'+eid+'/cart/');
+		cartLink.setAttribute('href','user/'+eid+'/cart');
 	}
 	var hasSpecial = 0;
 	var coll_list = Dase.$('collectionList');
@@ -986,6 +982,7 @@ Dase.initAddToCart = function() {
 
 Dase.initCart = function() {
 	Dase.loadingMsg(true);
+	/* so cart totals are only displayed when viewing item set. hmmmm. */
 	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
@@ -1303,6 +1300,55 @@ Dase.util.zip = function() {
     return d;
 }
 
+Dase.initSlideshowLink = function() {
+	var sslink = Dase.$('startSlideshow');
+	if (!sslink) return;
+	var json_url = Dase.getJsonUrl();
+	if (!json_url) {
+		Dase.addClass(sslink,'hide');
+		return;
+	}
+	sslink.onclick = function() {
+		Dase.addClass(Dase.$('top'),'hide');
+		Dase.addClass(Dase.$('header'),'hide');
+		Dase.addClass(Dase.$('sidebar'),'hide');
+		Dase.addClass(Dase.$('footer'),'hide');
+		var content = Dase.$('content');
+		content.innerHTML = "<h1>loading slideshow....</h1>";
+		Dase.slideshow.start(json_url,Dase.user.eid,Dase.user.htpasswd);
+		return false;
+	}
+}
+
+Dase.initShowHtpasswd = function() {
+	var link = Dase.$('htpasswd');
+	if (!link) return;
+	link.onclick = function() {
+		alert(Dase.user.htpasswd);
+		return false;
+	}
+}
+
+Dase.getFeedUrl = function() {
+	var links = document.getElementsByTagName('link');
+	for (var i=0;i<links.length;i++) {
+		if (links[i].type == 'application/atom+xml') {
+			return links[i].href;
+		}
+	}
+	return false;
+}
+
+Dase.getJsonUrl = function() {
+	var links = document.getElementsByTagName('link');
+	for (var i=0;i<links.length;i++) {
+		if (links[i].type == 'application/json') {
+			return links[i].href;
+		}
+	}
+	return false;
+}
+
 Dase.widget = {};
 
 Dase.addLoadEvent(function() {
@@ -1317,6 +1363,8 @@ Dase.addLoadEvent(function() {
 		Dase.initLogoff();
 		Dase.initContentNotes();
 		Dase.initAttributeEdit();
+		Dase.initSlideshowLink();
+		Dase.initShowHtpasswd();
 		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

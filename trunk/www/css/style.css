@@ -116,6 +116,9 @@ a.edit { color: #00c; }
 #contentHeader h1 a {
 	color: #666;
 }
+#contentHeader h1 span.searchEcho {
+	font-size: .9em;
+}
 #contentHeader h2 {
 }
 #contentHeader h3 {

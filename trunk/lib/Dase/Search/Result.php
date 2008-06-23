@@ -62,6 +62,27 @@ class Dase_Search_Result
 		return $echo_str;
 	}
 
+	public function getResultSetAsJsonFeed()
+	{
+		//todo: this needs lots of work!
+		$json_tag;
+		$json_tag['uri'] = 'ssssssss';
+		$json_tag['updated'] = date(DATE_ATOM);
+		$json_tag['name'] = 'search';
+		$json_tag['is_public'] = 1;
+		foreach($this->item_ids as $item_id) {
+			$item = new Dase_DBO_Item();
+			$item->load($item_id);
+			$json_item = array();
+			foreach ($item->getMedia() as $m) {
+				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+			}
+			$json_tag['items'][] = $json_item;
+		}
+		$js = new  Services_JSON;	
+		return $js->json_format($json_tag);	
+	}
+
 	public function getResultSetAsAtomFeed($start,$max)
 	{
 		$next = $start + $max;

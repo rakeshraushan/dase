@@ -306,34 +306,23 @@ class Dase_Http_Request
 		$this->user = $user;
 	}
 
-	public function getHttpUser()
+	public function getUser($auth='cookie')
 	{
 		if ($this->user) {
 			return $this->user;
 		}
-		$eid = Dase_Http_Auth::getEid();
-		if ($eid) {
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT * FROM dase_user
-				WHERE lower(eid) = ?
-				";	
-			$sth = $db->prepare($sql);
-			if ($sth->execute(array($eid))) {
-				$this->user = new Dase_DBO_DaseUser($sth->fetch());
-				return $this->user;
-			} 
-		} else {
-			return false;
-		}
-	}
 
-	public function getUser()
-	{
-		if ($this->user) {
-			return $this->user;
+		switch ($auth) {
+		case 'cookie':
+			$eid = Dase_Cookie::getEid();
+			break;
+		case 'http':
+			$eid = Dase_Http_Auth::getEid();
+			break;
+		default:
+			$eid = Dase_Cookie::getEid();
 		}
-		$eid = Dase_Cookie::getEid();
+
 		if ($eid) {
 			return $this->getDbUser($eid);
 		} else {

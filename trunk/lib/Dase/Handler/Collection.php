@@ -27,7 +27,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		/*
 		if ('atom' == $request->format) {
-			$this->user = $request->getHttpUser();
+			$this->user = $request->getUser('http');
 			if (!$this->user->can('read','collection',$this->collection)) {
 			$request->renderError(401);
 			}
@@ -75,7 +75,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function postToCollection($request) 
 	{
-		$this->user = $request->getHttpUser($this->collection);
+		$this->user = $request->getUser('http');
 		if (!$this->user->can('write','collection',$this->collection)) {
 			$request->renderError(401);
 		}

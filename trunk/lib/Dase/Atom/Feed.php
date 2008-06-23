@@ -60,6 +60,7 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	public static function retrieve($url,$user='',$pwd='') 
 	{
+		Dase_Log::debug('retrieving feed: '.$url);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -191,7 +192,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$this->addElement('itemsPerPage',$num,Dase_Atom::$ns['opensearch']);
 	}
 
-	function asXml()
+	function attachEntries()
 	{
 		//attach entries
 		if ($this->_entries) {
@@ -199,6 +200,11 @@ class Dase_Atom_Feed extends Dase_Atom
 				$this->root->appendChild($entry->root);
 			}
 		}
+	}
+
+	function asXml()
+	{
+		$this->attachEntries();
 		return parent::asXml();
 	}
 

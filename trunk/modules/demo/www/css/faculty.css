@@ -1,0 +1,132 @@
+.nameheading {  
+	position:absolute;
+	top:170px;
+	left:220px;
+	font-family: Arial, Verdana, Helvetica, sans-serif; 
+	font-size: 40px; 
+	font-weight: bold; 
+	color: #993333; 
+	text-decoration: none
+	}
+#headerpicback{
+	position: absolute;
+	top:0px;
+	left:0px;
+	padding:0px;
+	width: 192px;
+	height: 228px;
+	display: block;
+}
+#headerpic{
+	position: absolute;
+	top:24px;
+	left:17px;
+	padding:0px;
+	width: 164px;
+	height: 183px;
+}
+#headertopbar{
+	position:absolute;
+	top:0px;
+	left:192px;
+	width:100%;
+	height:24px;
+	background-color:#336666;
+	}
+#headermenuabout{
+	position: absolute;
+	top: 24px;
+	left: 192px;
+	width: 87px;
+	height: 40px;
+	}
+#headermenufaculty{
+	position: absolute;
+	top: 24px;
+	left: 279px;
+	width: 65px;
+	height: 40px;
+	}
+#headermenugrad{
+	position: absolute;
+	top: 24px;
+	left: 344px;
+	width: 78px;
+	height: 40px;
+	}
+#headermenuugd{
+	position: absolute;
+	top: 24px;
+	left: 422px;
+	width: 105px;
+	height: 40px;
+	}
+#headermenuevents{
+	position: absolute;
+	top: 24px;
+	left: 527px;
+	width: 82px;
+	height: 40px;
+	}
+#headermenuintranet{
+	position: absolute;
+	top: 24px;
+	left: 609px;
+	width: 90px;
+	height: 40px;
+	}
+#headermenucenters{
+	position: absolute;
+	top: 24px;
+	left: 699px;
+	width: 61px;
+	height: 40px;
+	}
+
+#headerbanner{
+	position: absolute;
+	top:73px;
+	left:192px;
+	width: 568px;
+	height: 156px;
+	}
+#headermenuarrow{
+	position: absolute;
+	top: 64px;
+	left:192px;
+	width:568px;
+
+	z-index: 3;
+	}
+#navbox{
+	position: absolute;
+	top:228px;
+	left:0px;
+	padding:5px;
+	width: 192px;
+	display: block;
+}
+#body{
+	position: relative;
+	top:215px;
+	left:212px;
+	padding-left:15px;
+	padding-right:25px;
+	padding-top:0px;
+	padding-bottom: 25%;
+	width: 80%;
+	display: block;
+	background-color: ffffff;
+	height: auto;
+}
+#footer{
+	position: relative;
+	top:228px;
+	left:192px;
+	width: 558px;
+	display: block;
+	background-color: ffffff;
+	height: auto;
+}
+
+

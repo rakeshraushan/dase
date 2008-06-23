@@ -16,6 +16,7 @@ class Dase_Handler_Login extends Dase_Handler
 	public function getLogin($request)
 	{
 		$t = new Dase_Template($request);
+		//'target' is the page to redirect to after login is complete
 		$t->assign('target',$request->get('target'));
 		$request->renderResponse($t->fetch('login_form.tpl'),$request);
 	}
@@ -35,6 +36,7 @@ class Dase_Handler_Login extends Dase_Handler
 		$pass = $request->get('password');
 		if ('tseliot' == $pass) {
 			Dase_Cookie::set($username);
+			Dase_DBO_DaseUser::init($username);
 			//do this so cookie is passed along
 			$request->renderRedirect(urldecode($request->get('target')));
 		} else {
