@@ -136,6 +136,10 @@ class Dase_Http_Response
 		case 500:
 			header('HTTP/1.1 500 Internal Server Error');
 			break;
+		case 410:
+			header("HTTP/1.1 410 Gone");
+			$msg = "Departed, have left no addresses.";
+			break;
 		case 411:
 			header("HTTP/1.1 411 Length Required");
 			break;

@@ -37,10 +37,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getThumbnailLink()
 	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('thumbnail' == $el->getAttribute('title')) {
-				return $el->getAttribute('href');
-			}
+		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
+		if ($elem) {
+			return $elem->getAttribute('url');
 		}
 	}
 
@@ -59,26 +58,24 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getMedia() {
 		$media_array = array();
-		foreach ($this->root->getElementsByTagName('link') as $el) {
-			if (strpos($el->getAttribute('rel'),'relation/media')) {
-				$file['href'] = $el->getAttribute('href');
-				$file['type'] = $el->getAttribute('type');
-				$file['width'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'width');
-				$file['height'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'height');
-				$file['label'] = $el->getAttribute('title');
-				$media_array[] = $file;
-			}
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'content') as $el) {
+			$file['href'] = $el->getAttribute('url');
+			$file['type'] = $el->getAttribute('type');
+			$file['width'] = $el->getAttribute('width');
+			$file['height'] = $el->getAttribute('height');
+			$file['label'] = $el->getElementsByTagName('category')->item(0)->nodeValue;
+			$media_array[] = $file;
 		}
 		return $media_array;
 	}
 
 	function selectMedia($size) 
 	{
-		foreach ($this->media as $m) {
-			if ($m['label'] == $size) {
-				return $m['href'];
-			}
-		}
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		return $x->query("media:group/media:content/media:category[. = '$size']")
+			->item(0)->parentNode->getAttribute('url');
 	}
 
 	function getCollection()

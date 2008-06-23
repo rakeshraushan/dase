@@ -123,9 +123,12 @@ class Dase_DBO implements IteratorAggregate
 		$sql = "SELECT * FROM $table WHERE id=:id";
 		$sth = $db->prepare($sql);
 		if (! $sth) {
-			$error = $db->errorInfo();
-			print "DASE_DBO 'load()' Problem ({$error[2]})";
+			$errs = $db->errorInfo();
+			if (isset($errs[2])) {
+				Dase_Log::debug($errs[2]);
+			}
 		}
+		Dase_Log::debug($sql . ' /// '.$id);
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
 		if ($sth->fetch()) {
@@ -237,7 +240,7 @@ class Dase_DBO implements IteratorAggregate
 		$this->sql = $sql;
 		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
-		Dase_Log::all($sql . ' /// ' . join(',',$bind));
+		Dase_Log::debug($sql . ' /// ' . join(',',$bind));
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
 		//NOTE: PDOStatement implements Traversable. 
@@ -272,7 +275,7 @@ class Dase_DBO implements IteratorAggregate
 		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
 		$values[] = $this->id;
 		$sth = $db->prepare( $sql );
-		Dase_Log::all($sql . ' /// ' . join(',',$values));
+		Dase_Log::debug($sql . ' /// ' . join(',',$values));
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {

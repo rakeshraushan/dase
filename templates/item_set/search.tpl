@@ -30,6 +30,7 @@
 			{/if}
 		</h4>
 	</div> <!--close contentHeader -->
+	<a href="start" id="startSlideshow">Start Slideshow</a>
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}

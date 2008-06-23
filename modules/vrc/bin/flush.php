@@ -59,8 +59,10 @@ function build($sernum,$coll) {
 		return;
 	} 
 	print (substr($item->updated,0,10) . ' ' . substr(date(DATE_ATOM),0,10)); 
-	if (substr($item->updated,0,10) == substr(date(DATE_ATOM),0,10)) {
-		print "item $sernum was update within the last 24 hours\n";
+	//if (substr($item->updated,0,10) == substr(date(DATE_ATOM),0,10)) {
+	//	print "item $sernum was update within the last 24 hours\n";
+	if (substr($item->updated,0,9) == substr(date(DATE_ATOM),0,9)) {
+		print "item $sernum was update within the last ?? days\n";
 		return;
 	}	
 

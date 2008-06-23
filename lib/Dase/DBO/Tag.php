@@ -44,6 +44,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$tag->type = self::TYPE_SET;
 			$tag->background = 'white';
 			$tag->is_public = 0;
+			$tag->eid = $user->eid;
 			$tag->created = date(DATE_ATOM);
 			//todo: for backward compat -- get rid of this in DASe 2:
 			$tag->tag_type_id = 2;

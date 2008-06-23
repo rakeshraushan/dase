@@ -6,15 +6,15 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/data' => 'data',
 		'{eid}/settings' => 'settings',
 		'{eid}/cart' => 'cart',
+		'{eid}/auth' => 'http_password',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
-		'{eid}/collection/{collection_ascii_id}/auth/{auth_level}' => 'http_password',
 	);
 
 	protected function setup($request)
 	{
-		if ($request->has('eid')) {
-			$this->user = Dase_DBO_DaseUser::get($request->get('eid'));
-			$this->user->getHttpPassword();
+		$this->user = $request->getUser();
+		if ($request->get('eid') != $this->user->eid) {
+			$request->renderError(401,'One must be so careful these days.');
 		}
 	}
 
@@ -37,7 +37,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getCartJson($request)
 	{
-		$request->renderResponse($this->user->getCart());
+		$request->renderResponse($this->user->getCartJson());
 	}
 
 	public function postToCart($request)
@@ -46,15 +46,21 @@ class Dase_Handler_User extends Dase_Handler
 		$u->expireDataCache();
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
-		$tag->tag_type_id = CART;
-		$tag->findOne();
-		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->item_id = $request->get('item_id');
-		$tag_item->tag_id = $tag->id;
-		if ($tag_item->insert()) {
-			$request->renderResponse("added cart item $tag_item->id");
+		$tag->type = 'cart';
+		if ($tag->findOne()) {
+			$tag_item = new Dase_DBO_TagItem;
+			$tag_item->item_id = $request->get('item_id');
+			$tag_item->tag_id = $tag->id;
+			$tag_item->updated = date(DATE_ATOM);
+			if ($tag_item->insert()) {
+				//writes are expensive ;-)
+				$tag_item->persist();
+				$request->renderResponse("added cart item $tag_item->id");
+			} else {
+				$request->renderResponse("add to cart failed");
+			}
 		} else {
-			$request->renderResponse("add to cart failed");
+			$request->renderResponse("no such cart");
 		}
 	}
 
@@ -80,47 +86,34 @@ class Dase_Handler_User extends Dase_Handler
 		$request->renderResponse(Dase_User::get($request)->getCollections(),$request);
 	}
 
-	public function cart($request)
+	public function getCart($request)
 	{
-		$u = Dase_User::get($request);
+		$u = $this->user;
 		$tag = new Dase_DBO_Tag;
 		$tag->dase_user_id = $u->id;
-		$tag->tag_type_id = CART;
-		$tag->findOne();
-		$http_pw = Dase_DBO_Tag::getHttpPassword($tag->ascii_id,$u->eid,'read');
-		$t = new Dase_Template($request);
-		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom/user/'.$u->eid.'/tag/'.$tag->ascii_id,$u->eid,$http_pw));
-		$request->renderResponse($t->fetch('item_set/tag.tpl'),$request);
+		$tag->type = 'cart';
+		if ($tag->findOne()) {
+			$http_pw = $u->getHttpPassword();
+			$t = new Dase_Template($request);
+			$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
+			$request->renderResponse($t->fetch('item_set/tag.tpl'));
+		} else {
+			$request->renderError(404);
+		}
 	}
 
 	public function getSettings($request)
 	{
 		$t = new Dase_Template($request);
 		$t->assign('user',$this->user);
+		$t->assign('http_password',$this->user->getHttpPassword());
 		$request->renderResponse($t->fetch('user/settings.tpl'),$request);
 	}
 
 	public function getHttpPassword($request) 
 	{
-		//this handler required eid authentication
-		//first, is *this* user authorized to do what
-		//they are asking for an http password to do.
-		if (Dase_Auth::authorize($params['auth_level'],$params)) {
-			//If so, generate password
-			$password = '';
-			if (isset($params['collection_ascii_id'])) {
-				$password = Dase_DBO_Collection::getHttpPassword($params['collection_ascii_id'],$params['eid'],$params['auth_level']);
-			} elseif (isset($params['tag_ascii_id'])) {
-				$password = Dase_DBO_Tag::getHttpPassword($params['tag_ascii_id'],$params['eid'],$params['auth_level']);
-			} else {
-				$request->renderError(401);
-			}
-			header("Content-Type: text/plain; charset=utf-8");
-			echo $password;
-			exit;
-		} else {
-			$request->renderError(401);
-		}
+		$u = $this->user;
+		$request->renderResponse($u->getHttpPassword());
 	}
 }
 

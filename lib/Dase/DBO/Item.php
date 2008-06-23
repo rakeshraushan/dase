@@ -403,7 +403,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
-		$d = "http://daseproject.org/ns/1.0";
+		$d = Dase_Atom::$ns['d'];
 		$this->collection || $this->getCollection();
 		$this->item_type || $this->getItemType();
 		//I think this can be simplified when DASe 1.0 is retired
@@ -429,15 +429,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$img = $div->addChild('img');
 		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
 		$img->addAttribute('class','thumbnail');
-		$div->addChild('p',htmlspecialchars($this->getDescription()));
+		//$div->addChild('p',htmlspecialchars($this->getDescription()));
 		$contents = $div->addChild('ul');
 		foreach ($this->getContents() as $cont) {
 			$content_note = $contents->addChild('li',htmlspecialchars($cont->text));
 			$content_note->addAttribute('eid',$cont->updated_by_eid);
 			$content_note->addAttribute('date',$cont->updated);
 		}
+		$keyvals = $div->addChild('dl');
+		$keyvals->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
 			//php dom will escape text for me here....
+			$attname = $keyvals->addChild('dt',$row['attribute_name']);
+			$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
+			//$val->addAttribute('class',$row['ascii_id']);
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 		}
@@ -446,6 +451,62 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addElement('d:serial_number',$this->serial_number,$d)->setAttribute('d:label','Serial Number');
 		$entry->addElement('d:item_type',$this->item_type_ascii,$d)->setAttribute('d:label','Item Type');
 
+		//much of the following can go in Dase_Atom_Entry
+		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
+		foreach ($this->getMedia() as $med) {
+			if ($med->size == 'thumbnail') {
+				//$media_thumbnail = $entry->addElement('media:thumbnail',null,Dase_Atom::$ns['media']);
+				$media_thumbnail = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'thumbnail'));
+				$media_thumbnail->setAttribute('url',$med->getLink());
+				$media_thumbnail->setAttribute('width',$med->width);
+				$media_thumbnail->setAttribute('height',$med->height);
+			}
+		   	if ($med->size == 'viewitem') {
+				//$media_viewitem = $entry->addElement('media:content',null,Dase_Atom::$ns['media']);
+				$media_viewitem = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
+				$media_viewitem->setAttribute('url',$med->getLink());
+				$media_viewitem->setAttribute('width',$med->width);
+				$media_viewitem->setAttribute('height',$med->height);
+				$media_viewitem->setAttribute('fileSize',$med->file_size);
+				$media_viewitem->setAttribute('type',$med->mime_type);
+				$media_category = $media_viewitem->appendChild($entry->dom->createElement('media:category'));
+				$media_category->appendChild($entry->dom->createTextNode($med->size));
+			}
+		//}
+		//foreach ($this->getMedia() as $med) {
+			if ($med->size != 'thumbnail' && $med->size != 'viewitem') {
+				$media_content = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
+				$media_content->setAttribute('url',$med->getLink());
+				$media_content->setAttribute('width',$med->width);
+				$media_content->setAttribute('height',$med->height);
+				$media_content->setAttribute('fileSize',$med->file_size);
+				$media_content->setAttribute('type',$med->mime_type);
+				$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
+				$media_category->appendChild($entry->dom->createTextNode($med->size));
+			}
+		}
+
+
+		/*
+		$media_feed = $entry->addMediaFeed($this->getBaseUrl().'/media.atom');
+		$media_feed->setId($this->getBaseUrl().'/media.atom');
+		foreach ($this->getMedia() as $med) {
+			$media_entry = $media_feed->addEntry();
+			$media_entry->setMediaContent($med->getLink(),$med->mime_type);
+			$media_entry->setId($this->getBaseUrl().'/media/'.$med->size.'.atom');
+			//$link->setAttribute('d:height',$med->height);
+			//$link->setAttribute('d:width',$med->width);
+			//$link->setAttribute('type',$med->mime_type);
+			//$link->setAttribute('length',$med->file_size);
+			//$link->setAttribute('title',$med->size);
+		}
+		//we need to attach entries here since it is a nested feed
+		//todo: treat nested feeds like entries and recursively
+		//attach them and their entries upon serialization
+		$media_feed->attachEntries();
+		 */
+
+		/*
 		foreach ($this->getMedia() as $med) {
 			$link = $entry->addLink($med->getLink(),'http://daseproject.org/relation/media');
 			$link->setAttribute('d:height',$med->height);
@@ -454,6 +515,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$link->setAttribute('length',$med->file_size);
 			$link->setAttribute('title',$med->size);
 		}
+		 */
+		//todo: not sure we allow xhtml content (just markdown?)
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
 			//from http://us.php.net/manual/en/function.simplexml-element-addChild.php
@@ -479,7 +542,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
 		$feed->setId($this->getBaseUrl());
-		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->collection->ascii_id.'/'.$this->serial_number,'self' );
+		$feed->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','self' );
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		return $feed;
@@ -521,8 +584,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getBaseUrl() 
 	{
-		$this->collection || $this->getCollection();
-		return $this->collection->getBaseUrl() . '/' . $this->serial_number;
+		return DASE_URL.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
 	}
 
 	public function getAtompubServiceDoc() {

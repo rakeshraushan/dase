@@ -19,6 +19,24 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		return $tag;
 	}
 
+	function persist() {
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT c.ascii_id as collection_ascii_id,i.serial_number
+			FROM tag_item t, collection c, item i
+			WHERE i.id = t.item_id
+			AND i.collection_id = c.id
+			AND t.id = ? 
+			";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($this->id));
+		$row = $sth->fetch();
+		$this->p_collection_ascii_id = $row['collection_ascii_id'];
+		$this->p_serial_number = $row['serial_number'];
+		$this->update();
+		return $this;
+	}
+
 	function asAtom()
 	{
 		$item = $this->getItem();

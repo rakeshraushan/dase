@@ -7,6 +7,8 @@
 	<div id="msg" class="alert hide"></div>
 	<h2>{$items->title} ({$items->count} items)</h2>
 	<h3>{$items->subtitle}</h3>
+	<a href="start" id="startSlideshow">Start Slideshow</a>
+
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}

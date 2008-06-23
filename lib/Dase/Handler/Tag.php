@@ -17,26 +17,30 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	protected function setup($request)
 	{
+		//Locates requested tag.  Method still needs to authorize.
+		$tag = new Dase_DBO_Tag;
 		if ($request->has('tag_ascii_id') && $request->has('eid')) {
-			$this->tag = Dase_DBO_Tag::get($request->get('tag_ascii_id'),$request->get('eid'));
+			$tag->ascii_id = $request->get('tag_ascii_id');
+			$tag->eid = $request->get('eid');
+			$found = $tag->findOne();
 		} elseif ($request->has('tag_id')) {
-			$this->tag = new Dase_DBO_Tag;
-			$this->tag->load($request->get('tag_id'));
+			$found = $tag->load($request->get('tag_id'));
+		} 
+		if ($found) {
+			$this->tag = $tag;
 		} else {
-			$request->renderError(404);
+			$request->renderError(404,'no such tag');
 		}
-		//$this->user = $request->getUser();
-		//if (!$this->user->can('read','tag',$this->tag)) {
-		//	$request->renderError(401);
-		//}
 	}	
 
 	public function getTagAtom($request)
 	{
-		$u = $request->getHttpUser();
+		/*
+		$u = $request->getUser('http');
 		if (!$u->can('read','tag',$this->tag)) {
 			$request->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
+		 */
 		$request->renderResponse($this->tag->asAtom());
 	}
 
@@ -54,8 +58,8 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagJson($request)
 	{
-		$u = $request->getHttpUser($this->tag);
-		if (!$u->can('read',$this->tag)) {
+		$u = $request->getUser('http');
+		if (!$u->can('read','tag',$this->tag)) {
 			$request->renderError(401);
 		}
 		$request->renderResponse($this->tag->asJson());
@@ -65,12 +69,16 @@ class Dase_Handler_Tag extends Dase_Handler
 	{
 		$u = $request->getUser();
 		if (!$u->can('read','tag',$this->tag)) {
-			$request->renderError(401);
+			$request->renderError(401,$u->eid .' is not authorized to read this resource');
 		}
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($request);
-		//cannot use eid/ascii since it'll sometimes be anotehr user's tag
-		$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$this->tag->id.'.atom',$u->eid,$http_pw));
+		//cannot use eid/ascii since it'll sometimes be another user's tag
+		$json_url = APP_ROOT.'/tag/'.$this->tag->id.'.json';
+		$t->assign('json_url',$json_url);
+		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$t->assign('feed_url',$feed_url);
+		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$request->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

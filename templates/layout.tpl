@@ -35,6 +35,18 @@
 		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
 		<![endif]-->
 
+		{if $feed_url}
+		<link rel="alternate" type="application/atom+xml" href="{$feed_url}"/>
+		{/if}
+
+		{if $json_url}
+		<link rel="alternate" type="application/json" href="{$json_url}"/>
+		<script type="text/javascript" src="www/scripts/dase_slideshow/jquery.js"></script>
+		<script type="text/javascript" src="www/scripts/dase_slideshow/ui.core.js"></script>
+		<script type="text/javascript" src="www/scripts/dase_slideshow/ui.draggable.js"></script>
+		<script type="text/javascript" src="www/scripts/dase_slideshow/dase_slideshow.js"></script>
+		{/if}
+
 	</head>
 
 	<body>
@@ -45,23 +57,25 @@
 		</noscript>
 
 
-		<div id="logoffControl" class="login hide">
-			logged in as <span id="userName"></span> 
-			|
-			<a href="settings" class="edit" id="settings-link">settings</a>
-			|
-			<a href="help" class="edit">help</a>
-			|
-			<a href="logoff" class="edit" id="logoff-link">logout</a>
-			<div id="eid" class="pagedata"></div>
-		</div>
+		<div id="top">
+			<div id="logoffControl" class="login hide">
+				logged in as <span id="userName"></span> 
+				|
+				<a href="settings" class="edit" id="settings-link">settings</a>
+				|
+				<a href="help" class="edit">help</a>
+				|
+				<a href="logoff" class="edit" id="logoff-link">logout</a>
+				<div id="eid" class="pagedata"></div>
+			</div>
 
-		<div id="loginControl" class="login hide">
-			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
-		</div>
+			<div id="loginControl" class="login hide">
+				<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
+			</div>
 
-		<div id="wordmark">
-			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark_02.jpg" alt="ut logo"/></a>
+			<div id="wordmark">
+				<a href="http://www.utexas.edu"><img src="www/images/UTwordmark_02.jpg" alt="ut logo"/></a>
+			</div>
 		</div>
 
 		<div id="header">
@@ -90,11 +104,13 @@
 					-->
 				</ul>
 				</li>
+				<!--
 				<li id="shared-menu"><a href="" class="main">Shared Collections &amp; Slideshows</a>
 				<ul class="hide" id="shared-submenu">
 					<li class="placeholder"></li>
 				</ul>
 				</li>
+				-->
 
 				<li id="user_collection-menu"><a href="" class="main">My Collections</a>
 				<ul class="hide" id="user_collection-submenu">
@@ -128,6 +144,7 @@
 		<div class="spacer"/>
 
 			<div id="footer">
+				<a href="admin" class="hide" id="adminLink"></a> |
 				<a href="apps/help" id="helpModule">FAQ</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 

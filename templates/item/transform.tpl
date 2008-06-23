@@ -4,9 +4,8 @@
 <div class="full" id="{$item->tagType|lower}">
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="contentHeader">
-		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h1>
+		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->searchEcho}</span></h1>
 		<h2>{$item->title}</h2>
-		<h3>{$item->subtitle}</h3>
 		<h4>
 			<a href="{$item->previous}">prev</a> |
 			<a href="{$item->feedLink}">up</a> |
@@ -39,7 +38,11 @@
 					{foreach item=set key=ascii_id from=$item->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
+					{if 'item_id' == $ascii_id or 'serial_number' == $ascii_id}
+					<dd>{$value}</dd>
+					{else}
 					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+					{/if}
 					{/foreach}
 					{/foreach}
 				</dl>

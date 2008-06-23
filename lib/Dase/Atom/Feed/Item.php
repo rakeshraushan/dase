@@ -36,6 +36,17 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	}
 
 	function getMedia() {
+		$media_array = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'content') as $el) {
+			$file['href'] = $el->getAttribute('url');
+			$file['type'] = $el->getAttribute('type');
+			$file['width'] = $el->getAttribute('width');
+			$file['height'] = $el->getAttribute('height');
+			$file['label'] = $el->getElementsByTagName('category')->item(0)->nodeValue;
+			$media_array[] = $file;
+		}
+		return $media_array;
+		/*
 		foreach ($this->root->getElementsByTagName('link') as $el) {
 			if (strpos($el->getAttribute('rel'),'relation/media')) {
 				$file['href'] = $el->getAttribute('href');
@@ -47,6 +58,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 			}
 		}
 		return $media_array;
+		 */
 	}
 
 	function getMetadata() {
@@ -102,22 +114,30 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->_collectionAsciiId;
 	}
 
+	function selectMedia($size) 
+	{
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		return $x->query("atom:entry/media:group/media:content/media:category[. = '$size']")
+			->item(0)->parentNode->getAttribute('url');
+	}
+
+
 	function getViewitemLink()
 	{
-		foreach ($this->root->getElementsByTagName('link') as $el) {
-			if ('viewitem' == $el->getAttribute('title')) {
-				return $el->getAttribute('href');
-			}
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		$elem =  $x->query("atom:entry/media:content/media:category[. = 'viewitem']")->item(0)->parentNode;
+		if ($elem) {
+			return $elem->getAttribute('url');
 		}
 	}
 
 	function getThumbnailLink()
 	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['h'],'img') as $el) {
-			if ('thumbnail' == $el->getAttribute('title')) {
-				return $el->getAttribute('href');
-			}
-		}
+		return $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0)->getAttribute('url');
 	}
 
 	function getItemId() 
@@ -137,6 +157,13 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		}
 		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
 	}
+
+	/** note this is different than the same method in feed:search */
+	function getSearchEcho()
+	{
+		return $this->getAtomElementText('subtitle');
+	}
+
 
 	function getEditLink() {
 		return $this->getEntry()->getEditLink();

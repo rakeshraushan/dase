@@ -24,10 +24,11 @@
 		<script type="text/javascript" src="scripts/ie7/ie7-squish.js"></script>
 		<script type="text/javascript" src="scripts/ie7/ie7-recalc.js"></script>
 		<![endif]-->
+		<script type="text/javascript" src="www/scripts/jquery.js"></script>
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
-                <script type="text/javascript" src="www/scripts/uploader.dase.js"></script>
+                <script type="text/javascript" src="www/scripts/upload.dase.js"></script>
 
 		<style type="text/css">
 			ul#menu li.{$request->resource}-tab {literal}{{/literal}

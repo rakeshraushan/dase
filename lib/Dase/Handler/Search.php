@@ -40,6 +40,14 @@ class Dase_Handler_Search extends Dase_Handler
 		$request->renderResponse($atom_feed);
 	}
 
+	public function getSearchJson($request)
+	{
+		$request->checkCache();
+		$search = new Dase_Search($request);
+		$json_feed = $search->getResult()->getResultSetAsJsonFeed();
+		$request->renderResponse($json_feed);
+	}
+
 	public function getSearchItemAtom($request)
 	{
 		$request->checkCache();
@@ -60,8 +68,17 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$request->checkCache();
 		$tpl = new Dase_Template($request);
-		$tpl->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom'));
-		$request->renderResponse($tpl->fetch('item_set/search.tpl'));
+		$json_url = APP_ROOT.'/'.$request->url.'&format=json';
+		$tpl->assign('json_url',$json_url);
+		$feed_url = APP_ROOT.'/'.$request->url.'&format=atom';
+		$tpl->assign('feed_url',$feed_url);
+		$feed = Dase_Atom_Feed::retrieve($feed_url);
+		if (1 == $feed->count) {
+			$request->renderRedirect($request->path.'/item?'.$request->query_string.'&format=atom');
+		} else {
+			$tpl->assign('items',$feed);
+			$request->renderResponse($tpl->fetch('item_set/search.tpl'));
+		}
 	}
 }
 

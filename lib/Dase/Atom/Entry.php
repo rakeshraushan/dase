@@ -100,6 +100,18 @@ class Dase_Atom_Entry extends Dase_Atom
 		$content->setAttribute('type',$mime);
 	}
 
+	function addMediaFeed($url)
+	{
+		//fancy footwork!
+		$elem = $this->addElement('gd:feedLink',null,Dase_Atom::$ns['gd']);
+		$elem->setAttribute('href',$url);
+		$feed = new Dase_Atom_Feed($this->dom);
+		//reset feed root
+		$feed->root = $feed->dom->appendChild($feed->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
+		$elem->appendChild($feed->root);
+		return $feed;
+	}
+
 	function setPublished($text)
 	{
 		if ($this->published_is_set) {
