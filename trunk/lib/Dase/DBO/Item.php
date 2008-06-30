@@ -554,20 +554,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}
 
-	function asAppMember()
-	{
-		$d = "http://daseproject.org/ns/1.0";
-		$member = new Dase_Atom_Entry_MemberItem;
-		$member->setEdited($this->updated);
-		$this->injectAtomEntryData($member);
-		$member->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit');
-		$link = $member->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media','http://daseproject.org/relation/media_collection');
-		//$elem = $member->addElement('d:feedLink',null,'http://schemas.google.com/g/2005');
-		//$elem->setAttribute('rel','media');
-		//$elem->setAttribute('href',APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media');
-		return $member->asXml();
-	}
-
 	function mediaAsAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;

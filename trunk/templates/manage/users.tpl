@@ -3,11 +3,12 @@
 {block name="javascript"}
 {literal}
 Dase.pageInit = function() {
-Dase.getJSON(Dase.base_href + "manage/users.json",function(json){
+var url = Dase.base_href+'manage/users.json';
+Dase.getJSON(url,function(json){
 var data = { 'users': json };
 var templateObj = TrimPath.parseDOMTemplate("users_jst");
 Dase.$('userList').innerHTML = templateObj.process(data);
-});
+},null,Dase.$('userList').className);
 };
 {/literal}
 {/block}
@@ -19,17 +20,20 @@ Dase.$('userList').innerHTML = templateObj.process(data);
 	<h2>{$user->ppd}</h2>
 	-->
 </div>
-<div id="userList"></div>
-{literal}
+<div id="userList" class="limit={$limit}"></div>
+
 <!-- javascript template -->
 <textarea class="javascript_template" id="users_jst">
+	{literal}
 	<ul>
 		{for u in users}
 		<li><a href="manage/user/${u.eid}">${u.eid}</a> ${u.name}</li>
 		{/for}
 	</ul>
+	{/literal}
 </textarea>
-{/literal}
+<!-- end javascript template -->
+
 {/block} 
 
 

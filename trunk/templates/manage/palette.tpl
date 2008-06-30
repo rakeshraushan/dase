@@ -2,6 +2,9 @@
 {block name="title"}DASe Color Palette{/block}
 {block name="style"}
 {literal}
+table th,table td {
+border: 0;
+}
 div.color {
 border: 1px solid #666;
 -moz-border-radius: 5px;

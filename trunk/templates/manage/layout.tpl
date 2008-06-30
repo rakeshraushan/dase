@@ -126,15 +126,6 @@
 
 		<div class="spacer"></div>
 
-		<div id="footer">
-			<a href="apps/help" id="helpModule">FAQ</a> | 
-			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-			<a href="copyright">Copyright/Usage Statement</a> | 
-			<!--
-			{$timer} seconds |
-			-->
-			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
-		</div><!--closes footer-->
 		<div id="debugData" class="pagedata"></div>
 	</body>
 </html>

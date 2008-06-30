@@ -130,29 +130,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($coll_array);
 	}
 
-	function asAppCollection($start,$count=50) 
-	{
-		$feed = new Dase_Atom_Feed_AppCollection;
-		$feed->setTitle($this->collection_name);
-		if ($this->description) {
-			$feed->setSubtitle($this->description);
-		}
-		$feed->setUpdated($this->updated);
-		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
-		$feed->setId($this->getBaseUrl());
-		$feed->addAuthor();
-		$feed->addLink($this->getBaseUrl(),'alternate');
-		$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
-		$feed->addLink(APP_ROOT.'/edit/'.$this->ascii_id,'self');
-		foreach ($this->getItemIdRange($start,$count) as $item_id) {
-			$i = new Dase_DBO_Item;
-			$i->load($item_id);
-			$i->injectAppEntryData($feed->addEntry());
-		}
-		return $feed->asXml();
-	}
-
 	function asJsonCollection($page=1,$limit=50)
 	{
 		$offset = $limit * ($page-1);
@@ -211,6 +188,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
 			$entry->setId(APP_ROOT . '/' . $coll->ascii_id . '/');
 			$entry->setUpdated($coll->created);
+			$entry->setEntryType('collection');
 			$entry->addLink(APP_ROOT.'/atom/collection/'.$coll->ascii_id.'/','self');
 			$entry->addLink($coll->getBaseUrl(),'alternate');
 			if ($coll->is_public) {

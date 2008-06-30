@@ -7,6 +7,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
+		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
@@ -72,6 +73,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		$request->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
+	public function getServiceAtom($request) 
+	{
+		$request->renderResponse($this->collection->getAtompubServiceDoc(),'application/atomsvc+xml');
+	}
+
+
 	public function postToCollection($request) 
 	{
 		$this->user = $request->getUser('http');
@@ -84,7 +91,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 		header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number);
-		echo $item->asAppMember();
+		echo $item->asAtom();
 		exit;
 	}
 
