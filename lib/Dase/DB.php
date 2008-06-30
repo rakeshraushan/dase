@@ -178,7 +178,7 @@ class Dase_DB {
 		$writer = new XMLWriter();
 		$writer->openMemory();
 		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
+		$writer->startDocument('1.0','UTF-8','yes');
 		$writer->startElement('database');
 		$writer->writeAttribute('name',Dase_DB::getDbName());
 		foreach (Dase_DB::listTables() as $table) {

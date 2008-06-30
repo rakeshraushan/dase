@@ -99,7 +99,7 @@ Dase.createHtmlSet = function(parent,set,tagName) {
 	}
 };
 
-Dase.createElem = function(parent,value,tagName,className) {
+Dase.createElem = function(parent,value,tagName,className,id) {
 	if (!parent) {
 		//alert('no parent');
 		return;
@@ -112,6 +112,9 @@ Dase.createElem = function(parent,value,tagName,className) {
 	parent.appendChild(element);
 	if (className) {
 		element.className = className;
+	}
+	if (id) {
+		element.id = id;
 	}
 	element.style.visibility = 'visible';
 	return element;
@@ -173,10 +176,12 @@ Dase.initUser = function() {
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
+			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(eid);
 			Dase.placeUserCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
+			Dase.placeManageLink(eid);
 			Dase.placeItemEditLink(eid);
 			Dase.placeUserSearchCollections();
 			Dase.initCart();
@@ -251,6 +256,15 @@ Dase.placeItemEditLink = function(eid) {
 		Dase.initEditLink(edit_link);
 	}
 	return;
+}
+
+Dase.placeManageLink = function(eid) {
+	var manageLink = Dase.$('manageLink');
+	if (manageLink && Dase.user.is_superuser) {
+		manageLink.setAttribute('href','manage');
+		manageLink.innerHTML = 'Manage DASe';
+		Dase.removeClass(manageLink,'hide');
+	}
 }
 
 Dase.placeCollectionAdminLink = function(eid) {
@@ -700,116 +714,6 @@ Dase.initCreateNewUserCollection = function() {
 	}
 };
 
-Dase.initBrowse = function() {
-	if (Dase.$('browseColumns')) {
-		var att_coll = Dase.$('attColumn');
-		Dase.getAttributes(att_coll.className);
-		att_coll.className = '';
-		var val_coll = Dase.$('valColumn');
-		val_coll.innerHTML = '';
-
-		var cats = Dase.$('catColumn').getElementsByTagName('a');
-		for (var i=0;i<cats.length;i++) {
-			var cat = cats[i];
-			cat.onclick = function() {
-				Dase.getAttributes(this.href);
-				var cts = Dase.$('catColumn').getElementsByTagName('a');
-				for (var j=0;j<cts.length;j++) {
-					Dase.removeClass(cts[j],'spill');
-				}
-				this.className = 'spill';
-				return false;
-			};
-		}
-	}
-};
-
-Dase.getAttributes = function(url) {
-	/* takes attributes json and makes html out of it */
-	Dase.getJSON(url,function(json) {
-			var html ='<h4>Select Attribute:</h4>';
-			html += '<ul id="attList">';
-			for (var i=0;i<json.length;i++) {
-			var coll_ascii = json[i].collection;
-			var att_ascii = json[i].ascii_id;
-			var att_name = json[i].attribute_name;
-			html += '<li><a href="collection/'+coll_ascii+'/attribute/'+att_ascii+'/values.json" id="'+att_ascii+'" class="att_link '+att_ascii+'"><span class="att_name">'+att_name+'</span> <span class="tally" id="tally-'+att_ascii+'"></span></a></li>';
-			}
-			html +="</ul></div>";
-			Dase.$('attColumn').innerHTML = html;
-			Dase.getAttributeTallies(url+'/tallies');
-			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			});
-	var val_coll = Dase.$('valColumn');
-	val_coll.className = 'hide';
-	val_coll.innerHTML = '';
-};
-
-Dase.bindGetValues = function(coll) {
-	var atts = Dase.$('attColumn').getElementsByTagName('a');
-	for (var i=0;i<atts.length;i++) {
-		var att_link = atts[i];
-		if (Dase.hasClass(att_link,'att_link')) {
-			att_link.onclick = function() {
-				var att_name = this.getElementsByTagName('span')[0].innerHTML;
-				var att_ascii = this.className.split(" ")[1];
-				Dase.getAttributeValues(this.href,att_name,att_ascii,coll,'valColumn');	
-				Dase.removeClass(Dase.$('valColumn'),'hide');
-				window.scroll(0,0);
-				for (var j=0;j<atts.length;j++) {
-					Dase.removeClass(atts[j],'spill');
-				}
-				Dase.addClass(this,'spill');
-				return false;
-			};
-		}
-	}
-};
-
-Dase.getAttributeValues = function(url,att_name,att_ascii,coll,target) {
-	Dase.getJSON(url,function(json) {
-			var html ='<h4>Select '+att_name+'</span> Value:</h4>';
-			html +="<ul>";
-			for (var i=0;i<json.length;i++) {
-			var text = json[i].v;
-			var tally = json[i].t;
-			html +='<li><a href="search?'+coll+'.'+att_ascii+'='+encodeURIComponent(text)+'" class="val_link">'+text+' <span class="tally">('+tally+')</span></a></li>';
-			}
-			html +="</ul>";
-			Dase.$(target).innerHTML = html;
-			Dase.getAttributeTallies(url+'/tallies');
-			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			});
-}
-
-Dase.getAttributeTallies = function(url) {
-	Dase.getJSON(url,function(json) {
-			for(var ascii_id in json) {
-			var	att_link = Dase.$(ascii_id);
-			if (att_link) {
-			//var tally = Dase.$('tally-'+ascii_id).parentNode.getElementsByTagName('span')[0];
-			var tally = Dase.$('tally-'+ascii_id);
-			if (tally) {
-			if (0 == json[ascii_id]) {
-			//make admin atts w/ no values disappear
-			//tally.parentNode.className = 'hide';
-			} else {
-			tally.innerHTML = '(' + json[ascii_id] + ')';
-			}
-			/*
-			if (is_admin) {
-			// makes admin atts appear ONLY after tallies are set
-			Dase.removeClass(Dase.$('get_admin_tallies'),'hide');
-			Dase.addClass(Dase.$('get_admin_tallies'),'hide');
-			Dase.removeClass(Dase.$('adminAttsLabel'),'hide');
-			Dase.removeClass(Dase.$('attList'),'hide');
-			}
-			*/
-			} } }
-			Dase.loadingMsg(false);
-	});
-};
-
 Dase.createXMLHttpRequest = function() {
 	var xmlhttp;
 	if (window.XMLHttpRequest) {
@@ -902,7 +806,7 @@ Dase.getElementHtml = function(url,target,my_func) {
 	};
 };
 
-Dase.getJSON = function(url,my_func,error_func,params) {
+Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 	var xmlhttp = Dase.createXMLHttpRequest();
 	// this is to deal with IE6 cache behavior
 	// also note that JSON data needs to be up-to-the-second
@@ -914,7 +818,11 @@ Dase.getJSON = function(url,my_func,error_func,params) {
 		url = url + '?cache_buster=' + date.getTime()+'&format=json';
 	}
 
-	xmlhttp.open('GET', url, true);
+	if (username && password) {
+		xmlhttp.open('GET', url, true,username,password);
+	} else {
+		xmlhttp.open('GET', url, true);
+	}
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4) {
@@ -1292,7 +1200,7 @@ Dase.util = {};
 
 Dase.util.zip = function() {
     var d = {};
-    if(arguments.lenth < 2) return d;
+    if(arguments.length < 2) return d;
     var arr = arguments[0];
     for(var a = 0; a <= arguments.length; a++) {
         if(a > 0 && arr[a - 1]) d[arguments[a]] = arr[a-1];
@@ -1309,12 +1217,6 @@ Dase.initSlideshowLink = function() {
 		return;
 	}
 	sslink.onclick = function() {
-		Dase.addClass(Dase.$('top'),'hide');
-		Dase.addClass(Dase.$('header'),'hide');
-		Dase.addClass(Dase.$('sidebar'),'hide');
-		Dase.addClass(Dase.$('footer'),'hide');
-		var content = Dase.$('content');
-		content.innerHTML = "<h1>loading slideshow....</h1>";
 		Dase.slideshow.start(json_url,Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	}
@@ -1355,7 +1257,6 @@ Dase.addLoadEvent(function() {
 		Dase.setCollectionAtts();
 		Dase.initUser();
 		Dase.initMenu('menu');
-		Dase.initBrowse();
 		Dase.multicheckItems();
 		Dase.initToggle();
 		Dase.initSaveTo();
@@ -1365,6 +1266,9 @@ Dase.addLoadEvent(function() {
 		Dase.initAttributeEdit();
 		Dase.initSlideshowLink();
 		Dase.initShowHtpasswd();
+		if (Dase.pageInit && typeof Dase.pageInit === 'function') {
+		Dase.pageInit();
+		}
 		//		Dase.initCheckImage();
 		//Dase.initRowTable('writing','highlight');
 		/*

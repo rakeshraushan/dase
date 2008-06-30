@@ -109,7 +109,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag = $this->tag;
 		$u = $request->getUser();
 		$u->expireDataCache();
-		if (!$u->can('write',$tag)) {
+		if (!$u->can('write','tag',$tag)) {
 			$request->renderError(401);
 		}
 		$item_id_array = explode(',',$request->get('item_ids'));
@@ -126,8 +126,8 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag = $this->tag;
 		$u = $request->getUser();
 		$u->expireDataCache();
-		if (!$u->can('write',$tag)) {
-			$request->renderError(401);
+		if (!$u->can('write','tag',$tag)) {
+			$request->renderError(401,'user does not have write privileges');
 		}
 		$item_id_array = explode(',',$request->get('item_ids'));
 		$num = count($item_id_array);

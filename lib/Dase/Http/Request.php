@@ -197,7 +197,7 @@ class Dase_Http_Request
 		$this->members[$key] = $val;
 	}
 
-	//allows multiple values for a key
+	/** allows multiple values for a key */
 	public function setUrlParam($key,$val)
 	{
 		$this->_getUrlParamsArray($key); //presetting avoids trouncing 

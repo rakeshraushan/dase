@@ -44,6 +44,18 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $this->http_password;
 	}
 
+	public static function listAsJson()
+	{
+		$u = new Dase_DBO_DaseUser;
+		$u->setLimit(500);
+		foreach ($u->find() as $user) {
+			foreach ($user as $k => $v) {
+				$user_array[$user->eid][$k] = $v;
+			}
+		}
+		return Dase_Json::get($user_array);
+	}
+
 	public function getTags()
 	{
 		$tag_array = array();
@@ -111,6 +123,10 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
+		$user_data[$this->eid]['ppd'] = md5($this->eid . Dase::getConfig('ppd_token'));
+		if ($this->isSuperuser()) {
+			$user_data[$this->eid]['is_superuser'] = 1;
+		}
 
 		// per REST principles (i.e. "Roy says...")
 		// the server need not ever know any of the following
@@ -165,15 +181,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 		return false;
 	}
-
-	public function getSettings()
-	{
-		if ($this->isSuperuser()) {
-			$this->is_superuser = 1;
-		}
-		$this->ppd = md5($this->eid . Dase::getConfig('ppd_token'));
-	}
-
 
 	function checkAttributeAuth($attribute,$auth_level)
 	{

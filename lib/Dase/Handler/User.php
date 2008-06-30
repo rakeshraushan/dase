@@ -52,6 +52,7 @@ class Dase_Handler_User extends Dase_Handler
 			$tag_item->item_id = $request->get('item_id');
 			$tag_item->tag_id = $tag->id;
 			$tag_item->updated = date(DATE_ATOM);
+			$tag_item->sort_order = 99999;
 			if ($tag_item->insert()) {
 				//writes are expensive ;-)
 				$tag_item->persist();
@@ -72,12 +73,12 @@ class Dase_Handler_User extends Dase_Handler
 		$tag_item->load($request->get('tag_item_id'));
 		$tag = new Dase_DBO_Tag;
 		$tag->load($tag_item->tag_id);
+		//todo: make this tag->eid == $u->eid
 		if ($tag->dase_user_id == $u->id) {
 			$tag_item->delete();
-			$request->renderResponse("tag item ".$request->get('tag_item_id')." deleted!");
-			exit;
+			$request->renderResponse("tag item ".$request->get('tag_item_id')." deleted!",false);
 		} else {
-			$request->renderError(401);
+			$request->renderError(401,'user does not own tag');
 		}
 	}
 
@@ -95,6 +96,8 @@ class Dase_Handler_User extends Dase_Handler
 		if ($tag->findOne()) {
 			$http_pw = $u->getHttpPassword();
 			$t = new Dase_Template($request);
+			$json_url = APP_ROOT.'/tag/'.$tag->id.'.json';
+			$t->assign('json_url',$json_url);
 			$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
 			$request->renderResponse($t->fetch('item_set/tag.tpl'));
 		} else {

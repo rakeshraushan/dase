@@ -359,13 +359,11 @@ class Dase_Search
 				if (count($ar_table_sets)) {
 					if (false === strpos($att,'admin_')) {
 						$value_table_search_sets[] = 
-							//"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-							"id IN (SELECT v.item_id FROM value v WHERE ".join(' AND ', $ar_table_sets)." AND v.p_collection_ascii_id = ? AND v.p_attribute_ascii_id = ?)";
+							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					} else {
 						//it's an admin attribute, so collection_id is 0
 						$value_table_search_sets[] = 
-							//"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
-							"id IN (SELECT v.item_id FROM value v WHERE ".join(' AND ', $ar_table_sets)." AND v.p_collection_ascii_id = ? AND v.p_attribute_ascii_id = ?)";
+							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					}
 				}
 				$value_table_params[] = $coll;
@@ -429,16 +427,18 @@ class Dase_Search
 		Dase_Log::debug('search sql: '.$this->sql);
 		Dase_Log::debug(join(', ',$this->bound_params));
 		$st = $db->prepare($this->sql);	
-		$st->execute($this->bound_params);
+		if (!$st->execute($this->bound_params)) {
+			$errs = $st->errorInfo();
+			if (isset($errs[2])) {
+				Dase_Log::debug($errs[2]);
+			}
+		}
 		$tallies = array();
 		$item_ids = array();
 		$items = array();
 		//create hit tally per collection:
 		while ($row = $st->fetch()) {
 			$items[$row['collection_id']][] = $row['id'];
-		}
-		if ($st->errorCode()) {
-			Dase_Log::debug('db error '.$st->errorInfo()); 
 		}
 		uasort($items, array('Dase_Util','sortByCount'));
 		foreach ($items as $coll_id => $set) {

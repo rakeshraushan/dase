@@ -68,7 +68,7 @@ class Dase_Search_Result
 		$json_tag;
 		$json_tag['uri'] = 'ssssssss';
 		$json_tag['updated'] = date(DATE_ATOM);
-		$json_tag['name'] = 'search';
+		$json_tag['name'] = 'search: '.$this->_constructEcho();
 		$json_tag['is_public'] = 1;
 		foreach($this->item_ids as $item_id) {
 			$item = new Dase_DBO_Item();

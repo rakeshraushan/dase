@@ -1,5 +1,6 @@
 div#manageHeader {
-	background-color: #263b5e;
+	background-color: #700c0c;
+	background-color: #353a41;
 	color: #ccc;
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
@@ -30,15 +31,45 @@ div#sidebar
 	margin: 0px 3px;
 }
 
+ul#menu a {
+	display:block;
+	color: #000;
+	color: #353a41;
+	padding: 9px 9px 9px 18px;
+	margin: 5px 0px;
+}
+ul#menu img {
+	border: 0;
+}
+ul#menu  li  {
+	/* fixes ie problem */
+	background-color: #ecd7d6;
+	background-color: #e7ff9c;
+	background-color: #76a452;
+	background-color: #8fb96e;
+	background-color: #c2dafb;
+	-moz-border-radius: 5px;
+}
+ul#menu li:hover {
+	background-color: #f7efee;
+	background-color: #e7ff9c;
+	background-color: #a8bdda;
+}
+
+sup {
+	margin-left: 10px;
+	font-size: 1em;
+}
+
 div#classInfo {
-	padding: 1em;
-	margin-left: 4em;
+	margin-top: 1em;
 	width: 70%;
 }
 
 div#classInfo h1 {
 	padding: 10px;
-	background-color: #eef;
+	background-color: #d4d8de;
+	color: #000;
 }
 
 div#classInfo h2 {
@@ -73,6 +104,10 @@ span.method {
 	color: #333;
 	font-weight: bold;
 	margin-right: .5em;
+}
+
+textarea.javascript_template {
+	display: none;
 }
 
 

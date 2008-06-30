@@ -33,6 +33,7 @@ class Dase_Template {
 		}
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
+		$this->smarty->register_block('foreachgroup', 'smarty_block_foreachgroup');
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
 		$this->smarty->register_modifier('filter', '_smarty_dase_atom_feed_filter');
@@ -116,6 +117,12 @@ function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)
 	return $entry->select($att);
 }
 
+function _smarty_dase_atom_entry_select_media(Dase_Atom_Entry $entry,$size)
+{
+	//returns media of stated size 
+	return $entry->select($size);
+}
+
 function _smarty_documenter_modifiers(Documenter $d,$value)
 {
 	//used in documentation 
@@ -161,3 +168,47 @@ function _smarty_swisdk_extends($params, &$smarty)
 	$ss = $smarty->get_template_vars('_swisdk_smarty_instance');
 	$ss->_derived = $params['file'];
 } 
+
+
+/** tucker b requested this */
+function smarty_block_foreachgroup($params, $content, $smarty, &$repeat)
+{
+	static $grouparray = array();
+	
+	//Check required parameters
+	if (!isset($params['from']))
+		$smarty->trigger_error('foreachgroup: missing "from" parameter.');
+	if (!isset($params['group_by']))
+		$smarty->trigger_error('foreachgroup: missing "groupby" parameter');
+		
+	//If this is the first pass, sort into groups
+	if (is_null($content))
+	{
+		$from = &$params['from'];
+		foreach ($from as $current)
+		{
+			$key = eval('return '.$params['group_by'].';');
+			if (!isset($grouparray[$key]))
+				$grouparray[$key] = array();
+			$grouparray[$key][] = $current;
+		}
+	}
+	
+	//For all other passes, get the next group
+	//and set special variables.
+	if (list($key, $item) = each($grouparray))
+	{
+		$smarty->assign('current_grouping_key', $key);
+		$smarty->assign('current_group', $item);
+		$repeat = true;
+	}
+	//If no more groups, stop the cycle.
+	else
+	{
+		$repeat = false;
+	}
+	
+	if (!is_null($content))
+		return $content;
+}
+

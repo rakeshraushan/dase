@@ -10,7 +10,10 @@ class Dase_Handler_Manage extends Dase_Handler
 		'name/{lastname}' => 'ut_person',
 		'jquery' => 'jquery',
 		'docs' => 'docs',
-		'docs/{id}' => 'docs',
+		'schema/{type}' => 'schema',
+		'users' => 'users',
+		'user/{eid}' => 'user',
+		'/' => 'index',
 	);
 
 	public function setup($request)
@@ -22,16 +25,115 @@ class Dase_Handler_Manage extends Dase_Handler
 		}
 	}
 
+	public function getIndex($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('manage/layout.tpl'));
+	}
+
 	public function getPhpinfo($request)
 	{
 		phpinfo();
 		exit;
 	}
 
+	public function getUsersJson($request)
+	{
+		$request->renderResponse(Dase_DBO_DaseUser::listAsJson());
+	}
+
+	public function getUsers($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('manage/users.tpl'));
+	}
+
+	public function getUser($request)
+	{
+		echo $request->get('eid');exit;
+		//$tpl = new Dase_Template($request);
+		//$request->renderResponse($tpl->fetch('manage/users.tpl'));
+	}
+
 	public function getColors($request) 
 	{
 		$tpl = new Dase_Template($request);
-		$request->renderResponse($tpl->fetch('palette.tpl'));
+		$request->renderResponse($tpl->fetch('manage/palette.tpl'));
+	}
+
+	public function getSchema($request)
+	{
+		switch ($request->get('type')) {
+		case 'sqlite': 
+			$types['sqlite']['bigint'] = 'INTEGER';
+			$types['sqlite']['boolean'] = 'INTEGER';
+			$types['sqlite']['character varying'] = "TEXT";
+			$types['sqlite']['double precision'] = "REAL";
+			$types['sqlite']['double'] = "REAL";
+			$types['sqlite']['integer'] = 'INTEGER';
+			$types['sqlite']['int'] = 'INTEGER';
+			$types['sqlite']['mediumtext'] = "TEXT";
+			$types['sqlite']['text'] = "TEXT";
+			$types['sqlite']['tinyint'] = 'INTEGER';
+			$types['sqlite']['varchar'] = "TEXT";
+			$request->renderResponse('sorry');
+			break;
+		case 'xml':
+			$request->response_mime_type = 'text/xml';
+			$request->renderResponse(Dase_DB::getSchemaXml());
+			break;
+		case 'mysql':
+			$target_db = 'mysql';
+			$schema_xml = Dase_DB::getSchemaXml();
+			$sx = simplexml_load_string($schema_xml);
+			$out = '';
+
+			$types['mysql']['bigint'] = 'int';
+			$types['mysql']['boolean'] = 'tinyint';
+			$types['mysql']['character varying'] = "varchar";
+			$types['mysql']['double precision'] = "REAL";
+			$types['mysql']['double'] = "REAL";
+			$types['mysql']['integer'] = 'int';
+			$types['mysql']['int'] = 'int';
+			$types['mysql']['mediumtext'] = "text";
+			$types['mysql']['text'] = "text";
+
+			foreach ($sx->table as $table) {
+				$out .= "DROP TABLE IF EXISTS `{$table['name']}`;\n";
+				$out .= "CREATE TABLE `{$table['name']}` (\n";
+				$sql = '';
+				foreach ($table->column as $col) {
+					if ('true' == $col['is_primary_key']) {
+						$id = "`id` int(11) NOT NULL auto_increment,\n";
+						$pk = "PRIMARY KEY (`{$col['name']}`)\n";  
+					} else {
+						$col_type = (string) $col['type'];
+						$sql .= "`{$col['name']}`"  . " " . $types[$target_db][$col_type];  
+						if ($col['max_length']) {
+							$sql .= "({$col['max_length']})";
+						} else {
+							if ('int' == $types[$target_db][$col_type]) {
+								$sql .= "(11)";
+							}
+							if ('tinyint' == $types[$target_db][$col_type]) {
+								$sql .= "(1)";
+							}
+
+						}
+						$sql .= " default NULL,\n";  
+					}
+				}
+				$out .= $id;
+				$out .= $sql;
+				$out .= $pk;
+				$out .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8;\n\n\n";
+			}
+			$request->response_mime_type = 'text/plain';
+			$request->renderResponse($out);
+			break;
+		default:
+			$request->renderResponse(Dase_DB::getSchemaXml());
+		}
 	}
 
 	public function getManagerEmail($request) 
@@ -99,13 +201,14 @@ class Dase_Handler_Manage extends Dase_Handler
 		$filter = create_function('$filename', 'return !preg_match("/autogen/i",$filename);');
 		$class_list = array_filter($class_list,$filter);
 		$tpl->assign('class_list',$class_list);
-		if ($request->has('id')) {
+		if ($request->has('class_id')) {
 			$tpl->assign('phpversion',phpversion()); 
-			$documenter = new Documenter($class_list[$request->get('id')]);
+			$tpl->assign('class_id',$request->get('class_id')); 
+			$documenter = new Documenter($class_list[$request->get('class_id')]);
 			$tpl->assign('default_properties',$documenter->getDefaultProperties());
 			$tpl->assign('doc',$documenter);
 		}
 		$request->renderResponse($tpl->fetch('manage/docs.tpl'));
-		}
 	}
+}
 
