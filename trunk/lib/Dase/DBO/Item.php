@@ -287,9 +287,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = $value_text;
-			$v->p_attribute_ascii_id = $att->ascii_id;
-			$v->p_collection_ascii_id = $this->collection->ascii_id;
-			$v->p_serial_number = $this->serial_number;
 			return($v->insert());
 		} else {
 			return false;

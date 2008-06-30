@@ -5,6 +5,12 @@
 {block name="content"}
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
+	<h4 class="startSlideshow">
+		<div class="slideIcon" id="startSlideshow">
+			<div class="slideIconInside">
+			</div>
+		</div>
+	</h4>
 	<div id="contentHeader">
 		<h3>{$items->searchEcho}</h3>
 		<!-- SEARCH FORM -->
@@ -30,7 +36,6 @@
 			{/if}
 		</h4>
 	</div> <!--close contentHeader -->
-	<a href="start" id="startSlideshow">Start Slideshow</a>
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}

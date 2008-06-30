@@ -5,10 +5,14 @@
 {block name="content"}
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
+	<h4 class="startSlideshow">
+		<div class="slideIcon" id="startSlideshow">
+			<div class="slideIconInside">
+			</div>
+		</div>
+	</h4>
 	<h2>{$items->title} ({$items->count} items)</h2>
 	<h3>{$items->subtitle}</h3>
-	<a href="start" id="startSlideshow">Start Slideshow</a>
-
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}

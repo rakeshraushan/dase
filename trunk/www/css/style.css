@@ -334,6 +334,80 @@ table#itemSet td div.cartAdd span {
 	color: #fff;
 }
 
+/************ SLIDESHOW DISPLAY **************/
+
+div.slideIcon {
+	background-color: white;
+	padding: 4px;
+	-moz-border-radius: 2px;
+}
+
+div.slideIconInside {
+	background-color: #333;
+	width: 12px;
+	height:10px;
+}
+
+body.black {
+	background-color: black;
+}
+
+body.white {
+	background-color: white;
+}
+
+h4.startSlideshow {
+	float: right;
+}
+
+div#slideshowContainer {
+	text-align: center;
+	width: 95%;
+}
+
+h1#slideshowTitle {
+	float: left;
+	margin: 1em;
+	font-size: 2em;
+	color: #999;
+}
+
+div#slideshowControls {
+	position: fixed;
+	bottom: 1em;
+	left: 1em;
+}
+
+div#slideshowControls a {
+	font-size: 1.4em;
+	font-weight: bold;
+	color: #999;
+}
+
+div#slideshowSizes {
+	position: fixed;
+	bottom: 1em;
+	right: 1em;
+}
+
+div#slideshowSizes a {
+	font-weight: bold;
+	color: #999;
+}
+
+div#slideshowSizes a.currentSize {
+	font-size: 1.8em;
+}
+
+a#slideshowExit {
+	color: #999;
+	position: fixed;
+	top: 1em;
+	right: 1.5em;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
 /*********** FORM STYLES *********************/
 
 form.adminForm {
@@ -378,6 +452,10 @@ form#loginForm input[type=submit] {
 }
 
 /************ MISCELLANEOUS STYLES ***************/
+
+textarea.javascript_template {
+	display: none;
+}
 
 .pagerControl {
 	margin: 1em 0;

@@ -1,181 +1,148 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>DASe Docs</title>
-		<base href="{$app_root}"/>
-		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
-		<link rel="shortcut icon" href="www/images/favicon.ico"/>
-	</head>
-
-	<body>
-		<div id="manageHeader">
-			<p>DASe Class Documentation</p>
-		</div>
-
-		<div id="sidebar">
-			<ul id="class_list">
-				{foreach item=classname from=$class_list key=id}
-				<li><a href="manage/docs/{$id}">{$classname}</a></li>
-				{/foreach}
-			</ul>
-		</div>
-		<div id="content">
-			<div id="classInfo">
-			{if $doc}
-				<h1>{$doc->name}</h1>
-				<p>
-				<h3>Date: {$smarty.now|date_format}</h3>
-				<h3>PHP Version: {$phpversion}</h3>
-				<h3>Type: {$doc->classType}</h3>
-				<p>{$doc->fullDescription}</p>
-				</p>
-				<h2>Public Methods</h2>
-				<ul>
-					{foreach key=meth item=method_info from=$doc->publicMethods}
-					<li>
-					{assign var=decl value=$method_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$method_info}</span> 
-					<span class="method">{$meth}</span> 
-					(
-					{foreach item=param name=param_set from=$method_info->getParameters()}
-					{$param|params}
-					{if $smarty.foreach.param_set.last}
-					{else}
-					,
-					{/if}
-					{/foreach}
-					)
-					{assign var=comment value=$method_info->getDocComment()}
-					{if $comment}
-					<p class="comment">{$comment}</p>
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Protected Methods</h2>
-				<ul>
-					{foreach key=meth item=method_info from=$doc->protectedMethods}
-					<li>
-					{assign var=decl value=$method_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$method_info}</span> 
-					<span class="method">{$meth}</span> 
-					(
-					{foreach item=param name=param_set from=$method_info->getParameters()}
-					{$param|params}
-					{if $smarty.foreach.param_set.last}
-					{else}
-					,
-					{/if}
-					{/foreach}
-					)
-					{assign var=comment value=$method_info->getDocComment()}
-					{if $comment}
-					<p class="comment">{$comment}</p>
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Private Methods</h2>
-				<ul>
-					{foreach key=meth item=method_info from=$doc->privateMethods}
-					<li>
-					{assign var=decl value=$method_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$method_info}</span> 
-					<span class="method">{$meth}</span> 
-					(
-					{foreach item=param name=param_set from=$method_info->getParameters()}
-					{$param|params}
-					{if $smarty.foreach.param_set.last}
-					{else}
-					,
-					{/if}
-					{/foreach}
-					)
-					{assign var=comment value=$method_info->getDocComment()}
-					{if $comment}
-					<p class="comment">{$comment}</p>
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Public Members</h2>
-				<ul>
-					{foreach key=mem item=mem_info from=$doc->publicDataMembers}
-					<li>
-					{assign var=decl value=$mem_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$mem_info}</span> 
-					{if $default_properties.$mem|@is_array}
-					{$mem} = array(); 
-					{else}
-					{$mem}; 
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Protected Members</h2>
-				<ul>
-					{foreach key=mem item=mem_info from=$doc->protectedDataMembers}
-					<li>
-					{assign var=decl value=$mem_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$mem_info}</span> 
-					{if $default_properties.$mem|@is_array}
-					{$mem} = array(); 
-					{else}
-					{$mem}; 
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Private Members</h2>
-				<ul>
-					{foreach key=mem item=mem_info from=$doc->privateDataMembers}
-					<li>
-					{assign var=decl value=$mem_info->getDeclaringClass()}
-					<span class="declaring">[{$decl->getName()}]</span>
-					<span class="mods">{$doc|modifiers:$mem_info}</span> 
-					{if $default_properties.$mem|@is_array}
-					{$mem} = array(); 
-					{else}
-					{$mem}; 
-					{/if}
-					</li>
-					{/foreach}
-				</ul>
-				<h2>Constants</h2>
-				<ul>
-					{foreach key=key item=value from=$doc->constants}
-					<li><span class="mods">{$key}</span> 
-					{$value}
-					</li>
-					{/foreach}
-				</ul>
-			{else}
-			<h1>select a class from the sidebar</h1>
-			{/if}
-			</div>
-		</div>
-
-		<div class="spacer"/>
-
-			<div id="footer">
-				<a href="apps/help" id="helpModule">FAQ</a> | 
-				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-				<a href="copyright">Copyright/Usage Statement</a> | 
-				<!--
-				<insert-timer/> seconds |
-				-->
-				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
-			</div><!--closes footer-->
-			<div id="debugData" class="pagedata"></div>
-		</div>
-	</body>
-</html>
+{extends file="manage/layout.tpl"}
+{block name="content"}
+<form action="manage/docs" method="get">
+	<select name="class_id">
+		<option value="">select a class</option>
+		{foreach item=classname from=$class_list key=id}
+		<option value="{$id}" {if $id eq $class_id}selected="selected"{/if}>{$classname}</option>
+		{/foreach}
+	</select>
+	<input type="submit" value="view class documentation"/>
+</form>
+<div id="classInfo">
+	{if $doc}
+	<h1>{$doc->name}</h1>
+	<p>
+	<h3>Date: {$smarty.now|date_format}</h3>
+	<h3>PHP Version: {$phpversion}</h3>
+	<h3>Type: {$doc->classType}</h3>
+	<p>{$doc->fullDescription}</p>
+	</p>
+	<h2>Public Methods</h2>
+	<ul>
+		{foreach key=meth item=method_info from=$doc->publicMethods}
+		<li>
+		{assign var=decl value=$method_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$method_info}</span> 
+		<span class="method">{$meth}</span> 
+		(
+		{foreach item=param name=param_set from=$method_info->getParameters()}
+		{$param|params}
+		{if $smarty.foreach.param_set.last}
+		{else}
+		,
+		{/if}
+		{/foreach}
+		)
+		{assign var=comment value=$method_info->getDocComment()}
+		{if $comment}
+		<p class="comment">{$comment}</p>
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Protected Methods</h2>
+	<ul>
+		{foreach key=meth item=method_info from=$doc->protectedMethods}
+		<li>
+		{assign var=decl value=$method_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$method_info}</span> 
+		<span class="method">{$meth}</span> 
+		(
+		{foreach item=param name=param_set from=$method_info->getParameters()}
+		{$param|params}
+		{if $smarty.foreach.param_set.last}
+		{else}
+		,
+		{/if}
+		{/foreach}
+		)
+		{assign var=comment value=$method_info->getDocComment()}
+		{if $comment}
+		<p class="comment">{$comment}</p>
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Private Methods</h2>
+	<ul>
+		{foreach key=meth item=method_info from=$doc->privateMethods}
+		<li>
+		{assign var=decl value=$method_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$method_info}</span> 
+		<span class="method">{$meth}</span> 
+		(
+		{foreach item=param name=param_set from=$method_info->getParameters()}
+		{$param|params}
+		{if $smarty.foreach.param_set.last}
+		{else}
+		,
+		{/if}
+		{/foreach}
+		)
+		{assign var=comment value=$method_info->getDocComment()}
+		{if $comment}
+		<p class="comment">{$comment}</p>
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Public Members</h2>
+	<ul>
+		{foreach key=mem item=mem_info from=$doc->publicDataMembers}
+		<li>
+		{assign var=decl value=$mem_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$mem_info}</span> 
+		{if $default_properties.$mem|@is_array}
+		{$mem} = array(); 
+		{else}
+		{$mem}; 
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Protected Members</h2>
+	<ul>
+		{foreach key=mem item=mem_info from=$doc->protectedDataMembers}
+		<li>
+		{assign var=decl value=$mem_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$mem_info}</span> 
+		{if $default_properties.$mem|@is_array}
+		{$mem} = array(); 
+		{else}
+		{$mem}; 
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Private Members</h2>
+	<ul>
+		{foreach key=mem item=mem_info from=$doc->privateDataMembers}
+		<li>
+		{assign var=decl value=$mem_info->getDeclaringClass()}
+		<span class="declaring">[{$decl->getName()}]</span>
+		<span class="mods">{$doc|modifiers:$mem_info}</span> 
+		{if $default_properties.$mem|@is_array}
+		{$mem} = array(); 
+		{else}
+		{$mem}; 
+		{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<h2>Constants</h2>
+	<ul>
+		{foreach key=key item=value from=$doc->constants}
+		<li><span class="mods">{$key}</span> 
+		{$value}
+		</li>
+		{/foreach}
+	</ul>
+	{/if}
+</div>
+{/block}

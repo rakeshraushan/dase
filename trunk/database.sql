@@ -20,6 +20,7 @@ CREATE TABLE `attribute` (
 `html_input_type_id` int(11) default NULL,
 `sort_order` int(11) default NULL,
 `collection_id` int(11) default NULL,
+`html_input_type` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `usage_notes` varchar(2000) default NULL,
 `attribute_name` varchar(200) default NULL,
@@ -43,6 +44,7 @@ DROP TABLE IF EXISTS `collection`;
 CREATE TABLE `collection` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
+`visibility` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `description` varchar(2000) default NULL,
@@ -70,7 +72,7 @@ CREATE TABLE `content` (
 `id` int(11) NOT NULL auto_increment,
 `item_id` int(11) default NULL,
 `text` text default NULL,
-`update_by_eid` varchar(100) default NULL,
+`updated_by_eid` varchar(100) default NULL,
 `updated` varchar(100) default NULL,
 `p_serial_number` varchar(100) default NULL,
 `p_collection_ascii_id` varchar(100) default NULL,
@@ -131,6 +133,7 @@ CREATE TABLE `item` (
 `item_type_id` int(11) default NULL,
 `status_id` int(11) default NULL,
 `collection_id` int(11) default NULL,
+`status` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
@@ -251,6 +254,9 @@ CREATE TABLE `tag` (
 `admin_collection_id` int(11) default NULL,
 `tag_type_id` int(11) default NULL,
 `dase_user_id` int(11) default NULL,
+`visibility` varchar(50) default NULL,
+`eid` varchar(50) default NULL,
+`type` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `ascii_id` varchar(200) default NULL,
 `background` varchar(20) default NULL,
@@ -290,9 +296,6 @@ CREATE TABLE `value` (
 `attribute_id` int(11) default NULL,
 `item_id` int(11) default NULL,
 `value_text` text default NULL,
-`p_serial_number` varchar(100) default NULL,
-`p_attribute_ascii_id` varchar(100) default NULL,
-`p_collection_ascii_id` varchar(100) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

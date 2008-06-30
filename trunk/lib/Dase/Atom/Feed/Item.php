@@ -129,7 +129,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		$elem =  $x->query("atom:entry/media:content/media:category[. = 'viewitem']")->item(0)->parentNode;
+		$elem =  $x->query("atom:entry/media:group/media:content/media:category[. = 'viewitem']")->item(0)->parentNode;
 		if ($elem) {
 			return $elem->getAttribute('url');
 		}

@@ -20,6 +20,7 @@ $sql = "
 	AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < $days 
 	";
 
+/*
 $sql = "
 	SELECT  
 	acc_num_PK
@@ -28,6 +29,7 @@ $sql = "
 	AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) < 999 
 	AND DATEDIFF(d,acc_modified,CURRENT_TIMESTAMP) > 100 
 	";
+ */
 
 /*
 $sql = "

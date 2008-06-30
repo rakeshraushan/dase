@@ -10,7 +10,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
-		'{collection_ascii_id}/attribute/{att_ascii_id}/values' => 'attribute_values',
 	);
 
 	protected function setup($request)
@@ -133,7 +132,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$request->checkCache(1500);
 		if ($request->has('filter') && ('admin' == $request->get('filter'))) {
-			$request->renderResponse($this->_adminAttributeTalliesJson());
+			$request->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
 			exit;
 		}
 		$c = $this->collection;
@@ -153,7 +152,9 @@ class Dase_Handler_Collection extends Dase_Handler
 			$sth->execute(array($row['id']));
 			$tallies[$row['ascii_id']] = $sth->fetchColumn();
 		}
-		$request->renderResponse(Dase_Json::get($tallies));
+		$result['tallies'] = $tallies;
+		$result['is_admin'] = 0;
+		$request->renderResponse(Dase_Json::get($result));
 	}
 
 	private function _adminAttributeTalliesJson() 
@@ -180,19 +181,9 @@ class Dase_Handler_Collection extends Dase_Handler
 			$sth->execute(array($row['id']));
 			$tallies[$row['ascii_id']] = $sth->fetchColumn();
 		}
-		return $tallies;
-	}
-
-	public function getAttributeValuesJson($request) 
-	{
-		$attr = Dase_DBO_Attribute::get($request->get('collection_ascii_id'),$request->get('att_ascii_id'));
-		if (0 == $attr->collection_id) {
-			//since it is admin att we need to be able to limit to items in this coll
-			$values_array = $attr->getDisplayValues($this->collection->ascii_id);
-		} else {
-			$values_array = $attr->getDisplayValues();
-		}
-		$request->renderResponse(Dase_Json::get($values_array));
+		$result['tallies'] = $tallies;
+		$result['is_admin'] = 1;
+		return $result;
 	}
 
 	public function itemsByTypeAsAtom($request) {

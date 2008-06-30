@@ -176,7 +176,7 @@ class Dase_DBO implements IteratorAggregate
 		if ($sth->execute($bind)) {
 			$last_id = $db->lastInsertId($seq);
 			$this->id = $last_id;
-			Dase_Log::all($sql." /// last insert id = $last_id");
+			Dase_Log::debug($sql." /// last insert id = $last_id");
 			return $last_id;
 		} else { 
 			$error = $sth->errorInfo();
@@ -290,7 +290,7 @@ class Dase_DBO implements IteratorAggregate
 		$sth = $db->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
-		Dase_Log::all("deleting id $this->id from $this->table table");
+		Dase_Log::debug("deleting id $this->id from $this->table table");
 		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
 	}

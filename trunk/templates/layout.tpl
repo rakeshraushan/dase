@@ -30,6 +30,14 @@
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/{block name="js_include"}default.js{/block}"></script>
+		<script>
+			{block name="javascript"}
+			//alert('hi from block');
+			{/block}
+		</script>
+
 
 		<!--[if lt IE 8]>
 		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
@@ -41,10 +49,7 @@
 
 		{if $json_url}
 		<link rel="alternate" type="application/json" href="{$json_url}"/>
-		<script type="text/javascript" src="www/scripts/dase_slideshow/jquery.js"></script>
-		<script type="text/javascript" src="www/scripts/dase_slideshow/ui.core.js"></script>
-		<script type="text/javascript" src="www/scripts/dase_slideshow/ui.draggable.js"></script>
-		<script type="text/javascript" src="www/scripts/dase_slideshow/dase_slideshow.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
 		{/if}
 
 	</head>
@@ -148,6 +153,7 @@
 				<a href="apps/help" id="helpModule">FAQ</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
+				<a href="manage" class="hide" id="manageLink"></a> 
 				<!--
 				<insert-timer/> seconds |
 				-->

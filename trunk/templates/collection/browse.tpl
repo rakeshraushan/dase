@@ -1,5 +1,7 @@
 {extends file="layout.tpl"}
 
+{block name="js_include"}collection/browse.js{/block}
+
 {block name="title"}DASe: {$collection->name|escape}{/block} 
 
 {block name="content"}
@@ -27,8 +29,37 @@
 			<a href="collection/{$collection->ascii_id}/attributes/admin">Admin Attributes</a>
 		</div>
 		<div id="attColumn" class="collection/{$collection->ascii_id}/attributes/public"></div>
-
+			{literal}
+			<!-- javascript template -->
+			<textarea class="javascript_template" id="atts_jst">
+				<h4>Select Attribute:</h4>
+				<ul id="attList">
+					{for att in atts}
+					<li>
+					<a href="attribute/${att.collection}/${att.ascii_id}/values.json"
+						id="${att.ascii_id}" class="att_link"
+						><span class="att_name">${att.attribute_name}</span> <span class="tally" id="tally-${att.ascii_id}"></span></a>
+					</li>
+					{/for}
+				</ul>
+			</textarea>
+			<!-- end javascript template -->
+			{/literal}
 		<div id="valColumn" class="hide"></div>
+			{literal}
+			<!-- javascript template -->
+			<textarea class="javascript_template" id="vals_jst">
+				<h4>Select ${att_name} Value:</h4>
+				<ul>
+					{for v in values}
+					<li>
+					<a href="search?${coll}.${att_ascii}=${encodeURIComponent(v.v)}" class="val_link">${v.v} <span class="tally">(${v.t})</span></a> 
+					</li>
+					{/for}
+				</ul>
+			</textarea>
+			<!-- end javascript template -->
+			{/literal}
 	</div> <!-- close browseColumns -->
 	<div class="spacer"></div>
 </div> <!-- close class full -->

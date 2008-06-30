@@ -7,6 +7,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'attributes',
 		'{collection_ascii_id}/{att_ascii_id}' => 'attribute',
+		'{collection_ascii_id}/{att_ascii_id}/values' => 'attribute_values',
 	);
 
 	public function setup($request)
@@ -36,5 +37,22 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$att->findOne();
 		$request->renderResponse($att->asJson());
 	}
+
+	public function getAttributeValuesJson($request) 
+	{
+		$attr = Dase_DBO_Attribute::get($request->get('collection_ascii_id'),$request->get('att_ascii_id'));
+		if (0 == $attr->collection_id) {
+			//since it is admin att we need to be able to limit to items in this coll
+			$values_array = $attr->getDisplayValues($this->collection->ascii_id);
+		} else {
+			$values_array = $attr->getDisplayValues();
+		}
+		$result['att_name'] = $attr->attribute_name;
+		$result['att_ascii'] = $attr->ascii_id;
+		$result['coll'] = $request->get('collection_ascii_id');
+		$result['values'] = $values_array;
+		$request->renderResponse(Dase_Json::get($result));
+	}
+
 }
 

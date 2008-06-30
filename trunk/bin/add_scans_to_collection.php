@@ -5,13 +5,14 @@
 $database = 'dase_prod';
 //$collection_ascii_id = 'yoruba';
 //$collection_ascii_id = 'american_photography';
-$collection_ascii_id = 'medieval';
-$repo = $collection_ascii_id .'_collection';
+$collection_ascii_id = 'keanepj';
+//$repo = $collection_ascii_id .'_collection';
 //$repo = mansfield;
 
 /******************************************/
 
-$REPOS = "/mnt/projects/dase_scanning/$repo";
+$REPOS = "/mnt/home/pkeane/rest_talk";
+//$REPOS = "/mnt/projects/dase_scanning/$repo";
 
 include 'cli_setup.php';
 $collection = Dase_DBO_Collection::get($collection_ascii_id);
@@ -32,7 +33,7 @@ function processDir($REPOS,$collection,$logfile) {
 			false === strpos($file->getPathname(),'to_be_deleted') &&
 			false === strpos($file->getPathname(),'bad_file_format') &&
 			false === strpos($file->getPathname(),'dase_upload_') &&
-			(strpos($file->getPathname(),'metal_box') || strpos($file->getPathname(),'napoli') || strpos($file->getPathname(),'hardwick_late_antiquity')) &&
+//			(strpos($file->getPathname(),'metal_box') || strpos($file->getPathname(),'napoli') || strpos($file->getPathname(),'hardwick_late_antiquity')) &&
 			$file->isFile()
 		) {
 			try {
