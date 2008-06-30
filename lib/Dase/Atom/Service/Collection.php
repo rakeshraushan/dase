@@ -14,4 +14,10 @@ class Dase_Atom_Service_Collection extends Dase_Atom_Service
 	public function addAccept($mime) {
 		$this->addElement('accept',$mime);
 	}
+
+	public function addCategorySet($fixed = 'yes',$scheme = '',$href = '') {
+		$cats = new Dase_Atom_Service_CategorySet($this->dom,$fixed,$scheme,$href);
+		$this->root->appendChild($cats->root);
+		return $cats;
+	}
 }

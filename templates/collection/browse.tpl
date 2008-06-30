@@ -28,38 +28,42 @@
 			<a href="collection/{$collection->ascii_id}/attributes/public" class="spill">Collection Attributes</a>
 			<a href="collection/{$collection->ascii_id}/attributes/admin">Admin Attributes</a>
 		</div>
-		<div id="attColumn" class="collection/{$collection->ascii_id}/attributes/public"></div>
+		<div id="attColumn" class="collection/{$collection->ascii_id}/attributes/public"><!-- insert template output--></div>
+
+		<!-- javascript template -->
+		<textarea class="javascript_template" id="atts_jst">
 			{literal}
-			<!-- javascript template -->
-			<textarea class="javascript_template" id="atts_jst">
-				<h4>Select Attribute:</h4>
-				<ul id="attList">
-					{for att in atts}
-					<li>
-					<a href="attribute/${att.collection}/${att.ascii_id}/values.json"
-						id="${att.ascii_id}" class="att_link"
-						><span class="att_name">${att.attribute_name}</span> <span class="tally" id="tally-${att.ascii_id}"></span></a>
-					</li>
-					{/for}
-				</ul>
-			</textarea>
-			<!-- end javascript template -->
+			<h4>Select Attribute:</h4>
+			<ul id="attList">
+				{for att in atts}
+				<li>
+				<a href="attribute/${att.collection}/${att.ascii_id}/values.json"
+					id="${att.ascii_id}" class="att_link"
+					><span class="att_name">${att.attribute_name}</span> <span class="tally" id="tally-${att.ascii_id}"></span></a>
+				</li>
+				{/for}
+			</ul>
 			{/literal}
-		<div id="valColumn" class="hide"></div>
+		</textarea>
+		<!-- end javascript template -->
+
+		<div id="valColumn" class="hide"><!--insert template output--></div>
+
+		<!-- javascript template -->
+		<textarea class="javascript_template" id="vals_jst">
 			{literal}
-			<!-- javascript template -->
-			<textarea class="javascript_template" id="vals_jst">
-				<h4>Select ${att_name} Value:</h4>
-				<ul>
-					{for v in values}
-					<li>
-					<a href="search?${coll}.${att_ascii}=${encodeURIComponent(v.v)}" class="val_link">${v.v} <span class="tally">(${v.t})</span></a> 
-					</li>
-					{/for}
-				</ul>
-			</textarea>
-			<!-- end javascript template -->
+			<h4>Select ${att_name} Value:</h4>
+			<ul>
+				{for v in values}
+				<li>
+				<a href="search?${coll}.${att_ascii}=${encodeURIComponent(v.v)}" class="val_link">${v.v} <span class="tally">(${v.t})</span></a> 
+				</li>
+				{/for}
+			</ul>
 			{/literal}
+		</textarea>
+		<!-- end javascript template -->
+
 	</div> <!-- close browseColumns -->
 	<div class="spacer"></div>
 </div> <!-- close class full -->

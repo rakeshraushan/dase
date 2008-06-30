@@ -25,6 +25,24 @@ class Dase_Handler_Collections extends Dase_Handler
 		}
 	}
 
+	public function postToCollections($request) 
+	{
+		$user = $request->getUser('http');
+		if (!$user->isSuperuser()) {
+			$request->renderError(401,$user->eid.' is not permitted to create a collection');
+		}
+		$coll_entry = Dase_Atom_Entry::load("php://input",false);
+		if ('collection' != $coll_entry->getEntryType) {
+			$request->renderError(400);
+		}
+		$coll = $coll_entry->create($request);
+		header("HTTP/1.1 201 Created");
+		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+		header("Location: ".APP_ROOT."/collection/".$request->get('collection_ascii_id'));
+		echo $coll->asAtom();
+		exit;
+	}
+
 	public function getCollectionsAtom($request) 
 	{
 		if ($request->get('get_all')) {

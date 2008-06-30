@@ -44,10 +44,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $this->http_password;
 	}
 
-	public static function listAsJson()
+	public static function listAsJson($limit = 10)
 	{
 		$u = new Dase_DBO_DaseUser;
-		$u->setLimit(500);
+		$u->setLimit($limit);
+		$user_array = array();
 		foreach ($u->find() as $user) {
 			foreach ($user as $k => $v) {
 				$user_array[$user->eid][$k] = $v;

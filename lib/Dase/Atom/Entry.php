@@ -1,13 +1,14 @@
 <?php
 class Dase_Atom_Entry extends Dase_Atom
 {
+	protected $edited_is_set;
 	protected $content_is_set;
 	protected $published_is_set;
 	protected $source_is_set;
 	protected $summary_is_set;
+	protected $entrytype;
 	public static $types_map = array(
 		'item' => 'Dase_Atom_Entry_Item',
-		'member' => 'Dase_Atom_Entry_MemberItem',
 		'attribute' => 'Dase_Atom_Entry_Attribute',
 		'collection' => 'Dase_Atom_Entry_Collection',
 	);
@@ -45,7 +46,25 @@ class Dase_Atom_Entry extends Dase_Atom
 		$dom->load($xml);
 		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $entry->item(0);
-		return new Dase_Atom_Entry($dom,$root);
+		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
+				$entrytype = $el->getAttribute('term');
+				$class = self::$types_map[$entrytype];
+				if ($class) {
+					$obj = new $class($dom,$root);
+					$obj->entrytype = $entrytype;
+					return $obj;
+				} else {
+					$entry = new Dase_Atom_Entry($dom,$root);
+					$entry->entrytype = 'none';
+					return $entry;
+				}
+			}
+		}
+		//in case no category element
+		$entry = new Dase_Atom_Entry($dom);
+		$entry->entrytype = 'none';
+		return $entry;
 	}
 
 	function __get($var) 
@@ -166,5 +185,13 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-
+	function setEdited($dateTime)
+	{
+		if ($this->edited_is_set) {
+			throw new Dase_Atom_Exception('edited is already set');
+		} else {
+			$this->edited_is_set = true;
+		}
+		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
+	}
 }

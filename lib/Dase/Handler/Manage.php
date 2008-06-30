@@ -39,12 +39,23 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getUsersJson($request)
 	{
-		$request->renderResponse(Dase_DBO_DaseUser::listAsJson());
+		if ($request->has('limit')) {
+			$limit = $request->get('limit');
+		} else {
+			$limit = 100;
+		}
+		$request->renderResponse(Dase_DBO_DaseUser::listAsJson($limit));
 	}
 
 	public function getUsers($request)
 	{
+		if ($request->has('limit')) {
+			$limit = $request->get('limit');
+		} else {
+			$limit = 100;
+		}
 		$tpl = new Dase_Template($request);
+		$tpl->assign('limit',$limit);
 		$request->renderResponse($tpl->fetch('manage/users.tpl'));
 	}
 
