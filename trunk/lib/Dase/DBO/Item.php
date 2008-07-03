@@ -328,7 +328,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteMedia();
 		$this->deleteValues();
 		$this->deleteSearchIndexes();
+		$this->deleteContent();
 		$this->delete();
+	}
+
+	function deleteContent()
+	{
+		$co = new Dase_DBO_Content;
+		$co->item_id = $this->id;
+		foreach ($co->find() as $doomed) {
+			$doomed->delete();
+		}
 	}
 
 	function deleteMedia()

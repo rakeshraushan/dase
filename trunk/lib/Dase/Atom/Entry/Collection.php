@@ -18,72 +18,61 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		return $this->getContent();
 	}
 
-	function create()
+	function create($request)
 	{
-		//todo: collection creation code
-		//from dase 1:
-		//
-		if ($user->eid != $super_admin_eid) {
-			header("Location:$app");  
-			exit;
+		$atom_author = $this->getXpathValue("atom:author/atom:name");
+		$user = $request->getUser('http');
+		if ($atom_author != $user->eid) {
+			$request->renderError(401,'users do not match');
 		}
 
-		require_once 'DataObjects/Attribute.php'; 
-		require_once 'DataObjects/Collection.php'; 
-		require_once 'DataObjects/Collection_manager.php'; 
-
-		$collection_name = $request->getParameterValue('collection_name');
-		$ascii_id = $request->getParameterValue('ascii_id');
-
-		if (!$collection_name || !$ascii_id) {
-			$msg = "Please enter name and ascii id!";
-			header("Location:$app/admin?msg=$msg");  
-			exit;
+		$collection_name = $this->getName();
+		$ascii_id = $this->getAscii_id();
+		$c = new Dase_DBO_Collection;
+		$c->collection_name = $collection_name;
+		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
+			$request->renderError(409,'collection already exists');
 		}
-
-		$check_collection = new DataObjects_Collection;
-		$check_collection->whereAdd("ascii_id = '$ascii_id' or collection_name = '$collection_name'");
-		if ($check_collection->find(1)) {
-			$msg = "Please choose another collection name or ascii id!";
-			header("Location:$app/admin?msg=$msg");  
-			exit;
-		}
-
-		$collection = new DataObjects_Collection;
-		$collection->ascii_id = $ascii_id;
-		$collection->collection_name = $collection_name;
-		$collection->path_to_media_files = "$BASE_MEDIA_DIR/$ascii_id";
-		$collection->is_public = 0;
-		$coll_id = $collection->insert();
-		if ($coll_id) {
-			if (mkdir("$BASE_MEDIA_DIR/$ascii_id")) {
-				chmod("$BASE_MEDIA_DIR/$ascii_id",0775);
-				foreach ($SIZE_DIRS as $size) {
-					mkdir("$BASE_MEDIA_DIR/$ascii_id/$size");
-					chmod("$BASE_MEDIA_DIR/$ascii_id/$size",0775);
+		$c->ascii_id = $ascii_id;
+		$media_dir =  Dase::getConfig('path_to_media').'/'.$ascii_id;
+		$c->path_to_media_files = $media_dir;
+		$c->is_public = 0;
+		$c->created = date(DATE_ATOM);
+		$c->updated = date(DATE_ATOM);
+		if ($c->insert()) {
+			Dase_Log::info('created collection '.$c->collection_name);
+			if (mkdir("$media_dir")) {
+				chmod("$media_dir",0775);
+				foreach (Dase::getConfig('sizes') as $size) {
+					mkdir("$media_dir/$size");
+					Dase_Log::info('created directory '.$media_dir.'/'.$size);
+					chmod("$media_dir/$size",0775);
 				}
-				symlink($BASE_MEDIA_DIR.'/'.$ascii_id,$BASE_MEDIA_DIR.'/'.$ascii_id.'_collection');
+				symlink($media_dir,$media_dir.'_collection');
 			}
 			foreach (array('title','description','keyword') as $att) {
-				$attribute = new DataObjects_Attribute;
-				$attribute->ascii_id = $att;
-				$attribute->attribute_name = ucfirst($att);
-				$attribute->collection_id = $coll_id;
-				$attribute->insert();
+				$a = new Dase_DBO_Attribute;
+				$a->ascii_id = $att;
+				$a->attribute_name = ucfirst($att);
+				$a->collection_id = $c->id;
+				$a->updated = date(DATE_ATOM);
+				$a->insert();
 			}
+			$cm = new Dase_DBO_CollectionManager;
+			$cm->collection_ascii_id = $ascii_id;
+			$cm->dase_user_eid = $atom_author; //checked above to be same as current user
+			$cm->auth_level = 'superuser';
+			$cm->created = date(DATE_ATOM);
+			if ($cm->insert()) {
+				Dase_Log::info('created admin user '.$ascii_id.'::'.$atom_author);
+			} else {
+				Dase_Log::info('could not create admin user');
+			}
+			$user->expireDataCache();
+			return $ascii_id;
+		} else {
+			return false;
 		}
-		$cm = new DataObjects_Collection_manager;
-		$cm->collection_ascii_id = $ascii_id;
-		$cm->dase_user_eid = $super_admin_eid;
-		$cm->auth_level = 'superuser';
-		$cm->insert();
-
-		$user->cb = $ascii_id;
-		$user->last_cb_access = time();
-		$user->update();
-
-		header("Location:$app/admin/$ascii_id");
-		exit;
 	}
 
 	function __get($var) {

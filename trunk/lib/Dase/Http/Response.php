@@ -17,7 +17,7 @@ class Dase_Http_Response
 	const INTERNALSERVERERROR = '500 Internal Server Error';
 	const NOTIMPLEMENTED = '501 Not Implemented';
 
-	private $codes = array(
+	private static $codes = array(
 		"100" => "Continue ",
 		"101" => "Switching Protocols ",
 		"200" => "OK ",
@@ -68,11 +68,15 @@ class Dase_Http_Response
 		$this->request =  $request;
 	}
 
-	public function render($content,$set_cache=true)
+	public function render($content,$set_cache=true,$status_code=null)
 	{
 		if ($set_cache) {
 			$cache = Dase_Cache::get($this->request->getCacheId());
 			$cache->setData($content);
+		}
+		if ($status_code) {
+			$message = $status_code.' '.self::$codes[$status_code]; 
+			header("HTTP/1.1 $message");
 		}
 		header("Content-Type: ".$this->request->response_mime_type."; charset=utf-8");
 		echo $content;

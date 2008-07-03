@@ -30,6 +30,7 @@
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="www/scripts/upload.dase.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/{block name="js_include"}default.js{/block}"></script>
 
 		<script>
 			{block name="javascript"}
@@ -112,6 +113,15 @@
 				<li class="colors-tab">
 				<a href="manage/colors">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>DASe Color Palette</sup>
+				</a>
+				</li>
+				<li class="collection-tab">
+				<a href="manage/collection/form">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Collection</sup>
+				</a>
+				<li class="remove-collection-tab">
+				<a href="manage/collections">
+					<img alt="icon" src="www/images/tango-icons/list-remove.png"/><sup>Delete a Collection</sup>
 				</a>
 				</li>
 			</ul>

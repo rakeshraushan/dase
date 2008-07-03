@@ -13,6 +13,8 @@ class Dase_Handler_Manage extends Dase_Handler
 		'schema/{type}' => 'schema',
 		'users' => 'users',
 		'user/{eid}' => 'user',
+		'collection/form' => 'collection_form',
+		'collections' => 'collections',
 		'/' => 'index',
 	);
 
@@ -29,6 +31,12 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($request);
 		$request->renderResponse($tpl->fetch('manage/layout.tpl'));
+	}
+
+	public function getCollections($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('manage/collections.tpl'));
 	}
 
 	public function getPhpinfo($request)
@@ -220,6 +228,12 @@ class Dase_Handler_Manage extends Dase_Handler
 			$tpl->assign('doc',$documenter);
 		}
 		$request->renderResponse($tpl->fetch('manage/docs.tpl'));
+	}
+
+	public function getCollectionForm($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('manage/collection_form.tpl'));
 	}
 }
 

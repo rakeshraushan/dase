@@ -66,6 +66,28 @@ class Dase_Handler_Collection extends Dase_Handler
 		$request->renderResponse($c->asAtomFull());
 	}
 
+	public function deleteCollection($request)
+	{
+		$user = $request->getUser('http');
+		if (!$user->isSuperuser()) {
+			$request->renderError(401,$user->eid.' is not permitted to delete a collection');
+		}
+		if ($this->collection->getItemCount() < 5) {
+			$archive_dir = $this->collection->path_to_media_files.'/archive';
+			if (!file_exists($archive_dir)) {
+				mkdir($archive_dir);
+				Dase_Log::info('created directory '.$archive_dir);
+				chmod($archive_dir,0775);
+			}
+			$archive = $this->collection->path_to_media_files.'/archive/'.$this->collection->ascii_id.'.atom';
+			file_put_contents($archive,$this->collection->asAtomArchive());
+			$this->collection->expunge();
+			$request->renderResponse('delete succeeded',false,200);
+		} else {
+			$request->renderError(403,'cannot delete collection with more than 5 items');
+		}
+	}
+
 	public function getCollection($request) 
 	{
 		$tpl = new Dase_Template($request);
@@ -85,7 +107,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$this->user->can('write','collection',$this->collection)) {
 			$request->renderError(401);
 		}
-		$entry = Dase_Atom_Entry_MemberItem::load("php://input",false);
+		$entry = Dase_Atom_Entry::load("php://input",false);
 		$metadata = "";
 		$item = $entry->insert($request);
 		header("HTTP/1.1 201 Created");

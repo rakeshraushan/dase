@@ -45,7 +45,7 @@
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 
 	<!-- start cranking out uploaders with hidden iframes -->
-	<!-- that skeleton wearing his bones like a broiler -->
+	<!-- that skeleton wearing his bones like a broiler (Anne Sexton, Godfather Death)-->
 	{section name=uploader loop=30}
 	<div class="uploader" id="uploader_{$fi}">
 		<form name="uploader_{$fi}_form" id="uploader_{$fi}_form" method="post" class="uploader" enctype="multipart/form-data">

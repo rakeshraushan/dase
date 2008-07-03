@@ -8,6 +8,8 @@ Dase = {};
 Dase.NAME = "Dase";    // The name of this namespace
 Dase.VERSION = 1.0;    // The version of this namespace
 Dase.user = {};
+Dase.util = {};
+Dase.widget = {};
 Dase.base_href = document.getElementsByTagName('base')[0].href;
 
 /* utilities */
@@ -30,6 +32,15 @@ Dase.addLoadEvent = function(func) {
 Dase.$ = function(id) {
 	return document.getElementById(id);
 };
+
+Dase.util.trim = function(str) {
+	//from: http://blog.stevenlevithan.com/archives/faster-trim-javascript
+	var	str = str.replace(/^\s\s*/, ''),
+		ws = /\s/,
+		i = str.length;
+	while (ws.test(str.charAt(--i)));
+	return str.slice(0, i + 1);
+}
 
 Dase.logoff = function() {
 	if (Dase.user.eid) {
@@ -183,7 +194,6 @@ Dase.initUser = function() {
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
 			Dase.placeItemEditLink(eid);
-			Dase.placeUserSearchCollections();
 			Dase.initCart();
 			Dase.initAddToCart();
 			}
@@ -316,115 +326,6 @@ Dase.placeUserCollections = function(eid) {
 	if (hasSpecial) {
 		//this simply shows the "Special Access Collections" subhead
 		Dase.removeClass(Dase.$('specialAccessLabel'),'hide');
-	}
-};
-
-Dase.placeUserSearchCollections = function() {
-	//this is the selector of all of the collections
-	//the user is allowed to search
-	var maxCollName = 30;
-	var sel = Dase.$('collectionsSelect');
-	if (!sel)  return; 
-	var opt = document.createElement('option');
-	opt.setAttribute('value','');
-	opt.appendChild(document.createTextNode('All Public Collections'));
-	sel.appendChild(opt);
-	if (!sel) return; 
-	for (var i=0;i<Dase.user.collections.length;i++) {
-		var c = Dase.user.collections[i];
-		opt = document.createElement('option');
-		opt.setAttribute('value',c.ascii_id);
-		var label = Dase.truncate(c.collection_name,maxCollName);
-		opt.appendChild(document.createTextNode(label));
-		sel.appendChild(opt);
-	}
-	sel.onchange = function() {
-		Dase.setCollectionAtts(this.options[this.selectedIndex].value);
-	};
-
-	Dase.$('refineCheckbox').onclick = Dase.searchRefine;
-};
-
-Dase.searchRefine = function() {
-	var formDiv = Dase.$('refinements');
-	if (!formDiv) return;
-	if (formDiv.hasChildNodes()) {
-		//means this is UNchecking the refine box
-		while (formDiv.childNodes[0]) {
-			formDiv.removeChild(formDiv.childNodes[0]);
-		}
-		//undo any restriction to single collection
-		var sel = Dase.$('collectionsSelect');
-		while (sel.childNodes[0]) {
-			sel.removeChild(sel.childNodes[0]);
-		}
-		Dase.placeUserSearchCollections();
-		Dase.setCollectionAtts('');
-		return;
-	}
-
-	/* we look in search tallies list for collections */
-	var st = Dase.$('searchTallies');
-	var coll_tallies = st.getElementsByTagName('li');
-	var colls_array = [];
-	for (var i=0;i<coll_tallies.length;i++) {
-		colls_array.push(coll_tallies[i].className);
-	}
-	if (1 == colls_array.length) {
-		var collection = colls_array[0];
-		var hidden = document.createElement('input');
-		hidden.setAttribute('type','hidden');
-		hidden.setAttribute('name','collection_ascii_id');
-		hidden.setAttribute('value',collection);
-		formDiv.appendChild(hidden);
-		Dase.limitSearchToCollection([collection]);
-	} else {
-		Dase.limitSearchToCollection(colls_array);
-	}
-	var current = String(Dase.$('self_url').innerHTML);
-	var parts = (current.split('?'));
-	var url_string = parts[0];
-	//note that '+' are replaced in the xslt stylesheet
-	var qstring = decodeURI(parts[1]);
-	var qpairs = qstring.split('&amp;');
-	for (var i=0;i<qpairs.length; i++) {
-		var qp = qpairs[i];
-		var keyval = qp.split('=');
-		if (keyval.length > 1 && keyval[1]) {
-			var hidden = document.createElement('input');
-			hidden.setAttribute('type','hidden');
-			hidden.setAttribute('name',keyval[0]);
-			hidden.setAttribute('value',keyval[1]);
-			formDiv.appendChild(hidden);
-		}
-	}
-};
-
-Dase.limitSearchToCollection = function(c_ascii_array) {
-	//remove all collection options except for
-	//those in c_ascii_array
-	var keepers = [];
-	var sel = Dase.$('collectionsSelect');
-	while (sel.childNodes[0]) {
-		for (var i=0;i<c_ascii_array.length;i++) {
-			if (sel.childNodes[0].value == c_ascii_array[i]) {
-				keepers.push(sel.childNodes[0]);
-			}
-		}
-		sel.removeChild(sel.childNodes[0]);
-	}
-	for (var j=0;j<keepers.length;j++) { 
-		sel.appendChild(keepers[j]);
-	}
-	if (1 == c_ascii_array.length) {
-		Dase.setCollectionAtts(c_ascii_array[0]);
-	} else {
-		var opt = document.createElement('option');
-		opt.setAttribute('value','');
-		opt.setAttribute('selected','selected');
-		opt.appendChild(document.createTextNode('Current Collections'));
-		sel.appendChild(opt);
-		Dase.setCollectionAtts('');
 	}
 };
 
@@ -563,6 +464,7 @@ Dase.multicheck = function(c) {
 	var coll_list = Dase.$('collectionList');
 	if (!coll_list) { return; }
 	target = Dase.$('checkall');
+	if (!target) { return; }
 	//class of the link determines its behaviour
 	target.className = 'uncheck';
 	var boxes = coll_list.getElementsByTagName('input');
@@ -754,12 +656,17 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	};
 };
 
-Dase.ajax = function(url,method,my_func,msgBody) {
+Dase.ajax = function(url,method,my_func,msgBody,username,password) {
 	if (!method) {
 		method = 'POST';
 	}
 	var xmlhttp = Dase.createXMLHttpRequest();
-	xmlhttp.open(method, url, true);
+
+	if (username && password) {
+		xmlhttp.open(method,url,true,username,password);
+	} else {
+		xmlhttp.open(method,url,true);
+	}
 	if (msgBody) {
 		xmlhttp.send(msgBody);
 	} else {
@@ -1196,8 +1103,6 @@ Function.prototype.bind = function() {
     }
 }
 
-Dase.util = {};
-
 Dase.util.zip = function() {
     var d = {};
     if(arguments.length < 2) return d;
@@ -1251,7 +1156,6 @@ Dase.getJsonUrl = function() {
 	return false;
 }
 
-Dase.widget = {};
 
 Dase.addLoadEvent(function() {
 		Dase.setCollectionAtts();
