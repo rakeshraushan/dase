@@ -258,11 +258,13 @@ Dase.placeItemEditLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');
+	var status_controls = Dase.$('adminStatusControls');
 	var controls = Dase.$('adminPageControls');
 	if (!edit_link || ('' == edit_link.href)) return;
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
+		Dase.removeClass(status_controls,'hide');
 		Dase.initEditLink(edit_link);
 	}
 	return;

@@ -3,6 +3,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 {
 	protected $_collection;
 	protected $_collectionAsciiId;
+	protected $_status;
 
 	function __construct($dom = null,$root = null)
 	{
@@ -76,6 +77,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
 		return $x->query("media:group/media:content/media:category[. = '$size']")
 			->item(0)->parentNode->getAttribute('url');
+	}
+
+	function getStatus()
+	{
+		if (!$this->_status) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item/status' == $el->getAttribute('scheme')) {
+					$this->_status =  $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $this->_status;
 	}
 
 	function getCollection()

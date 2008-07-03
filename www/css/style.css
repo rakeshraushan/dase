@@ -101,6 +101,7 @@ a.delete { color:#c00; }
 .alert { color:#c00; }
 .msg { color:#c00; }
 a.edit { color: #00c; }
+a.current { color: #00c; font-weight: bold;}
 
 /********* STANDARD STYLES *******************/
 
@@ -261,6 +262,13 @@ div#itemLinks a {
 }
 
 div#adminPageControls {
+	text-align: right;
+	margin-top: -10px;
+	margin-right: 10px;
+	min-height: 18px;
+}
+
+div#adminStatusControls {
 	text-align: right;
 	margin-top: -10px;
 	margin-right: 10px;

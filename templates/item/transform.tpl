@@ -5,7 +5,6 @@
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="contentHeader">
 		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->searchEcho}</span></h1>
-		<h2>{$item->title}</h2>
 		<h4>
 			<a href="{$item->previous}">prev</a> |
 			<a href="{$item->feedLink}">up</a> |
@@ -71,7 +70,24 @@
 			</td>
 		</tr>
 	</table>
+	<div id="adminStatusControls" class="hide">
+		set item status:
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/public" 
+			title="click to make public"
+			class="item_status {if $item->status == 'public'}current{/if}" id="public">public</a>
+		|
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/admin_only" 
+			class="item_status {if $item->status == 'public'}admin_only{/if}" id="admin_only">admin only</a>
+		|
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/marked_for_delete" 
+			class="item_status {if $item->status == 'public'}marked_for_delete{/if}" id="marked_for_delete">marked for delete</a>
+		|
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/deep_storage" 
+			class="item_status {if $item->status == 'public'}deep_storage{/if}" id="deep_storage">deep storage</a>
+	</div>
+
 	{if $item->editLink}
+	<!-- this is an atompub thing -->
 	<div><a class="hide" id="editLink" href="{$item->editLink}">edit item</a></div>
 	{/if}
 </div> <!-- close content -->
