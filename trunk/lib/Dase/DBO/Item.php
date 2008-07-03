@@ -386,6 +386,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $description;
 	}
 
+	/** do we really need this?? */
 	function injectAppEntryData(Dase_Atom_Entry $entry)
 	{
 		$app = "http://www.w3.org/2007/app";
@@ -430,6 +431,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
 		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->label);
+		$entry->addCategory('item','http://daseproject.org/category/entrytype');
+		if ($this->status) {
+			$entry->addCategory($this->status,'http://daseproject.org/category/item/status');
+		} else {
+			$entry->addCategory('public','http://daseproject.org/category/item/status');
+		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());

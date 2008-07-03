@@ -88,6 +88,19 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->getAtomElementText('summary');
 	}
 
+	function getStatus()
+	{
+		if (!$this->_status) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item/status' == $el->getAttribute('scheme')) {
+					$this->_status =  $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $this->_status;
+	}
+
 	function getCollection()
 	{
 		if (!$this->_collection) {

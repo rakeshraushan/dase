@@ -115,10 +115,16 @@
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>DASe Color Palette</sup>
 				</a>
 				</li>
+				<li class="remote-collection-tab">
+				<a href="manage/collection/clone_form">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Clone a Remote Collection</sup>
+				</a>
+				</li>
 				<li class="collection-tab">
 				<a href="manage/collection/form">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Collection</sup>
 				</a>
+				</li>
 				<li class="remove-collection-tab">
 				<a href="manage/collections">
 					<img alt="icon" src="www/images/tango-icons/list-remove.png"/><sup>Delete a Collection</sup>
