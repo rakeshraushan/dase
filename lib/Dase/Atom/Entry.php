@@ -176,7 +176,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
 	}
 
-	function getEntryType($type) 
+	function getEntryType() 
 	{
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {

@@ -27,7 +27,7 @@ $conf['ppd_token'] = "
 	. date('Ymd',time()); //changes every day
 
 //see also media/config.php
-$conf['path_to_media'] = '/mnt/www-data/dase/media/uploaded_files';
+$conf['path_to_media'] = '/mnt/www-data/dase/media';
 $conf['graveyard'] = "/mnt/home/pkeane/dase_graveyard";
 
 //cache can be file or memcached (only 'file' is implemented) 
@@ -77,3 +77,29 @@ $conf['item_status'][] = 'public';
 $conf['item_status'][] = 'admin_only';
 $conf['item_status'][] = 'marked_for_delete';
 $conf['item_status'][] = 'deep_storage';
+
+$conf['sizes'][] = '400';
+$conf['sizes'][] = 'aiff';
+$conf['sizes'][] = 'archive';
+$conf['sizes'][] = 'css';
+$conf['sizes'][] = 'deleted';
+$conf['sizes'][] = 'doc';
+$conf['sizes'][] = 'full';
+$conf['sizes'][] = 'gif';
+$conf['sizes'][] = 'html';
+$conf['sizes'][] = 'jpeg';
+$conf['sizes'][] = 'large';
+$conf['sizes'][] = 'medium';
+$conf['sizes'][] = 'mp3';
+$conf['sizes'][] = 'pdf';
+$conf['sizes'][] = 'png';
+$conf['sizes'][] = 'quicktime';
+$conf['sizes'][] = 'quicktime_stream';
+$conf['sizes'][] = 'raw';
+$conf['sizes'][] = 'small';
+$conf['sizes'][] = 'text';
+$conf['sizes'][] = 'thumbnails';
+$conf['sizes'][] = 'tiff';
+$conf['sizes'][] = 'wav';
+$conf['sizes'][] = 'xml';
+$conf['sizes'][] = 'xslt';

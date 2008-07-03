@@ -32,15 +32,20 @@ class Dase_Handler_Collections extends Dase_Handler
 			$request->renderError(401,$user->eid.' is not permitted to create a collection');
 		}
 		$coll_entry = Dase_Atom_Entry::load("php://input",false);
-		if ('collection' != $coll_entry->getEntryType) {
+		if ('collection' != $coll_entry->entrytype) {
 			$request->renderError(400);
 		}
-		$coll = $coll_entry->create($request);
+		$ascii_id = $coll_entry->create($request);
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-		header("Location: ".APP_ROOT."/collection/".$request->get('collection_ascii_id'));
-		echo $coll->asAtom();
+		header("Location: ".APP_ROOT."/collection/".$ascii_id.'.atom');
+		echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry();
 		exit;
+	}
+
+	public function getCollectionsJson($request) 
+	{
+		$request->renderResponse(Dase_DBO_Collection::listAsJson());
 	}
 
 	public function getCollectionsAtom($request) 
@@ -50,7 +55,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		} else {
 			$public_only = true;
 		}
-		$request->renderResponse(Dase_DBO_Collection::listAsAtom($public_only),$request);
+		$request->renderResponse(Dase_DBO_Collection::listAsAtom($public_only));
 	}
 
 	public function getCollections($request) 
@@ -59,7 +64,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		$feed = Dase_Atom_Feed::retrieve(DASE_URL.'/collections?format=atom');
 		$tpl->assign('collections',$feed);
 		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
-		$request->renderResponse($tpl->fetch('collection/list.tpl'),$request);
+		$request->renderResponse($tpl->fetch('collection/list.tpl'));
 	}
 
 	public function getItemTalliesJson($request) 

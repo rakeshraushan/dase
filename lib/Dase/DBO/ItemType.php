@@ -94,4 +94,15 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		}
 		return $feed->asXml();
 	}
+
+	function expunge()
+	{
+		$att_its = new Dase_DBO_AttributeItemType;
+		$atts_its->item_type_id = $this->id;
+		foreach ($atts_its->find() as $doomed) {
+			Dase_Log::info('deleted attribute_item_type '.$doomed->id);
+			$doomed->delete();
+		}
+		$this->delete();
+	}
 }

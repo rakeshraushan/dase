@@ -118,7 +118,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$this->addCategory($type,'http://daseproject.org/category/feedtype'); 
 	}
 
-	function getFeedType($type) 
+	function getFeedType() 
 	{
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/feedtype' == $el->getAttribute('scheme')) {

@@ -32,7 +32,6 @@ PRIMARY KEY (`id`)
 DROP TABLE IF EXISTS `attribute_item_type`;
 CREATE TABLE `attribute_item_type` (
 `id` int(11) NOT NULL auto_increment,
-`is_identifier` tinyint(1) default NULL,
 `attribute_id` int(11) default NULL,
 `item_type_id` int(11) default NULL,
 `cardinality` varchar(20) default NULL,
@@ -156,15 +155,6 @@ CREATE TABLE `item_type` (
 `description` varchar(2000) default NULL,
 `ascii_id` varchar(200) default NULL,
 `name` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `item_type_relation`;
-CREATE TABLE `item_type_relation` (
-`id` int(11) NOT NULL auto_increment,
-`parent_item_type_id` int(11) default NULL,
-`item_type_id` int(11) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

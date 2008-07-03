@@ -38,6 +38,34 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($coll_array,true);
 	}
 
+	public function expunge()
+	{
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->id;
+		foreach ($items->find() as $item) {
+			Dase_Log::info("item $this->ascii_id:$item->serial_number deleted");
+			$item->expunge();
+		}
+		$item_types = new Dase_DBO_ItemType;
+		$item_types->collection_id = $this->id;
+		foreach ($item_types->find() as $type) {
+			$type->expunge();
+		}
+		$atts = new Dase_DBO_Attribute;
+		$atts->collection_id = $this->id;
+		foreach ($atts->find() as $a) {
+			Dase_Log::info("attribute $this->asci_id:$a->ascii_id deleted");
+			$a->delete();
+		}	
+		$cms = new Dase_DBO_CollectionManager;
+		$cms->collection_ascii_id = $this->ascii_id;
+		foreach ($cms->find() as $cm) {
+			$cm->delete();
+		}
+		$this->delete();
+		Dase_Log::info("$this->ascii_id deleted");
+	}
+
 	function getBaseAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;
@@ -70,6 +98,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setFeedType('collection');
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
 		return $feed->asXml();
+	}
+
+	function asAtomEntry()
+	{
+		$entry = new Dase_Atom_Entry();
+		$entry->setId(APP_ROOT.'/collection/'.$this->ascii_id);
+		$entry->setEntryType('collection');
+		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
+		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id);
+		return $entry->asXml();
 	}
 
 	function asAtomFull() 
@@ -164,6 +202,23 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$coll_array['next'] = $this->getBaseUrl().'.json?page='. $next;
 		$json = new Services_JSON;
 		return $json->encode($coll_array,true);
+	}
+
+	static function listAsJson($public_only = false)
+	{
+		$c = new Dase_DBO_Collection;
+		$c->orderBy('collection_name');
+		if ($public_only) {
+			$c->is_public = 1;
+		} 
+		foreach ($c->find() as $coll) {
+			foreach ($coll as $k => $v) {
+				$coll_array[$k] = $v;
+			}
+			$coll_array['count'] = $coll->getItemCount();
+			$result[] = $coll_array;
+		}
+		return Dase_Json::get($result);
 	}
 
 	static function listAsAtom($public_only = false)

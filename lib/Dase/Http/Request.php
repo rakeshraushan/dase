@@ -386,10 +386,10 @@ class Dase_Http_Request
 		return false;
 	}
 
-	public function renderResponse($content,$set_cache=true)
+	public function renderResponse($content,$set_cache=true,$status_code=null)
 	{
 		$response = new Dase_Http_Response($this);
-		$response->render($content,$set_cache);
+		$response->render($content,$set_cache,$status_code);
 		exit;
 	}
 
