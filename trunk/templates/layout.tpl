@@ -97,47 +97,66 @@
 				<ul class="hide" id="cart-submenu">
 					<li><a href="" class="create" id="cartLink">view cart</a></li>
 					<li><a href="" class="create">empty cart</a></li>
-					<!--
-					<li><a href="" class="create" id="moveCartTo">move cart items to...</a>
-					<ul class="hide">
-						<li>
-						<form action="sss" method="post">
-							<div id="allTags">
-							</div>
-							<div><input type="submit" value="move items"/></div>
-						</form>
-						</li>
-					</ul>
-					</li>
-					-->
 				</ul>
 				</li>
-				<!--
-				<li id="shared-menu"><a href="" class="main">Shared Collections &amp; Slideshows</a>
-				<ul class="hide" id="shared-submenu">
-					<li class="placeholder"></li>
-				</ul>
-				</li>
-				-->
-
-				<li id="user_collection-menu"><a href="" class="main">My Collections</a>
-				<ul class="hide" id="user_collection-submenu">
-					<li class="placeholder"></li>
-				</ul>
-				</li>
-
-				<li id="slideshow-menu"><a href="" class="main">My Slideshows</a>
-				<ul class="hide" id="slideshow-submenu">
-					<li class="placeholder"></li>
+				<li id="sets-menu"><a href="" class="main">My Sets</a>
+				<ul class="hide" id="sets-submenu">
+					<!-- insert javascript template output -->
 				</ul>
 				</li>
 
 				<li id="subscription-menu"><a href="" class="main">My Subscriptions</a>
 				<ul class="hide" id="subscription-submenu">
-					<li class="placeholder"></li>
+					<!-- insert javascript template output -->
 				</ul>
 				</li>
 			</ul>
+
+			<!-- javascript template for sets-->
+			<textarea class="javascript_template" id="sets_jst">
+				<li><a href='new' id='createNewSet' class='edit'>create new set</a></li>
+				{literal}
+				{for tag in tags}
+				{if 'set' == tag.type || 'slideshow' == tag.type}
+				<li>
+				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name} (${tag.count})</a>
+				</li>
+				{/if}
+				{/for}
+				{/literal}
+			</textarea>
+			<!-- end javascript template -->
+
+			<!-- javascript template for subscriptions-->
+			<textarea class="javascript_template" id="subscriptions_jst">
+				{literal}
+				{for tag in tags}
+				{if 'subscription' == tag.type}
+				<li>
+				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name}</a>
+				</li>
+				{/if}
+				{/for}
+				{/literal}
+			</textarea>
+			<!-- end javascript template -->
+
+			<!-- javascript template for save-to pull down-->
+			<textarea class="javascript_template" id="saveto_jst">
+				<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>
+					<option value=''>save checked items to...</option>
+					{literal}
+					{for tag in tags}
+					{if 'subscription' != tag.type && 'admin' != tag.type}
+					<option value='${tag.ascii_id}'>${tag.type}:${tag.name}</option>
+					{/if}
+					{/for}
+					{/literal}
+				</select>
+				<input type='submit' value='add'/>
+			</textarea>
+			<!-- end javascript template -->
+
 
 			<h5 id="ajaxMsg"></h5>
 

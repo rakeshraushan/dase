@@ -34,6 +34,14 @@ Class Dase_Util
 		return preg_replace('/__*/','_',$str);
 	}
 
+	public static function sortByTagName($b,$a)
+	{
+		if ($a['name'] == $b['name']) {
+			return 0;
+		}
+		return strcasecmp($b['name'],$a['name']);
+	}
+
 	public static function sortByLastUpdateSortable($b,$a)
 	{
 		if ($a->lastUpdateSortable == $b->lastUpdateSortable) {

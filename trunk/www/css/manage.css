@@ -17,7 +17,7 @@ div#manageHeader p {
 }
 
 div#manage {
-	background-color:#eef1f8;
+	background-color:#f3f8ff;
 }
 
 
@@ -96,7 +96,7 @@ span.mods {
 }
 
 span.declaring {
-	color: #999;
+	color: #666;
 	margin-right: .5em;
 }
 

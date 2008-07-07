@@ -36,8 +36,8 @@ Dase.$ = function(id) {
 Dase.util.trim = function(str) {
 	//from: http://blog.stevenlevithan.com/archives/faster-trim-javascript
 	var	str = str.replace(/^\s\s*/, ''),
-		ws = /\s/,
-		i = str.length;
+	ws = /\s/,
+	i = str.length;
 	while (ws.test(str.charAt(--i)));
 	return str.slice(0, i + 1);
 }
@@ -45,9 +45,9 @@ Dase.util.trim = function(str) {
 Dase.logoff = function() {
 	if (Dase.user.eid) {
 		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
-				function(resp) { 
-				window.location.href = Dase.base_href+'login/form';
-				});
+		function(resp) { 
+			window.location.href = Dase.base_href+'login/form';
+		});
 	} else {
 		window.location.href = Dase.base_href+'login/form';
 	}
@@ -86,6 +86,15 @@ Dase.hasClass = function(elem,cname) {
 	}
 	return false;
 };
+
+//use to hide 'em
+Dase.addClassToChildren = function(elem,cname) {
+	if (!elem) return;
+	var children = elem.getElementsByTagName('*');
+	for (var i=0;i<children.length;i++) {
+		Dase.addClass(children[i],cname);
+	}
+}
 
 Dase.displayError = function(msg) {
 	var jsalert = Dase.$('msg');
@@ -134,15 +143,15 @@ Dase.createElem = function(parent,value,tagName,className,id) {
 Dase.removeChildren = function(target) {
 	if (!target) return;
 	while (target.childNodes[0]) {
-		target.removeChild(target.childNodes[0]);
-	}
+	target.removeChild(target.childNodes[0]);
+}
 }
 
 Dase.highlight = function(target,time) {
 	Dase.addClass(target,'highlight');
 	setTimeout(function() {
-			Dase.removeClass(target,'highlight');
-			},time);
+		Dase.removeClass(target,'highlight');
+	},time);
 }
 
 Dase.removeFromArray = function(ar,val) {
@@ -181,7 +190,7 @@ Dase.initUser = function() {
 	}
 	Dase.loadingMsg(true);
 	Dase.getJSON(Dase.base_href + "user/"+eid+ "/data",function(json){
-			for (var eid in json) {
+		for (var eid in json) {
 			Dase.user.eid = eid;
 			Dase.user.htpasswd = json[eid].htpasswd;
 			Dase.user.name = json[eid].name;
@@ -189,18 +198,18 @@ Dase.initUser = function() {
 			Dase.user.collections = json[eid].collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.placeUserName(eid);
-			Dase.placeUserTags(eid);
+			Dase.placeUserTags(Dase.user);
 			Dase.placeUserCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
 			Dase.placeItemEditLink(eid);
 			Dase.initCart();
 			Dase.initAddToCart();
-			}
-			Dase.loginControl(Dase.user.eid);
-			Dase.multicheck("checkedCollection");
-			Dase.getItemTallies();
-			});
+		}
+		Dase.loginControl(Dase.user.eid);
+		Dase.multicheck("checkedCollection");
+		Dase.getItemTallies();
+	});
 };
 
 Dase.loginControl = function(eid) {
@@ -213,6 +222,7 @@ Dase.loginControl = function(eid) {
 
 Dase.initLogoff = function() {
 	var link = Dase.$('logoff-link');
+	if (!link) return;
 	link.onclick = function() {
 		Dase.logoff();
 		return false;
@@ -222,8 +232,8 @@ Dase.initLogoff = function() {
 Dase.placeUserName = function(eid) {
 	var nameElem = Dase.$('userName');
 	if (nameElem) {
-	/*	nameElem.innerHTML = Dase.user.name;
-		*/
+		/*	nameElem.innerHTML = Dase.user.name;
+		 */
 		nameElem.innerHTML = eid;
 		var settingsElem = Dase.$('settings-link');
 		settingsElem.href = 'user/'+eid+'/settings';
@@ -331,7 +341,6 @@ Dase.placeUserCollections = function(eid) {
 	}
 };
 
-/*Dase.setCollectionAtts = function(coll) {*/
 Dase.setCollectionAtts = function() {
 	//you can pass in a coll OR use as an event handler
 	var coll_el = Dase.$('collectionAsciiId');
@@ -345,36 +354,36 @@ Dase.setCollectionAtts = function() {
 	if ('' === coll) {
 		/* per http://raibledesigns.com/rd/entry/javascript_removechild_howto */
 		while (sel.childNodes[0]) {
-			sel.removeChild(sel.childNodes[0]);
-		}
-		Dase.addClass(Dase.$('preposition'),'hide');
-		Dase.addClass(sel,'hide');
-	} else {
-		Dase.getJSON(Dase.base_href + "collection/" + coll + "/attributes",function(json){
-				//fixes problem in which search string defined a collection_ascii
-				//AND refinement to THIS collection did also and for some reason the att
-				//list got populated twice
-				//(it's because the child removal above gets called on the second call
-				//of this function BEFORE this async call is complete, so you have
-				//remove-remove-add-add rather than remove-add-remove-add
-			while (sel.childNodes[0]) {
-				sel.removeChild(sel.childNodes[0]);
-			}
-			var opt = document.createElement('option');
-			opt.setAttribute('value',"");
-			opt.appendChild(document.createTextNode("All Attributes"));
-			sel.appendChild(opt);
-			for (var i=0;i<json.length;i++) {
-				var att = json[i];
-				var opt = document.createElement('option');
-				opt.setAttribute('value',att.collection+'~'+att.ascii_id);
-				var label = Dase.truncate(att.attribute_name,maxAttName);
-				opt.appendChild(document.createTextNode(label));
-				sel.appendChild(opt);
-			}
-			Dase.removeClass(Dase.$('preposition'),'hide');
-			Dase.removeClass(sel,'hide');
-		});
+		sel.removeChild(sel.childNodes[0]);
+	}
+	Dase.addClass(Dase.$('preposition'),'hide');
+	Dase.addClass(sel,'hide');
+} else {
+	Dase.getJSON(Dase.base_href + "collection/" + coll + "/attributes",function(json){
+		//fixes problem in which search string defined a collection_ascii
+		//AND refinement to THIS collection did also and for some reason the att
+		//list got populated twice
+		//(it's because the child removal above gets called on the second call
+		//of this function BEFORE this async call is complete, so you have
+		//remove-remove-add-add rather than remove-add-remove-add
+		while (sel.childNodes[0]) {
+		sel.removeChild(sel.childNodes[0]);
+	}
+	var opt = document.createElement('option');
+	opt.setAttribute('value',"");
+	opt.appendChild(document.createTextNode("All Attributes"));
+	sel.appendChild(opt);
+	for (var i=0;i<json.length;i++) {
+		var att = json[i];
+		var opt = document.createElement('option');
+		opt.setAttribute('value',att.collection+'~'+att.ascii_id);
+		var label = Dase.truncate(att.attribute_name,maxAttName);
+		opt.appendChild(document.createTextNode(label));
+		sel.appendChild(opt);
+	}
+	Dase.removeClass(Dase.$('preposition'),'hide');
+	Dase.removeClass(sel,'hide');
+});
 	}
 };
 
@@ -506,15 +515,17 @@ Dase.multicheck = function(c) {
 Dase.getItemTallies = function() {
 	if (Dase.$("collectionList")) {
 		Dase.getJSON(Dase.base_href+"collections/item_tallies", function(json){
-				for(var ascii_id in json) {
+			for(var ascii_id in json) {
 				var asc = Dase.$(ascii_id);
 				if (asc) {
-				var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
-				if (tally) {
-				tally.innerHTML = '(' + json[ascii_id] + ')';
-				} } } 
-				Dase.loadingMsg(false);
-				});
+					var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
+					if (tally) {
+						tally.innerHTML = '(' + json[ascii_id] + ')';
+					} 
+				} 
+			} 
+			Dase.loadingMsg(false);
+		});
 	}
 };
 
@@ -529,90 +540,42 @@ Dase.loadingMsg = function(displayBool) {
 	}
 }
 
-Dase.placeUserTags = function(eid) {
-	var types = {
-		'cart':'My Cart',
-		'subscription':'Subscription',
-		'slideshow':'Slideshow',
-		'user_collection':'User Collection'
-	};
-	var json = Dase.user.tags;
-	var tags={};
-	var sets = {};
-	//this creates the select menu for tags the user can copy to
-	var saveChecked = "<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>";
-	saveChecked += "<option value=''>save checked items to...</option>";
-	tags.allTags = Dase.$('allTags');
-	for (var type in json) {
-		if ('user_collection' == type) {
-			sets[type] = "<li><a href='new' id='createUserCollection' class='edit'>create new collection</a></li>\n";
-		}
-		var jsonType = json[type];
-		for (var ascii in jsonType) {
-			var jsonAscii = jsonType[ascii];
-			if ('subscription' != type) {
-				saveChecked += "<option value='"+ascii+"'>"+types[type]+": "+jsonAscii+"</option>\n";
-			}
-			if ('cart' != type) {
-				//we populate 'sets' as we go
-				if (sets[type]) {
-					//concat...
-					//note that subscriptions don't REALLY use the ascii_id -- it's actually the tag id
-					if ('subscription' == type) {
-						var id = ascii.substring(1);
-						sets[type] = sets[type] + "<li><a href='tag/" + id  + "'>" + jsonAscii + "</a></li>\n";
-					} else {
-						sets[type] = sets[type] + "<li><a href='tag/" + eid + "/" + ascii + "'>" + jsonAscii + "</a></li>\n";
-					}
-				} else {
-					//first time through...
-					if ('subscription' == type) {
-						id = ascii.substring(1);
-						sets[type] = "<li><a href='tag/" + id + "'>" + jsonAscii + "</a></li>\n";
-					} else {
-						sets[type] = "<li><a href='tag/" + eid + "/" + ascii + "'>" + jsonAscii + "</a></li>\n";
-					}
-				}
-			} 
-		} 
-	}
-	saveChecked += "</select>";
+Dase.placeUserTags = function(user) {
+	if (!Dase.$('sets_jst')) return;
+	var templateObj = TrimPath.parseDOMTemplate("sets_jst");
+	Dase.$('sets-submenu').innerHTML = templateObj.process(user);
+
+	var templateObj = TrimPath.parseDOMTemplate("subscriptions_jst");
+	Dase.$('subscription-submenu').innerHTML = templateObj.process(user);
+
+	var templateObj = TrimPath.parseDOMTemplate("saveto_jst");
 	var target = Dase.$('saveChecked');
-	//if we are on an item set, also place
-	//the select menu for "save checked items to...."
 	var item_set = Dase.$('itemSet');
 	if (item_set) {
 		var items = item_set.getElementsByTagName('td');
 	}
 	if (target && item_set && items.length) {
-		target.innerHTML = saveChecked;
-		target.innerHTML += "<input type='submit' value='add'/>";
+		target.innerHTML = templateObj.process(user);
 	}
-	for (var type in sets) {
-		try{
-			Dase.$(type+'-submenu').innerHTML = sets[type];
-		} catch(e) {
-			//	alert('a friendly notice: ' +e);
-		}
-	}
-	Dase.initCreateNewUserCollection();
-};
 
-Dase.initCreateNewUserCollection = function() {
-	var createUserCollectionLink = Dase.$('createUserCollection');
-	if (createUserCollectionLink) {
-		createUserCollectionLink.onclick = function() {
+	Dase.initCreateNewSet();
+}
+
+Dase.initCreateNewSet = function() {
+	var createNewSetLink = Dase.$('createNewSet');
+	if (createNewSetLink) {
+		createNewSetLink.onclick = function() {
 			var tag = {};
-			tag.tag_name = prompt("Enter name of collection","");
+			tag.tag_name = prompt("Enter name of set","");
 			HTTP.post(Dase.base_href + 'tags',tag,
-					function(resp) { 
-					Dase.initUser(); 
-					Dase.initSaveTo();
-					alert(resp);
-					},
-					function(code,resp) {
-					alert(resp);
-					});
+			function(resp) { 
+				Dase.initUser(); 
+				Dase.initSaveTo();
+				alert(resp);
+			},
+			function(code,resp) {
+				alert(resp);
+			});
 			return false;
 		};
 	}
@@ -649,25 +612,30 @@ Dase.getHtml = function(url,elem_id,my_func) {
 			if (Dase.$(elem_id)) {
 				Dase.$(elem_id).innerHTML = returnStr;
 			}
-			if (my_func) {
-				my_func();
+			if (my_func) { 
+				my_func(); 
 			}
-		} else {
-			// wait for the call to complete
-		}
+			} else {
+				// wait for the call to complete
+			}
+		};
 	};
-};
 
-Dase.ajax = function(url,method,my_func,msgBody,username,password) {
-	if (!method) {
-		method = 'POST';
-	}
-	var xmlhttp = Dase.createXMLHttpRequest();
+	Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers) {
+		if (!method) {
+			method = 'POST';
+		}
+		var xmlhttp = Dase.createXMLHttpRequest();
 
-	if (username && password) {
-		xmlhttp.open(method,url,true,username,password);
-	} else {
-		xmlhttp.open(method,url,true);
+		if (username && password) {
+			xmlhttp.open(method,url,true,username,password);
+		} else {
+			xmlhttp.open(method,url,true);
+		}
+		if (content_headers) {
+			for (var k in content_headers) {
+			xmlhttp.setRequestHeader(k,content_headers[k]);
+		}
 	}
 	if (msgBody) {
 		xmlhttp.send(msgBody);
@@ -680,9 +648,7 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password) {
 			if (my_func) {
 				my_func(returnStr);
 			}
-		} else {
-			// wait for the call to complete
-		}
+		} 
 		if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
 			alert(xmlhttp.responseText);
 		} 
@@ -709,9 +675,7 @@ Dase.getElementHtml = function(url,target,my_func) {
 			if (my_func) {
 				my_func();
 			}
-		} else {
-			// wait for the call to complete
-		}
+		} 
 	};
 };
 
@@ -749,7 +713,7 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 				} else {
 					return json;
 				}
-			} else { //non 200 status returned
+				} else { //non 200 status returned
 				var json = {};
 				if (my_func) {
 					my_func(json);
@@ -757,9 +721,7 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 					return json;
 				}
 			}
-		} else { 	
-			// wait for the call to complete
-		}
+		} 
 		return false;
 	};
 };
@@ -786,10 +748,10 @@ Dase.initAddToCart = function() {
 				var item = {};
 				item.item_id = inputElem.value;
 				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
-						function(resp) { 
-						Dase.initUser(); 
-						Dase.initSaveTo();
-						});
+				function(resp) { 
+					Dase.initUser(); 
+					Dase.initSaveTo();
+				});
 				return false;
 			};
 			Dase.removeClass(anchors[i],'hide');
@@ -803,47 +765,47 @@ Dase.initCart = function() {
 	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
-			function(json) { 
-			var label = Dase.$('cartLabel');
-			if (label) {
+	function(json) { 
+		var label = Dase.$('cartLabel');
+		if (label) {
 			if (undefined !== json.length) {
-			label.innerHTML = "My Cart ("+json.length+")";
+				label.innerHTML = "My Cart ("+json.length+")";
 			} else {
-			label.innerHTML = "My Cart (" + 0 + ")";
+				label.innerHTML = "My Cart (" + 0 + ")";
 			}
-			}
-			for (var i=0;i<json.length;i++) {
+		}
+		for (var i=0;i<json.length;i++) {
 			var in_cart = Dase.$('addToCart_'+ json[i].item_id);
 			if  (in_cart) {
-			//by default all search result thumbnails have an 'add to cart' link
-			//with id = addToCart_{item_id} when this initCart function runs,
-			//items currently in cart have link changed to '(remove)', the
-			//'in cart' label is unhidden, and the link id is set to removeFromCart_{tag_item_id}
-			//and the href is created that, sent with 'delete' http method, will
-			//delete item from user's cart
-			in_cart.innerHTML = '(remove)';
-			in_cart.id = 'removeFromCart_'+json[i].tag_item_id;
-			in_cart.href=Dase.base_href + 'user/' + Dase.user.eid + '/tag_items/' + json[i].tag_item_id;
-			Dase.removeClass(in_cart.parentNode.getElementsByTagName('span')[0],'hide');
-			Dase.addClass(in_cart,'inCart');
-			in_cart.item_id = json[i].item_id;
-			in_cart.onclick = function() {
-				//first, optimistically assume delete will work
-				//and reset this link to be an 'add to cart' link
-				this.innerHTML = 'add to cart';
-				this.id = 'addToCart_' + this.item_id;
-				var delete_url = this.href;
-				this.href = '#';
-				Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
-				Dase.ajax(delete_url,'DELETE',function(resp) {
+				//by default all search result thumbnails have an 'add to cart' link
+				//with id = addToCart_{item_id} when this initCart function runs,
+				//items currently in cart have link changed to '(remove)', the
+				//'in cart' label is unhidden, and the link id is set to removeFromCart_{tag_item_id}
+				//and the href is created that, sent with 'delete' http method, will
+				//delete item from user's cart
+				in_cart.innerHTML = '(remove)';
+				in_cart.id = 'removeFromCart_'+json[i].tag_item_id;
+				in_cart.href=Dase.base_href + 'user/' + Dase.user.eid + '/tag_items/' + json[i].tag_item_id;
+				Dase.removeClass(in_cart.parentNode.getElementsByTagName('span')[0],'hide');
+				Dase.addClass(in_cart,'inCart');
+				in_cart.item_id = json[i].item_id;
+				in_cart.onclick = function() {
+					//first, optimistically assume delete will work
+					//and reset this link to be an 'add to cart' link
+					this.innerHTML = 'add to cart';
+					this.id = 'addToCart_' + this.item_id;
+					var delete_url = this.href;
+					this.href = '#';
+					Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
+					Dase.ajax(delete_url,'DELETE',function(resp) {
 						Dase.initUser(); 
 						Dase.initSaveTo();
-						});
-				return false;
-			};
+					});
+					return false;
+				};
 			}
-			}
-			});
+		}
+	});
 };
 
 /* Looks for any link w/ class 'toggle'.  That link should have
@@ -893,11 +855,11 @@ Dase.initSaveTo = function() {
 		var data = {};
 		data.item_ids = item_id_array;
 		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
-				function(resp) { 
-				alert(resp); 
-				Dase.initUser();
-				Dase.initSaveTo();
-				});
+		function(resp) { 
+			alert(resp); 
+			Dase.initUser();
+			Dase.initSaveTo();
+		});
 		return false;
 	};
 };
@@ -939,9 +901,9 @@ Dase.initRemoveItems = function() {
 			var item_ids = item_id_array.join(',');
 			var url = Dase.base_href + 'tag/'+Dase.user.eid+'/'+tag_ascii_id+'/items/'+item_ids;
 			Dase.ajax(url,'DELETE',function(resp) {
-					alert(resp);
-					remove_form.submit();
-					});
+				alert(resp);
+				remove_form.submit();
+			});
 		}
 		return false;
 	};
@@ -963,10 +925,10 @@ Dase.initContentNotes = function() {
 	notesForm.onsubmit = function() {
 		var note = Dase.$('note').value;
 		Dase.ajax(document.notes_form.action,'POST',
-				function(resp) { 
-				Dase.toggle(notesForm);
-				Dase.getNotes();
-				},note);
+		function(resp) { 
+			Dase.toggle(notesForm);
+			Dase.getNotes();
+		},note);
 		return false;
 	};
 };
@@ -976,30 +938,30 @@ Dase.getNotes = function() {
 	var notesLink = Dase.$('notesLink');
 	if (!notesLink) return;
 	Dase.getJSON(notesLink.href,
-			function(resp) {
-			var html = '';
-			for (var i=0;i<resp.length;i++) {
+	function(resp) {
+		var html = '';
+		for (var i=0;i<resp.length;i++) {
 			html += '<li>'+resp[i].text;
 			html += ' <a href="'+notesLink.href+'/'+resp[i].id+'" class="delete note">(x)</a>';
 			html += '</li>';
-			}
-			Dase.$('notes').innerHTML = html;
-			var delete_links = notes.getElementsByTagName('a');
-			for (var i=0;i<delete_links.length;i++) {
+		}
+		Dase.$('notes').innerHTML = html;
+		var delete_links = notes.getElementsByTagName('a');
+		for (var i=0;i<delete_links.length;i++) {
 			if ('delete note' == delete_links[i].className) {
-			delete_links[i].onclick = function() {
-			if (!confirm('delete this note?')) {
-			return false;
+				delete_links[i].onclick = function() {
+					if (!confirm('delete this note?')) {
+						return false;
+					}
+					Dase.ajax(this.href,'DELETE',
+					function(resp) {
+						Dase.getNotes();
+					},null);
+					return false;
+				};
 			}
-			Dase.ajax(this.href,'DELETE',
-				function(resp) {
-				Dase.getNotes();
-				},null);
-			return false;
-			};
-			}
-			}
-			});
+		}
+	});
 };
 
 Dase.initEditLink = function(el) {
@@ -1011,9 +973,9 @@ Dase.initEditLink = function(el) {
 		Dase.toggle(metadata);
 		Dase.toggle(form_div);
 		Dase.getJSON(el.href,function(json) {
-				//build form and insert it into page
-				form_div.innerHTML = Dase.buildForm(json,el.href);
-				});
+			//build form and insert it into page
+			form_div.innerHTML = Dase.buildForm(json,el.href);
+		});
 		return false;
 	}
 };
@@ -1042,28 +1004,28 @@ Dase.getFormElement = function(set) {
 	}
 	//NOTE: on form submit, use jquery serialize!
 	switch (type) {
-	case 'radio':
+		case 'radio':
 		break;
-	case 'checkbox':
+		case 'checkbox':
 		break;
-	case 'select':
+		case 'select':
 		break;
-	case 'text': 
+		case 'text': 
 		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
 		break;
-	case 'textarea': 
+		case 'textarea': 
 		element_html += '<textarea name="'+name+'" rows="5">'+value+'"</textarea>';
 		break;
-	case 'no_edit': 
+		case 'no_edit': 
 		element_html += value;
 		break;
-	case 'listbox': 
+		case 'listbox': 
 		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
 		break;
-	case 'text_with_menu':
+		case 'text_with_menu':
 		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
 		break;
-	default:
+		default:
 		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
 	}
 	return element_html;
@@ -1080,10 +1042,10 @@ Dase.initAttributeEdit = function() {
 				var att_ascii = this.className.split(" ")[1];
 				var editRow = Dase.$('editRow-'+att_ascii);
 				Dase.getJSON(this.href,function(json) {
-						//build form and insert it into page
-						//editRow.innerHTML = Dase.buildForm(json,el.href);
-						editRow.innerHTML = '<td colspan="0"><h1>'+json.attribute_name+'</h1></td>';
-						});
+					//build form and insert it into page
+					//editRow.innerHTML = Dase.buildForm(json,el.href);
+					editRow.innerHTML = '<td colspan="0"><h1>'+json.attribute_name+'</h1></td>';
+				});
 				Dase.toggle(editRow);
 				return false;
 			};
@@ -1095,24 +1057,14 @@ Dase.initAttributeEdit = function() {
 // todo: reorganize these additions once it's clear it's not breaking things.
 
 Function.prototype.bind = function() {
-    // http://developer.mozilla.org/en/docs/
-    // Core_JavaScript_1.5_Reference:Functions:arguments
-    var _$A = function(a){return Array.prototype.slice.call(a);}
-    if(arguments.length < 2 && (typeof arguments[0] == "undefined")) return this;
-    var __method = this, args = _$A(arguments), object = args.shift();
-    return function() {
-        return __method.apply(object, args.concat(_$A(arguments)));
-    }
-}
-
-Dase.util.zip = function() {
-    var d = {};
-    if(arguments.length < 2) return d;
-    var arr = arguments[0];
-    for(var a = 0; a <= arguments.length; a++) {
-        if(a > 0 && arr[a - 1]) d[arguments[a]] = arr[a-1];
-    }
-    return d;
+	// http://developer.mozilla.org/en/docs/
+	// Core_JavaScript_1.5_Reference:Functions:arguments
+	var _$A = function(a){return Array.prototype.slice.call(a);}
+	if(arguments.length < 2 && (typeof arguments[0] == "undefined")) return this;
+	var __method = this, args = _$A(arguments), object = args.shift();
+	return function() {
+		return __method.apply(object, args.concat(_$A(arguments)));
+	}
 }
 
 Dase.initSlideshowLink = function() {
@@ -1160,45 +1112,45 @@ Dase.getJsonUrl = function() {
 
 
 Dase.addLoadEvent(function() {
-		Dase.setCollectionAtts();
-		Dase.initUser();
-		Dase.initMenu('menu');
-		Dase.multicheckItems();
-		Dase.initToggle();
-		Dase.initSaveTo();
-		Dase.initRemoveItems();
-		Dase.initLogoff();
-		Dase.initContentNotes();
-		Dase.initAttributeEdit();
-		Dase.initSlideshowLink();
-		Dase.initShowHtpasswd();
-		if (Dase.pageInit && typeof Dase.pageInit === 'function') {
+	Dase.setCollectionAtts();
+	Dase.initUser();
+	Dase.initMenu('menu');
+	Dase.multicheckItems();
+	Dase.initToggle();
+	Dase.initSaveTo();
+	Dase.initRemoveItems();
+	Dase.initLogoff();
+	Dase.initContentNotes();
+	Dase.initAttributeEdit();
+	Dase.initSlideshowLink();
+	Dase.initShowHtpasswd();
+	if (Dase.pageInit && typeof Dase.pageInit === 'function') {
 		Dase.pageInit();
-		}
-		//		Dase.initCheckImage();
-		//Dase.initRowTable('writing','highlight');
-		/*
-		   Dase.prepareAddFileUpload();
-		   Dase.prepareAttributeFlags();
-		   Dase.prepareCartAdds(); 
-		   Dase.prepareDeletable(); 
-		   Dase.prepareDeleteCommonValues();
-		   Dase.prepareDownload('download');
-		   Dase.prepareHelpModule();
-		   Dase.prepareHelpPopup();
-		   Dase.prepareLinkBack();
-		   Dase.prepareMediaLinks();
-		   Dase.prepareMine();
-		   Dase.prepareTagItems();
-		   Dase.prepareUploadValidation();
-		   Dase.setAutoReload();
-		   Dase.prepareRemoteLaunch('slideshowLaunch');
-		   Dase.initResize();
-		   Dase.prepareAddMetadata('addMetadata');
-		   Dase.prepareAddMetadata('addTagMetadata');
-		   Dase.prepareAddMetadata('uploadForm');
-		   Dase.prepareEditable();
-		   Dase.prepareGenericEditable();
-		 */
+	}
+	//		Dase.initCheckImage();
+	//Dase.initRowTable('writing','highlight');
+	/*
+	 Dase.prepareAddFileUpload();
+	 Dase.prepareAttributeFlags();
+	 Dase.prepareCartAdds(); 
+	 Dase.prepareDeletable(); 
+	 Dase.prepareDeleteCommonValues();
+	 Dase.prepareDownload('download');
+	 Dase.prepareHelpModule();
+	 Dase.prepareHelpPopup();
+	 Dase.prepareLinkBack();
+	 Dase.prepareMediaLinks();
+	 Dase.prepareMine();
+	 Dase.prepareTagItems();
+	 Dase.prepareUploadValidation();
+	 Dase.setAutoReload();
+	 Dase.prepareRemoteLaunch('slideshowLaunch');
+	 Dase.initResize();
+	 Dase.prepareAddMetadata('addMetadata');
+	 Dase.prepareAddMetadata('addTagMetadata');
+	 Dase.prepareAddMetadata('uploadForm');
+	 Dase.prepareEditable();
+	 Dase.prepareGenericEditable();
+	 */
 });
 

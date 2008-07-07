@@ -41,7 +41,8 @@ class Dase_Handler_Login extends Dase_Handler
 			$request->renderRedirect(urldecode($request->get('target')));
 		} else {
 			//I could probably just display here instead of redirect
-			$request->renderRedirect("login/form",'incorrect username/password');
+			$params['msg'] = 'incorrect username/password';
+			$request->renderRedirect("login/form",$params);
 		}
 	}
 

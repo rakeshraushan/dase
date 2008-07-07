@@ -14,19 +14,21 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	public static function getByUser($user)
 	{
 		$db = Dase_DB::get();
+		//union allows us to get tags that have no items
 		$sql = "
-			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,count(ti.id)
+			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id)
 			FROM tag t , tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.dase_user_id = ?
-			GROUP BY t.id,t.ascii_id,t.name,t.tag_type_id
+			GROUP BY t.id,t.ascii_id,t.name,t.type
 			UNION
-			SELECT t.id,t.ascii_id,t.name,t.tag_type_id,0
+			SELECT t.id,t.ascii_id,t.name,t.type,0
 			FROM tag t 
 			WHERE NOT EXISTS(SELECT * FROM tag_item ti WHERE ti.tag_id = t.id)
 			AND t.dase_user_id = ?
 			";
 		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute(array($user->id,$user->id));
 		return $sth;
 	}

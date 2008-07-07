@@ -10,9 +10,12 @@ class Dase_Handler_Admin extends Dase_Handler
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/managers' => 'managers',
 		'{collection_ascii_id}/settings' => 'settings',
-		'{collection_ascii_id}/upload' => 'upload',
+		'{collection_ascii_id}/indexer' => 'indexer',
+		'{collection_ascii_id}/uploader' => 'uploader',
+		'{collection_ascii_id}/upload/status' => 'upload_status',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 	);
+	public $upload_responses = array('status','num','message','filename','filesize','filetype','title','item_url','thumbnail_url');
 
 	protected function setup($request)
 	{
@@ -20,6 +23,10 @@ class Dase_Handler_Admin extends Dase_Handler
 		if (!$this->collection) {
 			$request->renderError(404);
 		}
+		//todo: this should be in individual methods
+		//if ('uploader' == $request->resource) {
+		//	$request->can_redirect_to_login = false;
+		//}
 		$this->user = $request->getUser();
 		if (!$this->user->can('admin','collection',$this->collection)) {
 			$request->renderError(401);
@@ -61,12 +68,69 @@ class Dase_Handler_Admin extends Dase_Handler
 		$request->renderResponse($tpl->fetch('admin/managers.tpl'));
 	}
 
-	public function getUpload($request)
+	public function getUploader($request)
 	{
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
-		$request->renderResponse($tpl->fetch('admin/upload_form.tpl'));
+		if ($request->has('prev_serial_number')) {
+			$tpl->assign('prev_serial_number',$request->get('prev_serial_number'));
+		}
+		$tpl->assign('num',$request->get('num')+1);
+		$request->renderResponse($tpl->fetch('admin/uploader.tpl'));
+	}
+
+	public function postToUploader($request)
+	{
+		//todo: check ppd?
+		//todo: 'compose' this as series of atompub posts
+		$num = $request->get('num');
+		$input_name = 'uploader_'.$num.'_file';
+		if (
+			isset($_FILES[$input_name]) && 
+			is_file($_FILES[$input_name]['tmp_name'])
+		) {
+			$name = $_FILES[$input_name]['name'];
+			$path = $_FILES[$input_name]['tmp_name'];
+			$type = $_FILES[$input_name]['type'];
+			try {
+				$u = new Dase_Upload(Dase_File::newFile($path,$type),$this->collection);
+				$u->checkForMultiTiff();
+				$ser_num = $u->createItem($request->getUser()->eid);
+				$logdata = $u->ingest();
+				$logdata .= $u->setTitle($name);
+				$logdata .= $u->buildSearchIndex();
+				Dase_Log::info($logdata);
+			} catch(Exception $e) {
+				$error_msg = $e->getMessage();
+				Dase_Log::info($error_msg);
+				header("HTTP/1.1 400 Bad Request");
+				$data['status'] = 'bad request';
+				$request->response_mime_type = 'application/json';
+				$request->renderResponse(Dase_Json::get($data));
+			}
+		} else {
+			$request->renderError(400,'could not upload file');
+		}
+		$params['status'] = 'ok';
+		$params['num'] = $num;
+		$params['message'] = 'ok';
+		$params['filename'] = $name;
+		$params['filesize'] = $u->getFileSize();
+		$params['filetype'] = $u->getFiletype();
+		$params['title'] = $u->getTitle();
+		$params['item_url'] = $u->getItemUrl();
+		$params['thumbnail_url'] = $u->getThumbnailUrl();
+		Dase_Log::debug(join('|',$params));
+		$request->renderRedirect('admin/'.$this->collection->ascii_id.'/upload/status',$params);
+	}
+
+	public function getUploadStatus($request)
+	{
+		foreach ($this->upload_responses as $f) {
+			$data[$f]=$request->get($f);
+		}
+		$request->renderResponse(Dase_Json::get($data));
 	}
 
 	public function getArchive($request) 
@@ -76,12 +140,11 @@ class Dase_Handler_Admin extends Dase_Handler
 		$request->serveFile($archive,'text/plain',true);
 	}
 
-	public function rebuildIndexes($request) 
+	public function postToIndexer($request) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		$c->buildSearchIndex();
-		$request->renderRedirect('',"rebuilt indexes for $c->collection_name");
+		$this->collection->buildSearchIndex();
+		$params['msg'] = "rebuilt indexes for $this->collection->collection_name";
+		$request->renderRedirect('',$params);
 	}
-
 }
 

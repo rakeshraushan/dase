@@ -344,18 +344,6 @@ table#itemSet td div.cartAdd span {
 
 /************ SLIDESHOW DISPLAY **************/
 
-div.slideIcon {
-	background-color: white;
-	padding: 4px;
-	-moz-border-radius: 2px;
-}
-
-div.slideIconInside {
-	background-color: #333;
-	width: 12px;
-	height:10px;
-}
-
 body.black {
 	background-color: black;
 }

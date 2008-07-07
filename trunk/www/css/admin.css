@@ -76,18 +76,23 @@ table.dataDisplay  th.rows {
 }
 
 /* uploader widget styles */
-input.uploader_file {
-    font-size: 18px;
+
+.uploader_target {
+	display: none;
 }
 
-div.uploader { display: none; }
+/* uploader widget styles */
+input.uploader_file {
+	font-size: 1.2em;
+	width: 80%;
+}
 
 .messagequeue li {
-    font-size: .75em;
-    padding: 1em;
-    margin: .5em;
+	width: 50%;
+    padding: .5em;
+    margin: 1em;
     list-style-type: none;
-    -moz-border-radius: 5%;
+    -moz-border-radius: 5px;
 }
 
 .messagequeue li.ok {

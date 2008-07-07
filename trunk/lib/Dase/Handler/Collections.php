@@ -31,9 +31,27 @@ class Dase_Handler_Collections extends Dase_Handler
 		if (!$user->isSuperuser()) {
 			$request->renderError(401,$user->eid.' is not permitted to create a collection');
 		}
-		$coll_entry = Dase_Atom_Entry::load("php://input",false);
+		$content_type = $request->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type) {
+			$this->_newAtomCollection($request);
+		} elseif ('application/json' == $content_type) {
+			$this->_newJsonCollection($request);
+		} else {
+			$request->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	private function _newAtomCollection($request)
+	{
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $request->getHeader('Content-MD5');
+		if (md5($raw_input) != $client_md5) {
+			$request->renderError(412,'md5 does not match');
+		}
+		$coll_entry = Dase_Atom_Entry::load($raw_input);
 		if ('collection' != $coll_entry->entrytype) {
-			$request->renderError(400);
+			$request->renderError(400,'must be a collection entry');
 		}
 		$ascii_id = $coll_entry->create($request);
 		header("HTTP/1.1 201 Created");
@@ -41,6 +59,11 @@ class Dase_Handler_Collections extends Dase_Handler
 		header("Location: ".APP_ROOT."/collection/".$ascii_id.'.atom');
 		echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry();
 		exit;
+	}
+
+	private function _newJsonCollection($request)
+	{
+		$request->renderResponse('still working on JSON posts!');
 	}
 
 	public function getCollectionsJson($request) 

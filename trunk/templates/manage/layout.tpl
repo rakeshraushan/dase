@@ -27,9 +27,9 @@
 		<script type="text/javascript" src="www/scripts/jquery.js"></script>
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
+		<script type="text/javascript" src="www/scripts/md5.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
-		<script type="text/javascript" src="www/scripts/upload.dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/{block name="js_include"}default.js{/block}"></script>
 
 		<script>
@@ -130,12 +130,17 @@
 					<img alt="icon" src="www/images/tango-icons/list-remove.png"/><sup>Delete a Collection</sup>
 				</a>
 				</li>
+				<li class="media-attributes-tab">
+				<a href="manage/media/attributes">
+					<img alt="icon" src="www/images/tango-icons/text-x-generic.png"/><sup>Media Attributes</sup>
+				</a>
+				</li>
 			</ul>
 			<h5 id="ajaxMsg"></h5>
 		</div> <!-- closes sidebar -->
 
 		<div id="content">
-			<div id="admin" class="full">
+			<div id="manage" class="full">
 				{block name="content"}default content{/block}
 			</div>
 		</div>

@@ -41,9 +41,9 @@ class Dase_Upload
 		}
 	}
 
-	function createItem()
+	function createItem($eid=null)
 	{
-		$this->item = Dase_DBO_Item::create($this->collection->ascii_id);
+		$this->item = Dase_DBO_Item::create($this->collection->ascii_id,null,$eid);
 		return $this->item->serial_number;
 	}
 
@@ -83,6 +83,7 @@ class Dase_Upload
 
 	function isDuplicate()
 	{
+		//todo: use file metadata
 		$meta = $this->file->getMetadata();
 		$v = new Dase_DBO_Value;
 		$v->attribute_id = Dase_DBO_Attribute::getAdmin('admin_checksum')->id;
@@ -97,6 +98,7 @@ class Dase_Upload
 		return false;
 	}
 
+	/** used when swapping in new media */
 	function deleteItemMedia()
 	{
 		$msg = '';
@@ -122,10 +124,11 @@ class Dase_Upload
 
 	function ingest()
 	{
+		Dase_Log::info('attempting to ingest file');
 		$msg = '';
 		$msg .= $this->file->makeThumbnail($this->item,$this->collection);
 		$msg .= $this->file->makeViewitem($this->item,$this->collection);
-		$msg .= $this->file->makeSizes($this->item,$this->collection);
+		$msg .= $this->file->processFile($this->item,$this->collection);
 
 		foreach ($this->getMetadata() as $ascii => $val) {
 			$this->item->setValue($ascii,$val);
@@ -169,4 +172,29 @@ class Dase_Upload
 		$this->metadata['admin_upload_date_time'] = date(DATE_ATOM); //NOTE this needs to be admin_upload_timestamp
 		return $this->metadata;
 	}	
+
+	public function getFilename()
+	{
+		return $this->file->getFilename();
+	}
+	public function	getFileSize()
+	{
+		return $this->file->getFileSize();
+	}
+	public function	getFiletype()
+	{
+		return $this->file->getFiletype();
+	}
+	public function	getTitle()
+	{
+		return $this->item->getTitle();
+	}
+	public function	getItemUrl()
+	{
+		return $this->item->getBaseUrl();
+	}
+	public function	getThumbnailUrl()
+	{
+		return $this->item->getMediaUrl('thumbnail');
+	}
 }

@@ -45,15 +45,20 @@ class Dase_File_Video extends Dase_File
 
 	function getMetadata()
 	{
-		//figure out what other metadata we should get here
+		//todo: figure out what other metadata we should get here
 		return parent::getMetadata();
 	}
 
-	function makeSizes($item,$collection)
+	function processFile($item,$collection)
 	{
 		$dest = $collection->path_to_media_files . "/quicktime/" . $item->serial_number . '.mov';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;
+
+		foreach ($this->getMetadata() as $term => $value) {
+			$media_file->addMetadata($term,$value);
+		}
+
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '.mov';
 		$media_file->file_size = $this->file_size;

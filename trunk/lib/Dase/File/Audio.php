@@ -4,9 +4,9 @@ class Dase_File_Audio extends Dase_File
 {
 	protected $metadata = array();
 
-	function __construct($file)
+	function __construct($file,$mime='')
 	{
-		parent::__construct($file);
+		parent::__construct($file,$mime);
 	}
 
 	function getMetadata()
@@ -91,11 +91,16 @@ class Dase_File_Audio extends Dase_File
 		return "created $media_file->filename\n";
 	}
 
-	function makeSizes($item,$collection)
+	function processFile($item,$collection)
 	{
 		$dest = $collection->path_to_media_files . "/mp3/" . $item->serial_number . '.mp3';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;
+
+		foreach ($this->getMetadata() as $term => $value) {
+			$media_file->addMetadata($term,$value);
+		}
+
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '.mp3';
 		$media_file->file_size = $this->file_size;

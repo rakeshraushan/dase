@@ -61,16 +61,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	{
 		$tag_array = array();
 		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
-			if (CART == $row['tag_type_id']) {
-				//$tag_array['cart'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
-				$tag_array['cart'][$row['ascii_id']] = $row['count'];
-			}
-			if (USER_COLLECTION == $row['tag_type_id']) {
-				$tag_array['user_collection'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
-			}
-			if (SLIDESHOW == $row['tag_type_id']) {
-				$tag_array['slideshow'][$row['ascii_id']] = $row['name'] . ' (' . $row['count'] . ')';
-			}
+			$tag_array[] = $row;
 		}
 		$subs = new Dase_DBO_Subscription;
 		$subs->dase_user_id = $this->id;
@@ -78,11 +69,17 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$tag = new Dase_DBO_Tag;
 			$tag->load($sub->tag_id);
 			if ($tag->name && $tag->ascii_id) {
+				$sub_tag['id'] = $tag->id;
 				//note that I am overloading the ascii_id place w/ the id
-				$key = "a" . $sub->tag_id;
-				$tag_array['subscription'][$key] = $tag->name;
+				//to ensure uniqueness
+				$sub_tag['ascii_id'] = "a" . $sub->tag_id;
+				$sub_tag['name'] = $tag->name;
+				$sub_tag['type'] = 'subscription';
+				$sub_tag['count'] = '';
 			}
+			$tag_array[] = $sub_tag;
 		}
+		uasort($tag_array, array('Dase_Util','sortByTagName'));
 		return $tag_array;
 	}
 

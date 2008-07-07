@@ -78,7 +78,17 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return $this->injectAtomEntryData($entry);
 	}
 
-	function deleteValues() 
+	function setMetadata($term,$text)
+	{
+		$media_att = Dase_DBO_MediaAttribute::findOrCreate($term);
+		$media_val = new Dase_DBO_MediaValue;
+		$media_val->media_file_id = $this->id;
+		$media_val->media_attribute_id = $media_att->id;
+		$media_val->text = $text;
+		return $media_val->insert();
+	}
+
+	function deleteMetadata() 
 	{
 		$db = Dase_DB::get();
 		$sql = "
@@ -91,7 +101,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 	function expunge() 
 	{
-		$this->deleteValues();
+		$this->deleteMetadata();
 		$this->delete();
 	}
 

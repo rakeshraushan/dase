@@ -43,7 +43,11 @@ class Dase_Atom_Entry extends Dase_Atom
 	{
 		//reader object
 		$dom = new DOMDocument('1.0','utf-8');
-		$dom->load($xml);
+		if (is_file($xml)) {
+			$dom->load($xml);
+		} else {
+			$dom->loadXml($xml);
+		}
 		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $entry->item(0);
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {

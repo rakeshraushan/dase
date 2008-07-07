@@ -26,6 +26,7 @@ class Dase_Http_Request
 	public $query_string;
 	public $response_mime_type;
 	public $resource;
+	public $can_redirect_to_login = true; 
 
 	function __construct()
 	{
@@ -112,6 +113,22 @@ class Dase_Http_Request
 		}
 	}
 
+	function getHeaders() 
+	{
+		//note: will ONLY work w/ apache (OK by me!)
+		return apache_request_headers();
+	}
+
+	function getHeader($name)
+	{
+		$headers = $this->getHeaders();
+		if (isset($headers[$name])) {
+			return $headers[$name];
+		} else {
+			return false;
+		}
+	}
+
 	function getContentType() 
 	{
 		if (isset($_SERVER['CONTENT_TYPE'])) {
@@ -123,7 +140,11 @@ class Dase_Http_Request
 		if (isset($header)) {
 			$parser = new Mimeparse;
 			list($type,$subtype,$params) = $parser->parse_mime_type($header);
-			return $type.'/'.$subtype;
+			if (isset($params['type'])) {
+				return $type.'/'.$subtype.';type='.$params['type'];
+			} else {
+				return $type.'/'.$subtype;
+			}
 		}
 	}
 
@@ -326,11 +347,11 @@ class Dase_Http_Request
 		if ($eid) {
 			return $this->getDbUser($eid);
 		} else {
-			if ('html' == $this->format) {
-				$target = urlencode($this->url);
-				$this->renderRedirect("login/form?target=$target");
+			if ('html' == $this->format && $this->can_redirect_to_login) {
+				$params['target'] = $this->url;
+				$this->renderRedirect('login/form',$params);
 			} else {
-				$this->renderError(401);
+				$this->renderError(401,'unauthorized');
 			}
 		}
 	}
@@ -400,10 +421,10 @@ class Dase_Http_Request
 		exit;
 	}
 
-	public function renderRedirect($path='',$msg='',$code='303')
+	public function renderRedirect($path='',$params=null)
 	{
 		$response = new Dase_Http_Response($this);
-		$response->redirect($path,$msg,$code,$this->format);
+		$response->redirect($path,$params);
 		exit;
 	}
 

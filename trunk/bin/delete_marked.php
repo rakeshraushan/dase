@@ -7,7 +7,7 @@ include 'cli_setup.php';
 //$coll = 'south_asia';
 //$coll = 'medieval';
 //$coll = 'early_american_history';
-$coll = 'efossils';
+$coll = 'kerkhoff';
 $c = Dase_DBO_Collection::get($coll);
 
 $status = new Dase_DBO_ItemStatus;

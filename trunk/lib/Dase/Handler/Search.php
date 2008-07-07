@@ -73,12 +73,9 @@ class Dase_Handler_Search extends Dase_Handler
 		$feed_url = APP_ROOT.'/'.$request->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
-		if (1 == $feed->count) {
-			$request->renderRedirect($request->path.'/item?'.$request->query_string.'&format=atom');
-		} else {
-			$tpl->assign('items',$feed);
-			$request->renderResponse($tpl->fetch('item_set/search.tpl'));
-		}
+		$tpl->assign('items',$feed);
+		//todo: reimplement single hit going directly to item??
+		$request->renderResponse($tpl->fetch('item_set/search.tpl'));
 	}
 }
 

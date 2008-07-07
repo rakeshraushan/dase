@@ -28,7 +28,14 @@
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
-                <script type="text/javascript" src="www/scripts/upload.dase.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/{block name="js_include"}default.js{/block}"></script>
+
+		<script>
+			{block name="javascript"}
+			//alert('hi from block');
+			{/block}
+		</script>
+
 
 		<style type="text/css">
 			ul#menu li.{$request->resource}-tab {literal}{{/literal}
@@ -104,7 +111,7 @@
 				</a>
 				</li>
 				<li class="upload-tab">
-				<a href="admin/{$collection->ascii_id}/upload">
+				<a href="admin/{$collection->ascii_id}/uploader">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>
