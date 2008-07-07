@@ -54,5 +54,11 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$request->renderResponse(Dase_Json::get($result));
 	}
 
+	public function getAttributeValuesAtom($request) 
+	{
+		$attr = Dase_DBO_Attribute::get($request->get('collection_ascii_id'),$request->get('att_ascii_id'));
+		$request->renderResponse($attr->valuesAsAtom($request->get('collection_ascii_id')));
+	}
+
 }
 

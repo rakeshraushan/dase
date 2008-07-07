@@ -3,23 +3,23 @@
 class Dase_Handler_Media extends Dase_Handler
 {
 	public $resource_map = array(
-		'attributes' => 'attributes',
-		'{collection_ascii_id}/{size}/{serial_number}' => 'file',
+		'{collection_ascii_id}/{size}/{serial_number}' => 'media_file',
 	);
 
 	protected function setup($request)
 	{
+		//work on ACL!!!!!!!!!!!!
 	}
 
-	public function getFileJpg($request)
+	public function getMediaFileJpg($request)
 	{
 		$collection_ascii_id = $request->get('collection_ascii_id');
 		$serial_number = $request->get('serial_number');
 		$size = $request->get('size');
-		$request->serveFile($this->getFilePath($collection_ascii_id,$serial_number,$size,$request->format),$request->response_mime_type);
+		$request->serveFile($this->_getFilePath($collection_ascii_id,$serial_number,$size,$request->format),$request->response_mime_type);
 	}
 
-	private function getFilePath($collection_ascii_id,$serial_number,$size,$format)
+	private function _getFilePath($collection_ascii_id,$serial_number,$size,$format)
 	{
 		$sizes = array(
 			'thumbnail' => array( 'dir' => 'thumbnails'),
@@ -36,25 +36,19 @@ class Dase_Handler_Media extends Dase_Handler
 		return $path;
 	}
 
-	public function getMediaAttributes($request)
-	{
-		$media_atts = new Dase_DBO_MediaAttribute;
-		$media_atts->orderBy('label');
-		$t = new Dase_Template($request);
-		$t->assign('attributes',$media_atts->find());  
-		$request->renderResponse($t->fetch('media/attributes.tpl'));
-	}
 
-	public function putMediaAttribute($request)
+	public function getMediaFileAtom($request) 
 	{
-		$media_att = new Dase_DBO_MediaAttribute;
-		$media_att->load($params['id']);
-		$media_att->term = $request->get('term');
-		$media_att->label = $request->get('label');
-		$media_att->update();
-		$msg = "updated media attribute";
-		$request->renderRedirect('media/attributes',$msg);
+		//todo: work on this
+		$media_file = new Dase_DBO_MediaFile;
+		$media_file->p_collection_ascii_id = $request->get('collection_ascii_id');
+		$media_file->p_serial_number = $request->get('serial_number');
+		$media_file->size = $request->get('size');
+		if ($media_file->findOne()) {
+			$request->renderResponse($media_file->asAtom());
+		} else {
+			$request->renderResponse(404);
+		}
 	}
-
 }
 

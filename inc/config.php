@@ -4,7 +4,7 @@ $conf['superuser'][] = 'pkeane';
 $conf['superuser'][] = 'rru62';
 
 $conf['token'] = '
-	---
+	----
 	Let us go then, you and I,	
 	When the evening is spread out against the sky	
 	Like a patient etherised upon a table;	
@@ -100,6 +100,7 @@ $conf['sizes'][] = 'small';
 $conf['sizes'][] = 'text';
 $conf['sizes'][] = 'thumbnails';
 $conf['sizes'][] = 'tiff';
+$conf['sizes'][] = 'uploaded_files';
 $conf['sizes'][] = 'wav';
 $conf['sizes'][] = 'xml';
 $conf['sizes'][] = 'xslt';

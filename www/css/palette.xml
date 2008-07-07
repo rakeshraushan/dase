@@ -34,6 +34,14 @@
 		<hex level="5">ebf6ef</hex>
 		<hex level="6">f4fff8</hex>
 	</hue>
+	<hue id="green" section="sets">
+		<hex level="1">283b1c</hex>
+		<hex level="2">669966</hex>
+		<hex level="3">9dbda9</hex>
+		<hex level="4">ceead8</hex>
+		<hex level="5">ebf6ef</hex>
+		<hex level="6">f4fff8</hex>
+	</hue>
 	<hue id="ltred" section="searches">
 		<hex level="1">947672</hex>
 		<hex level="2">947672</hex>

@@ -112,14 +112,24 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function redirect($path='',$msg='',$code="303",$format='html')
+	public function redirect($path='',$params=null)
 	{
 		//SHOULD use 303 (redirect after put,post,delete)
 		//OR 307 -- no go -- look here
-		$msg = urlencode($msg);
 		//NOTE that this redirect may be innapropriate when
 		//client expect something OTHER than html (e.g., json,text,xml)
-		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?msg='.$msg.'&format='.$format;
+		//format should be passed in params
+		$query_array = array();
+		if (isset($params) && is_array($params)) {
+			foreach ($params as $key => $val) {
+				$query_array[] = urlencode($key).'='.urlencode($val);
+			}
+		}
+		if (false !== strpos($path,'?')) {
+			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'&'.join("&",$query_array);
+		} else {
+			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?'.join("&",$query_array);
+		}
 		Dase_Log::info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
@@ -127,31 +137,11 @@ class Dase_Http_Response
 
 	public function error($code,$msg='')
 	{
-		switch ($code) {
-		case 400:
-			header("HTTP/1.1 400 Bad Request");
-			break;
-		case 404:
-			header("HTTP/1.1 404 Not Found");
-			break;
-		case 401:
-			header('HTTP/1.1 401 Unauthorized');
-			break;
-		case 500:
-			header('HTTP/1.1 500 Internal Server Error');
-			break;
-		case 410:
-			header("HTTP/1.1 410 Gone");
-			$msg = "Departed, have left no addresses.";
-			break;
-		case 411:
-			header("HTTP/1.1 411 Length Required");
-			break;
-		case 415:
-			header("HTTP/1.1 415 Unsupported Media Type");
-			break;
-		default:
-			header('HTTP/1.1 500 Internal Server Error');
+		if (isset(self::$codes[$code])) {
+			$message = $code.' '.self::$codes[$code]; 
+			header("HTTP/1.1 $message");
+		} else {
+			header("HTTP/1.1 500 Internal Server Error");
 		}
 
 		if ($msg) {

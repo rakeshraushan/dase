@@ -22,21 +22,21 @@
 abstract class Dase_File
 {
 	private static $types_map = array(
-		'image/jpeg' => array('size' => 'jpeg', 'ext' => '.jpg','class'=>'Dase_File_Image'),
-		'image/gif' => array('size' => 'gif', 'ext' => '.gif','class'=>'Dase_File_Image'),
-		'image/png' => array('size' => 'png', 'ext' => '.png','class'=>'Dase_File_Image'),
-		'image/tiff' => array('size' => 'tiff', 'ext' => '.tiff','class'=>'Dase_File_Image'),
-		'audio/mpeg' => array('size' => 'mp3', 'ext' => '.mp3','class'=>'Dase_File_Audio'),
-		'audio/mpg' => array('size' => 'mp3', 'ext' => '.mp3','class'=>'Dase_File_Audio'),
-		'video/quicktime' => array('size' => 'quicktime', 'ext' => '.mov','class'=>'Dase_File_Video'),
-		'application/pdf' => array('size' => 'pdf', 'ext' => '.pdf','class'=>'Dase_File_Pdf'),
-		'application/xml' => array('size' => 'xml', 'ext' => '.xml','class'=>'Dase_File_Image'),
-		'text/xml' => array('size' => 'xml', 'ext' => '.xml','class'=>'Dase_File_Image'),
-		'application/xslt+xml' => array('size' => 'xslt', 'ext' => '.xsl','class'=>'Dase_File_Image'),
-		'application/msword' => array('size' => 'doc', 'ext' => '.doc','class'=>'Dase_File_Doc'),
-		'text/css' => array('size' => 'css', 'ext' => '.css','class'=>'Dase_File_Image'),
-		'text/html' => array('size' => 'html', 'ext' => '.html','class'=>'Dase_File_Image'),
-		'text/plain' => array('size' => 'html', 'ext' => '.html','class'=>'Dase_File_Image')
+		'image/jpeg' => array('size' => 'jpeg', 'ext' => 'jpg','class'=>'Dase_File_Image'),
+		'image/gif' => array('size' => 'gif', 'ext' => 'gif','class'=>'Dase_File_Image'),
+		'image/png' => array('size' => 'png', 'ext' => 'png','class'=>'Dase_File_Image'),
+		'image/tiff' => array('size' => 'tiff', 'ext' => 'tiff','class'=>'Dase_File_Image'),
+		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'video/quicktime' => array('size' => 'quicktime', 'ext' => 'mov','class'=>'Dase_File_Video'),
+		'application/pdf' => array('size' => 'pdf', 'ext' => 'pdf','class'=>'Dase_File_Pdf'),
+		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Image'),
+		'text/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Image'),
+		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
+		'application/msword' => array('size' => 'doc', 'ext' => 'doc','class'=>'Dase_File_Doc'),
+		'text/css' => array('size' => 'css', 'ext' => 'css','class'=>'Dase_File_Image'),
+		'text/html' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Image'),
+		'text/plain' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Image')
 	);
 
 	protected $metadata = array();
@@ -47,12 +47,18 @@ abstract class Dase_File
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
 
-	protected function __construct($file)
+	protected function __construct($file,$mime='')
 	{  //can ONLY be called by subclass
 		$this->filepath = $file;
 		$this->file_size = filesize($file);
 		$path_parts = pathinfo($file);
-		$this->extension = $path_parts['extension'];
+		if ($mime) {
+			$this->mime_type = $mime;
+			$this->extension = self::$types_map[$mime]['ext'];
+		} else {
+			//todo: will be a problem if no extention is returned in path_parts
+			$this->extension = $path_parts['extension'];
+		}
 		$this->basename = $path_parts['basename'];
 		if (isset($path_parts['filename'])) {
 			$this->filename = $path_parts['filename']; // since PHP 5.2.0
@@ -71,6 +77,16 @@ abstract class Dase_File
 		return $this->filename;
 	}
 
+	function getFiletype()
+	{
+		return $this->mime_type;
+	}
+
+	function getFileSize()
+	{
+		return $this->file_size;
+	}
+
 	function getBasename()
 	{
 		return $this->basename;
@@ -78,6 +94,7 @@ abstract class Dase_File
 
 	abstract public function makeThumbnail($item,$collection);
 	abstract public function makeViewitem($item,$collection);
+	abstract public function processFile($item,$collection);
 
 	function getMetadata()
 	{
@@ -90,15 +107,17 @@ abstract class Dase_File
 		return $this->metadata;
 	}	
 
-	static function newFile($file)
+	static function newFile($file,$mime ='')
 	{
-		$mime = Dase_File::getMimeType($file);
+		if (!$mime) {
+			$mime = Dase_File::getMimeType($file);
+		}
 		if ($mime) {
 			if (!isset(self::$types_map[$mime])) {
 				throw new Exception("do not know about $mime mime type ($file)");
 			}
 			//creates proper subclass
-			$dasefile = new self::$types_map[$mime]['class']($file);
+			$dasefile = new self::$types_map[$mime]['class']($file,$mime);
 			$dasefile->size = self::$types_map[$mime]['size'];
 			$dasefile->ext = self::$types_map[$mime]['ext'];
 			$dasefile->mime_type = $mime;

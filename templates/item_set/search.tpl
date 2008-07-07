@@ -6,10 +6,7 @@
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	<h4 class="startSlideshow">
-		<div class="slideIcon" id="startSlideshow">
-			<div class="slideIconInside">
-			</div>
-		</div>
+		<a href="#" id="startSlideshow">view as slideshow</a>
 	</h4>
 	<div id="contentHeader">
 		<h3>{$items->searchEcho}</h3>

@@ -1,5 +1,6 @@
 <?php
 define("APP_ROOT","http://dase.laits.utexas.edu");
+define("DASE_URL","http://dase.laits.utexas.edu");
 define("BIN_PATH", dirname(__FILE__));
 define("DEBUG",1);
 define("DASE_PATH",BIN_PATH . '/..');

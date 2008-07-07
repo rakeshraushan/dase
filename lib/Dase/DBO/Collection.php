@@ -491,8 +491,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return true;
 	}
 
-	function createNewItem($serial_number = null)
+	function createNewItem($serial_number=null,$eid=null)
 	{
+		if (!$eid) {
+			$eid = '_dase';
+		}
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $this->id;
 		if ($serial_number) {
@@ -505,12 +508,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->item_type_id = 0;
 			$item->created = date(DATE_ATOM);
 			$item->updated = date(DATE_ATOM);
+			$item->created_by_eid = $eid;
 			$item->insert();
 			return $item;
 		} else {
 			$item->status_id = 0;
 			$item->item_type_id = 0;
 			$item->created = date(DATE_ATOM);
+			$item->created_by_eid = $eid;
 			$item->insert();
 			$item->serial_number = sprintf("%09d",$item->id);
 			$item->updated = date(DATE_ATOM);
@@ -523,8 +528,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$svc = new Dase_Atom_Service;	
 		$svc->addWorkspace($this->collection_name.' Workspace')
-			->addCollection(APP_ROOT.'/edit/'.$this->ascii_id,$this->collection_name.' Items')
-			->addAccept('application/atom+xml;type=entry');
+			->addCollection(APP_ROOT.'/collection/'.$this->ascii_id,$this->collection_name.' Items')
+			->addAccept('application/atom+xml;type=entry')
+			->addCategorySet()
+			->addCategory('item','http://daseproject.org/category/entrytype');
 		return $svc->asXml();
 	}
 

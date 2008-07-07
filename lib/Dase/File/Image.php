@@ -4,9 +4,9 @@ class Dase_File_Image extends Dase_File
 {
 	protected $metadata = array();
 
-	function __construct($file)
+	function __construct($file,$mime='')
 	{
-		parent::__construct($file);
+		parent::__construct($file,$mime);
 	}
 
 	function getIptc()
@@ -170,14 +170,23 @@ class Dase_File_Image extends Dase_File
 		return "created $media_file->size $media_file->filename\n";
 	}
 
-	function copyToMediaDir($item,$collection) {
-		$dest = $collection->path_to_media_files.'/'.$this->size.'/'.$item->serial_number.$this->ext;
+	public function processFile($item,$collection)
+	{
+		$this->_makeSizes($item,$collection);
+
+		//todo: beware!!! this moves archival tifs into DASe!!
+		$dest = $collection->path_to_media_files.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
 		$this->copyTo($dest);
 		$file_info = getimagesize($dest);
 		if ($file_info) {
 		$media_file = new Dase_DBO_MediaFile;
+
+		foreach ($this->getMetadata() as $term => $value) {
+			$media_file->addMetadata($term,$value);
+		}
+
 		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number.$this->ext;
+		$media_file->filename = $item->serial_number.'.'.$this->ext;
 		$media_file->file_size = $this->file_size;
 		$media_file->mime_type = $this->mime_type;
 		$media_file->size = $this->size; 
@@ -192,11 +201,9 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeSizes($item,$collection)
+	private function _makeSizes($item,$collection)
 	{
-		//todo: beware!!! this moves archival tifs into DASe!!
-		$msg = $this->copyToMediaDir($item,$collection);
-
+		$msg = '';
 		$image_properties = array(
 			'small' => array(
 				'geometry'        => '640x480',

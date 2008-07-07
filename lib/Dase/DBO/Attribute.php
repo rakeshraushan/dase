@@ -221,6 +221,31 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return Dase_Json::get($this->asArray());
 	}
 
+	public function valuesAsAtom($collection_ascii_id)
+	{
+		if (0 == $this->collection_id) {
+			//since it is admin att we need to be able to limit to items in this coll
+			$values_array = $this->getDisplayValues($collection_ascii_id);
+		} else {
+			$values_array = $this->getDisplayValues();
+		}
+		$feed = new Dase_Atom_Feed;
+		$feed->setId(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom');
+		$feed->setFeedType('attribute_values');
+		$feed->setTitle('values for '.$collection_ascii_id.'.'.$this->ascii_id);
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+		$feed->addLink(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
+		foreach ($values_array as $v) {
+			$entry = $feed->addEntry();
+			$entry->setId(APP_ROOT.'/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
+			$entry->addLink(APP_ROOT.'/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
+			$entry->setUpdated(date(DATE_ATOM));
+			$entry->setTitle($v['v']);
+		}
+		return $feed->asXml();
+	}
+
 	public function fixBools()
 	{
 		//the purpose here is to prepare for update

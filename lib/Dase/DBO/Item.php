@@ -15,10 +15,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	const STATUS_DELETE = 'delete';
 	const STATUS_ARCHIVE = 'archive';
 
-	public static function create($collection_ascii_id,$serial_number= null)
+	public static function create($collection_ascii_id,$serial_number=null,$eid=null)
 	{
+		if (!$eid) {
+			$eid = '_dase';
+		}
 		$c = Dase_DBO_Collection::get($collection_ascii_id);
-		return $c->createNewItem($serial_number);
+		return $c->createNewItem($serial_number,$eid);
 	}
 
 	public static function get($collection_ascii_id,$serial_number)
@@ -500,36 +503,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 
-
-		/*
-		$media_feed = $entry->addMediaFeed($this->getBaseUrl().'/media.atom');
-		$media_feed->setId($this->getBaseUrl().'/media.atom');
-		foreach ($this->getMedia() as $med) {
-			$media_entry = $media_feed->addEntry();
-			$media_entry->setMediaContent($med->getLink(),$med->mime_type);
-			$media_entry->setId($this->getBaseUrl().'/media/'.$med->size.'.atom');
-			//$link->setAttribute('d:height',$med->height);
-			//$link->setAttribute('d:width',$med->width);
-			//$link->setAttribute('type',$med->mime_type);
-			//$link->setAttribute('length',$med->file_size);
-			//$link->setAttribute('title',$med->size);
-		}
-		//we need to attach entries here since it is a nested feed
-		//todo: treat nested feeds like entries and recursively
-		//attach them and their entries upon serialization
-		$media_feed->attachEntries();
-		 */
-
-		/*
-		foreach ($this->getMedia() as $med) {
-			$link = $entry->addLink($med->getLink(),'http://daseproject.org/relation/media');
-			$link->setAttribute('d:height',$med->height);
-			$link->setAttribute('d:width',$med->width);
-			$link->setAttribute('type',$med->mime_type);
-			$link->setAttribute('length',$med->file_size);
-			$link->setAttribute('title',$med->size);
-		}
-		 */
 		//todo: not sure we allow xhtml content (just markdown?)
 		if ($this->xhtml_content) {
 			$content_sx = new SimpleXMLElement($this->xhtml_content);	
@@ -591,7 +564,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->collection || $this->getCollection();
 		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
 		$media_coll->addAccept('image/*');
 		$media_coll->addAccept('audio/*');
 		$media_coll->addAccept('video/*');
@@ -605,12 +578,32 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_array['serial_number'] = $this->serial_number;
 		$item_array['created'] = $this->created;
 		$item_array['updated'] = $this->updated;
-		$item_array['collection']['ascii_id'] = $this->collection->ascii_id;
-		$item_array['collection']['name'] = $this->collection->collection_name;
+		$item_array['collection'] = $this->collection->ascii_id;
+		//$item_array['collection']['ascii_id'] = $this->collection->ascii_id;
+		//$item_array['collection']['name'] = $this->collection->collection_name;
+		$item_array['metadata'] = array();
+		foreach ($this->getMetadata() as $row) {
+			//note: a simpler way would be to ALWAYS make value an array.
+			//but this is a bit more concise (only an array if multiple) 
+			if (isset($item_array['metadata'][$row['ascii_id']])) {
+				if (is_array($item_array['metadata'][$row['ascii_id']])) {
+					$item_array['metadata'][$row['ascii_id']][] = $row['value_text'];
+				} else {
+					$orig = $item_array['metadata'][$row['ascii_id']];
+					$item_array['metadata'][$row['ascii_id']] = array();;
+					$item_array['metadata'][$row['ascii_id']][] = $orig;
+					$item_array['metadata'][$row['ascii_id']][] = $row['value_text'];
+				}
+			} else {
+				$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
+			}
+		}
 		$item_array['media'] = array();
 		foreach ($this->getMedia() as $m) {
 			foreach ($m as $k => $v) {
-				$media_file[$k] = $v;
+				if (!in_array($k,array('p_collection_ascii_id','p_serial_number'))) {
+					$media_file[$k] = $v;
+				}
 			}
 			$item_array['media'][] = $media_file;
 		}
@@ -619,10 +612,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$content[$c->id]['eid'] = $c->updated_by_eid;
 			$content[$c->id]['text'] = $c->text;
 			$item_array['content'][] = $content;
-		}
-		$item_array['metadata'] = array();
-		foreach ($this->getMetadata() as $row) {
-			$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
 		}
 		return $item_array;
 	}

@@ -8,6 +8,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
+		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
@@ -19,7 +20,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$this->collection) {
 			$request->renderError(404);
 		}
-		if ('html' == $request->format) {
+		if ('html' == $request->format && 'service' != $request->resource) {
 			$this->user = $request->getUser();
 			if (!$this->user->can('read','collection',$this->collection)) {
 				$request->renderError(401);
@@ -33,6 +34,11 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		 */
+	}
+
+	public function getRecent($request)
+	{
+		//this is trickir than it seems (lovely RFC 3339)
 	}
 
 	public function getCollectionAtom($request) 
@@ -107,21 +113,48 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$this->user->can('write','collection',$this->collection)) {
 			$request->renderError(401);
 		}
-		$entry = Dase_Atom_Entry::load("php://input",false);
-		$metadata = "";
-		$item = $entry->insert($request);
+		$content_type = $request->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type) {
+			$this->_newAtomItem($request);
+		} elseif ('application/json' == $content_type) {
+			$this->_newJsonItem($request);
+		} else {
+			$request->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	private function _newAtomItem($request)
+	{
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $request->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+			$request->renderError(412,'md5 does not match');
+		}
+		$item_entry = Dase_Atom_Entry::load($raw_input);
+		if ('item' != $item_entry->entrytype) {
+			$request->renderError(400,'must be an item entry');
+		}
+		$item = $item_entry->insert($request);
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-		header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number);
+		header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number.'.atom');
 		echo $item->asAtom();
 		exit;
+	}
+
+	private function _newJsonItem($request)
+	{
+		$request->renderResponse('still working on JSON posts!');
 	}
 
 	public function rebuildIndexes($request) 
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$c->buildSearchIndex();
-		$request->renderRedirect('',"rebuilt indexes for $c->collection_name");
+		$params['msg'] = "rebuilt indexes for $c->collection_name";
+		$request->renderRedirect('',$params);
 	}
 
 	public function getAttributesAtom($request) 
@@ -226,7 +259,19 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$c = Dase_Collection::get($request->get('collection_ascii_id'));
 		$c->buildSearchIndex();
-		$request->renderRedirect('',"rebuilt indexes for $c->collection_name");
+		$params['msg'] = "rebuilt indexes for $c->collection_name";
+		$request->renderRedirect('',$params);
+	}
+
+	public function getServiceTxt($request)
+	{
+		$this->getService($request);
+	}
+
+	public function getService($request)
+	{
+		$request->response_mime_type = 'application/atomsvc+xml';
+		$request->renderResponse($this->collection->getAtompubServiceDoc());
 	}
 
 }

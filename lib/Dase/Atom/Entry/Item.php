@@ -151,8 +151,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function insert($request) 
 	{
+		$eid = $request->getUser()->eid;
 		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
-		$item = Dase_DBO_Item::create($c->ascii_id);
+		$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
 		foreach ($this->metadata as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
 				$item->setValue($att,$v);
