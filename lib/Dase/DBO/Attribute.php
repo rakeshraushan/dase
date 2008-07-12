@@ -77,7 +77,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $entry;
 	}
 
-	function getDisplayValues($coll = null)
+	function getDisplayValues($coll = null,$limit=1000)
 	{
 		$admin_sql = '';
 		if (!$this->id) {
@@ -89,6 +89,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if ($coll) {
 			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id IN (SELECT id FROM collection WHERE ascii_id = '$coll'))";
 		}
+		if ($limit) {
+			$limit_sql = "LIMIT $limit";
+		}
 		$sql = "
 			SELECT value_text, count(value_text)
 			FROM value
@@ -96,6 +99,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$admin_sql
 			GROUP BY value_text
 			ORDER BY value_text
+			$limit_sql;
 			";
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));
@@ -110,17 +114,17 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $display_values_array;
 	}
 
-	public function getFormValues($input_type) 
+	public function getFormValues() 
 	{
 		//todo: this could use some optimization
 		$values = array();
-		if (in_array($input_type,array('radio','checkbox','select'))) {
+		if (in_array($this->html_input_type,array('radio','checkbox','select'))) {
 			$dv = new Dase_DBO_DefinedValue();
 			$dv->attribute_id = $this->id;
 			foreach ($dv->find() as $defval) {
 				$values[] = $defval->value_text;
 			}
-		} elseif ('text_with_menu' == $input_type) {
+		} elseif ('text_with_menu' == $this->html_input_type) {
 			$v = new Dase_DBO_Value;
 			$v->attribute_id = $this->id;
 			foreach ($v->find() as $value) {
@@ -131,7 +135,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		} else {
 			//nothin'
 		}
-		$values;
+		return $values;
 	}
 
 	public static function get($collection_ascii_id,$ascii_id)
@@ -214,6 +218,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		foreach ($this as $k => $v) {
 			$att_array[$k] = $v;
 		}
+		$att_array['values'] = $this->getFormValues();
 		return $att_array;
 	}
 

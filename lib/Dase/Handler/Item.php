@@ -5,8 +5,11 @@ class Dase_Handler_Item extends Dase_Handler
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
 		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
+		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
+		'{collection_ascii_id}/{serial_number}/status' => 'status',
+		'{collection_ascii_id}/{serial_number}/templates' => 'input_templates',
 		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
 	);
 
@@ -55,6 +58,12 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse($this->item->getEditFormJson());
 	}
 
+	public function getInputTemplates($request)
+	{
+		$t = new Dase_Template($request);
+		$request->renderResponse($t->fetch('item/jstemplates.tpl'));
+	}
+
 	public function deleteNote($request)
 	{
 		$note = new Dase_DBO_Content;
@@ -64,6 +73,27 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$this->item->buildSearchIndex();
 		$request->renderResponse('deleted note '.$note->id);
+	}
+
+	public function putStatus($request)
+	{
+		if (!$this->user->can('write','item',$this->item)) {
+			$request->renderError(401);
+		}
+		$status = trim(file_get_contents("php://input"));
+
+		if (in_array($status,array('public','draft','delete','archive'))) {
+			$this->item->status = $status;
+		} else {
+			$request->renderError(406,'not an acceptable status string');
+		}
+		$compat['public'] = 0;
+		$compat['draft'] = 1;
+		$compat['delete'] = 2;
+		$compat['archive'] = 3;
+		$this->item->status_id = $compat[$status];
+		$this->item->update();
+		$request->renderResponse('status updated');
 	}
 
 	public function postToNotes($request)
@@ -80,13 +110,31 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse('added content: '.$bits);
 	}
 
+	public function postToMetadata($request)
+	{
+		if (!$this->user->can('write','item',$this->item)) {
+			$request->renderError(401);
+		}
+		$att_ascii = $request->get('ascii_id');
+		foreach ($request->get('value',true) as $val) {
+			$this->item->setValue($att_ascii,$val);
+		}
+		$request->renderResponse('added metadata');
+	}
+
+	public function getMetadataJson($request)
+	{
+		$meta =	$this->item->getMetadata();
+		$request->renderResponse(Dase_Json::get($meta));
+	}
+
 	public function getNotesJson($request)
 	{
 		$request->renderResponse($this->item->getContentsJson());
 	}
 
 	/** from last version: work on this!!!!!!!!! */
-	public function postToItem($request) 
+	public function postToMedia($request) 
 	{
 		$this->user = $request->getUser('http');
 		if (!$this->user->can('read','item',$this->item)) {

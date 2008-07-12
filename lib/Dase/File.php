@@ -46,6 +46,7 @@ abstract class Dase_File
 	protected $basename; //this INCLUDES the extension
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
+	protected $orig_name;
 
 	protected function __construct($file,$mime='')
 	{  //can ONLY be called by subclass
@@ -92,6 +93,11 @@ abstract class Dase_File
 		return $this->basename;
 	}
 
+	function getOrigName()
+	{
+		return $this->orig_name;
+	}
+
 	abstract public function makeThumbnail($item,$collection);
 	abstract public function makeViewitem($item,$collection);
 	abstract public function processFile($item,$collection);
@@ -107,20 +113,22 @@ abstract class Dase_File
 		return $this->metadata;
 	}	
 
-	static function newFile($file,$mime ='')
+	static function newFile($file,$mime='',$orig_name='')
 	{
 		if (!$mime) {
 			$mime = Dase_File::getMimeType($file);
 		}
 		if ($mime) {
 			if (!isset(self::$types_map[$mime])) {
-				throw new Exception("do not know about $mime mime type ($file)");
+				$orig_name = $orig_name ? $orig_name : $file;
+				throw new Exception("DASe does not handle $mime mime type ($orig_name)");
 			}
 			//creates proper subclass
 			$dasefile = new self::$types_map[$mime]['class']($file,$mime);
 			$dasefile->size = self::$types_map[$mime]['size'];
 			$dasefile->ext = self::$types_map[$mime]['ext'];
 			$dasefile->mime_type = $mime;
+			$dasefile->orig_name = $orig_name;
 			return $dasefile;
 		} else {
 			throw new Exception("cannot determin mime type for $file");

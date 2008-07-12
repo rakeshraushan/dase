@@ -94,8 +94,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
 			try {
-				$u = new Dase_Upload(Dase_File::newFile($path,$type),$this->collection);
-				$u->checkForMultiTiff();
+				$u = new Dase_Upload(Dase_File::newFile($path,$type,$name),$this->collection);
 				$ser_num = $u->createItem($request->getUser()->eid);
 				$logdata = $u->ingest();
 				$logdata .= $u->setTitle($name);
@@ -106,7 +105,8 @@ class Dase_Handler_Admin extends Dase_Handler
 				Dase_Log::info($error_msg);
 				header("HTTP/1.1 400 Bad Request");
 				$data['status'] = 'bad request';
-				$request->response_mime_type = 'application/json';
+				$data['message'] = $error_msg;
+				$data['num'] = $num;
 				$request->renderResponse(Dase_Json::get($data));
 			}
 		} else {
@@ -130,6 +130,8 @@ class Dase_Handler_Admin extends Dase_Handler
 		foreach ($this->upload_responses as $f) {
 			$data[$f]=$request->get($f);
 		}
+		//it is json, but needs to be rendered as text/html
+		//since it is going to an iframe
 		$request->renderResponse(Dase_Json::get($data));
 	}
 

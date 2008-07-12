@@ -126,6 +126,9 @@ Dase.pageInit = function() {
 					var link = Dase.createElem(Dase.$('queue_'+num),' [x]','a');
 					link.onclick = function() {
 						Dase.addClass(Dase.$('queue_'+num),'hide');
+						//abort iframe load
+						var iframe = Dase.$('uploader_'+num+'_target');
+						iframe.src = '';
 						return false;
 					}
 					link.className="delete";

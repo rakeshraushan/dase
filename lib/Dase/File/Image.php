@@ -172,6 +172,15 @@ class Dase_File_Image extends Dase_File
 
 	public function processFile($item,$collection)
 	{
+		if ($this->mime_type = 'image/tiff') {
+			$image = new Imagick($this->getFilepath());
+			if (1 < $image->getNumberImages()) {
+				throw new Dase_Upload_Exception("Error: " . $this->getOrigName() . " appears to be a multi-layered tiff\n");
+			} else {
+				return 0;
+			}
+		}
+
 		$this->_makeSizes($item,$collection);
 
 		//todo: beware!!! this moves archival tifs into DASe!!

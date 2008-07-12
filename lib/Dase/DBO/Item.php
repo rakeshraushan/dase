@@ -142,6 +142,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$bound_params[] = $att_ascii_id;
 		}
 		$st = $db->prepare($sql);
+		$st->setFetchMode(PDO::FETCH_ASSOC);
 		$st->execute($bound_params);
 		while ($row = $st->fetch()) {
 			$metadata[] = $row;
@@ -169,7 +170,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			if (in_array($row['html_input_type'],array('radio','checkbox','select','text_with_menu'))) {
 				$att = new Dase_DBO_Attribute;
 				$att->load($row['att_id']);
-				$set['values'] = $att->getFormValues($row['html_input_type']);
+				$set['values'] = $att->getFormValues();
 			}
 			$set['att_ascii_id'] = $row['ascii_id'];
 			$set['attribute_name'] = $row['attribute_name'];
@@ -277,6 +278,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function setValue($att_ascii_id,$value_text)
 	{
+		//todo: set value revision history as well
 		$this->collection || $this->getCollection();
 		$att = new Dase_DBO_Attribute;
 		$att->ascii_id = $att_ascii_id;
@@ -433,7 +435,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
-		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->label);
+		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item/type',$this->item_type->label);
+		$entry->addCategory($this->serial_number,'http://daseproject.org/category/item/serial_number');
+		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
 		$entry->addCategory('item','http://daseproject.org/category/entrytype');
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/item/status');
@@ -463,10 +467,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 		}
-
-		$entry->addElement('d:item_id',$this->id,$d)->setAttribute('d:label','Item ID');
-		$entry->addElement('d:serial_number',$this->serial_number,$d)->setAttribute('d:label','Serial Number');
-		$entry->addElement('d:item_type',$this->item_type_ascii,$d)->setAttribute('d:label','Item Type');
 
 		//much of the following can go in Dase_Atom_Entry
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
@@ -540,6 +540,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed = new Dase_Atom_Feed;
 		$this->injectAtomFeedData($feed);
 		$feed->setFeedType('item');
+		//todo: this needs to be passed in?
+		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 		$this->injectAtomEntryData($feed->addEntry());
 		return $feed->asXml();
 	}
