@@ -12,12 +12,28 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getItemId() 
 	{
-		return $this->getAtomElementText('item_id','d');
+		if (!$this->item_id) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item/id' == $el->getAttribute('scheme')) {
+					$this->item_id =  $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $this->item_id;
 	}
 
 	function getSerialNumber() 
 	{
-		return $this->getAtomElementText('serial_number','d');
+		if (!$this->serial_number) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item/serial_number' == $el->getAttribute('scheme')) {
+					$this->serial_number =  $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $this->serial_number;
 	}
 
 	function getItemLink()
@@ -90,6 +106,24 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		return $this->_status;
+	}
+
+	function getStatusLabel()
+	{
+		$labels['public'] = "Public";
+		$labels['draft'] = "Draft (Admin View Only)";
+		$labels['delete'] = "Marked for Deletion";
+		$labels['archive'] = "In Deep Storage";
+
+		if (!$this->_status) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item/status' == $el->getAttribute('scheme')) {
+					$this->_status =  $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $labels[$this->_status];
 	}
 
 	function getCollection()

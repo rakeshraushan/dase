@@ -32,12 +32,10 @@ class Dase_Handler_Attribute extends Dase_Handler
 
 	public function getAttributeJson($request) 
 	{
-		$att = new Dase_DBO_Attribute;
-		$att->ascii_id = $request->get('att_ascii_id');
-		$att->findOne();
-		$request->renderResponse($att->asJson());
+		$request->renderResponse($this->attribute->asJson());
 	}
 
+	/** implicit 1000 limit */
 	public function getAttributeValuesJson($request) 
 	{
 		$attr = Dase_DBO_Attribute::get($request->get('collection_ascii_id'),$request->get('att_ascii_id'));

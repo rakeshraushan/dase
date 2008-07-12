@@ -175,7 +175,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ('admin' == $filter) {
 			$attributes->collection_id = 0;
 		}
-		$attributes->orderBy('sort_order');
+		//$attributes->orderBy('sort_order');
+		$attributes->orderBy('attribute_name');
 		$att_array = array();
 		foreach($attributes->find() as $att) {
 			$att_array[] =

@@ -34,8 +34,8 @@
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/{block name="js_include"}default.js{/block}"></script>
-		<script>
+		<script type="text/javascript" src="www/scripts/{block name="js_include"}default.js{/block}"></script>
+		<script type="text/javascript">
 			{block name="javascript"}
 			//alert('hi from block');
 			{/block}
@@ -101,12 +101,14 @@
 				</li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
 				<ul class="hide" id="sets-submenu">
+					<li></li>
 					<!-- insert javascript template output -->
 				</ul>
 				</li>
 
 				<li id="subscription-menu"><a href="" class="main">My Subscriptions</a>
 				<ul class="hide" id="subscription-submenu">
+					<li></li>
 					<!-- insert javascript template output -->
 				</ul>
 				</li>
@@ -182,5 +184,6 @@
 				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 			</div><!--closes footer-->
 			<div id="debugData" class="pagedata"></div>
+			<div id="jsTemplates" class="pagedata"></div>
 		</body>
 	</html>

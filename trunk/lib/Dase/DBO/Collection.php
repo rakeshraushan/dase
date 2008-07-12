@@ -504,7 +504,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				throw new Exception('duplicate serial number!');
 				return;
 			}
+			//todo: Dase 1 compat
 			$item->status_id = 0;
+			$item->status = 'public';
 			$item->item_type_id = 0;
 			$item->created = date(DATE_ATOM);
 			$item->updated = date(DATE_ATOM);
@@ -512,7 +514,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->insert();
 			return $item;
 		} else {
+			//todo: Dase 1 compat
 			$item->status_id = 0;
+			$item->status = 'public';
 			$item->item_type_id = 0;
 			$item->created = date(DATE_ATOM);
 			$item->created_by_eid = $eid;

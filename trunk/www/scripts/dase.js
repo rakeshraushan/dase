@@ -6,7 +6,6 @@ if (Dase && (typeof Dase != "object" || Dase.NAME)) {
 // Create our namespace, and specify some meta-information
 Dase = {};
 Dase.NAME = "Dase";    // The name of this namespace
-Dase.VERSION = 1.0;    // The version of this namespace
 Dase.user = {};
 Dase.util = {};
 Dase.widget = {};
@@ -87,6 +86,22 @@ Dase.hasClass = function(elem,cname) {
 	return false;
 };
 
+Dase.getElementsByClass = function(parent,cname,tagname) {
+	var res = [];
+	var c;
+	if (tagname) {
+		c = parent.getElementsByTagName(tagname);
+	} else {
+		c = parent.getElementsByTagName('*');
+	}
+	for (var i=0;i<c.length;i++) {
+		if (Dase.hasClass(c[i],cname)) {
+			res.push(c[i]);
+		}
+	}
+	return res;
+}
+
 //use to hide 'em
 Dase.addClassToChildren = function(elem,cname) {
 	if (!elem) return;
@@ -108,8 +123,10 @@ Dase.displayError = function(msg) {
 Dase.toggle = function(el) {
 	if (Dase.hasClass(el,'hide')) {
 		Dase.removeClass(el,'hide');
+		return true;
 	} else {
 		Dase.addClass(el,'hide');
+		return false;
 	}
 };
 
@@ -202,7 +219,7 @@ Dase.initUser = function() {
 			Dase.placeUserCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
-			Dase.placeItemEditLink(eid);
+			Dase.initItemEditing(eid);
 			Dase.initCart();
 			Dase.initAddToCart();
 		}
@@ -262,22 +279,38 @@ Dase.checkAdminStatus = function(eid) {
 	return false;
 }
 
-Dase.placeItemEditLink = function(eid) {
-	//it's not a security check, just a convenience for users
-	//with proper credentials to see the edit link
+Dase.initItemEditing = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');
+	if (!edit_link) return;
 	var status_controls = Dase.$('adminStatusControls');
 	var controls = Dase.$('adminPageControls');
-	if (!edit_link || ('' == edit_link.href)) return;
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
 		Dase.removeClass(status_controls,'hide');
-		Dase.initEditLink(edit_link);
+		//get jstemplates
+		Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
+			Dase.$('jsTemplates').innerHTML = resp;
+			Dase.enableStatusControl();
+			Dase.initEditLink(edit_link);
+			Dase.initAddMetadata();
+		});
 	}
 	return;
+}
+
+Dase.enableStatusControl = function() {
+	var form = Dase.$('updateStatus');
+	if (!form) return;
+	form.onsubmit = function() {
+		Dase.ajax(form.action,'put',function(resp) {
+			//hard reload
+			window.location.reload(true);
+		},form.status.value);
+		return false;
+	}
 }
 
 Dase.placeManageLink = function(eid) {
@@ -345,7 +378,7 @@ Dase.setCollectionAtts = function() {
 	//you can pass in a coll OR use as an event handler
 	var coll_el = Dase.$('collectionAsciiId');
 	if (coll_el) {
-		coll = coll_el.innerHTML;
+		var	coll = coll_el.innerHTML;
 	}
 	var sel = Dase.$('attributesSelect');
 	if (!sel) return; 
@@ -384,7 +417,7 @@ Dase.setCollectionAtts = function() {
 	Dase.removeClass(Dase.$('preposition'),'hide');
 	Dase.removeClass(sel,'hide');
 });
-	}
+}
 };
 
 Dase.specifyQueryType = function() {
@@ -615,44 +648,42 @@ Dase.getHtml = function(url,elem_id,my_func) {
 			if (my_func) { 
 				my_func(); 
 			}
-			} else {
-				// wait for the call to complete
-			}
-		};
+		}
 	};
+};
 
-	Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers) {
-		if (!method) {
-			method = 'POST';
-		}
-		var xmlhttp = Dase.createXMLHttpRequest();
-
-		if (username && password) {
-			xmlhttp.open(method,url,true,username,password);
-		} else {
-			xmlhttp.open(method,url,true);
-		}
-		if (content_headers) {
-			for (var k in content_headers) {
-			xmlhttp.setRequestHeader(k,content_headers[k]);
-		}
+Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers) {
+	if (!method) {
+		method = 'POST';
 	}
-	if (msgBody) {
-		xmlhttp.send(msgBody);
+	var xmlhttp = Dase.createXMLHttpRequest();
+
+	if (username && password) {
+		xmlhttp.open(method,url,true,username,password);
 	} else {
-		xmlhttp.send(null);
+		xmlhttp.open(method,url,true);
 	}
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var returnStr = xmlhttp.responseText;
-			if (my_func) {
-				my_func(returnStr);
-			}
-		} 
-		if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
-			alert(xmlhttp.responseText);
-		} 
-	};
+	if (content_headers) {
+		for (var k in content_headers) {
+		xmlhttp.setRequestHeader(k,content_headers[k]);
+	}
+}
+if (msgBody) {
+	xmlhttp.send(msgBody);
+} else {
+	xmlhttp.send(null);
+}
+xmlhttp.onreadystatechange = function() {
+	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		var returnStr = xmlhttp.responseText;
+		if (my_func) {
+			my_func(returnStr);
+		}
+	} 
+	if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
+		alert(xmlhttp.responseText);
+	} 
+};
 };
 
 Dase.getElementHtml = function(url,target,my_func) {
@@ -685,9 +716,14 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 	// also note that JSON data needs to be up-to-the-second
 	// accurate given the way we currently do deletes!
 	var date = new Date();
+
+	//per http://www.subbu.org/weblogs/main/2005/10/xmlhttprequest.html
+	//this may be unnecessary
 	if (params) {
+		//url = url + '?' + params +'&format=json';
 		url = url + '?' + params + '&cache_buster=' + date.getTime()+'&format=json';
 	} else {
+		//url = url + '?format=json';
 		url = url + '?cache_buster=' + date.getTime()+'&format=json';
 	}
 
@@ -696,6 +732,7 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 	} else {
 		xmlhttp.open('GET', url, true);
 	}
+	//xmlhttp.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1970 00:00:00 GMT');
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4) {
@@ -897,7 +934,7 @@ Dase.initRemoveItems = function() {
 			alert('Please check at least one item.');
 			return false;
 		}
-		if (confirm('Delete '+item_id_array.length+' item(s) from '+tag_ascii_id+'?')) {
+		if (confirm('Remove '+item_id_array.length+' item(s) from '+tag_ascii_id+'?')) {
 			var item_ids = item_id_array.join(',');
 			var url = Dase.base_href + 'tag/'+Dase.user.eid+'/'+tag_ascii_id+'/items/'+item_ids;
 			Dase.ajax(url,'DELETE',function(resp) {
@@ -979,6 +1016,60 @@ Dase.initEditLink = function(el) {
 		return false;
 	}
 };
+
+Dase.initAddMetadata = function()
+{
+	var mlink = Dase.$('addMetadataLink');
+	var mform = Dase.$('addMetadata');
+	var coll = Dase.$('collectionAsciiId').innerHTML;
+	if (!mlink || !mform) return;
+	mlink.onclick = function() {
+		if (Dase.toggle(mform)) {
+			mform.innerHTML = '<div class="loading">Loading...</div>';
+			Dase.getJSON(Dase.base_href + "collection/" + coll + "/attributes",
+			function(json){
+			var data = { 'atts': json };
+			var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
+			mform.innerHTML = templateObj.process(data);
+			var getForm = Dase.$('getInputForm');
+			Dase.initGetInputForm(getForm);
+		});
+	}
+	return false;
+}
+}
+
+Dase.initGetInputForm = function(form) {
+	coll = Dase.$('collectionAsciiId').innerHTML;
+	form.att_ascii_id.onchange = function() {
+		var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
+		Dase.getJSON(url,function(resp) {
+			resp.coll_ser = Dase.$('collSer').innerHTML;
+			if (!resp.html_input_type) {
+				resp.html_input_type = 'text';
+			}
+			var templateObj = TrimPath.parseDOMTemplate('input_form_'+resp.html_input_type+'_jst');
+			Dase.$('addMetadataFormTarget').innerHTML = templateObj.process(resp);
+			var input_form = Dase.$('addMetadata').getElementsByTagName('form')[1];
+			input_form.onsubmit = function() {
+				var content_headers = {
+					'Content-Type':'application/x-www-form-urlencoded',
+				}
+				Dase.ajax(this.action,'post',function() { 
+					Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(metadata_json) {
+					data = {'meta':metadata_json};
+					var templateObj = TrimPath.parseDOMTemplate('metadata_jst');
+					Dase.$('metadata').innerHTML = templateObj.process(data);
+				});
+			},jQuery(this).serialize(),null,null,content_headers); 
+			//Dase.addClass(Dase.$('addMetadataFormTarget'),'hide');
+			Dase.$('addMetadataFormTarget').innerHTML = '';
+			return false;
+		};
+	});
+	return false;
+}
+}
 
 Dase.buildForm = function(json,href) {
 	var html_form = '<form id="metadata_form" method="post" action="'+href+'">';

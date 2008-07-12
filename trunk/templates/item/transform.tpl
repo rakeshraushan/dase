@@ -1,8 +1,10 @@
 {extends file="layout.tpl"}
+{block name="js_include"}jquery.js{/block}
 {block name="title"}View Item{/block}
 {block name="content"}
 <div class="full" id="{$item->tagType|lower}">
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
+	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->serialNumber}</div>
 	<div id="contentHeader">
 		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->searchEcho}</span></h1>
 		<h4>
@@ -12,6 +14,8 @@
 		</h4>
 	</div> <!-- close contentHeader -->
 	<div id="adminPageControls" class="hide">
+		<!-- is there a better place for this?-->
+		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
 		|
 		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
@@ -30,18 +34,19 @@
 				</ul>
 			</td>
 			<td class="metadata">
+
+				<!-- adding metadata section-->
+				<div id="addMetadata" class="hide">
+					<!-- note: javascript templates are retrieved asynchronously -->
+				</div>
+				<!-- end adding metadata section-->
+
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
-
-
 				<dl id="metadata" class="{$item->collectionAsciiId}">
 					{foreach item=set key=ascii_id from=$item->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					{if 'item_id' == $ascii_id or 'serial_number' == $ascii_id}
-					<dd>{$value}</dd>
-					{else}
 					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
-					{/if}
 					{/foreach}
 					{/foreach}
 				</dl>
@@ -71,19 +76,16 @@
 		</tr>
 	</table>
 	<div id="adminStatusControls" class="hide">
-		set item status:
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/public" 
-			title="click to make public"
-			class="item_status {if $item->status == 'public'}current{/if}" id="public">public</a>
-		|
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/admin_only" 
-			class="item_status {if $item->status == 'public'}admin_only{/if}" id="admin_only">admin only</a>
-		|
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/marked_for_delete" 
-			class="item_status {if $item->status == 'public'}marked_for_delete{/if}" id="marked_for_delete">marked for delete</a>
-		|
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/status/deep_storage" 
-			class="item_status {if $item->status == 'public'}deep_storage{/if}" id="deep_storage">deep storage</a>
+		<p>This item is <span class="current">{$item->statusLabel}</span></p> 
+		<form id="updateStatus" action="item/{$item->collectionAsciiId}/{$item->serialNumber}/status" method="post">
+			<select name="status">
+				<option value="public" {if $item->status == 'public'}selected="selected"{/if}>Public</option>
+				<option value="draft" {if $item->status == 'draft'}selected="selected"{/if}>Draft (Admin View Only)</option>
+				<option value="delete" {if $item->status == 'delete'}selected="selected"{/if}>Marked for Deletion</option>
+				<option value="archive" {if $item->status == 'archive'}selected="selected"{/if}>In Deep Storage</option>
+			</select>
+			<input type="submit" value="update status"/>
+		</form>
 	</div>
 
 	{if $item->editLink}

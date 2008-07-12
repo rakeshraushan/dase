@@ -119,6 +119,10 @@ class Dase_Handler_Manage extends Dase_Handler
 			$types['mysql']['text'] = "text";
 
 			foreach ($sx->table as $table) {
+				if ($request->has('prefix')) {
+					//todo: figure out implementing table prefixes in config as well
+					//$table['name'] = $request->get('prefix').'_'.$table['name'];
+				}
 				$out .= "DROP TABLE IF EXISTS `{$table['name']}`;\n";
 				$out .= "CREATE TABLE `{$table['name']}` (\n";
 				$sql = '';

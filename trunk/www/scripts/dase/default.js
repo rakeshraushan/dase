@@ -1,2 +1,2 @@
-console && console.log && console.log('default');
+//nothing here
 

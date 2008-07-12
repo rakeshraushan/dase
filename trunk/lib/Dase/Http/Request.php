@@ -194,11 +194,22 @@ class Dase_Http_Request
 				if (isset($this->members[$key])) {
 					return $this->members[$key];
 				}
+				if (isset($this->url_params[$key])) {
+					//necessary for late-set url_params like when we pass "original search" in
+					return $this->url_params[$key][0]; //'cause it is an array
+				}
 				return false;
 			}
 		} else {
-			if ('POST' == $this->method) {
-				return $this->_filterArray($_POST[$key]);
+			if ('post' == $this->method) {
+				if (isset($_POST[$key])) {
+					if (is_array($_POST[$key])) {
+						//need to implement the value[] for this to work
+						return $this->_filterArray($_POST[$key]);
+					} else {
+						return array(strip_tags($_POST[$key]));
+					}
+				}
 			} else {
 				return $this->_getUrlParamsArray($key);
 			}
@@ -264,6 +275,7 @@ class Dase_Http_Request
 					} 
 					$url_params[$k][] = $v;
 				} else { //this deals with case of '&' in search term!
+					//like search?q=horse&q=red & green
 					//we still have $k left over from last list ($k,$v) = explode... 
 					$last = array_pop($url_params[$k]);
 					$url_params[$k][] = $last.'&'.$pair;
@@ -410,6 +422,9 @@ class Dase_Http_Request
 	public function renderResponse($content,$set_cache=true,$status_code=null)
 	{
 		$response = new Dase_Http_Response($this);
+		if ('get' != $this->method) {
+			$set_cache = false;
+		}
 		$response->render($content,$set_cache,$status_code);
 		exit;
 	}

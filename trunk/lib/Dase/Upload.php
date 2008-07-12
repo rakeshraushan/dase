@@ -37,7 +37,7 @@ class Dase_Upload
 		$this->file = $file;
 		$this->collection = $collection;
 		if ($check_for_dup && $this->isDuplicate()) {
-			throw new Dase_Upload_Exception("Error: duplicate file found: " . $this->file->getFilepath());
+			throw new Dase_Upload_Exception("Error: duplicate file found: " . $this->file->getOrigName());
 		}
 	}
 
@@ -69,16 +69,6 @@ class Dase_Upload
 		} else {
 			return "NO ITEM RETRIEVED (" . $this->file->getFilename() . ")\n";
 		}	
-	}
-
-	function checkForMultiTiff()
-	{
-		$image = new Imagick($this->file->getFilepath());
-		if (1 < $image->getNumberImages()) {
-			throw new Dase_Upload_Exception("Error: " . $this->file->getFilepath() . " appears to be a multi-layered tiff\n");
-		} else {
-			return 0;
-		}
 	}
 
 	function isDuplicate()
@@ -128,7 +118,11 @@ class Dase_Upload
 		$msg = '';
 		$msg .= $this->file->makeThumbnail($this->item,$this->collection);
 		$msg .= $this->file->makeViewitem($this->item,$this->collection);
-		$msg .= $this->file->processFile($this->item,$this->collection);
+		try {
+			$msg .= $this->file->processFile($this->item,$this->collection);
+		} catch( Exception $e) {
+			throw $e;
+		}
 
 		foreach ($this->getMetadata() as $ascii => $val) {
 			$this->item->setValue($ascii,$val);

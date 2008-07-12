@@ -1,8 +1,24 @@
-{extends file="layout.tpl"}
+{extends file="manage/layout.tpl"}
 {block name="title"}DASe standard media attributes{/block} 
 
+{block name="javascript"}
+{literal}
+Dase.pageInit = function() {
+var manage = Dase.$('manage');
+var forms = manage.getElementsByTagName('form');
+for (var i=0;i<forms.length;i++) {
+var form = forms[i];
+form.onsubmit = function() {
+alert(this.label.value);
+return false;
+};
+}
+};
+{/literal}
+{/block}
+
 {block name="content"}
-<div class="list" id="browse">
+<div class="list">
 	<h1>Media File Attributes</h1>
 	{foreach item=ma from=$attributes}
 	<form method="post" action="media/attribute/{$ma->id}" class="adminForm">

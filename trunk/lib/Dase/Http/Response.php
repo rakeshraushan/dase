@@ -125,10 +125,14 @@ class Dase_Http_Response
 				$query_array[] = urlencode($key).'='.urlencode($val);
 			}
 		}
-		if (false !== strpos($path,'?')) {
-			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'&'.join("&",$query_array);
-		} else {
-			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/').'?'.join("&",$query_array);
+		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/');
+		if (count($query_array)) {
+			//since path is allowed to have some query params already
+			if (false !== strpos($path,'?')) {
+				$redirect_path .= '&'.join("&",$query_array);
+			} else {
+				$redirect_path .= '?'.join("&",$query_array);
+			}
 		}
 		Dase_Log::info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);

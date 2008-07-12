@@ -383,6 +383,8 @@ if (typeof(TrimPath) == 'undefined')
         if (optDocument == null)
             optDocument = document;
         var element = optDocument.getElementById(elementId);
+		//debug:
+		//alert(elementId);
         var content = element.value;     // Like textarea.value.
         if (content == null)
             content = element.innerHTML; // Like textarea.innerHTML.

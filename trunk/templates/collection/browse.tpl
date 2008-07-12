@@ -1,6 +1,6 @@
 {extends file="layout.tpl"}
 
-{block name="js_include"}collection/browse.js{/block}
+{block name="js_include"}dase/collection/browse.js{/block}
 
 {block name="title"}DASe: {$collection->name|escape}{/block} 
 
