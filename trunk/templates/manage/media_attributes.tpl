@@ -1,20 +1,22 @@
 {extends file="manage/layout.tpl"}
 {block name="title"}DASe standard media attributes{/block} 
 
-{block name="javascript"}
-{literal}
-Dase.pageInit = function() {
-var manage = Dase.$('manage');
-var forms = manage.getElementsByTagName('form');
-for (var i=0;i<forms.length;i++) {
-var form = forms[i];
-form.onsubmit = function() {
-alert(this.label.value);
-return false;
-};
-}
-};
+{block name="head"}
+<script type="text/javascript">
+	{literal}
+	Dase.pageInit = function() {
+		var manage = Dase.$('manage');
+		var forms = manage.getElementsByTagName('form');
+		for (var i=0;i<forms.length;i++) {
+			var form = forms[i];
+			form.onsubmit = function() {
+				alert(this.label.value);
+				return false;
+			};
+		}
+	};
 {/literal}
+</script>
 {/block}
 
 {block name="content"}
