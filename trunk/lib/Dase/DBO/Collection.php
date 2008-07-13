@@ -6,6 +6,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 {
 	public $item_count;
 
+	const COLLECTION_VISIBILITY_PUBLIC = 'public';
+	const COLLECTION_VISIBILITY_USER = 'user';
+	const COLLECTION_VISIBILITY_MANAGER = 'manager';
+
 	public static function get($ascii_id)
 	{
 		$collection = new Dase_DBO_Collection;

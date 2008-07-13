@@ -559,7 +559,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getBaseUrl() 
 	{
-		return DASE_URL.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
+		return APP_ROOT.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
 	}
 
 	public function getAtompubServiceDoc() {

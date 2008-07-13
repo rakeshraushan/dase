@@ -34,12 +34,7 @@
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
-		<script type="text/javascript" src="www/scripts/{block name="js_include"}default.js{/block}"></script>
-		<script type="text/javascript">
-			{block name="javascript"}
-			//alert('hi from block');
-			{/block}
-		</script>
+		{block name="head"}{/block}
 
 
 		<!--[if lt IE 8]>
