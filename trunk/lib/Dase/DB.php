@@ -80,6 +80,36 @@ class Dase_DB {
 		return self::$type;
 	}
 
+	public static function listIndexes()
+	{
+		$db = self::get();
+		if ('mysql' == self::$type) {
+			return "under construction";	
+		}
+		if ('pgsql' == self::$type) {
+			$sql =<<< EOF
+			SELECT c.relname as "Name", 
+				CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as "Type",
+				c2.relname as "Table"
+				FROM pg_catalog.pg_class c
+				JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid
+				JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid
+				LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
+				LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+				WHERE c.relkind IN ('i','')
+				AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+				AND pg_catalog.pg_table_is_visible(c.oid)
+				ORDER BY 1,2;
+EOF;
+		}
+		if ('sqlite' == self::$type) {
+			return "under construction";	
+		}
+		$sth = $db->prepare($sql);
+		$sth->execute();
+		return ($sth->fetchAll());
+	}	
+
 	public static function listTables()
 	{
 		$db = self::get();
