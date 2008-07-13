@@ -1,5 +1,8 @@
 {extends file="layout.tpl"}
-{block name="js_include"}jquery.js{/block}
+{block name="head"}
+<script src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">google.load('jquery','1');</script>
+{/block}
 {block name="title"}View Item{/block}
 {block name="content"}
 <div class="full" id="{$item->tagType|lower}">

@@ -8,7 +8,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		'manager/email' => 'manager_email',
 		'eid/{eid}' => 'ut_person',
 		'name/{lastname}' => 'ut_person',
-		'jquery' => 'jquery',
 		'docs' => 'docs',
 		'schema/{type}' => 'schema',
 		'users' => 'users',
@@ -184,12 +183,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		}
 		$request->response_mime_type = 'text/plain';
 		$request->renderResponse(var_export($person,true));
-	}
-
-	public function getJquery($request)
-	{
-		$tpl = new Dase_Template($request);
-		$request->renderResponse($tpl->fetch('manage/jqtest.tpl'));
 	}
 
 	public function getDocs($request)

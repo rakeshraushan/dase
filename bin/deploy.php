@@ -41,9 +41,9 @@ if ($bytes) {
 	print "error writing .htaccess\n";
 }
 
-apacheWrite("$working/var/cache", $httpd_group);
-apacheWrite("$working/var/log/error.log", $httpd_group);
-apacheWrite("$working/var/log/dase.log", $httpd_group);
+apacheWrite("$working/cache", $httpd_group);
+apacheWrite("$working/log/error.log", $httpd_group);
+apacheWrite("$working/log/dase.log", $httpd_group);
 
 print "done!\n";
 

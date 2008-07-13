@@ -1,27 +1,29 @@
 {extends file="manage/layout.tpl"}
 
-{block name="javascript"}
-{literal}
-Dase.pageInit = function() {
-var url = Dase.base_href+'collections.json';
-Dase.getJSON(url,function(json){
-var data = { 'collections': json };
-var templateObj = TrimPath.parseDOMTemplate("collections_jst");
-Dase.$('cList').innerHTML = templateObj.process(data);
-var links = Dase.$('cList').getElementsByTagName('a');
-for (var i=0;i<links.length;i++) {
-if ('delete' == links[i].className) {
-links[i].onclick = function() {
-if (!confirm('Do you REALLY want to delete \n'+this.id+' ??')) return false;
-Dase.ajax(this.href,'delete',function(resp) {
-alert(resp);
-Dase.pageInit();
-},null,Dase.user.eid,Dase.user.htpasswd);
-return false;
-} } }
-},null);
-};
+{block name="head"}
+<script type="text/javascript">
+	{literal}
+	Dase.pageInit = function() {
+		var url = Dase.base_href+'collections.json';
+		Dase.getJSON(url,function(json){
+				var data = { 'collections': json };
+				var templateObj = TrimPath.parseDOMTemplate("collections_jst");
+				Dase.$('cList').innerHTML = templateObj.process(data);
+				var links = Dase.$('cList').getElementsByTagName('a');
+				for (var i=0;i<links.length;i++) {
+				if ('delete' == links[i].className) {
+				links[i].onclick = function() {
+				if (!confirm('Do you REALLY want to delete \n'+this.id+' ??')) return false;
+				Dase.ajax(this.href,'delete',function(resp) {
+					alert(resp);
+					Dase.pageInit();
+					},null,Dase.user.eid,Dase.user.htpasswd);
+				return false;
+				} } }
+				},null);
+	};
 {/literal}
+</script>
 {/block}
 
 {block name="content"}

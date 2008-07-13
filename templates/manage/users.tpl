@@ -1,16 +1,18 @@
 {extends file="manage/layout.tpl"}
 
-{block name="javascript"}
-{literal}
-Dase.pageInit = function() {
-var url = Dase.base_href+'manage/users.json';
-Dase.getJSON(url,function(json){
-var data = { 'users': json };
-var templateObj = TrimPath.parseDOMTemplate("users_jst");
-Dase.$('userList').innerHTML = templateObj.process(data);
-},null,Dase.$('userList').className);
-};
+{block name="head"}
+<script type="text/javascript">
+	{literal}
+	Dase.pageInit = function() {
+		var url = Dase.base_href+'manage/users.json';
+		Dase.getJSON(url,function(json){
+				var data = { 'users': json };
+				var templateObj = TrimPath.parseDOMTemplate("users_jst");
+				Dase.$('userList').innerHTML = templateObj.process(data);
+				},null,Dase.$('userList').className);
+	};
 {/literal}
+</script>
 {/block}
 
 {block name="content"}

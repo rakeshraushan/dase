@@ -1,6 +1,8 @@
 {extends file="manage/layout.tpl"}
 
-{block name="js_include"}dase/manage/collection_form.js{/block}
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/manage/collection_form.js"></script>
+{/block}
 
 {block name="title"}DASe: Add a Collection{/block} 
 
