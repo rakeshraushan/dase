@@ -84,9 +84,9 @@ class Dase_Handler_Collections extends Dase_Handler
 	public function getCollections($request) 
 	{
 		$tpl = new Dase_Template($request);
-		$feed = Dase_Atom_Feed::retrieve(DASE_URL.'/collections?format=atom');
+		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/collections?format=atom');
 		$tpl->assign('collections',$feed);
-		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(DASE_URL.'/atom'));
+		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom'));
 		$request->renderResponse($tpl->fetch('collection/list.tpl'));
 	}
 

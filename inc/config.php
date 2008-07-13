@@ -1,8 +1,16 @@
 <?php
 
+$conf['db']['type'] = 'sqlite';
+$conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only
+$conf['db']['host'] = 'localhost';
+$conf['db']['name'] = 'dase';
+$conf['db']['user'] = 'username';
+$conf['db']['pass'] = 'password';
+
 $conf['superuser'][] = 'pkeane';
 $conf['superuser'][] = 'rru62';
 
+//used to create only-known-by-server security hash
 $conf['token'] = '
 	----
 	Let us go then, you and I,	
@@ -19,29 +27,23 @@ $conf['token'] = '
 	Let us go and make our visit.'
    	. date('Ymd',time()); //changes every day
 
-
 //POST/PUT/DELETE token:	
 $conf['ppd_token'] = "
 	When you're lost in the rain in Juarez 
 	and it's Easter time, too." 
 	. date('Ymd',time()); //changes every day
 
-//see also media/config.php
+//used ONLY as a default when we create a new collection
 $conf['path_to_media'] = '/mnt/www-data/dase/media';
+
+//a place to store metadata of deleted items (just-in-case)
 $conf['graveyard'] = "/mnt/home/pkeane/dase_graveyard";
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';
 
-$conf['login_module'] = 'auth';
+//handler that gets invoked when APP_ROOT is requested
 $conf['default_handler'] = 'collections';
-
-$conf['db']['type'] = 'sqlite';
-$conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only
-$conf['db']['host'] = 'localhost';
-$conf['db']['name'] = 'dase';
-$conf['db']['user'] = 'username';
-$conf['db']['pass'] = 'password';
 
 //local_config CAN OVERRIDE any of the above values
 //this is useful for build scripts to hold db
@@ -49,58 +51,40 @@ $conf['db']['pass'] = 'password';
 if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 	include DASE_PATH . '/inc/local_config.php';
 }
-//also allow modules to overide config if
-//request is coming from a module
-//note that passwords in modules will
-//likely get checked in
-//also, login_module cannot be overridden since calls to logoff,login 
-//will not create a MODULE_PATH
+
+//allow module to overide config 
 if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
 	include(MODULE_PATH . '/inc/config.php');
 }	
 
-//default lookup values
-//basing id's on array indexes
-//here is way too fragile &
-//generally a bad idea
+//maximum no. of items displayed on a search result page
+$conf['max_items'] = 30;
 
-$conf['html_input_type'][] = 'checkboxes';
-$conf['html_input_type'][] = 'list_box';
-$conf['html_input_type'][] = 'non_editable';
-$conf['html_input_type'][] = 'radio_buttons';
-$conf['html_input_type'][] = 'select_menu';
-$conf['html_input_type'][] = 'textarea';
-$conf['html_input_type'][] = 'textbox';
-$conf['html_input_type'][] = 'textbox_with_dynamic_menu';
-
-$conf['item_status'][] = 'public';
-$conf['item_status'][] = 'admin_only';
-$conf['item_status'][] = 'marked_for_delete';
-$conf['item_status'][] = 'deep_storage';
-
-$conf['sizes'][] = '400';
-$conf['sizes'][] = 'aiff';
-$conf['sizes'][] = 'archive';
-$conf['sizes'][] = 'css';
-$conf['sizes'][] = 'deleted';
-$conf['sizes'][] = 'doc';
-$conf['sizes'][] = 'full';
-$conf['sizes'][] = 'gif';
-$conf['sizes'][] = 'html';
-$conf['sizes'][] = 'jpeg';
-$conf['sizes'][] = 'large';
-$conf['sizes'][] = 'medium';
-$conf['sizes'][] = 'mp3';
-$conf['sizes'][] = 'pdf';
-$conf['sizes'][] = 'png';
-$conf['sizes'][] = 'quicktime';
-$conf['sizes'][] = 'quicktime_stream';
-$conf['sizes'][] = 'raw';
-$conf['sizes'][] = 'small';
-$conf['sizes'][] = 'text';
-$conf['sizes'][] = 'thumbnails';
-$conf['sizes'][] = 'tiff';
-$conf['sizes'][] = 'uploaded_files';
-$conf['sizes'][] = 'wav';
-$conf['sizes'][] = 'xml';
-$conf['sizes'][] = 'xslt';
+$conf['sizes'] = array(
+	'400',
+	'aiff',
+	'archive',
+	'css',
+	'deleted',
+	'doc',
+	'full',
+	'gif',
+	'html',
+	'jpeg',
+	'large',
+	'medium',
+	'mp3',
+	'pdf',
+	'png',
+	'quicktime',
+	'quicktime_stream',
+	'raw',
+	'small',
+	'text',
+	'thumbnails',
+	'tiff',
+	'uploaded_files',
+	'wav',
+	'xml',
+	'xslt',
+);

@@ -318,9 +318,7 @@ class Dase_Http_Request
 			//note: php does this already (??)
 			Dase::error(401);
 		}
-		if ('/' != APP_BASE) {
-			$path= str_replace(APP_BASE,'',$path);
-		}
+		$path= str_replace(APP_BASE,'',$path);
 		$path= trim($path, '/');
 		/* Remove the query_string from the URL */
 		if ( strpos($path, '?') !== FALSE ) {

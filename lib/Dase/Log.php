@@ -47,23 +47,26 @@ class Dase_Log
 	{
 	}
 
+	public static function all($msg,$backtrace = false)
+	{
+		//very verbose
+		if (self::$log_level >= 3) {
+			self::write($msg,$backtrace);
+		}
+	}
+
 	public static function debug($msg,$backtrace = false)
 	{
-		if (self::$log_level >= DASE_LOG_DEBUG) {
+		//notices helpful for debugging (including all sql)
+		if (self::$log_level >= 2) {
 			self::write($msg,$backtrace);
 		}
 	}
 
 	public static function info($msg,$backtrace = false)
 	{
-		if (self::$log_level >= DASE_LOG_INFO) {
-			self::write($msg,$backtrace);
-		}
-	}
-
-	public static function all($msg,$backtrace = false)
-	{
-		if (self::$log_level >= DASE_LOG_ALL) {
+		//normal notices, ok for production
+		if (self::$log_level >= 1) {
 			self::write($msg,$backtrace);
 		}
 	}

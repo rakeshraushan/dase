@@ -15,7 +15,7 @@ class Dase_Handler_Search extends Dase_Handler
 		if ($request->has('max')) {
 			$this->max = $request->get('max');
 		} else {
-			$this->max = MAX_ITEMS;
+			$this->max = Dase::getConfig('max_items');
 		}
 		if ($request->has('start')) {
 			$this->start = $request->get('start');

@@ -42,12 +42,11 @@ class Dase_DB {
 				self::$name = $conf['name'];
 			}
 			$host = $conf['host'];
-			$sqlite_path = $conf['path'];
 			$user = $conf['user'];
 			$pass = $conf['pass'];
 			$driverOpts = array();
 			if ('sqlite' == self::$type) {
-				$dsn = "sqlite:$sqlite_path";
+				$dsn = "sqlite:".$conf['path'];
 			} else {
 				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
 			}

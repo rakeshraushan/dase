@@ -11,6 +11,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	const TYPE_SLIDESHOW = 'slideshow';
 	const TYPE_ADMIN = 'admin';
 
+	const TAG_VISIBILITY_PUBLIC = 'public';
+	const TAG_VISIBILITY_USER = 'user';
+	const TAG_VISIBILITY_OWNER = 'owner';
+
 	public static function getByUser($user)
 	{
 		$db = Dase_DB::get();
