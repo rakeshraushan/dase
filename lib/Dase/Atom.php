@@ -165,8 +165,9 @@ class Dase_Atom
 		return $this->getLink('previous');
 	}
 
-	function getLink($rel) 
+	function getLink($rel='alternate') 
 	{
+	
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ($rel == $el->getAttribute('rel')) {
 				return $el->getAttribute('href');

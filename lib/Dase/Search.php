@@ -426,6 +426,11 @@ class Dase_Search
 		$db = Dase_DB::get();
 		Dase_Log::debug('search sql: '.$this->sql);
 		Dase_Log::debug(join(', ',$this->bound_params));
+		$log_sql = $this->sql;
+		foreach ($this->bound_params as $bp) {
+			$log_sql = preg_replace('/\?/',"'$bp'",$log_sql,1);
+		}
+		Dase_Log::debug('** SEARCH SQL ** '.$log_sql);
 		$st = $db->prepare($this->sql);	
 		if (!$st->execute($this->bound_params)) {
 			$errs = $st->errorInfo();

@@ -146,7 +146,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->size $media_file->filename\n";
+		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
 	function makeViewitem($item,$collection)
@@ -167,18 +167,17 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->size $media_file->filename\n";
+		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
 	public function processFile($item,$collection)
 	{
-		if ($this->mime_type = 'image/tiff') {
+		/* check for multi-tiff */
+		if ('image/tiff' == $this->mime_type) {
 			$image = new Imagick($this->getFilepath());
-			if (1 < $image->getNumberImages()) {
-				throw new Dase_Upload_Exception("Error: " . $this->getOrigName() . " appears to be a multi-layered tiff\n");
-			} else {
-				return 0;
-			}
+			if (1 > $image->getNumberImages()) {
+				throw new Dase_Upload_Exception("Error: ".$this->getOrigName()." appears to be a multi-layered tiff\n");
+			} 
 		}
 
 		$this->_makeSizes($item,$collection);
@@ -204,7 +203,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->filename which is $this->file_size bytes in size\n";
+		Dase_Log::info("created $media_file->filename ($media_file->size) which is $this->file_size bytes in size");
 		} else {
 			//report error??????
 		}
@@ -262,7 +261,7 @@ class Dase_File_Image extends Dase_File
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
-			$msg .= "created $media_file->size $media_file->filename\n";
+			Dase_Log::info("created $media_file->size $media_file->filename");
 		}
 		return $msg;
 	}

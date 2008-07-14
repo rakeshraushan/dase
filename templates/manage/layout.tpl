@@ -100,6 +100,11 @@
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>MySQL Schema</sup>
 				</a>
 				</li>
+				<li class="item_types-tab">
+				<a href="manage/db/indexes">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Database Indexes</sup>
+				</a>
+				</li>
 				<li class="managers-tab">
 				<a href="manage/users">
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>

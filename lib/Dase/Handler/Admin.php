@@ -73,6 +73,9 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl = new Dase_Template($request);
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
+
+		$tpl->assign('recent_uploads_url',APP_ROOT.'/user/'.$this->user->eid.'/'.$this->collection->ascii_id.'/recent.atom?limit=10&auth=http');
+		$tpl->assign('recent_uploads',Dase_Atom_Feed::retrieve(APP_ROOT.'/user/'.$this->user->eid.'/'.$this->collection->ascii_id.'/recent.atom?limit=10&auth=http',$this->user->eid,$this->user->getHttpPassword()));
 		if ($request->has('prev_serial_number')) {
 			$tpl->assign('prev_serial_number',$request->get('prev_serial_number'));
 		}
@@ -93,13 +96,13 @@ class Dase_Handler_Admin extends Dase_Handler
 			$name = $_FILES[$input_name]['name'];
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
+			Dase_Log::info('uploaded file '.$name.' type: '.$type);
 			try {
 				$u = new Dase_Upload(Dase_File::newFile($path,$type,$name),$this->collection);
 				$ser_num = $u->createItem($request->getUser()->eid);
-				$logdata = $u->ingest();
-				$logdata .= $u->setTitle($name);
-				$logdata .= $u->buildSearchIndex();
-				Dase_Log::info($logdata);
+				$u->ingest();
+				$u->setTitle($name);
+				$u->buildSearchIndex();
 			} catch(Exception $e) {
 				$error_msg = $e->getMessage();
 				Dase_Log::info($error_msg);

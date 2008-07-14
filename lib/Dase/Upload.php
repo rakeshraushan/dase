@@ -115,11 +115,10 @@ class Dase_Upload
 	function ingest()
 	{
 		Dase_Log::info('attempting to ingest file');
-		$msg = '';
-		$msg .= $this->file->makeThumbnail($this->item,$this->collection);
-		$msg .= $this->file->makeViewitem($this->item,$this->collection);
+		$this->file->makeThumbnail($this->item,$this->collection);
+		$this->file->makeViewitem($this->item,$this->collection);
 		try {
-			$msg .= $this->file->processFile($this->item,$this->collection);
+			$this->file->processFile($this->item,$this->collection);
 		} catch( Exception $e) {
 			throw $e;
 		}
@@ -127,13 +126,13 @@ class Dase_Upload
 		foreach ($this->getMetadata() as $ascii => $val) {
 			$this->item->setValue($ascii,$val);
 		}
-		$msg .= "added admin metadata\n";
-		return $msg;
+		Dase_Log::info("added admin metadata");
 	}
 
 	function buildSearchIndex()
 	{
-		return $this->item->buildSearchIndex();
+		$this->item->buildSearchIndex();
+		return;
 	}
 
 	function deleteItemAdminMetadata()

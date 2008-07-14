@@ -51,7 +51,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$t->assign('json_url',APP_ROOT.'/tag/'.$this->tag->id.'.json');
 		$t->assign('eid',$u->eid);
-		$t->assign('http_pw',$this->tag->getHttpPassword($u->eid));
+		$t->assign('http_pw',$u->getHttpPassword());
 		$request->renderResponse($t->fetch('item_set/slideshow.tpl'));
 
 	}

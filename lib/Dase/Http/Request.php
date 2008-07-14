@@ -343,6 +343,11 @@ class Dase_Http_Request
 			return $this->user;
 		}
 
+		//allow auth type to be forced w/ query param
+		if ($this->has('auth')) {
+			$auth = $this->get('auth');
+		}
+
 		switch ($auth) {
 		case 'cookie':
 			$eid = Dase_Cookie::getEid();

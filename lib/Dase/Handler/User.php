@@ -8,6 +8,7 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/cart' => 'cart',
 		'{eid}/auth' => 'http_password',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
+		'{eid}/{collection_ascii_id}/recent' => 'recent_items',
 	);
 
 	protected function setup($request)
@@ -16,6 +17,31 @@ class Dase_Handler_User extends Dase_Handler
 		if ($request->get('eid') != $this->user->eid) {
 			$request->renderError(401,'One must be so careful these days.');
 		}
+	}
+
+	public function getRecentItemsAtom($request)
+	{
+		//implement http authorization!
+		$items = new Dase_DBO_Item;
+		$items->created_by_eid = $this->user->eid;
+		$items->collection_id = Dase_DBO_Collection::get($request->get('collection_ascii_id'))->id;
+		$items->orderBy('created DESC');
+		if ($request->has('limit')) {
+			$limit = $request->get('limit');
+		} else {
+			$limit = 50;
+		}
+		$items->setLimit($limit);
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle('Recent Uploads by '.$this->user->eid);
+		$feed->setId(APP_ROOT.'user/'.$this->user->eid.'/'.$request->get('collection_ascii_id').'/recent');
+		$feed->setFeedType('items');
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+		foreach ($items->find() as $item) {
+			$item->injectAtomEntryData($feed->addEntry('item'));
+		}
+		$request->renderResponse($feed->asXml());
 	}
 
 	public function getDataJson($request)
