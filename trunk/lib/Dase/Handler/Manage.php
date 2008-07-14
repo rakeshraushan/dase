@@ -9,6 +9,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'eid/{eid}' => 'ut_person',
 		'name/{lastname}' => 'ut_person',
 		'docs' => 'docs',
+		'db/indexes' => 'db_indexes',
 		'schema/{type}' => 'schema',
 		'users' => 'users',
 		'user/{eid}' => 'user',
@@ -78,6 +79,13 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($request);
 		$request->renderResponse($tpl->fetch('manage/palette.tpl'));
+	}
+
+	public function getDbIndexes($request) 
+	{
+		$tpl = new Dase_Template($request);
+		$tpl->assign('indexes',Dase_DB::listIndexes());
+		$request->renderResponse($tpl->fetch('manage/db_indexes.tpl'));
 	}
 
 	public function getSchema($request)

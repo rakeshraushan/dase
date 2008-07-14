@@ -88,9 +88,9 @@ class Dase_DB {
 		}
 		if ('pgsql' == self::$type) {
 			$sql =<<< EOF
-			SELECT c.relname as "Name", 
-				CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as "Type",
-				c2.relname as "Table"
+			SELECT c.relname as "name", 
+				CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as "type",
+				c2.relname as "table"
 				FROM pg_catalog.pg_class c
 				JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid
 				JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid
@@ -106,6 +106,7 @@ EOF;
 			return "under construction";	
 		}
 		$sth = $db->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_ASSOC);
 		$sth->execute();
 		return ($sth->fetchAll());
 	}	

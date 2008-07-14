@@ -70,7 +70,7 @@ class Dase_File_Audio extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->filename\n";
+		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
 	function makeViewitem($item,$collection)
@@ -88,7 +88,7 @@ class Dase_File_Audio extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->filename\n";
+		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
 	function processFile($item,$collection)
@@ -109,7 +109,7 @@ class Dase_File_Audio extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		return "created $media_file->filename\n";
+		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
 }

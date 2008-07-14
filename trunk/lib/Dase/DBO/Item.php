@@ -119,7 +119,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
 		$this->update();
-		return "built indexes for " . $this->serial_number . "\n";
+		Dase_Log::info("built indexes for " . $this->serial_number);
 	}
 
 	public function getMetadata($att_ascii_id = '')

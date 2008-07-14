@@ -91,6 +91,15 @@ iframe {
 	display: none;
 }
 
+ul#recent li {
+	width: 60%;
+    padding: .5em;
+    margin: 1em;
+    list-style-type: none;
+    -moz-border-radius: 5px;
+    background-color: #c5cffa;
+}
+
 ul#results li {
 	width: 60%;
     padding: .5em;

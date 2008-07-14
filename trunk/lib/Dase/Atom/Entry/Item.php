@@ -38,6 +38,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getItemLink()
 	{
+		//shouldn't this just be rel="alternate" link?
 		return $this->getLink('http://daseproject.org/relation/search-item');
 	}
 

@@ -45,6 +45,10 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed',
 			'entry' => 'Dase_Atom_Entry',
 		),
+		'items' => array(
+			'feed' => 'Dase_Atom_Feed_Collection',
+			'entry' => 'Dase_Atom_Entry_Item',
+		),
 	);
 	protected $feedtype;
 
