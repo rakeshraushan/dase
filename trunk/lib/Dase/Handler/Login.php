@@ -10,10 +10,21 @@ class Dase_Handler_Login extends Dase_Handler
 
 	protected function setup($request)
 	{
+		//place pointer to alernate login module here ?
+	}
+
+	public function getLogin($request)
+	{
+		$alt = Dase::getConfig::('auth');
+		if ($alt) {
+			//
+		} else {
+			$this->_getLogin();
+		}
 	}
 
 	//rewrite/replace for alternate authentication
-	public function getLogin($request)
+	private function _getLogin($request)
 	{
 		$t = new Dase_Template($request);
 		//'target' is the page to redirect to after login is complete
@@ -22,6 +33,7 @@ class Dase_Handler_Login extends Dase_Handler
 	}
 
 	//used only in *this* login scheme
+	//will *not* be used in plugged-in auth
 	public function getLoginForm($request)
 	{
 		$t = new Dase_Template($request);
@@ -29,8 +41,19 @@ class Dase_Handler_Login extends Dase_Handler
 		$request->renderResponse($t->fetch('login_form.tpl'),$request);
 	}
 
-	//rewrite/replace for alternate authentication
 	public function postToLogin($request)
+	{
+		$alt = Dase::getConfig::('auth');
+		if ($alt) {
+			//
+		} else {
+			$this->_postToLogin();
+		}
+	}
+
+
+	//rewrite/replace for alternate authentication
+	private function _postToLogin($request)
 	{
 		$username = $request->get('username');
 		$pass = $request->get('password');
