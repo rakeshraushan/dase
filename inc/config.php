@@ -10,6 +10,9 @@ $conf['db']['pass'] = 'password';
 $conf['superuser'][] = 'pkeane';
 $conf['superuser'][] = 'rru62';
 
+//alternative authentication module
+$conf['auth'] = '';
+
 //used to create only-known-by-server security hash
 $conf['token'] = '
 	----
