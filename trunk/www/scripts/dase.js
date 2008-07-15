@@ -1108,7 +1108,8 @@ Dase.initGetInputForm = function(form) {
 					var templateObj = TrimPath.parseDOMTemplate('metadata_jst');
 					Dase.$('metadata').innerHTML = templateObj.process(data);
 				});
-			},jQuery(this).serialize(),null,null,content_headers); 
+			//},jQuery(this).serialize(),null,null,content_headers); 
+			},Dase.form.serialize(this),null,null,content_headers); 
 			//Dase.addClass(Dase.$('addMetadataFormTarget'),'hide');
 			Dase.$('addMetadataFormTarget').innerHTML = '';
 			return false;

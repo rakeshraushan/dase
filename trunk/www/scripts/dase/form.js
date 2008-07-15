@@ -33,8 +33,9 @@ Dase.form = function() {
                 'checkbox': function(el) { return el.checked ? el.value : null; }
             }
             var params = {};
-            for(c in form.childNodes) {
-                n = form.childNodes[c];
+            var eList = form.getElementsByTagName('*');
+            for(var i=0;i<eList.length;i++) {
+                n = eList[i];
                 if(n.nodeType && n.nodeType == 1) {
                     if(n.tagName && n.name && element_handlers[n.tagName.toLowerCase()] && type_handlers[element_handlers[n.tagName.toLowerCase()](n)]) {
                         if(params[n.name] && !(params[n.name] instanceof Array)) {

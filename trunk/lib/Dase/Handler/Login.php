@@ -15,11 +15,11 @@ class Dase_Handler_Login extends Dase_Handler
 
 	public function getLogin($request)
 	{
-		$alt = Dase::getConfig::('auth');
+		$alt = Dase::getConfig('auth');
 		if ($alt) {
 			//
 		} else {
-			$this->_getLogin();
+			$this->_getLogin($request);
 		}
 	}
 
@@ -43,11 +43,11 @@ class Dase_Handler_Login extends Dase_Handler
 
 	public function postToLogin($request)
 	{
-		$alt = Dase::getConfig::('auth');
+		$alt = Dase::getConfig('auth');
 		if ($alt) {
 			//
 		} else {
-			$this->_postToLogin();
+			$this->_postToLogin($request);
 		}
 	}
 
