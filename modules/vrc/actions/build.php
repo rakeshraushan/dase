@@ -14,7 +14,7 @@ $item->serial_number = $sernum;
 $item->collection_id = $coll->id;
 if (!$item->findOne()) {
 	$item->item_type_id = 0;
-	$item->status_id = 0;
+	$item->status = 'public';
 	$item->insert();
 }
 

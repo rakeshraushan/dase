@@ -7,9 +7,11 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{tag_id}' => 'tag',
 		'{tag_id}/slideshow' => 'slideshow',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/slideshow' => 'slideshow',
 		'item/{tag_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
+		'{eid}/{tag_ascii_id}/{tag_item_id}/sorter' => 'sorter',
 		'{eid}/{tag_ascii_id}/item/{collection_ascii_id}/{serial_number}' => 'tag_item',
 		//for set delete:
 		'{eid}/{tag_ascii_id}/items/{item_ids}' => 'tag_items',
@@ -32,6 +34,28 @@ class Dase_Handler_Tag extends Dase_Handler
 			$request->renderError(404,'no such tag');
 		}
 	}	
+
+	public function postToSorter($request)
+	{
+		$new_order = file_get_contents("php://input");
+		if ($new_order < 0) {
+			$new_order = 0;
+		}
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->load($request->get('tag_item_id'));
+		$old_order = $tag_item->sort_order;
+		$tag_item->sort_order = $new_order;
+		$tag_item->updated = date(DATE_ATOM);
+		$tag_item->update();
+		if ($old_order > $new_order) {
+			$dir = 'DESC';
+		} else {
+			$dir = 'ASC';
+		}
+		$this->tag->resortTagItems($dir);
+		echo "done";
+		exit;
+	}
 
 	public function getTagAtom($request)
 	{
@@ -58,11 +82,17 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagJson($request)
 	{
-		$u = $request->getUser('http');
+		$u = $request->getUser();
 		if (!$u->can('read','tag',$this->tag)) {
 			$request->renderError(401);
 		}
 		$request->renderResponse($this->tag->asJson());
+	}
+
+	public function getTagTemplate($request)
+	{
+		$t = new Dase_Template($request);
+		$request->renderResponse($t->fetch('item_set/jstemplates.tpl'));
 	}
 
 	public function getTag($request)
@@ -134,6 +164,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		foreach ($item_id_array as $item_id) {
 			$tag->removeItem($item_id);
 		}
+		$tag->resortTagItems();
 		$request->response_mime_type = 'text/plain';
 		$request->renderResponse("removed $num items from $tag->name");
 	}

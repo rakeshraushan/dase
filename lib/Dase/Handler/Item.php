@@ -87,11 +87,6 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$request->renderError(406,'not an acceptable status string');
 		}
-		$compat['public'] = 0;
-		$compat['draft'] = 1;
-		$compat['delete'] = 2;
-		$compat['archive'] = 3;
-		$this->item->status_id = $compat[$status];
 		$this->item->update();
 		$request->renderResponse('status updated');
 	}

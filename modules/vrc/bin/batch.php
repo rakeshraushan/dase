@@ -105,7 +105,7 @@ function build($sernum,$coll,$media_count) {
 	$item->collection_id = $coll->id;
 	if (!$item->findOne()) {
 		$item->item_type_id = 0;
-		$item->status_id = 0;
+		$item->status = 'public';
 		$item->insert();
 	} else {
 		if (isset($media_count[$sernum])) {

@@ -10,50 +10,27 @@ class Dase_Handler_Login extends Dase_Handler
 
 	protected function setup($request)
 	{
-		//place pointer to alernate login module here ?
 	}
 
 	public function getLogin($request)
 	{
-		$alt = Dase::getConfig('auth');
-		if ($alt) {
-			//
-		} else {
-			$this->_getLogin($request);
-		}
-	}
-
-	//rewrite/replace for alternate authentication
-	private function _getLogin($request)
-	{
 		$t = new Dase_Template($request);
 		//'target' is the page to redirect to after login is complete
 		$t->assign('target',$request->get('target'));
-		$request->renderResponse($t->fetch('login_form.tpl'),$request);
+		$request->renderResponse($t->fetch('login_form.tpl'));
 	}
 
-	//used only in *this* login scheme
-	//will *not* be used in plugged-in auth
 	public function getLoginForm($request)
 	{
+		//target is empty in the most common case
+		//but it *is* used to get people back to
+		//their place if they are prompted in the middle of things
 		$t = new Dase_Template($request);
 		$t->assign('target',$request->get('target'));
-		$request->renderResponse($t->fetch('login_form.tpl'),$request);
+		$request->renderResponse($t->fetch('login_form.tpl'));
 	}
 
 	public function postToLogin($request)
-	{
-		$alt = Dase::getConfig('auth');
-		if ($alt) {
-			//
-		} else {
-			$this->_postToLogin($request);
-		}
-	}
-
-
-	//rewrite/replace for alternate authentication
-	private function _postToLogin($request)
 	{
 		$username = $request->get('username');
 		$pass = $request->get('password');

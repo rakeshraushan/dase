@@ -109,6 +109,16 @@ class Dase_Http_Request
 			//so dispatch matching works
 			return 'modules/'.$this->module;
 		} else {
+			//here's the entire plugin architecture
+			//simply reimplement any handler as a module
+			$plugins = Dase::getConfig('handler');
+			if (isset($plugins[$first])) {
+				if(!file_exists(DASE_PATH.'/modules/'.$plugins[$first])) {
+					$this->renderError(404,'no such module');
+				}
+				Dase_Log::info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$plugins[$first]);
+				$this->module = $plugins[$first];
+			}
 			return $first;
 		}
 	}

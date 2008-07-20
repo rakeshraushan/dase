@@ -99,7 +99,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			from
 			collection, item
 			where collection.id = item.collection_id
-			and item.status_id = 0
+			and item.status = 'public' 
 			group by collection.id, collection.ascii_id
 			";
 		$st = $db->query($sql);

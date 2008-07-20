@@ -16,6 +16,8 @@ class Dase_Handler_Manage extends Dase_Handler
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'media/attributes' => 'media_attributes',
+		'settings' => 'settings',
+		'status' => 'status',
 		'/' => 'index',
 	);
 
@@ -26,6 +28,16 @@ class Dase_Handler_Manage extends Dase_Handler
 		if (!$user->isSuperuser()) {
 			$request->renderError(401);
 		}
+	}
+
+	public function getSettings($request)
+	{
+		$request->renderResponse("hello from settings");
+	}
+
+	public function getStatus($request)
+	{
+		$request->renderResponse("hello from status");
 	}
 
 	public function getIndex($request)

@@ -18,6 +18,11 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		}
 	}
 
+	function getEid()
+	{
+		return $this->getXpathValue("atom:author/atom:name");
+	}
+
 	function getSelf()
 	{
 		return $this->getLink('self');

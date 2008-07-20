@@ -53,6 +53,18 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getAtomElementText('summary');
 	}
 
+	function getViewitemLink()
+	{
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		$elem =  $x->query("atom:entry/media:group/media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
+		if ($elem) {
+			return $elem->getAttribute('url');
+		}
+	}
+
+
 	function getThumbnailLink()
 	{
 		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
@@ -89,11 +101,16 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function selectMedia($size) 
 	{
+		//todo: fix this!!
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		return $x->query("media:group/media:content/media:category[. = '$size']")
-			->item(0)->parentNode->getAttribute('url');
+		//return $x->query("media:group/media:content/media:category[. = '$size']")
+		//	->item(0)->parentNode->getAttribute('url');
+		$nodes = $x->query("media:group/media:content/media:category[. = '$size']");
+		foreach ($nodes as $node) {
+			return $node->parentNode->getAttribute('url');
+		}
 	}
 
 	function getStatus()

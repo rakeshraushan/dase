@@ -10,8 +10,10 @@ $conf['db']['pass'] = 'password';
 $conf['superuser'][] = 'pkeane';
 $conf['superuser'][] = 'rru62';
 
-//alternative authentication module
-$conf['auth'] = '';
+//define alternative (plugin) handlers
+//$conf['handler']['login'] = 'openid';
+$conf['handler']['db'] = 'dbadmin';
+$conf['handler']['am'] = 'ancientmeso';
 
 //used to create only-known-by-server security hash
 $conf['token'] = '

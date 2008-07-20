@@ -25,16 +25,21 @@ class Dase
 		$request = new Dase_Http_Request;
 		//http://www.jcinacio.com/2007/04/19/phps-__tostring-magic-method-not-so-magic-before-520/
 		Dase_Log::all($request->__toString());
+		$classname = '';
 		if ($request->module) {
 			//modules, by convention, have one handler in a file named
 			//'handler.php' with classname {Module}ModuleHandler
 			$handler_file = DASE_PATH.'/modules/'.$request->module.'/handler.php';
 			if (file_exists($handler_file)) {
 				include "$handler_file";
+				//modules can carry their own libraries
+				$new_include_path = ini_get('include_path').':'.DASE_PATH.'/modules/'.$request->module.'/lib'; 
+				ini_set('include_path',$new_include_path); 
+				Dase_Log::debug('set include path to: '.$new_include_path);
+				$classname = 'Dase_ModuleHandler_'.ucfirst($request->module);
 			} else {
 				$request->renderError(404,"no such handler: $handler_file");
 			}
-			$classname = 'Dase_ModuleHandler_'.ucfirst($request->module);
 		} else {
 			$classname = 'Dase_Handler_'.ucfirst($request->handler);
 		}

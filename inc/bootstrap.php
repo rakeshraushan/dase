@@ -1,5 +1,5 @@
 <?php
-ini_set('include_path','.:lib');
+ini_set('include_path','lib');
 
 //PHP ERROR REPORTING
 ini_set('display_errors','on');
@@ -29,10 +29,13 @@ define('DASE_LOG', DASE_PATH . '/log/dase.log');
 define('LOG_LEVEL',3);
 
 function __autoload($class_name) {
-	$class_file = preg_replace('/_/','/',$class_name) . '.php';
-	try {
-		include "$class_file";
-	} catch (Exception $e) {
-		Dase::log('error',"could not autoload $class_file");
-	}
+	$include_path_tokens = explode(':', get_include_path());
+	foreach($include_path_tokens as $prefix){
+		$class_file = DASE_PATH.'/'.$prefix . '/' . preg_replace('/_/','/',$class_name) . '.php';
+		if(file_exists($class_file)){
+			require_once $class_file;
+			return;
+		}
+	}  
+	Dase_Log::info("could not autoload $class_file");
 }

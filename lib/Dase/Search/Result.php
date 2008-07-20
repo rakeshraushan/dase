@@ -79,8 +79,7 @@ class Dase_Search_Result
 			}
 			$json_tag['items'][] = $json_item;
 		}
-		$js = new  Services_JSON;	
-		return $js->json_format($json_tag);	
+		return Dase_Json::get($json_tag);	
 	}
 
 	public function getResultSetAsAtomFeed($start,$max)

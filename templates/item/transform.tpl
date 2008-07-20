@@ -1,7 +1,9 @@
 {extends file="layout.tpl"}
 {block name="head"}
+<!--
 <script src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">google.load('jquery','1');</script>
+-->
 <script type="text/javascript" src="www/scripts/dase/form.js"></script>
 {/block}
 {block name="title"}View Item{/block}
@@ -58,7 +60,7 @@
 
 
 				<div id="itemLinks">
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom">atom</a> 
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a> 
 				</div>

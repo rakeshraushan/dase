@@ -172,7 +172,7 @@
 				<a href="apps/help" id="helpModule">FAQ</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
-				<a href="manage" class="hide" id="manageLink"></a> 
+				<a href="manage" class="hide" id="manageLink"></a> |
 				<!--
 				<insert-timer/> seconds |
 				-->

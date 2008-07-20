@@ -16,7 +16,7 @@ $status->findOne();
 
 $item = new Dase_DBO_Item;
 $item->collection_id = $c->id;
-$item->status_id = $status->id;
+$item->status = 'delete';
 foreach ($item->find() as $doomed) {
 	print "DELETING $doomed->serial_number\n";
 	$doomed->expunge();

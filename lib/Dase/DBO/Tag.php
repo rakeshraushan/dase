@@ -52,8 +52,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$tag->is_public = 0;
 			$tag->eid = $user->eid;
 			$tag->created = date(DATE_ATOM);
-			//todo: for backward compat -- get rid of this in DASe 2:
-			$tag->tag_type_id = 2;
 			$tag->insert();
 			return $tag;
 		}
@@ -131,10 +129,24 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tag_item->find();
 	}
 
+	function resortTagItems($dir='DESC')
+	{
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->tag_id = $this->id;
+		$tag_item->orderBy('sort_order, updated '.$dir);
+		$i = 0;
+		foreach ($tag_item->find() as $ti) {
+			$i++;
+			$ti->sort_order = $i;
+			$ti->updated = date(DATE_ATOM);
+			$ti->update();
+		}
+	}
+
 	function getType()
 	{
-		$type = new Dase_DBO_TagType;
-		return $type->load($this->tag_type_id);
+		//for compat
+		return $this->type;
 	}
 
 	function getUser()
@@ -147,7 +159,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	function getLink() 
 	{
 		$this->user || $this->getUser(); 
-		return APP_ROOT . '/user/' . $this->user->eid . '/tag/' . $this->ascii_id;
+		return APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
 	}
 
 	function addItem($item_id)
@@ -171,7 +183,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function asJson()
 	{
+		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$json_tag;
+		$eid = $this->getUser()->eid;
 		$json_tag['uri'] = $this->getLink();
 		if ($this->created) {
 			$json_tag['updated'] = $this->created;
@@ -183,23 +197,28 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$json_tag['background'] = $this->background;
 		$json_tag['is_public'] = $this->is_public;
 		$json_tag['type'] = $this->type;
-		$json_tag['eid'] = $this->getUser()->eid;
+		$json_tag['eid'] = $eid;
 		foreach($this->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
 			$json_item = array();
-			$json_item['url'] = APP_ROOT.'/tag/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
+			//$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
+			$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
 			$json_item['sort_order'] = $tag_item->sort_order;
+			$json_item['item_id'] = $item->id;
 			$json_item['size'] = $tag_item->size;
 			$json_item['updated'] = $tag_item->updated;
 			$json_item['annotation'] = $tag_item->annotation;
+			$json_item['title'] = $item->getTitle();
+			$json_item['collection_name'] = $collection_lookup[$item->collection_id]['collection_name'];
 
 			foreach ($item->getMedia() as $m) {
 				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 			}
 			$json_tag['items'][] = $json_item;
 		}
-		$js = new  Services_JSON;	
-		return $js->json_format($json_tag);	
+		return Dase_Json::get($json_tag);
+		//$js = new  Services_JSON;	
+		//return $js->json_format($json_tag);	
 	}
 
 
@@ -220,7 +239,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink(APP_ROOT.'/tag/'.$this->id,'http://daseproject.org/relation/tag');
 
 		$feed->addCategory($this->ascii_id,"http://daseproject.org/category/tag",$this->name);
-		$feed->addCategory($this->getType()->ascii_id,"http://daseproject.org/category/tag/type",$this->type);
+		$feed->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {
 			$pub = "public";
 		} else {
@@ -230,10 +249,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addCategory($this->background,"http://daseproject.org/category/tag/background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
+		$setnum=0;
 		foreach($this->getTagItems() as $tag_item) {
 			$entry = $feed->addEntry();
 			$item = $tag_item->getItem();
 			$item->injectAtomEntryData($entry);
+			$setnum++;
+			$entry->addCategory($setnum,'http://daseproject.org/category/number_in_set');
 			$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 		}
 		return $feed->asXml();

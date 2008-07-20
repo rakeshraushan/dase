@@ -211,10 +211,13 @@ Dase.removeChildren = function(target) {
 }
 }
 
-Dase.highlight = function(target,time) {
-	Dase.addClass(target,'highlight');
+Dase.highlight = function(target,time,cname) {
+	if (!cname) {
+		cname = 'highlight';
+	}
+	Dase.addClass(target,cname);
 	setTimeout(function() {
-		Dase.removeClass(target,'highlight');
+		Dase.removeClass(target,cname);
 	},time);
 }
 
@@ -246,7 +249,7 @@ Dase.getEid = function() {
 	}
 };
 
-Dase.initUser = function() {
+Dase.initUser = function(func) {
 	var eid = Dase.getEid();
 	if (!eid) {
 		Dase.removeClass(Dase.$('loginControl'),'hide');
@@ -267,8 +270,13 @@ Dase.initUser = function() {
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
 			Dase.initItemEditing(eid);
+			Dase.initToggleTagEditing(eid);
+			//Dase.initTagEditing(eid,func);
 			Dase.initCart();
 			Dase.initAddToCart();
+			if (func) {
+				func();
+			}
 		}
 		Dase.loginControl(Dase.user.eid);
 		Dase.multicheck("checkedCollection");
@@ -324,7 +332,83 @@ Dase.checkAdminStatus = function(eid) {
 		}
 	}
 	return false;
-}
+};
+
+Dase.initToggleTagEditing = function(eid) {
+	var tog = Dase.$('toggleTagSorting');
+	if (!tog) return;
+	tog.onclick = function() {
+		if ('disable sorting' == this.innerHTML) {
+			var arrows = Dase.$('itemSet').getElementsByTagName('a');
+			for (var i=0;i<arrows.length;i++) {
+				if (Dase.hasClass(arrows[i],'moveto')) {
+					arrows[i].className = 'hide';
+				}
+			}
+			//hard reload
+			//window.location.reload(true);
+			this.innerHTML = 'enable sorting';
+			return false;
+		} else {
+			Dase.initTagEditing(Dase.user.eid,function() {
+				var tog = Dase.$('toggleTagSorting');
+				tog.innerHTML = 'disable sorting';
+			});
+			return false;
+		}
+	};
+};
+
+Dase.initTagEditing = function(eid,func) {
+	var eid_elem = Dase.$('tagEid');
+	if (!eid_elem) return;
+	if (eid_elem.innerHTML != eid) return;
+	//Dase.removeClass(controls,'hide');
+	//Dase.removeClass(status_controls,'hide');
+	//get jstemplates
+	Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
+		Dase.$('jsTemplates').innerHTML = resp;
+		Dase.initTagSorting(eid,func);
+	});
+	return;
+};
+
+Dase.initTagSorting = function(eid,func) {
+	var tag_table_el = Dase.$('itemSet');
+	var tag_ascii_el = Dase.$('tagAsciiId');
+	if (!tag_ascii_el) return; 
+	Dase.getJSON(Dase.base_href + "tag/"+eid+"/"+tag_ascii_el.innerHTML,
+	function(json){
+	var data = { 'tag': json };
+	var templateObj = TrimPath.parseDOMTemplate("tag_jst");
+	tag_table_el.innerHTML = templateObj.process(data);
+	if (func) {
+		//this is the highlight function
+		func();
+	}
+	Dase.initCart();
+	Dase.initAddToCart();
+	var set = Dase.$('itemSet');
+	if (!set) return;
+	var controls = set.getElementsByTagName('a');
+	for (var i=0;i<controls.length;i++) {
+		if (Dase.hasClass(controls[i],'moveto')) {
+			controls[i].onclick = function() {
+				var classes = this.className.split(" ");
+				Dase.addClass(Dase.$('cell_'+(classes[2]-1)),'highlight');
+				Dase.ajax(this.href,'post',function(resp) {
+					Dase.initUser(function() {
+						Dase.initTagEditing(eid,function() {
+							Dase.highlight(Dase.$('cell_'+(classes[1]-1)),1200,'completed');
+						});
+					});
+				},classes[1]);
+				return false;
+			};
+		}
+	}
+});
+};
 
 Dase.initItemEditing = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
@@ -346,7 +430,7 @@ Dase.initItemEditing = function(eid) {
 		});
 	}
 	return;
-}
+};
 
 Dase.enableStatusControl = function() {
 	var form = Dase.$('updateStatus');
@@ -367,7 +451,7 @@ Dase.placeManageLink = function(eid) {
 		manageLink.innerHTML = 'Manage DASe';
 		Dase.removeClass(manageLink,'hide');
 	}
-}
+};
 
 Dase.placeCollectionAdminLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
@@ -378,7 +462,7 @@ Dase.placeCollectionAdminLink = function(eid) {
 		adminLink.innerHTML = auth_info.collection_name+' Admin';
 		Dase.removeClass(adminLink,'hide');
 	}
-}
+};
 
 Dase.placeUserCollections = function(eid) {
 	var cartLink = Dase.$('cartLink');
