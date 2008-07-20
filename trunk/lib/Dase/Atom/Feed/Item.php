@@ -132,6 +132,15 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->_collection;
 	}
 
+	function getNumberInSet()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/number_in_set' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 	function getCollectionAsciiId()
 	{
 		if (!$this->_collectionAsciiId) {

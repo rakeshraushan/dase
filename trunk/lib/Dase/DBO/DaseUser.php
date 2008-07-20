@@ -24,6 +24,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			return false;
 		} else {
 			$user->initCart();
+			return true;
 		}
 	}
 
@@ -33,6 +34,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$tag->dase_user_id = $this->id;
 		$tag->type = 'cart';
 		if (!$tag->findOne()) {
+			$tag->eid = $this->eid;
+			$tag->name = 'My Cart';
+			$tag->ascii_id = 'cart';
 			$tag->created = date(DATE_ATOM);
 			$tag->insert();
 		}

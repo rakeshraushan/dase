@@ -41,6 +41,13 @@ border-top: 1px solid #fff;
 #menu ul#slideshow-submenu a:hover { background-color: #eef1f8; }
 
   
+#menu li#set-menu a.main { border: 1px solid #283b1c; border-left: 18px solid #283b1c; background-color: #ffffff; }
+#menu li#set-menu a:hover , a:active { background-color: #ceead8; }
+#menu ul#set-submenu { background-color: #ceead8; }
+#menu ul#set-submenu a { background-color: #ceead8; }
+#menu ul#set-submenu a:hover { background-color: #ebf6ef; }
+
+  
 #menu li#user_collection-menu a.main { border: 1px solid #283b1c; border-left: 18px solid #283b1c; background-color: #ffffff; }
 #menu li#user_collection-menu a:hover , a:active { background-color: #ceead8; }
 #menu ul#user_collection-submenu { background-color: #ceead8; }

@@ -41,10 +41,9 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 	{
 		$item = $this->getItem();
 		$tag = $this->getTag();
-		$tag_type = $tag->getType();
 		$feed = new Dase_Atom_Feed;
 		$item->injectAtomFeedData($feed);
-		$feed->addCategory($tag_type->ascii_id,"http://daseproject.org/category/tag_type",$tag_type->name);
+		$feed->addCategory($tag->type,"http://daseproject.org/category/tag_type",$tag->type);
 		$feed->addLink($tag->getLink(),"http://daseproject.org/relation/feed-link");
 
 		$tag_item_id_array = $tag->getTagItemIds();

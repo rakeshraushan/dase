@@ -40,8 +40,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$att->in_basic_search = 1;
 			$att->is_on_list_display = 1;
 			$att->is_public = 1;
-			//todo: will be deprecated
-			$att->html_input_type_id = 5;
 			$att->mapped_admin_att_id = 0;
 			$att->updated = date(DATE_ATOM);
 			$att->html_input_type = 'text';
@@ -170,13 +168,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
-	}
-
-	function getHtmlInputType()
-	{
-		$inp = new Dase_DBO_HtmlInputType;
-		$inp->load($this->html_input_type_id);
-		return $inp;
 	}
 
 	function getDefinedValues() {

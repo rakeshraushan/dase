@@ -3,10 +3,12 @@
 {block name="title"}Item Set{/block}
 
 {block name="content"}
+<a href="tag/{$items->eid}/{$items->tagAsciiId}/template.html" class="pagedata" id="jsTemplatesUrl"></a>
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	<h4 class="startSlideshow">
-		<a href="#" id="startSlideshow">view as slideshow</a>
+		<a href="#" id="startSlideshow">view as slideshow</a> |
+		<a href="#" id="toggleTagSorting">enable sorting</a>
 	</h4>
 	<h2>{$items->title} ({$items->count} items)</h2>
 	<h3>{$items->subtitle}</h3>
@@ -28,6 +30,7 @@
 		<input type="submit" name="deleteTag" id="deleteTag" value="delete this set"/>
 	</form>
 	{/if}
+	<div id="tagEid" class="pagedata">{$items->eid}</div>
 	<div id="tagName" class="pagedata">{$items->tagName}</div>
 	<div id="tagAsciiId" class="pagedata">{$items->tagAsciiId}</div>
 	<div class="spacer"></div>

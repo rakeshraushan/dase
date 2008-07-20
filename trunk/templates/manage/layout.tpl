@@ -90,6 +90,11 @@
 					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>DASe Settings</sup>
 				</a>
 				</li>
+				<li class="status-tab">
+				<a href="manage/status">
+					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>View Status Report</sup>
+				</a>
+				</li>
 				<li class="attributes-tab">
 				<a href="manage/docs">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>

@@ -18,16 +18,16 @@ class Dase_Template {
 
 	protected $smarty;
 
-	public function __construct($request,$module = '')
+	public function __construct($request,$use_module_template_dir=false)
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
 		require_once DASE_PATH . '/lib/smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
 		$this->smarty->compile_dir = CACHE_DIR;
-		$this->smarty->compile_id = $module ? $module : 'smarty';
-		if ($module) {
-			$this->smarty->template_dir = DASE_PATH . '/modules/'.$module.'/templates';
+		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
+		if ($use_module_template_dir) {
+			$this->smarty->template_dir = DASE_PATH . '/modules/'.$request->module.'/templates';
 		} else {
 			$this->smarty->template_dir = DASE_PATH . '/templates';
 		}

@@ -74,6 +74,13 @@ html #maincontent {
 	border: 1px solid #9cacc6
 }
 
+#set {
+	background-color:#ceead8;
+}
+#set td {
+	border: 1px solid #9dbda9;
+}
+
 #user_collection {
 	background-color:#ceead8;
 }
@@ -299,9 +306,18 @@ table#itemSet {
 	margin-bottom: 0;
 }
 table#itemSet td {
-	vertical-align: top;
+	padding: .25em .5em;
 	text-align: center;
+	vertical-align: top;
 	width: 180px;
+}
+
+table#itemSet td.highlight {
+	background-color: #ccc;
+}
+
+table#itemSet td.completed {
+	background-color: #ffc;
 }
 table#itemSet td.blank {
 	height: 1px;
@@ -346,6 +362,23 @@ table#itemSet td div.cartAdd span {
 	font-weight: bold;
 }
 
+table#itemSet td a.moveto img {
+	border: 0;
+	padding: 0 12px;
+	width: 12px;
+	height: 12px;
+}
+
+#prev-arrow {
+	float: left;
+	margin-top: 30px;
+}
+
+#next-arrow {
+	float: right;
+	margin-top: 30px;
+}
+
 #removeFromSet {
 	float:right;
 }
@@ -377,7 +410,7 @@ div#slideshowContainer {
 h1#slideshowTitle {
 	float: left;
 	margin: 1em;
-	font-size: 2em;
+	font-size: 1.4em;
 	color: #999;
 }
 

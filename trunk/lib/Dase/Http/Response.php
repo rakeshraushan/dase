@@ -125,7 +125,11 @@ class Dase_Http_Response
 				$query_array[] = urlencode($key).'='.urlencode($val);
 			}
 		}
-		$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/');
+		if ('http' != substr($path,0,4)) {
+			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/');
+		} else {
+			$redirect_path = $path;
+		}
 		if (count($query_array)) {
 			//since path is allowed to have some query params already
 			if (false !== strpos($path,'?')) {
