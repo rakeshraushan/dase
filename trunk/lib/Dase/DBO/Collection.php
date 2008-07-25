@@ -100,7 +100,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$feed = $this->getBaseAtomFeed();
 		$feed->setFeedType('collection');
-		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id,'self');
+		$feed->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
 		return $feed->asXml();
 	}
 
@@ -182,21 +182,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$coll_array['name'] = $this->collection_name;
 		$coll_array['ascii_id'] = $this->ascii_id;
 		$coll_array['item_count'] = $this->getItemCount();
-		/*
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT serial_number
-			FROM item 
-			WHERE collection_id = ?
-			ORDER BY serial_number
-			LIMIT ? 
-			OFFSET ?
-			";
-		$sth = $db->prepare($sql);
-		$sth->execute(array($this->id,$limit,$offset));
-		$item_array = array();
-		 */
-		//while ($sernum = $sth->fetchColumn()) {
 		foreach ($this->getItems() as $item) {
 			$item_array['href'] = 'https://dase.laits.utexas.edu/'.$this->ascii_id.'/'.$item->serial_number;
 			$item_array['title'] = $item->getTitle();
@@ -262,15 +247,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	static function getLastCreated()
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT created
 			FROM collection
 			ORDER BY created DESC
 			";
-		$st = $db->prepare($sql);
-		$st->execute();
-		return $st->fetchColumn();
+		//returns first non-null created
+		foreach (Dase_DBO::query($sql) as $row) {
+			if ($row['created']) {
+				return $row['created'];
+			}
+		}
 	}
 
 	static function getLookupArray()
@@ -292,17 +279,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	 */
 	function getManagers()
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
 			FROM collection_manager m,dase_user u 
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
 			ORDER BY m.dase_user_eid";
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute(array($this->ascii_id));
-		return $sth;
+		return Dase_DBO::query($sql,array($this->ascii_id));
 	}
 
 	function getAttributes($sort = 'sort_order')
@@ -313,35 +296,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $att->find();
 	}
 
-	function getAttributesData()
-	{
-		$att = new Dase_DBO_Attribute;
-		$cols = Dase_DB::listColumns('attribute');
-		$sql = "
-			SELECT *
-			FROM attribute
-			WHERE collection_id = ?
-			ORDER BY sort_order
-			";
-		$db = Dase_DB::get();
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute(array($this->id));
-		return $sth->fetchAll();
-	}
-
 	function changeAttributeSort($att_ascii_id,$new_so)
 	{
 		$att_ascii_id_array = array();
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT ascii_id 
 			FROM attribute
 			WHERE collection_id = ?
 			ORDER BY sort_order";
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute(array($this->id));
+		$sth = Dase_DBO::query($sql,array($this->id))->fetch(); 
 		while ($row = $sth->fetch()) {
 			if ($att_ascii_id != $row['ascii_id']) {
 				$att_ascii_id_array[] = $row['ascii_id'];
@@ -354,11 +317,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			updated = ?
 			WHERE ascii_id = ?
 			AND collection_id = ?";
-		$sth = $db->prepare($sql);
 		$so = 1;
 		foreach ($att_ascii_id_array as $ascii) {
 			$now = date(DATE_ATOM);
-			$sth->execute(array($so,$now,$ascii,$this->id));
+			Dase_DBO::query($sql,array($so,$now,$ascii,$this->id));
 			$so++;
 		}
 	}
@@ -373,16 +335,12 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemCount()
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(item.id) as count
 			FROM item
 			where collection_id = ?
 			";
-		$st = $db->prepare($sql);
-		$st->execute(array($this->id));
-		$this->item_count = $st->fetchColumn();
-		return $this->item_count;
+		return Dase_DBO::query($sql,array($this->id))->fetchColumn();
 	}
 
 	function getItems()
@@ -394,20 +352,21 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemIdRange($start,$count)
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT id 
 			FROM item
 			WHERE collection_id = ?
 			ORDER BY updated DESC
 			";
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_COLUMN);
-		$sth->execute(array($this->id));
-		$rows = $sth->fetchAll();
-		$item_id_array_array = array_slice($rows,$start-1,$count);
-		foreach ($item_id_array_array as $item_id_result) {
-			$item_id_array[] = $item_id_result[0];
+		$i = 0;
+		$total = 0;
+		$item_id_array = array();
+		foreach (Dase_DBO::query($sql,array($this->id)) as $row) {
+			$i++;
+			if ($i >= $start && $count >= $total) {
+				$total++;
+				$item_id_array[] = $row['id'];
+			}
 		}
 		return $item_id_array;
 	}

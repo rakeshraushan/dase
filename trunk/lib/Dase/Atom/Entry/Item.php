@@ -42,6 +42,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getLink('http://daseproject.org/relation/search-item');
 	}
 
+	function getMediaCollectionLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/media-collection');
+	}
+
 	function getEditLink()
 	{
 		return $this->getLink('edit');
@@ -58,7 +63,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		$elem =  $x->query("atom:entry/media:group/media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
+		$elem =  $x->query("media:group/media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
 		if ($elem) {
 			return $elem->getAttribute('url');
 		}
@@ -205,12 +210,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		$eid = $request->getUser()->eid;
 		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if (!$c) { return; }
 		$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
 		foreach ($this->metadata as $att => $keyval) {
+			//creates atribute if it doesn't exist!
+			Dase_DBO_Attribute::findOrCreate($c->ascii_id,$att);
 			foreach ($keyval['values'] as $v) {
-				$item->setValue($att,$v);
+				if (trim($v)) {
+					$item->setValue($att,$v);
+				}
 			}
 		}
+		$enc = $item->getEnclosure(); 
+		//todo:  now POST the $enc to the item's media collection!
 		$item->buildSearchIndex();
 		return $item;
 	}

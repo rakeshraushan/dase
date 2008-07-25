@@ -17,7 +17,6 @@ CREATE TABLE `attribute` (
 `is_on_list_display` tinyint(1) default NULL,
 `in_basic_search` tinyint(1) default NULL,
 `mapped_admin_att_id` int(11) default NULL,
-`html_input_type_id` int(11) default NULL,
 `sort_order` int(11) default NULL,
 `collection_id` int(11) default NULL,
 `html_input_type` varchar(50) default NULL,
@@ -95,7 +94,7 @@ CREATE TABLE `dase_user` (
 `last_cb_access` varchar(50) default NULL,
 `cb` varchar(200) default NULL,
 `name` varchar(200) default NULL,
-`eid` varchar(20) default NULL,
+`eid` varchar(255) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -105,14 +104,6 @@ CREATE TABLE `defined_value` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
 `value_text` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `html_input_type`;
-CREATE TABLE `html_input_type` (
-`id` int(11) NOT NULL auto_increment,
-`name` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -130,20 +121,12 @@ DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
 `id` int(11) NOT NULL auto_increment,
 `item_type_id` int(11) default NULL,
-`status_id` int(11) default NULL,
 `collection_id` int(11) default NULL,
+`created_by_eid` varchar(50) default NULL,
 `status` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `item_status`;
-CREATE TABLE `item_status` (
-`id` int(11) NOT NULL auto_increment,
-`status` varchar(20) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -242,7 +225,6 @@ CREATE TABLE `tag` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
 `admin_collection_id` int(11) default NULL,
-`tag_type_id` int(11) default NULL,
 `dase_user_id` int(11) default NULL,
 `visibility` varchar(50) default NULL,
 `eid` varchar(50) default NULL,
@@ -267,15 +249,6 @@ CREATE TABLE `tag_item` (
 `p_serial_number` varchar(20) default NULL,
 `size` varchar(200) default NULL,
 `annotation` varchar(2000) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `tag_type`;
-CREATE TABLE `tag_type` (
-`id` int(11) NOT NULL auto_increment,
-`name` varchar(20) default NULL,
-`ascii_id` varchar(20) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

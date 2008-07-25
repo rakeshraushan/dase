@@ -412,7 +412,7 @@ class Dase_Search
 		if (isset($search['type']['coll']) && isset($search['type']['name']) && 
 			(isset($search_table_sql) || count($value_table_search_sets))) {
 				$sql .=
-					"AND WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
+					"AND item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
 				$bound_params[] = $search['type']['name'];
 				$bound_params[] = $search['type']['coll'];
 			}
@@ -423,21 +423,7 @@ class Dase_Search
 	private function _executeSearch()
 	{
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
-		$db = Dase_DB::get();
-		Dase_Log::debug('search sql: '.$this->sql);
-		Dase_Log::debug(join(', ',$this->bound_params));
-		$log_sql = $this->sql;
-		foreach ($this->bound_params as $bp) {
-			$log_sql = preg_replace('/\?/',"'$bp'",$log_sql,1);
-		}
-		Dase_Log::debug('** SEARCH SQL ** '.$log_sql);
-		$st = $db->prepare($this->sql);	
-		if (!$st->execute($this->bound_params)) {
-			$errs = $st->errorInfo();
-			if (isset($errs[2])) {
-				Dase_Log::debug($errs[2]);
-			}
-		}
+		$st = Dase_DBO::query($this->sql,$this->bound_params);
 		$tallies = array();
 		$item_ids = array();
 		$items = array();

@@ -3,8 +3,6 @@
 //$database = 'dase_prod';
 include 'cli_setup.php';
 
-define('DEBUG',true);
-
 $result = array();
 
 $sx = simplexml_load_file('search.xml');

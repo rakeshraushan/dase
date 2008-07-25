@@ -5,9 +5,9 @@ include 'cli_setup.php';
 
 //$coll = 'bsls_collection';
 //$coll = 'south_asia';
-//$coll = 'medieval';
+$coll = 'medieval';
 //$coll = 'early_american_history';
-$coll = 'kerkhoff';
+//$coll = 'archivision';
 $c = Dase_DBO_Collection::get($coll);
 
 $status = new Dase_DBO_ItemStatus;

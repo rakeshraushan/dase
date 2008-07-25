@@ -143,6 +143,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'thumbnail';
+		$media_file->file_size = filesize($thumbnail);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
@@ -164,6 +165,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'viewitem';
+		$media_file->file_size = filesize($viewitem);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
@@ -258,6 +260,7 @@ class Dase_File_Image extends Dase_File
 			$last_height = $media_file->height;
 			$media_file->mime_type = 'image/jpeg';
 			$media_file->size = $size;
+			$media_file->file_size = filesize($newimage);
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();

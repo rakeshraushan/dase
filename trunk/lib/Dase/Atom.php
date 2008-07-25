@@ -175,6 +175,19 @@ class Dase_Atom
 		}
 	}
 
+	function getEnclosure() 
+	{
+	
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('enclosure' == $el->getAttribute('rel')) {
+				$enc['href'] = $el->getAttribute('href');
+				$enc['mime_type'] = $el->getAttribute('type');
+				$enc['length'] = $el->getAttribute('length');
+				return $enc;
+			}
+		}
+	}
+
 	function setRights($text) 
 	{
 		if ($this->rights_is_set) {

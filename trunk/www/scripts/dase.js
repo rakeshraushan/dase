@@ -1290,6 +1290,13 @@ Function.prototype.bind = function() {
 	}
 }
 
+//?? from http://aymanh.com/9-javascript-tips-you-may-not-know#BindingMethodsToObjects
+/*
+function bind(obj, method) {
+	return function() { return method.apply(obj, arguments); }
+}
+*/
+
 Dase.initSlideshowLink = function() {
 	var sslink = Dase.$('startSlideshow');
 	if (!sslink) return;

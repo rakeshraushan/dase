@@ -4,7 +4,9 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
+		'{collection_ascii_id}/{serial_number}/micro' => 'microformat',
 		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
+		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
@@ -26,14 +28,30 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$this->user = $request->getUser();
 			if (!$this->user->can('read','item',$this->item)) {
-				$request->renderError(401);
+				$request->renderError(401,'user cannot read this item');
 			}
 		}
 	}	
 
+	public function getMicroformat($request)
+	{
+		$request->renderResponse($this->item->asMicroformat());
+	}
+
+	public function getMediaAtom($request)
+	{
+		$request->renderResponse($this->item->mediaAsAtomFeed());
+	}
+
 	public function getItemAtom($request)
 	{
 		$request->renderResponse($this->item->asAtom());
+	}
+
+	public function getItemService($request)
+	{
+		$request->response_mime_type = 'application/atomsvc+xml';
+		$request->renderResponse($this->item->getAtomPubServiceDoc());
 	}
 
 	public function getItemJson($request)
@@ -78,7 +96,7 @@ class Dase_Handler_Item extends Dase_Handler
 	public function putStatus($request)
 	{
 		if (!$this->user->can('write','item',$this->item)) {
-			$request->renderError(401);
+			$request->renderError(401,'cannot write for put');
 		}
 		$status = trim(file_get_contents("php://input"));
 
@@ -108,7 +126,7 @@ class Dase_Handler_Item extends Dase_Handler
 	public function postToMetadata($request)
 	{
 		if (!$this->user->can('write','item',$this->item)) {
-			$request->renderError(401);
+			$request->renderError(401,'cannot post to metadata');
 		}
 		$att_ascii = $request->get('ascii_id');
 		foreach ($request->get('value',true) as $val) {
@@ -131,9 +149,10 @@ class Dase_Handler_Item extends Dase_Handler
 	/** from last version: work on this!!!!!!!!! */
 	public function postToMedia($request) 
 	{
+		$item = $this->item;
 		$this->user = $request->getUser('http');
-		if (!$this->user->can('read','item',$this->item)) {
-			$request->renderError(401);
+		if (!$this->user->can('write','item',$item)) {
+			$request->renderError(401,'user cannot write media file');
 		}
 		$types = array('image/*','audio/*','video/*','application/pdf');
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
@@ -157,7 +176,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		fclose($fp);
 
-		$coll = $this->item->getCollection();
+		$coll = $item->getCollection();
 
 		$slug = '';
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
@@ -196,12 +215,12 @@ class Dase_Handler_Item extends Dase_Handler
 			$u->setTitle($slug);
 			$u->buildSearchIndex();
 		} catch(Exception $e) {
-			Dase::log('error',$e->getMessage());
-			Dase::error(500);
+			Dase_Log::debug('error',$e->getMessage());
+			$request->renderError(500,'could not ingest file');
 		}
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $coll->ascii_id;
-		$m->p_serial_number = $this->item->serial_number;
+		$m->p_serial_number = $item->serial_number;
 		$m->size = $u->getDaseFileSize(); //meaning media directory
 		if ($m->findOne()) {
 			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';
