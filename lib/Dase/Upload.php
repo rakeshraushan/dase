@@ -64,11 +64,21 @@ class Dase_Upload
 	function retrieveItem()
 	{
 		$this->item = Dase_DBO_Item::get($this->collection->ascii_id,$this->file->getFilename());
-		if ($this->item->id) {
-			return "RETRIEVED " . $this->item->serial_number . "\n";
+		if (isset($this->item->id)) {
+			return true;
 		} else {
-			return "NO ITEM RETRIEVED (" . $this->file->getFilename() . ")\n";
+			return false;
 		}	
+	}
+
+	function checkForMultiTiff()
+	{
+		$image = new Imagick($this->file->getFilepath());
+		if (1 < $image->getNumberImages()) {
+			throw new Dase_Upload_Exception("Error: " . $this->file->getFilepath() . " appears to be a multi-layered tiff\n");
+		} else {
+			return 0;
+		}
 	}
 
 	function isDuplicate()

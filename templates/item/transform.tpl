@@ -60,6 +60,8 @@
 
 
 				<div id="itemLinks">
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/micro">micro</a> 
+					|
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a> 

@@ -122,11 +122,47 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		Dase_Log::info("built indexes for " . $this->serial_number);
 	}
 
+	public function asMicroformat() 
+	{
+		$div = new SimpleXMLElement('<div/>');
+		$div->addAttribute('class',$this->serial_number);
+		$img = $div->addChild('img');
+		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
+		$img->addAttribute('class','thumbnail');
+		$contents = $div->addChild('ul');
+		$contents->addAttribute('class','notes');
+		foreach ($this->getContents() as $cont) {
+			$content_note = $contents->addChild('li',htmlspecialchars($cont->text));
+			$content_note->addAttribute('class',$cont->updated_by_eid .' '.$cont->updated);
+		}
+		$keyvals = $div->addChild('dl');
+		$keyvals->addAttribute('class','metadata');
+		foreach ($this->getMetadata() as $row) {
+			//php dom will escape text for me here....
+			$attname = $keyvals->addChild('dt',$row['attribute_name']);
+			$attname->addAttribute('class',$row['ascii_id']);
+			$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
+		}
+		$media = $div->addChild('ul');
+
+		foreach ($this->getMedia() as $med) {
+			$media_file = $media->addChild('li');
+			$media_file->addAttribute('class',$med->size);
+			$media_link = $media_file->addChild('a',$med->filename);
+			$media_link->addAttribute('href',$med->getLink());
+			$media_link->addAttribute('type',$med->mime_type);
+			$media_link->addAttribute('title',$med->size);
+			//$media_content->setAttribute('width',$med->width);
+			//$media_content->setAttribute('height',$med->height);
+			//$media_content->setAttribute('fileSize',$med->file_size);
+		}
+		return $div->asXml();
+	}
+
 	public function getMetadata($att_ascii_id = '')
 	{
 		$metadata = array();
 		$bound_params = array();
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id
 			FROM attribute a, value v
@@ -141,12 +177,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				";
 			$bound_params[] = $att_ascii_id;
 		}
-		$st = $db->prepare($sql);
-		$st->setFetchMode(PDO::FETCH_ASSOC);
-		$st->execute($bound_params);
+		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
 			$metadata[] = $row;
 		}
+	
 		return $metadata;
 	}
 
@@ -154,7 +189,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$metadata = array();
 		$bound_params = array();
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT a.id as att_id,a.ascii_id,a.attribute_name,a.html_input_type,v.value_text
 			FROM attribute a, value v
@@ -163,8 +197,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			ORDER BY a.sort_order,v.value_text
 			";
 		$bound_params[] = $this->id;
-		$st = $db->prepare($sql);
-		$st->execute($bound_params);
+		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
 			$set = array();
 			if (in_array($row['html_input_type'],array('radio','checkbox','select','text_with_menu'))) {
@@ -238,6 +271,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->item_id = $this->id;
 		$m->orderBy('width');
 		return $m->find();
+	}
+
+	public function getEnclosure()
+	{
+		$this->collection || $this->getCollection();
+		$m = new Dase_DBO_MediaFile;
+		$m->item_id = $this->id;
+		$m->orderBy('file_size DESC');
+		return $m->findOne();
 	}
 
 	public function getMediaUrl($size)
@@ -357,16 +399,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getTitle()
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT v.value_text 
 			FROM attribute a, value v
 			WHERE a.id = v.attribute_id
 			AND a.ascii_id = 'title'
-			AND v.item_id = $this->id
+			AND v.item_id = ? 
 			";
-		$st = $db->query($sql);
-		$title = $st->fetchColumn();
+		$title = Dase_DBO::query($sql,array($this->id))->fetchColumn();
 		if (!$title) {
 			$title = $this->serial_number;
 		}
@@ -375,43 +415,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getDescription()
 	{
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT v.value_text 
 			FROM attribute a, value v
 			WHERE a.id = v.attribute_id
 			AND a.ascii_id = 'description'
-			AND v.item_id = $this->id
+			AND v.item_id = ? 
 			";
-		$st = $db->query($sql);
-		$description = $st->fetchColumn();
+		$description = Dase_DBO::query($sql,array($this->id))->fetchColumn();
 		if (!$description) {
 			$description = $this->getTitle();
 		}
 		return $description;
-	}
-
-	/** do we really need this?? */
-	function injectAppEntryData(Dase_Atom_Entry $entry)
-	{
-		$app = "http://www.w3.org/2007/app";
-		$this->collection || $this->getCollection();
-		$this->item_type || $this->getItemType();
-		if (is_numeric($this->updated)) {
-			$updated = date(DATE_ATOM,$this->updated);
-		} else {
-			$updated = $this->updated;
-		}
-		$entry->setTitle($this->getTitle());
-		$entry->setUpdated($updated);
-		$entry->setEdited($updated);
-		$entry->setSummary('');
-		$entry->setId($this->getBaseUrl());
-		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->label);
-		$entry->addLink($this->getBaseUrl(),'alternate' );
-		$entry->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit' );
-		return $entry;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
@@ -431,6 +446,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$created = $this->created;
 		}
 		$entry->setTitle($this->getTitle());
+		//for AtomPub
+		$entry->setEdited($updated);
+		//for AtomPub -- is this correct??
+		$entry->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit' );
 		$entry->setUpdated($updated);
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
@@ -445,6 +464,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory('public','http://daseproject.org/category/item/status');
 		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
+		$entry->addLink($this->getBaseUrl().'/service','service' );
+		$entry->addLink($this->getBaseUrl().'/media','http://daseproject.org/relation/media-collection' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$img = $div->addChild('img');
@@ -489,8 +510,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_category = $media_viewitem->appendChild($entry->dom->createElement('media:category'));
 				$media_category->appendChild($entry->dom->createTextNode($med->size));
 			}
-		//}
-		//foreach ($this->getMedia() as $med) {
 			if ($med->size != 'thumbnail' && $med->size != 'viewitem') {
 				$media_content = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
 				$media_content->setAttribute('url',$med->getLink());
@@ -502,19 +521,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_category->appendChild($entry->dom->createTextNode($med->size));
 			}
 		}
-
-		//todo: not sure we allow xhtml content (just markdown?)
-		if ($this->xhtml_content) {
-			$content_sx = new SimpleXMLElement($this->xhtml_content);	
-			//from http://us.php.net/manual/en/function.simplexml-element-addChild.php
-			$node1 = dom_import_simplexml($div);
-			$dom_sxe = dom_import_simplexml($content_sx);
-			$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
-			$node1->appendChild($node2);
-		} elseif ($this->text_content) {
-			$text = $div->addChild('div',htmlspecialchars($content));
-			$text->addAttribute('class','itemContent');
-		}
+		$enc = $this->getEnclosure();
+		$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		return $entry;
 	}
 
@@ -562,7 +570,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return APP_ROOT.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
 	}
 
-	public function getAtompubServiceDoc() {
+	public function getAtomPubServiceDoc() {
 		$this->collection || $this->getCollection();
 		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');

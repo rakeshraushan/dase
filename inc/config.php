@@ -1,5 +1,8 @@
 <?php
 
+//settings in this file are chacked "as needed" (i.e. will not be used
+//on every request
+
 $conf['db']['type'] = 'sqlite';
 $conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only
 $conf['db']['host'] = 'localhost';

@@ -40,7 +40,7 @@ class Dase_Log
 		}
 	}
 
-	/** this is simply to make sure the class is loaded,
+	/** make sure the class is loaded,
 		since it is not properly loaded when called from a destructor
 	 */
 	public static function start()

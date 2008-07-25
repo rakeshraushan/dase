@@ -240,7 +240,14 @@ class Dase_DBO implements IteratorAggregate
 		$this->sql = $sql;
 		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
-		Dase_Log::debug($sql . ' /// ' . join(',',$bind));
+
+		//pretty logging
+		$log_sql = $this->sql;
+		foreach ($this->bind as $k => $v) {
+			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
+		}
+		Dase_Log::debug('[DBO find]'.$log_sql);
+
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
 		//NOTE: PDOStatement implements Traversable. 
@@ -252,13 +259,26 @@ class Dase_DBO implements IteratorAggregate
 		return $sth;
 	}
 
-	public static function query($sql)
+	public static function query($sql,$params=array(),$return_object=false)
 	{
-		//return generic object
 		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_OBJ);
-		$sth->execute();
+		if ($return_object) {
+			$sth->setFetchMode(PDO::FETCH_OBJ);
+		} else {
+			$sth->setFetchMode(PDO::FETCH_ASSOC);
+		}
+		if (!$sth->execute($params)) {
+			$errs = $sth->errorInfo();
+			if (isset($errs[2])) {
+				Dase_Log::debug("[DBO query]". $errs[2]);
+			}
+		} else {
+			foreach ($params as $bp) {
+				$sql = preg_replace('/\?/',"'$bp'",$sql,1);
+			}
+			Dase_Log::debug("[DBO query]".$sql);
+		}
 		return $sth;
 	}
 

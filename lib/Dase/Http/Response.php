@@ -156,7 +156,7 @@ class Dase_Http_Response
 			$this->request->error_message = $msg;
 		}
 
-		if (defined('DEBUG')) {
+		if (ini_get('display_errors')) {
 			header("Content-Type: text/plain; charset=utf-8");
 			print "DASe Error Report\n\n";
 			print "================================\n";

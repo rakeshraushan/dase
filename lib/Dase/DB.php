@@ -63,6 +63,9 @@ class Dase_DB {
 		return self::$db;
 	}
 
+	public static function logger($sth,$params=array(),$bool,$msg='DB query') {
+	}
+
 	public static function getDbName()
 	{
 		self::get();

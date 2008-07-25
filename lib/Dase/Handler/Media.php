@@ -19,6 +19,24 @@ class Dase_Handler_Media extends Dase_Handler
 		$request->serveFile($this->_getFilePath($collection_ascii_id,$serial_number,$size,$request->format),$request->response_mime_type);
 	}
 
+	/** AtomPub Media Link Entry */
+	public function getMediaFileAtom($request)
+	{
+		$collection_ascii_id = $request->get('collection_ascii_id');
+		$serial_number = $request->get('serial_number');
+		$size = $request->get('size');
+		$m = new Dase_DBO_MediaFile;
+		$m->p_collection_ascii_id = $collection_ascii_id;
+		$m->p_serial_number = $serial_number;
+		$m->size = $size; //meaning media directory
+		if ($m->findOne()) {
+			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';
+			header("Location:". $mle_url,TRUE,201);
+			$request->response_mime_type = 'application/atom+xml';
+			$request->renderResponse($m->asAtom());
+		}
+	}
+
 	private function _getFilePath($collection_ascii_id,$serial_number,$size,$format)
 	{
 		$sizes = array(
@@ -34,21 +52,6 @@ class Dase_Handler_Media extends Dase_Handler
 			$sizes[$size]['dir'].'/'.
 			$serial_number.'.'.$format;
 		return $path;
-	}
-
-
-	public function getMediaFileAtom($request) 
-	{
-		//todo: work on this
-		$media_file = new Dase_DBO_MediaFile;
-		$media_file->p_collection_ascii_id = $request->get('collection_ascii_id');
-		$media_file->p_serial_number = $request->get('serial_number');
-		$media_file->size = $request->get('size');
-		if ($media_file->findOne()) {
-			$request->renderResponse($media_file->asAtom());
-		} else {
-			$request->renderResponse(404);
-		}
 	}
 }
 

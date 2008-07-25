@@ -184,7 +184,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'id' => $att->id,
 					'ascii_id' => $att->ascii_id,
 					'attribute_name' => $att->attribute_name,
-					'input_type' => $att->getHtmlInputType()->name,
+					'input_type' => $att->html_input_type,
 					'collection' => $request->get('collection_ascii_id')
 				);
 		}
@@ -205,10 +205,9 @@ class Dase_Handler_Collection extends Dase_Handler
 			WHERE attribute.collection_id = ?
 			AND attribute.is_public = true;
 		";
-		$db = Dase_DB::get();
-		$st = $db->prepare($sql);	
-		$st->execute(array($c->id));
+		$st = Dase_DBO::query($sql,array($c->id));
 		$sql = "SELECT count(DISTINCT value_text) FROM value WHERE attribute_id = ?";
+		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
 		$tallies = array();
 		while ($row = $st->fetch()) {
@@ -228,9 +227,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			FROM attribute
 			WHERE attribute.collection_id = 0
 			";
-		$db = Dase_DB::get();
-		$st = $db->prepare($sql);	
-		$st->execute();
+		$st = Dase_DBO::query($sql);
 		$sql = "
 			SELECT count(DISTINCT value_text) 
 			FROM value WHERE attribute_id = ? 
@@ -238,6 +235,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			(SELECT id FROM item
 			WHERE item.collection_id = $c->id)
 			";
+		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
 		$tallies = array();
 		while ($row = $st->fetch()) {

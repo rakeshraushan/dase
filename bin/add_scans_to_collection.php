@@ -3,16 +3,12 @@
 /************ configuration *********************/
 
 $database = 'dase_prod';
-//$collection_ascii_id = 'yoruba';
-//$collection_ascii_id = 'american_photography';
-$collection_ascii_id = 'keanepj';
-//$repo = $collection_ascii_id .'_collection';
-//$repo = mansfield;
+$collection_ascii_id = 'medieval';
+$repo = $collection_ascii_id .'_collection/hebrew_bible';
 
 /******************************************/
 
-$REPOS = "/mnt/home/pkeane/rest_talk";
-//$REPOS = "/mnt/projects/dase_scanning/$repo";
+$REPOS = "/mnt/projects/dase_scanning/$repo";
 
 include 'cli_setup.php';
 $collection = Dase_DBO_Collection::get($collection_ascii_id);
