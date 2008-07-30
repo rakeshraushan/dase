@@ -131,7 +131,7 @@ class Dase_File_Image extends Dase_File
 	function makeThumbnail($item,$collection)
 	{
 		$thumbnail = $collection->path_to_media_files . "/thumbnails/$item->serial_number" . '_100.jpg';  
-		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");
+		$results = exec("/opt/local/bin/convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");
 		$file_info = getimagesize($thumbnail);
 
 		$media_file = new Dase_DBO_MediaFile;
@@ -153,7 +153,7 @@ class Dase_File_Image extends Dase_File
 	function makeViewitem($item,$collection)
 	{
 		$viewitem = $collection->path_to_media_files . "/400/$item->serial_number" . '_400.jpg';  
-		$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '400x400 >' -colorspace RGB $viewitem");
+		$results = exec("/opt/local/bin/convert \"$this->filepath\" -format jpeg -resize '400x400 >' -colorspace RGB $viewitem");
 		$file_info = getimagesize($viewitem);
 
 		$media_file = new Dase_DBO_MediaFile;
@@ -240,7 +240,7 @@ class Dase_File_Image extends Dase_File
 		$last_height = '';
 		foreach ($image_properties as $size => $size_info) {
 			$newimage = $collection->path_to_media_files . "/$size/$item->serial_number{$size_info['size_tag']}.jpg";  
-			$results = exec("/usr/bin/convert \"$this->filepath\" -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $newimage");
+			$results = exec("/opt/local/bin/convert \"$this->filepath\" -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $newimage");
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry

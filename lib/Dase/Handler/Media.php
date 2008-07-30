@@ -8,15 +8,29 @@ class Dase_Handler_Media extends Dase_Handler
 
 	protected function setup($request)
 	{
-		//work on ACL!!!!!!!!!!!!
+		//finish!!!!!!!!!!!!!!!!!!!!!!!!!!
+		$this->collection_ascii_id = $request->get('collection_ascii_id');
+		$this->serial_number = $request->get('serial_number');
+		$this->size = $request->get('size');
+		/*
+		if (!Dase_Acl::check($this->collection_ascii_id,$this->size)) {
+			if (!$path) {
+				$user = $request->getUser();
+				if (!$user) {
+					$request->renderError(401,'cannot access media');
+				}
+				if (!Dase_Acl::check($this->collection_ascii_id,$this->size,$user->eid)) {
+					$request->renderError(401,'cannot access media');
+				}
+			}
+			//get coll path to media!!!!!!!!
+		}
+		 */
 	}
 
 	public function getMediaFileJpg($request)
 	{
-		$collection_ascii_id = $request->get('collection_ascii_id');
-		$serial_number = $request->get('serial_number');
-		$size = $request->get('size');
-		$request->serveFile($this->_getFilePath($collection_ascii_id,$serial_number,$size,$request->format),$request->response_mime_type);
+		$request->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$request->format),$request->response_mime_type);
 	}
 
 	/** AtomPub Media Link Entry */
@@ -47,7 +61,7 @@ class Dase_Handler_Media extends Dase_Handler
 			'large' => array( 'dir' => 'large'),
 			'full' => array( 'dir' => 'full'),
 		);
-		$path = '/mnt/www-data/dase/media/'.
+		$path = '/opt/local/www-data/dase/media/'.
 			$collection_ascii_id.'/'.
 			$sizes[$size]['dir'].'/'.
 			$serial_number.'.'.$format;

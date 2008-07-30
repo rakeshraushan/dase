@@ -48,6 +48,25 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $att;
 	}
 
+	public static function findOrCreateAdmin($attribute_ascii_id) 
+	{
+		$att = new Dase_DBO_Attribute;
+		$att->collection_id = 0;
+		$att->ascii_id = $attribute_ascii_id;
+		if (!$att->findOne()) {
+			$att->attribute_name = ucwords(str_replace('_',' ',$attribute_ascii_id));
+			$att->sort_order = 0;
+			$att->in_basic_search = 0;
+			$att->is_on_list_display = 0;
+			$att->is_public = 0;
+			$att->mapped_admin_att_id = 0;
+			$att->updated = date(DATE_ATOM);
+			$att->html_input_type = 'text';
+			$att->insert();
+		}
+		return $att;
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$collection = $this->getCollection();

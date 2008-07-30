@@ -112,7 +112,7 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function redirect($path='',$params=null)
+	public function redirect($path='',$params=null,$code=303)
 	{
 		//SHOULD use 303 (redirect after put,post,delete)
 		//OR 307 -- no go -- look here

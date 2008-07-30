@@ -1,1 +1,5 @@
 ---- log file ---
+[28-Jul-2008 22:47:06] PHP Warning:  include(Dase/DB/Collection.php): failed to open stream: No such file or directory in /Users/pkeane/dase/bin/build_indexes.php on line 35
+[28-Jul-2008 22:47:06] PHP Warning:  include(): Failed opening 'Dase/DB/Collection.php' for inclusion (include_path='../lib') in /Users/pkeane/dase/bin/build_indexes.php on line 35
+[28-Jul-2008 22:47:06] PHP Fatal error:  Class 'Dase_DB_Collection' not found in /Users/pkeane/dase/bin/build_indexes.php on line 50
+[28-Jul-2008 22:47:30] PHP Fatal error:  Call to undefined method Dase_DBO_Collection::getAll() in /Users/pkeane/dase/bin/build_indexes.php on line 51

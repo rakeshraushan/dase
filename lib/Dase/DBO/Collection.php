@@ -193,18 +193,29 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $json->encode($coll_array,true);
 	}
 
+	static function dataAsJson()
+	{
+		$result = array();
+		$colls = new Dase_DBO_Collection;
+		foreach ($colls->find() as $c) {
+			$result[$c->ascii_id]['visibility'] = $c->visibility;
+			$result[$c->ascii_id]['path_to_media_files'] = $c->path_to_media_files;
+		}
+		return Dase_Json::get($result);
+	}
+
 	static function listAsJson($public_only = false)
 	{
-		$c = new Dase_DBO_Collection;
-		$c->orderBy('collection_name');
+		$colls = new Dase_DBO_Collection;
+		$colls->orderBy('collection_name');
 		if ($public_only) {
-			$c->is_public = 1;
+			$colls->is_public = 1;
 		} 
-		foreach ($c->find() as $coll) {
-			foreach ($coll as $k => $v) {
+		foreach ($colls->find() as $c) {
+			foreach ($c as $k => $v) {
 				$coll_array[$k] = $v;
 			}
-			$coll_array['count'] = $coll->getItemCount();
+			$coll_array['count'] = $c->getItemCount();
 			$result[] = $coll_array;
 		}
 		return Dase_Json::get($result);
@@ -285,7 +296,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
 			ORDER BY m.dase_user_eid";
-		return Dase_DBO::query($sql,array($this->ascii_id));
+		return Dase_DBO::query($sql,array($this->ascii_id),true);
 	}
 
 	function getAttributes($sort = 'sort_order')
