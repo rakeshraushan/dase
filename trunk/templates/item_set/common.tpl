@@ -6,11 +6,11 @@
 	{assign var=i value=$j+1}
 	<td>
 		<div class="checkNum">
-			<input type="checkbox" name="item_id[]" value="{$it->itemId}"/>
+			<input type="checkbox" name="item_unique[]" value="{$it->unique}"/>
 			<span class="numberInSet">{$it->numberInSet}.</span>
 		</div>
 		<div class="cartAdd">
-			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$it->itemId}">add to cart</a>
+			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$it->unique}">add to cart</a>
 		</div>
 		<div class="image">
 			<a href="{$it->itemLink}">

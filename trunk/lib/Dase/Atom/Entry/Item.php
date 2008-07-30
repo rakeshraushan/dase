@@ -184,6 +184,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->_collectionAsciiId;
 	}
 
+	function getUnique()
+	{
+		return $this->getCollectionAsciiId().'/'.$this->getSerialNumber();
+	}
+
 	function getMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {

@@ -149,10 +149,10 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getCartJson()
 	{
-		$item_id_array = array();
+		$item_array = array();
 		$db = Dase_DB::get();
 		$sql = "
-			SELECT ti.id,ti.item_id,t.id
+			SELECT ti.id,t.id,ti.p_collection_ascii_id,ti.p_serial_number
 			FROM tag t, tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.type = 'cart' 
@@ -160,14 +160,14 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			";
 		$sth = $db->prepare($sql);	
 		$sth->execute(array($this->id));
-		while (list($tag_item_id,$item_id,$tag_id) = $sth->fetch()) {
-			$item_id_array[] = array(
+		while (list($tag_item_id,$tag_id,$coll,$sernum) = $sth->fetch()) {
+			$item_array[] = array(
 				'tag_item_id' => $tag_item_id,
-				'item_id' => $item_id,
+				'item_unique' => $coll.'/'.$sernum,
 				'tag_id' => $tag_id
 			);
 		}
-		return Dase_Json::get($item_id_array);
+		return Dase_Json::get($item_array);
 	}
 
 	function expireDataCache()

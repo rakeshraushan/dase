@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_SearchCache extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'search_cache',  array('attribute_id','cb_id','collection_id_string','dase_user_id','exact_search','is_stale','item_id_string','query','refine','search_md5','sort_by','timestamp'));
+		parent::__construct( 'search_cache',  array('is_stale','cb_id','sort_by','exact_search','attribute_id','dase_user_id','item_id_string','timestamp','search_md5','refine','collection_id_string','query'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

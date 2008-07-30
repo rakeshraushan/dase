@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Collection extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'collection',  array('ascii_id','collection_name','created','description','is_public','path_to_media_files','updated','visibility'));
+		parent::__construct( 'collection',  array('is_public','visibility','updated','created','description','path_to_media_files','collection_name','ascii_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;
