@@ -58,7 +58,7 @@ class Dase
 		if (isset($conf[$key])) {
 			return $conf[$key];
 		} else {
-			throw new Exception("no such configuration key: $key");
+			return false;
 		}
 	}
 }

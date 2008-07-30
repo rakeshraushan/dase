@@ -5,7 +5,8 @@ Dase.pageInit = function() {
 			up_form.reset();
 			var iframe = up_form.parentNode.getElementsByTagName('iframe')[0];
 			iframe.onload = function() { 
-				//alert(this.contentDocument.body.innerHTML);
+				//debug
+//				alert(this.contentDocument.body.innerHTML);
 				try {
 					var res = JSON.parse(this.contentDocument.body.innerHTML);
 				} catch(e) {

@@ -132,6 +132,7 @@ class Dase_Handler_Item extends Dase_Handler
 		foreach ($request->get('value',true) as $val) {
 			$this->item->setValue($att_ascii,$val);
 		}
+		$this->item->buildSearchIndex();
 		$request->renderResponse('added metadata');
 	}
 

@@ -46,7 +46,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			Dase_Log::info('created collection '.$c->collection_name);
 			if (mkdir("$media_dir")) {
 				chmod("$media_dir",0775);
-				foreach (Dase::getConfig('sizes') as $size) {
+				foreach (Dase::getConfig('sizes') as $size => $access_level) {
 					mkdir("$media_dir/$size");
 					Dase_Log::info('created directory '.$media_dir.'/'.$size);
 					chmod("$media_dir/$size",0775);
@@ -58,6 +58,12 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 				$a->ascii_id = $att;
 				$a->attribute_name = ucfirst($att);
 				$a->collection_id = $c->id;
+				$a->in_basic_search = true;
+				$a->is_public = true;
+				$a->html_input_type = 'text';
+				if ('description' == $att) {
+					$a->html_input_type = 'textarea';
+				}
 				$a->updated = date(DATE_ATOM);
 				$a->insert();
 			}

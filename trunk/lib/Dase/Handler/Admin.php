@@ -6,6 +6,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'settings',
 		'{collection_ascii_id}/archive' => 'archive',
+		'{collection_ascii_id}/remote_acl' => 'remote_acl',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/managers' => 'managers',
@@ -66,6 +67,34 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('managers',$this->collection->getManagers());
 		$request->renderResponse($tpl->fetch('admin/managers.tpl'));
+	}
+
+	public function postToManagers($request)
+	{
+		if (!$request->has('auth_level')) {
+			$params['msg'] = 'You must select an Authorization Level';
+			$request->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+		}
+		if (!$request->has('dase_user_eid')) {
+			$params['msg'] = 'You must enter an EID';
+			$request->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+		}
+		if (!Dase_DBO_DaseUser::get($request->get('dase_user_eid'))) {
+			$params['msg'] = 'User '.$request->get('dase_user_eid').' does not yet exist';
+			$request->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+		}
+		$mgr = new Dase_DBO_CollectionManager;
+		$mgr->dase_user_eid = $request->get('dase_user_eid');
+		$mgr->auth_level = $request->get('auth_level');
+		$mgr->collection_ascii_id = $this->collection->ascii_id;
+		$mgr->created = date(DATE_ATOM);
+		try {
+			$mgr->insert();
+			$params['msg'] = 'success!';
+		} catch (Exception $e) {
+			$params['msg'] = 'there was a problem:'.$e->getMessage();;
+		}
+		$request->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
 	}
 
 	public function getUploader($request)
