@@ -442,6 +442,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
+			$search_table->collection_ascii_id = $this->ascii_id;
 			$search_table->insert();
 
 			//admin search table
@@ -460,6 +461,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
+			$search_table->collection_ascii_id = $this->ascii_id;
 			$search_table->insert();
 		}
 		return true;

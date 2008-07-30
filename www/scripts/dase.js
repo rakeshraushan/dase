@@ -914,9 +914,10 @@ Dase.initAddToCart = function() {
 				Dase.removeClass(this.parentNode.getElementsByTagName('span')[0],'hide');
 				var inputElem = this.parentNode.parentNode.getElementsByTagName('input')[0];
 				var item = {};
-				item.item_id = inputElem.value;
+				item.item_unique = inputElem.value;
 				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
 				function(resp) { 
+				alert(resp);
 					Dase.initUser(); 
 					Dase.initSaveTo();
 				});
@@ -943,10 +944,10 @@ Dase.initCart = function() {
 			}
 		}
 		for (var i=0;i<json.length;i++) {
-			var in_cart = Dase.$('addToCart_'+ json[i].item_id);
+			var in_cart = Dase.$('addToCart_'+ json[i].item_unique);
 			if  (in_cart) {
 				//by default all search result thumbnails have an 'add to cart' link
-				//with id = addToCart_{item_id} when this initCart function runs,
+				//with id = addToCart_{item_unique} when this initCart function runs,
 				//items currently in cart have link changed to '(remove)', the
 				//'in cart' label is unhidden, and the link id is set to removeFromCart_{tag_item_id}
 				//and the href is created that, sent with 'delete' http method, will
@@ -956,12 +957,12 @@ Dase.initCart = function() {
 				in_cart.href=Dase.base_href + 'user/' + Dase.user.eid + '/tag_items/' + json[i].tag_item_id;
 				Dase.removeClass(in_cart.parentNode.getElementsByTagName('span')[0],'hide');
 				Dase.addClass(in_cart,'inCart');
-				in_cart.item_id = json[i].item_id;
+				in_cart.item_unique = json[i].item_unique;
 				in_cart.onclick = function() {
 					//first, optimistically assume delete will work
 					//and reset this link to be an 'add to cart' link
 					this.innerHTML = 'add to cart';
-					this.id = 'addToCart_' + this.item_id;
+					this.id = 'addToCart_' + this.item_unique;
 					var delete_url = this.href;
 					this.href = '#';
 					Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
@@ -1004,15 +1005,16 @@ Dase.initSaveTo = function() {
 	form.onsubmit = function() {
 		var saveToSelect = Dase.$('saveToSelect');
 		var tag_ascii_id = saveToSelect.options[saveToSelect.options.selectedIndex].value;
-		var item_id_array = [];
+		var item_uniques_array = [];
 		var inputs = itemSet.getElementsByTagName('input');
 		for (var i=0;i<inputs.length;i++) {
-			if ('item_id[]' == inputs[i].name && true == inputs[i].checked) {
-				item_id_array[item_id_array.length] = inputs[i].value;
+			if ('item_unique[]' == inputs[i].name && true == inputs[i].checked) {
+				//item_uniques_array[item_uniques_array.length] = encodeURIComponent(inputs[i].value);
+				item_uniques_array[item_uniques_array.length] = inputs[i].value;
 				inputs[i].checked = false;
 			}
 		}
-		if (!item_id_array.length) {
+		if (!item_uniques_array.length) {
 			alert('Please check at least one item.');
 			return false;
 		}
@@ -1021,7 +1023,7 @@ Dase.initSaveTo = function() {
 			return false;
 		}
 		var data = {};
-		data.item_ids = item_id_array;
+		data.item_uniques = item_uniques_array;
 		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
 		function(resp) { 
 			alert(resp); 
@@ -1053,21 +1055,21 @@ Dase.initRemoveItems = function() {
 		button.style.marginRight =  units+'px';
 	}
 	button.onclick = function() {
-		var item_id_array = [];
+		var item_uniques_array = [];
 		var inputs = itemSet.getElementsByTagName('input');
 		if (!inputs.length) return false;
 		for (var i=0;i<inputs.length;i++) {
-			if ('item_id[]' == inputs[i].name && true == inputs[i].checked) {
-				item_id_array[item_id_array.length] = inputs[i].value;
+			if ('item_unique[]' == inputs[i].name && true == inputs[i].checked) {
+				item_uniques_array[item_uniques_array.length] = encodeURIComponent(inputs[i].value);
 			}
 		}
-		if (!item_id_array.length) {
+		if (!item_uniques_array.length) {
 			alert('Please check at least one item.');
 			return false;
 		}
-		if (confirm('Remove '+item_id_array.length+' item(s) from '+tag_ascii_id+'?')) {
-			var item_ids = item_id_array.join(',');
-			var url = Dase.base_href + 'tag/'+Dase.user.eid+'/'+tag_ascii_id+'/items/'+item_ids;
+		if (confirm('Remove '+item_uniques_array.length+' item(s) from '+tag_ascii_id+'?')) {
+			var item_uniques = item_uniques_array.join(',');
+			var url = Dase.base_href + 'tag/'+Dase.user.eid+'/'+tag_ascii_id+'/items?uniques='+item_uniques;
 			Dase.ajax(url,'DELETE',function(resp) {
 				alert(resp);
 				remove_form.submit();

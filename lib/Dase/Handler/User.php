@@ -75,13 +75,21 @@ class Dase_Handler_User extends Dase_Handler
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
 			$tag_item = new Dase_DBO_TagItem;
-			$tag_item->item_id = $request->get('item_id');
+			list($coll,$sernum) = explode('/',$request->get('item_unique'));
+
+			//todo: compat 
+			$item = Dase_DBO_Item::get($coll,$sernum);
+			$tag_item->item_id = $item->id;
+
+			$tag_item->p_collection_ascii_id = $coll;
+			$tag_item->p_serial_number = $sernum;;
 			$tag_item->tag_id = $tag->id;
 			$tag_item->updated = date(DATE_ATOM);
 			$tag_item->sort_order = 99999;
 			if ($tag_item->insert()) {
+				//will not need this when we use item_unique:
 				//writes are expensive ;-)
-				$tag_item->persist();
+				//$tag_item->persist();
 				$request->renderResponse("added cart item $tag_item->id");
 			} else {
 				$request->renderResponse("add to cart failed");

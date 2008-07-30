@@ -154,6 +154,12 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->_collectionAsciiId;
 	}
 
+	/** combination of coll_ascii_id & serial_number */
+	function getUnique()
+	{
+		return $this->getCollectionAsciiId().'/'.$this->getSerialNumber();
+	}
+
 	function selectMedia($size) 
 	{
 		$x = new DomXPath($this->dom);

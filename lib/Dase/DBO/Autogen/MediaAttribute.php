@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_MediaAttribute extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'media_attribute',  array('label','sort_order','term'));
+		parent::__construct( 'media_attribute',  array('sort_order','label','term'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

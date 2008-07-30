@@ -23,6 +23,8 @@ require_once 'Dase/DB.php';
 /* this class implements the ActiveRecord pattern
  */
 
+class Dase_DBO_Exception extends Exception {}
+
 class Dase_DBO implements IteratorAggregate
 {
 	public $id = 0;
@@ -99,7 +101,7 @@ class Dase_DBO implements IteratorAggregate
 				'operator' => $operator
 			);
 		} else {
-			throw new Exception('addWhere problem');
+			throw new Dase_DBO_Exception('addWhere problem');
 		}
 	}
 
@@ -125,7 +127,7 @@ class Dase_DBO implements IteratorAggregate
 		if (! $sth) {
 			$errs = $db->errorInfo();
 			if (isset($errs[2])) {
-				Dase_Log::debug($errs[2]);
+				throw new Dase_DBO_Exception($errs[2]);
 			}
 		}
 		Dase_Log::debug($sql . ' /// '.$id);
@@ -271,7 +273,7 @@ class Dase_DBO implements IteratorAggregate
 		if (!$sth->execute($params)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
-				Dase_Log::debug("[DBO query]". $errs[2]);
+				throw new Dase_DBO_Exception('could not execute query: '.$errs[2]);
 			}
 		} else {
 			foreach ($params as $bp) {
@@ -299,7 +301,7 @@ class Dase_DBO implements IteratorAggregate
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
-				Dase_Log::debug($errs[2]);
+				throw new Dase_DBO_Exception('could not update');
 			}
 		}
 	}

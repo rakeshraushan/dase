@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_AdminSearchTable extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'admin_search_table',  array('collection_id','item_id','status_id','updated','value_text'));
+		parent::__construct( 'admin_search_table',  array('status_id','collection_id','item_id','value_text','updated'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

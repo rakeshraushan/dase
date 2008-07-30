@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_ValueRevisionHistory extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'value_revision_history',  array('added_text','attribute_name','collection_ascii_id','dase_user_eid','deleted_text','item_serial_number','timestamp'));
+		parent::__construct( 'value_revision_history',  array('added_text','deleted_text','timestamp','collection_ascii_id','attribute_name','item_serial_number','dase_user_eid'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

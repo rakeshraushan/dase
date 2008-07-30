@@ -6,12 +6,12 @@
 		<td id="cell_${i++}">
 			<a href="${ti.url}/sorter" class="moveto ${i-5} ${i}"><img src="www/images/tango-icons/go-up.png"/></a> 
 			<div class="checkNum">
-				<input type="checkbox" name="item_id[]" value="${ti.item_id}"/>
+				<input type="checkbox" name="item_id[]" value="${ti.item_unique}"/>
 				<span class="numberInSet">${i}.</span>
 			</div>
 
 			<div class="cartAdd">
-				<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_${ti.item_id}">add to cart</a>
+				<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_${ti.item_unique}">add to cart</a>
 			</div>
 			<div class="image">
 				<a href="${ti.url}/sorter" id="next-arrow" class="moveto ${i+1} ${i}"><img src="www/images/tango-icons/go-next.png"/></a> 

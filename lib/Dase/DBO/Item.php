@@ -87,10 +87,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getContents() as $c) {
 			$composite_value_text .= $c->text . " ";
 		}
+		$this->collection || $this->getCollection();
 		$search_table = new Dase_DBO_SearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
+		$search_table->collection_ascii_id = $this->collection->ascii_id;
 		$search_table->updated = date(DATE_ATOM);
 		if ($composite_value_text) {
 			$search_table->insert();
@@ -115,6 +117,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
+		$search_table->collection_ascii_id = $this->collection->ascii_id;
 		$search_table->updated = date(DATE_ATOM);
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
@@ -456,7 +459,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
 		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item/type',$this->item_type->label);
 		$entry->addCategory($this->serial_number,'http://daseproject.org/category/item/serial_number');
-		$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
+		//todo: item_id is for adding to tag
+		//$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
 		$entry->addCategory('item','http://daseproject.org/category/entrytype');
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/item/status');

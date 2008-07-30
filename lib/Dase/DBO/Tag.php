@@ -20,7 +20,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$db = Dase_DB::get();
 		//union allows us to get tags that have no items
 		$sql = "
-			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id)
+			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) count
 			FROM tag t , tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.dase_user_id = ?
@@ -98,20 +98,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $st->fetchAll(PDO::FETCH_COLUMN);
 	}
 
-	function getItemIds()
-	{
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT item_id
-			FROM tag_item 
-			WHERE tag_id = ?
-			ORDER BY sort_order
-			";
-		$st = $db->prepare($sql);
-		$st->execute(array($this->id));
-		return $st->fetchAll(PDO::FETCH_COLUMN);
-	}
-
 	function getUpdated()
 	{
 		$tag_item = new Dase_DBO_TagItem;
@@ -162,20 +148,35 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
 	}
 
-	function addItem($item_id)
+	function addItem($item_unique)
 	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
-		$tag_item->item_id = $item_id;
-		//I think this should be in a try-catch
+		list ($coll,$sernum) = explode('/',$item_unique);
+
+		//todo: compat
+		$item = Dase_DBO_Item::get($coll,$sernum);
+		$tag_item->item_id = $item->id;
+
+		$tag_item->p_collection_ascii_id = $coll;
+		$tag_item->p_serial_number = $sernum;
+
+		//todo: I think this should be in a try-catch
 		return ($tag_item->insert());
 	}
 
-	function removeItem($item_id)
+	function removeItem($item_unique)
 	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
-		$tag_item->item_id = $item_id;
+		list ($coll,$sernum) = explode('/',$item_unique);
+
+		//todo: compat
+		$item = Dase_DBO_Item::get($coll,$sernum);
+		$tag_item->item_id = $item->id;
+
+		$tag_item->p_collection_ascii_id = $coll;
+		$tag_item->p_serial_number = $sernum;
 		if ($tag_item->findOne()) {
 			return ($tag_item->delete());
 		}
@@ -204,7 +205,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			//$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
 			$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
 			$json_item['sort_order'] = $tag_item->sort_order;
-			$json_item['item_id'] = $item->id;
+			//make sure p_ values are always populated!
+			$json_item['item_unique'] = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
 			$json_item['size'] = $tag_item->size;
 			$json_item['updated'] = $tag_item->updated;
 			$json_item['annotation'] = $tag_item->annotation;
