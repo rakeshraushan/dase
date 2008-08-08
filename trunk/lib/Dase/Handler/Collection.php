@@ -4,6 +4,7 @@ class Dase_Handler_Collection extends Dase_Handler
 {
 	public $collection;
 	public $resource_map = array(
+		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
@@ -20,7 +21,10 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$this->collection) {
 			$request->renderError(404);
 		}
-		if ('html' == $request->format && 'service' != $request->resource) {
+		if ('html' == $request->format && 
+			'service' != $request->resource &&
+			'ping' != $request->resource 
+		) {
 			$this->user = $request->getUser();
 			if (!$this->user->can('read','collection',$this->collection)) {
 				$request->renderError(401);
@@ -34,6 +38,11 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		 */
+	}
+
+	public function getPing($request)
+	{
+		$request->renderResponse('ok');
 	}
 
 	public function getRecent($request)

@@ -6,18 +6,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		parent::__construct($dom,$root);
 	}
 
-	function getName() 
-	{
-		//how name is modelled in Atom
-		return $this->getTitle();
-	}
-
-	function getAscii_id() 
-	{
-		//how ascii_id is modelled in Atom
-		return $this->getContent();
-	}
-
 	function create($request)
 	{
 		$atom_author = $this->getXpathValue("atom:author/atom:name");
@@ -27,26 +15,28 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		}
 
 		$collection_name = $this->getName();
-		$ascii_id = $this->getAscii_id();
+		$ascii_id = $this->getAsciiId();
+		$media_repos = $this->getLink('http://daseproject.org/relation/media-collection');
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;
 		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
 			$request->renderError(409,'collection already exists');
 		}
 		$c->ascii_id = $ascii_id;
-		$media_dir =  Dase::getConfig('path_to_media').'/'.$ascii_id;
+		$media_dir =  Dase_Config::get('path_to_media').'/'.$ascii_id;
 		if (file_exists($media_dir)) {
 			$request->renderError(409,'collection media archive exists');
 		}
 		$c->path_to_media_files = $media_dir;
 		$c->is_public = 0;
+		$c->media_repository = $media_repos;
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
 			Dase_Log::info('created collection '.$c->collection_name);
 			if (mkdir("$media_dir")) {
 				chmod("$media_dir",0775);
-				foreach (Dase::getConfig('sizes') as $size => $access_level) {
+				foreach (Dase_Config::get('sizes') as $size => $access_level) {
 					mkdir("$media_dir/$size");
 					Dase_Log::info('created directory '.$media_dir.'/'.$size);
 					chmod("$media_dir/$size",0775);

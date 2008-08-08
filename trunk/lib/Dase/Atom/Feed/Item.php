@@ -29,7 +29,7 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getTagType()
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/tag_type' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/tag/type' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
 		}
@@ -101,24 +101,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->_status;
 	}
 
-	function getStatusLabel()
-	{
-		$labels['public'] = "Public";
-		$labels['draft'] = "Draft (Admin View Only)";
-		$labels['delete'] = "Marked for Deletion";
-		$labels['archive'] = "In Deep Storage";
-
-		if (!$this->_status) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item/status' == $el->getAttribute('scheme')) {
-					$this->_status =  $el->getAttribute('term');
-					break;
-				}
-			}
-		}
-		return $labels[$this->_status];
-	}
-
 	function getCollection()
 	{
 		if (!$this->_collection) {
@@ -184,19 +166,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getThumbnailLink()
 	{
 		return $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0)->getAttribute('url');
-	}
-
-	function getItemId() 
-	{
-		if (!$this->item_id) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item/id' == $el->getAttribute('scheme')) {
-					$this->item_id =  $el->getAttribute('term');
-					break;
-				}
-			}
-		}
-		return $this->item_id;
 	}
 
 	function getSerialNumber() 

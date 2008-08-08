@@ -248,7 +248,7 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($this->bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
-		Dase_Log::debug('[DBO find]'.$log_sql);
+		Dase_Log::debug('[DBO find] '.$log_sql);
 
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);

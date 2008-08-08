@@ -3,7 +3,7 @@
 {block name="title"}Item Set{/block}
 
 {block name="content"}
-<a href="tag/{$items->eid}/{$items->tagAsciiId}/template.html" class="pagedata" id="jsTemplatesUrl"></a>
+<a href="tag/{$items->eid}/{$items->asciiId}/template.html" class="pagedata" id="jsTemplatesUrl"></a>
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	<h4 class="startSlideshow">
@@ -31,8 +31,8 @@
 	</form>
 	{/if}
 	<div id="tagEid" class="pagedata">{$items->eid}</div>
-	<div id="tagName" class="pagedata">{$items->tagName}</div>
-	<div id="tagAsciiId" class="pagedata">{$items->tagAsciiId}</div>
+	<div id="tagName" class="pagedata">{$items->name}</div>
+	<div id="tagAsciiId" class="pagedata">{$items->asciiId}</div>
 	<div class="spacer"></div>
 </div>
 {/block}

@@ -217,24 +217,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($metadata);
 	}
 
-	public function getChildren()
-	{
-
-		//WORK ON THIS!!!!!!!!
-		$sql = "
-			SELECT i.id 
-			FROM attribute a, attribute_item_type ai, item i, item_type_relation r
-			WHERE a.item_id = $this->id
-			AND a.id = ai.attribute_id
-			AND ai.is_identifier = 't'	
-			AND ai.item_type_id = $this->item_type_id
-			AND r.parent_item_type_id = $this->item_type_id
-			AND i.item_type_id = r.item_type_id
-			";
-
-
-	}
-
 	public function getValues()
 	{
 		$val = new Dase_DBO_Value;
@@ -371,7 +353,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function expunge()
 	{
 		$this->collection || $this->getCollection();
-		$graveyard = Dase::getConfig('graveyard');
+		$graveyard = Dase_Config::get('graveyard');
 		$filename = $this->collection->ascii_id .'_'.$this->serial_number;
 		file_put_contents($graveyard.'/'.$filename,$this->asAtom());
 		
@@ -459,8 +441,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
 		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item/type',$this->item_type->label);
 		$entry->addCategory($this->serial_number,'http://daseproject.org/category/item/serial_number');
-		//todo: item_id is for adding to tag
-		//$entry->addCategory($this->id,'http://daseproject.org/category/item/id');
 		$entry->addCategory('item','http://daseproject.org/category/entrytype');
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/item/status');
@@ -468,8 +448,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory('public','http://daseproject.org/category/item/status');
 		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
-		$entry->addLink($this->getBaseUrl().'/service','service' );
-		$entry->addLink($this->getBaseUrl().'/media','http://daseproject.org/relation/media-collection' );
+
+		//item no longer has a service doc
+		//$entry->addLink($this->getBaseUrl().'/service','service' );
+		//not necessarily true, since media coll can be someplace else.
+		//allow the collection service doc to dictate where the media collection is
+		//$entry->addLink($this->getBaseUrl().'/media','http://daseproject.org/relation/media-collection' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$img = $div->addChild('img');
@@ -555,7 +539,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->injectAtomFeedData($feed);
 		$feed->setFeedType('item');
 		//todo: this needs to be passed in?
-		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
+		$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
 		$this->injectAtomEntryData($feed->addEntry());
 		return $feed->asXml();
 	}
@@ -616,12 +600,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$item_array['media'] = array();
 		foreach ($this->getMedia() as $m) {
+			/*
 			foreach ($m as $k => $v) {
 				if (!in_array($k,array('p_collection_ascii_id','p_serial_number'))) {
 					$media_file[$k] = $v;
 				}
 			}
 			$item_array['media'][] = $media_file;
+		 */
+		$item_array['media'][$m->size] = 
+			APP_ROOT.'/media/'.
+			$this->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 		}
 		foreach ($this->getContents() as $c) {
 			$content[$c->id]['updated'] = $c->updated;
@@ -635,6 +624,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function asJson()
 	{
 		return Dase_Json::get($this->asArray(),true);
+	}
+
+	public function statusAsJson()
+	{
+		$labels['public'] = "Public";
+		$labels['draft'] = "Draft (Admin View Only)";
+		$labels['delete'] = "Marked for Deletion";
+		$labels['archive'] = "In Deep Storage";
+
+		$status['term'] = $this->status;
+		$status['label'] = $labels[$this->status];
+
+		return Dase_Json::get($status);
 	}
 
 	public function getContents()

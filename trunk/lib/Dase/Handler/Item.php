@@ -93,6 +93,11 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse('deleted note '.$note->id);
 	}
 
+	public function getStatusJson($request)
+	{
+		$request->renderResponse($this->item->statusAsJson());
+	}
+
 	public function putStatus($request)
 	{
 		if (!$this->user->can('write','item',$this->item)) {

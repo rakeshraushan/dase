@@ -22,21 +22,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		return $this->getSubtitle();
 	}
 
-	function getName()
-	{
-		return $this->getTitle();
-	}
-
-	function getAscii_id()
-	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
-				return $el->getAttribute('term');
-			}
-		}
-	}
-
-	function getItem_count()
+	function getItemCount()
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/collection/item_count' == $el->getAttribute('scheme')) {

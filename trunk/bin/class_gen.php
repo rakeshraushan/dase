@@ -1,6 +1,6 @@
 <?php
 $database = 'dase_prod';
-include 'cli_setup.php';
+include 'laptop_cli.php';
 
 $class_dir = '../lib/Dase';
 if (!file_exists($class_dir)) {

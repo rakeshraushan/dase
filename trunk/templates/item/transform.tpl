@@ -83,18 +83,7 @@
 			</td>
 		</tr>
 	</table>
-	<div id="adminStatusControls" class="hide">
-		<p>This item is <span class="current">{$item->statusLabel}</span></p> 
-		<form id="updateStatus" action="item/{$item->collectionAsciiId}/{$item->serialNumber}/status" method="post">
-			<select name="status">
-				<option value="public" {if $item->status == 'public'}selected="selected"{/if}>Public</option>
-				<option value="draft" {if $item->status == 'draft'}selected="selected"{/if}>Draft (Admin View Only)</option>
-				<option value="delete" {if $item->status == 'delete'}selected="selected"{/if}>Marked for Deletion</option>
-				<option value="archive" {if $item->status == 'archive'}selected="selected"{/if}>In Deep Storage</option>
-			</select>
-			<input type="submit" value="update status"/>
-		</form>
-	</div>
+	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->serialNumber}/status"></div>
 
 	{if $item->editLink}
 	<!-- this is an atompub thing -->

@@ -50,15 +50,4 @@ class Dase
 			$request->renderError(404,'no such handler class');
 		}
 	}
-
-	public static function getConfig($key)
-	{
-		$conf = array();
-		include(DASE_CONFIG);
-		if (isset($conf[$key])) {
-			return $conf[$key];
-		} else {
-			return false;
-		}
-	}
 }

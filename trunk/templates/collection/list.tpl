@@ -12,9 +12,9 @@
 		</div>
 		<ul id="collectionList" class="multicheck">
 			{foreach item=c from=$collections->entries}
-			<li id="{$c->ascii_id}">
-			<input name="c" value="{$c->ascii_id}" checked="checked" type="checkbox"/>
-			<a href="collection/{$c->ascii_id}" class="checkedCollection">{$c->name|escape}</a>
+			<li id="{$c->asciiId}">
+			<input name="c" value="{$c->asciiId}" checked="checked" type="checkbox"/>
+			<a href="collection/{$c->asciiId}" class="checkedCollection">{$c->name|escape}</a>
 			<span class="tally"></span>
 			</li>
 			{/foreach}

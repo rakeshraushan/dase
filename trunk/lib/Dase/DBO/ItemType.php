@@ -20,8 +20,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	{
 		$entry->setTitle('Item Type '.$this->name);
 		$entry->setId(APP_ROOT.'/item_type/'.$collection->ascii_id.'/'.$this->ascii_id);
-		$entry->addCategory($this->name,'http://daseproject.org/category/collection/item_type',$this->ascii_id);
-		$entry->addCategory('item_type','http://daseproject.org/category','Item Type');
+		$entry->addCategory('item_type','http://daseproject.org/category/entrytype','Item Type');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {

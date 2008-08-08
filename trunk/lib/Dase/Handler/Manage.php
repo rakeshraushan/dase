@@ -129,7 +129,9 @@ class Dase_Handler_Manage extends Dase_Handler
 
 			$types['mysql']['bigint'] = 'int';
 			$types['mysql']['boolean'] = 'tinyint';
+			$types['mysql']['tinyint'] = 'tinyint';
 			$types['mysql']['character varying'] = "varchar";
+			$types['mysql']['varchar'] = "varchar";
 			$types['mysql']['double precision'] = "REAL";
 			$types['mysql']['double'] = "REAL";
 			$types['mysql']['integer'] = 'int';
