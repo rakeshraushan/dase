@@ -83,7 +83,7 @@ class Dase_Acl
 	public static function check($coll,$size,$eid=null)
 	{
 		$cdata = Dase_Acl::getCollectionData();
-		$sizes = Dase::getConfig('sizes');
+		$sizes = Dase_Config::get('sizes');
 		$gate = $sizes[$size];
 		if (!$gate) {
 			return $cdata[$coll]['path_to_media_files'];

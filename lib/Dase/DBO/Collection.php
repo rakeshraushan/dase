@@ -78,12 +78,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->updated);
-		$feed->addCategory($this->ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
 		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
 		$feed->setId($this->getBaseUrl());
 		$feed->addAuthor();
 		$feed->addLink($this->getBaseUrl(),'alternate');
-		//$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
+		$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
 		return $feed;
 	}
 
@@ -241,7 +240,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$entry = $feed->addEntry();
 			$entry->setTitle($coll->collection_name);
 			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
-			$entry->setId(APP_ROOT . '/' . $coll->ascii_id . '/');
+			$entry->setId(APP_ROOT . '/' . $coll->ascii_id);
 			$entry->setUpdated($coll->created);
 			$entry->setEntryType('collection');
 			$entry->addLink(APP_ROOT.'/atom/collection/'.$coll->ascii_id.'/','self');
@@ -503,11 +502,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	public function getAtompubServiceDoc() 
 	{
 		$svc = new Dase_Atom_Service;	
-		$svc->addWorkspace($this->collection_name.' Workspace')
-			->addCollection(APP_ROOT.'/collection/'.$this->ascii_id,$this->collection_name.' Items')
+		$ws = $svc->addWorkspace($this->collection_name.' Workspace');
+		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id,$this->collection_name.' Items')
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
 			->addCategory('item','http://daseproject.org/category/entrytype');
+		$media_repos = $this->media_repository;
+		if (!$media_repos) {
+			$media_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/media';
+		}
+		$ws->addCollection($media_repos,$this->collection_name.' Media')
+			->addAccept('image/*')
+			->addAccept('audio/*')
+			->addAccept('video/*');
 		return $svc->asXml();
 	}
 
@@ -519,5 +526,21 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$sources[$coll->ascii_id] = $coll->path_to_media_files;
 		}
 		return $sources;
+	}
+
+	/** figure out base_url for a given collection_ascii_id */
+	//todo: implement caching here!!
+	//this is NOT used, but it is an interesting idea
+	public static function getRemoteUrl($collection_ascii_id)
+	{
+		if (Dase_Config::get('_'.$collection_ascii_id)) {
+			return Dase_Config::get('_'.$collection_ascii_id);
+		}
+		foreach (Dase_Config::get('federations') as $fed) {
+			if ('ok' == trim(@file_get_contents($fed.'/collection/'.$collection_ascii_id.'/ping'))) {
+				Dase_Config::set('_'.$collection_ascii_id,$fed);
+				return $fed;
+			}
+		}
 	}
 }

@@ -73,11 +73,14 @@ class Dase_Search_Result
 		foreach($this->item_ids as $item_id) {
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
+			/*
 			$json_item = array();
 			foreach ($item->getMedia() as $m) {
 				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 			}
 			$json_tag['items'][] = $json_item;
+			 */
+			$json_tag['items'][] = $item->asArray();
 		}
 		return Dase_Json::get($json_tag);	
 	}
@@ -185,7 +188,7 @@ class Dase_Search_Result
 			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed);
 			$item->injectAtomEntryData($feed->addEntry());
-			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
+			$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
 			$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$num,'http://daseproject.org/relation/search-item-link');
 			$feed->addLink(APP_ROOT.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');
 			if ($next) {

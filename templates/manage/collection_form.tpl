@@ -10,10 +10,16 @@
 <div class="list" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Add a Collection:</h1>
+	//this form data will be transformed into atom
+	//using js template (see below)
 	<form id="newCollection" action="collections" method="post">
 		<p>
 		<label for="collection_name">Collection Name:</label>
 		<input type="text" id="collection_name" name="collection_name"/>
+		</p>
+		<p>
+		<label for="media_repository">Media Repository (leave blank for default):</label>
+		<input type="text" id="media_repository" name="media_repository"/>
 		</p>
 		<p>
 		<input type="submit" value="create"/>
@@ -27,6 +33,7 @@
 	<title>${collection_name}</title>
 	<id>${id}</id>
 	<updated>${date}</updated>
+	<link rel="http://daseproject.org/relation/media-collection" href="${media_repository}"/>
 	<category term="collection" scheme="http://daseproject.org/category/entrytype"/>
 	<content type="text">${ascii_id}</content>
 	<author><name>${eid}</name></author>

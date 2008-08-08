@@ -39,7 +39,7 @@ class Dase_Http_Request
 		$this->content_type = $this->getContentType();
 
 		if (!$this->handler) {
-			$this->renderRedirect(Dase::getConfig('default_handler'));
+			$this->renderRedirect(Dase_Config::get('default_handler'));
 		}
 	}
 
@@ -77,11 +77,13 @@ class Dase_Http_Request
 	{
 		$params = '';
 		foreach ($_GET as $k => $v) {
-			//cache_busing is for client javascript in IE6
+			//cache_busing is for client javascript in IE6 ONLY
+			//do not use to bust *this* cache
 			if ('cache_buster' != $k) {
 				$params .= $k.'='.$v.';';
 			}
 		}
+		Dase_Log::debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$params);
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$params;
 	}
 
@@ -111,7 +113,7 @@ class Dase_Http_Request
 		} else {
 			//here's the entire plugin architecture
 			//simply reimplement any handler as a module
-			$plugins = Dase::getConfig('handler');
+			$plugins = Dase_Config::get('handler');
 			if (isset($plugins[$first])) {
 				if(!file_exists(DASE_PATH.'/modules/'.$plugins[$first])) {
 					$this->renderError(404,'no such module');

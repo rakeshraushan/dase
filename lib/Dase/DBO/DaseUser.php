@@ -44,7 +44,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getHttpPassword()
 	{
-		$this->http_password = substr(md5(Dase::getConfig('token').$this->eid.'httpbasic'),0,8);
+		$this->http_password = substr(md5(Dase_Config::get('token').$this->eid.'httpbasic'),0,8);
 		return $this->http_password;
 	}
 
@@ -125,7 +125,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
-		$user_data[$this->eid]['ppd'] = md5($this->eid . Dase::getConfig('ppd_token'));
+		$user_data[$this->eid]['ppd'] = md5($this->eid . Dase_Config::get('ppd_token'));
 		if ($this->isSuperuser()) {
 			$user_data[$this->eid]['is_superuser'] = 1;
 		}
@@ -178,7 +178,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function isSuperuser()
 	{
-		if (in_array($this->eid,Dase::getConfig('superuser'))) {
+		if (in_array($this->eid,Dase_Config::get('superuser'))) {
 			return true;
 		}
 		return false;

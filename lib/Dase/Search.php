@@ -406,7 +406,8 @@ class Dase_Search
 			$bound_params[] = $search['type']['name'];
 			$bound_params[] = $search['type']['coll'];
 		} else {
-			$sql = 'no query';
+			//null 
+			$sql = 'SELECT id, collection_id FROM item WHERE 1 = 2';
 		}
 		//if search type is used as filter:
 		if (isset($search['type']['coll']) && isset($search['type']['name']) && 

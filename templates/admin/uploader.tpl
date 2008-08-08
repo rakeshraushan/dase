@@ -132,7 +132,7 @@
 	<h2>{$recent_uploads->title}</h2>
 	<ul id="recent">
 		{foreach item=item from = $recent_uploads->entries}
-		<li><img src="{$item->thumbnailLink}"/><a href="{$item->link}">{$item->title}</a></li>
+		<li><img src="{$item->thumbnailLink}"/><br/><a href="{$item->link}">{$item->title}</a></li>
 		{/foreach}
 	</ul>
 </div>

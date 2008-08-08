@@ -19,7 +19,7 @@ $conf['handler']['db'] = 'dbadmin';
 $conf['handler']['am'] = 'ancientmeso';
 
 //used to create only-known-by-server security hash
-$conf['token'] = 'jhuhiug' . date('Ymd',time()); //changes every day
+$conf['token'] = 'foxinsocks' . date('Ymd',time()); //changes every day
 
 //POST/PUT/DELETE token:	
 $conf['ppd_token'] = "
@@ -50,12 +50,6 @@ if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
 	include(MODULE_PATH . '/inc/config.php');
 }	
-
-//a collection can specify a remote media server,
-//which is simply another DASe instance. If this
-//instance will be used as a remote media server
-//set 'is_remote_media_server' to true 
-$conf['is_remote_media_server'] = false;
 
 //maximum no. of items displayed on a search result page
 $conf['max_items'] = 30;

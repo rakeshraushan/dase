@@ -493,6 +493,12 @@ form#loginForm input[type=submit] {
 	margin-left:40%;
 }
 
+form#newCollection label {
+	display: block;
+	font-weight: bold;
+	color: #666;
+}
+
 /************ MISCELLANEOUS STYLES ***************/
 
 textarea.javascript_template {

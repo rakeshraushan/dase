@@ -415,16 +415,14 @@ Dase.initItemEditing = function(eid) {
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');
 	if (!edit_link) return;
-	var status_controls = Dase.$('adminStatusControls');
 	var controls = Dase.$('adminPageControls');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
-		Dase.removeClass(status_controls,'hide');
 		//get jstemplates
 		Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
-			Dase.enableStatusControl();
+			Dase.updateItemStatus();
 			Dase.initEditLink(edit_link);
 			Dase.initAddMetadata();
 		});
@@ -432,16 +430,20 @@ Dase.initItemEditing = function(eid) {
 	return;
 };
 
-Dase.enableStatusControl = function() {
-	var form = Dase.$('updateStatus');
-	if (!form) return;
-	form.onsubmit = function() {
-		Dase.ajax(form.action,'put',function(resp) {
-			//hard reload
-			window.location.reload(true);
-		},form.status.value);
-		return false;
-	}
+Dase.updateItemStatus = function() {
+	var status_controls = Dase.$('adminStatusControls');
+	Dase.getJSON(Dase.base_href+status_controls.className+'.json',function(json){
+			var data = {'status':json};
+			var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
+			status_controls.innerHTML = templateObj.process(data);
+			var form = Dase.$('updateStatus');
+			form.onsubmit = function() {
+			Dase.ajax(Dase.base_href+status_controls.className,'put',function(resp) {
+				Dase.updateItemStatus();
+				},form.status.value);
+			return false;
+			}
+			});
 }
 
 Dase.placeManageLink = function(eid) {

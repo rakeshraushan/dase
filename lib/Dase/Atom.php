@@ -123,7 +123,7 @@ class Dase_Atom
 	}
 
 	function getId() {
-		return $this->id;
+		return $this->getAtomElementText('id');
 	}
 
 	function setId($text) 
@@ -254,5 +254,18 @@ class Dase_Atom
 		//format output
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();
+	}
+
+	function getName()
+	{
+		//how we generally model names in DASe
+		return $this->getTitle();
+	}
+
+	function getAsciiId()
+	{
+		//by convention, for entities that have an ascii id,
+		//it will be the last segment of the atom:id
+		return array_pop(explode('/',$this->getId()));
 	}
 }
