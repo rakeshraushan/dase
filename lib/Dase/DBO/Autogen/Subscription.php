@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Subscription extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'subscription',  array('tag_id','dase_user_id'));
+		parent::__construct( 'subscription',  array('dase_user_id','tag_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_DaseUser extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'dase_user',  array('has_access_exception','current_search_cache_id','max_items','template_composite','backtrack','current_collections','last_action','last_item','display','last_cb_access','cb','name','eid'));
+		parent::__construct( 'dase_user',  array('backtrack','cb','current_collections','current_search_cache_id','display','eid','has_access_exception','last_action','last_cb_access','last_item','max_items','name','template_composite'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

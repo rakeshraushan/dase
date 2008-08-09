@@ -28,9 +28,38 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
+	/** from http://www.weberdev.com/get_example-3543.html */
+	public static function getUniqueFilename($xtn = "tmp")
+	{
+		// explode the IP of the remote client into four parts
+		if (isset($_SERVER["REMOTE_ADDR"])) {
+			$ip = $_SERVER["REMOTE_ADDR"];
+		} else {
+			$ip = '123.456.7.8';
+		}
+		$ipbits = explode(".", $ip);
+		// Get both seconds and microseconds parts of the time
+		list($usec, $sec) = explode(" ",microtime());
+
+		// Fudge the time we just got to create two 16 bit words
+		$usec = (integer) ($usec * 65536);
+		$sec = ((integer) $sec) & 0xFFFF;
+
+		// Fun bit - convert the remote client's IP into a 32 bit
+		// hex number then tag on the time.
+		// Result of this operation looks like this xxxxxxxx-xxxx-xxxx
+		$uid = sprintf("%08x-%04x-%04x",($ipbits[0] << 24)
+			| ($ipbits[1] << 16)
+				| ($ipbits[2] << 8)
+					| $ipbits[3], $sec, $usec);
+
+		// Tag on the extension and return the filename
+		return $uid.'.'.$xtn;
+	} 
+
 	public static function dirify($str)
 	{
-		$str = strtolower(preg_replace('/[^a-zA-Z0-9_]/','_',$str));
+		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',$str));
 		return preg_replace('/__*/','_',$str);
 	}
 

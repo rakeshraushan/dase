@@ -3,10 +3,15 @@
 
 /*********** CONFIGURATION ********************/
 
-$app = 'dase';
-$target = '/opt/local/apache2/htdocs/'.$app;
+//$app = 'dase';
+//$target = '/opt/local/apache2/htdocs/'.$app;
+//$rewrite_base = $app; 
+//$httpd_group = 'www';
+
+$app = 'dase1';
+$target = '/var/www/html/'.$app;
 $rewrite_base = $app; 
-$httpd_group = 'www';
+$httpd_group = 'apache';
 
 /**********************************************/
 

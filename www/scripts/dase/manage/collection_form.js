@@ -12,7 +12,6 @@ Dase.pageInit = function() {
 	form.onsubmit = function() {
 		data = {};
 		data.collection_name = form.collection_name.value;
-		data.media_repository = form.media_repository.value;
 		data.eid = Dase.user.eid;
 		var d = new Date();
 		var utcf = d.getTimezoneOffset();
@@ -38,9 +37,6 @@ Dase.pageInit = function() {
 		//needs work!!!!!!!!!!!!!:
 		var ascii_id = form.collection_name.value.replace(/(collection|archive)/i,'').replace(/ /gi,"_").replace(/(__|_$)/g,'').toLowerCase();
 		data.id = Dase.base_href+'collection/'+ascii_id; 
-		if (!data.media_repository) {
-			data.media_repository =  Dase.base_href+'collection/'+ascii_id+'/media';
-		}
 		data.date = datestring
 		data.ascii_id = ascii_id; 
 		var templateObj = TrimPath.parseDOMTemplate("atom_jst");

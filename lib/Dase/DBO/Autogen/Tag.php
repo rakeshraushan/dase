@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Tag extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'tag',  array('is_public','admin_collection_id','dase_user_id','visibility','eid','type','created','ascii_id','background','description','name'));
+		parent::__construct( 'tag',  array('admin_collection_id','ascii_id','background','created','dase_user_id','description','eid','is_public','name','type','visibility'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

@@ -16,7 +16,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 
 		$collection_name = $this->getName();
 		$ascii_id = $this->getAsciiId();
-		$media_repos = $this->getLink('http://daseproject.org/relation/media-collection');
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;
 		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
@@ -29,7 +28,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		}
 		$c->path_to_media_files = $media_dir;
 		$c->is_public = 0;
-		$c->media_repository = $media_repos;
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
