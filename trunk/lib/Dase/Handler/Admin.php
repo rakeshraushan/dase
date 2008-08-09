@@ -125,7 +125,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$name = $_FILES[$input_name]['name'];
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
-			Dase_Log::info('uploaded file '.$name.' type: '.$type);
+			Dase_Log::info('uploading file '.$name.' type: '.$type);
 			try {
 				$u = new Dase_Upload(Dase_File::newFile($path,$type,$name),$this->collection);
 				$ser_num = $u->createItem($request->getUser()->eid);

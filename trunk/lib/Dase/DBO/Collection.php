@@ -507,14 +507,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
 			->addCategory('item','http://daseproject.org/category/entrytype');
-		$media_repos = $this->media_repository;
-		if (!$media_repos) {
-			$media_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/media';
+		$media_repos = APP_ROOT.'/media/'.$this->ascii_id;
+		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
+		foreach(Dase_Config::get('media_types') as $type) {
+			$media_coll->addAccept($type);
 		}
-		$ws->addCollection($media_repos,$this->collection_name.' Media')
-			->addAccept('image/*')
-			->addAccept('audio/*')
-			->addAccept('video/*');
 		return $svc->asXml();
 	}
 

@@ -91,12 +91,12 @@ while ($row = $st->fetch()) {
 		if (isset($media_count[$row['acc_num_PK']]) && 6 == $media_count[$row['acc_num_PK']]) {
 			print "{$row['acc_num_PK']} already exists and has 6 media items!\n";
 		} else {
-			build($row['acc_num_PK'],$coll,$media_count);
+			build($row['acc_num_PK'],$coll,$media_count,$images);
 		}
 	}
 }
 
-function build($sernum,$coll,$media_count) {
+function build($sernum,$coll,$media_count,$images) {
 	$url = APP_ROOT . "/modules/vrc/$sernum";
 	print "retrieve $url\n";
 	$sxe = new SimpleXMLElement($url, NULL, TRUE);
@@ -147,19 +147,26 @@ function build($sernum,$coll,$media_count) {
 		print "inserted $a->attribute_name : $m\n";
 	}
 
-	$file = $sxe->item[0]['digital_file'];
-	print "retrieving htttp://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file\n";
-	$img = file_get_contents("http://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file");
-	file_put_contents("/tmp/$file",$img);
+	$file = (string) $sxe->item[0]['digital_file'];
+	//print "retrieving htttp://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file\n";
+	//$img = file_get_contents("http://quickdraw.laits.utexas.edu/dase/modules/vrc/image/$file");
+	$path = $images[$file];
+	if ($path && copy($path,"/tmp/$file")) {
+		print "copied $path to /tmp/$file\n";
 
-	makeThumbnail("/tmp/$file",$item,$coll);
-	makeViewitem("/tmp/$file",$item,$coll);
-	makeSizes("/tmp/$file",$item,$coll);
-	unlink("/tmp/$file");
+		//file_put_contents("/tmp/$file",$img);
 
-	print "building search index......";
-	$item->buildSearchIndex();
-	print "done.\n\n";
+		makeThumbnail("/tmp/$file",$item,$coll);
+		makeViewitem("/tmp/$file",$item,$coll);
+		makeSizes("/tmp/$file",$item,$coll);
+		unlink("/tmp/$file");
+
+		print "building search index......";
+		$item->buildSearchIndex();
+		print "done.\n\n";
+	} else {
+		print "no go $file ($path)\n";
+	}
 }
 
 function makeThumbnail($filename,$item,$coll) {

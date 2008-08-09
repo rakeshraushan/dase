@@ -27,11 +27,23 @@ $conf['ppd_token'] = "
 	and it's Easter time, too." 
 	. date('Ymd',time()); //changes every day
 
+//path to imagemagick convert
+$conf['convert'] = '/usr/bin/convert';
+
 //collection-specific media dirs live under here /<collection_ascii_id>/<size>
-$conf['path_to_media'] = '/opt/local/www-data/dase/media';
+//$conf['path_to_media'] = '/opt/local/www-data/dase/media';
+$conf['path_to_media'] = '/mnt/www-data/dase/media';
+
+//mime types that collections accept
+$conf['media_types'][] = 'image/*';
+$conf['media_types'][] = 'audio/*';
+$conf['media_types'][] = 'video/*';
+$conf['media_types'][] = 'application/pdf';
+
 
 //a place to store metadata of deleted items (just-in-case)
-$conf['graveyard'] = "/opt/local/www-data/dase/graveyard";
+//$conf['graveyard'] = "/opt/local/www-data/dase/graveyard";
+$conf['graveyard'] = "/mnt/www-data/dase/graveyard";
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';

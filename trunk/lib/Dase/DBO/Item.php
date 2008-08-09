@@ -449,11 +449,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 
-		//item no longer has a service doc
-		//$entry->addLink($this->getBaseUrl().'/service','service' );
-		//not necessarily true, since media coll can be someplace else.
-		//allow the collection service doc to dictate where the media collection is
-		//$entry->addLink($this->getBaseUrl().'/media','http://daseproject.org/relation/media-collection' );
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$img = $div->addChild('img');
