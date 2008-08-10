@@ -25,11 +25,6 @@
 		<!-- atompub discovery -->
 		<link rel="service" type="application/atomsvc+xml" href="service"/>
 
-		<!--[if lt IE 7]>
-		<script type="text/javascript" src="scripts/ie7/IE7.js"></script>
-		<script type="text/javascript" src="scripts/ie7/ie7-squish.js"></script>
-		<script type="text/javascript" src="scripts/ie7/ie7-recalc.js"></script>
-		<![endif]-->
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
