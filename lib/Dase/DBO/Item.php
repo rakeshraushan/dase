@@ -253,7 +253,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
+		//$m->item_id = $this->id;
+		$m->p_collection_ascii_id = $this->collection->ascii_id;
+		$m->p_serial_number = $this->serial_number;
 		$m->orderBy('width');
 		return $m->find();
 	}
@@ -262,7 +264,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
+		//$m->item_id = $this->id;
+		$m->p_collection_ascii_id = $this->collection_ascii_id;
+		$m->p_serial_number = $this->serial_number;
 		$m->orderBy('file_size DESC');
 		return $m->findOne();
 	}
@@ -271,7 +275,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{  //size really means type here
 		$this->collection || $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		$m->item_id = $this->id;
+		//$m->item_id = $this->id;
+		$m->p_collection_ascii_id = $this->collection_ascii_id;
+		$m->p_serial_number = $this->serial_number;
 		$m->size = $size;
 		$m->findOne();
 		$url = APP_ROOT . "/media/{$this->collection->ascii_id}/$size/$m->filename";
@@ -280,11 +286,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getMediaCount()
 	{
+		$this->collection || $this->getCollection();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
 			FROM media_file
 			WHERE item_id = $this->id
+			";
+		$sql = "
+			SELECT count(*) 
+			FROM media_file
+			WHERE p_serial_number = $this->serial_number
+			AND p_collection_ascii_id = $this->collection->ascii_id
 			";
 		return $db->query($sql)->fetchColumn();
 	}

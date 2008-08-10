@@ -1,21 +1,21 @@
 #!/usr/bin/php
 <?php
 
+$working = dirname(__FILE__) . '/..';
+define('DASE_PATH',$working);
+
 /*********** CONFIGURATION ********************/
 
-//$app = 'dase';
-//$target = '/opt/local/apache2/htdocs/'.$app;
-//$rewrite_base = $app; 
-//$httpd_group = 'www';
-
-$app = 'dase1';
-$target = '/var/www/html/'.$app;
-$rewrite_base = $app; 
-$httpd_group = 'apache';
+//all of these configurations are set in 'inc/config.php' or 'inc/local_config.php';
+include $working.'/inc/config.php';
+$target = $conf['application_path'];
+$httpd_group = $conf['apache_group'];
+$rewrite_base = '';
+if ($target !== $conf['apache_docroot']) {
+	$rewrite_base = str_replace($conf['apache_docroot'].'/','',$target); 
+}
 
 /**********************************************/
-
-$working = dirname(__FILE__) . '/..';
 
 print "copying $working/* to $target\n";
 print "...\n";
@@ -46,9 +46,9 @@ if ($bytes) {
 	print "error writing .htaccess\n";
 }
 
-apacheWrite("$working/cache", $httpd_group);
-apacheWrite("$working/log/error.log", $httpd_group);
-apacheWrite("$working/log/dase.log", $httpd_group);
+apacheWrite("$target/cache", $httpd_group);
+apacheWrite("$target/log/error.log", $httpd_group);
+apacheWrite("$target/log/dase.log", $httpd_group);
 
 print "done!\n";
 

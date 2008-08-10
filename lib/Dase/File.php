@@ -21,7 +21,7 @@
 
 abstract class Dase_File
 {
-	private static $types_map = array(
+	public static $types_map = array(
 		'image/jpeg' => array('size' => 'jpeg', 'ext' => 'jpg','class'=>'Dase_File_Image'),
 		'image/gif' => array('size' => 'gif', 'ext' => 'gif','class'=>'Dase_File_Image'),
 		'image/png' => array('size' => 'png', 'ext' => 'png','class'=>'Dase_File_Image'),
@@ -69,6 +69,34 @@ abstract class Dase_File
 		}
 	}
 
+	static function newFile($file,$mime='',$orig_name='')
+	{
+		if (!$mime) {
+			$mime = Dase_File::getMimeType($file);
+		}
+		if ($mime) {
+			if (!isset(self::$types_map[$mime])) {
+				$orig_name = $orig_name ? $orig_name : $file;
+				throw new Exception("DASe does not handle $mime mime type ($orig_name)");
+			}
+			//creates proper subclass
+			$dasefile = new self::$types_map[$mime]['class']($file,$mime);
+			$dasefile->size = self::$types_map[$mime]['size'];
+			$dasefile->ext = self::$types_map[$mime]['ext'];
+			$dasefile->mime_type = $mime;
+			$dasefile->orig_name = $orig_name;
+			return $dasefile;
+		} else {
+			throw new Exception("cannot determin mime type for $file");
+		}
+	}
+
+	static function newFileFromUrl($file)
+	{
+		$mime = Dase_File::getMimeType($file,1);
+
+	}
+
 	function getFilepath()
 	{
 		return $this->filepath;
@@ -113,34 +141,6 @@ abstract class Dase_File
 		$this->metadata['admin_filepath'] = $this->filepath;
 		return $this->metadata;
 	}	
-
-	static function newFile($file,$mime='',$orig_name='')
-	{
-		if (!$mime) {
-			$mime = Dase_File::getMimeType($file);
-		}
-		if ($mime) {
-			if (!isset(self::$types_map[$mime])) {
-				$orig_name = $orig_name ? $orig_name : $file;
-				throw new Exception("DASe does not handle $mime mime type ($orig_name)");
-			}
-			//creates proper subclass
-			$dasefile = new self::$types_map[$mime]['class']($file,$mime);
-			$dasefile->size = self::$types_map[$mime]['size'];
-			$dasefile->ext = self::$types_map[$mime]['ext'];
-			$dasefile->mime_type = $mime;
-			$dasefile->orig_name = $orig_name;
-			return $dasefile;
-		} else {
-			throw new Exception("cannot determin mime type for $file");
-		}
-	}
-
-	static function newFileFromUrl($file)
-	{
-		$mime = Dase_File::getMimeType($file,1);
-
-	}
 
 	static function getMimeType($file,$is_url = false)
 	{

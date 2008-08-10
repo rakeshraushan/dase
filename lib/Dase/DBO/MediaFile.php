@@ -122,6 +122,8 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 				$val->text = $text;
 				$val->insert();
 			}
+		} else {
+			Dase_Log::info('ALERT: no such media attribute: '.$term);
 		}
 	}
 
