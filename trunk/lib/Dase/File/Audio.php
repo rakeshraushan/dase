@@ -11,6 +11,7 @@ class Dase_File_Audio extends Dase_File
 
 	function getMetadata()
 	{
+		//todo: id3 will ONLY be available as a plugin from now on 8/9/08
 		$this->metadata = parent::getMetadata();
 		//$getid3 = new getID3;
 		$getid3 = new getid3;

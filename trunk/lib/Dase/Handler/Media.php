@@ -82,21 +82,27 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		fclose($fp);
 
-		$slug = '';
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$slug = Dase_Util::dirify( $_SERVER['HTTP_SLUG'] );
+			$title = $_SERVER['HTTP_SLUG'];
 		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
-			$slug = Dase_Util::dirify( $_SERVER['HTTP_TITLE'] );
+			$title = $_SERVER['HTTP_TITLE'];
 		} else {
-			$slug = $item->serial_number;
+			$title = Dase_Util::getUniqueName();
 		}
-		$upload_dir = Dase_Config:get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+
+		//note: "basename" is the unique identifier for a file or file group
+		//it is often the same as the item serial_number, but not always
+		$basename = Dase_Util::dirify($title);
+
+		$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$request->renderError(401,'missing upload directory');
 		}
 
-		$ext = $subtype;
-		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+		$ext = Dase_File::$types_map[$type]['ext'];
+		$new_file = $upload_dir.'/'.$basename.'.'.$ext;
+
+		//todo: check for duplicate filename here!
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
@@ -108,23 +114,25 @@ class Dase_Handler_Media extends Dase_Handler
 		// Set correct file permissions
 		@ chmod( $new_file,0644);
 
-		//NOW do a 'file upload' a la DASe
+		//check for multi-layered tiff
+		if ('image/tiff' == $type ){
+			$image = new Imagick($new_file);
+			if ($image->getNumberImages() > 1) {
+				Dase::error(400,"appears to be a multi-layered tiff");
+			}
+		}
 		try {
-			//$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),false); //false means do NOT check for dup
-			$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),true); //false means do NOT check for dup
-			//may need to account for multi-tiff
-			//$u->checkForMultiTiff();
-			$u->setItem($item);
-			$u->ingest();
-			$u->setTitle($slug);
-			$u->buildSearchIndex();
+			$file = Dase_File::newFile($new_file);
+			$file->addToCollection($file,$title,$c,false);  //set 3rd param to true to test for dups
+			$file->addDerivativesToCollection($file,$title,$c);
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
 			$request->renderError(500,'could not ingest file');
 		}
+		//the returned atom entry needs links to derivs
 		$m = new Dase_DBO_MediaFile;
-		$m->p_collection_ascii_id = $coll->ascii_id;
-		$m->p_serial_number = $item->serial_number;
+		$m->p_collection_ascii_id = $c->ascii_id;
+		$m->p_serial_number = $basename;
 		$m->size = $u->getDaseFileSize(); //meaning media directory
 		if ($m->findOne()) {
 			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';

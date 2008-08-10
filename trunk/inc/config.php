@@ -1,8 +1,5 @@
 <?php
 
-//settings in this file are chacked "as needed" (i.e. will not be used
-//on every request
-
 $conf['db']['type'] = 'mysql';
 $conf['db']['path'] = '/var/www-data/dase/dase.db';  //sqlite only
 $conf['db']['host'] = 'localhost';
@@ -13,6 +10,11 @@ $conf['db']['pass'] = 'password';
 $conf['superuser'][] = 'pkeane';
 $conf['superuser'][] = 'rru62';
 
+//deployment settings
+$conf['apache_docroot'] = '/var/www/html';
+$conf['application_path'] = $conf['apache_docroot'].'/dase1';
+$conf['apache_group'] = 'apache';
+
 //define alternative (plugin) handlers
 //$conf['handler']['login'] = 'openid';
 $conf['handler']['db'] = 'dbadmin';
@@ -22,15 +24,13 @@ $conf['handler']['am'] = 'ancientmeso';
 $conf['token'] = 'foxinsocks' . date('Ymd',time()); //changes every day
 
 //POST/PUT/DELETE token:	
-$conf['ppd_token'] = "
-	When you're lost in the rain in Juarez 
-	and it's Easter time, too." 
-	. date('Ymd',time()); //changes every day
+$conf['ppd_token'] = "hurry up please, it's time...".date('Ymd',time()); //changes every day
 
 //path to imagemagick convert
 $conf['convert'] = '/usr/bin/convert';
 
 //collection-specific media dirs live under here /<collection_ascii_id>/<size>
+//must be apache group writeable
 //$conf['path_to_media'] = '/opt/local/www-data/dase/media';
 $conf['path_to_media'] = '/mnt/www-data/dase/media';
 
@@ -40,8 +40,8 @@ $conf['media_types'][] = 'audio/*';
 $conf['media_types'][] = 'video/*';
 $conf['media_types'][] = 'application/pdf';
 
-
 //a place to store metadata of deleted items (just-in-case)
+//must be apache group writeable
 //$conf['graveyard'] = "/opt/local/www-data/dase/graveyard";
 $conf['graveyard'] = "/mnt/www-data/dase/graveyard";
 

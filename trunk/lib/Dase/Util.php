@@ -29,7 +29,7 @@ Class Dase_Util
 	}
 
 	/** from http://www.weberdev.com/get_example-3543.html */
-	public static function getUniqueFilename($xtn = "tmp")
+	public static function getUniqueName()
 	{
 		// explode the IP of the remote client into four parts
 		if (isset($_SERVER["REMOTE_ADDR"])) {
@@ -54,7 +54,7 @@ Class Dase_Util
 					| $ipbits[3], $sec, $usec);
 
 		// Tag on the extension and return the filename
-		return $uid.'.'.$xtn;
+		return $uid;
 	} 
 
 	public static function dirify($str)
