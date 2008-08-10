@@ -19,15 +19,6 @@
 		<link rel="stylesheet" type="text/css" href="www/css/admin.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
-		<!--[if lt IE 7]>
-		<script type="text/javascript" src="scripts/ie7/IE7.js"></script>
-		<script type="text/javascript" src="scripts/ie7/ie7-squish.js"></script>
-		<script type="text/javascript" src="scripts/ie7/ie7-recalc.js"></script>
-		<![endif]-->
-		<!--
-		<script src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript">google.load('jquery','1');</script>
-		-->
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
