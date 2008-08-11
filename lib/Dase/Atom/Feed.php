@@ -21,6 +21,10 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed_Collection',
 			'entry' => 'Dase_Atom_Entry_Collection',
 		),
+		'media-collection' => array(
+			'feed' => 'Dase_Atom_Feed',
+			'entry' => 'Dase_Atom_Entry',
+		),
 		'item' => array(
 			'feed' => 'Dase_Atom_Feed_Item',
 			'entry' => 'Dase_Atom_Entry_Item',

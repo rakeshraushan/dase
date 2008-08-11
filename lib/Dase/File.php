@@ -127,18 +127,15 @@ abstract class Dase_File
 		return $this->orig_name;
 	}
 
-	abstract public function makeThumbnail($item,$collection);
-	abstract public function makeViewitem($item,$collection);
-	abstract public function processFile($item,$collection);
+	abstract public function addToCollection($title,$uid,$collection,$check_for_dups);
 
 	function getMetadata()
 	{
-		$this->metadata['admin_checksum'] = md5_file($this->filepath);
-		$this->metadata['admin_file_size'] = $this->file_size;
-		$this->metadata['admin_filename'] = $this->basename;
-		$this->metadata['admin_last_modified_date_time'] = filemtime($this->filepath); 
-		$this->metadata['admin_mime_type'] = $this->mime_type;
-		$this->metadata['admin_filepath'] = $this->filepath;
+		$this->metadata['md5'] = md5_file($this->filepath);
+		$this->metadata['file_size'] = $this->file_size;
+		$this->metadata['filename'] = $this->basename;
+		$this->metadata['updated'] = date(DATE_ATOM,filemtime($this->filepath)); 
+		$this->metadata['mime_type'] = $this->mime_type;
 		return $this->metadata;
 	}	
 

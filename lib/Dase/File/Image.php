@@ -11,34 +11,92 @@ class Dase_File_Image extends Dase_File
 		parent::__construct($file,$mime);
 	}
 
+	function addToCollection($title,$base_ident,$collection,$check_for_dups)
+	{
+		//check for multi-layered tiff
+		if ('image/tiff' == $this->mime_type ){
+			$image = new Imagick($new_file);
+			if ($image->getNumberImages() > 1) {
+				Dase::error(400,"appears to be a multi-layered tiff");
+				//throw new Exception("Error: ".$title." appears to be a multi-layered tiff\n");
+			}
+		}
+		$this->getMetadata();
+
+		//prevents 2 files in same collection w/ same md5
+		if ($check_for_dups) {
+			$mf = new Dase_DBO_MediaFile;
+			$mf->p_collection_ascii_id = $collection->ascii_id;
+			$mf->md5 = $this->metadata['md5'];
+			if ($mf->findOne()) {
+				throw new Exception('duplicate file');
+			}
+		}
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$base_ident.'.'.$this->ext;
+		//should this be try-catch?
+		if ($this->copyTo($target)) {
+			$media_file = new Dase_DBO_MediaFile;
+			$meta = array(
+				'filename','file_size','height','width','mime_type','updated','md5'
+			);
+			foreach ($meta as $term) {
+				if (isset($this->metadata[$term])) {
+					$media_file->$term = $this->metadata[$term];
+				}
+			}
+			$media_file->item_id = 0;
+			$media_file->size = $this->size;
+			$media_file->p_serial_number = $base_ident;
+			$media_file->p_collection_ascii_id = $collection->ascii_id;
+			$media_file->insert();
+			foreach ($this->metadata as $term => $text) {
+				$media_file->addMetadata($term,$text);
+			}
+			$media_file->addMetadata('title',$title);
+		}
+		$rotate = 0;
+		if (isset($this->metadata['exif_orientation'])) {
+			if (6 == $this->metadata['exif_orientation']) {
+				$rotate = 90;
+			}
+			if (8 == $this->metadata['exif_orientation']) {
+				$rotate = 270;
+			}
+		}
+		$this->makeThumbnail($base_ident,$collection,$rotate);
+		$this->makeViewitem($base_ident,$collection,$rotate);
+		$this->makeSizes($base_ident,$collection,$rotate);
+		return $media_file;
+	}
+
 	function getIptc()
 	{   
 		$iptc_metadata = array();
-		$iptc_table['2#005'] = 'admin_iptc_object_name';
-		$iptc_table['2#015'] = 'admin_iptc_category';
-		$iptc_table['2#020'] = 'admin_iptc_supplemental_category';
-		$iptc_table['2#025'] = 'admin_iptc_keywords';
-		$iptc_table['2#055'] = 'admin_iptc_date_created';
-		$iptc_table['2#060'] = 'admin_iptc_time_created';
-		$iptc_table['2#062'] = 'admin_iptc_digital_creation_date';
-		$iptc_table['2#063'] = 'admin_iptc_digital_creation_time';
-		$iptc_table['2#065'] = 'admin_iptc_originating_program';
-		$iptc_table['2#070'] = 'admin_iptc_program_version';
-		$iptc_table['2#080'] = 'admin_iptc_by_line';
-		$iptc_table['2#085'] = 'admin_iptc_by_line_title';
-		$iptc_table['2#090'] = 'admin_iptc_city';
-		$iptc_table['2#092'] = 'admin_iptc_sub_location';
-		$iptc_table['2#095'] = 'admin_iptc_province_state';
-		$iptc_table['2#100'] = 'admin_iptc_country_primary_location_code';
-		$iptc_table['2#101'] = 'admin_iptc_country_primary_location_name';
-		$iptc_table['2#105'] = 'admin_iptc_headline';
-		$iptc_table['2#110'] = 'admin_iptc_credit';
-		$iptc_table['2#115'] = 'admin_iptc_source';
-		$iptc_table['2#116'] = 'admin_iptc_copyright_notice';
-		$iptc_table['2#118'] = 'admin_iptc_contact';
-		$iptc_table['2#120'] = 'admin_iptc_caption_abstract';
-		$iptc_table['2#122'] = 'admin_iptc_caption_writer';
-		$iptc_table['2#131'] = 'admin_iptc_image_orientation';
+		$iptc_table['2#005'] = 'iptc_object_name';
+		$iptc_table['2#015'] = 'iptc_category';
+		$iptc_table['2#020'] = 'iptc_supplemental_category';
+		$iptc_table['2#025'] = 'iptc_keywords';
+		$iptc_table['2#055'] = 'iptc_date_created';
+		$iptc_table['2#060'] = 'iptc_time_created';
+		$iptc_table['2#062'] = 'iptc_digital_creation_date';
+		$iptc_table['2#063'] = 'iptc_digital_creation_time';
+		$iptc_table['2#065'] = 'iptc_originating_program';
+		$iptc_table['2#070'] = 'iptc_program_version';
+		$iptc_table['2#080'] = 'iptc_by_line';
+		$iptc_table['2#085'] = 'iptc_by_line_title';
+		$iptc_table['2#090'] = 'iptc_city';
+		$iptc_table['2#092'] = 'iptc_sub_location';
+		$iptc_table['2#095'] = 'iptc_province_state';
+		$iptc_table['2#100'] = 'iptc_country_primary_location_code';
+		$iptc_table['2#101'] = 'iptc_country_primary_location_name';
+		$iptc_table['2#105'] = 'iptc_headline';
+		$iptc_table['2#110'] = 'iptc_credit';
+		$iptc_table['2#115'] = 'iptc_source';
+		$iptc_table['2#116'] = 'iptc_copyright_notice';
+		$iptc_table['2#118'] = 'iptc_contact';
+		$iptc_table['2#120'] = 'iptc_caption_abstract';
+		$iptc_table['2#122'] = 'iptc_caption_writer';
+		$iptc_table['2#131'] = 'iptc_image_orientation';
 		$size = getimagesize ( $this->filepath, $info);       
 		if(is_array($info) && isset($info["APP13"])) {   
 			$iptc = iptcparse($info["APP13"]);
@@ -66,8 +124,8 @@ class Dase_File_Image extends Dase_File
 		$this->getIptc();
 		$this->getExif();
 		$size = getimagesize($this->filepath);
-		$this->metadata['admin_image_width'] =  $size[0];
-		$this->metadata['admin_image_height'] = $size[1];
+		$this->metadata['width'] =  $size[0];
+		$this->metadata['height'] = $size[1];
 		return $this->metadata;
 	}
 
@@ -75,45 +133,42 @@ class Dase_File_Image extends Dase_File
 	function getExif()
 	{
 
-		//exif_read_data only gooss w/ jpg & tif
+		//exif_read_data only w/ jpg & tif
 		if (strpos($this->mime_type,'jpg') ||
 			strpos($this->mime_type, 'tif') ||
 			strpos($this->mime_type, 'jpeg') ||
 			strpos($this->mime_type, 'tiff'))
 		{
-		/*
-		$exif_table['FileName'] = 'admin_exif_XXXX';
-		$exif_table['FileDateTime'] = 'admin_exif_XXXX';
-		$exif_table['FileSize'] = 'admin_exif_XXXX';
-		$exif_table['FileType'] = 'admin_exif_XXXX';
-		$exif_table['MimeType'] = 'admin_exif_XXXX';
-		$exif_table['Make'] = 'admin_exif_XXXX';
-		$exif_table['Model'] = 'admin_exif_XXXX';
-		$exif_table['Orientation'] = 'admin_exif_XXXX';
-		$exif_table['XResolution'] = 'admin_exif_XXXX';
-		$exif_table['YResolution'] = 'admin_exif_XXXX';
-		$exif_table['ResolutionUnit'] = 'admin_exif_XXXX';
-		$exif_table['DateTime'] = 'admin_exif_XXXX';
-		$exif_table['YCbCrPositioning'] = 'admin_exif_XXXX';
-		$exif_table['Exif_IFD_Pointer'] = 'admin_exif_XXXX';
-		$exif_table['ExposureTime'] = 'admin_exif_XXXX';
-		$exif_table['FNumber'] = 'admin_exif_XXXX';
-		$exif_table['ExifVersion'] = 'admin_exif_XXXX';
-		$exif_table['DateTimeOriginal'] = 'admin_exif_XXXX';
-		$exif_table['DateTimeDigitized'] = 'admin_exif_XXXX';
-		$exif_table['ComponentsConfiguration'] = 'admin_exif_XXXX';
-		$exif_table['CompressedBitsPerPixel'] = 'admin_exif_XXXX';
-		$exif_table['ShutterSpeedValue'] = 'admin_exif_XXXX';
-		$exif_table['ApertureValue'] = 'admin_exif_XXXX';
-		$exif_table['ExposureBiasValue'] = 'admin_exif_XXXX';
-		$exif_table['MaxApertureValue'] = 'admin_exif_XXXX';
-		$exif_table['MeteringMode'] = 'admin_exif_XXXX';
-		$exif_table['ImageType'] = 'admin_exif_XXXX';
-		$exif_table['FirmwareVersion'] = 'admin_exif_XXXX';
-		$exif_table['ImageNumber'] = 'admin_exif_XXXX';
-		$exif_table['OwnerName'] = 'admin_exif_XXXX';
-		 */
-			$exif_table['DateTime'] = 'admin_exif_datetime';
+			$exif_table['FileName'] = 'exif_filename';
+			//$exif_table['FileDateTime'] = 'exif_filedatetime';
+			$exif_table['FileSize'] = 'exif_filesize';
+			$exif_table['FileType'] = 'exif_filetype';
+			$exif_table['MimeType'] = 'exif_mimetype';
+			$exif_table['Make'] = 'exif_make';
+			$exif_table['Model'] = 'exif_model';
+			$exif_table['Orientation'] = 'exif_orientation';
+		//	$exif_table['XResolution'] = 'exif_xresolution';
+		//	$exif_table['YResolution'] = 'exif_yresolution';
+		//	$exif_table['ResolutionUnit'] = 'exif_resolutionunit';
+			$exif_table['DateTime'] = 'exif_datetime';
+		//	$exif_table['YCbCrPositioning'] = 'exif_ycbcrpositioning';
+		//	$exif_table['Exif_IFD_Pointer'] = 'exif_ifd_pointer';
+		//	$exif_table['ExposureTime'] = 'exif_exposuretime';
+		//	$exif_table['FNumber'] = 'exif_fnumber';
+		//	$exif_table['ExifVersion'] = 'exif_exifversion';
+		//	$exif_table['DateTimeOriginal'] = 'exif_datetimeoriginal';
+		//	$exif_table['DateTimeDigitized'] = 'exif_datetimedigitized';
+		//	$exif_table['ComponentsConfiguration'] = 'exif_componentsconfiguration';
+		//	$exif_table['CompressedBitsPerPixel'] = 'exif_compressedbitsperpixel';
+		//	$exif_table['ShutterSpeedValue'] = 'exif_shutterspeedvalue';
+		//	$exif_table['ApertureValue'] = 'exif_aperturevalue';
+		//	$exif_table['ExposureBiasValue'] = 'exif_exposurebiasvalue';
+		//	$exif_table['MaxApertureValue'] = 'exif_maxaperturevalue';
+		//	$exif_table['MeteringMode'] = 'exif_meteringmode';
+			$exif_table['ImageType'] = 'exif_imagetype';
+		//	$exif_table['FirmwareVersion'] = 'exif_firmwareversion';
+		//	$exif_table['ImageNumber'] = 'exif_imagenumber';
+			$exif_table['OwnerName'] = 'exif_ownername';
 			$exif_metadata = array();
 			$exif = exif_read_data($this->filepath);
 			if (is_array($exif)) {
@@ -130,15 +185,16 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeThumbnail($item,$collection)
+	function makeThumbnail($base_ident,$collection,$rotate)
 	{
-		$thumbnail = $collection->path_to_media_files . "/thumbnails/$item->serial_number" . '_100.jpg';  
-		$results = exec("$this->convert \"$this->filepath\" -format jpeg -resize '100x100 >' -colorspace RGB $thumbnail");
+		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnails/'.$base_ident.'_100.jpg';  
+		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
 		$file_info = getimagesize($thumbnail);
 
 		$media_file = new Dase_DBO_MediaFile;
-		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number . '_100.jpg';
+		//todo: compat
+		$media_file->item_id = 0;
+		$media_file->filename = $base_ident.'_100.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
 			$media_file->height = $file_info[1];
@@ -147,20 +203,20 @@ class Dase_File_Image extends Dase_File
 		$media_file->size = 'thumbnail';
 		$media_file->file_size = filesize($thumbnail);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $item->serial_number;
+		$media_file->p_serial_number = $base_ident;
 		$media_file->insert();
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$collection)
+	function makeViewitem($base_ident,$collection,$rotate)
 	{
-		$viewitem = $collection->path_to_media_files . "/400/$item->serial_number" . '_400.jpg';  
-		$results = exec("$this->convert \"$this->filepath\" -format jpeg -resize '400x400 >' -colorspace RGB $viewitem");
+		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/400/'.$base_ident.'_400.jpg';  
+		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
 		$file_info = getimagesize($viewitem);
 
 		$media_file = new Dase_DBO_MediaFile;
-		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number . '_400.jpg';
+		$media_file->item_id = 0;
+		$media_file->filename = $base_ident . '_400.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
 			$media_file->height = $file_info[1];
@@ -169,53 +225,13 @@ class Dase_File_Image extends Dase_File
 		$media_file->size = 'viewitem';
 		$media_file->file_size = filesize($viewitem);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $item->serial_number;
+		$media_file->p_serial_number = $base_ident;
 		$media_file->insert();
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	public function processFile($item,$collection)
+	function makeSizes($base_ident,$collection,$rotate)
 	{
-		/* check for multi-tiff */
-		if ('image/tiff' == $this->mime_type) {
-			$image = new Imagick($this->getFilepath());
-			if (1 > $image->getNumberImages()) {
-				throw new Dase_Upload_Exception("Error: ".$this->getOrigName()." appears to be a multi-layered tiff\n");
-			} 
-		}
-
-		$this->_makeSizes($item,$collection);
-
-		//todo: beware!!! this moves archival tifs into DASe!!
-		$dest = $collection->path_to_media_files.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
-		$this->copyTo($dest);
-		$file_info = getimagesize($dest);
-		if ($file_info) {
-		$media_file = new Dase_DBO_MediaFile;
-
-		foreach ($this->getMetadata() as $term => $value) {
-			$media_file->addMetadata($term,$value);
-		}
-
-		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number.'.'.$this->ext;
-		$media_file->file_size = $this->file_size;
-		$media_file->mime_type = $this->mime_type;
-		$media_file->size = $this->size; 
-		$media_file->width = $file_info[0];
-		$media_file->height = $file_info[1];
-		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $item->serial_number;
-		$media_file->insert();
-		Dase_Log::info("created $media_file->filename ($media_file->size) which is $this->file_size bytes in size");
-		} else {
-			//report error??????
-		}
-	}
-
-	private function _makeSizes($item,$collection)
-	{
-		$msg = '';
 		$image_properties = array(
 			'small' => array(
 				'geometry'        => '640x480',
@@ -241,21 +257,21 @@ class Dase_File_Image extends Dase_File
 		$last_width = '';
 		$last_height = '';
 		foreach ($image_properties as $size => $size_info) {
-			$newimage = $collection->path_to_media_files . "/$size/$item->serial_number{$size_info['size_tag']}.jpg";  
-			$results = exec("$this->convert \"$this->filepath\" -format jpeg -resize '$size_info[geometry] >' -colorspace RGB $newimage");
+			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$base_ident.$size_info['size_tag'].'.jpg';  
+			$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage");
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry
 			$media_file = new Dase_DBO_MediaFile;
-			$media_file->item_id = $item->id;
-			$media_file->filename = "$item->serial_number{$size_info['size_tag']}.jpg";
+			$media_file->item_id = 0;
+			$media_file->filename = "$base_ident{$size_info['size_tag']}.jpg";
 			if ($file_info) {
 				$media_file->width = $file_info[0];
 				$media_file->height = $file_info[1];
 			}
 
 			if (($media_file->width <= $last_width) && ($media_file->height <= $last_height)) {
-				return $msg;
+				return;
 			}
 
 			$last_width = $media_file->width;
@@ -264,10 +280,10 @@ class Dase_File_Image extends Dase_File
 			$media_file->size = $size;
 			$media_file->file_size = filesize($newimage);
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
-			$media_file->p_serial_number = $item->serial_number;
+			$media_file->p_serial_number = $base_ident;
 			$media_file->insert();
 			Dase_Log::info("created $media_file->size $media_file->filename");
 		}
-		return $msg;
+		return;
 	}
 }
