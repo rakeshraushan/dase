@@ -95,11 +95,20 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed;
 	}
 
-	function asAtom()
+	function asAtom($limit = 20)
 	{
 		$feed = $this->getBaseAtomFeed();
 		$feed->setFeedType('collection');
 		$feed->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->id;
+		if ($limit && is_numeric($limit)) {
+			$items->setLimit($limit);
+		}
+		$items->orderBy('updated DESC');
+		foreach ($items->find() as $item) {
+			$item->injectAtomEntryData($feed->addEntry('item'));
+		}
 		return $feed->asXml();
 	}
 
@@ -503,11 +512,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace($this->collection_name.' Workspace');
-		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id,$this->collection_name.' Items')
+		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' Items')
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
 			->addCategory('item','http://daseproject.org/category/entrytype');
-		$media_repos = APP_ROOT.'/media/'.$this->ascii_id;
+		$media_repos = APP_ROOT.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Config::get('media_types') as $type) {
 			$media_coll->addAccept($type);
@@ -540,4 +549,32 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			}
 		}
 	}
+
+	function mediaAsAtomFeed($limit = 20) 
+	{
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->collection_name.' Media');
+		$feed->setUpdated($this->updated);
+		$feed->setId(APP_ROOT.'/media/'.$this->ascii_id.'.atom');
+		$feed->addAuthor();
+		$feed->setFeedType('media-collection');
+		$feed->addLink(APP_ROOT.'/media/'.$this->ascii_id.'.atom','self');
+		$media = new Dase_DBO_MediaFile;
+		$media->p_collection_ascii_id = $this->ascii_id;
+		$media->orderBy('updated DESC');
+		$media->setLimit($limit);
+		$media->addWhere('size','thumbnail','!=');
+		$media->addWhere('size','viewitem','!=');
+		$media->addWhere('size','small','!=');
+		$media->addWhere('size','medium','!=');
+		$media->addWhere('size','large','!=');
+		$media->addWhere('size','full','!=');
+		$media->addWhere('updated','','!=');
+		foreach ($media->find() as $m) {
+			$entry = $feed->addEntry();
+			$m->injectAtomEntryData($entry);
+		}
+		return $feed->asXml();
+	}	
+
 }

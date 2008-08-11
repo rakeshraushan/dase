@@ -5,18 +5,20 @@ require_once 'Dase/DBO/Autogen/MediaAttribute.php';
 class Dase_DBO_MediaAttribute extends Dase_DBO_Autogen_MediaAttribute 
 {
 	public static $common = array(
-		'client_ip_address',
-		'height',
-		'width',
-		'duration',
 		'bitrate',
-		'frame_rate',
-		'sampling_rate',
-		'language',
+		'client_ip_address',
+		'duration',
 		'file_size',
+		'filename',
+		'frame_rate',
+		'height',
+		'language',
 		'md5',
 		'mime_type',
+		'sampling_rate',
+		'title',
 		'updated',
+		'width',
 	);
 
 	public static function seed() 
@@ -41,8 +43,6 @@ class Dase_DBO_MediaAttribute extends Dase_DBO_Autogen_MediaAttribute
 
 	public static function findOrCreate($term) 
 	{
-		//assume a leading 'admin_' can be stripped
-		$term = str_replace('admin_','',$term);
 		$ma = Dase_DBO_MediaAttribute::get($term);
 		if (!$ma) {
 			$ma = new Dase_DBO_MediaAttribute;

@@ -2,7 +2,7 @@
 
 //this is a standard php-based image POSTer suitable for
 //use with an AtomPub implementation
-
+exit;
 ini_set('include_path','/usr/local/lib/php');
 
 function __autoload($class_name) {
