@@ -165,9 +165,28 @@ class Dase_Atom_Entry extends Dase_Atom
 		$summary = $this->addElement('summary',$text);
 	}
 
+	function getSummary() 
+	{
+		return $this->getAtomElementText('summary');
+	}
+
+	function getSummaryType() 
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'summary') as $el) {
+			return $el->getAttribute('type');
+		}
+	}
+
 	function getContent() 
 	{
 		return $this->getAtomElementText('content');
+	}
+
+	function getContentType() 
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content') as $el) {
+			return $el->getAttribute('type');
+		}
 	}
 
 	function getId() 

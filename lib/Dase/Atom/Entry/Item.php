@@ -195,6 +195,21 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 			}
 		}
+		$content = new Dase_DBO_Content;
+		$atom_content = $this->getContent();
+		if ($atom_content) {
+			$content->text = $atom_content;
+			$content->type = $this->getContentType();
+			$content->item_id = $item->id;
+			$content->p_collection_ascii_id = $c->ascii_id;
+			$content->p_serial_number = $item->serial_number;
+			$content->updated = date(DATE_ATOM);
+			$content->updated_by_eid = $eid;
+			$content->insert();
+		}
+		$item->setValue('title',$this->getTitle());
+		$item->setValue('description',$this->getSummary());
+
 		$enc = $item->getEnclosure(); 
 		//todo:  now POST the $enc to the item's media collection!
 		$item->buildSearchIndex();

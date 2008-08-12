@@ -126,21 +126,25 @@ class Dase_Handler_Admin extends Dase_Handler
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
 			Dase_Log::info('uploading file '.$name.' type: '.$type);
-			try {
-				$u = new Dase_Upload(Dase_File::newFile($path,$type,$name),$this->collection);
-				$ser_num = $u->createItem($request->getUser()->eid);
-				$u->ingest();
-				$u->setTitle($name);
-				$u->buildSearchIndex();
-			} catch(Exception $e) {
-				$error_msg = $e->getMessage();
-				Dase_Log::info($error_msg);
-				header("HTTP/1.1 400 Bad Request");
-				$data['status'] = 'bad request';
-				$data['message'] = $error_msg;
-				$data['num'] = $num;
-				$request->renderResponse(Dase_Json::get($data));
-			}
+
+			$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
+			$item->setValue('title',$name);
+
+			//what about HTTPS ???????
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, APP_ROOT.'/media/'.$this->collection->ascii_id.'?auth=http');
+			$upload = file_get_contents($path);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $upload);
+			curl_setopt($ch, CURLOPT_USERPWD,$this->user->eid.':'.$this->user->getHttpPassword());
+			$str  = array(
+				"Slug: $item->serial_number",
+				"Content-type: $type"
+			);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			Dase_Log::debug(curl_exec($ch));
+			curl_close($ch);  
 		} else {
 			$request->renderError(400,'could not upload file');
 		}
@@ -148,11 +152,11 @@ class Dase_Handler_Admin extends Dase_Handler
 		$params['num'] = $num;
 		$params['message'] = 'ok';
 		$params['filename'] = $name;
-		$params['filesize'] = $u->getFileSize();
-		$params['filetype'] = $u->getFiletype();
-		$params['title'] = $u->getTitle();
-		$params['item_url'] = $u->getItemUrl();
-		$params['thumbnail_url'] = $u->getThumbnailUrl();
+		$params['filesize'] = filesize($path);
+		$params['filetype'] = $type;
+		$params['title'] = $item->serial_number;
+		$params['item_url'] = $item->getBaseUrl();
+		$params['thumbnail_url'] = $item->getMediaUrl('thumbnail');
 		Dase_Log::debug(join('|',$params));
 		$request->renderRedirect('admin/'.$this->collection->ascii_id.'/upload/status',$params);
 	}

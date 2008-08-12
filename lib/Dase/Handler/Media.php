@@ -123,14 +123,14 @@ class Dase_Handler_Media extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file);
+			$file = Dase_File::newFile($new_file,$type);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
 			$media_file = $file->addToCollection($title,$base_ident,$c,false);  //set 4th param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
-			$request->renderError(500,'could not ingest file');
+			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		//the returned atom entry links to derivs!
 		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
