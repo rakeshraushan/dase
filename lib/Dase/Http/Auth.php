@@ -13,10 +13,10 @@ class Dase_Http_Auth
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$password = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,8);
 			if (in_array($_SERVER['PHP_AUTH_PW'],array('skeletonkey',$password))) {
-				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_USER']);
+				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
 				return $eid;
 			} else {
-				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_USER']);
+				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
 			}
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');

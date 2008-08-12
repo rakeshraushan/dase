@@ -5,6 +5,9 @@
 {/block}
 
 {block name="title"}DASe: {$collection->name|escape}{/block} 
+{block name="servicedoc"}
+<link rel="service" type="application/atomsvc+xml" href="collection/{$collection->asciiId}/service"/>
+{/block} 
 
 {block name="content"}
 <div class="full" id="browse">

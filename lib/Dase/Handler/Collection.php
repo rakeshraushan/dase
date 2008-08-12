@@ -120,11 +120,12 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$this->user = $request->getUser('http');
 		if (!$this->user->can('write','collection',$this->collection)) {
-			$request->renderError(401);
+			$request->renderError(401,'no go unauthorized');
 		}
 		$content_type = $request->getContentType();
 
-		if ('application/atom+xml;type=entry' == $content_type) {
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
 			$this->_newAtomItem($request);
 		} elseif ('application/json' == $content_type) {
 			$this->_newJsonItem($request);
@@ -143,7 +144,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$item_entry = Dase_Atom_Entry::load($raw_input);
 		if ('item' != $item_entry->entrytype) {
-			$request->renderError(400,'must be an item entry');
+		//	$item_entry->setEntryType('item');
+		//	$request->renderError(400,'must be an item entry');
 		}
 		$item = $item_entry->insert($request);
 		header("HTTP/1.1 201 Created");

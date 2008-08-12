@@ -447,7 +447,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//for AtomPub
 		$entry->setEdited($updated);
 		//for AtomPub -- is this correct??
-		$entry->addLink(APP_ROOT.'/edit/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit' );
+		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','edit' );
 		$entry->setUpdated($updated);
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
