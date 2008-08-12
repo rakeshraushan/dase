@@ -112,6 +112,8 @@ class Dase_Handler_Admin extends Dase_Handler
 		$request->renderResponse($tpl->fetch('admin/uploader.tpl'));
 	}
 
+	/** here we create an item, then AtomPub POST a file with the sernum as slug */
+	/* (cool, but bandwidth wasteful and slow) */
 	public function postToUploader($request)
 	{
 		//todo: check ppd?
@@ -130,7 +132,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
 			$item->setValue('title',$name);
 
-			//what about HTTPS ???????
+			/*
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, APP_ROOT.'/media/'.$this->collection->ascii_id.'?auth=http');
 			$upload = file_get_contents($path);
@@ -145,6 +147,10 @@ class Dase_Handler_Admin extends Dase_Handler
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			Dase_Log::debug(curl_exec($ch));
 			curl_close($ch);  
+			 */
+			$file = Dase_File::newFile($path,$type);
+			//this'll create thumbnail, viewitem, and any derivatives
+			$media_file = $file->addToCollection($title,$item->serial_number,$this->collection,false);
 		} else {
 			$request->renderError(400,'could not upload file');
 		}
