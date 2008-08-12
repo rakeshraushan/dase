@@ -180,6 +180,33 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $metadata;
 	}
 
+	function replace($request) 
+	{
+		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		if ($item) {
+		$item->deleteValues();
+		foreach ($this->metadata as $att => $keyval) {
+			foreach ($keyval['values'] as $v) {
+				$item->setValue($att,$v);
+			}
+		}
+		$item->buildSearchIndex();
+		return $item;
+		} else {
+			Dase::error(404);
+		}
+	}
+
+	function setEdited($dateTime)
+	{
+		if ($this->edited_is_set) {
+			throw new Dase_Atom_Exception('edited is already set');
+		} else {
+			$this->edited_is_set = true;
+		}
+		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
+	}
+
 	function insert($request) 
 	{
 		$eid = $request->getUser()->eid;
@@ -214,33 +241,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//todo:  now POST the $enc to the item's media collection!
 		$item->buildSearchIndex();
 		return $item;
-	}
-
-	function replace($request) 
-	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
-		if ($item) {
-		$item->deleteValues();
-		foreach ($this->metadata as $att => $keyval) {
-			foreach ($keyval['values'] as $v) {
-				$item->setValue($att,$v);
-			}
-		}
-		$item->buildSearchIndex();
-		return $item;
-		} else {
-			Dase::error(404);
-		}
-	}
-
-	function setEdited($dateTime)
-	{
-		if ($this->edited_is_set) {
-			throw new Dase_Atom_Exception('edited is already set');
-		} else {
-			$this->edited_is_set = true;
-		}
-		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
 	function __get($var) 

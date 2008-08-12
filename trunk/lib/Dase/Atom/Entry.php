@@ -217,4 +217,32 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
+
+	function insert($request) 
+	{
+		$eid = $request->getUser()->eid;
+		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if (!$c) { return; }
+		$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
+		$content = new Dase_DBO_Content;
+		$atom_content = $this->getContent();
+		if ($atom_content) {
+			$content->text = $atom_content;
+			$content->type = $this->getContentType();
+			$content->item_id = $item->id;
+			$content->p_collection_ascii_id = $c->ascii_id;
+			$content->p_serial_number = $item->serial_number;
+			$content->updated = date(DATE_ATOM);
+			$content->updated_by_eid = $eid;
+			$content->insert();
+		}
+		$item->setValue('title',$this->getTitle());
+		$item->setValue('description',$this->getSummary());
+
+		$enc = $item->getEnclosure(); 
+		//todo:  now POST the $enc to the item's media collection!
+		$item->buildSearchIndex();
+		return $item;
+	}
+
 }

@@ -1,5 +1,5 @@
 <?php
-define("APP_ROOT","http://dase.laits.utexas.edu");
+define("APP_ROOT","http://quickdraw.laits.utexas.edu/dase1");
 define("BIN_PATH", dirname(__FILE__));
 define("DASE_PATH",BIN_PATH . '/..');
 define('CACHE_DIR', DASE_PATH . '/var/cache/');
