@@ -208,6 +208,22 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $current;
 	}
 
+	function expunge() {
+		$dv = new Dase_DBO_DefinedValue;
+		$dv->attribute_id = $this->id;
+		foreach ($dv->find() as $doomed) {
+			$doomed->delete();
+		}
+
+		$ait = new Dase_DBO_AttributeItemType;
+		$ait->attribute_id = $this->id;
+		foreach ($ait->find() as $doomed) {
+			$doomed->delete();
+		}
+
+		$this->delete();
+	}
+
 
 	function getAdminEquiv($mapped_id)
 	{
@@ -223,11 +239,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	}
 
 	public function asArray() {
+		$c = $this->getCollection();
 		$att_array = array();
 		foreach ($this as $k => $v) {
 			$att_array[$k] = $v;
 		}
 		$att_array['values'] = $this->getFormValues();
+		$att_array['collection_ascii_id'] = $c->ascii_id;
 		return $att_array;
 	}
 
@@ -271,6 +289,46 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 		if (!$this->in_basic_search) {
 			$this->in_basic_search = 0;
+		}
+	}
+
+	public function resort($sort_after=null) {
+		$coll = $this->getCollection(); 
+		if (!$sort_after) {
+			$new_sort_order = 0;
+			foreach ($coll->getAttributes() as $att) {
+				$new_sort_order++;
+				$att->sort_order = $new_sort_order;
+				$att->update();
+			}
+		} else {
+			$after_att = Dase_DBO_Attribute::get($coll->ascii_id,$sort_after);
+			$after_sort = $after_att->sort_order;
+
+			if ($this->sort_order < $after_sort) {
+				foreach ($coll->getAttributes() as $att) {
+					if (($att->sort_order > $this->sort_order) && ($att->sort_order <= $after_sort)) {
+						$att->sort_order = $att->sort_order - 1;
+						$att->update();
+					}
+					else if ($att->sort_order == $this->sort_order) {
+						$att->sort_order = $after_sort;
+						$att->update();
+					}
+				}
+			}
+			if ($this->sort_order > $after_sort) {
+				foreach ($coll->getAttributes() as $att) {
+					if (($att->sort_order > $after_sort) && ($att->sort_order < $this->sort_order)) {
+						$att->sort_order = $att->sort_order + 1;
+						$att->update();
+					}
+					else if ($att->sort_order == $this->sort_order) {
+						$att->sort_order = $after_sort + 1;
+						$att->update();
+					}
+				}
+			}
 		}
 	}
 }

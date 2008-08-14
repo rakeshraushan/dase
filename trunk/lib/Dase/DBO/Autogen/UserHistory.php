@@ -9,11 +9,11 @@ require_once 'Dase/DBO.php';
  * 
  */
 
-class Dase_DBO_Autogen_Collection extends Dase_DBO 
+class Dase_DBO_Autogen_UserHistory extends Dase_DBO 
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'collection',  array('ascii_id','collection_name','created','description','is_public','updated','visibility'));
+		parent::__construct( 'user_history',  array('eid','href','summary','title','type','updated'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

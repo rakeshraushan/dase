@@ -7,10 +7,12 @@ class Dase_File_Video extends Dase_File
 		print "hello world\n";
 	}
 
+	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+
 	function makeThumbnail($item,$collection)
 	{
-		if (!file_exists($collection->path_to_media_files . "/thumbnails/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',$collection->path_to_media_files . '/thumbnails/quicktime.jpg');
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/quicktime.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -27,8 +29,8 @@ class Dase_File_Video extends Dase_File
 
 	function makeViewitem($item,$collection)
 	{
-		if (!file_exists($collection->path_to_media_files . "/400/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',$collection->path_to_media_files . '/400/quicktime.jpg');
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/quicktime.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -51,7 +53,7 @@ class Dase_File_Video extends Dase_File
 
 	function processFile($item,$collection)
 	{
-		$dest = $collection->path_to_media_files . "/quicktime/" . $item->serial_number . '.mov';
+		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/quicktime/" . $item->serial_number . '.mov';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;
 

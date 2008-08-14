@@ -120,7 +120,7 @@ function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)
 function _smarty_dase_atom_entry_select_media(Dase_Atom_Entry $entry,$size)
 {
 	//returns media of stated size 
-	return $entry->select($size);
+	return $entry->selectMedia($size);
 }
 
 function _smarty_documenter_modifiers(Documenter $d,$value)

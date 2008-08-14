@@ -25,23 +25,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}
 
-	function asJson() 
-	{
-		$coll_array = array();
-		$coll_array['collection'] = array(
-			'name' => $this->collection_name,
-			'ascii_id' => $this->ascii_id,
-			'path_to_media_file' => $this->path_to_media_files,
-		);
-		$coll_array['collection']['attributes'] = array();
-		foreach ($this->getAttributes() as $att) {
-			$att_array['name'] = $att->attribute_name;
-			$att_array['ascii_id'] = $att->ascii_id;
-			$coll_array['collection']['attributes'][] = $att_array;
-		}
-		return Dase_Json::get($coll_array,true);
-	}
-
 	public function expunge()
 	{
 		$items = new Dase_DBO_Item;
@@ -141,7 +124,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	}
 
 	function asAtomArchive($limit=0) {
-		//todo: this needs ot be paged
+		//todo: this needs to be paged
 		$feed = $this->getBaseAtomFeed();
 		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
 		$feed->setFeedType('archive');
@@ -150,6 +133,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		foreach ($this->getAdminAttributes() as $att) {
 			$att->injectAtomEntryData($feed->addEntry('attribute'));
+		}
+		foreach ($this->getItemTypes() as $item_type) {
+			$item_type->injectAtomEntryData($feed->addEntry('item_type'),$this);
 		}
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
@@ -207,7 +193,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$colls = new Dase_DBO_Collection;
 		foreach ($colls->find() as $c) {
 			$result[$c->ascii_id]['visibility'] = $c->visibility;
-			$result[$c->ascii_id]['path_to_media_files'] = $c->path_to_media_files;
+			$result[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
 		}
 		return Dase_Json::get($result);
 	}
@@ -313,6 +299,29 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$att->collection_id = $this->id;
 		$att->orderBy($sort);
 		return $att->find();
+	}
+
+	function getAttributesJson()
+	{
+		$att_array = array();
+		$last = 0;
+		$last_name = 'First';
+	
+		$att_array['ordered_atts']['0'] = 'First';
+		foreach ($this->getAttributes() as $att) {
+			$att_array['ordered_atts'][$att->ascii_id] = "after ".$att->attribute_name;
+			foreach ($att as $k => $v) {
+				$att_array['attributes'][$att->ascii_id][$k] = $v;
+			}
+			$att_array['attributes'][$att->ascii_id]['values'] = $att->getFormValues();
+			$att_array['attributes'][$att->ascii_id]['count'] = count($att_array['attributes'][$att->ascii_id]['values']);
+			$att_array['attributes'][$att->ascii_id]['collection_ascii_id'] = $this->ascii_id;
+			$att_array['attributes'][$att->ascii_id]['last'] = $last;
+			$att_array['attributes'][$att->ascii_id]['last_name'] = $last_name;
+			$last = $att->ascii_id;
+			$last_name = $att->attribute_name;
+		}
+		return Dase_Json::get($att_array);
 	}
 
 	function changeAttributeSort($att_ascii_id,$new_so)
@@ -521,17 +530,12 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach(Dase_Config::get('media_types') as $type) {
 			$media_coll->addAccept($type);
 		}
+		$attributes_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/attributes.atom';
+		$ws->addCollection($attributes_repos,$this->collection_name.' Attributes')
+			->addAccept('application/atom+xml;type=entry')
+			->addCategorySet()
+			->addCategory('attribute','http://daseproject.org/category/entrytype');
 		return $svc->asXml();
-	}
-
-	public static function getMediaSources()
-	{
-		$sources = array();
-		$colls = new Dase_DBO_Collection;
-		foreach ($colls->find() as $coll) {
-			$sources[$coll->ascii_id] = $coll->path_to_media_files;
-		}
-		return $sources;
 	}
 
 	/** figure out base_url for a given collection_ascii_id */

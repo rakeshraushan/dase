@@ -67,6 +67,16 @@ class Dase_Handler_Item extends Dase_Handler
 			APP_ROOT.'/item/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number').'.atom',
 			$this->user->eid,$this->user->getHttpPassword()
 		);
+
+		$hist = new Dase_DBO_UserHistory;
+		$hist->eid = $request->getUser()->eid;
+		$hist->href = APP_ROOT.'/'.$request->url;
+		$hist->title = $feed->getTitle();
+		//$hist->summary = $feed->getSearchEcho();
+		$hist->type = 'item_view';
+		$hist->updated = date(DATE_ATOM);
+		$hist->insert();
+
 		$t->assign('item',$feed);
 		$request->renderResponse($t->fetch('item/transform.tpl'));
 	}
@@ -192,7 +202,7 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$slug = $item->serial_number;
 		}
-		$upload_dir = $coll->path_to_media_files.'/uploaded_files';
+		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$request->renderError(401,'missing upload directory');
 		}

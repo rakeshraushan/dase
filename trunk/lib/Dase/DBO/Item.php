@@ -573,9 +573,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
 		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
-		$media_coll->addAccept('image/*');
-		$media_coll->addAccept('audio/*');
-		$media_coll->addAccept('video/*');
+		foreach(Dase_Config::get('media_types') as $type) {
+			$media_coll->addAccept($type);
+		}
 		return $app->asXml();
 	}
 
@@ -672,6 +672,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->collection || $this->getCollection();
 		$note = new Dase_DBO_Content;
 		$note->item_id = $this->id;
+		//todo: security! filter input....
 		$note->text = $text;
 		$note->p_collection_ascii_id = $this->collection->ascii_id;
 		$note->p_serial_number = $this->serial_number;

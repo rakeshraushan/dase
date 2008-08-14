@@ -21,6 +21,7 @@
 
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
+		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		{block name="head"}{/block}
 
@@ -29,7 +30,7 @@
 			ul#menu li.{$request->resource}-tab {literal}{{/literal}
 				background-color: #eef1f8;
 				background-color: #bbccdd;
-			{literal}{{/literal}
+			{literal}}{/literal}
 		</style>
 
 		<!--[if lt IE 8]>

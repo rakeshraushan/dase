@@ -30,7 +30,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		if ('thumbnail' == $size) {
 			$size = 'thumbnails';
 		}
-		return $c->path_to_media_files . '/' . $size . '/' . $this->filename; 
+		return Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/' . $size . '/' . $this->filename; 
 	}
 
 	public function resize($geometry)

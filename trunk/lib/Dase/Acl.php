@@ -61,7 +61,7 @@ class Dase_Acl
 			$colls = new Dase_DBO_Collection();
 			foreach ($colls->find() as $c) {
 				$cdata[$c->ascii_id]['visibility'] = $c->visibility;
-				$cdata[$c->ascii_id]['path_to_media_files'] = $c->path_to_media_files;
+				$cdata[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
 			}
 			$cache->setData($cdata);
 			return $cdata;

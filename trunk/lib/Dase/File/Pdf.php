@@ -15,10 +15,12 @@ class Dase_File_Pdf extends Dase_File
 		return $this->metadata;
 	}
 
+	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+
 	function makeThumbnail($item,$collection)
 	{
-		if (!file_exists($collection->path_to_media_files . "/thumbnails/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',$collection->path_to_media_files . '/thumbnails/pdf.jpg');
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/pdf.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -35,8 +37,8 @@ class Dase_File_Pdf extends Dase_File
 
 	function makeViewitem($item,$collection)
 	{
-		if (!file_exists($collection->path_to_media_files . "/400/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',$collection->path_to_media_files . '/400/pdf.jpg');
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/pdf.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -53,7 +55,7 @@ class Dase_File_Pdf extends Dase_File
 
 	function processFile($item,$collection)
 	{
-		$dest = $collection->path_to_media_files . "/pdf/" . $item->serial_number . '.pdf';
+		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/pdf/" . $item->serial_number . '.pdf';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;
 
