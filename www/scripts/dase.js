@@ -1188,7 +1188,7 @@ Dase.initGetInputForm = function(form) {
 			var input_form = Dase.$('addMetadata').getElementsByTagName('form')[1];
 			input_form.onsubmit = function() {
 				var content_headers = {
-					'Content-Type':'application/x-www-form-urlencoded',
+					'Content-Type':'application/x-www-form-urlencoded'
 				}
 				Dase.ajax(this.action,'post',function() { 
 					Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(metadata_json) {
@@ -1258,7 +1258,33 @@ Dase.getFormElement = function(set) {
 	return element_html;
 };
 
+//from http://www.quirksmode.org/js/findpos.html
+Dase.scrollTo = function (obj) {
+	var curleft = curtop = 0;
+	if (obj.offsetParent) {
+		do {
+			curleft += obj.offsetLeft;
+			curtop += obj.offsetTop;
+		} while (obj = obj.offsetParent);
+		window.scroll(curleft,curtop);
+	}
+}
+
+
+// should probably be in page-specific script:
 Dase.initAttributeEdit = function() {
+	var att_form;
+	var att_form_link = Dase.$('attribute_form_link');
+	if (!att_form_link) return;
+	Dase.ajax(att_form_link.href,'get',function(txt) {
+		att_form = txt;
+	});
+	var att_data_link = Dase.$('attribute_data_link');
+	if (!att_data_link) return;
+	var atts_data;
+	Dase.getJSON(att_data_link.href,function(json) {
+		atts_data = json;
+	});
 	var table = Dase.$('attributesTable');
 	if (!table) return;
 	var links = table.getElementsByTagName('a');
@@ -1266,19 +1292,50 @@ Dase.initAttributeEdit = function() {
 		var classes = links[i].className.split(" ");
 		if (classes && classes[1] && 'attribute' == classes[0]) {
 			links[i].onclick = function() {
+				Dase.loadingMsg(true);
 				var att_ascii = this.className.split(" ")[1];
 				var editRow = Dase.$('editRow-'+att_ascii);
-				Dase.getJSON(this.href,function(json) {
-					//build form and insert it into page
-					//editRow.innerHTML = Dase.buildForm(json,el.href);
-					editRow.innerHTML = '<td colspan="0"><h1>'+json.attribute_name+'</h1></td>';
-				});
 				Dase.toggle(editRow);
+				Dase.scrollTo(this);
+				var data = { 'att': atts_data['attributes'][att_ascii]};
+				data.att.ordered_atts = atts_data.ordered_atts;
+				var templateObj = TrimPath.parseTemplate(att_form);
+				editRow.innerHTML = templateObj.process(data);
+				var d_button = Dase.$('deleteAtt');
+				if (d_button) {
+					d_button.onclick = function() {
+						return confirm('are you sure?');
+					};
+				}
+			 	var def_form = Dase.$('defined_values_form');
+				if (def_form) {
+					def_form.onsubmit = function() {
+						Dase.ajax(def_form.action,'put',function(resp) {
+							var jsonObj = JSON.parse(resp);
+							Dase.updateDefinedValues(jsonObj);
+						},this.defined_values_input.value);
+						return false;
+					};
+				}
 				return false;
 			};
 		}
 	}
 };
+
+Dase.updateDefinedValues = function(json) {
+	var ul = Dase.$('defined_values_list');
+	ul.innerHTML = '';
+	var inp = Dase.$('defined_values_input');
+	inp.value = '';
+	var vals;
+	for (var i=0;i<json.length;i++) {
+		var v = json[i];
+		ul.innerHTML += '<li>'+v+'</li>';
+		inp.value += v+"\n";
+	}
+};
+
 
 
 // todo: reorganize these additions once it's clear it's not breaking things.

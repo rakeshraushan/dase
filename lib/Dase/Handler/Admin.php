@@ -7,6 +7,9 @@ class Dase_Handler_Admin extends Dase_Handler
 		'{collection_ascii_id}' => 'settings',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/remote_acl' => 'remote_acl',
+		'{collection_ascii_id}/attribute/form' => 'attribute_form',
+		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
+		'{collection_ascii_id}/attribute/{att_ascii_id}/defined_values' => 'attribute_defined_values',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/managers' => 'managers',
@@ -42,6 +45,21 @@ class Dase_Handler_Admin extends Dase_Handler
 		$request->renderResponse($tpl->fetch('admin/settings.tpl'));
 	}
 
+	public function postToSettings($request)
+	{
+		$this->collection->collection_name = trim($request->get('collection_name'));
+		//uses false because you cannot pass a zero as a value through form (dase framework bug)
+		if ('false' == $request->get('is_public')) {
+			$this->collection->is_public = 0;
+		} else {
+			$this->collection->is_public = 1;
+		}
+		$this->collection->description = trim($request->get('description'));
+		$this->collection->update();
+		$params['msg'] = "settings updated";
+		$request->renderRedirect('admin/'.$this->collection->ascii_id.'/settings',$params);
+	}
+
 	public function getAttributes($request)
 	{
 		$tpl = new Dase_Template($request);
@@ -50,6 +68,102 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('attributes',$this->collection->getAttributes());
 		$request->renderResponse($tpl->fetch('admin/attributes.tpl'));
 	}
+
+	public function getAttributesJson($request)
+	{
+		$request->renderResponse($this->collection->getAttributesJson());
+	}
+
+	public function getAttributeForm($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('admin/attribute_form.tpl'));
+	}
+
+	public function postToAttribute($request)
+	{
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$request->get('att_ascii_id'));
+		if ($request->has('method') && ('delete attribute' == $request->get('method'))) {
+			$d = $att->attribute_name;
+			$count = count($att->getCurrentValues());
+			if ($count) {
+				$params['msg'] = "sorry, but there are $count values for $att->attribute_name so it cannot be deleted";
+				$request->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+			}
+			$att->expunge();
+			$att->resort();
+			$params['msg'] = "$d deleted";
+			$request->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+		}
+		$att->attribute_name = $request->get('attribute_name');
+		$att->usage_notes = $request->get('usage_notes');
+		if ($request->has('is_on_list_display')) {
+			$att->is_on_list_display = 1;
+		} else {
+			$att->is_on_list_display = 0;
+		}
+		if ($request->has('in_basic_search')) {
+			$att->in_basic_search = 1;
+		} else {
+			$att->in_basic_search = 0;
+		}
+		if ($request->has('is_public')) {
+			$att->is_public = 1;
+		} else {
+			$att->is_public = 0;
+		}
+		$att->html_input_type = $request->get('input_type');
+		$att->update();
+		$att->resort($request->get('sort_after'));
+		$params['msg'] = "$att->attribute_name updated";
+		$request->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+	}
+
+	public function putAttributeDefinedValues($request)
+	{
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$request->get('att_ascii_id'));
+		$def_values = new Dase_DBO_DefinedValue;
+		$def_values->attribute_id = $att->id;
+		foreach ($def_values->find() as $df) {
+			$df->delete();
+		}
+		$defined_values = trim(file_get_contents("php://input"));
+		$pattern = "/[\n;]/";
+		$munged_string = preg_replace($pattern,'%',$defined_values);
+		$def_value_array = explode('%',$munged_string); 
+		foreach ($def_value_array as $df_text) {
+			if (trim($df_text)) {
+				$def_value = new Dase_DBO_DefinedValue;
+				$def_value->value_text = htmlspecialchars(trim($df_text),ENT_NOQUOTES,'UTF-8');
+				$def_value->attribute_id = $att->id;
+				$def_value->insert();
+			}
+		}
+		$request->response_mime_type = 'application/json';
+		$request->renderResponse(Dase_Json::get($def_value_array));
+	}
+
+
+	public function postToAttributes($request)
+	{
+		$att = new Dase_DBO_Attribute;
+		$att->attribute_name = $request->get('attribute_name');
+		$att->ascii_id = Dase_Util::dirify($att->attribute_name);
+		if (!Dase_DBO_Attribute::get($this->collection->ascii_id,$att->ascii_id)) {
+			$att->collection_id = $this->collection->id;
+			$att->updated = date(DATE_ATOM);
+			$att->sort_order = 999;
+			$att->is_on_list_display = 1;
+			$att->is_public = 1;
+			$att->in_basic_search = 1;
+			$att->html_input_type = 'text';
+			$att->insert();
+			$att->resort();
+			$params['msg'] = "added $att->attribute_name";
+			$request->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+		}
+	}
+
 
 	public function getItemTypes($request)
 	{

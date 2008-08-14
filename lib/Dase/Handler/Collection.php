@@ -69,7 +69,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$request->serveFile($archive,'text/plain',true);
 	}
 
-	public function asAtomArchive($request) 
+	public function getArchiveAtom($request) 
 	{
 		$limit = $request->get('limit');
 		$request->renderResponse($this->collection->asAtomArchive($limit));
@@ -88,13 +88,13 @@ class Dase_Handler_Collection extends Dase_Handler
 			$request->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
 		if ($this->collection->getItemCount() < 5) {
-			$archive_dir = $this->collection->path_to_media_files.'/archive';
+			$archive_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive';
 			if (!file_exists($archive_dir)) {
 				mkdir($archive_dir);
 				Dase_Log::info('created directory '.$archive_dir);
 				chmod($archive_dir,0775);
 			}
-			$archive = $this->collection->path_to_media_files.'/archive/'.$this->collection->ascii_id.'.atom';
+			$archive = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive/'.$this->collection->ascii_id.'.atom';
 			file_put_contents($archive,$this->collection->asAtomArchive());
 			$this->collection->expunge();
 			$request->renderResponse('delete succeeded',false,200);
@@ -144,8 +144,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$item_entry = Dase_Atom_Entry::load($raw_input);
 		if ('item' != $item_entry->entrytype) {
-		//	$item_entry->setEntryType('item');
-		//	$request->renderError(400,'must be an item entry');
+			$item_entry->setEntryType('item');
+			$request->renderError(400,'must be an item entry');
 		}
 		$item = $item_entry->insert($request);
 		header("HTTP/1.1 201 Created");
@@ -186,8 +186,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ('admin' == $filter) {
 			$attributes->collection_id = 0;
 		}
-		//$attributes->orderBy('sort_order');
-		$attributes->orderBy('attribute_name');
+		$attributes->orderBy('sort_order');
+		//$attributes->orderBy('attribute_name');
 		$att_array = array();
 		foreach($attributes->find() as $att) {
 			$att_array[] =

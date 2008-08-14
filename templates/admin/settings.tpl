@@ -2,30 +2,58 @@
 
 {block name="content"}
 <div id="contentHeader">
+	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Collection Settings for {$collection->collection_name}</h1>
 	<!--
 	<h2>{$user->ppd}</h2>
 	-->
 </div>
 <div id="collectionData">
+	<form action="admin/{$collection->ascii_id}/settings" method="post">
 	<table class="dataDisplay">
 		<tr>
 			<th>Name</th>
-			<th>Ascii Id</th>
-			<th>Is Public</th>
-			<th>Description</th>
-			<th>Created</th>
-			<th>Path to Media Files</th>
+			<td class="data"><input type="text" name="collection_name" size="40" value="{$collection->collection_name}"/></td>
 		</tr>
 		<tr>
-			<th>{$collection->collection_name}</th>
-			<td>{$collection->ascii_id}</td>
-			<td>
-				{if 0 == $collection->is_public}no{else}yes{/if}
+			<th>Ascii Id</th>
+			<td class="data">{$collection->ascii_id}</td>
+		</tr>
+		<tr>
+			<th>Is Public
+				<div class="current">
+				{if 0 == $collection->is_public}not public{/if}
+				{if 0 != $collection->is_public}public{/if}
+				</div>
+			</th>
+			<td class="data">
+				<p>
+				<input type="radio" name="is_public" value="false" {if 0 == $collection->is_public}checked="checked"{/if}/> no
+				</p>
+				<p>
+				<input type="radio" name="is_public" value="true" {if 0 != $collection->is_public}checked="checked"{/if}/> yes
+				</p>
 			</td>
-			<td>{$collection->description}</td>
-			<td>{$collection->created}</td>
-			<td>{$collection->path_to_media_files}</td>
+		</tr>
+		<tr>
+			<th>Description
+				<div class="current">
+				{$collection->description}
+				</div>
+			</th>
+			<td class="data">
+				<textarea name="description" cols="40" rows="4">{$collection->description}</textarea>
+			</td>
+		</tr>
+		<tr>
+			<th>Created</th>
+			<td class="data">{$collection->created}</td>
+		</tr>
+		<tr>
+			<th></th>
+			<td class="data">
+				<input type="submit" value="update"/>
+			</td>
 		</tr>
 	</table>
 </div>

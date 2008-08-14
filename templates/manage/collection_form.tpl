@@ -10,8 +10,9 @@
 <div class="list" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Add a Collection:</h1>
-	//this form data will be transformed into atom
-	//using js template (see below)
+	<!--this form data will be transformed into atom
+	using js template (see below)
+	-->
 	<form id="newCollection" action="collections" method="post">
 		<p>
 		<label for="collection_name">Collection Name:</label>

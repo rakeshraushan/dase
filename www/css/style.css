@@ -501,7 +501,7 @@ form#newCollection label {
 
 /************ MISCELLANEOUS STYLES ***************/
 
-textarea.javascript_template {
+.javascript_template {
 	display: none;
 }
 

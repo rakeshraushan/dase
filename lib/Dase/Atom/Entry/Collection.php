@@ -26,7 +26,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		if (file_exists($media_dir)) {
 			$request->renderError(409,'collection media archive exists');
 		}
-		$c->path_to_media_files = $media_dir;
 		$c->is_public = 0;
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);

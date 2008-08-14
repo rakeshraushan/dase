@@ -66,13 +66,60 @@ table.dataDisplay  td.data {
 	text-align: left;
 }
 
+table.dataDisplay  td.editForm {
+	text-align: left;
+	vertical-align: top;
+	padding: 1em 1em 1em 2em;
+}
+
+table.dataDisplay  td.editForm ul.defined {
+	margin-bottom: 2em;
+}
+
+table.dataDisplay  td.editForm .submitControl {
+	float: left;
+	margin-right: 1em;
+}
+
+table.dataDisplay  td.editForm .deleteControl {
+	float: right;
+	margin-right: 2em;
+}
+
+table.dataDisplay  td.editForm .deleteControl input {
+	padding: 1px;
+	border: 1px solid #c00;
+    -moz-border-radius: 5px;
+}
+
+table.dataDisplay  td.editForm .deleteControl input:hover {
+	color: white;
+	background-color: red;
+}
+
+table.dataDisplay  td.editForm label{
+	display: block;
+	color: #666;
+}
+
 table.dataDisplay  th {
 	color: #333;
 	background-color: #f2dfc1;
 }
 
+table.dataDisplay  th div.current{
+	margin-top: 1em;
+	color: #999;
+	max-width: 300px;
+}
+
 table.dataDisplay  th.rows {
 	text-align: right;
+}
+
+#defined_values_form textarea {
+	min-height: 6em;
+	margin-bottom: 1em;
 }
 
 /* uploader widget styles */

@@ -60,7 +60,7 @@ class ID3Parser {
     }
 }
 
-if($argc > 1) {
+if(isset($argc) && $argc > 1) {
     try {
         $p = new ID3Parser($argv[1]);
         $p->open();

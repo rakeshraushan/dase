@@ -48,8 +48,8 @@ class Dase_Handler_Collections extends Dase_Handler
 	{
 		$raw_input = file_get_contents("php://input");
 		$client_md5 = $request->getHeader('Content-MD5');
-		if (md5($raw_input) != $client_md5) {
-			$request->renderError(412,'md5 does not match');
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+		//	$request->renderError(412,'md5 does not match');
 		}
 		$coll_entry = Dase_Atom_Entry::load($raw_input);
 		if ('collection' != $coll_entry->entrytype) {
