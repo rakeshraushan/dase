@@ -276,7 +276,15 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$url = $request->get('url');
 		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom&amp;limit=20');
+		$coll_ascii_id = $feed->getAsciiId();
 		$feed->ingest($request);
+		$cm = new Dase_DBO_CollectionManager;
+		$cm->dase_user_eid = $request->getUser()->eid;
+		$cm->collection_ascii_id = $coll_ascii_id;
+		$cm->auth_level = 'superuser';
+		$cm->created = date(DATE_ATOM); 
+		$cm->insert();
+		$request->renderResponse('completed operation');
 	}
 
 	public function getIngestForm($request)
