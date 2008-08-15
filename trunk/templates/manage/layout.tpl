@@ -27,6 +27,8 @@
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/md5.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/form.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/colors.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		{block name="head"}{/block}
 
@@ -72,6 +74,7 @@
 		</div>
 
 		<div id="manageHeader">
+			<span id="throbber"></span>
 			<p>DASe Application Manager</p> 
 		</div>
 
@@ -118,8 +121,8 @@
 				</a>
 				</li>
 				<li class="remote-collection-tab">
-				<a href="manage/collection/clone_form">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Clone a Remote Collection</sup>
+				<a href="manage/ingest/form">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Ingest a Remote Collection</sup>
 				</a>
 				</li>
 				<li class="collection-tab">

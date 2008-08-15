@@ -23,7 +23,10 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 
 		//todo: work on better auth mapping
-		if ('service' == $request->resource || 'atom' == $request->format) {
+		if ('service' == $request->resource || 
+			'atom' == $request->format ||
+			(('media' == $request->resource) && ('post' == $request->method))
+		) {
 			$this->user = $request->getUser('http');
 		} else {
 			$this->user = $request->getUser();
@@ -162,10 +165,10 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse($this->item->getContentsJson());
 	}
 
-	/** from last version: work on this!!!!!!!!! */
 	public function postToMedia($request) 
 	{
 		$item = $this->item;
+		$coll = $item->getCollection();
 		$this->user = $request->getUser('http');
 		if (!$this->user->can('write','item',$item)) {
 			$request->renderError(401,'user cannot write media file');
@@ -202,6 +205,7 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$slug = $item->serial_number;
 		}
+
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$request->renderError(401,'missing upload directory');
@@ -220,30 +224,21 @@ class Dase_Handler_Item extends Dase_Handler
 		// Set correct file permissions
 		@ chmod( $new_file,0644);
 
-		//NOW do a 'file upload' a la DASe
 		try {
-			//$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),false); //false means do NOT check for dup
-			$u = new Dase_Upload(Dase_File::newFile($new_file),$item->getCollection(),true); //false means do NOT check for dup
-			//may need to account for multi-tiff
-			//$u->checkForMultiTiff();
-			$u->setItem($item);
-			$u->ingest();
-			$u->setTitle($slug);
-			$u->buildSearchIndex();
+			$file = Dase_File::newFile($new_file,$type);
+
+			//this'll create thumbnail, viewitem, and any derivatives
+			//then return the Dase_DBO_MediaFile for the original
+			$media_file = $file->addToCollection($item->serial_number,$item->serial_number,$coll,false);  //set 4th param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
-			$request->renderError(500,'could not ingest file');
+			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
-		$m = new Dase_DBO_MediaFile;
-		$m->p_collection_ascii_id = $coll->ascii_id;
-		$m->p_serial_number = $item->serial_number;
-		$m->size = $u->getDaseFileSize(); //meaning media directory
-		if ($m->findOne()) {
-			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';
-			header("Location:". $mle_url,TRUE,201);
-			$request->response_mime_type = 'application/atom+xml';
-			$request->renderResponse($m->asAtom());
-		}
+		//the returned atom entry links to derivs!
+		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
+		header("Location:". $mle_url,TRUE,201);
+		$request->response_mime_type = 'application/atom+xml';
+		$request->renderResponse($media_file->asAtom());
 	}
 
 	public function getServiceTxt($request)

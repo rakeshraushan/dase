@@ -6,6 +6,7 @@ class Dase_Handler_Collections extends Dase_Handler
 	//and create parameters based on templates
 	public $resource_map = array(
 		'/' => 'collections',
+		'ingester' => 'ingester',
 		'data' => 'data',
 		'acl' => 'acl',
 		'item_tallies' => 'item_tallies',
@@ -44,11 +45,20 @@ class Dase_Handler_Collections extends Dase_Handler
 		}
 	}
 
+	public function postToIngester($request) 
+	{
+		$user = $request->getUser();
+		if ($user->isSuperuser()) {
+			$url = $request->get('url');
+		}
+	}
+
 	private function _newAtomCollection($request)
 	{
 		$raw_input = file_get_contents("php://input");
 		$client_md5 = $request->getHeader('Content-MD5');
 		if ($client_md5 && md5($raw_input) != $client_md5) {
+			//todo: fix this
 		//	$request->renderError(412,'md5 does not match');
 		}
 		$coll_entry = Dase_Atom_Entry::load($raw_input);
