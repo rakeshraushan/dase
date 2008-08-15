@@ -284,6 +284,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$cm->auth_level = 'superuser';
 		$cm->created = date(DATE_ATOM); 
 		$cm->insert();
+		$request->getUser()->expireDataCache();
 		$request->renderResponse('completed operation');
 	}
 
