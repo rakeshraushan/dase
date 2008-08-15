@@ -14,6 +14,8 @@ class Dase_Handler_Manage extends Dase_Handler
 		'users' => 'users',
 		'user/{eid}' => 'user',
 		'collection/form' => 'collection_form',
+		'ingest/checker' => 'ingest_checker',
+		'ingest/form' => 'ingest_form',
 		'collections' => 'collections',
 		'media/attributes' => 'media_attributes',
 		'settings' => 'settings',
@@ -254,6 +256,25 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($request);
 		$request->renderResponse($tpl->fetch('manage/collection_form.tpl'));
+	}
+
+	public function postToIngestChecker($request)
+	{
+		$url = $request->get('url');
+		$resp = @file_get_contents($url.'/ping');
+		if ('ok' != $resp) {
+			$request->renderResponse('no');
+		} else {
+			$feed = Dase_Atom_Feed::retrieve($url.'/archive.atom');
+			$count = $feed->ingest();
+			$request->renderResponse('ok|'.$count);
+		}
+	}
+
+	public function getIngestForm($request)
+	{
+		$tpl = new Dase_Template($request);
+		$request->renderResponse($tpl->fetch('manage/ingest_form.tpl'));
 	}
 
 	public function getMediaAttributes($request)

@@ -31,7 +31,8 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		}
 	}
 
-	function getAttributes() {
+	function getAttributes() 
+	{
 		$attributes = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
 			if ('admin_' != substr($dd->localName,0,6)) {
@@ -41,7 +42,8 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		return $attributes;
 	}
 
-	function getAdminAttributes() {
+	function getAdminAttributes() 
+	{
 		$admin_attributes = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
 			if ('admin_' == substr($dd->localName,0,6)) {
@@ -49,5 +51,15 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			}
 		}
 		return $admin_attributes;
+	}
+
+	function ingest() 
+	{
+		$coll_ascii_id = $this->getAsciiId();
+		$count=0;
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
+			$count++;
+		}
+		return $count;
 	}
 }

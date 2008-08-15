@@ -499,7 +499,27 @@ form#newCollection label {
 	color: #666;
 }
 
+form#ingestCollectionForm label {
+	display: block;
+	font-weight: bold;
+	color: #666;
+}
+
 /************ MISCELLANEOUS STYLES ***************/
+
+table#colors {
+	float: left;
+	margin-right: 1em;
+	margin-top: 2px;
+}
+
+table#colors td {
+	border: 0;
+	line-height: 4px;
+	padding: 0px;
+	height: 4px;
+	width: 6px;
+}
 
 .javascript_template {
 	display: none;
