@@ -87,7 +87,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			foreach ($this->getEntries() as $entry) {
 				if ('item' == $entry->getEntryType()) {
 					$request->set('collection_ascii_id',$c->ascii_id);
-					$entry->ingest($request);
+					$entry->insert($request);
 				}
 			}
 		}
