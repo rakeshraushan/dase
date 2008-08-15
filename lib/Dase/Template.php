@@ -46,6 +46,9 @@ class Dase_Template {
 
 		$this->smarty->register_modifier('shift', 'array_shift');
 		$this->smarty->assign('app_root', APP_ROOT.'/');
+		if ($request->module) {
+			$this->smarty->assign('module_root', APP_ROOT.'/modules/'.$request->module.'/');
+		}
 		$this->smarty->assign('msg', $request->get('msg'));
 		$this->smarty->assign('request', $request);
 		error_reporting($er);

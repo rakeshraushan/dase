@@ -23,6 +23,12 @@ class Dase_Config {
 		}
 	}
 
+	public static function getAll()
+	{
+		self::_init();
+		return self::$conf;
+	}
+
 	public static function set($key,$value)
 	{
 		self::_init();

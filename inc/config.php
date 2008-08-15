@@ -8,7 +8,6 @@ $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
 
 $conf['superuser'][] = 'pkeane';
-$conf['superuser'][] = 'rru62';
 
 //deployment settings
 $conf['apache_docroot'] = '/var/www/html';
@@ -16,9 +15,11 @@ $conf['application_path'] = $conf['apache_docroot'].'/dase1';
 $conf['apache_group'] = 'apache';
 
 //define alternative (plugin) handlers
+//$conf['handler']['<handler>'] = '<module_name>';
 //$conf['handler']['login'] = 'openid';
 $conf['handler']['db'] = 'dbadmin';
 $conf['handler']['am'] = 'ancientmeso';
+$conf['handler']['install'] = 'install';
 
 //used to create only-known-by-server security hash
 $conf['token'] = 'foxinsocks' . date('Ymd',time()); //changes every day
@@ -29,10 +30,12 @@ $conf['ppd_token'] = "hurry up please, it's time...".date('Ymd',time()); //chang
 //path to imagemagick convert
 $conf['convert'] = '/usr/bin/convert';
 
-//collection-specific media dirs live under here /<collection_ascii_id>/<size>
 //must be apache group writeable
-//$conf['path_to_media'] = '/opt/local/www-data/dase/media';
 $conf['path_to_media'] = '/mnt/www-data/dase/media';
+
+//a place to archive metadata of deleted items 
+//must be apache group writeable
+$conf['graveyard'] = "/mnt/www-data/dase/graveyard";
 
 //mime types that collections accept
 $conf['media_types'][] = 'image/*';
@@ -40,31 +43,14 @@ $conf['media_types'][] = 'audio/*';
 $conf['media_types'][] = 'video/*';
 $conf['media_types'][] = 'application/pdf';
 
-//a place to store metadata of deleted items (just-in-case)
-//must be apache group writeable
-//$conf['graveyard'] = "/opt/local/www-data/dase/graveyard";
-$conf['graveyard'] = "/mnt/www-data/dase/graveyard";
-
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';
 
-//handler that gets invoked when APP_ROOT is requested
-$conf['default_handler'] = 'collections';
-
-//local_config CAN OVERRIDE any of the above values
-//this is useful for build scripts to hold db
-//usernames & passwords (which shouldn't be checked in)
-if (file_exists( DASE_PATH . '/inc/local_config.php')) {
-	include DASE_PATH . '/inc/local_config.php';
-}
-
-//allow module to overide config 
-if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
-	include(MODULE_PATH . '/inc/config.php');
-}	
-
 //maximum no. of items displayed on a search result page
 $conf['max_items'] = 30;
+
+//handler that gets invoked when APP_ROOT is requested
+$conf['default_handler'] = 'collections';
 
 //access key: 
 //0: anyone, anywhere,anytime
@@ -99,3 +85,14 @@ $conf['sizes'] = array(
 	'xml' => 1,
 	'xslt' => 1,
 );
+
+//local_config CAN OVERRIDE any of the above values
+if (file_exists( DASE_PATH . '/local_config.php')) {
+	include DASE_PATH . '/local_config.php';
+}
+
+//allow module to overide config 
+if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
+	include(MODULE_PATH . '/inc/config.php');
+}	
+
