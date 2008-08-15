@@ -15,8 +15,6 @@ class Dase_ModuleHandler_Dbadmin extends Dase_Handler {
 	public function getInfo($request) 
 	{
 		$tpl = new Dase_Template($request,true);
-		//$tpl->template_dir = MODULE_PATH . '/templates';
-		$tpl->assign('module_root',APP_ROOT.'/modules/dbadmin');
 
 		$types['sqlite'] = "SQLite";
 		$types['mysql'] = "MySQL";

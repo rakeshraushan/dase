@@ -6,6 +6,7 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/data' => 'data',
 		'{eid}/settings' => 'settings',
 		'{eid}/cart' => 'cart',
+		'{eid}/sets' => 'sets',
 		'{eid}/auth' => 'http_password',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
 		'{eid}/{collection_ascii_id}/recent' => 'recent_items',
@@ -17,6 +18,22 @@ class Dase_Handler_User extends Dase_Handler
 		if ($request->get('eid') != $this->user->eid) {
 			$request->renderError(401,'One must be so careful these days.');
 		}
+	}
+
+	public function getSetsAtom($request)
+	{
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->user->eid.' sets');
+		$feed->setId(APP_ROOT.'user/'.$this->user->eid.'/sets');
+		$feed->setFeedType('sets');
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+		$sets = new Dase_DBO_Tag;
+		$sets->dase_user_id = $this->user->id;
+		foreach ($sets->find() as $set) {
+			$set->injectAtomEntryData($feed->addEntry('set'));
+		}
+		$request->renderResponse($feed->asXml());
 	}
 
 	public function getRecentItemsAtom($request)

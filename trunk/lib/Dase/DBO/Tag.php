@@ -223,7 +223,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		//return $js->json_format($json_tag);	
 	}
 
-
 	function asAtom()
 	{
 		$this->user || $this->getUser(); 
@@ -260,5 +259,29 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 		}
 		return $feed->asXml();
+	}
+
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	{
+		$this->user || $this->getUser(); 
+		$entry->setTitle($this->name);
+		if ($this->description) {
+			$entry->setSubtitle($this->description);
+		}
+		$entry->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
+		$entry->setUpdated($this->getUpdated());
+		$entry->addAuthor($this->user->eid);
+		$entry->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id.'.atom','self');
+		$entry->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id);
+
+		$entry->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
+		if ($this->is_public) {
+			$pub = "public";
+		} else {
+			$pub = "private";
+		}
+		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
+		return $entry->asXml();
 	}
 }
