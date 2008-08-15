@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="www/scripts/md5.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/form.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/colors.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/loading.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		{block name="head"}{/block}
 
@@ -74,7 +74,6 @@
 		</div>
 
 		<div id="manageHeader">
-			<span id="throbber"></span>
 			<p>DASe Application Manager</p> 
 		</div>
 

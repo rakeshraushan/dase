@@ -508,7 +508,6 @@ form#ingestCollectionForm label {
 /************ MISCELLANEOUS STYLES ***************/
 
 table#colors {
-	float: left;
 	margin-right: 1em;
 	margin-top: 2px;
 }
@@ -518,7 +517,7 @@ table#colors td {
 	line-height: 4px;
 	padding: 0px;
 	height: 4px;
-	width: 6px;
+	width: 16px;
 }
 
 .javascript_template {

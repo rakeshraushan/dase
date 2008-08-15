@@ -52,7 +52,8 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getCollectionAtom($request) 
 	{
-		$request->renderResponse($this->collection->asAtom());
+		$limit = $request->has('limit') ? $request->get('limit') : 15;
+		$request->renderResponse($this->collection->asAtom($limit));
 	}
 
 	public function getArchive($request) 
