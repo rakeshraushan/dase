@@ -46,7 +46,6 @@ CREATE TABLE `collection` (
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `description` varchar(2000) default NULL,
-`path_to_media_files` varchar(200) default NULL,
 `collection_name` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
@@ -127,6 +126,19 @@ CREATE TABLE `item` (
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `item_link`;
+CREATE TABLE `item_link` (
+`id` int(11) NOT NULL auto_increment,
+`length` int(11) default NULL,
+`item_unique` varchar(100) default NULL,
+`title` varchar(100) default NULL,
+`type` varchar(50) default NULL,
+`rel` varchar(100) default NULL,
+`href` varchar(2000) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -249,6 +261,19 @@ CREATE TABLE `tag_item` (
 `p_serial_number` varchar(20) default NULL,
 `size` varchar(200) default NULL,
 `annotation` varchar(2000) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `user_history`;
+CREATE TABLE `user_history` (
+`id` int(11) NOT NULL auto_increment,
+`updated` varchar(50) default NULL,
+`summary` varchar(2000) default NULL,
+`title` varchar(100) default NULL,
+`type` varchar(20) default NULL,
+`href` varchar(2000) default NULL,
+`eid` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

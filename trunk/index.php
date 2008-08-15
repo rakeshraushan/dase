@@ -55,7 +55,6 @@ function __autoload($class_name) {
 	}  
 	Dase_Log::info("could not autoload $class_file");
 }
-
 Dase_Timer::start();
 Dase_Log::start();
 Dase::run();
