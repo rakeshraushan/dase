@@ -16,7 +16,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$html = "<html><body>";
 			$html .= "<h3>".CACHE_DIR." directory must be writeable by the web server</h3>";
 			if (!is_writeable(DASE_LOG)) {
-				$html .= "<h3>".DASE_LOG." directory must be writeable by the web server for logging to be enabled</h3>";
+				$html .= "<h3>".DASE_LOG." file must be writeable by the web server for logging to be enabled</h3>";
 			}
 			$html .= "</body></html>";
 			echo $html;
