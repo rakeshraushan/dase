@@ -1,21 +1,39 @@
 Dase.install = {};
 
 Dase.install.initCheckDb = function() {
-	var form = Dase.$('db_form');
-	form.onsubmit = function() {
+	var form = Dase.$('check_form');
+	var type_select = form.db_type;
+	var db_path = Dase.$('db_path');
+	if ('sqlite' != type_select.options[type_select.options.selectedIndex].value) {
+		db_path.className = 'hide';
+	}
+	form.db_type.onchange = function() {
+		if ('sqlite' != type_select.options[type_select.options.selectedIndex].value) {
+			db_path.className = 'hide';
+		} else {
+			db_path.className = '';
+		}
+	}
+	var dbc = Dase.$('db_check_button');
+	dbc.onclick = function() {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(this.action,'post',function(resp) { 
+		Dase.ajax(Dase.base_href+'dbchecker','post',function(resp) { 
 			parts = resp.split('|');
-			var msg = Dase.$('msg');
-			msg.innerHTML = parts[1];
+			var db_msg = Dase.$('db_msg');
+			db_msg.innerHTML = parts[1];
 			if ('ok' == parts[0]) {
-				msg.className = 'msg_ok';
-			} else {
-				msg.className = 'msg_not_ok';
+				db_msg.className = 'msg_ok';
 			}
-		},Dase.form.serialize(this),null,null,content_headers); 
+			if ('no' == parts[0]) {
+				db_msg.className = 'msg_no';
+			}
+			if ('ready' == parts[0]) {
+				db_msg.className = 'msg_ready';
+				Dase.removeClass(Dase.$('init_db'),'hide');
+			}
+		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
 	};
 };

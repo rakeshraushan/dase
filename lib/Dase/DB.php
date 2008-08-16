@@ -38,7 +38,7 @@ class Dase_DB {
 					self::$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 				}
 			} catch (PDOException $e) {
-				echo 'connect failed: ' . $e->getMessage();
+				throw new  PDOException('connect failed: ' . $e->getMessage());
 			}
 		}
 		// Return the connection
@@ -98,7 +98,12 @@ EOF;
 
 	public static function listTables()
 	{
-		$db = self::get();
+		//try-catch-trhow since we use this during install
+		try {
+			$db = self::get();
+		} catch (PDOException $e) {
+			throw new PDOException($e->getMessage());
+		}
 		if ('mysql' == self::$type) {
 			$sql = "SHOW TABLES";
 		}

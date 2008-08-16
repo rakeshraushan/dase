@@ -2,6 +2,7 @@
 
 class Dase_ModuleHandler_Install extends Dase_Handler {
 
+	public $db_set;
 	public $resource_map = array(
 		'/' => 'info',
 		'index' => 'info',
@@ -11,9 +12,21 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function setup($request)
 	{
-		$u = new Dase_DBO_DaseUser;
-		if (!$u->findOne()) {
-			$this->createUser();
+		try {
+			//see if db is set and we have users
+			$u = new Dase_DBO_DaseUser;
+			if ($u->findOne()) {
+				//if so, make sure user is logged in
+				//and is a superuser
+				$user = $request->getUser();
+				if ($user->isSuperuser()) {
+					$this->done($request);
+				} else {
+					$request->renderError(401);
+				}
+			}
+		} catch (Exception $e) {
+			$this->db_set = 0;
 		}
 	}
 
@@ -27,10 +40,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$request->renderResponse($tpl->fetch('index.tpl'));
 	}
 
-	public function createUser($request) 
+	public function done($request) 
 	{
-		$tpl = new Dase_Template($request,true);
-		$request->renderResponse($tpl->fetch('user_form.tpl'));
+		//setup method determined we are good to go
+		$request->renderRedirect();
 	}
 
 	public function postToDbchecker($request) 
@@ -50,10 +63,16 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		try {
 			$db = new PDO($dsn, $user, $pass, $driverOpts);
 		} catch (PDOException $e) {
-			echo 'no|connect failed: ' . $e->getMessage();
-			exit;
+			$request->renderResponse('no|connect failed: ' . $e->getMessage());
 		}
-		echo "ok|Database connection was successful";
-		exit;
+		try {
+			if (count(Dase_DB::listTables())) {
+				$request->renderResponse("ok|Database connection was successful ($count tables exist)");
+			}
+		} catch (PDOException $e) {
+			//if we are here, passed in settings worked, but Dase_Config settings (saved settings) did not
+		}
+		//since connection, not table count, is dependent on passed in settings
+		$request->renderResponse("ready|Database connection was successful.");
 	}
 }

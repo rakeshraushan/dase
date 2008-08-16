@@ -6,14 +6,10 @@ define('DASE_PATH',$working);
 
 /*********** CONFIGURATION ********************/
 
-//all of these configurations are set in 'inc/config.php' or 'inc/local_config.php';
-include $working.'/inc/config.php';
-$target = $conf['application_path'];
-$httpd_group = $conf['apache_group'];
-$rewrite_base = '';
-if ($target !== $conf['apache_docroot']) {
-	$rewrite_base = str_replace($conf['apache_docroot'].'/','',$target); 
-}
+//deployment settings
+$target = '/var/www/html/dase1';
+$httpd_group = 'apache';
+$rewrite_base = 'dase1';
 
 /**********************************************/
 

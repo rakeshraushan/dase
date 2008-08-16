@@ -47,6 +47,14 @@ class Dase_DBO implements IteratorAggregate
 		return false;
 	}
 
+	private function _dbGet() {
+		try {
+			return Dase_DB::get();
+		} catch (PDOException $e) {
+			throw new PDOException($e->getMessage());
+		}
+	}
+
 	function getFieldNames() {
 		return array_keys($this->fields);
 	}
@@ -101,7 +109,7 @@ class Dase_DBO implements IteratorAggregate
 	function load( $id )
 	{
 		$this->id = $id;
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		$table = $this->table;
 		$sql = "SELECT * FROM $table WHERE id=:id";
 		$sth = $db->prepare($sql);
@@ -136,7 +144,7 @@ class Dase_DBO implements IteratorAggregate
 		} else {
 			$id = 0;
 		}
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		$fields = array('id');
 		$inserts = array($id);
 		foreach( array_keys( $this->fields ) as $field )
@@ -183,7 +191,7 @@ class Dase_DBO implements IteratorAggregate
 	{
 		//finds matches based on set fields (omitting 'id')
 		//returns an iterator
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		$sets = array();
 		$bind = array();
 		$limit = '';
@@ -244,7 +252,7 @@ class Dase_DBO implements IteratorAggregate
 
 	public static function query($sql,$params=array(),$return_object=false)
 	{
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		$sth = $db->prepare($sql);
 		if ($return_object) {
 			$sth->setFetchMode(PDO::FETCH_OBJ);
@@ -267,7 +275,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function update()
 	{
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		foreach( $this->fields as $key => $val) {
 			if ('timestamp' != $key || $val) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
@@ -289,7 +297,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function delete()
 	{
-		$db = Dase_DB::get();
+		$db = $this->_dbGet();
 		$sth = $db->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
