@@ -13,10 +13,13 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function setup($request)
 	{
 		if (!is_writeable(CACHE_DIR)) {
-			echo CACHE_DIR." directory needs to be writeable by the web server\n";
+			$html = "<html><body>";
+			$html .= "<h3>".CACHE_DIR." directory must be writeable by the web server</h3>";
 			if (!is_writeable(DASE_LOG)) {
-				echo DASE_LOG." must be writeable by the web server for logging to be enabled";
+				$html .= "<h3>".DASE_LOG." directory must be writeable by the web server for logging to be enabled</h3>";
 			}
+			$html .= "</body></html>";
+			echo $html;
 			exit;
 		}
 		try {
