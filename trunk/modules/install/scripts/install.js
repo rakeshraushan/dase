@@ -8,6 +8,7 @@ Dase.install.initCheckDb = function() {
 		db_path.className = 'hide';
 	}
 	form.db_type.onchange = function() {
+		Dase.$('db_msg').innerHTML = '';
 		if ('sqlite' != type_select.options[type_select.options.selectedIndex].value) {
 			db_path.className = 'hide';
 		} else {
