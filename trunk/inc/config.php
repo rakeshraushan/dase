@@ -50,7 +50,8 @@ $conf['cache'] = 'file';
 $conf['max_items'] = 30;
 
 //handler that gets invoked when APP_ROOT is requested
-$conf['default_handler'] = 'collections';
+//$conf['default_handler'] = 'collections';
+$conf['default_handler'] = 'install';
 
 //access key: 
 //0: anyone, anywhere,anytime
@@ -87,8 +88,8 @@ $conf['sizes'] = array(
 );
 
 //local_config CAN OVERRIDE any of the above values
-if (file_exists( DASE_PATH . '/local_config.php')) {
-	include DASE_PATH . '/local_config.php';
+if (file_exists( DASE_PATH . '/inc/local_config.php')) {
+	include DASE_PATH . '/inc/local_config.php';
 }
 
 //allow module to overide config 

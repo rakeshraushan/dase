@@ -1,3 +1,7 @@
+<?php
+
+$query =<<<EOF
+
 DROP TABLE IF EXISTS `admin_search_table`;
 CREATE TABLE `admin_search_table` (
 `id` int(11) NOT NULL auto_increment,
@@ -301,4 +305,5 @@ CREATE TABLE `value_revision_history` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+EOF;
 
