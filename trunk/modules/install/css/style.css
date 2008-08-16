@@ -12,6 +12,10 @@ h1 {
 	font-size: 1.5em;
 }
 
+.hide {
+	display: none;
+}
+
 div.container{
 width:900px;
 margin:20px auto;
@@ -35,17 +39,32 @@ form input {
 	margin-bottom: .5em;
 }
 
+table#form_table td {
+	padding: 9px;
+	border: 1px solid #999;
+	width: 600px;
+}
+
+table#form_table th {
+	text-align: right;
+	padding: 9px;
+	border: 1px solid #999;
+	width: 200px;
+}
+
 label {
 	color: #999;
-	display: block;
 	font-size: .9em;
 	font-weight: bold;
 	margin-top: .5em;
 }
 
-.msg_ok {
+.msg_ready {
 	color: #0c0;
 }
-.msg_not_ok {
+.msg_ok {
+	color: #00c;
+}
+.msg_no {
 	color: #c00;
 }
