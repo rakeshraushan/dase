@@ -10,7 +10,7 @@ class Dase_Log
 		$date = date(DATE_W3C);
 		$msg = $date.'| pid:'.getmypid().':'.$msg."\n";
 		if(file_exists(self::$logfile)) {
-			file_put_contents(self::$logfile,$msg,FILE_APPEND);
+			@file_put_contents(self::$logfile,$msg,FILE_APPEND);
 		}
 		if ($backtrace) {
 			//include backtrace w/ errors
@@ -18,7 +18,7 @@ class Dase_Log
 			debug_print_backtrace();
 			$trace = ob_get_contents();
 			ob_end_clean();
-			file_put_contents(self::$logfile,$trace,FILE_APPEND);
+			@file_put_contents(self::$logfile,$trace,FILE_APPEND);
 		}
 	}
 

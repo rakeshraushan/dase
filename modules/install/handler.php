@@ -12,6 +12,13 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function setup($request)
 	{
+		if (!is_writeable(CACHE_DIR)) {
+			echo CACHE_DIR." directory needs to be writeable by the web server\n";
+			if (!is_writeable(DASE_LOG)) {
+				echo DASE_LOG." must be writeable by the web server for logging to be enabled";
+			}
+			exit;
+		}
 		try {
 			//see if db is set and we have users
 			$u = new Dase_DBO_DaseUser;
