@@ -1336,27 +1336,10 @@ Dase.updateDefinedValues = function(json) {
 	}
 };
 
-
-
-// todo: reorganize these additions once it's clear it's not breaking things.
-
-Function.prototype.bind = function() {
-	// http://developer.mozilla.org/en/docs/
-	// Core_JavaScript_1.5_Reference:Functions:arguments
-	var _$A = function(a){return Array.prototype.slice.call(a);}
-	if(arguments.length < 2 && (typeof arguments[0] == "undefined")) return this;
-	var __method = this, args = _$A(arguments), object = args.shift();
-	return function() {
-		return __method.apply(object, args.concat(_$A(arguments)));
-	}
-}
-
-//?? from http://aymanh.com/9-javascript-tips-you-may-not-know#BindingMethodsToObjects
-/*
+//from http://aymanh.com/9-javascript-tips-you-may-not-know#BindingMethodsToObjects
 function bind(obj, method) {
 	return function() { return method.apply(obj, arguments); }
 }
-*/
 
 Dase.initSlideshowLink = function() {
 	var sslink = Dase.$('startSlideshow');

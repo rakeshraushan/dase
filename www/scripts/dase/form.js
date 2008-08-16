@@ -6,13 +6,12 @@ Dase.form = function() {
             }
             return false;
         },
-        serialize: function(f, formatter) {
+        serialize: function(f) {
             if(f instanceof HTMLFormElement) var form = f;
             else var form = Dase.form.getByName(f) || document.getElementById(f);
             if(!(form instanceof HTMLFormElement)) {
                 throw new TypeError('Not a valid form name or id: '+f);
             }
-            formatter = typeof formatter == 'function' || this.postify;
             var element_handlers = {
                 'input': function(el) { return el.type; },
                 'select': function(el) { return 'select'; },
@@ -23,11 +22,7 @@ Dase.form = function() {
                 'hidden' : function(el) { return el.value; },
                 'textarea': function(el) { return el.value; },
                 'select': function(el) { 
-                    return Dase.util.map(filter(el.options, function(o) {
-                        return o.selected; 
-                    }), function(el) {
-                            return el.value; 
-                        }); 
+					return el.options[el.options.selectedIndex].value;
                 },
                 'radio': function(el) { return el.checked ? el.value : null; },
                 'checkbox': function(el) { return el.checked ? el.value : null; }
@@ -50,7 +45,7 @@ Dase.form = function() {
                     }
                 }
             }
-            return formatter(Dase.util.ofilter(params, function(k,v) { return v != null; }));
+            return this.postify(params);
         },
         postify: function(obj) {
             var params = [];
@@ -58,10 +53,10 @@ Dase.form = function() {
                 if(obj[k] instanceof Array) {
                     var multivalue = [];
                     for(kk in obj[k]) {
-                        if(obj[k][kk] != null) params.push(escape(k.toString())+'='+escape(obj[k][kk].toString()));
+                        if(obj[k][kk] != null) params.push(encodeURIComponent(k.toString())+'='+encodeURIComponent(obj[k][kk].toString()));
                     }
                 } else {
-                    if(obj[k] != null) params.push(escape(k.toString())+'='+escape(obj[k].toString()));
+                    if(obj[k] != null) params.push(encodeURIComponent(k.toString())+'='+encodeURIComponent(obj[k].toString()));
                 }
             }
             return params.join('&');

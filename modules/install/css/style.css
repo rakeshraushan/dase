@@ -8,7 +8,9 @@ body{
 font-family: trebuchet ms,arial,sans-serif;
 }
 
-
+h1 {
+	font-size: 1.5em;
+}
 
 div.container{
 width:900px;
@@ -29,21 +31,21 @@ div.content {
 	padding: 20px;
 }
 
-ul.tableSet li a {
-	color: #5d5d5d;
-	text-decoration: none;
+form input {
+	margin-bottom: .5em;
 }
 
-ul.tableSet li a:hover {
-	text-decoration: underline;
+label {
+	color: #999;
+	display: block;
+	font-size: .9em;
+	font-weight: bold;
+	margin-top: .5em;
 }
 
-ul.tableSet ul {
-	margin-left: 10px;
-	padding: 5px;
+.msg_ok {
+	color: #0c0;
 }
-
-ul.tableSet ul > li{
-	color: #ba1f00;
+.msg_not_ok {
+	color: #c00;
 }
-

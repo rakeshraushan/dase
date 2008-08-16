@@ -301,7 +301,7 @@ class Dase_Http_Request
 	public function getUrl() 
 	{
 		$this->path = $this->path ? $this->path : $this->getPath();
-		return $this->path . '?' . $this->getQueryString();
+		return trim($this->path . '?' . $this->getQueryString(),'?');
 	}
 
 	public function getQueryString() 

@@ -18,29 +18,29 @@
  * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-define('DASE_PATH', dirname(__FILE__));
-
 ini_set('include_path','lib');
 
-//PHP ERROR REPORTING
+define('DASE_PATH', dirname(__FILE__));
+
+//PHP ERROR REPORTING -- turn off for production
 ini_set('display_errors',1);
-ini_set('log_errors',1);
-ini_set('error_log',DASE_PATH . '/log/error.log');
 error_reporting(E_ALL);
 
 //scripts using Dase library can set this
 define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
 
-//need to be writable by apache:
+//need to be writable by apache!!:
 define('CACHE_DIR', DASE_PATH . '/cache/');
 define('DASE_LOG', DASE_PATH . '/log/dase.log');
 
 define('LOG_LEVEL',3);
 
 $protocol = (!isset($_SERVER['HTTPS'])) ? 'http://' : 'https://'; 
+
 define('APP_ROOT',trim($protocol.$_SERVER['HTTP_HOST'].'/'.trim(dirname($_SERVER['SCRIPT_NAME']),'/'),'/'));
 define('APP_HTTP_ROOT',str_replace('https:','http:',APP_ROOT));
 define('APP_HTTPS_ROOT',str_replace('http:','https:',APP_ROOT));
+
 //when dase is not a the server root
 define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 
@@ -55,6 +55,7 @@ function __autoload($class_name) {
 	}  
 	Dase_Log::info("could not autoload $class_file");
 }
+
 Dase_Timer::start();
 Dase_Log::start();
 Dase::run();

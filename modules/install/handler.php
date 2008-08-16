@@ -6,6 +6,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'/' => 'info',
 		'index' => 'info',
 		'index/{msg}' => 'info',
+		'dbchecker' => 'dbchecker',
 	);
 
 	public function setup($request)
@@ -30,5 +31,29 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($request,true);
 		$request->renderResponse($tpl->fetch('user_form.tpl'));
+	}
+
+	public function postToDbchecker($request) 
+	{
+		$name = $request->get('db_name');
+		$path = $request->get('db_path');
+		$type = $request->get('db_type');
+		$host = $request->get('db_host');
+		$user = $request->get('db_user');
+		$pass = $request->get('db_pass');
+		$driverOpts = array();
+		if ('sqlite' == $type) {
+			$dsn = "sqlite:".$path;
+		} else {
+			$dsn = $type . ":host=$host;dbname=".$name;
+		}
+		try {
+			$db = new PDO($dsn, $user, $pass, $driverOpts);
+		} catch (PDOException $e) {
+			echo 'no|connect failed: ' . $e->getMessage();
+			exit;
+		}
+		echo "ok|Database connection was successful";
+		exit;
 	}
 }
