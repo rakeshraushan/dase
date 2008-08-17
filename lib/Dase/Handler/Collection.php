@@ -52,7 +52,11 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getCollectionAtom($request) 
 	{
-		$limit = $request->has('limit') ? $request->get('limit') : 15;
+		if ($request->has('limit')) {
+		   $limit = $request->get('limit');
+		} else {
+			$limit = 10;
+		}
 		$request->renderResponse($this->collection->asAtom($limit));
 	}
 
