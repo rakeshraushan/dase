@@ -99,8 +99,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		try {
 			$pdo = new PDO($dsn, $db['user'], $db['pass']);
 		} catch (PDOException $e) {
-			Dase_Log::debug('-------'.print_r($_REQUEST,true));
-			$request->renderResponse('no|connect failed: '.print_r($_REQUEST,true).' | ' . $e->getMessage());
+			$request->renderResponse('no|connect failed: ' . $e->getMessage());
 		}
 		try {
 			$count = count(Dase_DB::listTables());
