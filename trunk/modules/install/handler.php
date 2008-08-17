@@ -170,6 +170,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$u->eid = $request->get('eid');
 		$u->name = $request->get('eid');
 		$u->insert();
+		$request->setUser($u);
 		$count = count(Dase_DB::listTables());
 
 		$url = "http://quickdraw.laits.utexas.edu/dase1/collection/american_west";
