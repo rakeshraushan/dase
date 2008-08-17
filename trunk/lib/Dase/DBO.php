@@ -184,7 +184,10 @@ class Dase_DBO implements IteratorAggregate
 	function findOne()
 	{
 		$this->setLimit(1);
-		return $this->find()->fetch();
+		$set = $this->find()->fetchAll();
+		if (count($set)) {
+			return $set[0];
+		}
 	}
 
 	function find()
@@ -231,6 +234,9 @@ class Dase_DBO implements IteratorAggregate
 		$this->sql = $sql;
 		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
+		if (!$sth) {
+			throw new PDOException('cannot create statement handle');
+		}
 
 		//pretty logging
 		$log_sql = $this->sql;
@@ -252,8 +258,14 @@ class Dase_DBO implements IteratorAggregate
 
 	public static function query($sql,$params=array(),$return_object=false)
 	{
-		$db = $this->_dbGet();
+		$db = self::_dbGet();
 		$sth = $db->prepare($sql);
+		if (!$sth) {
+			$errs = $db->errorInfo();
+			if (isset($errs[2])) {
+				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
+			}
+		}
 		if ($return_object) {
 			$sth->setFetchMode(PDO::FETCH_OBJ);
 		} else {

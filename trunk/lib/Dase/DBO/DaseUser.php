@@ -178,7 +178,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function isSuperuser()
 	{
-		if (in_array($this->eid,Dase_Config::get('superuser'))) {
+		if (in_array($this->eid,array_keys(Dase_Config::get('superuser')))) {
 			return true;
 		}
 		return false;

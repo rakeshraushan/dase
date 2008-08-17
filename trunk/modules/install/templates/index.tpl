@@ -23,7 +23,7 @@
 								<label for="eid">Username</label>
 							</th>
 							<td>
-								<input type="text" name="eid" value=""/>
+								<input type="text" name="eid" value="{$eid}"/>
 							</td>
 						</tr>
 						<tr>
@@ -31,7 +31,7 @@
 								<label for="password">Password</label>
 							</th>
 							<td>
-								<input type="text" name="password" value=""/>
+								<input type="text" name="password" value="{$password}"/>
 							</td>
 						</tr>
 					</table>
@@ -126,7 +126,8 @@
 						<tr id="init_db" class="hide">
 							<th></th>
 							<td>
-								<input type="submit" id="db_init_button" value="save settings and initialize database"/>
+								<input type="submit" id="save_settings_button" value="save settings"/>
+								<input type="submit" id="db_init_button" value="initialize database"/>
 								<div id="init_db_msg"></div>
 							</td>
 						</tr>

@@ -35,7 +35,9 @@ class Dase_DB {
 			try {
 				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
 				if ('mysql' == self::$type) {
-					self::$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+					self::$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
+					//http://netevil.org/blog/2006/apr/using-pdo-mysql
+					self::$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 				}
 			} catch (PDOException $e) {
 				throw new  PDOException('connect failed: ' . $e->getMessage());
@@ -43,6 +45,15 @@ class Dase_DB {
 		}
 		// Return the connection
 		return self::$db;
+	}
+
+	/** simply wraps logging */
+	public static function query($sql)
+	{
+		//beware sql injection
+		$db = self::get();
+		Dase_Log::debug("[DB exec] ".$sql);
+		return $db->query($sql);
 	}
 
 	public static function logger($sth,$params=array(),$bool,$msg='DB query') {
@@ -130,6 +141,12 @@ EOF;
 				";
 		}
 		$sth = $db->prepare($sql);
+		if (!$sth) {
+			$errs = $db->errorInfo();
+			if (isset($errs[2])) {
+				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
+			}
+		}
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
@@ -158,6 +175,12 @@ EOF;
 			return $names;
 		}
 		$sth = $db->prepare($sql);
+		if (!$sth) {
+			$errs = $db->errorInfo();
+			if (isset($errs[2])) {
+				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
+			}
+		}
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	

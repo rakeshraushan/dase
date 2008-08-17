@@ -8,6 +8,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'index' => 'info',
 		'index/{msg}' => 'info',
 		'dbchecker' => 'dbchecker',
+		'savesettings' => 'savesettings',
 		'dbinit' => 'dbinit',
 		'pathchecker' => 'pathchecker',
 	);
@@ -46,9 +47,14 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	{
 		$conf = var_export(Dase_Config::getAll(),true);
 		$file_contents = "<?php \$conf=$conf;";
-		//file_put_contents(DASE_PATH.'/local_config.php',$file_contents);
 		$tpl = new Dase_Template($request,true);
-		$tpl->assign('conf',Dase_Config::getAll());
+		$conf = Dase_Config::getAll();
+		if (isset($conf['superuser'])  && is_array($conf['superuser'])) {
+			$eid = array_shift(array_keys($conf['superuser']));
+			$tpl->assign('eid',$eid);
+			$tpl->assign('password',$conf['superuser'][$eid]);
+		}
+		$tpl->assign('conf',$conf);
 		$lc = DASE_PATH.'/inc/local_config.php';
 		$tpl->assign('lc',$lc);
 		$request->renderResponse($tpl->fetch('index.tpl'),false);
@@ -93,20 +99,22 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		try {
 			$pdo = new PDO($dsn, $db['user'], $db['pass']);
 		} catch (PDOException $e) {
-			$request->renderResponse('no|connect failed: ' . $e->getMessage(),false);
+			Dase_Log::debug('-------'.print_r($_REQUEST,true));
+			$request->renderResponse('no|connect failed: '.print_r($_REQUEST,true).' | ' . $e->getMessage());
 		}
 		try {
-			if (count(Dase_DB::listTables())) {
-				$request->renderResponse("ok|Database connection was successful ($count tables exist)",false);
+			$count = count(Dase_DB::listTables());
+			if ($count) {
+				$request->renderResponse("ok|Database connection was successful ($count tables exist)");
 			}
 		} catch (PDOException $e) {
 			//if we are here, passed in settings worked, but Dase_Config settings (saved settings) did not
 		}
 		//since connection, not table count, is dependent on passed in settings
-		$request->renderResponse("ready|Database connection was successful.",false);
+		$request->renderResponse("ready|Database connection was successful.");
 	}
 
-	public function postToDbInit($request) 
+	public function postToSavesettings($request) 
 	{
 		$db = array();
 		$db['name'] = $request->get('db_name');
@@ -126,8 +134,9 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$request->renderResponse('no|connect failed: ' . $e->getMessage(),false);
 		}
 		try {
-			if (count(Dase_DB::listTables())) {
-				$request->renderResponse("ok|Database is already initialized ($count tables exist)",false);
+			$count = count(Dase_DB::listTables());
+			if ($count) {
+				$request->renderResponse("ok|Database is already initialized ($count tables exist)");
 			}
 		} catch (PDOException $e) {
 			//if we are here, passed in settings worked, but Dase_Config settings (saved settings) did not
@@ -152,5 +161,20 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			);
 		}
 		exit;
+	}
+
+	public function postToDbinit($request) 
+	{
+		include (DASE_PATH.'/modules/install/mysql_schema.php');
+		Dase_DB::query($query)->fetchAll();
+		$u = new Dase_DBO_DaseUser;
+		$u->eid = $request->get('eid');
+		$u->name = $request->get('eid');
+		$u->insert();
+		$count = count(Dase_DB::listTables());
+		if ($count) {
+			$request->renderResponse("ok|Database has been initialized ($count tables created)");
+		}
+		$request->renderResponse("ok|Database has been initialized");
 	}
 }
