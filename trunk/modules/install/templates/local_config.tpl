@@ -11,4 +11,4 @@ $conf['token'] = '{$token}';
 $conf['ppd_token'] = "{$ppd_token}";
 $conf['path_to_media'] = '{$path_to_media}';
 $conf['graveyard'] = "{$graveyard}";
-//$conf['default_handler'] = 'collections';
+$conf['default_handler'] = 'collections';
