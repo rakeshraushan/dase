@@ -172,6 +172,18 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$u->name = $request->get('eid');
 		$u->insert();
 		$count = count(Dase_DB::listTables());
+
+		$url = "http://quickdraw.laits.utexas.edu/dase1/collection/american_west";
+		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom');
+		$coll_ascii_id = $feed->getAsciiId();
+		$feed->ingest($request);
+		$cm = new Dase_DBO_CollectionManager;
+		$cm->dase_user_eid = $u->eid;
+		$cm->collection_ascii_id = $coll_ascii_id;
+		$cm->auth_level = 'superuser';
+		$cm->created = date(DATE_ATOM); 
+		$cm->insert();
+
 		if ($count) {
 			$request->renderResponse("ok|Database has been initialized ($count tables created)");
 		}
