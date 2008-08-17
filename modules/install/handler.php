@@ -15,7 +15,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function setup($request)
 	{
-		if (!is_writeable(CACHE_DIR) || !is_writeable(DASE_LOG)) {
+		if (!is_writeable(CACHE_DIR)) {
 			$html = "<html><body>";
 			$html .= "<h3>".CACHE_DIR." directory must be writeable by the web server</h3>";
 			$html .= "</body></html>";
