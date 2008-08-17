@@ -57,7 +57,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('conf',$conf);
 		$lc = DASE_PATH.'/inc/local_config.php';
 		$tpl->assign('lc',$lc);
-		$request->renderResponse($tpl->fetch('index.tpl'),false);
+		$request->renderResponse($tpl->fetch('index.tpl'));
 	}
 
 	public function done($request) 
@@ -79,7 +79,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		} else {
 			$resp .= "msg_no|This path is NOT writeable";
 		}
-		$request->renderResponse($resp,false);
+		$request->renderResponse($resp);
 	}
 
 	public function postToDbchecker($request) 
@@ -130,7 +130,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		try {
 			$pdo = new PDO($dsn, $db['user'], $db['pass']);
 		} catch (PDOException $e) {
-			$request->renderResponse('no|connect failed: ' . $e->getMessage(),false);
+			$request->renderResponse('no|connect failed: ' . $e->getMessage());
 		}
 		try {
 			$count = count(Dase_DB::listTables());
