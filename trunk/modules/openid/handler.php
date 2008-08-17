@@ -11,7 +11,8 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 
 	protected function setup($request)
 	{
-		session_save_path(CACHE_DIR);
+		$this->save_dir = CACHE_DIR;
+		session_save_path($this->save_dir);
 		require_once "Auth/OpenID/FileStore.php";
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/Yadis/Manager.php";
@@ -35,7 +36,7 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 	public function getConfirmation($request)
 	{
 		session_start();
-		$store_path = CACHE_DIR."openid_consumer";
+		$store_path = $this->save_dir."/openid_consumer";
 		if (!file_exists($store_path) && !mkdir($store_path)) {
 			print "Could not create the FileStore directory '$store_path'. ".
 				" Please check the effective permissions.";
@@ -82,7 +83,7 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 	public function postToLogin($request)
 	{
 		session_start();
-		$store_path = CACHE_DIR."openid_consumer";
+		$store_path = $this->save_dir."/openid_consumer";
 		if (!file_exists($store_path) && !mkdir($store_path)) {
 			print "Could not create the FileStore directory '$store_path'. ".
 				" Please check the effective permissions.";

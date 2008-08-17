@@ -39,13 +39,17 @@ form input {
 	margin-bottom: .5em;
 }
 
-table#form_table td {
+table.form_table {
+	margin-bottom: 1em;
+}
+
+table.form_table td {
 	padding: 9px;
 	border: 1px solid #999;
 	width: 600px;
 }
 
-table#form_table th {
+table.form_table th {
 	text-align: right;
 	padding: 9px;
 	border: 1px solid #999;

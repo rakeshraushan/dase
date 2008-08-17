@@ -32,9 +32,13 @@ class Dase_Handler_Login extends Dase_Handler
 
 	public function postToLogin($request)
 	{
+		//this is the default, uber-simple login
+		//which should be overidden by a module
+		//all valid users need to be superusers
 		$username = $request->get('username');
 		$pass = $request->get('password');
-		if ('tseliot' == $pass) {
+		$superusers = Dase_Config::get('superuser');
+		if ($superusers[$username] == $pass) {
 			Dase_Cookie::set($username);
 			Dase_DBO_DaseUser::init($username);
 			//do this so cookie is passed along

@@ -15,9 +15,55 @@
 				DASe Installation & Configuration
 			</div>
 			<div class="content">
-				<h1>Database Settings</h1>
 				<form id="check_form" action="dbchecker" method="post">
-					<table id="form_table">
+				<h1>Admin User Information</h1>
+					<table class="form_table">
+						<tr>
+							<th>
+								<label for="eid">Username</label>
+							</th>
+							<td>
+								<input type="text" name="eid" value=""/>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<label for="password">Password</label>
+							</th>
+							<td>
+								<input type="text" name="password" value=""/>
+							</td>
+						</tr>
+					</table>
+				<h1>Media Repository Settings</h1>
+					<table class="form_table">
+						<tr>
+							<th>
+								<label for="path_to_media">Path to Media Directory (must be writable by web server)</label>
+							</th>
+							<td>
+								<input type="text" size="40" name="path_to_media" value="{$conf.path_to_media}"/>
+								<span id="path_to_media_msg"></span>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<label for="graveyard">Path to Graveyard (deleted item metadata archive)</label>
+							</th>
+							<td>
+								<input type="text" size="40" name="graveyard" value="{$conf.graveyard}"/>
+								<span id="graveyard_msg"></span>
+							</td>
+						</tr>
+						<tr>
+							<th></th>
+							<td>
+								<input type="submit" id="repos_check_button" value="check directory permissions"/>
+							</td>
+						</tr>
+					</table>
+				<h1>Database Settings</h1>
+					<table class="form_table">
 						<tr>
 							<th>
 								<label for="db_type">Database Type</label>
@@ -80,8 +126,15 @@
 						<tr id="init_db" class="hide">
 							<th></th>
 							<td>
-								<input type="submit" id="init_db_button" value="initialize database"/>
-								<span id="init_db_msg"></span>
+								<input type="submit" id="db_init_button" value="save settings and initialize database"/>
+								<div id="init_db_msg"></div>
+							</td>
+						</tr>
+						<tr id="local_config" class="hide">
+							<th></th>
+							<td>
+								Save as {$lc}
+								<textarea id="local_config_txt" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
 					</table>

@@ -7,11 +7,12 @@ $conf['db']['name'] = 'dase';
 $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
 
-$conf['superuser'][] = 'pkeane';
+//eid & admin password
+$conf['superuser']['pkeane'] = 'tseliot1';
 
 //define module handlers (can override existing handler)
 //$conf['handler']['<handler>'] = '<module_name>';
-//$conf['handler']['login'] = 'openid';
+$conf['handler']['login'] = 'openid';
 $conf['handler']['db'] = 'dbadmin';
 $conf['handler']['install'] = 'install';
 
@@ -42,11 +43,6 @@ $conf['default_handler'] = 'install';
 if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 	include DASE_PATH . '/inc/local_config.php';
 }
-
-//allow module to overide config 
-if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
-	include(MODULE_PATH . '/inc/config.php');
-}	
 
 //causes tokens to change daily
 $conf['token'] = $conf['token'].date('Ymd',time()); 
