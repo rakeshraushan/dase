@@ -11,7 +11,7 @@ $query =<<<EOF
 -- Server version: 5.0.27
 -- PHP Version: 4.3.9
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- (pk commented out) SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 --
 -- Database: `pkeane_dase`
