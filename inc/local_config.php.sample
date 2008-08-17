@@ -6,18 +6,11 @@ $conf['db']['name'] = '';
 $conf['db']['user'] = '';
 $conf['db']['pass'] = '';
 
-$conf['superuser'][] = '';
+$conf['superuser']['eid'] = 'password';
 
-//deployment settings
-$conf['apache_docroot'] = '';
-$conf['application_path'] = $conf['apache_docroot'].'/dase';
-$conf['apache_group'] = 'apache';
-
-//collection-specific media dirs live under here /<collection_ascii_id>/<size>
 //must be apache group writeable
 $conf['path_to_media'] = '';
 
-//a place to store metadata of deleted items (just-in-case)
 //must be apache group writeable
 $conf['graveyard'] = "";
 
