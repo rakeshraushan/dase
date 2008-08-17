@@ -12,7 +12,7 @@ $conf['superuser']['pkeane'] = 'tseliot1';
 
 //define module handlers (can override existing handler)
 //$conf['handler']['<handler>'] = '<module_name>';
-$conf['handler']['login'] = 'openid';
+//$conf['handler']['login'] = 'openid';
 $conf['handler']['db'] = 'dbadmin';
 $conf['handler']['install'] = 'install';
 
