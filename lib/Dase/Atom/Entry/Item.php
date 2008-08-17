@@ -237,8 +237,22 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->setValue('title',$this->getTitle());
 		$item->setValue('description',$this->getSummary());
 
-		$enc = $item->getEnclosure(); 
-		//todo:  now POST the $enc to the item's media collection!
+		$enc = $this->getEnclosure(); 
+		$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+		if (!file_exists($upload_dir)) {
+			$request->renderError(401,'missing upload directory');
+		}
+		$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
+		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+		file_put_contents($new_file,file_get_contents($enc['href']));
+
+		try {
+			$file = Dase_File::newFile($new_file,$enc['mime_type']);
+			$media_file = $file->addToCollection($this->title,$item->serial_number,$c,false);
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
+		}
 		$item->buildSearchIndex();
 		return $item;
 	}
