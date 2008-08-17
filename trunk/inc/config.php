@@ -8,7 +8,7 @@ $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
 
 //eid & admin password
-$conf['superuser']['pkeane'] = 'tseliot1';
+//$conf['superuser']['<username>'] = '<password>';
 
 //define module handlers (can override existing handler)
 //$conf['handler']['<handler>'] = '<module_name>';
@@ -26,11 +26,11 @@ $conf['ppd_token'] = "--greeneggsandham--";
 $conf['convert'] = '/usr/bin/convert';
 
 //must be apache group writeable
-$conf['path_to_media'] = '/mnt/www-data/dase/media';
+$conf['path_to_media'] = '/var/www/data/dase/media';
 
 //a place to archive metadata of deleted items 
 //must be apache group writeable
-$conf['graveyard'] = "/mnt/www-data/dase/graveyard";
+$conf['graveyard'] = "/var/www/data/dase/graveyard";
 
 //maximum no. of items displayed on a search result page
 $conf['max_items'] = 30;
