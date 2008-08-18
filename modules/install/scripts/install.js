@@ -5,7 +5,6 @@ Dase.install.initCheckForm = function() {
 
 	Dase.$('repos_check_button').onclick = function() {
 		Dase.$('init_db').className = 'hide';
-		Dase.$('local_config').className = 'hide';
 		Dase.$('init_db_msg').innerHTML = '';
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
