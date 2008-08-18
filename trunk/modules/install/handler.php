@@ -162,7 +162,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				', then click "confirm settings" button:|'.$config
 			);
 		} else {
-			$request->renderResponse('ready|Please initialize the database');
+			$request->renderResponse('ready|Settings OK! Please initialize the database');
 		}
 		exit;
 	}
