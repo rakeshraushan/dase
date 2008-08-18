@@ -128,8 +128,8 @@
 							<td>
 								<input type="submit" id="save_settings_button" value="save settings"/>
 								<input type="submit" id="init_db_button" class="hide" value="initialize database"/>
-								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 								<div id="init_db_msg"></div>
+								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
 						<tr id="completed" class="hide">
