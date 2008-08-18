@@ -109,6 +109,7 @@ Dase.install.initCheckForm = function() {
 			db_msg.innerHTML = parts[1];
 			if ('ok' == parts[0]) {
 				db_msg.className = 'msg_ok';
+				Dase.removeClass(Dase.$('completed'),'hide');
 			}
 			if ('no' == parts[0]) {
 				db_msg.className = 'msg_no';
@@ -118,7 +119,6 @@ Dase.install.initCheckForm = function() {
 			if ('nowrite' == parts[0]) {
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
-				Dase.removeClass(Dase.$('local_config'),'hide');
 			}
 		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
