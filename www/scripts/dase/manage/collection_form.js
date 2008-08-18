@@ -34,7 +34,7 @@ Dase.pageInit = function() {
 		var oFsg = (utcf < 0) ? '-' : '+';
 
 		var datestring = ypad+'-'+mpad+'-'+dpad+'T'+SHour+':'+SMins+':'+SSecs+oFsg+uOhr+':'+uOmn
-		//needs work!!!!!!!!!!!!!:
+		//todo: needs work!!!!!!!!!!!!!:
 		var ascii_id = form.collection_name.value.replace(/(collection|archive)/i,'').replace(/ /gi,"_").replace(/(__|_$)/g,'').toLowerCase();
 		data.id = Dase.base_href+'collection/'+ascii_id; 
 		data.date = datestring

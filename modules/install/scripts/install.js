@@ -105,10 +105,11 @@ Dase.install.initCheckForm = function() {
 			parts = resp.split('|');
 			db_msg.innerHTML = parts[1];
 			if ('ok' == parts[0]) {
-				db_msg.className = 'msg_ok';
+				alert('ok');
 				Dase.$('save_settings_button').className = 'hide';
 				Dase.$('init_db_button').className = 'hide';
 				Dase.$('completed').className = '';
+				db_msg.className = 'msg_ok';
 			}
 			if ('no' == parts[0]) {
 				db_msg.className = 'msg_no';
