@@ -90,6 +90,7 @@ Dase.install.initCheckForm = function() {
 			if ('ready' == parts[0]) {
 				db_msg.className = 'msg_ok';
 				Dase.removeClass(Dase.$('init_db_button'),'hide');
+				Dase.$('local_config_txt').className = 'hide';
 			}
 		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
