@@ -132,12 +132,6 @@
 								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
-						<tr id="completed" class="hide">
-							<th></th>
-							<td>
-								<a href="{$app_root}login/form">please login</a>
-							</td>
-						</tr>
 					</table>
 
 				</form>

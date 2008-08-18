@@ -189,8 +189,9 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$cm->created = date(DATE_ATOM); 
 		$cm->insert();
 
+		$login_url = APP_ROOT.'/login/form';
 		if ($count) {
-			$request->renderResponse("ok|Database has been initialized ($count tables created)");
+			$request->renderResponse("ok|Database has been initialized ($count tables created) <a href=\"$login_url\">please login</a>");
 		}
 		$request->renderResponse("ok|Database has been initialized");
 	}
