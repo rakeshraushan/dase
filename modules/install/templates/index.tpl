@@ -121,7 +121,6 @@
 							<td>
 								<input type="submit" id="db_check_button" value="check database settings"/>
 								<span id="db_msg"></span>
-								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
 						<tr id="init_db" class="hide">
@@ -129,12 +128,14 @@
 							<td>
 								<input type="submit" id="save_settings_button" value="save settings"/>
 								<input type="submit" id="init_db_button" class="hide" value="initialize database"/>
+								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 								<div id="init_db_msg"></div>
 							</td>
 						</tr>
-						<tr id="local_config" class="hide">
+						<tr id="completed" class="hide">
 							<th></th>
 							<td>
+								<a href="{$app_root}login/form">please login</a>
 							</td>
 						</tr>
 					</table>
