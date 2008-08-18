@@ -5,12 +5,17 @@ $conf['db']['host'] = '';
 $conf['db']['name'] = '';
 $conf['db']['user'] = '';
 $conf['db']['pass'] = '';
+$conf['db']['path'] = ''; //sqlite only
 
-$conf['superuser']['eid'] = 'password';
+$conf['superuser']['<eid>'] = '<password>';
 
 //must be apache group writeable
 $conf['path_to_media'] = '';
 
 //must be apache group writeable
 $conf['graveyard'] = "";
+
+$conf['token'] = '<random string here>';
+$conf['ppd_token'] = '<random string here>';
+$conf['default_handler'] = 'collections';
 

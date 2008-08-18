@@ -127,7 +127,7 @@
 							<th></th>
 							<td>
 								<input type="submit" id="save_settings_button" value="save settings"/>
-								<input type="submit" id="db_init_button" value="initialize database"/>
+								<input type="submit" id="init_db_button" class="hide" value="initialize database"/>
 								<div id="init_db_msg"></div>
 							</td>
 						</tr>

@@ -85,21 +85,26 @@ Dase.install.initCheckForm = function() {
 				Dase.$('local_config').className = 'hide';
 				Dase.$('db_msg').innerHTML = '';
 			}
-			if ('nowrite' == parts[0]) {
+			if ('display' == parts[0]) {
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
 				Dase.removeClass(Dase.$('local_config'),'hide');
 			}
+			if ('ready' == parts[0]) {
+				db_msg.className = 'msg_ok';
+				Dase.removeClass(Dase.$('init_db_button'),'hide');
+			}
 		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
 	};
-	Dase.$('db_init_button').onclick = function() {
+	Dase.$('init_db_button').onclick = function() {
+		var db_msg = Dase.$('init_db_msg');
+		var db_msg.innerHTML = "<blink>initializing database and importing test collection</blink>";
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
 		Dase.ajax(Dase.base_href+'dbinit','post',function(resp) { 
 			parts = resp.split('|');
-			var db_msg = Dase.$('init_db_msg');
 			db_msg.innerHTML = parts[1];
 			if ('ok' == parts[0]) {
 				db_msg.className = 'msg_ok';

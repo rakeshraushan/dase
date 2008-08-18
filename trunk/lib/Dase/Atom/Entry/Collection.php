@@ -40,12 +40,13 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 				}
 				symlink($media_dir,$media_dir.'_collection');
 			}
-			foreach (array('title','description','keyword') as $att) {
+			foreach (array('title','description','keyword','rights') as $att) {
 				$a = new Dase_DBO_Attribute;
 				$a->ascii_id = $att;
 				$a->attribute_name = ucfirst($att);
 				$a->collection_id = $c->id;
 				$a->in_basic_search = true;
+				$a->is_on_list_display = true;
 				$a->is_public = true;
 				$a->html_input_type = 'text';
 				if ('description' == $att) {
