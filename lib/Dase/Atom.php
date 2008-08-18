@@ -178,6 +178,11 @@ class Dase_Atom
 		$rights = $addElement('rights',$text);
 	}
 
+	function getRights() 
+	{
+		return $this->getAtomElementText('rights');
+	}
+
 	function setTitle($text) 
 	{
 		if ($this->title_is_set) {

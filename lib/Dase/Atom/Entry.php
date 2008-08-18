@@ -238,6 +238,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		$item->setValue('title',$this->getTitle());
 		$item->setValue('description',$this->getSummary());
+		$item->setValue('rights',$this->getRights());
 
 		$enc = $this->getEnclosure(); 
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';

@@ -156,12 +156,13 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('db',$db);
 		$config = $tpl->fetch('local_config.tpl');
 		$lc = DASE_PATH.'/inc/local_config.php';
-		if (!is_writeable($lc)) {
+		if (!file_exists($lc)) {
 			$request->renderResponse(
-				'nowrite|Cannot write to '.$lc.'. 
-				Save the following text as '.$lc.
+				'display|Save the following text as '.$lc.
 				':|'.$config
 			);
+		} else {
+			$request->renderResponse('ready|Please initialize the database');
 		}
 		exit;
 	}
