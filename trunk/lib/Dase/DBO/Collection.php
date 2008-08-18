@@ -78,7 +78,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed;
 	}
 
-	function asAtom($limit = 10)
+	function asAtom($limit = 2)
 	{
 		$feed = $this->getBaseAtomFeed();
 		$feed->setFeedType('collection');
