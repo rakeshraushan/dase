@@ -427,6 +427,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $description;
 	}
 
+	function getRights()
+	{
+		$sql = "
+			SELECT v.value_text 
+			FROM attribute a, value v
+			WHERE a.id = v.attribute_id
+			AND a.ascii_id = 'rights'
+			AND v.item_id = ? 
+			";
+		return Dase_DBO::query($sql,array($this->id))->fetchColumn();
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$d = Dase_Atom::$ns['d'];
@@ -444,6 +456,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$created = $this->created;
 		}
 		$entry->setTitle($this->getTitle());
+		$entry->setRights($this->getRights());
 		//for AtomPub
 		$entry->setEdited($updated);
 		//for AtomPub -- is this correct??

@@ -175,7 +175,7 @@ class Dase_Atom
 		} else {
 			$this->rights_is_set = true;
 		}
-		$rights = $addElement('rights',$text);
+		$rights = $this->addElement('rights',$text);
 	}
 
 	function getRights() 
