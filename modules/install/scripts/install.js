@@ -36,7 +36,6 @@ Dase.install.initCheckForm = function() {
 	}
 	Dase.$('db_check_button').onclick = function() {
 		Dase.$('init_db').className = 'hide';
-		Dase.$('local_config').className = 'hide';
 		Dase.$('init_db_msg').innerHTML = '';
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
@@ -51,7 +50,6 @@ Dase.install.initCheckForm = function() {
 			if ('no' == parts[0]) {
 				db_msg.className = 'msg_no';
 				Dase.$('init_db').className = 'hide';
-				Dase.$('local_config').className = 'hide';
 			}
 			if ('ready' == parts[0]) {
 				db_msg.className = 'msg_ready';
@@ -81,7 +79,6 @@ Dase.install.initCheckForm = function() {
 			}
 			if ('no' == parts[0]) {
 				db_msg.className = 'msg_no';
-				Dase.$('local_config').className = 'hide';
 				Dase.$('db_msg').innerHTML = '';
 			}
 			if ('display' == parts[0]) {
@@ -112,7 +109,6 @@ Dase.install.initCheckForm = function() {
 			}
 			if ('no' == parts[0]) {
 				db_msg.className = 'msg_no';
-				Dase.$('local_config').className = 'hide';
 				Dase.$('db_msg').innerHTML = '';
 			}
 			if ('nowrite' == parts[0]) {
