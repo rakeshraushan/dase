@@ -22,6 +22,7 @@ class Dase_Cache
 	//must be overridden:
 	function expire() {}
 	function getData() {}
+	public static function expunge() {}
 	function setData($data) {}
 }
 
