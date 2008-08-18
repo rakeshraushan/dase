@@ -58,6 +58,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$tpl->assign('eid',$eid);
 			$tpl->assign('password',$conf['superuser'][$eid]);
 		}
+		exec('which convert',$path_array);
+		if ($path_array[0]) {
+			$tpl->assign('convert_path',$path_array[0]);
+		}
 		$tpl->assign('conf',$conf);
 		$lc = DASE_PATH.'/inc/local_config.php';
 		$tpl->assign('lc',$lc);

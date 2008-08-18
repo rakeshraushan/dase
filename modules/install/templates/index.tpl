@@ -16,7 +16,7 @@
 			</div>
 			<div class="content">
 				<form id="check_form" action="dbchecker" method="post">
-				<h1>Admin User Information</h1>
+					<h1>Admin User Information</h1>
 					<table class="form_table">
 						<tr>
 							<th>
@@ -35,7 +35,7 @@
 							</td>
 						</tr>
 					</table>
-				<h1>Media Repository Settings</h1>
+					<h1>Media Repository Settings</h1>
 					<table class="form_table">
 						<tr>
 							<th>
@@ -62,7 +62,18 @@
 							</td>
 						</tr>
 					</table>
-				<h1>Database Settings</h1>
+					<h1>ImageMagick</h1>
+					<table class="form_table">
+						<tr>
+							<th>
+								<label for="convert_path">Path to ImageMagick "convert" Utility</label>
+							</th>
+							<td>
+								<input type="text" name="convert_path" value="{$convert_path}"/>
+							</td>
+						</tr>
+					</table>
+					<h1>Database Settings</h1>
 					<table class="form_table">
 						<tr>
 							<th>
