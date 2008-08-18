@@ -20,6 +20,15 @@ class Dase_Cache_File extends Dase_Cache
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
+	public static function expunge() 
+	{
+		foreach (new DirectoryIterator(CACHE_DIR) as $file) {
+			if (! $file->isDot()) {
+				unlink($file->getPathname());
+			}
+		}
+	}
+
 	function expire()
 	{
 		$filename = $this->cache_dir . $this->filename;
