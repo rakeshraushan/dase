@@ -154,6 +154,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('password',$request->get('password'));
 		$tpl->assign('path_to_media',$request->get('path_to_media'));
 		$tpl->assign('graveyard',$request->get('graveyard'));
+		$tpl->assign('convert_path',$request->get('convert_path'));
 		$tpl->assign('db',$db);
 		$tpl->assign('token',md5(time().'abc'));
 		$tpl->assign('ppd_token',md5(time().'def'));
