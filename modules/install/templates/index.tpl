@@ -121,6 +121,7 @@
 							<td>
 								<input type="submit" id="db_check_button" value="check database settings"/>
 								<span id="db_msg"></span>
+								<textarea id="local_config_txt" class="hide" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
 						<tr id="init_db" class="hide">
@@ -134,8 +135,6 @@
 						<tr id="local_config" class="hide">
 							<th></th>
 							<td>
-								Save as {$lc}
-								<textarea id="local_config_txt" cols="80" rows="16" name="local_config"></textarea>
 							</td>
 						</tr>
 					</table>

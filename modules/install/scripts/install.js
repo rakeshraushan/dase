@@ -88,7 +88,8 @@ Dase.install.initCheckForm = function() {
 			if ('display' == parts[0]) {
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
-				Dase.removeClass(Dase.$('local_config'),'hide');
+				Dase.removeClass(Dase.$('local_config_txt'),'hide');
+				Dase.$('save_settings_button').value = 'confirm settings';
 			}
 			if ('ready' == parts[0]) {
 				db_msg.className = 'msg_ok';
