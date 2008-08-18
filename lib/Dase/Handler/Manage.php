@@ -275,7 +275,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function postToIngester($request)
 	{
 		$url = $request->get('url');
-		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom&limit=3');
+		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom');
 		$coll_ascii_id = $feed->getAsciiId();
 		$feed->ingest($request);
 		$cm = new Dase_DBO_CollectionManager;
