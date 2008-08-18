@@ -159,7 +159,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		if (!file_exists($lc)) {
 			$request->renderResponse(
 				'display|Save the following text as '.$lc.
-				':|'.$config
+				', then click "confirm settings" button:|'.$config
 			);
 		} else {
 			$request->renderResponse('ready|Please initialize the database');
