@@ -103,19 +103,23 @@ Dase.install.initCheckForm = function() {
 		}
 		Dase.ajax(Dase.base_href+'dbinit','post',function(resp) { 
 			parts = resp.split('|');
-			db_msg.innerHTML = parts[1];
-			if ('ok' == parts[0]) {
+			switch (parts[0]) {
+				case 'ok':
+				db_msg.innerHTML = parts[1];
 				Dase.$('save_settings_button').className = 'hide';
 				Dase.$('init_db_button').className = 'hide';
 				db_msg.className = 'msg_ok';
-			}
-			if ('no' == parts[0]) {
+				case 'no': 
+				db_msg.innerHTML = parts[1];
 				db_msg.className = 'msg_no';
 				Dase.$('db_msg').innerHTML = '';
-			}
-			if ('nowrite' == parts[0]) {
+				case 'nowrite':
+				db_msg.innerHTML = parts[1];
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
+				default:
+				db_msg.innerHTML = 'sorry, there was an error';
+
 			}
 		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
