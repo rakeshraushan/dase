@@ -189,6 +189,9 @@ class Dase_File_Image extends Dase_File
 	{
 		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnails/'.$base_ident.'_100.jpg';  
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
+		if (!file_exists($thumbnail)) {
+			Dase_Log::info("failed to write $thumbnail");
+		}
 		$file_info = getimagesize($thumbnail);
 
 		$media_file = new Dase_DBO_MediaFile;
@@ -212,6 +215,9 @@ class Dase_File_Image extends Dase_File
 	{
 		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/400/'.$base_ident.'_400.jpg';  
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
+		if (!file_exists($viewitem)) {
+			Dase_Log::info("failed to write $viewitem");
+		}
 		$file_info = getimagesize($viewitem);
 
 		$media_file = new Dase_DBO_MediaFile;
