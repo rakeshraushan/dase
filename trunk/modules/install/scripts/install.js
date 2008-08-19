@@ -118,6 +118,7 @@ Dase.install.initCheckForm = function() {
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
 				default:
+				alert(parts[0]);
 				db_msg.innerHTML = 'sorry, there was an error';
 
 			}
