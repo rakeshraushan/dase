@@ -13,12 +13,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getSerialNumber() 
 	{
 		if (!$this->serial_number) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item/serial_number' == $el->getAttribute('scheme')) {
-					$this->serial_number =  $el->getAttribute('term');
-					break;
-				}
-			}
+			//serial numbers are modelled the same way as 
+			//ascii ids (last segment of id)
+			$this->serial_number = $this->getAsciiId();
 		}
 		return $this->serial_number;
 	}
@@ -252,6 +249,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
 			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
+		}
+		$item->buildSearchIndex();
+		return $item;
+	}
+
+	function update($request) 
+	{
+		$eid = $request->getUser()->eid;
+		$sernum = $this->getSerialNumber();
+		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if (!$c) { return; }
+		$item = Dase_DBO_Item::get($c->ascii_id,$sernum);
+		$item->updated = date(DATE_ATOM);
+		$item->update();
+		$metadata = $this->getMetadata();
+		$item->deleteValues();
+		foreach (array_keys($metadata) as $ascii_id) {
+			foreach ($metadata[$ascii_id]['values'] as $val) {
+				$item->setValue($ascii_id,$val);
+			}
 		}
 		$item->buildSearchIndex();
 		return $item;

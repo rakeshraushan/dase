@@ -10,6 +10,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
+		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
@@ -38,6 +39,27 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		 */
+	}
+
+	public function getItemsThatLackMediaTxt($request) 
+	{
+		$output = '';
+		$i = 0;
+		foreach ($this->collection->getItems() as $item) {
+			if (!$item->getMediaCount()) {
+				$i++;
+				$output .= $item->serial_number; 
+				//pass in 'display' params to view att value
+				foreach ($request->get('display',true) as $member) {
+					$output .= '|'.$item->getValue($member);
+				}
+				$output .= "\n";
+			}
+		}
+		if ($request->has('get_count')) {
+			$output = $i;
+		}
+		$request->renderResponse($output);
 	}
 
 	public function getPing($request)

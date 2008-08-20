@@ -171,7 +171,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			FROM attribute a, value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
-			ORDER BY a.sort_order,v.value_text
 			";
 		$bound_params[] = $this->id;
 		if ($att_ascii_id) {
@@ -180,6 +179,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				";
 			$bound_params[] = $att_ascii_id;
 		}
+		$sql .= "
+			ORDER BY a.sort_order,v.value_text
+			";
 		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
 			$metadata[] = $row;
@@ -222,6 +224,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$val = new Dase_DBO_Value;
 		$val->item_id = $this->id;
 		return $val->find();
+	}
+
+	public function getValue($att_ascii_id)
+	{
+		$sql = "
+			SELECT v.value_text
+			FROM attribute a, value v
+			WHERE v.item_id = ?
+			AND v.attribute_id = a.id
+			AND a.ascii_id = ?
+			LIMIT 1
+			";
+		$res = Dase_DBO::query($sql,array($this->id,$att_ascii_id),true)->fetch();
+		if ($res) {
+			return $res->value_text;
+		}
 	}
 
 	public function getCollection()
@@ -296,10 +314,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT count(*) 
 			FROM media_file
-			WHERE p_serial_number = $this->serial_number
-			AND p_collection_ascii_id = $this->collection->ascii_id
+			WHERE p_serial_number = ?
+			AND p_collection_ascii_id = ?
 			";
-		return $db->query($sql)->fetchColumn();
+		return Dase_DBO::query($sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
 	}
 
 	function setType($type_ascii_id)
@@ -328,6 +346,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$att->collection_id = $this->collection_id;
 		}
 		if ($att->findOne()) {
+			//does NOT overwrite (just adds k-v pair)
 			$v = new Dase_DBO_Value;
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;

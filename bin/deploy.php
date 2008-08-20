@@ -11,6 +11,9 @@ $target = '/var/www/html/dase1';
 $httpd_group = 'apache';
 $rewrite_base = 'dase1';
 
+//$target = '/mnt/projects/efossils/htdocs/tb_dase';
+//$rewrite_base = 'efossils/tb_dase';
+
 /**********************************************/
 
 print "copying $working/* to $target\n";

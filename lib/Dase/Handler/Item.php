@@ -154,6 +154,32 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse('added metadata');
 	}
 
+	public function putMetadata($request)
+	{
+		//todo: work on this!!!!!!!!!!!!
+		$content_type = $request->getContentType();
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $request->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+			$request->renderError(412,'md5 does not match');
+		}
+		$item_entry = Dase_Atom_Entry::load($raw_input);
+		if ('item' != $item_entry->entrytype) {
+		//	$item_entry->setEntryType('item');
+			$request->renderError(400,'must be an item entry');
+		}
+		$item = $item_entry->update($request);
+		if ($item) {
+			header("HTTP/1.1 200 Ok");
+			header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+		}
+		}
+		exit;
+	}
+
 	public function getMetadataJson($request)
 	{
 		$meta =	$this->item->getMetadata();
