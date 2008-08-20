@@ -278,7 +278,7 @@ class Dase_Http_Request
 		$url_params[$key] = array();
 		//NOTE: urldecode is NOT UTF-8 compatible
 		$pairs = explode('&',html_entity_decode(urldecode($_SERVER['QUERY_STRING'])));
-		if (count($pairs)) {
+		if (count($pairs) && $pairs[0]) {
 			foreach ($pairs as $pair) {
 				if (false !== strpos($pair,'=')) {	
 					list($k,$v) = explode('=',$pair);
