@@ -224,6 +224,7 @@ class Dase_Handler_Manage extends Dase_Handler
 				false === strpos($file->getPathname(),'smarty') &&
 				false === strpos($file->getPathname(),'Smarty') &&
 				false === strpos($file->getPathname(),'getid3') &&
+				false === strpos($file->getPathname(),'htaccess') &&
 				$file->isFile()
 			) {
 				try {

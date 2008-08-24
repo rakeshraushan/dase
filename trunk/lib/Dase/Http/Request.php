@@ -444,6 +444,13 @@ class Dase_Http_Request
 		exit;
 	}
 
+	public function renderOk()
+	{
+		$response = new Dase_Http_Response($this);
+		$response->ok();
+		exit;
+	}
+
 	public function serveFile($path,$mime_type,$download=false)
 	{
 		$response = new Dase_Http_Response($this);
