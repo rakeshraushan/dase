@@ -1,5 +1,7 @@
 <?php
 
+include DASE_PATH.'/lib/getid3/getid3.php';
+
 class Dase_File_Audio extends Dase_File
 {
 	protected $metadata = array();
@@ -12,8 +14,6 @@ class Dase_File_Audio extends Dase_File
 	function getMetadata()
 	{
 		$this->metadata = parent::getMetadata();
-		//todo: id3 will ONLY be available as a plugin from now on 8/9/08
-		/*
 		$getid3 = new getid3;
 		$getid3->encoding = 'UTF-8';
 		try {
@@ -53,11 +53,58 @@ class Dase_File_Audio extends Dase_File
 				$this->metadata['admin_audio_totaltracks'] = $id3['comments']['totaltracks'][0];
 			}
 		}
-		 */
 		return $this->metadata;
 	}
 
-	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+	public function addToCollection($title,$base_ident,$collection,$check_for_dups) 
+	{
+		$this->getMetadata();
+		//prevents 2 files in same collection w/ same md5
+		if ($check_for_dups) {
+			$mf = new Dase_DBO_MediaFile;
+			$mf->p_collection_ascii_id = $collection->ascii_id;
+			$mf->md5 = $this->metadata['md5'];
+			if ($mf->findOne()) {
+				throw new Exception('duplicate file');
+			}
+		}
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$base_ident.'.'.$this->ext;
+		//should this be try-catch?
+		if ($this->copyTo($target)) {
+			$media_file = new Dase_DBO_MediaFile;
+			$meta = array(
+				'filename','file_size','height','width','mime_type','updated','md5'
+			);
+			foreach ($meta as $term) {
+				if (isset($this->metadata[$term])) {
+					$media_file->$term = $this->metadata[$term];
+				}
+			}
+			$media_file->item_id = 0;
+			$media_file->size = $this->size;
+			$media_file->p_serial_number = $base_ident;
+			$media_file->p_collection_ascii_id = $collection->ascii_id;
+			$media_file->insert();
+			foreach ($this->metadata as $term => $text) {
+				$media_file->addMetadata($term,$text);
+			}
+			$media_file->addMetadata('title',$title);
+		}
+		$rotate = 0;
+		if (isset($this->metadata['exif_orientation'])) {
+			if (6 == $this->metadata['exif_orientation']) {
+				$rotate = 90;
+			}
+			if (8 == $this->metadata['exif_orientation']) {
+				$rotate = 270;
+			}
+		}
+		$this->makeThumbnail($base_ident,$collection,$rotate);
+		$this->makeViewitem($base_ident,$collection,$rotate);
+		$this->makeSizes($base_ident,$collection,$rotate);
+		return $media_file;
+	
+	}
 
 	function makeThumbnail($item,$collection)
 	{

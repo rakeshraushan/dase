@@ -67,6 +67,15 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		return $this->getXpathValue("opensearch:totalResults");
 	}
 
+	function getMax()
+	{
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		return $this->getXpathValue("opensearch:itemsPerPage");
+	}
+
 	function getStartIndex()
 	{
 		return $this->getAtomElementText('startIndex','os');

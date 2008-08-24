@@ -172,9 +172,10 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function ok()
+	public function ok($msg = '')
 	{
 		header("HTTP/1.1 200 Ok");
+		print $msg;
 		exit;
 	}
 
