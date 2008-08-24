@@ -1,0 +1,18 @@
+1. Check the source code out of subversion: svn checkout
+http://dase.googlecode.com/svn/trunk/ dase-read-only
+
+2. place the directory (probably renamed 'dase') somewhere in the
+docroot, and open the .htaccess file and make sure the RewriteBase
+is properly set (if the directory is called 'dase', and it lives at
+<docroot>/dase, the RewriteBase would be '/dase')
+
+3. Make sure you have an empty mysql database set up and you know the
+path,name,username, and password.
+
+4. make the 'dase/cache' directory apache-writeable, and create an empty
+file 'dase/log/dase.log' and make it apache-writeable
+
+5. Point a web browser at the directory and follow instructions (note
+that you'll need apache-writeable media repository and (optional)
+graveyard somewhere on the file system
+

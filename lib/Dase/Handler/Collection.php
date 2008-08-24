@@ -11,6 +11,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
+		'{collection_ascii_id}/items/marked/to_be_deleted' => 'items_marked_to_be_deleted',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
@@ -58,6 +59,18 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		if ($request->has('get_count')) {
 			$output = $i;
+		}
+		$request->renderResponse($output);
+	}
+
+	public function getItemsMarkedToBeDeletedTxt($request) 
+	{
+		$output = '';
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->collection->id;
+		$items->status = 'delete';
+		foreach ($items->find() as $item) {
+			$output .= $item->serial_number.'|'; 
 		}
 		$request->renderResponse($output);
 	}

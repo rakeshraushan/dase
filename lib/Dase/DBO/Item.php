@@ -26,6 +26,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public static function get($collection_ascii_id,$serial_number)
 	{
+		if (!$collection_ascii_id || !$serial_number) {
+			throw new Exception('missing information');
+		}
 		$c = Dase_DBO_Collection::get($collection_ascii_id);
 		if (!$c) {
 			return false;

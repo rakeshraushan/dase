@@ -42,7 +42,7 @@ class Dase_Atom
 			//$elem = $this->root->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],$tagname));
 			$elem = $this->root->appendChild($this->dom->createElement($tagname));
 		}
-		if ($text) {
+		if ('' !== $text) { //so '0' works
 			$elem->appendChild($this->dom->createTextNode($text));
 		}
 		return $elem;

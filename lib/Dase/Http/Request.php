@@ -444,10 +444,10 @@ class Dase_Http_Request
 		exit;
 	}
 
-	public function renderOk()
+	public function renderOk($msg='')
 	{
 		$response = new Dase_Http_Response($this);
-		$response->ok();
+		$response->ok($msg);
 		exit;
 	}
 

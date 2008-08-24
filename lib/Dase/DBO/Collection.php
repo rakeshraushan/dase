@@ -12,6 +12,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public static function get($ascii_id)
 	{
+		if (!$ascii_id) {
+			throw new Exception('missing collection ascii id');
+		}
 		$collection = new Dase_DBO_Collection;
 		$collection->ascii_id = $ascii_id;
 		if ($collection->findOne()) {

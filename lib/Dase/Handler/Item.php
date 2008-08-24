@@ -47,7 +47,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		try {
 			$this->item->expunge();
-			$request->renderOk();
+			$request->renderOk('item deleted');
 		} catch (Exception $e) {
 			$request->renderError(500);
 		}

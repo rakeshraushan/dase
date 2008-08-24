@@ -11,12 +11,16 @@ class Dase_Timer
 		$this->_start = self::microtime_float();
 	}
 
-	public static function start()
+	public static function start($restart=false)
 	{
-		if (empty (self::$instance)) {
+		if ($restart) {
 			self::$instance = new Dase_Timer();
 		} else {
-			throw new Exception( 'timer was already started' ); 
+			if (empty (self::$instance)) {
+				self::$instance = new Dase_Timer();
+			} else {
+				throw new Exception( 'timer was already started' ); 
+			}
 		}
 		return self::$instance;
 	}
@@ -32,7 +36,7 @@ class Dase_Timer
 		if (empty (self::$instance)) {
 			throw new Exception( 'timer was not started' ); 
 		}
-		return round(self::microtime_float() - self::$instance->_start,4);
+		return round(self::microtime_float() - self::$instance->_start,2);
 	}
 }
 
