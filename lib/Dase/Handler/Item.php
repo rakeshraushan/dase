@@ -7,6 +7,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/micro' => 'microformat',
 		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
+		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
@@ -23,18 +24,38 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 
 		//todo: work on better auth mapping
-		if ('service' == $request->resource || 
-			'atom' == $request->format ||
-			(('media' == $request->resource) && ('post' == $request->method))
-		) {
-			$this->user = $request->getUser('http');
-		} else {
-			$this->user = $request->getUser();
-			if (!$this->user->can('read','item',$this->item)) {
-				$request->renderError(401,'user cannot read this item');
+		if ('media_count' != $request->resource) { 
+			if ('service' == $request->resource || 
+				'atom' == $request->format ||
+				('media' == $request->resource && 'post' == $request->method) ||
+				('item' == $request->resource && 'delete' == $request->method) 
+			) {
+				$this->user = $request->getUser('http');
+			} else {
+				$this->user = $request->getUser();
+				if (!$this->user->can('read','item',$this->item)) {
+					$request->renderError(401,'user cannot read this item');
+				}
 			}
 		}
 	}	
+
+	public function deleteItem($request)
+	{
+		if (!is_writeable(Dase_Config::get('graveyard'))) {
+			$request->renderError(500);
+		}
+		try {
+			$this->item->expunge();
+			$request->renderOk();
+		} catch (Exception $e) {
+			$request->renderError(500);
+		}
+	}
+	public function getMediaCount($request)
+	{
+		$request->renderResponse($this->item->getMediaCount());
+	}
 
 	public function getMicroformat($request)
 	{
@@ -154,30 +175,29 @@ class Dase_Handler_Item extends Dase_Handler
 		$request->renderResponse('added metadata');
 	}
 
-	public function putMetadata($request)
+	public function putItem($request)
 	{
-		//todo: work on this!!!!!!!!!!!!
 		$content_type = $request->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
-		'application/atom+xml' == $content_type ) {
-		$raw_input = file_get_contents("php://input");
-		$client_md5 = $request->getHeader('Content-MD5');
-		//if Content-MD5 header isn't set, we just won't check
-		if ($client_md5 && md5($raw_input) != $client_md5) {
-			$request->renderError(412,'md5 does not match');
+			'application/atom+xml' == $content_type
+		) {
+			$raw_input = file_get_contents("php://input");
+			$client_md5 = $request->getHeader('Content-MD5');
+			//if Content-MD5 header isn't set, we just won't check
+			if ($client_md5 && md5($raw_input) != $client_md5) {
+				$request->renderError(412,'md5 does not match');
+			}
+			$item_entry = Dase_Atom_Entry::load($raw_input);
+			if ('item' != $item_entry->entrytype) {
+				//	$item_entry->setEntryType('item');
+				$request->renderError(400,'must be an item entry');
+			}
+			$item = $item_entry->update($request);
+			if ($item) {
+				$request->renderOk();
+			}
 		}
-		$item_entry = Dase_Atom_Entry::load($raw_input);
-		if ('item' != $item_entry->entrytype) {
-		//	$item_entry->setEntryType('item');
-			$request->renderError(400,'must be an item entry');
-		}
-		$item = $item_entry->update($request);
-		if ($item) {
-			header("HTTP/1.1 200 Ok");
-			header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-		}
-		}
-		exit;
+		$request->renderError(500);
 	}
 
 	public function getMetadataJson($request)
@@ -242,7 +262,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
-			Dase::error(500);
+			$request->renderError(500);
 		}
 
 		@fwrite( $ifp, $bits );

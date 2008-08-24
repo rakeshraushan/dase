@@ -172,6 +172,12 @@ class Dase_Http_Response
 		exit;
 	}
 
+	public function ok()
+	{
+		header("HTTP/1.1 200 Ok");
+		exit;
+	}
+
 	function __destruct() 
 	{
 		//see http://bugs.php.net/bug.php?id=34206

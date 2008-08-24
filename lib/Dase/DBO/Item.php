@@ -347,6 +347,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		if ($att->findOne()) {
 			//does NOT overwrite (just adds k-v pair)
+			//and does NOT create attribute if not found
 			$v = new Dase_DBO_Value;
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
