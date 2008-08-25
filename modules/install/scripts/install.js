@@ -13,8 +13,6 @@ Dase.install.initCheckForm = function() {
 			parts = resp.split('|');
 			Dase.$('path_to_media_msg').className = parts[0];
 			Dase.$('path_to_media_msg').innerHTML = parts[1];
-			Dase.$('graveyard_msg').className = parts[2];
-			Dase.$('graveyard_msg').innerHTML = parts[3];
 		},Dase.form.serialize(form),null,null,content_headers); 
 		return false;
 	};

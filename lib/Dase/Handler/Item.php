@@ -42,9 +42,6 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function deleteItem($request)
 	{
-		if (!is_writeable(Dase_Config::get('graveyard'))) {
-			$request->renderError(500);
-		}
 		try {
 			$this->item->expunge();
 			$request->renderOk('item deleted');

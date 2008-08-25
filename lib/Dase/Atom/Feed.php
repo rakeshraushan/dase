@@ -89,6 +89,11 @@ class Dase_Atom_Feed extends Dase_Atom
 		$xml = curl_exec($ch);
 		curl_close($ch);
 
+		//beware tight coupling to dase error text!!!
+		if (0 === strpos($xml,'DASe Error')) {
+			return false;
+		}
+
 		//for debugging
 		if (isset($_GET['showfeed'])) {
 			print $xml;

@@ -13,6 +13,5 @@ path,name,username, and password.
 file 'dase/log/dase.log' and make it apache-writeable
 
 5. Point a web browser at the directory and follow instructions (note
-that you'll need apache-writeable media repository and (optional)
-graveyard somewhere on the file system
+that you'll need apache-writeable media repository somewhere on the file system)
 
