@@ -7,12 +7,13 @@ class Dase_File_Video extends Dase_File
 		print "hello world\n";
 	}
 
-	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+	public function addToCollection($item,$check_for_dups) {}
 
-	function makeThumbnail($item,$collection)
+	function makeThumbnail($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/quicktime.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/quicktime.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -27,10 +28,11 @@ class Dase_File_Video extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$collection)
+	function makeViewitem($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/quicktime.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/quicktime.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -51,8 +53,9 @@ class Dase_File_Video extends Dase_File
 		return parent::getMetadata();
 	}
 
-	function processFile($item,$collection)
+	function processFile($item)
 	{
+		$collection = $item->getCollection();
 		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/quicktime/" . $item->serial_number . '.mov';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;

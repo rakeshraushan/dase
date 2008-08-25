@@ -11,8 +11,9 @@ class Dase_File_Image extends Dase_File
 		parent::__construct($file,$mime);
 	}
 
-	function addToCollection($collection,$item,$check_for_dups)
+	function addToCollection($item,$check_for_dups)
 	{
+		$collection = $item->getCollection();
 		//check for multi-layered tiff
 		if ('image/tiff' == $this->mime_type ){
 			$image = new Imagick($this->filepath);
@@ -46,7 +47,7 @@ class Dase_File_Image extends Dase_File
 			}
 			$media_file->item_id = $item->id;
 			$media_file->size = $this->size;
-			$media_file->p_serial_number = $base_ident;
+			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->insert();
 			foreach ($this->metadata as $term => $text) {
@@ -63,9 +64,9 @@ class Dase_File_Image extends Dase_File
 				$rotate = 270;
 			}
 		}
-		$this->makeThumbnail($base_ident,$collection,$rotate);
-		$this->makeViewitem($base_ident,$collection,$rotate);
-		$this->makeSizes($base_ident,$collection,$rotate);
+		$this->makeThumbnail($item,$rotate);
+		$this->makeViewitem($item,$rotate);
+		$this->makeSizes($item,$rotate);
 		return $media_file;
 	}
 
@@ -185,9 +186,10 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeThumbnail($base_ident,$collection,$rotate)
+	function makeThumbnail($item,$rotate)
 	{
-		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnails/'.$base_ident.'_100.jpg';  
+		$collection = $item->getCollection();
+		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$item->serial_number.'_100.jpg';  
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
 		if (!file_exists($thumbnail)) {
 			Dase_Log::info("failed to write $thumbnail");
@@ -197,7 +199,7 @@ class Dase_File_Image extends Dase_File
 		$media_file = new Dase_DBO_MediaFile;
 		//todo: compat
 		$media_file->item_id = 0;
-		$media_file->filename = $base_ident.'_100.jpg';
+		$media_file->filename = $item->serial_number.'_100.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
 			$media_file->height = $file_info[1];
@@ -206,14 +208,15 @@ class Dase_File_Image extends Dase_File
 		$media_file->size = 'thumbnail';
 		$media_file->file_size = filesize($thumbnail);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $base_ident;
+		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($base_ident,$collection,$rotate)
+	function makeViewitem($item,$rotate)
 	{
-		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/400/'.$base_ident.'_400.jpg';  
+		$collection = $item->getCollection();
+		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$item->serial_number.'_400.jpg';  
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
 		if (!file_exists($viewitem)) {
 			Dase_Log::info("failed to write $viewitem");
@@ -222,7 +225,7 @@ class Dase_File_Image extends Dase_File
 
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = 0;
-		$media_file->filename = $base_ident . '_400.jpg';
+		$media_file->filename = $item->serial_number . '_400.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
 			$media_file->height = $file_info[1];
@@ -231,13 +234,14 @@ class Dase_File_Image extends Dase_File
 		$media_file->size = 'viewitem';
 		$media_file->file_size = filesize($viewitem);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
-		$media_file->p_serial_number = $base_ident;
+		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeSizes($base_ident,$collection,$rotate)
+	function makeSizes($item,$rotate)
 	{
+		$collection = $item->getCollection();
 		$image_properties = array(
 			'small' => array(
 				'geometry'        => '640x480',
@@ -263,14 +267,14 @@ class Dase_File_Image extends Dase_File
 		$last_width = '';
 		$last_height = '';
 		foreach ($image_properties as $size => $size_info) {
-			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$base_ident.$size_info['size_tag'].'.jpg';  
+			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
 			$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage");
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry
 			$media_file = new Dase_DBO_MediaFile;
 			$media_file->item_id = 0;
-			$media_file->filename = "$base_ident{$size_info['size_tag']}.jpg";
+			$media_file->filename = $item->serial_number.$size_info['size_tag'].".jpg";
 			if ($file_info) {
 				$media_file->width = $file_info[0];
 				$media_file->height = $file_info[1];
@@ -286,7 +290,7 @@ class Dase_File_Image extends Dase_File
 			$media_file->size = $size;
 			$media_file->file_size = filesize($newimage);
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
-			$media_file->p_serial_number = $base_ident;
+			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
 			Dase_Log::info("created $media_file->size $media_file->filename");
 		}

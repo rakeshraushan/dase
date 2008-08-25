@@ -246,7 +246,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 			try {
 				$file = Dase_File::newFile($new_file,$enc['mime_type']);
-				$media_file = $file->addToCollection($this->title,$item->serial_number,$c,false);
+				$media_file = $file->addToCollection($item,false);
 			} catch(Exception $e) {
 				Dase_Log::debug('error',$e->getMessage());
 				$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
