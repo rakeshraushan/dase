@@ -389,9 +389,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function expunge()
 	{
 		$this->collection || $this->getCollection();
-		$graveyard = Dase_Config::get('graveyard');
-		$filename = $this->collection->ascii_id .'_'.$this->serial_number;
-		file_put_contents($graveyard.'/'.$filename,$this->asAtom());
+		$filename = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/deleted/'.$this->serial_number.'.atom';
+		file_put_contents($filename,$this->asAtom());
 		
 		$this->deleteMedia();
 		$this->deleteValues();

@@ -108,7 +108,7 @@ abstract class Dase_File
 		return $this->orig_name;
 	}
 
-	abstract public function addToCollection($title,$uid,$collection,$check_for_dups);
+	abstract public function addToCollection(Dase_DBO_Collection $collection,Dase_DBO_Item $item,$check_for_dups);
 
 	function getMetadata()
 	{

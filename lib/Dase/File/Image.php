@@ -11,7 +11,7 @@ class Dase_File_Image extends Dase_File
 		parent::__construct($file,$mime);
 	}
 
-	function addToCollection($title,$base_ident,$collection,$check_for_dups)
+	function addToCollection($collection,$item,$check_for_dups)
 	{
 		//check for multi-layered tiff
 		if ('image/tiff' == $this->mime_type ){
@@ -32,7 +32,7 @@ class Dase_File_Image extends Dase_File
 				throw new Exception('duplicate file');
 			}
 		}
-		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$base_ident.'.'.$this->ext;
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;
@@ -44,7 +44,7 @@ class Dase_File_Image extends Dase_File
 					$media_file->$term = $this->metadata[$term];
 				}
 			}
-			$media_file->item_id = 0;
+			$media_file->item_id = $item->id;
 			$media_file->size = $this->size;
 			$media_file->p_serial_number = $base_ident;
 			$media_file->p_collection_ascii_id = $collection->ascii_id;

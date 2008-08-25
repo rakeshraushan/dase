@@ -6,7 +6,6 @@ class Dase_Handler_Collections extends Dase_Handler
 	//and create parameters based on templates
 	public $resource_map = array(
 		'/' => 'collections',
-		'ingester' => 'ingester',
 		'data' => 'data',
 		'acl' => 'acl',
 		'item_tallies' => 'item_tallies',
@@ -42,14 +41,6 @@ class Dase_Handler_Collections extends Dase_Handler
 			$this->_newJsonCollection($request);
 		} else {
 			$request->renderError(415,'cannot accept '.$content_type);
-		}
-	}
-
-	public function postToIngester($request) 
-	{
-		$user = $request->getUser();
-		if ($user->isSuperuser()) {
-			$url = $request->get('url');
 		}
 	}
 

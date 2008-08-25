@@ -28,10 +28,6 @@ $conf['convert'] = '/usr/bin/convert';
 //must be apache group writeable
 $conf['path_to_media'] = '/var/www/data/dase/media';
 
-//a place to archive metadata of deleted items 
-//must be apache group writeable
-$conf['graveyard'] = "/var/www/data/dase/graveyard";
-
 //maximum no. of items displayed on a search result page
 $conf['max_items'] = 30;
 
@@ -63,7 +59,6 @@ $conf['cache'] = 'file';
 //2: must have collection-specific privileges
 
 $conf['sizes'] = array(
-	'400' => 1,
 	'aiff' => 2,
 	'archive' => 1,
 	'css' => 1,
@@ -83,11 +78,12 @@ $conf['sizes'] = array(
 	'raw' => 2,
 	'small' => 1,
 	'text' => 1,
-	'thumbnails' => 0,
+	'thumbnail' => 0,
 	'tiff' => 2,
 	'uploaded_files' => 2,
+	'viewitem' => 1,
 	'wav' => 2,
 	'xml' => 1,
-	'xslt' => 1,
+	'xsl' => 1,
 );
 

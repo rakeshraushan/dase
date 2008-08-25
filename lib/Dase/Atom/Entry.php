@@ -123,18 +123,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		$content->setAttribute('type',$mime);
 	}
 
-	function addMediaFeed($url)
-	{
-		//fancy footwork!
-		$elem = $this->addElement('gd:feedLink',null,Dase_Atom::$ns['gd']);
-		$elem->setAttribute('href',$url);
-		$feed = new Dase_Atom_Feed($this->dom);
-		//reset feed root
-		$feed->root = $feed->dom->appendChild($feed->dom->createElementNS(Dase_Atom::$ns['atom'],'feed'));
-		$elem->appendChild($feed->root);
-		return $feed;
-	}
-
 	function setPublished($text)
 	{
 		if ($this->published_is_set) {
@@ -217,47 +205,4 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
-
-	function insert($request) 
-	{
-		$eid = $request->getUser()->eid;
-		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
-		if (!$c) { return; }
-		$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
-		$content = new Dase_DBO_Content;
-		$atom_content = $this->getContent();
-		if ($atom_content) {
-			$content->text = $atom_content;
-			$content->type = $this->getContentType();
-			$content->item_id = $item->id;
-			$content->p_collection_ascii_id = $c->ascii_id;
-			$content->p_serial_number = $item->serial_number;
-			$content->updated = date(DATE_ATOM);
-			$content->updated_by_eid = $eid;
-			$content->insert();
-		}
-		$item->setValue('title',$this->getTitle());
-		$item->setValue('description',$this->getSummary());
-		$item->setValue('rights',$this->getRights());
-
-		$enc = $this->getEnclosure(); 
-		$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
-		if (!file_exists($upload_dir)) {
-			$request->renderError(401,'missing upload directory');
-		}
-		$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
-		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
-		file_put_contents($new_file,file_get_contents($enc['href']));
-
-		try {
-			$file = Dase_File::newFile($new_file,$enc['mime_type']);
-			$media_file = $file->addToCollection($this->title,$item->serial_number,$c,false);
-		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
-			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
-		}
-		$item->buildSearchIndex();
-		return $item;
-	}
-
 }
