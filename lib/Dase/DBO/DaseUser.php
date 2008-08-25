@@ -238,16 +238,17 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}	
 	}
 
-	function can($auth_level,$entity_type,$entity)
+	function can($auth_level,$entity)
 	{
-		switch ($entity_type) {
-		case 'attribute':
+		$class = get_class($entity);
+		switch ($class) {
+		case 'Dase_DBO_Attribute':
 			return $this->checkAttributeAuth($entity,$auth_level);
-		case 'collection':
+		case 'Dase_DBO_Collection':
 			return $this->checkCollectionAuth($entity,$auth_level);
-		case 'item':
+		case 'Dase_DBO_Item':
 			return $this->checkItemAuth($entity,$auth_level);
-		case 'tag':
+		case 'Dase_DBO_Tag':
 			return $this->checkTagAuth($entity,$auth_level);
 		default:
 			return false;

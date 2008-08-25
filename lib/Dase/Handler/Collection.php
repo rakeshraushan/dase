@@ -28,14 +28,14 @@ class Dase_Handler_Collection extends Dase_Handler
 			'ping' != $request->resource 
 		) {
 			$this->user = $request->getUser();
-			if (!$this->user->can('read','collection',$this->collection)) {
+			if (!$this->user->can('read',$this->collection)) {
 				$request->renderError(401);
 			}
 		}
 		/*
 		if ('atom' == $request->format) {
 			$this->user = $request->getUser('http');
-			if (!$this->user->can('read','collection',$this->collection)) {
+			if (!$this->user->can('read',$this->collection)) {
 			$request->renderError(401);
 			}
 		}
@@ -159,7 +159,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function postToCollection($request) 
 	{
 		$this->user = $request->getUser('http');
-		if (!$this->user->can('write','collection',$this->collection)) {
+		if (!$this->user->can('write',$this->collection)) {
 			$request->renderError(401,'no go unauthorized');
 		}
 		$content_type = $request->getContentType();
