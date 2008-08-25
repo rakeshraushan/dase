@@ -52,8 +52,13 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$request->checkCache();
 		$search = new Dase_Search($request);
-		$atom_feed = $search->getResult()->getItemAsAtomFeed($this->start,$this->max,$request->get('num'));
-		$request->renderResponse($atom_feed);
+		$search_result = $search->getResult();
+		$atom_feed = $search_result->getItemAsAtomFeed($this->start,$this->max,$request->get('num'));
+		if ($atom_feed) {
+			$request->renderResponse($atom_feed);
+		} else {
+			$request->renderError(404,'no such item');
+		}
 	}
 
 	public function getSearchItem($request)
@@ -61,8 +66,10 @@ class Dase_Handler_Search extends Dase_Handler
 		$request->checkCache();
 		$tpl = new Dase_Template($request);
 		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$request->url.'&format=atom');
+		if (!$feed) {
+			$request->renderError(404,'no such item');
+		}
 		$tpl->assign('item',$feed);
-
 		$hist = new Dase_DBO_UserHistory;
 		$hist->eid = $request->getUser()->eid;
 		$hist->href = APP_ROOT.'/'.$request->url;

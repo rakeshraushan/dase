@@ -9,11 +9,8 @@ $conf['db']['path'] = ''; //sqlite only
 
 $conf['superuser']['<eid>'] = '<password>';
 
-//must be apache group writeable
+//must be writeable by apache
 $conf['path_to_media'] = '';
-
-//must be apache group writeable
-$conf['graveyard'] = "";
 
 $conf['token'] = '<random string here>';
 $conf['ppd_token'] = '<random string here>';

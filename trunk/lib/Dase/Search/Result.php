@@ -168,6 +168,10 @@ class Dase_Search_Result
 
 	public function getItemAsAtomFeed($start,$max,$num)
 	{
+		//no need to send back a feed if count is 0
+		if (!$this->count) {
+			return false;
+		}
 		$num = $num ? $num : 1;
 
 		$previous = 0;
@@ -181,7 +185,11 @@ class Dase_Search_Result
 
 		$search_url = str_replace('search/item','search',$this->url);
 		$echo = $this->_constructEcho();
-		$item_id = $this->item_ids[$num-1];
+		if (isset($this->item_ids[$num-1])) {
+			$item_id = $this->item_ids[$num-1];
+		} else {
+			return;
+		}
 		$item = new Dase_DBO_Item;
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
