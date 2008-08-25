@@ -16,82 +16,96 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
-		$this->item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		$this->item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$this->item) {
-			$request->renderError(404);
+			$r->renderError(404);
 		}
 
-		//todo: work on better auth mapping
-		if ('media_count' != $request->resource) { 
-			if ('service' == $request->resource || 
-				'atom' == $request->format ||
-				('media' == $request->resource && 'post' == $request->method) ||
-				('item' == $request->resource && 'delete' == $request->method) 
-			) {
-				$this->user = $request->getUser('http');
-			} else {
-				$this->user = $request->getUser();
-				if (!$this->user->can('read','item',$this->item)) {
-					$request->renderError(401,'user cannot read this item');
-				}
-			}
-		}
+		//all auth happens in individual methods
 	}	
 
-	public function deleteItem($request)
+	public function deleteItem($r)
 	{
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'user cannot delete this item');
+		}
 		try {
 			$this->item->expunge();
-			$request->renderOk('item deleted');
+			$r->renderOk('item deleted');
 		} catch (Exception $e) {
-			$request->renderError(500);
+			$r->renderError(500);
 		}
 	}
-	public function getMediaCount($request)
+	public function getMediaCount($r)
 	{
-		$request->renderResponse($this->item->getMediaCount());
+		$r->renderResponse($this->item->getMediaCount());
 	}
 
-	public function getMicroformat($request)
+	public function getMicroformat($r)
 	{
-		$request->renderResponse($this->item->asMicroformat());
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->asMicroformat());
 	}
 
-	public function getMediaAtom($request)
+	public function getMediaAtom($r)
 	{
-		$request->renderResponse($this->item->mediaAsAtomFeed());
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->mediaAsAtomFeed());
 	}
 
-	public function getItemAtom($request)
+	public function getItemAtom($r)
 	{
-		$request->renderResponse($this->item->asAtom());
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->asAtom());
 	}
 
-	public function getItemService($request)
+	public function getItemService($r)
 	{
-		$request->response_mime_type = 'application/atomsvc+xml';
-		$request->renderResponse($this->item->getAtomPubServiceDoc());
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->item->getAtomPubServiceDoc());
 	}
 
-	public function getItemJson($request)
+	public function getItemJson($r)
 	{
-		$request->renderResponse($this->item->asJson());
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->asJson());
 	}
 
-	public function getItem($request)
+	public function getItem($r)
 	{
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
 		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
-		$t = new Dase_Template($request);
+		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
-			APP_ROOT.'/item/'. $request->get('collection_ascii_id') . '/' . $request->get('serial_number').'.atom',
+			APP_ROOT.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom',
 			$this->user->eid,$this->user->getHttpPassword()
 		);
 
 		$hist = new Dase_DBO_UserHistory;
-		$hist->eid = $request->getUser()->eid;
-		$hist->href = APP_ROOT.'/'.$request->url;
+		$hist->eid = $r->getUser()->eid;
+		$hist->href = APP_ROOT.'/'.$r->url;
 		$hist->title = $feed->getTitle();
 		//$hist->summary = $feed->getSearchEcho();
 		$hist->type = 'item_view';
@@ -99,54 +113,71 @@ class Dase_Handler_Item extends Dase_Handler
 		$hist->insert();
 
 		$t->assign('item',$feed);
-		$request->renderResponse($t->fetch('item/transform.tpl'));
+		$r->renderResponse($t->fetch('item/transform.tpl'));
 	}
 
-	public function getEditFormJson($request)
+	public function getEditFormJson($r)
 	{
-		$request->renderResponse($this->item->getEditFormJson());
+		$this->user = $r->getUser();
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'user cannot write this item');
+		}
+		$r->renderResponse($this->item->getEditFormJson());
 	}
 
-	public function getInputTemplates($request)
+	public function getInputTemplates($r)
 	{
-		$t = new Dase_Template($request);
-		$request->renderResponse($t->fetch('item/jstemplates.tpl'));
+		$t = new Dase_Template($r);
+		$r->renderResponse($t->fetch('item/jstemplates.tpl'));
 	}
 
-	public function deleteNote($request)
+	public function deleteNote($r)
 	{
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
 		$note = new Dase_DBO_Content;
-		$note->load($request->get('note_id'));
+		$note->load($r->get('note_id'));
 		if ($this->user->eid == $note->updated_by_eid) {
 			$note->delete();
 		}
 		$this->item->buildSearchIndex();
-		$request->renderResponse('deleted note '.$note->id);
+		$r->renderResponse('deleted note '.$note->id);
 	}
 
-	public function getStatusJson($request)
+	public function getStatusJson($r)
 	{
-		$request->renderResponse($this->item->statusAsJson());
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->statusAsJson());
 	}
 
-	public function putStatus($request)
+	public function putStatus($r)
 	{
-		if (!$this->user->can('write','item',$this->item)) {
-			$request->renderError(401,'cannot write for put');
+		$this->user = $r->getUser();
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write for put');
 		}
 		$status = trim(file_get_contents("php://input"));
 
 		if (in_array($status,array('public','draft','delete','archive'))) {
 			$this->item->status = $status;
 		} else {
-			$request->renderError(406,'not an acceptable status string');
+			$r->renderError(406,'not an acceptable status string');
 		}
 		$this->item->update();
-		$request->renderResponse('status updated');
+		$r->renderResponse('status updated');
 	}
 
-	public function postToNotes($request)
+	public function postToNotes($r)
 	{
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'cannot read this item');
+		}
 		//auth: anyone can post to an item they can read
 		$fp = fopen("php://input", "rb");
 		$bits = NULL;
@@ -156,72 +187,81 @@ class Dase_Handler_Item extends Dase_Handler
 		fclose($fp);
 		$this->item->addContent($bits,$this->user->eid);
 		$this->item->buildSearchIndex();
-		$request->renderResponse('added content: '.$bits);
+		$r->renderResponse('added content: '.$bits);
 	}
 
-	public function postToMetadata($request)
+	public function postToMetadata($r)
 	{
-		if (!$this->user->can('write','item',$this->item)) {
-			$request->renderError(401,'cannot post to metadata');
+		$this->user = $r->getUser();
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'cannot post to metadata');
 		}
-		$att_ascii = $request->get('ascii_id');
-		foreach ($request->get('value',true) as $val) {
+		$att_ascii = $r->get('ascii_id');
+		foreach ($r->get('value',true) as $val) {
 			$this->item->setValue($att_ascii,$val);
 		}
 		$this->item->buildSearchIndex();
-		$request->renderResponse('added metadata');
+		$r->renderResponse('added metadata');
 	}
 
-	public function putItem($request)
+	public function putItem($r)
 	{
-		$content_type = $request->getContentType();
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'cannot update item');
+		}
+		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
 		) {
 			$raw_input = file_get_contents("php://input");
-			$client_md5 = $request->getHeader('Content-MD5');
+			$client_md5 = $r->getHeader('Content-MD5');
 			//if Content-MD5 header isn't set, we just won't check
 			if ($client_md5 && md5($raw_input) != $client_md5) {
-				$request->renderError(412,'md5 does not match');
+				$r->renderError(412,'md5 does not match');
 			}
 			$item_entry = Dase_Atom_Entry::load($raw_input);
 			if ('item' != $item_entry->entrytype) {
 				//	$item_entry->setEntryType('item');
-				$request->renderError(400,'must be an item entry');
+				$r->renderError(400,'must be an item entry');
 			}
-			$item = $item_entry->update($request);
+			$item = $item_entry->update($r);
 			if ($item) {
-				$request->renderOk();
+				$r->renderOk();
 			}
 		}
-		$request->renderError(500);
+		$r->renderError(500);
 	}
 
-	public function getMetadataJson($request)
+	public function getMetadataJson($r)
 	{
 		$meta =	$this->item->getMetadata();
-		$request->renderResponse(Dase_Json::get($meta));
+		$r->renderResponse(Dase_Json::get($meta));
 	}
 
-	public function getNotesJson($request)
+	public function getNotesJson($r)
 	{
-		$request->renderResponse($this->item->getContentsJson());
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'cannot post media to this item');
+		}
+		$r->renderResponse($this->item->getContentsJson());
 	}
 
-	public function postToMedia($request) 
+	public function postToMedia($r) 
 	{
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('write',$this->item)) {
+			$r->renderError(401,'cannot post media to this item');
+		}
 		$item = $this->item;
 		$coll = $item->getCollection();
-		$this->user = $request->getUser('http');
-		if (!$this->user->can('write','item',$item)) {
-			$request->renderError(401,'user cannot write media file');
-		}
 		$types = array('image/*','audio/*','video/*','application/pdf');
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
-			$request->renderError(411,'missing content length');
+			$r->renderError(411,'missing content length');
 		}
 		//clean this up (prob from wordpress)
-		$content_type = $request->getContentType();
+		$content_type = $r->getContentType();
 		list($type,$subtype) = explode('/',$content_type);
 		list($subtype) = explode(";",$subtype); // strip MIME parameters
 		foreach($types as $t) {
@@ -251,7 +291,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$request->renderError(401,'missing upload directory');
+			$r->renderError(401,'missing upload directory');
 		}
 
 		$ext = $subtype;
@@ -259,7 +299,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
-			$request->renderError(500);
+			$r->renderError(500);
 		}
 
 		@fwrite( $ifp, $bits );
@@ -275,24 +315,32 @@ class Dase_Handler_Item extends Dase_Handler
 			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
-			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
+			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		//the returned atom entry links to derivs!
 		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
-		$request->response_mime_type = 'application/atom+xml';
-		$request->renderResponse($media_file->asAtom());
+		$r->response_mime_type = 'application/atom+xml';
+		$r->renderResponse($media_file->asAtom());
 	}
 
-	public function getServiceTxt($request)
+	public function getServiceTxt($r)
 	{
-		$this->getService($request);
+		$this->user = $r->getUser();
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'cannot read item');
+		}
+		$this->getService($r);
 	}
 
-	public function getService($request)
+	public function getService($r)
 	{
-		$request->response_mime_type = 'application/atomsvc+xml';
-		$request->renderResponse($this->item->getAtompubServiceDoc());
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('read',$this->item)) {
+			$r->renderError(401,'cannot read this item service document');
+		}
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->item->getAtompubServiceDoc());
 	}
 }
 
