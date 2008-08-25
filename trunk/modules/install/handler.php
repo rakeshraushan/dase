@@ -37,7 +37,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				//and is a superuser
 				$user = $request->getUser();
 				if ($user->isSuperuser()) {
-					//$this->done($request);
+					$this->done($request);
 				} else {
 					$request->renderError(401);
 				}
@@ -81,11 +81,6 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$resp = "msg_ready|This path is writeable|";
 		} else {
 			$resp = "msg_no|This path is NOT writeable|";
-		}
-		if (is_writeable($request->get('graveyard'))) {
-			$resp .= "msg_ready|This path is writeable";
-		} else {
-			$resp .= "msg_no|This path is NOT writeable";
 		}
 		$request->renderResponse($resp);
 	}
@@ -153,7 +148,6 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('eid',$request->get('eid'));
 		$tpl->assign('password',$request->get('password'));
 		$tpl->assign('path_to_media',$request->get('path_to_media'));
-		$tpl->assign('graveyard',$request->get('graveyard'));
 		$tpl->assign('convert_path',$request->get('convert_path'));
 		$tpl->assign('db',$db);
 		$tpl->assign('token',md5(time().'abc'));

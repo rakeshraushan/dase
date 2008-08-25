@@ -275,7 +275,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
-			$media_file = $file->addToCollection($item->serial_number,$item->serial_number,$coll,false);  //set 4th param to true to test for dups
+			$media_file = $file->addToCollection($coll,$item,false);  //set 3rd param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
 			$request->renderError(500,'could not ingest file ('.$e->getMessage().')');

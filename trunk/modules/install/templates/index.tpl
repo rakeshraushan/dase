@@ -47,15 +47,6 @@
 							</td>
 						</tr>
 						<tr>
-							<th>
-								<label for="graveyard">Path to Graveyard (deleted item metadata archive)</label>
-							</th>
-							<td>
-								<input type="text" size="40" name="graveyard" value="{$conf.graveyard}"/>
-								<span id="graveyard_msg"></span>
-							</td>
-						</tr>
-						<tr>
 							<th></th>
 							<td>
 								<input type="submit" id="repos_check_button" value="check directory permissions"/>
