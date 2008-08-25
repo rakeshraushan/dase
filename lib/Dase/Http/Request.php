@@ -367,6 +367,9 @@ class Dase_Http_Request
 		case 'http':
 			$eid = Dase_Http_Auth::getEid();
 			break;
+		case 'none':
+			//allows nothing to happen
+			return;
 		default:
 			$eid = Dase_Cookie::getEid();
 		}

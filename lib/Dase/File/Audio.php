@@ -56,7 +56,7 @@ class Dase_File_Audio extends Dase_File
 		return $this->metadata;
 	}
 
-	public function addToCollection($title,$base_ident,$collection,$check_for_dups) 
+	public function addToCollection($item,$check_for_dups) 
 	{
 		$this->getMetadata();
 		//prevents 2 files in same collection w/ same md5
@@ -68,7 +68,7 @@ class Dase_File_Audio extends Dase_File
 				throw new Exception('duplicate file');
 			}
 		}
-		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$base_ident.'.'.$this->ext;
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;
@@ -82,7 +82,7 @@ class Dase_File_Audio extends Dase_File
 			}
 			$media_file->item_id = 0;
 			$media_file->size = $this->size;
-			$media_file->p_serial_number = $base_ident;
+			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->insert();
 			foreach ($this->metadata as $term => $text) {
@@ -90,26 +90,17 @@ class Dase_File_Audio extends Dase_File
 			}
 			$media_file->addMetadata('title',$title);
 		}
-		$rotate = 0;
-		if (isset($this->metadata['exif_orientation'])) {
-			if (6 == $this->metadata['exif_orientation']) {
-				$rotate = 90;
-			}
-			if (8 == $this->metadata['exif_orientation']) {
-				$rotate = 270;
-			}
-		}
-		$this->makeThumbnail($base_ident,$collection,$rotate);
-		$this->makeViewitem($base_ident,$collection,$rotate);
-		$this->makeSizes($base_ident,$collection,$rotate);
+		$this->makeThumbnail($item);
+		$this->makeViewitem($item);
 		return $media_file;
 	
 	}
 
-	function makeThumbnail($item,$collection)
+	function makeThumbnail($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/audio.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/audio.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/audio.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/audio.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -124,10 +115,11 @@ class Dase_File_Audio extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$collection)
+	function makeViewitem($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/audio.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/audio.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/audio.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/audio.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/audio.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -142,8 +134,9 @@ class Dase_File_Audio extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function processFile($item,$collection)
+	function processFile($item)
 	{
+		$collection = $item->getCollection();
 		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/mp3/" . $item->serial_number . '.mp3';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;

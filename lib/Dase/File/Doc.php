@@ -15,12 +15,13 @@ class Dase_File_Doc extends Dase_File
 		return $this->metadata;
 	}
 
-	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+	public function addToCollection($item,$check_for_dups) {}
 
-	function makeThumbnail($item,$collection)
+	function makeThumbnail($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/doc.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/doc.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/doc.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/doc.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -35,10 +36,11 @@ class Dase_File_Doc extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$collection)
+	function makeViewitem($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/doc.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/doc.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/doc.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/doc.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/doc.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -53,8 +55,9 @@ class Dase_File_Doc extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function processFile($item,$collection)
+	function processFile($item)
 	{
+		$collection = $item->getCollection();
 		//todo: insert media metadata
 		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/doc/" . $item->serial_number . '.doc';
 		$this->copyTo($dest);

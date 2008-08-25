@@ -15,12 +15,13 @@ class Dase_File_Pdf extends Dase_File
 		return $this->metadata;
 	}
 
-	public function addToCollection($title,$uid,$collection,$check_for_dups) {}
+	public function addToCollection($item,$check_for_dups) {}
 
-	function makeThumbnail($item,$collection)
+	function makeThumbnail($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnails/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnails/pdf.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/pdf.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -35,10 +36,11 @@ class Dase_File_Pdf extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$collection)
+	function makeViewitem($item)
 	{
-		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/400/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/400/pdf.jpg');
+		$collection = $item->getCollection();
+		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/pdf.jpg")) {
+			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -53,8 +55,9 @@ class Dase_File_Pdf extends Dase_File
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
 
-	function processFile($item,$collection)
+	function processFile($item)
 	{
+		$collection->getItem();
 		$dest = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/pdf/" . $item->serial_number . '.pdf';
 		$this->copyTo($dest);
 		$media_file = new Dase_DBO_MediaFile;
