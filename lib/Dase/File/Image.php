@@ -53,7 +53,7 @@ class Dase_File_Image extends Dase_File
 			foreach ($this->metadata as $term => $text) {
 				$media_file->addMetadata($term,$text);
 			}
-			$media_file->addMetadata('title',$title);
+			$media_file->addMetadata('title',$item->serial_number);
 		}
 		$rotate = 0;
 		if (isset($this->metadata['exif_orientation'])) {
@@ -197,8 +197,7 @@ class Dase_File_Image extends Dase_File
 		$file_info = getimagesize($thumbnail);
 
 		$media_file = new Dase_DBO_MediaFile;
-		//todo: compat
-		$media_file->item_id = 0;
+		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number.'_100.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
@@ -224,7 +223,7 @@ class Dase_File_Image extends Dase_File
 		$file_info = getimagesize($viewitem);
 
 		$media_file = new Dase_DBO_MediaFile;
-		$media_file->item_id = 0;
+		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '_400.jpg';
 		if ($file_info) {
 			$media_file->width = $file_info[0];
@@ -273,7 +272,7 @@ class Dase_File_Image extends Dase_File
 
 			//create the media_file entry
 			$media_file = new Dase_DBO_MediaFile;
-			$media_file->item_id = 0;
+			$media_file->item_id = $item->id;
 			$media_file->filename = $item->serial_number.$size_info['size_tag'].".jpg";
 			if ($file_info) {
 				$media_file->width = $file_info[0];

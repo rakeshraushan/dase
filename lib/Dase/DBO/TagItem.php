@@ -7,9 +7,13 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 	function getItem()
 	{
 		$item = new Dase_DBO_Item;
-		$item->load($this->item_id);
-		$item->getCollection();
-		return $item;
+		//todo: go with p_coll & p_sernum
+		if ($item->load($this->item_id)) {
+			$item->getCollection();
+			return $item;
+		} else {
+			return false;
+		}
 	}
 
 	function getTag()

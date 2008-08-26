@@ -28,8 +28,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function deleteItem($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'user cannot delete this item');
 		}
 		try {
@@ -46,8 +46,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getMicroformat($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->asMicroformat());
@@ -55,8 +55,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getMediaAtom($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->mediaAsAtomFeed());
@@ -64,8 +64,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getItemAtom($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->asAtom());
@@ -73,8 +73,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getItemService($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
@@ -83,8 +83,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getItemJson($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->asJson());
@@ -92,15 +92,15 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getItem($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
 		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
 			APP_ROOT.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom',
-			$this->user->eid,$this->user->getHttpPassword()
+			$user->eid,$user->getHttpPassword()
 		);
 
 		$hist = new Dase_DBO_UserHistory;
@@ -118,8 +118,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getEditFormJson($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'user cannot write this item');
 		}
 		$r->renderResponse($this->item->getEditFormJson());
@@ -133,13 +133,13 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function deleteNote($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$note = new Dase_DBO_Content;
 		$note->load($r->get('note_id'));
-		if ($this->user->eid == $note->updated_by_eid) {
+		if ($user->eid == $note->updated_by_eid) {
 			$note->delete();
 		}
 		$this->item->buildSearchIndex();
@@ -148,8 +148,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getStatusJson($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->statusAsJson());
@@ -157,8 +157,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function putStatus($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot write for put');
 		}
 		$status = trim(file_get_contents("php://input"));
@@ -174,8 +174,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function postToNotes($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'cannot read this item');
 		}
 		//auth: anyone can post to an item they can read
@@ -185,15 +185,15 @@ class Dase_Handler_Item extends Dase_Handler
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
-		$this->item->addContent($bits,$this->user->eid);
+		$this->item->addContent($bits,$user->eid);
 		$this->item->buildSearchIndex();
 		$r->renderResponse('added content: '.$bits);
 	}
 
 	public function postToMetadata($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot post to metadata');
 		}
 		$att_ascii = $r->get('ascii_id');
@@ -206,8 +206,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function putItem($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot update item');
 		}
 		$content_type = $r->getContentType();
@@ -241,8 +241,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getNotesJson($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'cannot post media to this item');
 		}
 		$r->renderResponse($this->item->getContentsJson());
@@ -250,8 +250,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function postToMedia($r) 
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('write',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot post media to this item');
 		}
 		$item = $this->item;
@@ -280,18 +280,20 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$coll = $item->getCollection();
 
-		$slug = '';
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$slug = Dase_Util::dirify( $_SERVER['HTTP_SLUG'] );
+			$title = $_SERVER['HTTP_SLUG'];
 		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
-			$slug = Dase_Util::dirify( $_SERVER['HTTP_TITLE'] );
+			$title =  $_SERVER['HTTP_TITLE'];
 		} else {
-			$slug = $item->serial_number;
+			$title = $item->serial_number;
 		}
+		$slug = Dase_Util::dirify($title);
+
+		$item->setValue('title',$title);
 
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$r->renderError(401,'missing upload directory');
+			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
 
 		$ext = $subtype;
@@ -317,6 +319,7 @@ class Dase_Handler_Item extends Dase_Handler
 			Dase_Log::debug('error',$e->getMessage());
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
+		$item->buildSearchIndex();
 		//the returned atom entry links to derivs!
 		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
@@ -326,8 +329,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getServiceTxt($r)
 	{
-		$this->user = $r->getUser();
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'cannot read item');
 		}
 		$this->getService($r);
@@ -335,8 +338,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getService($r)
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('read',$this->item)) {
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'cannot read this item service document');
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
