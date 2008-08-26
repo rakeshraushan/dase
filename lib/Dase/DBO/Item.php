@@ -556,7 +556,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 		$enc = $this->getEnclosure();
-		$enc = '';
 		if ($enc) {
 			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
