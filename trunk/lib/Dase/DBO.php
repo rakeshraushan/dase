@@ -108,6 +108,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function load( $id )
 	{
+		if (!$id) {return false;}
 		$this->id = $id;
 		$db = $this->_dbGet();
 		$table = $this->table;

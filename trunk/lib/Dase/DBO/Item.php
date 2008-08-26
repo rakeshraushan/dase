@@ -253,12 +253,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
-		$this->collection = $c;
-		return $c;
+		if ($c) {
+			$this->collection = $c;
+			return $c;
+		} else {
+			return false;
+		}
 	}
 
 	public function getItemType()
 	{
+		if ($this->item_type) {
+			return $this->item_type;
+		}
 		$item_type = new Dase_DBO_ItemType;
 		if ($this->item_type_id) {
 			$item_type->load($this->item_type_id);
@@ -272,10 +279,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getMedia()
 	{
-		$this->collection || $this->getCollection();
+		Dase_Log::debug("getting media for " . $this->id);
+		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		//$m->item_id = $this->id;
-		$m->p_collection_ascii_id = $this->collection->ascii_id;
+		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
 		$m->orderBy('width');
 		return $m->find();
@@ -283,10 +290,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getEnclosure()
 	{
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		//$m->item_id = $this->id;
-		$m->p_collection_ascii_id = $this->collection_ascii_id;
+		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
 		$m->orderBy('file_size DESC');
 		return $m->findOne();
@@ -294,14 +300,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getMediaUrl($size)
 	{  //size really means type here
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
-		//$m->item_id = $this->id;
-		$m->p_collection_ascii_id = $this->collection_ascii_id;
+		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
 		$m->size = $size;
 		$m->findOne();
-		$url = APP_ROOT . "/media/{$this->collection->ascii_id}/$size/$m->filename";
+		$url = APP_ROOT . "/media/{$c->ascii_id}/$size/$m->filename";
 		return $url;
 	}
 
@@ -309,11 +314,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$this->collection || $this->getCollection();
 		$db = Dase_DB::get();
-		$sql = "
-			SELECT count(*) 
-			FROM media_file
-			WHERE item_id = $this->id
-			";
 		$sql = "
 			SELECT count(*) 
 			FROM media_file
@@ -340,13 +340,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function setValue($att_ascii_id,$value_text)
 	{
 		//todo: set value revision history as well
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$att = new Dase_DBO_Attribute;
 		$att->ascii_id = $att_ascii_id;
 		//allows for admin metadata, att_ascii for which
 		//always begins 'admin_'
 		if (false === strpos($att_ascii_id,'admin_')) {
-			$att->collection_id = $this->collection_id;
+			$att->collection_id = $c->id;
 		}
 		if ($att->findOne()) {
 			//does NOT overwrite (just adds k-v pair)
@@ -463,10 +463,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
+		if (!$this->id) { return false; }
 		$d = Dase_Atom::$ns['d'];
-		$this->collection || $this->getCollection();
-		$this->item_type || $this->getItemType();
-		//I think this can be simplified when DASe 1.0 is retired
+		$c = $this->getCollection();
+		$type = $this->getItemType();
+		//todo: I think this can be simplified when DASe 1.0 is retired
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {
@@ -523,6 +524,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		//much of the following can go in Dase_Atom_Entry
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
+
 		foreach ($this->getMedia() as $med) {
 			if ($med->size == 'thumbnail') {
 				//$media_thumbnail = $entry->addElement('media:thumbnail',null,Dase_Atom::$ns['media']);
@@ -554,6 +556,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 		$enc = $this->getEnclosure();
+		$enc = '';
 		if ($enc) {
 			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
@@ -562,7 +565,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function injectAtomFeedData(Dase_Atom_Feed $feed)
 	{
-		$this->collection || $this->getCollection();
+		if (!$this->id) { return false; }
+		$c = $this->getCollection();
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {
@@ -571,7 +575,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
 		$feed->setId($this->getBaseUrl());
-		$feed->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','self' );
+		$feed->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','self' );
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		return $feed;

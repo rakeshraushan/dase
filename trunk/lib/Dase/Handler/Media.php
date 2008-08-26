@@ -3,24 +3,25 @@
 class Dase_Handler_Media extends Dase_Handler
 {
 	public $resource_map = array(
+		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/{size}/{serial_number}' => 'media_file',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
 		//finish!!!!!!!!!!!!!!!!!!!!!!!!!!
-		$this->collection_ascii_id = $request->get('collection_ascii_id');
-		$this->serial_number = $request->get('serial_number');
-		$this->size = $request->get('size');
+		$this->collection_ascii_id = $r->get('collection_ascii_id');
+		$this->serial_number = $r->get('serial_number');
+		$this->size = $r->get('size');
 		/*
 		if (!Dase_Acl::check($this->collection_ascii_id,$this->size)) {
 			if (!$path) {
-				$user = $request->getUser();
+				$user = $r->getUser();
 				if (!$user) {
-					$request->renderError(401,'cannot access media');
+					$r->renderError(401,'cannot access media');
 				}
 				if (!Dase_Acl::check($this->collection_ascii_id,$this->size,$user->eid)) {
-					$request->renderError(401,'cannot access media');
+					$r->renderError(401,'cannot access media');
 				}
 			}
 			//get coll path to media!!!!!!!!
@@ -28,17 +29,17 @@ class Dase_Handler_Media extends Dase_Handler
 		 */
 	}
 
-	public function getMediaFileJpg($request)
+	public function getMediaFileJpg($r)
 	{
-		$request->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$request->format),$request->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	/** AtomPub Media Link Entry */
-	public function getMediaFileAtom($request)
+	public function getMediaFileAtom($r)
 	{
-		$collection_ascii_id = $request->get('collection_ascii_id');
-		$serial_number = $request->get('serial_number');
-		$size = $request->get('size');
+		$collection_ascii_id = $r->get('collection_ascii_id');
+		$serial_number = $r->get('serial_number');
+		$size = $r->get('size');
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $collection_ascii_id;
 		$m->p_serial_number = $serial_number;
@@ -46,8 +47,8 @@ class Dase_Handler_Media extends Dase_Handler
 		if ($m->findOne()) {
 			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';
 			header("Location:". $mle_url,TRUE,201);
-			$request->response_mime_type = 'application/atom+xml';
-			$request->renderResponse($m->asAtom());
+			$r->response_mime_type = 'application/atom+xml';
+			$r->renderResponse($m->asAtom());
 		}
 	}
 
@@ -58,6 +59,21 @@ class Dase_Handler_Media extends Dase_Handler
 			$size.'/'.
 			$serial_number.'.'.$format;
 		return $path;
+	}
+
+	public function postToCollection($r)
+	{
+		$user = $r->getUser('http');
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		if (!$user->can('write',$c)) {
+			$r->renderError(401,'cannot post media to this item');
+		}
+		//hand off to item handler
+		$item_handler = new Dase_Handler_Item;
+		$item_handler->item = $c->createNewItem(null,$user->eid);
+		$item_handler->postToMedia($r);
+		//if something goes wrong and control returns here
+		$r->renderError(500,'error in post to collection');
 	}
 }
 

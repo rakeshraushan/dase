@@ -17,10 +17,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function getByUser($user)
 	{
-		$db = Dase_DB::get();
+		//$db = Dase_DB::get();
 		//union allows us to get tags that have no items
 		$sql = "
-			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) count
+			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) as count
 			FROM tag t , tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.dase_user_id = ?
@@ -31,10 +31,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			WHERE NOT EXISTS(SELECT * FROM tag_item ti WHERE ti.tag_id = t.id)
 			AND t.dase_user_id = ?
 			";
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute(array($user->id,$user->id));
-		return $sth;
+		//$sth = $db->prepare($sql);
+		//$sth->setFetchMode(PDO::FETCH_ASSOC);
+		//$sth->execute(array($user->id,$user->id));
+		//return $sth;
+		return Dase_DBO::query($sql,array($user->id,$user->id));
 	}
 
 	public static function create($tag_name,$user)
@@ -251,12 +252,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		$setnum=0;
 		foreach($this->getTagItems() as $tag_item) {
-			$entry = $feed->addEntry();
 			$item = $tag_item->getItem();
-			$item->injectAtomEntryData($entry);
-			$setnum++;
-			$entry->addCategory($setnum,'http://daseproject.org/category/number_in_set');
-			$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			if ($item) {
+				$entry = $feed->addEntry();
+				$item->injectAtomEntryData($entry);
+				$setnum++;
+				$entry->addCategory($setnum,'http://daseproject.org/category/number_in_set');
+				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			}
 		}
 		return $feed->asXml();
 	}

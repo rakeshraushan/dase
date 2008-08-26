@@ -24,7 +24,9 @@ class Dase_Cache_File extends Dase_Cache
 	{
 		foreach (new DirectoryIterator(CACHE_DIR) as $file) {
 			if (! $file->isDot()) {
-				unlink($file->getPathname());
+				if (is_writable($file->getPathname())) {
+					unlink($file->getPathname());
+				}
 			}
 		}
 	}
