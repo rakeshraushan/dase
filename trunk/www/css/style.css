@@ -11,6 +11,7 @@ html #maincontent {
 
 #header {
 	background-image:url(../images/daseBanner.jpg);
+	background-repeat: no-repeat;
 	height:70px;
 /*	margin-top:-1px;*/
 	margin-top:-4px;
