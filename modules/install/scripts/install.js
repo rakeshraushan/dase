@@ -107,14 +107,17 @@ Dase.install.initCheckForm = function() {
 				Dase.$('save_settings_button').className = 'hide';
 				Dase.$('init_db_button').className = 'hide';
 				db_msg.className = 'msg_ok';
+				break;
 				case 'no': 
 				db_msg.innerHTML = parts[1];
 				db_msg.className = 'msg_no';
 				Dase.$('db_msg').innerHTML = '';
+				break;
 				case 'nowrite':
 				db_msg.innerHTML = parts[1];
 				db_msg.className = 'msg_no';
 				Dase.$('local_config_txt').value = parts[2];
+				break;
 				default:
 				alert(parts[0]);
 				db_msg.innerHTML = 'sorry, there was an error';
