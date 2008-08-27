@@ -57,6 +57,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$this->collection->description = trim($r->get('description'));
 		$this->collection->update();
 		$params['msg'] = "settings updated";
+		$this->user->expireDataCache();
 		$r->renderRedirect('admin/'.$this->collection->ascii_id.'/settings',$params);
 	}
 
