@@ -151,7 +151,7 @@
 			<!-- end javascript template -->
 
 
-			<h5 id="ajaxMsg"></h5>
+			<h5 id="ajaxMsg" class="hide"></h5>
 
 		</div> <!-- closes sidebar -->
 

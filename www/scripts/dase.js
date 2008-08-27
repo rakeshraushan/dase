@@ -699,9 +699,11 @@ Dase.loadingMsg = function(displayBool) {
 	var loading = Dase.$('ajaxMsg');
 	if (!loading) return;
 	if (displayBool) {
+		Dase.removeClass(loading,'hide');
 		loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
+		Dase.addClass(loading,'hide');
 		loading.innerHTML = '';
 	}
 }

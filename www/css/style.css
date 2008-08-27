@@ -574,6 +574,9 @@ span.numberInSet {
 }
 
 #ajaxMsg {
-	padding: 1em 2em;
-	color: #966;
+	-moz-border-radius: 15px;
+	background-color: #fdf5b4;
+	padding: .5em 1em;
+	margin: 10px 0 0 18px;
+	color: #333;
 }
