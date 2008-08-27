@@ -17,7 +17,7 @@
 			<div>
 				<input id="queryInput" type="text" name="q" size="30"/>
 				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
-				<input type="submit" value="Refine Search" class="button"/>
+				<input type="submit" value="Search within this search" class="button"/>
 			</div>
 			<div id="refinements"></div>
 		</form>
