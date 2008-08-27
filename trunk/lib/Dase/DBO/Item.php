@@ -514,8 +514,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$keyvals = $div->addChild('dl');
 		$keyvals->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
-			//php dom will escape text for me here....
-			$attname = $keyvals->addChild('dt',$row['attribute_name']);
+			//php dom will escape text for me here (no, it won't!!)....
+			$attname = $keyvals->addChild('dt',htmlspecialchars($row['attribute_name']));
 			$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
 			//$val->addAttribute('class',$row['ascii_id']);
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);

@@ -17,7 +17,6 @@
 		<h1>{$collection->name|escape} ({$collection->itemCount} items)</h1>
 		<h3>{$collection->description|escape}</h3>
 	</div>
-	<h3>Search:</h3>
 	<form method="get" action="search">
 		<div>
 			<input type="text" id="queryInput" name="q" size="30"/>
@@ -25,7 +24,7 @@
 			<!--
 			<select id="attributesSelect" class="hide"><!-- filled ajaxily --></select>
 			-->
-			<input type="submit" value="go" class="button"/>
+			<input type="submit" value="Search" class="button"/>
 		</div>
 	</form>
 	<div id="browseColumns">
