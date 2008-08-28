@@ -104,15 +104,10 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
-		$metadata = $this->getMetadata();
 		$d = "http://daseproject.org/ns/1.0";
 		//this function assumes p_collection_ascii_id & p_serial_number are set
 		$entry->setId($this->getLink());
-		if (isset($metadata['title']['text'])) {
-			$entry->setTitle($metadata['title']['text']);
-		} else {
-			$entry->setTitle($this->filename);
-		}
+		$entry->setTitle($this->filename);
 		$entry->addAuthor();
 
 		$entry->setUpdated($this->updated);

@@ -18,7 +18,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		'ingester' => 'ingester',
 		'ingest/form' => 'ingest_form',
 		'collections' => 'collections',
-		'media/attributes' => 'media_attributes',
 		'settings' => 'settings',
 		'status' => 'status',
 		'/' => 'index',
@@ -293,26 +292,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($request);
 		$request->renderResponse($tpl->fetch('manage/ingest_form.tpl'));
-	}
-
-	public function getMediaAttributes($request)
-	{
-		$media_atts = new Dase_DBO_MediaAttribute;
-		$media_atts->orderBy('label');
-		$t = new Dase_Template($request);
-		$t->assign('attributes',$media_atts->find());  
-		$request->renderResponse($t->fetch('manage/media_attributes.tpl'));
-	}
-
-	public function putMediaAttribute($request)
-	{
-		$media_att = new Dase_DBO_MediaAttribute;
-		$media_att->load($params['id']);
-		$media_att->term = $request->get('term');
-		$media_att->label = $request->get('label');
-		$media_att->update();
-		$params['msg'] = "updated media attribute";
-		$request->renderRedirect('manage/media_attributes',$params);
 	}
 }
 

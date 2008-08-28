@@ -75,7 +75,7 @@ class Dase_File_Audio extends Dase_File
 			$media_file = new Dase_DBO_MediaFile;
 			//follows search.yahoo.com/mrss attributes
 			$meta = array(
-				'file_size','height','width','mime_type','updated','md5','bitrate','samplingrate','framerate','channels','duration'
+				'file_size','height','width','mime_type','updated','md5'
 			);
 			foreach ($meta as $term) {
 				if (isset($this->metadata[$term])) {
@@ -88,8 +88,8 @@ class Dase_File_Audio extends Dase_File
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $c->ascii_id;
 			$media_file->insert();
-			//will only insert item metadata when attribute name matches 'admin_'+att_name
 			foreach ($this->metadata as $term => $text) {
+				//will only insert item metadata when attribute name matches 'admin_'+att_name
 				$item->setValue('admin_'.$term,$text);
 			}
 		}
@@ -109,7 +109,7 @@ class Dase_File_Audio extends Dase_File
 		$media_file->filename = 'audio.jpg';
 		$media_file->file_size = filesize(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/thumbnail/audio.jpg');
 		$media_file->md5 = md5_file(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/thumbnail/audio.jpg');
-		$mdeia_file->updated = date(DATE_ATOM);
+		$media_file->updated = date(DATE_ATOM);
 		$media_file->width = 80;
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
@@ -131,7 +131,7 @@ class Dase_File_Audio extends Dase_File
 		$media_file->filename = 'audio.jpg';
 		$media_file->file_size = filesize(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/viewitem/audio.jpg');
 		$media_file->md5 = md5_file(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/viewitem/audio.jpg');
-		$mdeia_file->updated = date(DATE_ATOM);
+		$media_file->updated = date(DATE_ATOM);
 		$media_file->width = 80;
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
