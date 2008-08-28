@@ -99,7 +99,7 @@
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
 				</a>
 				</li>
-				<li class="upload-tab">
+				<li class="uploader-tab">
 				<a href="admin/{$collection->ascii_id}/uploader">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
