@@ -92,77 +92,6 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return $this->injectAtomEntryData($entry);
 	}
 
-	function deleteMetadata() 
-	{
-		$db = Dase_DB::get();
-		$sql = "
-			DELETE
-			FROM media_value 
-			WHERE media_file_id = $this->id
-			";
-		$db->query($sql);
-	}
-
-	function expunge() 
-	{
-		$this->deleteMetadata();
-		$this->delete();
-	}
-
-	function setMetadata($term,$text)
-	{
-		$media_att = Dase_DBO_MediaAttribute::findOrCreate($term);
-		$media_val = new Dase_DBO_MediaValue;
-		$media_val->media_file_id = $this->id;
-		$media_val->media_attribute_id = $media_att->id;
-		$media_val->text = $text;
-		return $media_val->insert();
-	}
-
-	/** why setMetadata & addMetadata ?? */
-	function addMetadata($term,$text,$overwrite=true) 
-	{
-		$att = Dase_DBO_MediaAttribute::findOrCreate($term);
-		$val = new Dase_DBO_MediaValue;
-		$val->media_attribute_id = $att->id;
-		$val->media_file_id = $this->id;
-		if ($val->findOne()) {
-			if ($overwrite) {
-				$val->text = $text;
-				$val->update();
-			}
-		} else {
-			$val->text = $text;
-			$val->insert();
-		}
-	}
-
-	public function getMetadata($term = '')
-	{
-		$metadata = array();
-		$bound_params = array();
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT a.term, a.label,v.text,v.id
-			FROM media_attribute a, media_value v
-			WHERE v.media_file_id = ?
-			AND v.media_attribute_id = a.id
-			ORDER BY a.sort_order,v.text
-			";
-		$bound_params[] = $this->id;
-		if ($term) {
-			$sql .= "
-				AND a.term = ?
-				";
-			$bound_params[] = $att_ascii_id;
-		}
-		$st = DAse_DBO::query($sql,$bound_params); 
-		while ($row = $st->fetch()) {
-			$metadata[$row['term']] = $row;
-		}
-		return $metadata;
-	}
-
 	function getDerivatives()
 	{
 		$m = new Dase_DBO_MediaFile;
@@ -189,12 +118,6 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$entry->setUpdated($this->updated);
 		$entry->setSummary('');
 
-		foreach ($this->getMetadata() as $row) {
-			//php dom will escape text for me here....
-			$meta = $entry->addElement('d:'.$row['term'],$row['text'],$d);
-			$meta->setAttribute('d:label',$row['label']);
-		}
-
 		//todo: atompub edit & edit-media links
 		$edit_media_url = APP_ROOT .'/edit-media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/media/'.$this->size;
 		$entry->addLink($edit_media_url,'edit-media');
@@ -202,6 +125,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$entry->addLink($edit_url,'edit');
 		$entry->setMediaContent($this->getLink(),$this->mime_type);
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
+		//todo: beef up w/ bitrate, samplingrate, etc.
 		foreach ($this->getDerivatives() as $med) {
 			if ($med->size == 'thumbnail') {
 				//$media_thumbnail = $entry->addElement('media:thumbnail',null,Dase_Atom::$ns['media']);

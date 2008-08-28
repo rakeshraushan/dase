@@ -50,10 +50,10 @@ class Dase_File_Image extends Dase_File
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->insert();
+			//will only insert item metadata when attribute name matches 'admin_'+att_name
 			foreach ($this->metadata as $term => $text) {
-				$media_file->addMetadata($term,$text);
+				$item->setValue('admin_'.$term,$text);
 			}
-			$media_file->addMetadata('title',$item->serial_number);
 		}
 		$rotate = 0;
 		if (isset($this->metadata['exif_orientation'])) {
@@ -205,6 +205,8 @@ class Dase_File_Image extends Dase_File
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'thumbnail';
+		$media_file->md5 = md5_file($thumbnail);
+		$mdeia_file->updated = date(DATE_ATOM);
 		$media_file->file_size = filesize($thumbnail);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
@@ -231,6 +233,8 @@ class Dase_File_Image extends Dase_File
 		}
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'viewitem';
+		$media_file->md5 = md5_file($viewitem);
+		$media_file->updated = date(DATE_ATOM);
 		$media_file->file_size = filesize($viewitem);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
@@ -287,6 +291,8 @@ class Dase_File_Image extends Dase_File
 			$last_height = $media_file->height;
 			$media_file->mime_type = 'image/jpeg';
 			$media_file->size = $size;
+			$media_file->md5 = md5_file($newimage);
+			$media_file->updated = date(DATE_ATOM);
 			$media_file->file_size = filesize($newimage);
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;

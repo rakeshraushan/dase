@@ -266,6 +266,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$file = Dase_File::newFile($path,$type);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false);
+			$item->buildSearchIndex();
 		} else {
 			$r->renderError(400,'could not upload file');
 		}
