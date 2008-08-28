@@ -8,58 +8,17 @@ class Dase_Search_Result
 	public $url;
 	public $echo_array = array();
 
-	public function __construct($item_ids,$tallies,$url,$echo_array)
+	public function __construct($item_ids,$tallies,$url,$search_array)
 	{
 		$this->item_ids = $item_ids;
 		$this->tallies = $tallies;
 		$this->url = $url;
-		$this->echo_array = $echo_array;
+		$this->search_array = $search_array;
 		$this->count = count($item_ids);
 	}
 
 	private function _constructEcho() {
-		$echo = $this->echo_array;
-		//construct echo
-		$echo_str = '';
-		if ($echo['query']) {
-			$echo_str .= " {$echo['query']} ";
-		} 
-		if ($echo['exact']) {
-			$echo_arr = array();
-			foreach ($echo['exact'] as $k => $v) {
-				$v = array_unique($v);
-				foreach( $v as $val) {
-					$echo_arr[] = "$val in $k";
-				}
-			}
-			if ($echo_str) {
-				$echo_str .= " AND ";
-			}
-			$echo_str .= join(' AND ',$echo_arr);
-		}
-		if ($echo['sub']) {
-			$echo_arr = array();
-			foreach ($echo['sub'] as $k => $v) {
-				$v = array_unique($v);
-				foreach( $v as $val) {
-					$echo_arr[] = "$val in $k";
-				}
-			}
-			if ($echo_str) {
-				$echo_str .= " AND ";
-			}
-			$echo_str .= join(' AND ',$echo_arr);
-		}
-		if ($echo['collection_ascii_id']) {
-			$echo_str .= " in {$echo['collection_ascii_id']} ";
-		}
-		if ($echo['type']) {
-			if ($echo_str) {
-				$echo_str .= " WITH ";
-			}
-			$echo_str .= " item type {$echo['type']} ";
-		}
-		return $echo_str;
+//work on this!!!!
 	}
 
 	public function getResultSetAsJsonFeed()
@@ -128,8 +87,6 @@ class Dase_Search_Result
 		$feed->setOpensearchItemsPerPage($max);
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
-		//$search_echo = $div->addChild('div',htmlspecialchars($search_title));
-		//$search_echo->addAttribute('class','searchEcho');
 		$ul = $div->addChild('ul');
 		$url_no_colls = preg_replace('/(\?|&|&amp;)c=\w+/i','',$this->url);
 		$url_no_colls = preg_replace('/(\?|&|&amp;)collection_ascii_id=\w+/i','',$url_no_colls);

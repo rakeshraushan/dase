@@ -3,7 +3,6 @@
 class Dase_Search 
 {
 	private $bound_params;
-	private $echo_array;		
 	private $search_result = null;
 	private $request;
 	private $search_array;		
@@ -79,18 +78,11 @@ class Dase_Search
 		$search['att'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
-		$search['or'] = array();
 
-		$echo['query'] = '';
-		$echo['collection_ascii_id'] = '';
-		$echo['sub'] = array();
-		$echo['exact'] = array();
-		$echo['type'] = '';
 		// search syntax:
 		// query name is 'q'
 		// include phrases in quotes (' or ")
 		// use '-' to omit a word or phrase
-		// use 'or' for Boolean OR between words or phrases
 		// for attribute searches, name is '<coll_ascii_id>~<attribute_ascii_id>'
 		// use tilde (as in example) for auto substring/phrase search
 		// use single period to match exact value_text string (case-insensitive)
@@ -100,12 +92,9 @@ class Dase_Search
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
 		//
-		// NOTE: everything is assumed to be 'and' unless explicitly
-		// 'or'-ed.  The word 'and' has *no* boolean significance. 
-		// Also, OR takes precedence (i.e. is figured out first). 
-		// Parentheses have not functional significance
-		//
-		// example: 'red green or blue' searches for "red AND (green OR blue)"
+		// NOTE: everything is assumed to be "and."
+		// The word 'and' has *no* boolean significance. 
+		// Parentheses have not functional significance.
 		//
 		/*
 		 * exact match:
@@ -142,66 +131,24 @@ class Dase_Search
 				}
 			}
 		}
-		//for substring att searches  => att~val
+		//unique-ify arrays
+		$search['find'] = array_unique($search['find']);
+		$search['omit'] = array_unique($search['omit']);
+
+		//for attr substring value searches => att~val
 		foreach ($request->urlParams as $k => $val) {
-			if (('q' != $k) && ('type' != $k) && strpos($k,'~')){
-				//$echo['sub'][$k] = join(' ',$val);
-				$echo['sub'][$k] = $val;
+			foreach($val as $v) {
 				$coll = null;
 				$att = null;
-				$tokens = array();
-				list($coll,$att) = explode('~',$k);
-				if ($coll && $att) {
-					$search['att'][$coll][$att]['find'] = array();
-					$search['att'][$coll][$att]['omit'] = array();
-					$search['att'][$coll][$att]['or'] = array();
-					foreach($val as $v) {
-						foreach ($this->_tokenizeQuoted($v) as $t) {
-							$tokens[] = $t;
-						}
-					}
-					foreach ($tokens as $tok) {
-						if ('-' == substr($tok,0,1)) {
-							$search['att'][$coll][$att]['omit'][] = substr($tok,1);
-						} else {
-							$search['att'][$coll][$att]['find'][] = $tok;
-						}
-					}
-					$or_keys = array_keys($search['att'][$coll][$att]['find'],'or');
-					foreach ($or_keys as $or_key) {
-						foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
-							if (array_key_exists($k,$search['att'][$coll][$att]['find'])) {
-								$search['att'][$coll][$att]['or'][] = $search['att'][$coll][$att]['find'][$k];
-							}
-						}
-					}
-					//purge the find array of all tokens in the or array
-					if (isset($search['att'][$coll][$att]['or'])) {
-						foreach ($search['att'][$coll][$att]['or'] as $k => $v) {
-							while (false !== array_search($v,$search['att'][$coll][$att]['find'])) {
-								$remove_key = array_search($v,$search['att'][$coll][$att]['find']);
-								unset($search['att'][$coll][$att]['find'][$remove_key]);
-							}
-						}
-					}
-					if (isset($search['att'][$coll][$att]['or'])) {
-						while (false !== array_search('or',$search['att'][$coll][$att]['or'])) {
-							$remove_key = array_search('or',$search['att'][$coll][$att]['or']);
-							unset($search['att'][$coll][$att]['or'][$remove_key]);
-						}
-					}
-					if (isset($search['att'][$coll][$att]['find'])) {
-						$search['att'][$coll][$att]['find'] = array_unique($search['att'][$coll][$att]['find']);
-					}
-					if (isset($search['att'][$coll][$att]['omit'])) {
-						$search['att'][$coll][$att]['omit'] = array_unique($search['att'][$coll][$att]['omit']);
-					}
-					if (isset($search['att'][$coll][$att]['or'])) {
-						$search['att'][$coll][$att]['or'] = array_unique($search['att'][$coll][$att]['or']);
-					}
+				if (('q' != $k) && ('type' != $k) && strpos($k,'~')){
+					list($coll,$att) = explode('~',$k);
+					$search['att'][$coll][$att]['value_text_substr'] = array();
+					$search['att'][$coll][$att]['value_text_substr'][] = $v;
+					$search['att'][$coll][$att]['value_text_substr'] = array_unique($search['att'][$coll][$att]['value_text_substr']);
 				}
 			}
 		}
+
 		//for attr exact value searches => att.val
 		foreach ($request->urlParams as $k => $val) {
 			foreach($val as $v) {
@@ -209,7 +156,6 @@ class Dase_Search
 				$att = null;
 				if (strpos($k,'.') && !strpos($k,'~') && !strpos($k,':')){
 					list($coll,$att) = explode('.',$k);
-					$echo['exact'][$k][] = $v;
 					$search['att'][$coll][$att]['value_text'] = array();
 					$search['att'][$coll][$att]['value_text'][] = $v;
 					$search['att'][$coll][$att]['value_text'] = array_unique($search['att'][$coll][$att]['value_text']);
@@ -223,41 +169,12 @@ class Dase_Search
 				if (is_array($val)) {
 					$val = array_pop($val);
 				}
-				$echo['type'] = $val;
 				list($coll,$type) = explode(':',$val);
 				$search['type']['coll'] = $coll;
 				$search['type']['name'] = $type;
 			}
 		}
 
-		$or_keys = array_keys($search['find'],'or');
-		//configure global 'or' set
-		foreach ($or_keys as $or_key) {
-			foreach(array($or_key-1,$or_key,$or_key+1) as $k) {
-				if (array_key_exists($k,$search['find'])) {
-					if (!array_search($search['find'][$k],$search['or'])) {
-						$search['or'][] = $search['find'][$k];
-					}
-				}
-			}
-			$search['or'] = array_unique($search['or']);
-		}
-		//unique-ify arrays
-		$search['find'] = array_unique($search['find']);
-		$search['omit'] = array_unique($search['omit']);
-
-		foreach ($search['or'] as $k => $v) {
-			while (false !== array_search($v,$search['find'])) {
-				$remove_key = array_search($v,$search['find']);
-				unset($search['find'][$remove_key]);
-			}
-		}
-		while (false !== array_search('or',$search['or'])) {
-			$remove_key = array_search('or',$search['or']);
-			unset($search['or'][$remove_key]);
-		}
-
-		$this->echo_array = $echo;
 		$this->search_array = $search;
 
 		// DONE parsing search string!!
@@ -308,13 +225,6 @@ class Dase_Search
 			}
 			$search_table_sets[] = join(' AND ',$search['omit']);
 		}
-		if (count($search['or'])) {
-			foreach ($search['or'] as $k => $term) {
-				$search['or'][$k] = "lower(s.value_text) LIKE ?";
-				$search_table_params[] = "%".strtolower($term)."%";
-			}
-			$search_table_sets[] = "(" . join(' OR ',$search['or']) . ")";
-		}
 		if (count($search_table_sets)) {
 			$search_table_sql = "SELECT s.item_id FROM search_table s WHERE " . join(' AND ', $search_table_sets);
 		}
@@ -326,28 +236,14 @@ class Dase_Search
 		foreach ($search['att'] as $coll => $att_arrays) {
 			foreach ($att_arrays as $att => $ar) {
 				$ar_table_sets = array();
-				if ($this->_testArray($ar,'find')) {
+				if ($this->_testArray($ar,'value_text_substr')) {
 					//the key needs to be specified to make sure it overwrites 
 					//(rather than appends) to the array
-					foreach ($ar['find'] as $k => $term) {
+					foreach ($ar['value_text_substr'] as $k => $term) {
 						$ar['find'][$k] = "lower(v.value_text) LIKE ?";
 						$value_table_params[] = "%".strtolower($term)."%";
 					}
-					$ar_table_sets[] = join(' AND ',$ar['find']);
-				}
-				if ($this->_testArray($ar,'omit')) {
-					foreach ($ar['omit'] as $k => $term) {
-						$ar['omit'][$k] = "lower(v.value_text) NOT LIKE ?";
-						$value_table_params[] = "%".strtolower($term)."%";
-					}
-					$ar_table_sets[] = join(' AND ',$ar['omit']);
-				}
-				if ($this->_testArray($ar,'or')) {
-					foreach ($ar['or'] as $k => $term) {
-						$ar['or'][$k] = "lower(v.value_text) LIKE ?";
-						$value_table_params[] = "%".strtolower($term)."%";
-					}
-					$ar_table_sets[] = "(" . join(' OR ',$ar['or']) . ")";
+					$ar_table_sets[] = join(' AND ',$ar['value_text_substr']);
 				}
 				if ($this->_testArray($ar,'value_text')) {
 					foreach ($ar['value_text'] as $k => $term) {
@@ -381,7 +277,7 @@ class Dase_Search
 			$search_table_params = array_merge($search_table_params,$search['colls']);
 			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
 		}
-		//if not explicitly requested, non-public collecitons will be omitted
+		//if not explicitly requested, non-public collections will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
 			//make sure this boolean query is portable!!!
 			//$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
@@ -440,7 +336,7 @@ class Dase_Search
 			$tallies[$ascii_id]['name'] = $collection_lookup[$coll_id]['collection_name'];
 			$item_ids = array_merge($item_ids,$set);
 		}
-		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->echo_array);
+		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->search_array);
 	}
 }
 
