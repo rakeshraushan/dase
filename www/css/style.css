@@ -229,10 +229,19 @@ table#item td a {
 table#item td a:hover {
 	text-decoration: underline;
 }
-table#item td.image h4 {
-	margin: .5em 0;
-	color: #666;
-	font-weight: bold;
+table#item td.image {
+	text-align: center;
+}
+table#item td.image  table{
+	margin: 1em auto;
+}
+table#item td.image table td{
+	padding: 2px;
+	padding-bottom: 0;
+	vertical-align: middle;
+	text-align: center;
+	font-size: .85em;
+	color: #000;
 }
 
 table#item td.metadata {

@@ -34,12 +34,18 @@
 		<tr>
 			<td class="image">
 				<img src="{$item->viewitemLink}"/>
-				<h4>Media:</h4>
-				<ul>
-					{foreach item=img from=$item->media}
-					<li><a href="{$img.href}">{$img.label}: {$img.width}x{$img.height} ({$img.type})</a></li>
+				<table>
+					{foreach item=m from=$item->media}
+					{if $m.label != 'thumbnail' && $m.label != 'viewitem'}
+					<tr>
+						<td><a href="{$m.href}"><img src="www/images/tango-icons/image-x-generic.png" alt="image icon"/></a></td>
+						<td><a href="{$m.href}">{$m.label} {if $m.height && $m.width}({$m.width}x{$m.height}){/if}</a></td>
+						<td><a href="{$m.href}">{$m.fileSize}K</a></td>
+						<td><a href="{$m.href}">{$m.type}</a></td>
+					</tr>
+					{/if}
 					{/foreach}
-				</ul>
+				</table>
 			</td>
 			<td class="metadata">
 

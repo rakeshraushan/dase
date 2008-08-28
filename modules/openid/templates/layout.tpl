@@ -78,7 +78,7 @@
 			</div>
 
 			<div id="wordmark">
-				<a href="http://www.utexas.edu"><img src="www/images/UTwordmark_02.jpg" alt="ut logo"/></a>
+				<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
 			</div>
 		</div>
 
