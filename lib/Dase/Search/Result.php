@@ -111,7 +111,8 @@ class Dase_Search_Result
 		$feed->addAuthor();
 		$feed->setTitle('DASe Search Result');
 		$feed->addLink(APP_ROOT.'/'.$this->url.'&format=atom&start='.$start.'&max='.$max,'self');
-		$feed->addLink($this->url,'alternate','text/html','',$search_title);
+		//$feed->addLink($this->url,'alternate','text/html','',$search_title);
+		$feed->addLink($this->url,'alternate','text/html','','Search Result');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->setFeedType('search');
 		if (isset($next)) {
@@ -127,8 +128,8 @@ class Dase_Search_Result
 		$feed->setOpensearchItemsPerPage($max);
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
-		$search_echo = $div->addChild('div',htmlspecialchars($search_title));
-		$search_echo->addAttribute('class','searchEcho');
+		//$search_echo = $div->addChild('div',htmlspecialchars($search_title));
+		//$search_echo->addAttribute('class','searchEcho');
 		$ul = $div->addChild('ul');
 		$url_no_colls = preg_replace('/(\?|&|&amp;)c=\w+/i','',$this->url);
 		$url_no_colls = preg_replace('/(\?|&|&amp;)collection_ascii_id=\w+/i','',$url_no_colls);

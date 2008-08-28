@@ -70,14 +70,6 @@ class Dase_Handler_Search extends Dase_Handler
 			$request->renderError(404,'no such item');
 		}
 		$tpl->assign('item',$feed);
-		$hist = new Dase_DBO_UserHistory;
-		$hist->eid = $request->getUser()->eid;
-		$hist->href = APP_ROOT.'/'.$request->url;
-		$hist->title = $feed->title;
-		$hist->summary = $feed->getSearchEcho();
-		$hist->type = 'item_view';
-		$hist->updated = date(DATE_ATOM);
-		$hist->insert();
 
 		$request->renderResponse($tpl->fetch('item/transform.tpl'));
 	}
@@ -91,15 +83,6 @@ class Dase_Handler_Search extends Dase_Handler
 		$feed_url = APP_ROOT.'/'.$request->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
-
-		$hist = new Dase_DBO_UserHistory;
-		$hist->eid = $request->getUser()->eid;
-		$hist->href = APP_ROOT.'/'.$request->url;
-		$hist->title = 'search';
-		$hist->summary = $feed->getSearchEcho();
-		$hist->type = 'search';
-		$hist->updated = date(DATE_ATOM);
-		$hist->insert();
 
 		$tpl->assign('items',$feed);
 		//todo: reimplement single hit going directly to item??

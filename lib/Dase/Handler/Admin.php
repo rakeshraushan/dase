@@ -4,7 +4,7 @@ class Dase_Handler_Admin extends Dase_Handler
 {
 	public $collection;
 	public $resource_map = array(
-		'{collection_ascii_id}' => 'settings',
+		'{collection_ascii_id}' => 'uploader',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/remote_acl' => 'remote_acl',
 		'{collection_ascii_id}/attribute/form' => 'attribute_form',

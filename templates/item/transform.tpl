@@ -19,14 +19,16 @@
 			<a href="{$item->next}">next</a> 
 		</h4>
 	</div> <!-- close contentHeader -->
-	<div id="adminPageControls" class="hide">
-		<!-- is there a better place for this?-->
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
-		|
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
-		|
-		<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
+	<div class="controlsContainer">
+		<div id="adminPageControls" class="hide">
+			<!-- is there a better place for this?-->
+			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
+			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
+			|
+			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
+			|
+			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
+		</div>
 	</div>
 	<table id="item">
 		<tr>

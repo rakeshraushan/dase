@@ -284,6 +284,10 @@ div#adminStatusControls {
 	min-height: 18px;
 }
 
+div.controlsContainer {
+	min-height: 8px;
+}
+
 #metadata_form label {
 	color:#339;
 	font-weight:bold;
@@ -574,7 +578,7 @@ span.numberInSet {
 }
 
 #ajaxMsg {
-	-moz-border-radius: 15px;
+	-moz-border-radius: 8px;
 	background-color: #fdf5b4;
 	padding: .5em 1em;
 	margin: 10px 0 0 18px;

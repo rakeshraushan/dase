@@ -211,7 +211,10 @@ class Dase_Atom
 		foreach (Dase_Atom::$ns as $k => $v) {
 			$x->registerNamespace($k,$v);
 		}
-		return $x->query($xpath)->item(0)->nodeValue;
+		$it = $x->query($xpath)->item(0);
+		if ($it) {
+			return $it->nodeValue;
+		}
 	}
 
 	function getTitle() 
