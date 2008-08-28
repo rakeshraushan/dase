@@ -27,10 +27,6 @@ class Dase_Handler_Admin extends Dase_Handler
 		if (!$this->collection) {
 			$r->renderError(404);
 		}
-		//todo: this should be in individual methods
-		//if ('uploader' == $r->resource) {
-		//	$r->can_redirect_to_login = false;
-		//}
 		$this->user = $r->getUser();
 		if (!$this->user->can('admin',$this->collection)) {
 			$r->renderError(401);

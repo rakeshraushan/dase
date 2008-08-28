@@ -26,7 +26,6 @@ class Dase_Http_Request
 	public $query_string;
 	public $response_mime_type;
 	public $resource;
-	public $can_redirect_to_login = true; 
 
 	function __construct()
 	{
@@ -349,7 +348,7 @@ class Dase_Http_Request
 		$this->user = $user;
 	}
 
-	public function getUser($auth='cookie')
+	public function getUser($auth='cookie',$force_login=true)
 	{
 		if ($this->user) {
 			return $this->user;
@@ -377,7 +376,8 @@ class Dase_Http_Request
 		if ($eid) {
 			return $this->getDbUser($eid);
 		} else {
-			if ('html' == $this->format && $this->can_redirect_to_login) {
+			if (!$force_login) { return; }
+			if ('html' == $this->format) {
 				$params['target'] = $this->url;
 				$this->renderRedirect('login/form',$params);
 			} else {
