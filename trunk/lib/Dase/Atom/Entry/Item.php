@@ -82,6 +82,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$file['type'] = $el->getAttribute('type');
 			$file['width'] = $el->getAttribute('width');
 			$file['height'] = $el->getAttribute('height');
+			$bytes = $el->getAttribute('fileSize');
+			$kilobytes = round((int) $bytes/1000,2);
+			$file['fileSize'] = $kilobytes;
 			$file['label'] = $el->getElementsByTagName('category')->item(0)->nodeValue;
 			$media_array[] = $file;
 		}
