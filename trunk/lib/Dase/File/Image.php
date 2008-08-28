@@ -38,7 +38,7 @@ class Dase_File_Image extends Dase_File
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;
 			$meta = array(
-				'filename','file_size','height','width','mime_type','updated','md5'
+				'file_size','height','width','mime_type','updated','md5'
 			);
 			foreach ($meta as $term) {
 				if (isset($this->metadata[$term])) {
@@ -46,6 +46,7 @@ class Dase_File_Image extends Dase_File
 				}
 			}
 			$media_file->item_id = $item->id;
+			$media_file->filename = $item->serial_number.'.'.$this->ext;
 			$media_file->size = $this->size;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
@@ -206,7 +207,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'thumbnail';
 		$media_file->md5 = md5_file($thumbnail);
-		$mdeia_file->updated = date(DATE_ATOM);
+		$media_file->updated = date(DATE_ATOM);
 		$media_file->file_size = filesize($thumbnail);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;

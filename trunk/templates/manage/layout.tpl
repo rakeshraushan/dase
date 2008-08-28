@@ -134,11 +134,6 @@
 					<img alt="icon" src="www/images/tango-icons/list-remove.png"/><sup>Delete a Collection</sup>
 				</a>
 				</li>
-				<li class="media-attributes-tab">
-				<a href="manage/media/attributes">
-					<img alt="icon" src="www/images/tango-icons/text-x-generic.png"/><sup>Media Attributes</sup>
-				</a>
-				</li>
 			</ul>
 			<h5 id="ajaxMsg"></h5>
 		</div> <!-- closes sidebar -->
