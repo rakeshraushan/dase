@@ -103,15 +103,6 @@ class Dase_Handler_Item extends Dase_Handler
 			$user->eid,$user->getHttpPassword()
 		);
 
-		$hist = new Dase_DBO_UserHistory;
-		$hist->eid = $r->getUser()->eid;
-		$hist->href = APP_ROOT.'/'.$r->url;
-		$hist->title = $feed->getTitle();
-		//$hist->summary = $feed->getSearchEcho();
-		$hist->type = 'item_view';
-		$hist->updated = date(DATE_ATOM);
-		$hist->insert();
-
 		$t->assign('item',$feed);
 		$r->renderResponse($t->fetch('item/transform.tpl'));
 	}

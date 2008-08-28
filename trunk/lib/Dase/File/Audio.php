@@ -25,10 +25,9 @@ class Dase_File_Audio extends Dase_File
 		}
 		if (is_array($id3)) {
 			$this->metadata['duration'] =  $id3['playtime_seconds'];
-			$this->metadata['audio_bitrate'] =  $id3['bitrate'];
-			$this->metadata['audio_channel_mode'] = $id3['audio']['channelmode'];
-			$this->metadata['audio_sampling_rate'] = $id3['audio']['sample_rate'];
-			$this->metadata['audio_time'] = $id3['playtime_string'];
+			$this->metadata['bitrate'] =  $id3['bitrate'];
+			$this->metadata['channels'] = $id3['audio']['channels'];
+			$this->metadata['samplingrate'] = $id3['audio']['sample_rate'];
 			$this->metadata['audio_title'] = $id3['comments']['title'][0]; 
 			$this->metadata['audio_artist'] = $id3['comments']['artist'][0];
 			if (isset($id3['comments']['comment'])) {
@@ -74,8 +73,9 @@ class Dase_File_Audio extends Dase_File
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;
+			//follows search.yahoo.com/mrss attributes
 			$meta = array(
-				'file_size','height','width','mime_type','updated','md5'
+				'file_size','height','width','mime_type','updated','md5','bitrate','samplingrate','framerate','channels','duration'
 			);
 			foreach ($meta as $term) {
 				if (isset($this->metadata[$term])) {
@@ -88,10 +88,10 @@ class Dase_File_Audio extends Dase_File
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->p_collection_ascii_id = $c->ascii_id;
 			$media_file->insert();
+			//will only insert item metadata when attribute name matches 'admin_'+att_name
 			foreach ($this->metadata as $term => $text) {
-				$media_file->addMetadata($term,$text);
+				$item->setValue('admin_'.$term,$text);
 			}
-			$media_file->addMetadata('title',$item->serial_number);
 		}
 		$this->makeThumbnail($item);
 		$this->makeViewitem($item);
@@ -107,6 +107,9 @@ class Dase_File_Audio extends Dase_File
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'audio.jpg';
+		$media_file->file_size = filesize(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/thumbnail/audio.jpg');
+		$media_file->md5 = md5_file(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/thumbnail/audio.jpg');
+		$mdeia_file->updated = date(DATE_ATOM);
 		$media_file->width = 80;
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
@@ -126,6 +129,9 @@ class Dase_File_Audio extends Dase_File
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
 		$media_file->filename = 'audio.jpg';
+		$media_file->file_size = filesize(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/viewitem/audio.jpg');
+		$media_file->md5 = md5_file(Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/viewitem/audio.jpg');
+		$mdeia_file->updated = date(DATE_ATOM);
 		$media_file->width = 80;
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
@@ -135,28 +141,5 @@ class Dase_File_Audio extends Dase_File
 		$media_file->insert();
 		Dase_Log::info("created $media_file->size $media_file->filename");
 	}
-
-	function processFile($item)
-	{
-		$c = $item->getCollection();
-		$dest = Dase_Config::get('path_to_media').'/'.$c->ascii_id . "/mp3/" . $item->serial_number . '.mp3';
-		$this->copyTo($dest);
-		$media_file = new Dase_DBO_MediaFile;
-
-		foreach ($this->getMetadata() as $term => $value) {
-			$media_file->addMetadata($term,$value);
-		}
-
-		$media_file->item_id = $item->id;
-		$media_file->filename = $item->serial_number . '.mp3';
-		$media_file->file_size = $this->file_size;
-		$media_file->mime_type = $this->mime_type;
-		$media_file->size = 'mp3';
-		$media_file->p_collection_ascii_id = $c->ascii_id;
-		$media_file->p_serial_number = $item->serial_number;
-		$media_file->insert();
-		Dase_Log::info("created $media_file->size $media_file->filename");
-	}
-
 }
 

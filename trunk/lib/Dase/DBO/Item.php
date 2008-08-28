@@ -357,6 +357,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->value_text = $value_text;
 			return($v->insert());
 		} else {
+			//simply returns false if no such attribute
+			Dase_Log::debug('[WARNING] no such attribute '.$att_ascii_id);
 			return false;
 		}
 	}
@@ -413,7 +415,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$mf = new Dase_DBO_MediaFile;
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
-			$doomed->expunge();
+			$doomed->delete();
 		}
 	}
 
