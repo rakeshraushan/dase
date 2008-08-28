@@ -142,7 +142,7 @@ ul#collectionList {
 	margin: .7em 0;
 }
 ul#collectionList li {
-	line-height: 1.8em;
+	line-height: 1.6em;
 }
 ul#collectionList h4 {
 	margin-top: .7em;
@@ -236,12 +236,15 @@ table#item td.image  table{
 	margin: 1em auto;
 }
 table#item td.image table td{
-	padding: 2px;
-	padding-bottom: 0;
+	padding: 2px 2px 0 2px;
 	vertical-align: middle;
 	text-align: center;
-	font-size: .85em;
-	color: #000;
+}
+
+table#item td.image table td a{
+	font-size: .7em;
+	font-family:Verdana,Arial,Helvetica,sans-serif;
+	color: #222;
 }
 
 table#item td.metadata {

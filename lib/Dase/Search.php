@@ -13,6 +13,7 @@ class Dase_Search
 	public function __construct($request)
 	{
 		if ($request->has('original_search')) {
+			//orignal search elements are simply folded into this
 			$orig = preg_replace('/&amp;/','&',urldecode($request->get('original_search')));
 			$orig = preg_replace('/original_search=/','',$orig);
 			foreach (explode('&',$orig) as $pair) {
@@ -98,6 +99,14 @@ class Dase_Search
 		// a query parameter name that is NOT part of the search will
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
+		//
+		// NOTE: everything is assumed to be 'and' unless explicitly
+		// 'or'-ed.  The word 'and' has *no* boolean significance. 
+		// Also, OR takes precedence (i.e. is figured out first). 
+		// Parentheses have not functional significance
+		//
+		// example: 'red green or blue' searches for "red AND (green OR blue)"
+		//
 		/*
 		 * exact match:
 		 * test.title=farewell+to+arms 

@@ -28,7 +28,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		} elseif ($r->has('tag_id')) {
 			$found = $tag->load($r->get('tag_id'));
 		} 
-		if ($found) {
+		if ($found->id) {
 			$this->tag = $tag;
 		} else {
 			$r->renderError(404,'no such tag');

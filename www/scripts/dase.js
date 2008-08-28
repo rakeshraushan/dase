@@ -1033,6 +1033,10 @@ Dase.initSaveTo = function() {
 			alert(resp); 
 			Dase.initUser();
 			Dase.initSaveTo();
+		},
+		//should *always* handle errors w/ an error callback:
+		function(resp) {
+			alert('Our sincerest apologies.  And error has occurred');
 		});
 		return false;
 	};
