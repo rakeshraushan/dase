@@ -161,15 +161,10 @@ PRIMARY KEY (`id`)
 DROP TABLE IF EXISTS `media_file`;
 CREATE TABLE `media_file` (
 `id` int(11) NOT NULL auto_increment,
-`duration` int(11) default NULL,
 `file_size` int(11) default NULL,
 `width` int(11) default NULL,
 `height` int(11) default NULL,
 `item_id` int(11) default NULL,
-`channels` varchar(20) default NULL,
-`samplingrate` varchar(20) default NULL,
-`framerate` varchar(20) default NULL,
-`bitrate` varchar(20) default NULL,
 `md5` varchar(200) default NULL,
 `updated` varchar(50) default NULL,
 `p_collection_ascii_id` varchar(200) default NULL,

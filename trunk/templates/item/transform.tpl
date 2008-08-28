@@ -38,7 +38,7 @@
 					{foreach item=m from=$item->media}
 					{if $m.label != 'thumbnail' && $m.label != 'viewitem'}
 					<tr>
-						<td><a href="{$m.href}"><img src="www/images/tango-icons/image-x-generic.png" alt="image icon"/></a></td>
+						<td><a href="{$m.href}"><img src="www/images/media-icons/{$m.label}.png" alt="image icon"/></a></td>
 						<td><a href="{$m.href}">{$m.label} {if $m.height && $m.width}({$m.width}x{$m.height}){/if}</a></td>
 						<td><a href="{$m.href}">{$m.fileSize}K</a></td>
 						<td><a href="{$m.href}">{$m.type}</a></td>
