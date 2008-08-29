@@ -74,16 +74,14 @@ class Dase_Http_Request
 
 	public function getCacheId()
 	{
-		$params = '';
-		foreach ($_GET as $k => $v) {
-			//cache_busing is for client javascript in IE6 ONLY
-			//do not use to bust *this* cache
-			if ('cache_buster' != $k) {
-				$params .= $k.'='.$v.';';
-			}
+		$query_string = $this->getQueryString();
+		if ($query_string) {
+			$query_string = preg_replace("!(\?|&)cache_buster=[^&]*!i",'',$query_string);
 		}
-		Dase_Log::debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$params);
-		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$params;
+		Dase_Log::debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
+		//todo: this is a *bug* -- when we have multiple params w/ same key
+		//this only get the last one! --need to use query string instead
+		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
 	public function checkCache($ttl=null)

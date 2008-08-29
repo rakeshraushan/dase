@@ -11,13 +11,15 @@
 	</h4>
 	{/if}
 	<div id="contentHeader">
-		<h3>{$items->searchEcho}</h3>
+		<h3><a href="{$items->collection.href}">{$items->collection.title}</a></h3>
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="30"/>
+				<input id="queryInput" type="text" name="q" size="30" value="{$items->query}"/>
+				<!--
 				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
-				<input type="submit" value="Search within this search" class="button"/>
+				-->
+				<input type="submit" value="Search" class="button"/>
 			</div>
 			<div id="refinements"></div>
 		</form>

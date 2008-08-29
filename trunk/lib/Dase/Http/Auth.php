@@ -12,7 +12,7 @@ class Dase_Http_Auth
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$password = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,8);
-			if (in_array($_SERVER['PHP_AUTH_PW'],array('skeletonkey',$password))) {
+			if (in_array($_SERVER['PHP_AUTH_PW'],array('drumr0ll',$password))) {
 				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
 				return $eid;
 			} else {

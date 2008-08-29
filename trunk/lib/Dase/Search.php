@@ -48,10 +48,10 @@ class Dase_Search
 			return $this->search_result;
 		} else {
 
-			//sets search_array and echo_array:
+			//sets search_array:
 			$this->_parseRequest();
 
-			//sets sql and bound_params
+			//sets sql and bound_params:
 			$this->_createSql();
 
 			$this->search_result = $this->_executeSearch();
@@ -112,11 +112,10 @@ class Dase_Search
 		}
 		$search['colls'] = array_unique($search['colls']);
 
-		//collection_ascii_id trumps (indicated by 'collection' query parameter)
+		//collection_ascii_id trumps 
 		if ($request->has('collection_ascii_id')) {
 			$collection_ascii_id = $request->get('collection_ascii_id');
 			$search['colls'] = array($collection_ascii_id);
-			$echo['collection_ascii_id'] = $collection_ascii_id;
 		}
 
 		//populate general find and omit array
@@ -145,6 +144,8 @@ class Dase_Search
 					$search['att'][$coll][$att]['value_text_substr'] = array();
 					$search['att'][$coll][$att]['value_text_substr'][] = $v;
 					$search['att'][$coll][$att]['value_text_substr'] = array_unique($search['att'][$coll][$att]['value_text_substr']);
+					//note: an attribute search means only *one* collection is searched
+					$search['colls'] = array($coll);
 				}
 			}
 		}
@@ -159,6 +160,8 @@ class Dase_Search
 					$search['att'][$coll][$att]['value_text'] = array();
 					$search['att'][$coll][$att]['value_text'][] = $v;
 					$search['att'][$coll][$att]['value_text'] = array_unique($search['att'][$coll][$att]['value_text']);
+					//note: an attribute search means only *one* collection is searched
+					$search['colls'] = array($coll);
 				}
 			}
 		}
@@ -172,6 +175,8 @@ class Dase_Search
 				list($coll,$type) = explode(':',$val);
 				$search['type']['coll'] = $coll;
 				$search['type']['name'] = $type;
+				//note: an item_type search means only *one* collection is searched
+				$search['colls'] = array($coll);
 			}
 		}
 
@@ -240,7 +245,7 @@ class Dase_Search
 					//the key needs to be specified to make sure it overwrites 
 					//(rather than appends) to the array
 					foreach ($ar['value_text_substr'] as $k => $term) {
-						$ar['find'][$k] = "lower(v.value_text) LIKE ?";
+						$ar['value_text_substr'][$k] = "lower(v.value_text) LIKE ?";
 						$value_table_params[] = "%".strtolower($term)."%";
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text_substr']);
@@ -279,7 +284,7 @@ class Dase_Search
 		}
 		//if not explicitly requested, non-public collections will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
-			//make sure this boolean query is portable!!!
+			//todo: make sure this boolean query is portable!!!
 			//$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
