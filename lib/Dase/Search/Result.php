@@ -44,6 +44,19 @@ class Dase_Search_Result
 		return Dase_Json::get($json_tag);	
 	}
 
+	private function _getQueryAsString()
+	{
+		$q = '';
+		foreach ($this->search_array['find'] as $find) {
+			$q .= ' '.$find;
+		}
+
+		foreach ($this->search_array['omit'] as $omit) {
+			$q .= ' -'.$omit;
+		}
+		return trim($q);
+	}
+
 	public function getResultSetAsAtomFeed($start,$max)
 	{
 		$next = $start + $max;
@@ -56,15 +69,6 @@ class Dase_Search_Result
 		}
 		$item_ids = array_slice($this->item_ids,$start-1,$max);
 		$end = $start + count($item_ids) - 1;
-
-		$echo = $this->_constructEcho();
-		if ($end > $start) {
-			$search_title = 'results '.$start.'-'.$end.' of '.$this->count.' items for '.$echo; 
-		} elseif ($end == $start) {
-			$search_title = '1 result for '.$echo; 
-		} else {
-			$search_title = 'no results for '.$echo; 
-		}
 
 		$feed = new Dase_Atom_Feed();
 		$feed->addAuthor();
@@ -87,6 +91,8 @@ class Dase_Search_Result
 		$feed->setOpensearchItemsPerPage($max);
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
+		$q = $div->addChild('div',$this->_getQueryAsString());
+		$q->addAttribute('id','query');
 		$ul = $div->addChild('ul');
 		$url_no_colls = preg_replace('/(\?|&|&amp;)c=\w+/i','',$this->url);
 		$url_no_colls = preg_replace('/(\?|&|&amp;)collection_ascii_id=\w+/i','',$url_no_colls);
@@ -104,6 +110,9 @@ class Dase_Search_Result
 					'',$tal['name'].': '.$tal['total'].' items'
 				);
 			}
+		}
+		if (1 == count($this->tallies)) {
+			$feed->addLink(APP_ROOT.'/collection/'.$coll,'http://daseproject.org/relation/collection','text/html',null,$this->tallies[$coll]['name']);
 		}
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->url);
@@ -142,7 +151,6 @@ class Dase_Search_Result
 		}
 
 		$search_url = str_replace('search/item','search',$this->url);
-		$echo = $this->_constructEcho();
 		if (isset($this->item_ids[$num-1])) {
 			$item_id = $this->item_ids[$num-1];
 		} else {
@@ -163,8 +171,7 @@ class Dase_Search_Result
 			if ($previous) {
 				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
 			}
-			$subtitle = 'Item ' . $num . ' of ' . $this->count . ' items for ' . $echo; 
-			$feed->setSubtitle($subtitle);
+			$feed->setSubtitle($this->_getQueryAsString());
 			return $feed->asXml();
 		}
 	}

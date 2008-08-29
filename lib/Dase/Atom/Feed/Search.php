@@ -43,6 +43,38 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		return $this->getXpathValue("atom:subtitle/h:div/h:div[@class='searchEcho']");
 	}
 
+	/** for single collection searches only */
+	function getCollection()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('http://daseproject.org/relation/collection' == $el->getAttribute('rel')) {
+				$res['href'] = $el->getAttribute('href');
+				$res['title'] = $el->getAttribute('title');
+				return $res;
+			}
+		}
+	}
+
+	function getQuery()
+	{
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		$dom = new DOMDocument('1.0','utf-8');
+		//need to import AND append!
+		$node = $dom->importNode($x->query("atom:subtitle/h:div/h:div[@id='query']/text()")->item(0),true);
+		$dom->appendChild($node);
+		return $dom->saveHTML();
+		//todo: the following should be much more efficient (but doesn't want to work):
+		/*
+		$qnode = $this->root->getElementById('query');
+		if ($qnode) {
+			return $qnode->nodeValue;
+		}
+		 */
+	}
+
 	function getSearchTallies()
 	{
 		//may want to adjust this to use atom related links
