@@ -213,6 +213,13 @@ class Dase_Atom_Feed extends Dase_Atom
 		$this->addElement('itemsPerPage',$num,Dase_Atom::$ns['opensearch']);
 	}
 
+	function setOpensearchQuery($q)
+	{
+		$el = $this->addElement('Query',null,Dase_Atom::$ns['opensearch']);
+		$el->setAttribute('role','request');
+		$el->setAttribute('searchTerms',$q);
+	}
+
 	function attachEntries()
 	{
 		//attach entries

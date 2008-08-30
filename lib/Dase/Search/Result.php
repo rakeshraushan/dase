@@ -54,6 +54,11 @@ class Dase_Search_Result
 		foreach ($this->search_array['omit'] as $omit) {
 			$q .= ' -'.$omit;
 		}
+		foreach ($this->search_array['qualified'] as $att => $vals) {
+			foreach($vals as $val) {
+				$q .= ' '.$att.':'.$val;
+			}
+		}
 		return trim($q);
 	}
 
@@ -89,10 +94,9 @@ class Dase_Search_Result
 		$feed->setOpensearchTotalResults($this->count);
 		$feed->setOpensearchStartIndex($start);
 		$feed->setOpensearchItemsPerPage($max);
+		$feed->setOpensearchQuery($this->_getQueryAsString());
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
-		$q = $div->addChild('div',$this->_getQueryAsString());
-		$q->addAttribute('id','query');
 		$ul = $div->addChild('ul');
 		$url_no_colls = preg_replace('/(\?|&|&amp;)c=\w+/i','',$this->url);
 		$url_no_colls = preg_replace('/(\?|&|&amp;)collection_ascii_id=\w+/i','',$url_no_colls);
@@ -171,7 +175,7 @@ class Dase_Search_Result
 			if ($previous) {
 				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
 			}
-			$feed->setSubtitle($this->_getQueryAsString());
+			$feed->setOpensearchQuery($this->_getQueryAsString());
 			return $feed->asXml();
 		}
 	}

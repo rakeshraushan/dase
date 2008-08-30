@@ -73,11 +73,12 @@ class Dase_Search
 	private function _parseRequest()
 	{
 		$request = $this->request;
-		$search['type'] = null;
-		$search['colls'] = array();
 		$search['att'] = array();
+		$search['colls'] = array();
 		$search['find'] = array();
 		$search['omit'] = array();
+		$search['qualified'] = array();
+		$search['type'] = null;
 
 		// search syntax:
 		// query name is 'q'
@@ -92,6 +93,10 @@ class Dase_Search
 		// make the search fail (since it'll be interpreted as an
 		// attribute search
 		//
+		// also...prepend query term with att_ascii_id to limit
+		// to that attribute ascii (allows cross-coll searches!)
+		// that's the 'qualified' search 
+		//
 		// NOTE: everything is assumed to be "and."
 		// The word 'and' has *no* boolean significance. 
 		// Parentheses have not functional significance.
@@ -105,6 +110,9 @@ class Dase_Search
 		 *
 		 * match item_type:
 		 * type=test:picture 
+		 *
+		 * qualified search:
+		 * q=title:farewell+to+arms
 		 */
 
 		foreach ($request->get('c',true) as $c) {
@@ -123,7 +131,9 @@ class Dase_Search
 		$echo['query'] = join(' AND ',$query);
 		foreach ($query as $q) {
 			foreach ($this->_tokenizeQuoted($q) as $t) {
-				if ('-' == substr($t,0,1)) {
+				if (preg_match('/([^:]+):([^:]+)/',$t,$matches)) {
+					$search['qualified'][$matches[1]][] = $matches[2];
+				} elseif ('-' == substr($t,0,1)) {
 					$search['omit'][] = substr($t,1);
 				} else {
 					$search['find'][] = $t;
@@ -273,6 +283,19 @@ class Dase_Search
 			}
 			unset($ar_table_sets);
 		}
+		foreach($search['qualified'] as $att => $val_array) {
+			foreach($val_array as $val) {
+				$qualified_val[] = "lower(v.value_text) LIKE ?";
+				$value_table_params[] = "%".strtolower($val)."%";
+			//	$qualified_val[] = "lower(v.value_text) = ?";
+			//	$value_table_params[] = strtolower($val);
+			}
+			$qualified_sets[] = join(' AND ',$qualified_val);
+			$value_table_search_sets[] = "id IN (SELECT v.item_id FROM value v,attribute a WHERE v.attribute_id = a.id AND ".join(' AND ', $qualified_sets)." AND a.ascii_id = ?)";
+			$value_table_params[] = $att;
+			unset($qualified_val);
+			unset($qualified_sets);
+		}
 		if (count($search['colls']) && isset($search_table_sql)) {
 			foreach ($search['colls'] as $ccc) {
 				$placeholders[] = '?'; 
@@ -319,6 +342,16 @@ class Dase_Search
 				$bound_params[] = $search['type']['name'];
 				$bound_params[] = $search['type']['coll'];
 			}
+		//make sure colls registers when all q's are qualified
+		if (count($search['colls']) && !isset($search_table_sql) && isset($search['qualified'])) {
+			foreach ($search['colls'] as $ccc) {
+				$placeholders[] = '?'; 
+				$bound_params[] = $ccc;
+			}
+			$ph = join(",",$placeholders);
+			unset($placeholders);
+			$sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
+		}
 		$this->sql = $sql;
 		$this->bound_params = $bound_params;
 	}

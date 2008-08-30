@@ -61,18 +61,7 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		foreach (Dase_Atom::$ns as $k => $v) {
 			$x->registerNamespace($k,$v);
 		}
-		$dom = new DOMDocument('1.0','utf-8');
-		//need to import AND append!
-		$node = $dom->importNode($x->query("atom:subtitle/h:div/h:div[@id='query']/text()")->item(0),true);
-		$dom->appendChild($node);
-		return $dom->saveHTML();
-		//todo: the following should be much more efficient (but doesn't want to work):
-		/*
-		$qnode = $this->root->getElementById('query');
-		if ($qnode) {
-			return $qnode->nodeValue;
-		}
-		 */
+		return $this->getXpathValue("opensearch:Query/@searchTerms");
 	}
 
 	function getSearchTallies()
