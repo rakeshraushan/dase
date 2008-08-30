@@ -15,7 +15,7 @@
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="30" value="{$items->query}"/>
+				<input id="queryInput" type="text" name="q" size="60" value="{$items->query}"/>
 				<!--
 				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
 				-->

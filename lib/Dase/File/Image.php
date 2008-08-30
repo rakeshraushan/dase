@@ -34,6 +34,10 @@ class Dase_File_Image extends Dase_File
 			}
 		}
 		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
+		if (file_exists($target)) {
+			//make a timestamped backup
+			copy($target,$target.'.bak.'.time());
+		}
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;

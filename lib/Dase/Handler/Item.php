@@ -252,6 +252,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(411,'missing content length');
 		}
 		//clean this up (prob from wordpress)
+		//415 if unsupported?
 		$content_type = $r->getContentType();
 		list($type,$subtype) = explode('/',$content_type);
 		list($subtype) = explode(";",$subtype); // strip MIME parameters
@@ -268,8 +269,6 @@ class Dase_Handler_Item extends Dase_Handler
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
-
-		$coll = $item->getCollection();
 
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
 			$title = $_SERVER['HTTP_SLUG'];

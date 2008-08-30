@@ -48,15 +48,38 @@ class Dase_Search_Result
 	{
 		$q = '';
 		foreach ($this->search_array['find'] as $find) {
+			if (false !== strpos(trim($find),' ')) {
+				$find = '&quot;'.$find.'&quot;';
+			}
 			$q .= ' '.$find;
 		}
 
+		//note cannot 'omit' phrases!
 		foreach ($this->search_array['omit'] as $omit) {
 			$q .= ' -'.$omit;
 		}
 		foreach ($this->search_array['qualified'] as $att => $vals) {
 			foreach($vals as $val) {
-				$q .= ' '.$att.':'.$val;
+				$set = $att.':'.$val;
+				if (false !== strpos(trim($set),' ')) {
+					$set = '&quot;'.$set.'&quot;';
+				}
+				$q .= ' '.$set;
+			}
+		}
+
+		foreach ($this->search_array['att'] as $coll => $att_arrays) {
+			foreach ($att_arrays as $att => $vals) {
+				if (isset($vals['value_text_substr'])) {
+					foreach ($vals['value_text_substr'] as $v) {
+						$q .= ' &quot;'.$att.':'.$v.'&quot;';
+					}
+				}
+				if (isset($vals['value_text'])) {
+					foreach ($vals['value_text'] as $v) {
+						$q .= ' &quot;'.$att.':'.$v.'&quot;';
+					}
+				}
 			}
 		}
 		return trim($q);
