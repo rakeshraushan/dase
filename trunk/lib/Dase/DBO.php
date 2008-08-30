@@ -281,7 +281,9 @@ class Dase_DBO implements IteratorAggregate
 			foreach ($params as $bp) {
 				$sql = preg_replace('/\?/',"'$bp'",$sql,1);
 			}
+			Dase_Log::debug("----------------------------");
 			Dase_Log::debug("[DBO query]".$sql);
+			Dase_Log::debug("----------------------------");
 		}
 		return $sth;
 	}

@@ -44,7 +44,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getHttpPassword()
 	{
-		$this->http_password = substr(md5(Dase_Config::get('token').$this->eid.'httpbasic'),0,8);
+		$this->http_password = substr(md5(Dase_Config::get('token').$this->eid.'httpbasic'),0,12);
 		return $this->http_password;
 	}
 

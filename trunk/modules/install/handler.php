@@ -152,6 +152,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('db',$db);
 		$tpl->assign('token',md5(time().'abc'));
 		$tpl->assign('ppd_token',md5(time().'def'));
+		$tpl->assign('service_token',md5(time().'ghi'));
 		$tpl->assign('db',$db);
 		$config = $tpl->fetch('local_config.tpl');
 		$lc = DASE_PATH.'/inc/local_config.php';
