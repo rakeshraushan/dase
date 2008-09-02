@@ -19,7 +19,10 @@ class Dase_Http_Auth
 				$passwords[] = md5(Dase_Config::get('service_token').$eid);
 			}
 
-			$passwords[] = 'swedxc789';
+			$tmp = Dase_Config::get('tmp_http_passwd');
+			if ($tmp) {
+				$passwords[] = $tmp;
+			}
 
 			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {
 				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
