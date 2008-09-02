@@ -44,6 +44,17 @@ class Dase_Search_Result
 		return Dase_Json::get($json_tag);	
 	}
 
+	public function getResultSetSerialNumbers()
+	{
+		$sernums = array();
+		foreach($this->item_ids as $item_id) {
+			$item = new Dase_DBO_Item();
+			$item->load($item_id);
+			$sernums[] = $item->serial_number;
+		}
+		return $sernums;	
+	}
+
 	private function _getQueryAsString()
 	{
 		$q = '';

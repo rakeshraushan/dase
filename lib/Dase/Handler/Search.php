@@ -5,6 +5,7 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public $resource_map = array(
 		'/' => 'search',
+		'sernums' => 'search_serial_numbers',
 		'refine' => 'search_refined',
 		'item' => 'search_item',
 		'{md5_hash}' => 'search_by_hash',
@@ -59,6 +60,14 @@ class Dase_Handler_Search extends Dase_Handler
 		$search = new Dase_Search($request);
 		$json_feed = $search->getResult()->getResultSetAsJsonFeed();
 		$request->renderResponse($json_feed);
+	}
+
+	public function getSearchSerialNumbers($request)
+	{
+		$request->checkCache();
+		$search = new Dase_Search($request);
+		$sernums = $search->getResult()->getResultSetSerialNumbers();
+		$request->renderResponse(join('|',$sernums));
 	}
 
 	public function getSearchItemAtom($request)
