@@ -202,6 +202,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$json_tag['eid'] = $eid;
 		foreach($this->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
+			if (!$item) {
+				Dase_Log::debug('tag_item missing item: '.$tag_item->id);
+				continue;
+			}
 			$json_item = array();
 			//$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
 			$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
