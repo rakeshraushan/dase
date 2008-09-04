@@ -240,8 +240,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			LIMIT 1
 			";
 		$res = Dase_DBO::query($sql,array($this->id,$att_ascii_id),true)->fetch();
-		if ($res) {
+		if ($res && $res->value_text) {
 			return $res->value_text;
+		} else {
+			return false;
 		}
 	}
 
@@ -305,9 +307,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
 		$m->size = $size;
-		$m->findOne();
-		$url = APP_ROOT . "/media/{$c->ascii_id}/$size/$m->filename";
-		return $url;
+		if ($m->findOne()) {
+			$url = APP_ROOT . "/media/{$c->ascii_id}/$size/$m->filename";
+			return $url;
+		} else {
+			return false;
+		}
 	}
 
 	function getMediaCount()
@@ -504,8 +509,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
 		$img = $div->addChild('img');
-		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
-		$img->addAttribute('class','thumbnail');
+		$thumb_url = $this->getMediaUrl('thumbnail');
+		if ($thumb_url) {
+			$img->addAttribute('src',$thumb_url);
+			$img->addAttribute('class','thumbnail');
+		}
 		//$div->addChild('p',htmlspecialchars($this->getDescription()));
 		$contents = $div->addChild('ul');
 		foreach ($this->getContents() as $cont) {
@@ -718,5 +726,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$note->updated = date(DATE_ATOM);
 		$note->updated_by_eid = $eid;
 		$note->insert();
+	}
+
+	public function getTags()
+	{
+		$tags = array();
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->item_id = $this->id;
+		foreach ($tag_item->find() as $ti) {
+			$tags[] = $ti->getTag();
+		}
+		if (count($tags)) {
+			return $tags;
+		} else {
+			return false;
+		}
 	}
 }

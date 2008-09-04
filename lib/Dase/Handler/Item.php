@@ -12,6 +12,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
+		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
 		'{collection_ascii_id}/{serial_number}/templates' => 'input_templates',
 		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
 	);
@@ -51,6 +52,10 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->asMicroformat());
+	}
+
+	public function getTags($r)
+	{
 	}
 
 	public function getMediaAtom($r)

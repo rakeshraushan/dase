@@ -15,6 +15,7 @@ class Dase_Http_Request
 		'txt' =>'text/plain',
 		'jpg' =>'image/jpeg',
 		'gif' =>'image/gif',
+		'pdf' =>'application/pdf',
 	);
 	public $content_type;
 	public $error_message;

@@ -232,16 +232,14 @@ class Dase_DBO implements IteratorAggregate
 		if (isset($this->limit)) {
 			$sql .= " LIMIT $this->limit";
 		}
-		$this->sql = $sql;
-		$this->bind = $bind;
 		$sth = $db->prepare( $sql );
 		if (!$sth) {
 			throw new PDOException('cannot create statement handle');
 		}
 
 		//pretty logging
-		$log_sql = $this->sql;
-		foreach ($this->bind as $k => $v) {
+		$log_sql = $sql;
+		foreach ($bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
 		Dase_Log::debug('[DBO find] '.$log_sql);
@@ -255,6 +253,51 @@ class Dase_DBO implements IteratorAggregate
 		//     print_r($one);
 		// }
 		return $sth;
+	}
+
+	function findCount()
+	{
+		$db = $this->_dbGet();
+		$sets = array();
+		$bind = array();
+		foreach( array_keys( $this->fields ) as $field ) {
+			if (isset($this->fields[ $field ]) 
+				&& ('id' != $field)) {
+					$sets []= "$field = :$field";
+					$bind[":$field"] = $this->fields[ $field ];
+				}
+		}
+		if (isset($this->qualifiers)) {
+			//work on this
+			foreach ($this->qualifiers as $qual) {
+				$f = $qual['field'];
+				$op = $qual['operator'];
+				//allows is to add 'is null' qualifier
+				if ('null' == $qual['value']) {
+					$v = $qual['value'];
+				} else {
+					$v = $db->quote($qual['value']);
+				}
+				$sets[] = "$f $op $v";
+			}
+		}
+		$where = join( " AND ", $sets );
+		if ($where) {
+			$sql = "SELECT count(*) FROM ".$this->table. " WHERE ".$where;
+		} else {
+			$sql = "SELECT count(*) FROM ".$this->table;
+		}
+		$sth = $db->prepare( $sql );
+		if (!$sth) {
+			throw new PDOException('cannot create statement handle');
+		}
+		$log_sql = $sql;
+		foreach ($bind as $k => $v) {
+			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
+		}
+		Dase_Log::debug('[DBO findCount] '.$log_sql);
+		$sth->execute($bind);
+		return $sth->fetchColumn();
 	}
 
 	public static function query($sql,$params=array(),$return_object=false)

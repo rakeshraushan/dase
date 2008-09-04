@@ -132,7 +132,12 @@ class Dase_Search
 		foreach ($query as $q) {
 			foreach ($this->_tokenizeQuoted($q) as $t) {
 				if (preg_match('/([^:]+):([^:]+)/',$t,$matches)) {
-					$search['qualified'][$matches[1]][] = $matches[2];
+					if ('c' == $matches[1]) {
+						//allows us to limit to *single* collection in search box
+						$search['colls'] = array($matches[2]);
+					} else {
+						$search['qualified'][$matches[1]][] = $matches[2];
+					}
 				} elseif ('-' == substr($t,0,1)) {
 					$search['omit'][] = substr($t,1);
 				} else {

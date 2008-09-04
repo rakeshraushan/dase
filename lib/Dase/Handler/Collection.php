@@ -10,6 +10,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
+		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
 		'{collection_ascii_id}/items/marked/to_be_deleted' => 'items_marked_to_be_deleted',
 		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
@@ -17,32 +18,32 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
-		$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$this->collection) {
-			$request->renderError(404);
+			$r->renderError(404);
 		}
-		if ('html' == $request->format && 
-			'service' != $request->resource &&
-			'ping' != $request->resource 
+		if ('html' == $r->format && 
+			'service' != $r->resource &&
+			'ping' != $r->resource 
 		) {
-			$this->user = $request->getUser();
+			$this->user = $r->getUser();
 			if (!$this->user->can('read',$this->collection)) {
-				$request->renderError(401);
+				$r->renderError(401);
 			}
 		}
 		/*
-		if ('atom' == $request->format) {
-			$this->user = $request->getUser('http');
+		if ('atom' == $r->format) {
+			$this->user = $r->getUser('http');
 			if (!$this->user->can('read',$this->collection)) {
-			$request->renderError(401);
+			$r->renderError(401);
 			}
 		}
 		 */
 	}
 
-	public function getItemsThatLackMediaTxt($request) 
+	public function getItemsThatLackMediaTxt($r) 
 	{
 		$output = '';
 		$i = 0;
@@ -51,19 +52,19 @@ class Dase_Handler_Collection extends Dase_Handler
 				$i++;
 				$output .= $item->serial_number; 
 				//pass in 'display' params to view att value
-				foreach ($request->get('display',true) as $member) {
+				foreach ($r->get('display',true) as $member) {
 					$output .= '|'.$item->getValue($member);
 				}
 				$output .= "\n";
 			}
 		}
-		if ($request->has('get_count')) {
+		if ($r->has('get_count')) {
 			$output = $i;
 		}
-		$request->renderResponse($output);
+		$r->renderResponse($output);
 	}
 
-	public function getItemsMarkedToBeDeletedTxt($request) 
+	public function getItemsMarkedToBeDeletedTxt($r) 
 	{
 		$output = '';
 		$items = new Dase_DBO_Item;
@@ -72,60 +73,84 @@ class Dase_Handler_Collection extends Dase_Handler
 		foreach ($items->find() as $item) {
 			$output .= $item->serial_number.'|'; 
 		}
-		$request->renderResponse($output);
+		$r->renderResponse($output);
 	}
 
-	public function getPing($request)
+	public function getItemsByMd5Txt($r) 
 	{
-		$request->renderResponse('ok');
+		$output = '';
+		$sql = "
+			SELECT serial_number 
+			FROM item
+			WHERE collection_id = ?
+			AND id IN
+			(SELECT value.item_id
+			FROM value, attribute
+			WHERE value.attribute_id = attribute.id
+			AND attribute.ascii_id = 'admin_checksum'
+			AND value.value_text = ?)
+			";
+		foreach (Dase_DBO::query($sql,array($this->collection->id,$r->get('md5')))->fetchAll() as $row) {
+			$output .= $row['serial_number'].'|'; 
+		}
+		if ($output) {
+			$r->renderResponse($output);
+		} else {
+			$r->renderError(404,'no item with checksum '.$r->get('md5'));
+		}
 	}
 
-	public function getRecent($request)
+	public function getPing($r)
+	{
+		$r->renderResponse('ok');
+	}
+
+	public function getRecent($r)
 	{
 		//this is trickir than it seems (lovely RFC 3339)
 	}
 
-	public function getCollectionAtom($request) 
+	public function getCollectionAtom($r) 
 	{
-		if ($request->has('limit')) {
-		   $limit = $request->get('limit');
+		if ($r->has('limit')) {
+		   $limit = $r->get('limit');
 		} else {
 			$limit = 5;
 		}
-		$request->renderResponse($this->collection->asAtom($limit));
+		$r->renderResponse($this->collection->asAtom($limit));
 	}
 
-	public function getArchive($request) 
+	public function getArchive($r) 
 	{
 		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
 		file_put_contents($archive,$this->collection->asAtomArchive());
-		$request->serveFile($archive,'text/plain',true);
+		$r->serveFile($archive,'text/plain',true);
 	}
 
-	public function getArchiveJson($request) 
+	public function getArchiveJson($r) 
 	{
 		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time().'.json';
 		file_put_contents($archive,$this->collection->asJsonArchive());
-		$request->serveFile($archive,'text/plain',true);
+		$r->serveFile($archive,'text/plain',true);
 	}
 
-	public function getArchiveAtom($request) 
+	public function getArchiveAtom($r) 
 	{
-		$limit = $request->get('limit');
-		$request->renderResponse($this->collection->asAtomArchive($limit));
+		$limit = $r->get('limit');
+		$r->renderResponse($this->collection->asAtomArchive($limit));
 	}
 
-	public function asAtomFull($request) 
+	public function asAtomFull($r) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
-		$request->renderResponse($c->asAtomFull());
+		$c = Dase_Collection::get($r->get('collection_ascii_id'));
+		$r->renderResponse($c->asAtomFull());
 	}
 
-	public function deleteCollection($request)
+	public function deleteCollection($r)
 	{
-		$user = $request->getUser('http');
+		$user = $r->getUser('http');
 		if (!$user->isSuperuser()) {
-			$request->renderError(401,$user->eid.' is not permitted to delete a collection');
+			$r->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
 		if ($this->collection->getItemCount() < 5) {
 			$archive_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive';
@@ -137,86 +162,86 @@ class Dase_Handler_Collection extends Dase_Handler
 			$archive = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive/'.$this->collection->ascii_id.'.atom';
 			file_put_contents($archive,$this->collection->asAtomArchive());
 			$this->collection->expunge();
-			$request->renderResponse('delete succeeded',false,200);
+			$r->renderResponse('delete succeeded',false,200);
 		} else {
-			$request->renderError(403,'cannot delete collection with more than 5 items');
+			$r->renderError(403,'cannot delete collection with more than 5 items');
 		}
 	}
 
-	public function getCollection($request) 
+	public function getCollection($r) 
 	{
-		$tpl = new Dase_Template($request);
-		$tpl->assign('collection',Dase_Atom_Feed::retrieve(APP_ROOT.'/collection/'.$request->get('collection_ascii_id').'.atom'));
-		$request->renderResponse($tpl->fetch('collection/browse.tpl'));
+		$tpl = new Dase_Template($r);
+		$tpl->assign('collection',Dase_Atom_Feed::retrieve(APP_ROOT.'/collection/'.$r->get('collection_ascii_id').'.atom'));
+		$r->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
-	public function getServiceAtom($request) 
+	public function getServiceAtom($r) 
 	{
-		$request->renderResponse($this->collection->getAtompubServiceDoc(),'application/atomsvc+xml');
+		$r->renderResponse($this->collection->getAtompubServiceDoc(),'application/atomsvc+xml');
 	}
 
 
-	public function postToCollection($request) 
+	public function postToCollection($r) 
 	{
-		$this->user = $request->getUser('http');
+		$this->user = $r->getUser('http');
 		if (!$this->user->can('write',$this->collection)) {
-			$request->renderError(401,'no go unauthorized');
+			$r->renderError(401,'no go unauthorized');
 		}
-		$content_type = $request->getContentType();
+		$content_type = $r->getContentType();
 
 		if ('application/atom+xml;type=entry' == $content_type ||
 		'application/atom+xml' == $content_type ) {
-			$this->_newAtomItem($request);
+			$this->_newAtomItem($r);
 		} elseif ('application/json' == $content_type) {
-			$this->_newJsonItem($request);
+			$this->_newJsonItem($r);
 		} else {
-			$request->renderError(415,'cannot accept '.$content_type);
+			$r->renderError(415,'cannot accept '.$content_type);
 		}
 	}
 
-	private function _newAtomItem($request)
+	private function _newAtomItem($r)
 	{
 		$raw_input = file_get_contents("php://input");
-		$client_md5 = $request->getHeader('Content-MD5');
+		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($raw_input) != $client_md5) {
-			$request->renderError(412,'md5 does not match');
+			$r->renderError(412,'md5 does not match');
 		}
 		$item_entry = Dase_Atom_Entry::load($raw_input);
 		if ('item' != $item_entry->entrytype) {
 			$item_entry->setEntryType('item');
-			$request->renderError(400,'must be an item entry');
+			$r->renderError(400,'must be an item entry');
 		}
-		$item = $item_entry->insert($request);
+		$item = $item_entry->insert($r);
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-		header("Location: ".APP_ROOT."/item/".$request->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
 		echo $item->asAtom();
 		exit;
 	}
 
-	private function _newJsonItem($request)
+	private function _newJsonItem($r)
 	{
-		$request->renderResponse('still working on JSON posts!');
+		$r->renderResponse('still working on JSON posts!');
 	}
 
-	public function rebuildIndexes($request) 
+	public function rebuildIndexes($r) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
+		$c = Dase_Collection::get($r->get('collection_ascii_id'));
 		$c->buildSearchIndex();
 		$params['msg'] = "rebuilt indexes for $c->collection_name";
-		$request->renderRedirect('',$params);
+		$r->renderRedirect('',$params);
 	}
 
-	public function getAttributesAtom($request) 
+	public function getAttributesAtom($r) 
 	{
-		$request->renderResponse($this->collection->getAttributesAtom()->asXml());
+		$r->renderResponse($this->collection->getAttributesAtom()->asXml());
 	}
 
-	public function getAttributesJson($request) 
+	public function getAttributesJson($r) 
 	{
-		$filter = $request->has('filter') ? $request->get('filter') : '';
-		$request->checkCache();
+		$filter = $r->has('filter') ? $r->get('filter') : '';
+		$r->checkCache();
 		$c = $this->collection;
 		$attributes = new Dase_DBO_Attribute;
 		$attributes->collection_id = $c->id;
@@ -236,17 +261,17 @@ class Dase_Handler_Collection extends Dase_Handler
 					'ascii_id' => $att->ascii_id,
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
-					'collection' => $request->get('collection_ascii_id')
+					'collection' => $r->get('collection_ascii_id')
 				);
 		}
-		$request->renderResponse(Dase_Json::get($att_array),$request);
+		$r->renderResponse(Dase_Json::get($att_array),$r);
 	}
 
-	public function getAttributeTalliesJson($request) 
+	public function getAttributeTalliesJson($r) 
 	{
-		$request->checkCache(1500);
-		if ($request->has('filter') && ('admin' == $request->get('filter'))) {
-			$request->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
+		$r->checkCache(1500);
+		if ($r->has('filter') && ('admin' == $r->get('filter'))) {
+			$r->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
 			exit;
 		}
 		$c = $this->collection;
@@ -267,7 +292,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 0;
-		$request->renderResponse(Dase_Json::get($result));
+		$r->renderResponse(Dase_Json::get($result));
 	}
 
 	private function _adminAttributeTalliesJson() 
@@ -298,30 +323,30 @@ class Dase_Handler_Collection extends Dase_Handler
 		return $result;
 	}
 
-	public function itemsByTypeAsAtom($request) {
+	public function itemsByTypeAsAtom($r) {
 		$item_type = new Dase_DBO_ItemType;
-		$item_type->ascii_id = $request->get('item_type_ascii_id');
+		$item_type->ascii_id = $r->get('item_type_ascii_id');
 		$item_type->findOne();
-		$request->renderResponse($item_type->getItemsAsFeed());
+		$r->renderResponse($item_type->getItemsAsFeed());
 	}
 
-	public function buildIndex($request) 
+	public function buildIndex($r) 
 	{
-		$c = Dase_Collection::get($request->get('collection_ascii_id'));
+		$c = Dase_Collection::get($r->get('collection_ascii_id'));
 		$c->buildSearchIndex();
 		$params['msg'] = "rebuilt indexes for $c->collection_name";
-		$request->renderRedirect('',$params);
+		$r->renderRedirect('',$params);
 	}
 
-	public function getServiceTxt($request)
+	public function getServiceTxt($r)
 	{
-		$this->getService($request);
+		$this->getService($r);
 	}
 
-	public function getService($request)
+	public function getService($r)
 	{
-		$request->response_mime_type = 'application/atomsvc+xml';
-		$request->renderResponse($this->collection->getAtompubServiceDoc());
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->collection->getAtompubServiceDoc());
 	}
 
 }
