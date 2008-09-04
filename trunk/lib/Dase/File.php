@@ -117,6 +117,11 @@ abstract class Dase_File
 		$this->metadata['filename'] = $this->basename;
 		$this->metadata['updated'] = date(DATE_ATOM,filemtime($this->filepath)); 
 		$this->metadata['mime_type'] = $this->mime_type;
+		//for admin_ attributes:
+		$this->metadata['upload_date_time'] = date(DATE_ATOM);
+		$this->metadata['checksum'] = $this->metadata['md5'];
+
+
 		return $this->metadata;
 	}	
 

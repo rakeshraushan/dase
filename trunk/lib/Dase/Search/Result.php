@@ -93,6 +93,9 @@ class Dase_Search_Result
 				}
 			}
 		}
+		if (count($this->search_array['colls']) == 1) {
+			$q .= ' c:'.$this->search_array['colls'][0];
+		}
 		return trim($q);
 	}
 

@@ -93,7 +93,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $entry;
 	}
 
-	function getDisplayValues($coll = null,$limit=1000)
+	function getDisplayValues($coll = null,$limit=2000)
 	{
 		$admin_sql = '';
 		if (!$this->id) {

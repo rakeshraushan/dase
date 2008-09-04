@@ -72,6 +72,30 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
+	/** be careful w/ this -- we do not archive before deleting */
+	function expunge()
+	{
+		$tag_items = new Dase_DBO_TagItem;
+		$tag_items->tag_id = $this->id;
+
+		$subscr = new Dase_DBO_Subscription;
+		$subscr->tag_id = $this->id;
+
+		if ($tag_items->findCount() > 50) {
+			throw new Exception("dangerous-looking tag deletion (more than 50 tag items)");
+		} 
+		if ($subscr->findCount() > 5) {
+			throw new Exception("dangerous-looking tag deletion (more than 5 subscribers)");
+		} 
+		foreach ($tag_items->find() as $doomed_tag_item) {
+			$doomed_tag_item->delete();
+		}
+		foreach ($subscr->find() as $doomed_subscr) {
+			$doomed_subscr->delete();
+		}
+		$this->delete();
+	}
+
 	function getItemCount()
 	{
 		$db = Dase_DB::get();
@@ -155,7 +179,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_item->tag_id = $this->id;
 		list ($coll,$sernum) = explode('/',$item_unique);
 
-		//todo: compat
+		//todo: compat (but handy anyway)
 		$item = Dase_DBO_Item::get($coll,$sernum);
 		$tag_item->item_id = $item->id;
 

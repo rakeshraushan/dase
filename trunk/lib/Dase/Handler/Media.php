@@ -16,7 +16,7 @@ class Dase_Handler_Media extends Dase_Handler
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
 		} else {
-			if ('put' != $r->method) {
+			if ('put' != $r->method && 'post' != $r->method) {
 				$r->renderError(404);
 			}
 		}
@@ -39,6 +39,11 @@ class Dase_Handler_Media extends Dase_Handler
 	}
 
 	public function getMediaFileJpg($r)
+	{
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
+	public function getMediaFilePdf($r)
 	{
 		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
@@ -146,7 +151,7 @@ class Dase_Handler_Media extends Dase_Handler
 		$user = $r->getUser('http');
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$user->can('write',$c)) {
-			$r->renderError(401,'cannot post media to this item');
+			$r->renderError(401,'cannot post media to this collection');
 		}
 		//hand off to item handler
 		$item_handler = new Dase_Handler_Item;
