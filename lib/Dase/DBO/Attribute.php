@@ -93,9 +93,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $entry;
 	}
 
-	function getDisplayValues($coll = null,$limit=2000)
+	function getDisplayValues($coll = null,$limit=2000,$filter_key='',$filter_value='')
 	{
 		$admin_sql = '';
+		$filter_sql = '';
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
@@ -105,6 +106,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if ($coll) {
 			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id IN (SELECT id FROM collection WHERE ascii_id = '$coll'))";
 		}
+		if ($filter_key && $filter_value) {
+			$filter_sql = "AND item_id IN (SELECT item_id FROM value v,attribute a WHERE v.value_text='$filter_value' and a.ascii_id = '$filter_key' and v.attribute_id = a.id)";
+		}
 		if ($limit) {
 			$limit_sql = "LIMIT $limit";
 		}
@@ -113,6 +117,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			FROM value
 			WHERE attribute_id = ?
 			$admin_sql
+			$filter_sql
 			GROUP BY value_text
 			ORDER BY value_text
 			$limit_sql;
@@ -253,13 +258,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return Dase_Json::get($this->asArray());
 	}
 
-	public function valuesAsAtom($collection_ascii_id)
+	public function valuesAsAtom($collection_ascii_id,$filter_key ='',$filter_value='')
 	{
 		if (0 == $this->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
-			$values_array = $this->getDisplayValues($collection_ascii_id);
+			$values_array = $this->getDisplayValues($collection_ascii_id,2000,$filter_key,$filter_value);
 		} else {
-			$values_array = $this->getDisplayValues();
+			$values_array = $this->getDisplayValues(null,2000,$filter_key,$filter_value);
 		}
 		$feed = new Dase_Atom_Feed;
 		$feed->setId(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');

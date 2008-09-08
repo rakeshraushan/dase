@@ -460,7 +460,7 @@ class Dase_Http_Request
 
 	public function serveFile($path,$mime_type,$download=false)
 	{
-		Dase_Log::debug('serving '.$path.' as '.$mime_type);
+		//Dase_Log::debug('serving '.$path.' as '.$mime_type);
 		$response = new Dase_Http_Response($this);
 		$response->serveFile($path,$mime_type,$download);
 		exit;
