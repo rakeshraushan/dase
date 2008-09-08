@@ -497,7 +497,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($serial_number) {
 			$item->serial_number = $serial_number;
 			if ($item->findOne()) {
-				throw new Exception('duplicate serial number!');
+				throw new Dase_Exception('duplicate serial number!');
 				return;
 			}
 			$item->status = 'public';

@@ -84,8 +84,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if ($tag_items->findCount() > 50) {
 			throw new Exception("dangerous-looking tag deletion (more than 50 tag items)");
 		} 
-		if ($subscr->findCount() > 5) {
-			throw new Exception("dangerous-looking tag deletion (more than 5 subscribers)");
+		if ($subscr->findCount() > 2) {
+			throw new Exception("dangerous-looking tag deletion (more than 2 subscribers)");
 		} 
 		foreach ($tag_items->find() as $doomed_tag_item) {
 			$doomed_tag_item->delete();
@@ -121,6 +121,15 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));
 		return $st->fetchAll(PDO::FETCH_COLUMN);
+	}
+
+	function getItemUniques()
+	{
+		$uniqs = array();
+		foreach ($this->getTagItems() as $ti) {
+			$uniqs[] = $ti->p_collection_ascii_id.'/'.$ti->p_serial_number;
+		}
+		return $uniqs;
 	}
 
 	function getUpdated()

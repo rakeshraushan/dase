@@ -596,3 +596,8 @@ span.numberInSet {
 	margin: 10px 0 0 18px;
 	color: #333;
 }
+
+#htpasswd {
+	background-color: #ffc;
+	padding: 10px;
+}

@@ -26,7 +26,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		if ('html' == $r->format && 
 			'service' != $r->resource &&
-			'ping' != $r->resource 
+			'ping' != $r->resource
 		) {
 			$this->user = $r->getUser();
 			if (!$this->user->can('read',$this->collection)) {
@@ -212,12 +212,22 @@ class Dase_Handler_Collection extends Dase_Handler
 			$item_entry->setEntryType('item');
 			$r->renderError(400,'must be an item entry');
 		}
-		$item = $item_entry->insert($r);
-		header("HTTP/1.1 201 Created");
-		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-		echo $item->asAtom();
-		exit;
+		//slug or title will be serial number
+		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
+			$r->set('serial_number',$_SERVER['HTTP_SLUG']);
+		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
+			$r->set('serial_number',$_SERVER['HTTP_TITLE']);
+		}
+		try {
+			$item = $item_entry->insert($r);
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+			echo $item->asAtom();
+			exit;
+		} catch (Dase_Exception $e) {
+			$r->renderError(409,$e->getMessage());
+		}
 	}
 
 	private function _newJsonItem($r)
