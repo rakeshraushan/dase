@@ -312,7 +312,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
-			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
+			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
 		//the returned atom entry links to derivs!
