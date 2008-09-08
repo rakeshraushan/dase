@@ -52,8 +52,6 @@
 			|
 			<a href="settings" class="edit" id="settings-link">settings</a>
 			|
-			<a href="help" class="edit">help</a>
-			|
 			<a href="logoff" class="edit" id="logoff-link">logout</a>
 			<div id="eid" class="pagedata"></div>
 		</div>

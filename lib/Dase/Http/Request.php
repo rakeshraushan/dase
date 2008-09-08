@@ -11,6 +11,7 @@ class Dase_Http_Request
 		'atom' =>'application/atom+xml',
 		'json' =>'application/json',
 		'html' =>'text/html',
+		'default' =>'text/html',
 		'css' =>'text/css',
 		'txt' =>'text/plain',
 		'jpg' =>'image/jpeg',
@@ -30,9 +31,9 @@ class Dase_Http_Request
 
 	function __construct()
 	{
+		$this->method = strtolower($_SERVER['REQUEST_METHOD']);
 		$this->format = $this->getFormat();
 		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
-		$this->method = strtolower($_SERVER['REQUEST_METHOD']);
 		$this->path = $this->getPath();
 		$this->response_mime_type = self::$types[$this->format];
 		$this->query_string = $this->getQueryString();
@@ -186,8 +187,11 @@ class Dase_Http_Request
 				return array_search($mime_match,self::$types); //returns format
 			}
 		}
-		//default is html
-		return 'html';
+		//default is html for get requests
+		if ('get' == $this->method) {
+			return 'html';
+		}
+		return 'default';
 	}
 
 	public function get($key,$as_array = false)
@@ -231,6 +235,7 @@ class Dase_Http_Request
 		return $this->_filterPost($key) || 
 			$this->_filterGet($key) || 
 			isset($this->params[$key]) ||
+			isset($this->members[$key]) ||
 			isset($this->url_params[$key]); //necessary for late-set url_params
 	}
 

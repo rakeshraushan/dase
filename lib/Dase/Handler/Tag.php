@@ -7,6 +7,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{tag_id}' => 'tag',
 		'{tag_id}/slideshow' => 'slideshow',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/slideshow' => 'slideshow',
 		//for set delete:
@@ -87,6 +88,21 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401);
 		}
 		$r->renderResponse($this->tag->asJson());
+	}
+
+	public function getItemUniquesTxt($r)
+	{
+		$u = $r->getUser('http');
+		if (!$u->can('read',$this->tag)) {
+			$r->renderError(401);
+		}
+		$output = '';
+		foreach($this->tag->getItemUniques() as $iu) {
+			if ($iu) {
+				$output .= '|'.$iu;
+			}
+		}
+		$r->renderResponse($output);
 	}
 
 	public function getTagTemplate($r)

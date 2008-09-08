@@ -85,6 +85,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 						Dase_Log::info('created directory '.$media_dir.'/'.$size);
 						chmod("$media_dir/$size",0775);
 					}
+					//todo: compat only!
 					symlink($media_dir,$media_dir.'_collection');
 				}
 			}

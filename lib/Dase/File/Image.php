@@ -276,7 +276,12 @@ class Dase_File_Image extends Dase_File
 		$last_height = '';
 		foreach ($image_properties as $size => $size_info) {
 			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
-			$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage");
+			$command = "$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage";
+			$results = exec($command);
+			if (!file_exists($image)) {
+				Dase_Log::debug("failed to write $size image");
+				Dase_Log::debug("UNSUCCESSFUL: $command");
+			}
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry

@@ -1362,10 +1362,10 @@ Dase.initSlideshowLink = function() {
 }
 
 Dase.initShowHtpasswd = function() {
-	var link = Dase.$('htpasswd');
+	var link = Dase.$('htpasswdToggle');
 	if (!link) return;
 	link.onclick = function() {
-		alert(Dase.user.htpasswd);
+		Dase.toggle(Dase.$('htpasswd'));
 		return false;
 	}
 }

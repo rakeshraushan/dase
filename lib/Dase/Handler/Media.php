@@ -153,10 +153,21 @@ class Dase_Handler_Media extends Dase_Handler
 		if (!$user->can('write',$c)) {
 			$r->renderError(401,'cannot post media to this collection');
 		}
+		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
+			$serial_number = $_SERVER['HTTP_SLUG'];
+		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
+			$serial_number =  $_SERVER['HTTP_TITLE'];
+		} else {
+			$serial_number = null;
+		}
 		//hand off to item handler
-		$item_handler = new Dase_Handler_Item;
-		$item_handler->item = $c->createNewItem(null,$user->eid);
-		$item_handler->postToMedia($r);
+		try {
+			$item_handler = new Dase_Handler_Item;
+			$item_handler->item = $c->createNewItem($serial_number,$user->eid);
+			$item_handler->postToMedia($r);
+		} catch (Exception $e) {
+			$r->renderError(500,$e->getMessage());
+		}
 		//if something goes wrong and control returns here
 		$r->renderError(500,'error in post to collection');
 	}

@@ -13,6 +13,7 @@ $conf['db']['pass'] = 'password';
 //define module handlers (can override existing handler)
 //$conf['handler']['<handler>'] = '<module_name>';
 //$conf['handler']['login'] = 'openid';
+$conf['handler']['login'] = 'eid';
 $conf['handler']['db'] = 'dbadmin';
 $conf['handler']['install'] = 'install';
 
