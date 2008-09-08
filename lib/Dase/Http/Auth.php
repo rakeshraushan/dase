@@ -21,7 +21,7 @@ class Dase_Http_Auth
 
 			//lets me use the superuser passwd for http work
 			$su = Dase_Config::get('superuser');
-			if (isset($su[$eid]) {
+			if (isset($su[$eid])) {
 				$passwords[] = $su[$eid];
 			}
 
