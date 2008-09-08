@@ -19,9 +19,10 @@ class Dase_Http_Auth
 				$passwords[] = md5(Dase_Config::get('service_token').$eid);
 			}
 
-			$tmp = Dase_Config::get('tmp_http_passwd');
-			if ($tmp) {
-				$passwords[] = $tmp;
+			//lets me use the superuser passwd for http work
+			$su = Dase_Config::get('superuser');
+			if (isset($su[$eid]) {
+				$passwords[] = $su[$eid];
 			}
 
 			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {
