@@ -256,7 +256,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				$media_file = $file->addToCollection($item,false);
 			} catch(Exception $e) {
 				Dase_Log::debug('error',$e->getMessage());
-				$request->renderError(500,'could not ingest file ('.$e->getMessage().')');
+				$request->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 			}
 		}
 		$item->buildSearchIndex();

@@ -6,6 +6,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
@@ -41,6 +42,13 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		 */
+	}
+
+	public function getSerialNumbersTxt($r)
+	{
+		$r->checkCache();
+		$sernums = $this->collection->getSerialNumbers();
+		$r->renderResponse(join('|',$sernums));
 	}
 
 	public function getItemsThatLackMediaTxt($r) 
@@ -358,6 +366,5 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($this->collection->getAtompubServiceDoc());
 	}
-
 }
 

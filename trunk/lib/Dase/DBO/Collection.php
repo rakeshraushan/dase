@@ -56,6 +56,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		Dase_Log::info("$this->ascii_id deleted");
 	}
 
+	function getSerialNumbers()
+	{
+		$sernums = array();
+		foreach ($this->getItems() as $item) {
+			$sernums[] = $item->serial_number;
+		}
+		return $sernums;
+	}
+
 	function getBaseAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;
