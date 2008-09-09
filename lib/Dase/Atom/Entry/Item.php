@@ -242,6 +242,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->setValue('description',$this->getSummary());
 
 		//how do we authenticate to get the enclosure??
+		/*
 		$enc = $this->getEnclosure(); 
 		if ($enc) {
 			$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
@@ -260,6 +261,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				$request->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 			}
 		}
+		 */
 		$item->buildSearchIndex();
 		return $item;
 	}
