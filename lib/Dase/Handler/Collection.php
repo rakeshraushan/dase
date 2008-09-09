@@ -6,6 +6,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
@@ -207,7 +208,24 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 	}
 
-	private function _newAtomItem($r)
+	public function postToIngester($r) 
+	{
+		$this->user = $r->getUser('http');
+		if (!$this->user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$content_type = $r->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
+			//will try to fetch enclosure
+			$this->_newAtomItem($r,true);
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	private function _newAtomItem($r,$fetch_enclosure=false)
 	{
 		$raw_input = file_get_contents("php://input");
 		$client_md5 = $r->getHeader('Content-MD5');
@@ -227,7 +245,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->set('serial_number',$_SERVER['HTTP_TITLE']);
 		}
 		try {
-			$item = $item_entry->insert($r);
+			$item = $item_entry->insert($r,$fetch_enclosure);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');

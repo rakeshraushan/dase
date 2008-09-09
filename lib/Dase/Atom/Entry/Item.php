@@ -207,7 +207,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
-	function insert($request) 
+	function insert($request,$fetch_enclosure=false) 
 	{
 		$eid = $request->getUser()->eid;
 		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
@@ -241,27 +241,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->setValue('title',$this->getTitle());
 		$item->setValue('description',$this->getSummary());
 
-		//how do we authenticate to get the enclosure??
-		/*
-		$enc = $this->getEnclosure(); 
-		if ($enc) {
-			$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
-			if (!file_exists($upload_dir)) {
-				$request->renderError(401,'missing upload directory');
-			}
-			$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
-			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
-			file_put_contents($new_file,file_get_contents($enc['href']));
+		if ($fetch_enclosure) {
+			$enc = $this->getEnclosure(); 
+			if ($enc) {
+				$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+				if (!file_exists($upload_dir)) {
+					$request->renderError(401,'missing upload directory');
+				}
+				$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
+				$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+				file_put_contents($new_file,file_get_contents($enc['href']));
 
-			try {
-				$file = Dase_File::newFile($new_file,$enc['mime_type']);
-				$media_file = $file->addToCollection($item,false);
-			} catch(Exception $e) {
-				Dase_Log::debug('error',$e->getMessage());
-				$request->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
+				try {
+					$file = Dase_File::newFile($new_file,$enc['mime_type']);
+					$media_file = $file->addToCollection($item,false);
+				} catch(Exception $e) {
+					Dase_Log::debug('error',$e->getMessage());
+					$request->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
+				}
 			}
-		}
-		 */
+		} 
 		$item->buildSearchIndex();
 		return $item;
 	}
