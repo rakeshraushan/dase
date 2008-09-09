@@ -227,6 +227,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		$content = new Dase_DBO_Content;
+		/*
 		$atom_content = $this->getContent();
 		if ($atom_content) {
 			$content->text = $atom_content;
@@ -238,8 +239,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$content->updated_by_eid = $eid;
 			$content->insert();
 		}
-		$item->setValue('title',$this->getTitle());
-		$item->setValue('description',$this->getSummary());
+		 */
+		//$item->setValue('title',$this->getTitle());
+		//$item->setValue('description',$this->getSummary());
 
 		if ($fetch_enclosure) {
 			$enc = $this->getEnclosure(); 
