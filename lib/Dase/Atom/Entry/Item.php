@@ -241,6 +241,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->setValue('title',$this->getTitle());
 		$item->setValue('description',$this->getSummary());
 
+		//this grabbing the enclosure may be unwise (??)
 		$enc = $this->getEnclosure(); 
 		if ($enc) {
 			$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';

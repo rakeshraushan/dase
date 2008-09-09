@@ -14,6 +14,5 @@ $conf['convert'] = '{$convert_path}';
 $conf['default_handler'] = 'collections';
 
 //$conf['serviceuser']['sssss'] = '1';
-//$conf['tmp_http_passwd'] = '';
 $conf['service_token'] = "{$service_token}";
 
