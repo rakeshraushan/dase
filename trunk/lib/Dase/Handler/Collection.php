@@ -231,7 +231,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-			echo $item->asAtom();
+			echo $item->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
