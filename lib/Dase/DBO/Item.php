@@ -599,6 +599,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}
 
+	function asAtomEntry()
+	{
+		$entry = new Dase_Atom_Entry;
+		$this->injectAtomEntryData($entry);
+		return $entry->asXml();
+	}
+
 	function mediaAsAtomFeed() 
 	{
 		$feed = new Dase_Atom_Feed;
