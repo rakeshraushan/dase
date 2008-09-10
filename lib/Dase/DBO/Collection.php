@@ -419,28 +419,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $types->find();
 	}
 
-	function getItemsByAttVal($att_ascii_id,$value_text,$substr = false)
-	{
-		$a = new Dase_DBO_Attribute;
-		$a->ascii_id = $att_ascii_id;
-		$a->collection_id = $this->id;
-		$a->findOne();
-		$v = new Dase_DBO_Value;
-		$v->attribute_id = $a->id;
-		if ($substr) {
-			$v->addWhere('value_text',"%$value_text%",'like');
-		} else {
-			$v->value_text = $value_text;
-		}
-		$items = array();
-		foreach ($v->find() as $val) {
-			$it = new Dase_DBO_Item;
-			$it->load($val->item_id);
-			$items[] = $it;
-		}
-		return $items;
-	}
-
 	public function buildSearchIndex()
 	{
 		$db = Dase_DB::get();
