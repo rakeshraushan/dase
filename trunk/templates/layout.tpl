@@ -56,27 +56,30 @@
 		</noscript>
 
 
-		<div id="top">
-			<div id="logoffControl" class="login hide">
-				logged in as <span id="userName"></span> 
-				|
-				<a href="settings" class="edit" id="settings-link">settings</a>
-				|
-				<a href="logoff" class="edit" id="logoff-link">logout</a>
-				<div id="eid" class="pagedata"></div>
-			</div>
+		<div id="logoffControl" class="login hide">
+			<a href="settings" class="edit" id="settings-link"><span id="userName"></span></a> 
+			|
+			<a href="logoff" class="edit" id="logoff-link">logout</a>
+			<div id="eid" class="pagedata"></div>
+		</div>
 
-			<div id="loginControl" class="login hide">
-				<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
-			</div>
+		<div id="loginControl" class="login hide">
+			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
+		</div>
 
-			<div id="wordmark">
-				<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
-			</div>
+		<!-- uncomment for UT look
+		<div id="wordmark">
+			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
 		</div>
 
 		<div id="header">
 			<!-- background image here-->	
+		</div>
+		-->
+
+		<!-- comment out for ut look-->
+		<div id="header">
+			Digital Archive Services: Development 	
 		</div>
 
 		<div id="sidebar">

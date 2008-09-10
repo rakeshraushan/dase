@@ -3,8 +3,8 @@ div#adminHeader {
 	color: #ccc;
 	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
-	margin-top: 2px;
-	padding:8px;
+	margin-top: 0px;
+	padding:4px;
 	padding-left: 15px;
 }
 
@@ -22,7 +22,17 @@ div#admin {
 
 /* overrrides style.css: */
 div.login {
-	padding-top: 1px;
+	padding-top: 6px;
+	color: #fff;
+}
+
+div.login a {
+	color: #fff;
+	font-weight: bold;
+}
+
+span#userName {
+	color: #ccc;
 }
 
 div#sidebar
@@ -33,7 +43,7 @@ div#sidebar
 ul#menu a {
 	display:block;
 	padding: 9px 9px 9px 18px;
-	margin: 5px 0px;
+	margin: 4px 0px;
 }
 ul#menu img {
 	border: 0;

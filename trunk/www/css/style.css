@@ -9,14 +9,57 @@ html #maincontent {
 	width:20em;
 }
 
+
+/* ut specific settings */
+
 #header {
+	/* uncomment for ut look
 	background-image:url(../images/daseBanner.jpg);
 	background-repeat: no-repeat;
 	height:70px;
-/*	margin-top:-1px;*/
 	margin-top:-4px;
 	padding:0 12px;
+	*/
+
+	/* comment out for ut look */
+	background-color: #263b5e;
+	background-color: #3f2c0d;
+	color: #fff;
+	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
+	font-weight: bold;
+	font-size: 1.8em;
+	margin-top: 0px;
+	padding:15px;
+
 }
+
+span#userName {
+	color: #444;
+	/* comment out for ut look */
+	color: #ccc;
+}
+
+div.login {
+	float:right;
+	margin-right:20px;
+	padding-top:18px;
+
+	/* comment out for ut look */
+	font-weight: bold;
+	padding-top: 5px;
+	color: #ccc;
+}
+
+div.login a.alert {
+	color: #c00;
+}
+
+/* comment out for ut look */
+div.login a {
+	color: #ccc;
+}
+
+/* end ut specific */
 
 #sidebar {
 	width: 16%;
@@ -37,7 +80,7 @@ html #maincontent {
 
 #content,
 #footer {
-	margin-left:17%;
+	margin-left:16.4%;
 }
 
 /******************* PAGE FORMATS ************************/
@@ -543,21 +586,6 @@ table#colors td {
 
 .pagerControl {
 	margin: 1em 0;
-}
-
-span#userName {
-	color: #333;
-	font-weight: bold;
-}
-
-div.login {
-	float:right;
-	margin-right:20px;
-	padding-top:18px;
-}
-
-div.login a.alert {
-	color: #c00;
 }
 
 .tally {
