@@ -55,9 +55,7 @@
 
 
 		<div id="logoffControl" class="login hide">
-			logged in as <span id="userName"></span> 
-			|
-			<a href="settings" class="edit" id="settings-link">settings</a>
+			<a href="settings" class="edit" id="settings-link"><span id="userName"></span></a> 
 			|
 			<a href="logoff" class="edit" id="logoff-link">logout</a>
 			<div id="eid" class="pagedata"></div>
@@ -67,12 +65,8 @@
 			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
-		<div id="wordmark">
-			<a href="http://www.utexas.edu"><img src="www/images/ut.gif" alt="the university of texas"/></a>
-		</div>
-
 		<div id="manageHeader">
-			<p>DASe Application Manager</p> 
+			<p>DASe Archive Manager</p> 
 		</div>
 
 		<div id="sidebar">
