@@ -16,6 +16,17 @@
 			</div>
 			<div class="content">
 				<form id="check_form" action="dbchecker" method="post">
+					<h1>Archive Information</h1>
+					<table class="form_table">
+						<tr>
+							<th>
+								<label for="main_title">Archive Title</label>
+							</th>
+							<td>
+								<input type="text" name="main_title" value="{$conf.main_title}"/>
+							</td>
+						</tr>
+					</table>
 					<h1>Admin User Information</h1>
 					<table class="form_table">
 						<tr>
