@@ -66,7 +66,7 @@
 		</div>
 
 		<div id="manageHeader">
-			<p>DASe Archive Manager</p> 
+			DASe Archive Manager 
 		</div>
 
 		<div id="sidebar">
