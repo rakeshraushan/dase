@@ -51,6 +51,7 @@ class Dase_Template {
 		}
 		$this->smarty->assign('msg', $request->get('msg'));
 		$this->smarty->assign('request', $request);
+		$this->smarty->assign('main_title', Dase_Config::get('main_title'));
 		error_reporting($er);
 	}
 
