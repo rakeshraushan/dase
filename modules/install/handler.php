@@ -145,6 +145,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		//since connection, not table count, is dependent on passed in settings
 		$tpl = new Dase_Template($request,true);
+		$tpl->assign('main_title',$request->get('main_title'));
 		$tpl->assign('eid',$request->get('eid'));
 		$tpl->assign('password',$request->get('password'));
 		$tpl->assign('path_to_media',$request->get('path_to_media'));
