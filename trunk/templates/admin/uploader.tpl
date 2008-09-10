@@ -1,7 +1,7 @@
 {extends file="admin/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/admin/uploader.js"></script>
+<script type="text/javascript" src="www/scripts/dase/admin_uploader.js"></script>
 {/block}
 
 {block name="title"}DASe: Upload Item{/block} 
