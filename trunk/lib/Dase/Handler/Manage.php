@@ -4,13 +4,10 @@ class Dase_Handler_Manage extends Dase_Handler
 {
 	public $resource_map = array(
 		'phpinfo' => 'phpinfo',
-		'colors' => 'colors',
 		'manager/email' => 'manager_email',
 		'eid/{eid}' => 'ut_person',
 		'name/{lastname}' => 'ut_person',
 		'docs' => 'docs',
-		'db/indexes' => 'db_indexes',
-		'schema/{type}' => 'schema',
 		'users' => 'users',
 		'user/{eid}' => 'user',
 		'collection/form' => 'collection_form',
@@ -18,8 +15,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		'ingester' => 'ingester',
 		'ingest/form' => 'ingest_form',
 		'collections' => 'collections',
-		'settings' => 'settings',
-		'status' => 'status',
 		'/' => 'index',
 	);
 
@@ -30,16 +25,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		if (!$user->isSuperuser()) {
 			$r->renderError(401);
 		}
-	}
-
-	public function getSettings($r)
-	{
-		$r->renderResponse("hello from settings");
-	}
-
-	public function getStatus($r)
-	{
-		$r->renderResponse("hello from status");
 	}
 
 	public function getIndex($r)
@@ -87,100 +72,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		echo $r->get('eid');exit;
 		//$tpl = new Dase_Template($r);
 		//$r->renderResponse($tpl->fetch('manage/users.tpl'));
-	}
-
-	public function getColors($r) 
-	{
-		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('manage/palette.tpl'));
-	}
-
-	public function getDbIndexes($r) 
-	{
-		$tpl = new Dase_Template($r);
-		$tpl->assign('indexes',Dase_DB::listIndexes());
-		$r->renderResponse($tpl->fetch('manage/db_indexes.tpl'));
-	}
-
-	public function getSchema($r)
-	{
-		switch ($r->get('type')) {
-		case 'sqlite': 
-			$types['sqlite']['bigint'] = 'INTEGER';
-			$types['sqlite']['boolean'] = 'INTEGER';
-			$types['sqlite']['character varying'] = "TEXT";
-			$types['sqlite']['double precision'] = "REAL";
-			$types['sqlite']['double'] = "REAL";
-			$types['sqlite']['integer'] = 'INTEGER';
-			$types['sqlite']['int'] = 'INTEGER';
-			$types['sqlite']['mediumtext'] = "TEXT";
-			$types['sqlite']['text'] = "TEXT";
-			$types['sqlite']['tinyint'] = 'INTEGER';
-			$types['sqlite']['varchar'] = "TEXT";
-			$r->renderResponse('sorry');
-			break;
-		case 'xml':
-			$r->response_mime_type = 'text/xml';
-			$r->renderResponse(Dase_DB::getSchemaXml());
-			break;
-		case 'mysql':
-			$target_db = 'mysql';
-			$schema_xml = Dase_DB::getSchemaXml();
-			$sx = simplexml_load_string($schema_xml);
-			$out = '';
-
-			$types['mysql']['bigint'] = 'int';
-			$types['mysql']['boolean'] = 'tinyint';
-			$types['mysql']['tinyint'] = 'tinyint';
-			$types['mysql']['character varying'] = "varchar";
-			$types['mysql']['varchar'] = "varchar";
-			$types['mysql']['double precision'] = "REAL";
-			$types['mysql']['double'] = "REAL";
-			$types['mysql']['integer'] = 'int';
-			$types['mysql']['int'] = 'int';
-			$types['mysql']['mediumtext'] = "text";
-			$types['mysql']['text'] = "text";
-
-			foreach ($sx->table as $table) {
-				if ($r->has('prefix')) {
-					//todo: figure out implementing table prefixes in config as well
-					//$table['name'] = $r->get('prefix').'_'.$table['name'];
-				}
-				$out .= "DROP TABLE IF EXISTS `{$table['name']}`;\n";
-				$out .= "CREATE TABLE `{$table['name']}` (\n";
-				$sql = '';
-				foreach ($table->column as $col) {
-					if ('true' == $col['is_primary_key']) {
-						$id = "`id` int(11) NOT NULL auto_increment,\n";
-						$pk = "PRIMARY KEY (`{$col['name']}`)\n";  
-					} else {
-						$col_type = (string) $col['type'];
-						$sql .= "`{$col['name']}`"  . " " . $types[$target_db][$col_type];  
-						if ($col['max_length']) {
-							$sql .= "({$col['max_length']})";
-						} else {
-							if ('int' == $types[$target_db][$col_type]) {
-								$sql .= "(11)";
-							}
-							if ('tinyint' == $types[$target_db][$col_type]) {
-								$sql .= "(1)";
-							}
-
-						}
-						$sql .= " default NULL,\n";  
-					}
-				}
-				$out .= $id;
-				$out .= $sql;
-				$out .= $pk;
-				$out .= ") ENGINE=MyISAM DEFAULT CHARSET=utf8;\n\n\n";
-			}
-			$r->response_mime_type = 'text/plain';
-			$r->renderResponse($out);
-			break;
-		default:
-			$r->renderResponse(Dase_DB::getSchemaXml());
-		}
 	}
 
 	public function getManagerEmail($r) 

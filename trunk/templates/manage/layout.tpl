@@ -76,39 +76,14 @@
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
 				</a>
 				</li>
-				<li class="settings-tab">
-				<a href="manage/settings">
-					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>DASe Settings</sup>
-				</a>
-				</li>
-				<li class="status-tab">
-				<a href="manage/status">
-					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>View Status Report</sup>
-				</a>
-				</li>
 				<li class="attributes-tab">
 				<a href="manage/docs">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>
 				</a>
 				</li>
-				<li class="item_types-tab">
-				<a href="manage/schema/mysql">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>MySQL Schema</sup>
-				</a>
-				</li>
-				<li class="item_types-tab">
-				<a href="manage/db/indexes">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Database Indexes</sup>
-				</a>
-				</li>
 				<li class="managers-tab">
 				<a href="manage/users">
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
-				</a>
-				</li>
-				<li class="colors-tab">
-				<a href="manage/colors">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>DASe Color Palette</sup>
 				</a>
 				</li>
 				<li class="remote-collection-tab">
