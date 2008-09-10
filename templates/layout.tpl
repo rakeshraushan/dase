@@ -67,19 +67,14 @@
 			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
-		<!-- uncomment for UT look
+		<!-- uncomment for ut look
 		<div id="wordmark">
 			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
 		</div>
-
-		<div id="header">
-			<!-- background image here-->	
-		</div>
 		-->
 
-		<!-- comment out for ut look-->
 		<div id="header">
-			Digital Archive Services: Development 	
+			{$main_title}
 		</div>
 
 		<div id="sidebar">
