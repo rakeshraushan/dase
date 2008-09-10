@@ -20,6 +20,7 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		<link rel="stylesheet" type="text/css" href="{$local_css}"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<!-- atompub discovery -->
@@ -67,11 +68,9 @@
 			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
-		<!-- uncomment for ut look
-		<div id="wordmark">
-			<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
+		<div id="pageLogo">
+			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"/></a>
 		</div>
-		-->
 
 		<div id="header">
 			{$main_title}

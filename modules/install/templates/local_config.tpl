@@ -7,6 +7,10 @@ $conf['db']['user'] = '{$db.user}';
 $conf['db']['pass'] = '{$db.pass}';
 
 $conf['main_title'] = '';
+$conf['path_to_local_css'] = '';
+$conf['page_logo']['link_target'] = '';
+$conf['page_logo']['src'] = '';
+$conf['page_logo']['alt'] = '';
 
 $conf['superuser']['{$eid}'] = '{$password}';
 $conf['token'] = '{$token}';
