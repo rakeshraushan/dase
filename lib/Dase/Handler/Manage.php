@@ -11,9 +11,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		'users' => 'users',
 		'user/{eid}' => 'user',
 		'collection/form' => 'collection_form',
-		'ingest/checker' => 'ingest_checker',
-		'ingester' => 'ingester',
-		'ingest/form' => 'ingest_form',
 		'collections' => 'collections',
 		'/' => 'index',
 	);
@@ -150,39 +147,5 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderResponse($tpl->fetch('manage/collection_form.tpl'));
 	}
 
-	public function postToIngestChecker($r)
-	{
-		$url = $r->get('url');
-		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom');
-		$count = $feed->getItemCount();
-		$title = $feed->getTitle();
-		if ($title) {
-			$r->renderResponse('ok|'.$count.'|'.$title);
-		} else {
-			$r->renderResponse('no');
-		}
-	}
-
-	public function postToIngester($r)
-	{
-		$url = $r->get('url');
-		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom');
-		$coll_ascii_id = $feed->getAsciiId();
-		$feed->ingest($r);
-		$cm = new Dase_DBO_CollectionManager;
-		$cm->dase_user_eid = $r->getUser()->eid;
-		$cm->collection_ascii_id = $coll_ascii_id;
-		$cm->auth_level = 'superuser';
-		$cm->created = date(DATE_ATOM); 
-		$cm->insert();
-		$r->getUser()->expireDataCache();
-		$r->renderResponse('completed operation');
-	}
-
-	public function getIngestForm($r)
-	{
-		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('manage/ingest_form.tpl'));
-	}
 }
 

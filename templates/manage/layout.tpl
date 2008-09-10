@@ -86,11 +86,6 @@
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
 				</a>
 				</li>
-				<li class="remote-collection-tab">
-				<a href="manage/ingest/form">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Ingest a Remote Collection</sup>
-				</a>
-				</li>
 				<li class="collection-tab">
 				<a href="manage/collection/form">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Collection</sup>
