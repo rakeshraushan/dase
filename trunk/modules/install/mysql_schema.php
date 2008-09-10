@@ -255,7 +255,8 @@ CREATE TABLE `value` (
 `attribute_id` int(11) default NULL,
 `item_id` int(11) default NULL,
 `value_text` text default NULL,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+KEY `value_text` (`value_text`(50))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
