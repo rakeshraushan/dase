@@ -10,9 +10,8 @@ html #maincontent {
 }
 
 #header {
-	background-color: #3f2c0d;
+	background-color: #333;
 	color: #fff;
-	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
 	font-size: 1.8em;
 	margin-top: 0px;
