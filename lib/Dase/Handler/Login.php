@@ -35,7 +35,7 @@ class Dase_Handler_Login extends Dase_Handler
 		//this is the default, uber-simple login
 		//which should be overidden by a module
 		//all valid users need to be superusers
-		$username = $request->get('username');
+		$username = strtolower($request->get('username'));
 		$pass = $request->get('password');
 		$superusers = Dase_Config::get('superuser');
 		if ($superusers[$username] == $pass) {

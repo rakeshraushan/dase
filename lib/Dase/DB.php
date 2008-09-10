@@ -76,6 +76,16 @@ class Dase_DB {
 		return self::$type;
 	}
 
+	public static function getCaseInsensitiveLikeOp()
+	{
+		$type = Dase_DB::getDbType();
+		if ('pgsql' == $type) {
+			return 'ILIKE';
+		} else {
+			return 'LIKE';
+		}
+	}
+
 	public static function listIndexes()
 	{
 		$db = self::get();
