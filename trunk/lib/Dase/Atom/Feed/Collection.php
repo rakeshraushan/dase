@@ -53,7 +53,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		return $admin_attributes;
 	}
 
-	function ingest($request) 
+	function ingest($request,$fetch_enclosures=false) 
 	{
 		$user = $request->getUser();
 		$coll_ascii_id = $this->getAsciiId();
@@ -92,7 +92,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			foreach ($this->getEntries() as $entry) {
 				if ('item' == $entry->getEntryType()) {
 					$request->set('collection_ascii_id',$c->ascii_id);
-					$entry->insert($request);
+					$entry->insert($request,$fetch_enclosures);
 				}
 			}
 		}
