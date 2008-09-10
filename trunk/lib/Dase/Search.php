@@ -221,6 +221,7 @@ class Dase_Search
 
 	private function _createSql()
 	{
+		$like = Dase_DB::getCaseInsensitiveLikeOp();
 		$search = $this->search_array;
 		$search_table_params = array();
 		$value_table_params = array();
@@ -233,15 +234,15 @@ class Dase_Search
 			//(it is just the number index) to make sure it overwrites 
 			//(rather than appends) to the array
 			foreach ($search['find'] as $k => $term) {
-				$search['find'][$k] = "lower(s.value_text) LIKE ?";
-				$search_table_params[] = "%".strtolower($term)."%";
+				$search['find'][$k] = "s.value_text $like ?";
+				$search_table_params[] = "%".$term."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['find']);
 		}
 		if (count($search['omit'])) {
 			foreach ($search['omit'] as $k => $term) {
-				$search['omit'][$k] = "lower(s.value_text) NOT LIKE ?";
-				$search_table_params[] = "%".strtolower($term)."%";
+				$search['omit'][$k] = "s.value_text NOT $like ?";
+				$search_table_params[] = "%".$term."%";
 			}
 			$search_table_sets[] = join(' AND ',$search['omit']);
 		}
@@ -260,16 +261,16 @@ class Dase_Search
 					//the key needs to be specified to make sure it overwrites 
 					//(rather than appends) to the array
 					foreach ($ar['value_text_substr'] as $k => $term) {
-						$ar['value_text_substr'][$k] = "lower(v.value_text) LIKE ?";
-						$value_table_params[] = "%".strtolower($term)."%";
+						$ar['value_text_substr'][$k] = "v.value_text $like ?";
+						$value_table_params[] = "%".$term."%";
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text_substr']);
 				}
 				if ($this->_testArray($ar,'value_text')) {
 					foreach ($ar['value_text'] as $k => $term) {
 						//note that exact searches are CASE INSENSITIVE
-						$ar['value_text'][$k] = "lower(v.value_text) = ?";
-						$value_table_params[] = strtolower($term);
+						$ar['value_text'][$k] = "v.value_text $like ?";
+						$value_table_params[] = $term;
 					}
 					$ar_table_sets[] = join(' AND ',$ar['value_text']);
 				}
@@ -290,10 +291,8 @@ class Dase_Search
 		}
 		foreach($search['qualified'] as $att => $val_array) {
 			foreach($val_array as $val) {
-				$qualified_val[] = "lower(v.value_text) LIKE ?";
-				$value_table_params[] = "%".strtolower($val)."%";
-			//	$qualified_val[] = "lower(v.value_text) = ?";
-			//	$value_table_params[] = strtolower($val);
+				$qualified_val[] = "v.value_text $like ?";
+				$value_table_params[] = "%".$val."%";
 			}
 			$qualified_sets[] = join(' AND ',$qualified_val);
 			$value_table_search_sets[] = "id IN (SELECT v.item_id FROM value v,attribute a WHERE v.attribute_id = a.id AND ".join(' AND ', $qualified_sets)." AND a.ascii_id = ?)";
