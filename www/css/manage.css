@@ -1,11 +1,10 @@
 div#manageHeader {
-	background-color: #353a41;
+	background-color: #333;
 	color: #ccc;
-	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
 	margin-top: 0px;
 	padding:8px;
-	padding-left: 15px;
+	padding-left: 18px;
 }
 
 div#manageHeader p {

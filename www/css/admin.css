@@ -1,11 +1,10 @@
 div#adminHeader {
-	background-color: #263b5e;
+	background-color: #333;
 	color: #ccc;
-	font-family: trebuchet ms, tahoma, verdana, arial, helvetica;
 	font-weight: bold;
 	margin-top: 0px;
 	padding:4px;
-	padding-left: 15px;
+	padding-left: 18px;
 }
 
 div#adminHeader p {
