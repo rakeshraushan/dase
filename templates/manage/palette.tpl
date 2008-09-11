@@ -1,4 +1,4 @@
-{extends file="manage/layout.tpl"}
+{extends file="admin/layout.tpl"}
 {block name="title"}DASe Color Palette{/block}
 {block name="style"}
 {literal}

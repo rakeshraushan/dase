@@ -449,7 +449,7 @@ Dase.updateItemStatus = function() {
 Dase.placeManageLink = function(eid) {
 	var manageLink = Dase.$('manageLink');
 	if (manageLink && Dase.user.is_superuser) {
-		manageLink.setAttribute('href','manage');
+		manageLink.setAttribute('href','admin');
 		manageLink.innerHTML = 'Manage DASe';
 		Dase.removeClass(manageLink,'hide');
 	}

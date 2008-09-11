@@ -1,6 +1,6 @@
-{extends file="manage/layout.tpl"}
+{extends file="admin/layout.tpl"}
 {block name="content"}
-<form action="manage/docs" method="get">
+<form action="admin/docs" method="get">
 	<select name="class_id">
 		<option value="">select a class</option>
 		{foreach item=classname from=$class_list key=id}

@@ -1,4 +1,4 @@
-{extends file="manage/layout.tpl"}
+{extends file="admin/layout.tpl"}
 
 {block name="head"}
 <script type="text/javascript">
