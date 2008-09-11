@@ -66,7 +66,7 @@
 		</div>
 
 		<div id="manageHeader">
-			DASe Archive Manager 
+			DASe Archive Administration 
 		</div>
 
 		<div id="sidebar">
