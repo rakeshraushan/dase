@@ -1,4 +1,4 @@
-{extends file="admin/layout.tpl"}
+{extends file="collectionbuilder/layout.tpl"}
 
 {block name="content"}
 <div id="contentHeader">

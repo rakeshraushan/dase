@@ -2,7 +2,7 @@
 <td colspan="3" class="editForm">
 	{literal}
 	<h1>${att.attribute_name} (${att.ascii_id})</h1>
-	<form action="admin/${att.collection_ascii_id}/attribute/${att.ascii_id}" method="post">
+	<form action="collectionbuilder/${att.collection_ascii_id}/attribute/${att.ascii_id}" method="post">
 		<p>
 		<label for="attribute_name">Name</label>
 		<input type="text" name="attribute_name" value="${att.attribute_name}"/>
@@ -62,7 +62,7 @@
 		<li>${val}</li>
 		{/for}
 	</ul>
-	<form id="defined_values_form" action="admin/${att.collection_ascii_id}/attribute/${att.ascii_id}/defined_values" method="post">
+	<form id="defined_values_form" action="collectionbuilder/${att.collection_ascii_id}/attribute/${att.ascii_id}/defined_values" method="post">
 		<textarea rows="${att.count}" id="defined_values_input"  name="defined_values_input">{for val in att.values}${val}
 			{/for}</textarea> <p class="submitControl">
 		<input type="submit" value="update"/>

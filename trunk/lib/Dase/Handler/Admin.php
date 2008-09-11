@@ -1,6 +1,6 @@
 <?php
 
-class Dase_Handler_Admin extends Dase_Handler
+class Dase_Handler_Collectionbuilder extends Dase_Handler
 {
 	public $collection;
 	public $resource_map = array(
@@ -38,7 +38,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl = new Dase_Template($r);
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
-		$r->renderResponse($tpl->fetch('admin/settings.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/settings.tpl'));
 	}
 
 	public function postToSettings($r)
@@ -54,7 +54,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$this->collection->update();
 		$params['msg'] = "settings updated";
 		$this->user->expireDataCache();
-		$r->renderRedirect('admin/'.$this->collection->ascii_id.'/settings',$params);
+		$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/settings',$params);
 	}
 
 	public function getAttributes($r)
@@ -63,7 +63,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes());
-		$r->renderResponse($tpl->fetch('admin/attributes.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/attributes.tpl'));
 	}
 
 	public function getAttributesJson($r)
@@ -74,7 +74,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	public function getAttributeForm($r)
 	{
 		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('admin/attribute_form.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/attribute_form.tpl'));
 	}
 
 	public function postToAttribute($r)
@@ -85,12 +85,12 @@ class Dase_Handler_Admin extends Dase_Handler
 			$count = count($att->getCurrentValues());
 			if ($count) {
 				$params['msg'] = "sorry, but there are $count values for $att->attribute_name so it cannot be deleted";
-				$r->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+				$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/attributes',$params);
 			}
 			$att->expunge();
 			$att->resort();
 			$params['msg'] = "$d deleted";
-			$r->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+			$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/attributes',$params);
 		}
 		$att->attribute_name = $r->get('attribute_name');
 		$att->usage_notes = $r->get('usage_notes');
@@ -113,7 +113,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$att->update();
 		$att->resort($r->get('sort_after'));
 		$params['msg'] = "$att->attribute_name updated";
-		$r->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+		$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/attributes',$params);
 	}
 
 	public function putAttributeDefinedValues($r)
@@ -157,7 +157,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$att->insert();
 			$att->resort();
 			$params['msg'] = "added $att->attribute_name";
-			$r->renderRedirect('admin/'.$this->collection->ascii_id.'/attributes',$params);
+			$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/attributes',$params);
 		}
 	}
 
@@ -168,7 +168,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('item_types',$this->collection->getItemTypes());
-		$r->renderResponse($tpl->fetch('admin/item_types.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/item_types.tpl'));
 	}
 
 	public function getManagers($r)
@@ -177,22 +177,22 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('managers',$this->collection->getManagers());
-		$r->renderResponse($tpl->fetch('admin/managers.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/managers.tpl'));
 	}
 
 	public function postToManagers($r)
 	{
 		if (!$r->has('auth_level')) {
 			$params['msg'] = 'You must select an Authorization Level';
-			$r->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+			$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/managers',$params);
 		}
 		if (!$r->has('dase_user_eid')) {
 			$params['msg'] = 'You must enter an EID';
-			$r->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+			$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/managers',$params);
 		}
 		if (!Dase_DBO_DaseUser::get($r->get('dase_user_eid'))) {
 			$params['msg'] = 'User '.$r->get('dase_user_eid').' does not yet exist';
-			$r->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+			$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/managers',$params);
 		}
 		$mgr = new Dase_DBO_CollectionManager;
 		$mgr->dase_user_eid = $r->get('dase_user_eid');
@@ -205,7 +205,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		} catch (Exception $e) {
 			$params['msg'] = 'there was a problem:'.$e->getMessage();;
 		}
-		$r->renderRedirect('admin/'.$this->collection->ascii_id.'/managers',$params);
+		$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/managers',$params);
 	}
 
 	public function getUploader($r)
@@ -220,7 +220,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$tpl->assign('prev_serial_number',$r->get('prev_serial_number'));
 		}
 		$tpl->assign('num',$r->get('num')+1);
-		$r->renderResponse($tpl->fetch('admin/uploader.tpl'));
+		$r->renderResponse($tpl->fetch('collectionbuilder/uploader.tpl'));
 	}
 
 	/** here we create an item, then AtomPub POST a file with the sernum as slug */
@@ -276,7 +276,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$params['item_url'] = $item->getBaseUrl();
 		$params['thumbnail_url'] = $item->getMediaUrl('thumbnail');
 		Dase_Log::debug(join('|',$params));
-		$r->renderRedirect('admin/'.$this->collection->ascii_id.'/upload/status',$params);
+		$r->renderRedirect('collectionbuilder/'.$this->collection->ascii_id.'/upload/status',$params);
 	}
 
 	public function getUploadStatus($r)

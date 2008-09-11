@@ -72,27 +72,27 @@
 				</a>
 				</li>
 				<li class="settings-tab">
-				<a href="admin/{$collection->ascii_id}/settings">
+				<a href="collectionbuilder/{$collection->ascii_id}/settings">
 					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
 				</a>
 				</li>
 				<li class="attributes-tab">
-				<a href="admin/{$collection->ascii_id}/attributes">
+				<a href="collectionbuilder/{$collection->ascii_id}/attributes">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
 				</a>
 				</li>
 				<li class="item_types-tab">
-				<a href="admin/{$collection->ascii_id}/item_types">
+				<a href="collectionbuilder/{$collection->ascii_id}/item_types">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
 				</a>
 				</li>
 				<li class="managers-tab">
-				<a href="admin/{$collection->ascii_id}/managers">
+				<a href="collectionbuilder/{$collection->ascii_id}/managers">
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
 				</a>
 				</li>
 				<li class="uploader-tab">
-				<a href="admin/{$collection->ascii_id}/uploader">
+				<a href="collectionbuilder/{$collection->ascii_id}/uploader">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>

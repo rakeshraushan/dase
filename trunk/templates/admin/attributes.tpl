@@ -1,4 +1,4 @@
-{extends file="admin/layout.tpl"}
+{extends file="collectionbuilder/layout.tpl"}
 
 {block name="content"}
 <div id="contentHeader">
@@ -9,8 +9,8 @@
 	-->
 </div>
 <div id="collectionData">
-	<a href="admin/{$collection->ascii_id}/attribute/form" class="hide" id="attribute_form_link"></a>
-	<a href="admin/{$collection->ascii_id}/attributes.json" class="hide" id="attribute_data_link"></a>
+	<a href="collectionbuilder/{$collection->ascii_id}/attribute/form" class="hide" id="attribute_form_link"></a>
+	<a href="collectionbuilder/{$collection->ascii_id}/attributes.json" class="hide" id="attribute_data_link"></a>
 	<table id="attributesTable" class="dataDisplay">
 		<tr>
 			<th>Name</th>
@@ -50,7 +50,7 @@
 		{/foreach}
 		<tr>
 			<td colspan="6" class="data">
-				<form action="admin/{$collection->ascii_id}/attributes" method="post">
+				<form action="collectionbuilder/{$collection->ascii_id}/attributes" method="post">
 					<input type="text" name="attribute_name"/>
 					<input type="submit" value="add attribute"/>
 				</form>
