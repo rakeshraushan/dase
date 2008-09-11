@@ -1,10 +1,10 @@
-{extends file="manage/layout.tpl"}
+{extends file="admin/layout.tpl"}
 
 {block name="head"}
 <script type="text/javascript">
 	{literal}
 	Dase.pageInit = function() {
-		var url = Dase.base_href+'manage/users.json';
+		var url = Dase.base_href+'admin/users.json';
 		Dase.getJSON(url,function(json){
 				var data = { 'users': json };
 				var templateObj = TrimPath.parseDOMTemplate("users_jst");
@@ -29,7 +29,7 @@
 	{literal}
 	<ul>
 		{for u in users}
-		<li><a href="manage/user/${u.eid}">${u.eid}</a> ${u.name}</li>
+		<li><a href="admin/user/${u.eid}">${u.eid}</a> ${u.name}</li>
 		{/for}
 	</ul>
 	{/literal}
