@@ -1,4 +1,4 @@
-{extends file="collectionbuilder/layout.tpl"}
+{extends file="manage/layout.tpl"}
 
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/uploader.js"></script>
