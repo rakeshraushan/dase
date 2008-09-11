@@ -450,7 +450,7 @@ Dase.placeManageLink = function(eid) {
 	var manageLink = Dase.$('manageLink');
 	if (manageLink && Dase.user.is_superuser) {
 		manageLink.setAttribute('href','admin');
-		manageLink.innerHTML = 'Manage DASe';
+		manageLink.innerHTML = 'DASe Archive Admin';
 		Dase.removeClass(manageLink,'hide');
 	}
 };
