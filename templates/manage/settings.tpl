@@ -1,4 +1,4 @@
-{extends file="collectionbuilder/layout.tpl"}
+{extends file="manage/layout.tpl"}
 
 {block name="content"}
 <div id="contentHeader">
@@ -9,7 +9,7 @@
 	-->
 </div>
 <div id="collectionData">
-	<form action="collectionbuilder/{$collection->ascii_id}/settings" method="post">
+	<form action="manage/{$collection->ascii_id}/settings" method="post">
 	<table class="dataDisplay">
 		<tr>
 			<th>Name</th>

@@ -1,4 +1,4 @@
-{extends file="collectionbuilder/layout.tpl"}
+{extends file="manage/layout.tpl"}
 
 {block name="content"}
 <div id="contentHeader">
@@ -26,7 +26,7 @@
 			<td>{$m->created}</td>
 		</tr>
 		{/foreach}
-		<form action="collectionbuilder/{$collection->ascii_id}/managers" method="post">
+		<form action="manage/{$collection->ascii_id}/managers" method="post">
 			<tr>
 				<th class="rows"></th>
 				<td>
