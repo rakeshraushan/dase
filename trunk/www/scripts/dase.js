@@ -461,7 +461,7 @@ Dase.placeCollectionAdminLink = function(eid) {
 	var adminLink = Dase.$('adminLink');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
 		adminLink.setAttribute('href','collectionbuilder/'+auth_info.collection_ascii_id);
-		adminLink.innerHTML = 'Manage '+auth_info.collection_name';
+		adminLink.innerHTML = 'Manage '+auth_info.collection_name;
 		Dase.removeClass(adminLink,'hide');
 	}
 };
