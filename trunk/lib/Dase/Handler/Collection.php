@@ -192,8 +192,8 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function postToCollection($r) 
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('write',$this->collection)) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
 			$r->renderError(401,'no go unauthorized');
 		}
 		$content_type = $r->getContentType();
@@ -210,8 +210,8 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function postToIngester($r) 
 	{
-		$this->user = $r->getUser('http');
-		if (!$this->user->can('write',$this->collection)) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
 			$r->renderError(401,'no go unauthorized');
 		}
 		$content_type = $r->getContentType();
