@@ -180,6 +180,14 @@ div#browseColumns a.spill {
 	margin-right:-10px;
 	padding-left:4px;
 }
+
+div#browseColumns a#attSorter {
+	float:right;
+	margin: -5px 6px 0 0;
+	color: #999;
+	font-weight: normal;
+}
+
 div#catColumn {
 	background-color:#d9c8ad;
 	float:left;
@@ -606,3 +614,8 @@ span.numberInSet {
 	background-color: #ffc;
 	padding: 10px;
 }
+
+.blink {
+	text-decoration: blink;
+}
+

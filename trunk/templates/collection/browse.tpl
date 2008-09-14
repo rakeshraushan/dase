@@ -31,7 +31,7 @@
 		<h3>Browse:</h3>
 		<div id="catColumn">
 			<h4>Select Attribute Group:</h4>
-			<a href="collection/{$collection->asciiId}/attributes/public" class="spill">Collection Attributes</a>
+			<a href="collection/{$collection->asciiId}/attributes/public" id="collectionAtts" class="spill">Collection Attributes</a>
 			<a href="collection/{$collection->asciiId}/attributes/admin">Admin Attributes</a>
 		</div>
 		<div id="attColumn" class="collection/{$collection->asciiId}/attributes/public"><!-- insert template output--></div>
@@ -39,12 +39,13 @@
 		<!-- javascript template -->
 		<textarea class="javascript_template" id="atts_jst">
 			{literal}
+			<a href="#" id="attSorter">sort</a>
 			<h4>Select Attribute:</h4>
 			<ul id="attList">
 				{for att in atts}
 				<li>
 				<a href="attribute/${att.collection}/${att.ascii_id}/values.json"
-					id="${att.ascii_id}" class="att_link"
+					id="${att.ascii_id}" class="att_link ${att.sort_order}"
 					><span class="att_name">${att.attribute_name}</span> <span class="tally" id="tally-${att.ascii_id}"></span></a>
 				</li>
 				{/for}

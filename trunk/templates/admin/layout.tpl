@@ -19,16 +19,11 @@
 		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
-		<!-- a problem if you are offline -->
-		<script src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript">google.load('jquery','1');</script>
-
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/md5.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/form.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/loading.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		{block name="head"}{/block}
 
@@ -76,9 +71,14 @@
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
 				</a>
 				</li>
-				<li class="attributes-tab">
+				<li class="docs-tab">
 				<a href="admin/docs">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>
+				</a>
+				</li>
+				<li class="attributes-tab">
+				<a href="admin/attributes">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Admin Attributes</sup>
 				</a>
 				</li>
 				<li class="managers-tab">

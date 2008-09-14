@@ -181,6 +181,17 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return($a->findOne());
 	}
 
+	public static function listAdminAttIds()
+	{
+		$ids = array();
+		$a = new Dase_DBO_Attribute;
+		$a->collection_id = 0;
+		foreach ($a->find() as $att) {
+			$ids[] = $att->id;
+		}
+		return $ids;
+	}
+
 	public function getCollection()
 	{
 		//avoids another db lookup

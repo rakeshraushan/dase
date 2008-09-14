@@ -371,10 +371,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function deleteValues()
 	{
 		//should sanity check and archive values
+		$admin_ids = Dase_DBO_Attribute::listAdminAttIds();
 		$v = new Dase_DBO_Value;
 		$v->item_id = $this->id;
 		foreach ($v->find() as $doomed) {
-			$doomed->delete();
+			//do not delete admin att values
+			if (!in_array($doomed->attribute_id,$admin_ids)) {
+				$doomed->delete();
+			}
 		}
 	}
 
@@ -401,6 +405,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		
 		$this->deleteMedia();
 		$this->deleteValues();
+		$this->deleteAdminValues();
 		$this->deleteSearchIndexes();
 		$this->deleteContent();
 		$this->delete();

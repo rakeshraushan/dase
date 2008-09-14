@@ -9,6 +9,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'name/{lastname}' => 'ut_person',
 		'docs' => 'docs',
 		'users' => 'users',
+		'attributes' => 'attributes',
 		'user/{eid}' => 'user',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
@@ -145,6 +146,20 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$r->renderResponse($tpl->fetch('admin/collection_form.tpl'));
+	}
+
+	public function getAttributes($r)
+	{
+		$tpl = new Dase_Template($r);
+		$aa = new Dase_DBO_Attribute;
+		$aa->collection_id = 0;
+		$aa->orderBy('attribute_name');
+		foreach ($aa->find() as $a) {
+			//NOTE that you *must* use clone here!!
+			$atts[] = clone $a;
+		}
+		$tpl->assign('atts',$atts);
+		$r->renderResponse($tpl->fetch('admin/attributes.tpl'));
 	}
 
 }

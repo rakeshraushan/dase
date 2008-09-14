@@ -297,6 +297,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'ascii_id' => $att->ascii_id,
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
+					'sort_order' => $att->sort_order,
 					'collection' => $r->get('collection_ascii_id')
 				);
 		}

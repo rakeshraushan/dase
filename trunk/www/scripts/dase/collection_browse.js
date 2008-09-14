@@ -26,10 +26,51 @@ Dase.getAttributes = function(url) {
 			Dase.$('attColumn').innerHTML = templateObj.process(data);
 			Dase.getAttributeTallies(url+'/tallies');
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
+			Dase.initAttSort();
 			});
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
 };
+
+Dase.attItemCompareAlpha = function(a,b) {
+	aname = a.getElementsByTagName('span')[0].innerHTML;
+	bname = b.getElementsByTagName('span')[0].innerHTML;
+	if (aname < bname) {
+		return -1;
+	}
+	if (aname > bname) {
+		return 1;
+	}
+	if (aname == bname) {
+		return 0;
+	}
+}
+
+Dase.initAttSort = function() {
+	link = Dase.$('attSorter');
+	link.onclick = function() {
+		if ('unsort' == this.innerHTML) {
+			Dase.getAttributes(Dase.$('collectionAtts').href);
+			return false;
+		}
+		this.innerHTML = 'unsort';
+		list = Dase.$('attList');
+		items = list.getElementsByTagName('li');
+		att_array = []
+		for (var i=0;i<items.length; i++) {
+			att_array[att_array.length] = items[i]
+		}
+		list.innerHTML = 'sorting...';
+		att_array.sort(Dase.attItemCompareAlpha);
+		list.innerHTML = '';
+		for (var i=0;i<att_array.length; i++) {
+			list.innerHTML += '<li>'+att_array[i].innerHTML+'</li>';
+		}
+		Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
+		Dase.initAttSort();
+		return false;
+	}
+}
 
 Dase.bindGetValues = function(coll) {
 	var atts = Dase.$('attColumn').getElementsByTagName('a');

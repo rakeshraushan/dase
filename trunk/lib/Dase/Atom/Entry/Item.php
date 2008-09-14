@@ -158,6 +158,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getCollectionAsciiId().'/'.$this->getSerialNumber();
 	}
 
+	/** does NOT retrieve admin metadata */
 	function getMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
@@ -184,14 +185,15 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
 		if ($item) {
-		$item->deleteValues();
-		foreach ($this->metadata as $att => $keyval) {
-			foreach ($keyval['values'] as $v) {
-				$item->setValue($att,$v);
+			$item->deleteValues();
+			$item->deleteAdminValues();
+			foreach ($this->metadata as $att => $keyval) {
+				foreach ($keyval['values'] as $v) {
+					$item->setValue($att,$v);
+				}
 			}
-		}
-		$item->buildSearchIndex();
-		return $item;
+			$item->buildSearchIndex();
+			return $item;
 		} else {
 			Dase::error(404);
 		}
@@ -267,6 +269,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $item;
 	}
 
+	/** used w/ PUT request and does not add OR delete admin metadata,
+	 * only collection-specific metadata
+	 */
 	function update($request) 
 	{
 		$eid = $request->getUser()->eid;
@@ -277,6 +282,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->updated = date(DATE_ATOM);
 		$item->update();
 		$metadata = $this->getMetadata();
+		//only deletes collection-specific (not admin) metadata
 		$item->deleteValues();
 		foreach (array_keys($metadata) as $ascii_id) {
 			foreach ($metadata[$ascii_id]['values'] as $val) {
