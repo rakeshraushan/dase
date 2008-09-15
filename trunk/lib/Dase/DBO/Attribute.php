@@ -317,6 +317,15 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				$att->sort_order = $new_sort_order;
 				$att->update();
 			}
+		} elseif ('_first' == $sort_after) {
+			$this->sort_order = 0;
+			$this->update();
+			$new_sort_order = 0;
+			foreach ($coll->getAttributes() as $att) {
+				$new_sort_order++;
+				$att->sort_order = $new_sort_order;
+				$att->update();
+			}
 		} else {
 			$after_att = Dase_DBO_Attribute::get($coll->ascii_id,$sort_after);
 			$after_sort = $after_att->sort_order;

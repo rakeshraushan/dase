@@ -270,8 +270,6 @@ Dase.initUser = function(func) {
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
 			Dase.initItemEditing(eid);
-			Dase.initToggleTagEditing(eid);
-			//Dase.initTagEditing(eid,func);
 			Dase.initCart();
 			Dase.initAddToCart();
 			if (func) {
@@ -332,82 +330,6 @@ Dase.checkAdminStatus = function(eid) {
 		}
 	}
 	return false;
-};
-
-Dase.initToggleTagEditing = function(eid) {
-	var tog = Dase.$('toggleTagSorting');
-	if (!tog) return;
-	tog.onclick = function() {
-		if ('disable sorting' == this.innerHTML) {
-			var arrows = Dase.$('itemSet').getElementsByTagName('a');
-			for (var i=0;i<arrows.length;i++) {
-				if (Dase.hasClass(arrows[i],'moveto')) {
-					arrows[i].className = 'hide';
-				}
-			}
-			//hard reload
-			//window.location.reload(true);
-			this.innerHTML = 'enable sorting';
-			return false;
-		} else {
-			Dase.initTagEditing(Dase.user.eid,function() {
-				var tog = Dase.$('toggleTagSorting');
-				tog.innerHTML = 'disable sorting';
-			});
-			return false;
-		}
-	};
-};
-
-Dase.initTagEditing = function(eid,func) {
-	var eid_elem = Dase.$('tagEid');
-	if (!eid_elem) return;
-	if (eid_elem.innerHTML != eid) return;
-	//Dase.removeClass(controls,'hide');
-	//Dase.removeClass(status_controls,'hide');
-	//get jstemplates
-	Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
-		Dase.$('jsTemplates').innerHTML = resp;
-		Dase.initTagSorting(eid,func);
-	});
-	return;
-};
-
-Dase.initTagSorting = function(eid,func) {
-	var tag_table_el = Dase.$('itemSet');
-	var tag_ascii_el = Dase.$('tagAsciiId');
-	if (!tag_ascii_el) return; 
-	Dase.getJSON(Dase.base_href + "tag/"+eid+"/"+tag_ascii_el.innerHTML,
-	function(json){
-	var data = { 'tag': json };
-	var templateObj = TrimPath.parseDOMTemplate("tag_jst");
-	tag_table_el.innerHTML = templateObj.process(data);
-	if (func) {
-		//this is the highlight function
-		func();
-	}
-	Dase.initCart();
-	Dase.initAddToCart();
-	var set = Dase.$('itemSet');
-	if (!set) return;
-	var controls = set.getElementsByTagName('a');
-	for (var i=0;i<controls.length;i++) {
-		if (Dase.hasClass(controls[i],'moveto')) {
-			controls[i].onclick = function() {
-				var classes = this.className.split(" ");
-				Dase.addClass(Dase.$('cell_'+(classes[2]-1)),'highlight');
-				Dase.ajax(this.href,'post',function(resp) {
-					Dase.initUser(function() {
-						Dase.initTagEditing(eid,function() {
-							Dase.highlight(Dase.$('cell_'+(classes[1]-1)),1200,'completed');
-						});
-					});
-				},classes[1]);
-				return false;
-			};
-		}
-	}
-});
 };
 
 Dase.initItemEditing = function(eid) {
@@ -1304,7 +1226,9 @@ Dase.initAttributeEdit = function() {
 				Dase.toggle(editRow);
 				Dase.scrollTo(this);
 				var data = { 'att': atts_data['attributes'][att_ascii]};
+				//for select menu
 				data.att.ordered_atts = atts_data.ordered_atts;
+				data.sort = Dase.$('sort').innerHTML;
 				var templateObj = TrimPath.parseTemplate(att_form);
 				editRow.innerHTML = templateObj.process(data);
 				var d_button = Dase.$('deleteAtt');
@@ -1407,30 +1331,5 @@ Dase.addLoadEvent(function() {
 	if (Dase.pageInit && typeof Dase.pageInit === 'function') {
 		Dase.pageInit();
 	}
-	//		Dase.initCheckImage();
-	//Dase.initRowTable('writing','highlight');
-	/*
-	 Dase.prepareAddFileUpload();
-	 Dase.prepareAttributeFlags();
-	 Dase.prepareCartAdds(); 
-	 Dase.prepareDeletable(); 
-	 Dase.prepareDeleteCommonValues();
-	 Dase.prepareDownload('download');
-	 Dase.prepareHelpModule();
-	 Dase.prepareHelpPopup();
-	 Dase.prepareLinkBack();
-	 Dase.prepareMediaLinks();
-	 Dase.prepareMine();
-	 Dase.prepareTagItems();
-	 Dase.prepareUploadValidation();
-	 Dase.setAutoReload();
-	 Dase.prepareRemoteLaunch('slideshowLaunch');
-	 Dase.initResize();
-	 Dase.prepareAddMetadata('addMetadata');
-	 Dase.prepareAddMetadata('addTagMetadata');
-	 Dase.prepareAddMetadata('uploadForm');
-	 Dase.prepareEditable();
-	 Dase.prepareGenericEditable();
-	 */
 });
 

@@ -21,7 +21,7 @@ class Dase_Search_Result
 //work on this!!!!
 	}
 
-	public function getResultSetAsJsonFeed()
+	public function getResultSetAsJsonFeed($max = 500)
 	{
 		//todo: this needs lots of work!
 		$json_tag;
@@ -29,7 +29,8 @@ class Dase_Search_Result
 		$json_tag['updated'] = date(DATE_ATOM);
 		$json_tag['name'] = 'search: '.$this->_constructEcho();
 		$json_tag['is_public'] = 1;
-		foreach($this->item_ids as $item_id) {
+		$item_ids = array_slice($this->item_ids,0,$max);
+		foreach($item_ids as $item_id) {
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
 			/*

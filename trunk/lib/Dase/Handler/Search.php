@@ -58,7 +58,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Search($r);
-		$json_feed = $search->getResult()->getResultSetAsJsonFeed();
+		$json_feed = $search->getResult()->getResultSetAsJsonFeed($this->max);
 		$r->renderResponse($json_feed);
 	}
 
@@ -100,7 +100,8 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
-		$json_url = APP_ROOT.'/'.$r->url.'&format=json';
+		//default slidehow max of 100
+		$json_url = APP_ROOT.'/'.$r->url.'&format=json&max=100';
 		$tpl->assign('json_url',$json_url);
 		$feed_url = APP_ROOT.'/'.$r->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
