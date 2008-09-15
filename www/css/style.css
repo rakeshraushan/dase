@@ -394,15 +394,34 @@ table#itemSet td a.moveto img {
 	height: 12px;
 }
 
-#prev-arrow {
-	float: left;
-	margin-top: 30px;
+table#sorter {
+	border: 1px solid #bbb;
 }
 
-#next-arrow {
-	float: right;
-	margin-top: 30px;
+table#sorter td {
+	width: 100px;
+	border-style: dashed;
+	border-color: #c8a24e;
+	border-left: 0;
+	border-right: 0;
+	text-align: center;
+	padding: 5px 10px 2px 10px;
 }
+
+table#sorter tr.shade {
+	background-color: #ddd;
+}
+table#sorter td.sortImage img {
+	width: 50%;
+	height: 50%;
+}
+
+table#sorter td div.tiny {
+	font-size: .7em;
+	color: #666;
+	margin-bottom: 2px;
+}
+
 
 #removeFromSet {
 	float:right;
@@ -545,7 +564,7 @@ div.login {
 }
 
 div.login a.alert {
-	color: #c00;
+	color: #f33;
 }
 
 div.login a {

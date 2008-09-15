@@ -8,6 +8,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'eid/{eid}' => 'ut_person',
 		'name/{lastname}' => 'ut_person',
 		'docs' => 'docs',
+		'palette' => 'palette',
 		'users' => 'users',
 		'attributes' => 'attributes',
 		'user/{eid}' => 'user',
@@ -146,6 +147,12 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$r->renderResponse($tpl->fetch('admin/collection_form.tpl'));
+	}
+
+	public function getPalette($r)
+	{
+		$tpl = new Dase_Template($r);
+		$r->renderResponse($tpl->fetch('admin/palette.tpl'));
 	}
 
 	public function getAttributes($r)

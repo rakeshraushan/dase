@@ -19,7 +19,11 @@ Dase.pageInit = function() {
 	}
 };
 
-Dase.getAttributes = function(url) {
+Dase.getAttributes = function(url,sort) {
+	var params;
+	if (sort) {
+		params = 'sort='+sort;
+	}
 	Dase.getJSON(url,function(json) {
 			var data = { 'atts': json };
 			var templateObj = TrimPath.parseDOMTemplate("atts_jst");
@@ -27,48 +31,23 @@ Dase.getAttributes = function(url) {
 			Dase.getAttributeTallies(url+'/tallies');
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
 			Dase.initAttSort();
-			});
+			},null,params);
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
 };
 
-Dase.attItemCompareAlpha = function(a,b) {
-	aname = a.getElementsByTagName('span')[0].innerHTML;
-	bname = b.getElementsByTagName('span')[0].innerHTML;
-	if (aname < bname) {
-		return -1;
-	}
-	if (aname > bname) {
-		return 1;
-	}
-	if (aname == bname) {
-		return 0;
-	}
-}
-
 Dase.initAttSort = function() {
 	link = Dase.$('attSorter');
 	link.onclick = function() {
-		if ('unsort' == this.innerHTML) {
+		if (Dase.attsort) {
 			Dase.getAttributes(Dase.$('collectionAtts').href);
+			Dase.attsort = 0;
+			return false;
+		} else {
+			Dase.getAttributes(Dase.$('collectionAtts').href,'attribute_name');
+			Dase.attsort = 1;
 			return false;
 		}
-		this.innerHTML = 'unsort';
-		list = Dase.$('attList');
-		items = list.getElementsByTagName('li');
-		att_array = []
-		for (var i=0;i<items.length; i++) {
-			att_array[att_array.length] = items[i]
-		}
-		list.innerHTML = 'sorting...';
-		att_array.sort(Dase.attItemCompareAlpha);
-		list.innerHTML = '';
-		for (var i=0;i<att_array.length; i++) {
-			list.innerHTML += '<li>'+att_array[i].innerHTML+'</li>';
-		}
-		Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-		Dase.initAttSort();
-		return false;
 	}
 }
 

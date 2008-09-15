@@ -20,6 +20,7 @@
 		</select>
 		</p>
 		<input type="hidden" name="att_ascii_id" value="${att.ascii_id}"/>
+		<input type="hidden" name="sort" value="${sort}"/>
 		<p>
 		<label for="input_type">Input Type</label>
 		<select name="input_type">

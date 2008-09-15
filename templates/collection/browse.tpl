@@ -39,7 +39,7 @@
 		<!-- javascript template -->
 		<textarea class="javascript_template" id="atts_jst">
 			{literal}
-			<a href="#" id="attSorter">sort</a>
+			<a href="#" id="attSorter">toggle sort</a>
 			<h4>Select Attribute:</h4>
 			<ul id="attList">
 				{for att in atts}

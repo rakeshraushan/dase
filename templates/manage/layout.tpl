@@ -52,6 +52,7 @@
 			|
 			<a href="logoff" class="edit" id="logoff-link">logout</a>
 			<div id="eid" class="pagedata"></div>
+			<div id="sort" class="pagedata">{$sort}</div>
 		</div>
 
 		<div id="loginControl" class="login hide">

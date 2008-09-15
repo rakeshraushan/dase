@@ -13,8 +13,8 @@
 	<a href="manage/{$collection->ascii_id}/attributes.json" class="hide" id="attribute_data_link"></a>
 	<table id="attributesTable" class="dataDisplay">
 		<tr>
-			<th>Name</th>
-			<th>Input Type</th>
+			<th><a href="manage/{$collection->ascii_id}/attributes?sort=attribute_name">Name</a></th>
+			<th><a href="manage/{$collection->ascii_id}/attributes?sort=html_input_type">Input Type</a></th>
 			<th>In Basic Search</th>
 			<th>On List Display</th>
 			<th>Is Public</th>

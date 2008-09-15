@@ -5,16 +5,14 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
-		'{tag_id}/slideshow' => 'slideshow',
 		'{eid}/{tag_ascii_id}' => 'tag',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/template' => 'tag_template',
-		'{eid}/{tag_ascii_id}/slideshow' => 'slideshow',
+		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
 		//for set delete:
 		'{eid}/{tag_ascii_id}/items' => 'tag_items',
 		'item/{tag_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
-		'{eid}/{tag_ascii_id}/{tag_item_id}/sorter' => 'sorter',
 		'{eid}/{tag_ascii_id}/item/{collection_ascii_id}/{serial_number}' => 'tag_item',
 	);
 
@@ -69,18 +67,6 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->renderResponse($this->tag->asAtom());
 	}
 
-	public function getSlideshow($r)
-	{
-		$u = $r->getUser();
-		$t = new Dase_Template($r);
-		//cannot use eid/ascii since it'll sometimes be another user's tag
-		$t->assign('json_url',APP_ROOT.'/tag/'.$this->tag->id.'.json');
-		$t->assign('eid',$u->eid);
-		$t->assign('http_pw',$u->getHttpPassword());
-		$r->renderResponse($t->fetch('item_set/slideshow.tpl'));
-
-	}
-
 	public function getTagJson($r)
 	{
 		$u = $r->getUser();
@@ -126,6 +112,34 @@ class Dase_Handler_Tag extends Dase_Handler
 		$t->assign('feed_url',$feed_url);
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
+	}
+
+	public function getTagSorter($r)
+	{
+		$u = $r->getUser();
+		if (!$u->can('read',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to read this resource');
+		}
+		$http_pw = $u->getHttpPassword();
+		$t = new Dase_Template($r);
+		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
+	}
+
+	public function postToTagSorter($r)
+	{
+		$u = $r->getUser();
+		if (!$u->can('read',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to read this resource');
+		}
+		$sort_array = $r->get('set_sort_item',true);
+		$this->tag->sort($sort_array);
+		$http_pw = $u->getHttpPassword();
+		$t = new Dase_Template($r);
+		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
 
 	public function getTagItemAtom($r)

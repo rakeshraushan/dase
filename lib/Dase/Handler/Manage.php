@@ -60,15 +60,26 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getAttributes($r)
 	{
 		$tpl = new Dase_Template($r);
+		if ($r->has('sort')) {
+			$so = $r->get('sort');
+		} else {
+			$so = 'sort_order';
+		}
 		$tpl->assign('user',$this->user);
+		$tpl->assign('sort',$so);
 		$tpl->assign('collection',$this->collection);
-		$tpl->assign('attributes',$this->collection->getAttributes());
+		$tpl->assign('attributes',$this->collection->getAttributes($so));
 		$r->renderResponse($tpl->fetch('manage/attributes.tpl'));
 	}
 
 	public function getAttributesJson($r)
 	{
-		$r->renderResponse($this->collection->getAttributesJson());
+		if ($r->has('sort')) {
+			$so = $r->get('sort');
+		} else {
+			$so = 'sort_order';
+		}
+		$r->renderResponse($this->collection->getAttributesJson($so));
 	}
 
 	public function getAttributeForm($r)
@@ -80,6 +91,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function postToAttribute($r)
 	{
 		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$params['sort'] = $r->get('sort');
 		if ($r->has('method') && ('delete attribute' == $r->get('method'))) {
 			$d = $att->attribute_name;
 			$count = count($att->getCurrentValues());

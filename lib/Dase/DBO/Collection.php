@@ -313,14 +313,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $att->find();
 	}
 
-	function getAttributesJson()
+	function getAttributesJson($sort = 'sort_order')
 	{
 		$att_array = array();
 		$last = 0;
 		$last_name = 'First';
 	
-		$att_array['ordered_atts']['0'] = 'First';
-		foreach ($this->getAttributes() as $att) {
+		$att_array['ordered_atts']['_first'] = 'First';
+		foreach ($this->getAttributes($sort) as $att) {
 			$att_array['ordered_atts'][$att->ascii_id] = "after ".$att->attribute_name;
 			foreach ($att as $k => $v) {
 				$att_array['attributes'][$att->ascii_id][$k] = $v;
