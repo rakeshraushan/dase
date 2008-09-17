@@ -15,7 +15,15 @@
 				Human Resource Management System (HRMS) Trainees 
 			</div>
 			<div class="content">
-				<p>Phase One of the new Human Resource Management System (HRMS) will launch on November 3, 2008. HRMS will replace the current Recruitment and Position Manager (RPM) and serve as the future means by which you will create a new position, reclassify a position, or fill an existing position.</p>
+				<dl>
+					<dt>Your Name:</dt>
+					<dd>{$user.name}</dt>
+					<dt>Your EID:</dt>
+					<dd>{$user.eid}</dt>
+					<dt>Your Unit:</dt>
+					<dd>{$user.unit}</dt>
+				</dl>
+				<p>Phase One of the new Human Resource Management System (HRMS) will launch on November 4, 2008. HRMS will replace the current Recruitment and Position Manager (RPM) and serve as the future means by which you will create a new position, reclassify a position, or fill an existing position.</p>
 
 				<p>Phase One will include salaried classified and administrative & professional (A&P) titles that are paid monthly, as well as titles for librarians, UT Elementary School teachers, and teachers’ aides.</p>  
 

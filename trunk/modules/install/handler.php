@@ -183,7 +183,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$count = count(Dase_DB::listTables());
 		Dase_Cache_File::expunge();
 
-		$url = "http://quickdraw.laits.utexas.edu/dase1/collection/germanic";
+		$url = "http://www.laits.utexas.edu/dasebeta/collection/sample";
 		$feed = Dase_Atom_Feed::retrieve($url.'?format=atom');
 		$coll_ascii_id = $feed->getAsciiId();
 		$feed->ingest($request,true);

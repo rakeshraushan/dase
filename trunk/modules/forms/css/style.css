@@ -1,8 +1,9 @@
-html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+/*html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
 table { border-collapse:collapse; border-spacing:0; }
 img { border:0; }
 ol,ul { list-style:none; }
 h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
+*/
 
 body{
 	font-family: trebuchet ms,arial,sans-serif;
@@ -14,6 +15,20 @@ h1 {
 
 .hide {
 	display: none;
+}
+
+dl {
+	margin-bottom: 1em;
+}
+
+dt {
+	float: left;
+	color: #666;
+}
+
+dd {
+	padding-left: 75px;
+	color: #009;
 }
 
 p {
