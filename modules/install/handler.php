@@ -170,7 +170,9 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function postToDbinit($request) 
 	{
-		include (DASE_PATH.'/modules/install/mysql_schema.php');
+		$type = $request->get('db_type');
+		//todo: i need an sqlite schema as well
+		include (DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		Dase_DB::query($query)->fetchAll();
 		$u = new Dase_DBO_DaseUser;
 		$u->eid = $request->get('eid');
