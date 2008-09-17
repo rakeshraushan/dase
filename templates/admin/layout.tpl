@@ -76,6 +76,11 @@
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>
 				</a>
 				</li>
+				<li class="log-tab">
+				<a href="admin/log">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>View Log</sup>
+				</a>
+				</li>
 				<li class="attributes-tab">
 				<a href="admin/attributes">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Admin Attributes</sup>

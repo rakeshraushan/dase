@@ -714,7 +714,6 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 		method = 'POST';
 	}
 	var xmlhttp = Dase.createXMLHttpRequest();
-
 	if (username && password) {
 		xmlhttp.open(method,url,true,username,password);
 	} else {
@@ -722,25 +721,28 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 	}
 	if (content_headers) {
 		for (var k in content_headers) {
-		xmlhttp.setRequestHeader(k,content_headers[k]);
-	}
-}
-if (msgBody) {
-	xmlhttp.send(msgBody);
-} else {
-	xmlhttp.send(null);
-}
-xmlhttp.onreadystatechange = function() {
-	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-		var returnStr = xmlhttp.responseText;
-		if (my_func) {
-			my_func(returnStr);
+			xmlhttp.setRequestHeader(k,content_headers[k]);
 		}
-	} 
-	if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
-		alert(xmlhttp.responseText);
-	} 
-};
+	}
+	if (msgBody) {
+		xmlhttp.send(msgBody);
+	} else {
+		xmlhttp.send(null);
+	}
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var returnStr = xmlhttp.responseText;
+			if (my_func) {
+				my_func(returnStr);
+			}
+		} 
+		if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
+			if (my_func) {
+				//todo: think about this
+				my_func(xmlhttp.getResponseHeader('Location'));
+			}
+		} 
+	};
 };
 
 Dase.getElementHtml = function(url,target,my_func) {

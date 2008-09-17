@@ -220,6 +220,25 @@ class Dase_Atom_Feed extends Dase_Atom
 		$el->setAttribute('searchTerms',$q);
 	}
 
+	function getOpensearchTotal()
+	{
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		return $this->getXpathValue("opensearch:totalResults");
+	}
+
+	function getQuery()
+	{
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		return $this->getXpathValue("opensearch:Query/@searchTerms");
+	}
+
+
 	function attachEntries()
 	{
 		//attach entries
@@ -269,7 +288,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $this;
 	}
 
-	protected function getCount()
+	public function getCount()
 	{
 		return count($this->getEntries());
 	}

@@ -214,6 +214,7 @@ class Dase_Search_Result
 				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
 			}
 			$feed->setOpensearchQuery($this->_getQueryAsString());
+			$feed->setOpensearchTotalResults($this->count);
 			return $feed->asXml();
 		}
 	}

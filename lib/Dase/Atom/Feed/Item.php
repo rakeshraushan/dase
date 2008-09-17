@@ -198,7 +198,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->getAtomElementText('subtitle');
 	}
 
-
 	function getEditLink() {
 		return $this->getEntry()->getEditLink();
 	}

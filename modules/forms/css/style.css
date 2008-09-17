@@ -1,0 +1,77 @@
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,form,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+table { border-collapse:collapse; border-spacing:0; }
+img { border:0; }
+ol,ul { list-style:none; }
+h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
+
+body{
+	font-family: trebuchet ms,arial,sans-serif;
+}
+
+h1 {
+	font-size: 1.5em;
+}
+
+.hide {
+	display: none;
+}
+
+p {
+	margin-bottom: 1em;
+	width: 70%;
+}
+
+div.container {
+	width: 90%;
+	margin: 20px auto;
+	margin-bottom: 0px;
+	border: 1px solid #999;
+	background-color: #f3f3f3;
+}
+
+div.footer {
+	width: 90%;
+	margin: 5px auto;
+}
+
+div.branding {
+	padding: 10px;
+	background-color: #eef;
+	font-size: 1.8em;
+	color: #ba5d00;
+	border-bottom: 1px solid #999;
+}
+
+div.content {
+	padding: 20px;
+}
+
+
+table {
+	margin-bottom: 1em;
+}
+
+table td {
+	padding: 6px;
+	border: 1px solid #999;
+	max-width: 150px;
+}
+
+table th {
+	text-align: left;
+	padding: 6px;
+	border: 1px solid #999;
+	max-width: 150px;
+}
+
+input {
+	max-width: 130px;
+}
+
+label {
+	color: #999;
+	font-size: .9em;
+	font-weight: bold;
+	margin-top: .5em;
+}
+

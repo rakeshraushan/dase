@@ -20,10 +20,10 @@ class Dase_Handler {
 				}
 			}
 
-			Dase_Log::all(" (regex) $uri_regex | (path) $request->path [resource: $resource]");
+			//Dase_Log::debug(" (regex) $uri_regex | (path) $request->path [resource: $resource]");
 			//second, see if uri_regex matches the request uri (a.k.a. path)
 			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
-				Dase_Log::all("matched resource $resource");
+				Dase_Log::debug("matched resource $resource");
 				//create parameters based on uri template and request matches
 				if (isset($template_matches[1]) && isset($uri_matches[1])) { 
 					array_shift($uri_matches);
@@ -31,7 +31,7 @@ class Dase_Handler {
 					$request->setParams($params);
 				}
 				$method = $this->determineMethod($resource,$request);
-				Dase_Log::all("try method $method");
+				Dase_Log::debug("try method $method");
 				if (method_exists($this,$method)) {
 					$request->resource = $resource;
 					$this->setup($request);

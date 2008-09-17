@@ -12,12 +12,14 @@
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->serialNumber}</div>
 	<div id="contentHeader">
-		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->searchEcho}</span></h1>
+		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->query}</span></h1>
+		{if $item->opensearchTotal > 1}
 		<h4>
 			<a href="{$item->previous}">prev</a> |
 			<a href="{$item->feedLink}">up</a> |
 			<a href="{$item->next}">next</a> 
 		</h4>
+		{/if}
 	</div> <!-- close contentHeader -->
 	<div class="controlsContainer">
 		<div id="adminPageControls" class="hide">

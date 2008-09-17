@@ -435,6 +435,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				SELECT value_text
 				FROM value
 				WHERE item_id = ?
+				AND value_text != ''
 				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
 				";
 			$st = $db->prepare($sql);
@@ -449,7 +450,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
-			$search_table->collection_ascii_id = $this->ascii_id;
+			//$search_table->collection_ascii_id = $this->ascii_id;
+			$search_table->updated = date(DATE_ATOM);
 			$search_table->insert();
 
 			//admin search table
@@ -469,6 +471,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
 			$search_table->collection_ascii_id = $this->ascii_id;
+			$search_table->updated = date(DATE_ATOM);
 			$search_table->insert();
 		}
 		return true;

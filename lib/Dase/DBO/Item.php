@@ -80,10 +80,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			SELECT value_text
 			FROM value
 			WHERE item_id = $this->id
+			AND value_text != ''
 			AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
 			";
 		$st = $db->prepare($sql);
 		$st->execute();
+		//todo: this should be a foreach
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}

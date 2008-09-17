@@ -55,15 +55,6 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		}
 	}
 
-	function getQuery()
-	{
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
-		return $this->getXpathValue("opensearch:Query/@searchTerms");
-	}
-
 	function getSearchTallies()
 	{
 		//may want to adjust this to use atom related links
@@ -81,11 +72,7 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 
 	function getCount()
 	{
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
-		return $this->getXpathValue("opensearch:totalResults");
+		return $this->getOpensearchTotal();
 	}
 
 	function getMax()
