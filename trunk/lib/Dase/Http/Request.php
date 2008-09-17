@@ -334,7 +334,7 @@ class Dase_Http_Request
 			Dase::error(401);
 		}
 		$base = APP_BASE;
-		$path= preg_replace("/$base/",'',$path,1);
+		$path= preg_replace("!$base!",'',$path,1);
 		$path= trim($path, '/');
 		/* Remove the query_string from the URL */
 		if ( strpos($path, '?') !== FALSE ) {
