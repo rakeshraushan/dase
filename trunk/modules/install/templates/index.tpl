@@ -7,7 +7,6 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script> 
 		<script type="text/javascript" src="scripts/install.js"></script> 
-		<script type="text/javascript" src="scripts/jquery.js"></script> 
 	</head>
 	<body>
 		<div class="container">

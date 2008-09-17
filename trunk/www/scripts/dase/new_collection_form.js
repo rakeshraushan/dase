@@ -48,8 +48,9 @@ Dase.pageInit = function() {
 		}
 		if (confirm("You are about to create collection with ascii id\n\n"+ascii_id+"\n\nOK?")) {
 			Dase.ajax(Dase.base_href='collections','post',function(resp) {
-					alert(resp);
-					},atom,Dase.user.eid,Dase.user.htpasswd,content_headers);
+				var loc = resp;
+				window.location = loc.replace(/\.atom/,"");
+			},atom,Dase.user.eid,Dase.user.htpasswd,content_headers);
 		}
 		return false;
 	}

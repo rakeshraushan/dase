@@ -4,7 +4,7 @@ include 'config.php';
 
 //this script rebuilds search indexes
 
-$coll_ascii_id = '';
+$coll_ascii_id = 'vrc';
 
 $coll = new Dase_DBO_Collection;
 if ($coll_ascii_id) {

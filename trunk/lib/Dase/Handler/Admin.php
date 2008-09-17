@@ -7,6 +7,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'manager/email' => 'manager_email',
 		'eid/{eid}' => 'ut_person',
 		'name/{lastname}' => 'ut_person',
+		'log' => 'log',
 		'docs' => 'docs',
 		'palette' => 'palette',
 		'users' => 'users',
@@ -25,6 +26,23 @@ class Dase_Handler_Admin extends Dase_Handler
 			$r->renderError(401);
 		}
 	}
+
+	public function getLog($r)
+	{
+		
+		$max = $r->get('max') ? $r->get('max') : 100;
+		$tpl = new Dase_Template($r);
+		$lines = file(DASE_PATH.'/log/dase.log');
+		$count = count($lines);
+		if ($count < $max) {
+			$log = join('',$lines);
+		} else {
+			$log = join('',array_slice($lines,-$max));
+		}
+		$tpl->assign('log',$log);
+		$r->renderResponse($tpl->fetch('admin/log.tpl'));
+	}
+
 
 	public function getIndex($r)
 	{

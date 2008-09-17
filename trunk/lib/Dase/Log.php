@@ -8,7 +8,7 @@ class Dase_Log
 	private static function write($msg,$backtrace)
 	{
 		$date = date(DATE_W3C);
-		$msg = $date.'| pid:'.getmypid().':'.$msg."\n";
+		$msg = $date.'| pid:'.getmypid().':  '.$msg."\n";
 		if(file_exists(self::$logfile)) {
 			@file_put_contents(self::$logfile,$msg,FILE_APPEND);
 		}
@@ -27,14 +27,6 @@ class Dase_Log
 	 */
 	public static function start()
 	{
-	}
-
-	public static function all($msg,$backtrace = false)
-	{
-		//very verbose
-		if (self::$log_level >= 3) {
-			self::write($msg,$backtrace);
-		}
 	}
 
 	public static function debug($msg,$backtrace = false)

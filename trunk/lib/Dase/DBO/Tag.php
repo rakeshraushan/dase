@@ -340,8 +340,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
 		$entry->setUpdated($this->getUpdated());
 		$entry->addAuthor($this->user->eid);
-		$entry->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id.'.atom','self');
-		$entry->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id);
+		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
+		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id);
 
 		$entry->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {
