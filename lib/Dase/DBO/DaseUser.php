@@ -191,7 +191,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function checkItemAuth($item,$auth_level)
 	{
-		return $this->checkCollectionAuth($item->getCollection(),$auth_level);
+		if ($item->created_by_eid == $this->eid) {
+			return true;
+		} else {
+			return $this->checkCollectionAuth($item->getCollection(),$auth_level);
+		}
 	}
 
 	function checkCollectionAuth($collection,$auth_level)
