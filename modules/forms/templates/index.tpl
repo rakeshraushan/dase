@@ -58,30 +58,35 @@
 						</th>
 					</tr>
 					<tr>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="text" name="first_name" value=""/>
-						</td>
-						<td>
-							<input type="submit" value="add"/>
-						</td>
+						<form action="{$app_root}hrms/trainee" method="post">
+							<input type="hidden" name="submitter_name" value="{$user.name}"/>
+							<input type="hidden" name="submitter_eid" value="{$user.eid}"/>
+							<input type="hidden" name="submitter_dept" value="{$user.unit}"/>
+							<td>
+								<input type="text" name="first_name" value=""/>
+							</td>
+							<td>
+								<input type="text" name="last_name" value=""/>
+							</td>
+							<td>
+								<input type="text" name="email" value=""/>
+							</td>
+							<td>
+								<input type="text" name="eid" value=""/>
+							</td>
+							<td>
+								<input type="text" name="logon_id" value=""/>
+							</td>
+							<td>
+								<input type="text" name="eoffice" value=""/>
+							</td>
+							<td>
+								<input type="text" name="edesk" value=""/>
+							</td>
+							<td>
+								<input type="submit" value="add"/>
+							</td>
+						</form>
 					</tr>
 				</table>
 			</div>
