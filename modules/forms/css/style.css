@@ -69,18 +69,22 @@ table {
 table td {
 	padding: 6px;
 	border: 1px solid #999;
-	max-width: 150px;
+	max-width: 212px;
 }
 
 table th {
 	text-align: left;
 	padding: 6px;
 	border: 1px solid #999;
-	max-width: 150px;
+	max-width: 212px;
 }
 
 input {
-	max-width: 130px;
+	max-width: 100px;
+}
+
+input[name="email"] {
+	max-width: 200px;
 }
 
 label {
