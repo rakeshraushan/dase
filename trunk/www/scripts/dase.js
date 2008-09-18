@@ -9,7 +9,8 @@ Dase.NAME = "Dase";    // The name of this namespace
 Dase.user = {};
 Dase.util = {};
 Dase.widget = {};
-Dase.base_href = document.getElementsByTagName('base')[0].href;
+//note: since modules create a module-specific base href, we need to strip module/<mod_name>
+Dase.base_href = document.getElementsByTagName('base')[0].href.replace(/\/modules\/[^/]*/,'');
 
 /* utilities */
 
@@ -256,7 +257,8 @@ Dase.initUser = function(func) {
 		return;
 	}
 	Dase.loadingMsg(true);
-	Dase.getJSON(Dase.base_href + "user/"+eid+ "/data",function(json){
+	var url = Dase.base_href + "user/"+eid+ "/data"
+	Dase.getJSON(url,function(json){
 		for (var eid in json) {
 			Dase.user.eid = eid;
 			Dase.user.htpasswd = json[eid].htpasswd;
