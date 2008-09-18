@@ -29,7 +29,7 @@
 
 				<p>Student and faculty positions will NOT be included in Phase One, nor will a few other A&P exceptions, including: research professors, assistant and associate research professors, department chairs, Harrington fellows and UTemp positions.</p> 
 
-				<p>Please list below those individuals (including yourself) who should receive HRMS training for Phase One. You may want to include both staff members who create recruiting documents and those who approve them. Then click the “submit” button.</p>
+				<p>Please list below those individuals (including yourself) who should receive HRMS training for Phase One. You may want to include both staff members who create recruiting documents and those who approve them.</p>
 				<h1>Trainees</h1>
 				<table class="trainee">
 					<tr>
@@ -58,7 +58,7 @@
 						</th>
 					</tr>
 					<tr>
-						<form action="{$app_root}hrms/trainee" method="post">
+						<form action="data" method="post">
 							<input type="hidden" name="submitter_name" value="{$user.name}"/>
 							<input type="hidden" name="submitter_eid" value="{$user.eid}"/>
 							<input type="hidden" name="submitter_dept" value="{$user.unit}"/>
@@ -88,6 +88,34 @@
 							</td>
 						</form>
 					</tr>
+					{foreach item=it from=$feed->entries}
+					<tr>
+						<td>
+							{$it|select:'first_name'}
+						</td>
+						<td>
+							{$it|select:'last_name'}
+						</td>
+						<td>
+							{$it|select:'email'}
+						</td>
+						<td>
+							{$it|select:'eid'}
+						</td>
+						<td>
+							{$it|select:'logon_id'}
+						</td>
+						<td>
+							{$it|select:'eoffice'}
+						</td>
+						<td>
+							{$it|select:'edesk'}
+						</td>
+						<td>
+							<a href="ssss" class="alert">delete</a>
+						</td>
+					</tr>
+					{/foreach}
 				</table>
 			</div>
 		</div>
