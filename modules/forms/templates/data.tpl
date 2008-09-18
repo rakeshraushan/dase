@@ -5,15 +5,14 @@
 		<title>HRMS Trainee Information</title>
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css">
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
-		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
+		<link rel="stylesheet" type="text/css" href="{$module_root}css/style.css">
+		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script> 
+		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script> 
 		<script type="text/javascript" src="scripts/forms.js"></script> 
 	</head>
 	<body>
-		<div id="eid" class="pagedata">{$user.eid}</div>
 		<div class="container">
 			<div class="branding">
 				Human Resource Management System (HRMS) Trainees 
@@ -27,16 +26,18 @@
 					<dt>Your Unit:</dt>
 					<dd>{$user.unit}</dt>
 				</dl>
-				<p>Phase One of the new Human Resource Management System (HRMS) will launch on November 3, 2008. HRMS will replace the current Recruitment and Position Manager (RPM) and serve as the future means by which you will create a new position, reclassify a position, or fill an existing position.</p>
-
-				<p>Phase One will include salaried classified and administrative & professional (A&P) titles that are paid monthly, as well as titles for librarians, UT Elementary School teachers, and teachers’ aides.</p>  
-
-				<p>Student and faculty positions will NOT be included in Phase One, nor will a few other A&P exceptions, including: research professors, assistant and associate research professors, department chairs, Harrington fellows and UTemp positions.</p> 
-
-				<p>Please list below those individuals (including yourself) who should receive HRMS training for Phase One. You may want to include both staff members who create recruiting documents and those who approve them.</p>
 				<h1>Trainees</h1>
 				<table class="trainee">
 					<tr>
+						<th>
+							<label for="submitter__name">Submitter Name</label>
+						</th>
+						<th>
+							<label for="submitter_eid">Submitter EID</label>
+						</th>
+						<th>
+							<label for="submitter_dept">Submitter Dept</label>
+						</th>
 						<th>
 							<label for="first_name">First Name</label>
 						</th>
@@ -58,42 +59,18 @@
 						<th>
 							<label for="Electronic Desk">Electronic Desk</label>
 						</th>
-						<th>
-						</th>
-					</tr>
-					<tr>
-						<form action="data" method="post">
-							<input type="hidden" name="submitter_name" value="{$user.name}"/>
-							<input type="hidden" name="submitter_eid" value="{$user.eid}"/>
-							<input type="hidden" name="submitter_dept" value="{$user.unit}"/>
-							<td>
-								<input type="text" name="first_name" value=""/>
-							</td>
-							<td>
-								<input type="text" name="last_name" value=""/>
-							</td>
-							<td>
-								<input type="text" name="email" value=""/>
-							</td>
-							<td>
-								<input type="text" name="eid" value=""/>
-							</td>
-							<td>
-								<input type="text" name="logon_id" value=""/>
-							</td>
-							<td>
-								<input type="text" name="eoffice" value=""/>
-							</td>
-							<td>
-								<input type="text" name="edesk" value=""/>
-							</td>
-							<td>
-								<input type="submit" value="add"/>
-							</td>
-						</form>
 					</tr>
 					{foreach item=it from=$feed->entries}
 					<tr>
+						<td>
+							{$it|select:'submitter_name'}
+						</td>
+						<td>
+							{$it|select:'submitter_eid'}
+						</td>
+						<td>
+							{$it|select:'submitter_dept'}
+						</td>
 						<td>
 							{$it|select:'first_name'}
 						</td>
@@ -115,15 +92,10 @@
 						<td>
 							{$it|select:'edesk'}
 						</td>
-						<td>
-							<a href="{$module_root}data/{$it->serialNumber}" class="delete">delete</a>
-						</td>
 					</tr>
 					{/foreach}
 				</table>
-				{if $admin_user}
-				<h3><a href="data">view all</a></h3>
-				{/if}
+				<h3><a href="index">return to form</a></h3>
 			</div>
 		</div>
 		<div class="footer">

@@ -88,9 +88,15 @@ input[name="email"] {
 }
 
 label {
-	color: #999;
+	color: #666;
 	font-size: .9em;
 	font-weight: bold;
 	margin-top: .5em;
 }
 
+a.delete {
+	font-size: .8em;
+}
+a.delete:hover {
+	text-decoration: underline;
+}
