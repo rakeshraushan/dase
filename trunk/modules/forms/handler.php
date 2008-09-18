@@ -6,6 +6,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		'/' => 'form',
 		'index' => 'form',
 		'data' => 'data',
+		'data/{serial_number}' => 'data',
 	);
 
 	public function setup($r)
@@ -26,6 +27,30 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$this->collection = Dase_DBO_Collection::get('hrms_form');
 		//needed for post privileges
 		$this->superuser = Dase_DBO_DaseUser::get('pkeane');
+	}
+
+	public function deleteData($r) 
+	{
+		$item = Dase_DBO_Item::get($this->collection->ascii_id,$r->get('serial_number'));
+		if (!$this->user->can('write',$item)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$item->expunge();
+		$r->renderOk();
+	}
+
+	public function getData($r) 
+	{
+		if (!$this->user->can('read',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
+		$tpl->assign('collection',$this->collection);
+		$cb = time();
+		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?c=hrms_form&q=%&cache_buster='.$cb));
+		$r->renderResponse($tpl->fetch('data.tpl'));
+
 	}
 
 	public function postToData($r)
@@ -65,6 +90,10 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
+		$tpl->assign('collection',$this->collection);
+		if ($this->user->can('read',$this->collection)) {
+			$tpl->assign('admin_user',1);
+		}
 		$cb = time();
 		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?hrms_form.submitter_eid='.$this->user->eid.'&cache_buster='.$cb));
 		$r->renderResponse($tpl->fetch('index.tpl'));
