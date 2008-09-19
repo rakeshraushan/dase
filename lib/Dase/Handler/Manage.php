@@ -51,6 +51,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$this->collection->is_public = 1;
 		}
 		$this->collection->description = trim($r->get('description'));
+		$this->collection->visibility = $r->get('visibility');
 		$this->collection->update();
 		$params['msg'] = "settings updated";
 		$this->user->expireDataCache();
