@@ -36,6 +36,20 @@
 			</td>
 		</tr>
 		<tr>
+			<th>Visibility (read/write)
+				<div class="current">
+				{$collection->visibility}
+				</div>
+			</th>
+			<td class="data">
+				<select name="visibility">
+					<option {if $collection->visibility eq 'manager'}selected="selected"{/if} value="manager">manager</option>
+					<option {if $collection->visibility eq 'user'}selected="selected"{/if} value="user">user</option>
+					<option {if $collection->visibility eq 'public'}selected="selected"{/if} value="public">public</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
 			<th>Description
 				<div class="current">
 				{$collection->description}
