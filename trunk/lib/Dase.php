@@ -33,8 +33,11 @@ class Dase
 			$handler_file = DASE_PATH.'/modules/'.$request->module.'/handler.php';
 			if (file_exists($handler_file)) {
 				include "$handler_file";
+				//will allow config request to include module config
+				define('MODULE_PATH',DASE_PATH.'/modules/'.$request->module);
+				Dase_Config::reload();
 				//modules can carry their own libraries
-				$new_include_path = ini_get('include_path').':'.DASE_PATH.'/modules/'.$request->module.'/lib'; 
+				$new_include_path = ini_get('include_path').':'.MODULE_PATH.'/lib'; 
 				ini_set('include_path',$new_include_path); 
 				Dase_Log::debug('set include path to: '.$new_include_path);
 				$classname = 'Dase_ModuleHandler_'.ucfirst($request->module);
