@@ -15,8 +15,6 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$this->fields = Dase_Config::get('fields');
 		$this->module = Dase_Config::get('module');
 		$this->collection = Dase_DBO_Collection::get(Dase_Config::get('collection_ascii_id'));
-		//needed for post privileges
-		$this->superuser = Dase_DBO_DaseUser::get('pkeane');
 	}
 
 	public function deleteData($r) 
@@ -65,7 +63,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		curl_setopt($ch, CURLOPT_URL, APP_ROOT.'/collection/'.$this->collection->ascii_id);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $entry->asXml());
-		curl_setopt($ch, CURLOPT_USERPWD,$this->superuser->eid.':'.$this->superuser->getHttpPassword());
+		curl_setopt($ch, CURLOPT_USERPWD,$this->user->eid.':'.$this->user->getHttpPassword());
 		$str  = array(
 			"Content-Type: application/atom+xml;type=entry"
 		);
