@@ -42,6 +42,10 @@ if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 	include DASE_PATH . '/inc/local_config.php';
 }
 
+if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
+	include(MODULE_PATH . '/inc/config.php');
+}      
+
 //causes tokens to change daily
 $conf['token'] = $conf['token'].date('Ymd',time()); 
 $conf['ppd_token'] = $conf['ppd_token'].date('Ymd',time());
