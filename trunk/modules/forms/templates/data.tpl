@@ -14,6 +14,7 @@
 	</head>
 	<body>
 		<div class="container">
+			<a href="{$app_root}logoff" class="edit" id="logoff-link">logout</a>
 			<div class="branding">
 				Human Resource Management System (HRMS) Trainees 
 			</div>
