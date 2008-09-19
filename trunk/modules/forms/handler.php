@@ -13,6 +13,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 	{
 		$this->user = $r->getUser();
 		$this->fields = Dase_Config::get('fields');
+		$this->module = Dase_Config::get('module');
 		$this->collection = Dase_DBO_Collection::get(Dase_Config::get('collection_ascii_id'));
 		//needed for post privileges
 		$this->superuser = Dase_DBO_DaseUser::get('pkeane');
@@ -46,7 +47,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 	{
 		//receive form post and create atom entry w/ data
 		$entry = new Dase_Atom_Entry;
-		$entry->setTitle('hrms');
+		$entry->setTitle($this->module);
 		$entry->addAuthor($r->getUser()->eid);
 		$entry->setEntryType('item');
 		$content = "<dl>";
@@ -72,7 +73,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		Dase_Log::debug(curl_exec($ch));
 		curl_close($ch);  
-		$r->renderRedirect('hrms');
+		$r->renderRedirect('modules/'.$this->module);
 	}
 
 	public function getForm($r) 
