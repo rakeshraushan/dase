@@ -78,7 +78,8 @@ class Dase_Http_Request
 	{
 		$query_string = $this->getQueryString();
 		if ($query_string) {
-			$query_string = preg_replace("!(\?|&)cache_buster=[^&]*!i",'',$query_string);
+			//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
+			$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$query_string);
 		}
 		Dase_Log::debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
 		//todo: this is a *bug* -- when we have multiple params w/ same key
