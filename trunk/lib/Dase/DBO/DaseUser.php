@@ -204,8 +204,22 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			Dase_Log::debug('attempting get to authorization for non-existing collection');
 			return false;
 		}
-		if ('read' == $auth_level && $collection->is_public) {
+		if ('read' == $auth_level) {
+			if (
+				$collection->is_public || 
+				'user' == $collection->visibility || 
+				'public' == $collection->visibility
+			) {
 			return true;
+			}
+		}
+		if ('write' == $auth_level) {
+			if (
+				'user' == $collection->visibility || 
+				'public' == $collection->visibility
+			) {
+			return true;
+			}
 		}
 		$cm = new Dase_DBO_CollectionManager; 
 		$cm->collection_ascii_id = $collection->ascii_id;
