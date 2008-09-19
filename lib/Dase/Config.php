@@ -34,4 +34,11 @@ class Dase_Config {
 		self::_init();
 		self::$conf[$key] = $value;
 	}
+
+	public static function reload()
+	{
+		//allows module request to get module-defined config
+		include(DASE_CONFIG);
+		self::$conf = $conf;
+	}
 }
