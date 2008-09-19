@@ -12,19 +12,8 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 	public function setup($r)
 	{
 		$this->user = $r->getUser();
-		$this->fields = array(
-			'submitter_name',
-			'submitter_eid',
-			'submitter_dept',
-			'first_name',
-			'last_name',
-			'email',
-			'eid',
-			'logon_id',
-			'eoffice',
-			'edesk',
-		);
-		$this->collection = Dase_DBO_Collection::get('hrms_form');
+		$this->fields = Dase_Config::get('fields');
+		$this->collection = Dase_DBO_Collection::get(Dase_Config::get('collection_ascii_id'));
 		//needed for post privileges
 		$this->superuser = Dase_DBO_DaseUser::get('pkeane');
 	}
@@ -48,7 +37,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
 		$tpl->assign('collection',$this->collection);
 		$cb = time();
-		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?c=hrms_form&q=%&cache_buster='.$cb));
+		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?c='.$this->collection->ascii_id.'&q=%&cache_buster='.$cb));
 		$r->renderResponse($tpl->fetch('data.tpl'));
 
 	}
@@ -95,7 +84,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 			$tpl->assign('admin_user',1);
 		}
 		$cb = time();
-		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?hrms_form.submitter_eid='.$this->user->eid.'&cache_buster='.$cb));
+		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?'.$this->collection->ascii_id.'.submitter_eid='.$this->user->eid.'&cache_buster='.$cb));
 		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
 }
