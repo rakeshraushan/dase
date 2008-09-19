@@ -1,5 +1,6 @@
 <?php
 
+$conf['module'] = 'forms';
 $conf['collection_ascii_id'] = 'hrms_form';
 $conf['fields'] = array( 
 	'edesk',
