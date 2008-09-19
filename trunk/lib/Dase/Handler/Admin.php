@@ -3,28 +3,53 @@
 class Dase_Handler_Admin extends Dase_Handler
 {
 	public $resource_map = array(
-		'phpinfo' => 'phpinfo',
-		'manager/email' => 'manager_email',
-		'eid/{eid}' => 'ut_person',
-		'name/{lastname}' => 'ut_person',
-		'log' => 'log',
-		'docs' => 'docs',
-		'palette' => 'palette',
-		'users' => 'users',
+		'/' => 'index',
 		'attributes' => 'attributes',
-		'user/{eid}' => 'user',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
-		'/' => 'index',
+		'docs' => 'docs',
+		'eid/{eid}' => 'ut_person',
+		'log' => 'log',
+		'manager/email' => 'manager_email',
+		'modules' => 'modules',
+		'name/{lastname}' => 'ut_person',
+		'palette' => 'palette',
+		'phpinfo' => 'phpinfo',
+		'user/{eid}' => 'user',
+		'users' => 'users',
 	);
 
 	public function setup($r)
 	{
 		//all routes here require superuser privileges
 		$user = $r->getUser();
-		if (!$user->isSuperuser()) {
+		if ( 'modules' != $r->resource && !$user->isSuperuser()) {
 			$r->renderError(401);
 		}
+	}
+
+	public function getModules($r)
+	{
+		$tpl = new Dase_Template($r);
+		$dir = new DirectoryIterator(DASE_PATH.'/modules');
+		$mods = array();
+		foreach ($dir as $file) {
+			if ( $file->isDir() && false === strpos($file->getFilename(),'.')) {
+				$m = $file->getFilename();
+				$name = $m;
+				$description = '';
+				if (file_exists($file->getPathname().'/inc/meta.php')) {
+					//will set name & description
+					include($file->getPathname().'/inc/meta.php');
+				}
+				$mods[$m]['ascii_id'] = $m;
+				$mods[$m]['name'] = $name;
+				$mods[$m]['description'] = $description;
+			}
+		}
+		ksort($mods);
+		$tpl->assign('modules',$mods);
+		$r->renderResponse($tpl->fetch('admin/modules.tpl'));
 	}
 
 	public function getLog($r)
