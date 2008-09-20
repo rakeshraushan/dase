@@ -79,7 +79,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
 		$tpl->assign('collection',$this->collection);
-		if ($this->user->can('read',$this->collection)) {
+		if ($this->user->isSuperuser()) {
 			$tpl->assign('admin_user',1);
 		}
 		$cb = time();
