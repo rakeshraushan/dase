@@ -78,6 +78,14 @@
 					<table class="form_table">
 						<tr>
 							<th>
+								<label for="table_prefix">Table Prefix (optional)</label>
+							</th>
+							<td>
+								<input type="text" name="table_prefix" value="{$conf.table_prefix}"/>
+							</td>
+						</tr>
+						<tr>
+							<th>
 								<label for="db_type">Database Type</label>
 							</th>
 							<td>

@@ -2,7 +2,7 @@
 
 $query =<<<EOF
 
-CREATE TABLE admin_search_table (
+CREATE TABLE {$table_prefix}admin_search_table (
     id serial NOT NULL,
     item_id integer,
     collection_id integer,
@@ -11,7 +11,7 @@ CREATE TABLE admin_search_table (
     updated character varying(50)
 );
 
-CREATE TABLE attribute (
+CREATE TABLE {$table_prefix}attribute (
     id serial NOT NULL,
     ascii_id character varying(200),
     collection_id integer,
@@ -26,14 +26,14 @@ CREATE TABLE attribute (
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
-CREATE TABLE attribute_item_type (
+CREATE TABLE {$table_prefix}attribute_item_type (
     id serial NOT NULL,
     item_type_id integer NOT NULL,
     attribute_id integer NOT NULL,
     cardinality character varying(20) DEFAULT '0:m'::character varying
 );
 
-CREATE TABLE collection (
+CREATE TABLE {$table_prefix}collection (
     id serial NOT NULL,
     ascii_id character varying(200),
     collection_name character varying(200),
@@ -44,7 +44,7 @@ CREATE TABLE collection (
     visibility character varying(50)
 );
 
-CREATE TABLE collection_manager (
+CREATE TABLE {$table_prefix}collection_manager (
     id serial NOT NULL,
     collection_ascii_id character varying(200),
     dase_user_eid character varying(20),
@@ -53,7 +53,7 @@ CREATE TABLE collection_manager (
     created character varying(50)
 );
 
-CREATE TABLE content (
+CREATE TABLE {$table_prefix}content (
     id serial NOT NULL,
     text text,
     "type" character varying(10),
@@ -64,7 +64,7 @@ CREATE TABLE content (
     updated_by_eid character varying(100)
 );
 
-CREATE TABLE dase_user (
+CREATE TABLE {$table_prefix}dase_user (
     id serial NOT NULL,
     eid character varying(255),
     name character varying(200),
@@ -81,13 +81,13 @@ CREATE TABLE dase_user (
     template_composite character varying(2000)
 );
 
-CREATE TABLE defined_value (
+CREATE TABLE {$table_prefix}defined_value (
     id serial NOT NULL,
     attribute_id integer,
     value_text character varying(200)
 );
 
-CREATE TABLE item (
+CREATE TABLE {$table_prefix}item (
     id serial NOT NULL,
     serial_number character varying(200),
     collection_id integer,
@@ -98,13 +98,13 @@ CREATE TABLE item (
     created_by_eid character varying(50)
 );
 
-CREATE TABLE input_template (
+CREATE TABLE {$table_prefix}input_template (
     id serial NOT NULL,
     collection_manager_id integer,
     attribute_id integer
 );
 
-CREATE TABLE item_link (
+CREATE TABLE {$table_prefix}item_link (
     id serial NOT NULL,
     href character varying(2000),
     rel character varying(100),
@@ -114,7 +114,7 @@ CREATE TABLE item_link (
     item_unique character varying(100)
 );
 
-CREATE TABLE item_type (
+CREATE TABLE {$table_prefix}item_type (
     id serial NOT NULL,
     collection_id integer DEFAULT 0 NOT NULL,
     name character varying(200),
@@ -122,7 +122,7 @@ CREATE TABLE item_type (
     description character varying(2000)
 );
 
-CREATE TABLE media_file (
+CREATE TABLE {$table_prefix}media_file (
     id serial NOT NULL,
     item_id integer,
     filename character varying(2000),
@@ -137,7 +137,7 @@ CREATE TABLE media_file (
     md5 character varying(200)
 );
 
-CREATE TABLE tag_item (
+CREATE TABLE {$table_prefix}tag_item (
     id serial NOT NULL,
     tag_id integer,
     item_id integer,
@@ -150,7 +150,7 @@ CREATE TABLE tag_item (
 );
 
 
-CREATE TABLE search_cache (
+CREATE TABLE {$table_prefix}search_cache (
     id serial NOT NULL,
     query character varying(2000),
     dase_user_id integer,
@@ -166,7 +166,7 @@ CREATE TABLE search_cache (
     "timestamp" character varying(50)
 );
 
-CREATE TABLE search_table (
+CREATE TABLE {$table_prefix}search_table (
     id serial NOT NULL,
     item_id integer NOT NULL,
     collection_id integer NOT NULL,
@@ -175,13 +175,13 @@ CREATE TABLE search_table (
     updated character varying(50)
 );
 
-CREATE TABLE subscription (
+CREATE TABLE {$table_prefix}subscription (
     id serial NOT NULL,
     dase_user_id integer,
     tag_id integer
 );
 
-CREATE TABLE tag (
+CREATE TABLE {$table_prefix}tag (
     id serial NOT NULL,
     name character varying(200),
     description character varying(200),
@@ -196,14 +196,14 @@ CREATE TABLE tag (
     visibility character varying(50)
 );
 
-CREATE TABLE value (
+CREATE TABLE {$table_prefix}value (
     id serial NOT NULL,
     item_id integer,
     attribute_id integer,
     value_text text
 );
 
-CREATE TABLE value_revision_history (
+CREATE TABLE {$table_prefix}value_revision_history (
     id serial NOT NULL,
     dase_user_eid character varying(20),
     deleted_text text,
@@ -214,121 +214,121 @@ CREATE TABLE value_revision_history (
     "timestamp" character varying(50)
 );
 
-CREATE SEQUENCE admin_search_table_seq
+CREATE SEQUENCE {$table_prefix}admin_search_table_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE attribute_seq
+CREATE SEQUENCE {$table_prefix}attribute_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE attribute_item_type_seq
+CREATE SEQUENCE {$table_prefix}attribute_item_type_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE collection_seq
+CREATE SEQUENCE {$table_prefix}collection_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE collection_manager_seq
+CREATE SEQUENCE {$table_prefix}collection_manager_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE content_seq
+CREATE SEQUENCE {$table_prefix}content_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE dase_user_seq
+CREATE SEQUENCE {$table_prefix}dase_user_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE defined_value_seq
+CREATE SEQUENCE {$table_prefix}defined_value_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE item_seq
+CREATE SEQUENCE {$table_prefix}item_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE input_template_seq
+CREATE SEQUENCE {$table_prefix}input_template_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE item_link_seq
+CREATE SEQUENCE {$table_prefix}item_link_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE item_type_seq
+CREATE SEQUENCE {$table_prefix}item_type_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE media_file_seq
+CREATE SEQUENCE {$table_prefix}media_file_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE tag_item_seq
+CREATE SEQUENCE {$table_prefix}tag_item_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE search_cache_seq
+CREATE SEQUENCE {$table_prefix}search_cache_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE search_table_seq
+CREATE SEQUENCE {$table_prefix}search_table_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE subscription_seq
+CREATE SEQUENCE {$table_prefix}subscription_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE tag_seq
+CREATE SEQUENCE {$table_prefix}tag_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE value_seq
+CREATE SEQUENCE {$table_prefix}value_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE value_revision_history_seq
+CREATE SEQUENCE {$table_prefix}value_revision_history_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
