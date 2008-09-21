@@ -47,6 +47,14 @@ class Dase_DB {
 		return self::$db;
 	}
 
+	public static function getNew($dbname = null)
+	{
+		self::$db = null;
+		return Dase_DB::get($dbname);
+	}
+
+
+
 	/** simply wraps logging */
 	public static function query($sql)
 	{
@@ -94,7 +102,7 @@ class Dase_DB {
 		}
 		if ('pgsql' == self::$type) {
 			$sql =<<< EOF
-			SELECT c.relname as "name", 
+				SELECT c.relname as "name", 
 				CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as "type",
 				c2.relname as "table"
 				FROM pg_catalog.pg_class c
