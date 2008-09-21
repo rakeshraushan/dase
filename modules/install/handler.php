@@ -178,6 +178,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
 		$db->exec($query);
+		//addresses problem w/ non-buffered query
+		$db = Dase_DB::getNew();
 		$u = new Dase_DBO_DaseUser;
 		$u->eid = $request->get('eid');
 		$u->name = $request->get('eid');
