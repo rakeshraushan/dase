@@ -105,14 +105,14 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getItemTalliesJson($request) 
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
-			select collection.ascii_id,count(item.id) 
+			select c.ascii_id,count(i.id) 
 			as count
-			from
-			collection, item
-			where collection.id = item.collection_id
-			and item.status = 'public' 
-			group by collection.id, collection.ascii_id
+			from {$prefix}collection c, {$prefix}item i
+			where c.id = i.collection_id
+			and i.status = 'public' 
+			group by c.id, c.ascii_id
 			";
 		$tallies = array();
 		foreach (Dase_DBO::query($sql)->fetchAll() as $row) {
