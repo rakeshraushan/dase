@@ -9,7 +9,7 @@ Dase.install.initCheckForm = function() {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(Dase.base_href+'pathchecker','post',function(resp) { 
+		Dase.ajax(Dase.base_href+'modules/install/'+'pathchecker','post',function(resp) { 
 			parts = resp.split('|');
 			Dase.$('path_to_media_msg').className = parts[0];
 			Dase.$('path_to_media_msg').innerHTML = parts[1];
@@ -38,7 +38,7 @@ Dase.install.initCheckForm = function() {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(Dase.base_href+'dbchecker','post',function(resp) { 
+		Dase.ajax(Dase.base_href+'modules/install/'+'dbchecker','post',function(resp) { 
 			parts = resp.split('|');
 			var db_msg = Dase.$('db_msg');
 			db_msg.innerHTML = parts[1];
@@ -68,7 +68,7 @@ Dase.install.initCheckForm = function() {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(Dase.base_href+'savesettings','post',function(resp) { 
+		Dase.ajax(Dase.base_href+'modules/install/'+'savesettings','post',function(resp) { 
 			parts = resp.split('|');
 			var db_msg = Dase.$('init_db_msg');
 			db_msg.innerHTML = parts[1];
@@ -99,7 +99,7 @@ Dase.install.initCheckForm = function() {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(Dase.base_href+'dbinit','post',function(resp) { 
+		Dase.ajax(Dase.base_href+'modules/install/'+'dbinit','post',function(resp) { 
 			parts = resp.split('|');
 			switch (parts[0]) {
 				case 'ok':
