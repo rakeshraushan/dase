@@ -221,6 +221,7 @@ class Dase_Search
 
 	private function _createSql()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$like = Dase_DB::getCaseInsensitiveLikeOp();
 		$search = $this->search_array;
 		$search_table_params = array();
@@ -247,7 +248,7 @@ class Dase_Search
 			$search_table_sets[] = join(' AND ',$search['omit']);
 		}
 		if (count($search_table_sets)) {
-			$search_table_sql = "SELECT s.item_id FROM search_table s WHERE " . join(' AND ', $search_table_sets);
+			$search_table_sql = "SELECT s.item_id FROM {$prefix}search_table s WHERE " . join(' AND ', $search_table_sets);
 		}
 
 		//at this point I have my search_table_sql AND search_table_params
@@ -277,11 +278,11 @@ class Dase_Search
 				if (count($ar_table_sets)) {
 					if (false === strpos($att,'admin_')) {
 						$value_table_search_sets[] = 
-							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
+							"id IN (SELECT v.item_id FROM {$prefix}value v,{$prefix}collection c,{$prefix}attribute a WHERE a.collection_id = c.id AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					} else {
 						//it's an admin attribute, so collection_id is 0
 						$value_table_search_sets[] = 
-							"id IN (SELECT v.item_id FROM value v,collection c,attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
+							"id IN (SELECT v.item_id FROM {$prefix}value v,{$prefix}collection c,{$prefix}attribute a WHERE a.collection_id = 0 AND v.attribute_id = a.id AND ".join(' AND ', $ar_table_sets)." AND c.ascii_id = ? AND a.ascii_id = ?)";
 					}
 				}
 				$value_table_params[] = $coll;
@@ -295,7 +296,7 @@ class Dase_Search
 				$value_table_params[] = "%".$val."%";
 			}
 			$qualified_sets[] = join(' AND ',$qualified_val);
-			$value_table_search_sets[] = "id IN (SELECT v.item_id FROM value v,attribute a WHERE v.attribute_id = a.id AND ".join(' AND ', $qualified_sets)." AND a.ascii_id = ?)";
+			$value_table_search_sets[] = "id IN (SELECT v.item_id FROM {$prefix}value v,{$prefix}attribute a WHERE v.attribute_id = a.id AND ".join(' AND ', $qualified_sets)." AND a.ascii_id = ?)";
 			$value_table_params[] = $att;
 			unset($qualified_val);
 			unset($qualified_sets);
@@ -307,7 +308,7 @@ class Dase_Search
 			$ph = join(",",$placeholders);
 			unset($placeholders);
 			$search_table_params = array_merge($search_table_params,$search['colls']);
-			$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
+			$search_table_sql .= " AND collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id IN ($ph))";
 		}
 		//if not explicitly requested, non-public collections will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
@@ -316,33 +317,33 @@ class Dase_Search
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = 
-				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql) AND " . join(' AND ',$value_table_search_sets);
+				"SELECT id, collection_id FROM {$prefix}item WHERE id IN ($search_table_sql) AND " . join(' AND ',$value_table_search_sets);
 			$bound_params = array_merge($bound_params,$search_table_params);
 			$bound_params = array_merge($bound_params,$value_table_params);
 		} elseif (isset($search_table_sql)) {
 			$sql = 
-				"SELECT id, collection_id FROM item WHERE id IN ($search_table_sql)";
+				"SELECT id, collection_id FROM {$prefix}item WHERE id IN ($search_table_sql)";
 			$bound_params = array_merge($bound_params,$search_table_params);
 		} elseif (count($value_table_search_sets)) {
 			$sql = 
-				"SELECT id, collection_id FROM item WHERE " . join(' AND ',$value_table_search_sets);
+				"SELECT id, collection_id FROM {$prefix}item WHERE " . join(' AND ',$value_table_search_sets);
 			$bound_params = array_merge($bound_params,$value_table_params);
 			//if searching ONLY for item type (NOT simply as filter)
 			//as indicated by lack of other queries (i.e., we got to this point in decision tree)
 		} elseif (isset($search['type']['coll']) && isset($search['type']['name'])) {
 			$sql =
-				"SELECT id, collection_id FROM item WHERE item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
+				"SELECT id, collection_id FROM {$prefix}item WHERE item_type_id IN (SELECT id FROM {$prefix}item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id = ?))";
 			$bound_params[] = $search['type']['name'];
 			$bound_params[] = $search['type']['coll'];
 		} else {
 			//null 
-			$sql = 'SELECT id, collection_id FROM item WHERE 1 = 2';
+			$sql = "SELECT id, collection_id FROM {$prefix}item WHERE 1 = 2";
 		}
 		//if search type is used as filter:
 		if (isset($search['type']['coll']) && isset($search['type']['name']) && 
 			(isset($search_table_sql) || count($value_table_search_sets))) {
 				$sql .=
-					"AND item_type_id IN (SELECT id FROM item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM collection WHERE ascii_id = ?))";
+					"AND item_type_id IN (SELECT id FROM {$prefix}item_type WHERE ascii_id = ? AND collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id = ?))";
 				$bound_params[] = $search['type']['name'];
 				$bound_params[] = $search['type']['coll'];
 			}
@@ -354,7 +355,7 @@ class Dase_Search
 			}
 			$ph = join(",",$placeholders);
 			unset($placeholders);
-			$sql .= " AND collection_id IN (SELECT id FROM collection WHERE ascii_id IN ($ph))";
+			$sql .= " AND collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id IN ($ph))";
 		}
 		$this->sql = $sql;
 		$this->bound_params = $bound_params;

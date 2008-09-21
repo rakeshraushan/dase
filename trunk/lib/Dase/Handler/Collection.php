@@ -87,17 +87,18 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsByMd5Txt($r) 
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$output = '';
 		$sql = "
 			SELECT serial_number 
-			FROM item
+			FROM {$prefix}item
 			WHERE collection_id = ?
 			AND id IN
 			(SELECT value.item_id
-			FROM value, attribute
-			WHERE value.attribute_id = attribute.id
-			AND attribute.ascii_id = 'admin_checksum'
-			AND value.value_text = ?)
+			FROM {$prefix}value v, {$prefix}attribute a
+			WHERE v.attribute_id = a.id
+			AND a.ascii_id = 'admin_checksum'
+			AND v.value_text = ?)
 			";
 		foreach (Dase_DBO::query($sql,array($this->collection->id,$r->get('md5')))->fetchAll() as $row) {
 			$output .= $row['serial_number'].'|'; 
@@ -311,6 +312,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributeTalliesJson($r) 
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$r->checkCache(1500);
 		if ($r->has('filter') && ('admin' == $r->get('filter'))) {
 			$r->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
@@ -319,9 +321,9 @@ class Dase_Handler_Collection extends Dase_Handler
 		$c = $this->collection;
 		$sql = "
 			SELECT id, ascii_id
-			FROM attribute
-			WHERE attribute.collection_id = ?
-			AND attribute.is_public = true;
+			FROM {$prefix}attribute a
+			WHERE a.collection_id = ?
+			AND a.is_public = true;
 		";
 		$st = Dase_DBO::query($sql,array($c->id));
 		$sql = "SELECT count(DISTINCT value_text) FROM value WHERE attribute_id = ?";
@@ -339,19 +341,21 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _adminAttributeTalliesJson() 
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$c = $this->collection;
 		$sql = "
 			SELECT id, ascii_id
-			FROM attribute
-			WHERE attribute.collection_id = 0
+			FROM {$prefix}attribute a
+			WHERE a.collection_id = 0
 			";
 		$st = Dase_DBO::query($sql);
 		$sql = "
 			SELECT count(DISTINCT value_text) 
-			FROM value WHERE attribute_id = ? 
-			AND value.item_id IN
-			(SELECT id FROM item
-			WHERE item.collection_id = $c->id)
+			FROM {$prefix}value v 
+			WHERE v.attribute_id = ? 
+			AND v.item_id IN
+			(SELECT id FROM {$prefix}item i
+			WHERE i.collection_id = $c->id)
 			";
 		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
