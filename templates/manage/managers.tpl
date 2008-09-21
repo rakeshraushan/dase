@@ -16,6 +16,7 @@
 			<th>Auth Level</th>
 			<th>Expiration</th>
 			<th>Created</th>
+			<th></th>
 		</tr>
 		{foreach item=m from=$managers}
 		<tr>
@@ -24,6 +25,7 @@
 			<td>{$m->auth_level}</td>
 			<td>{$m->expiration}</td>
 			<td>{$m->created}</td>
+			<td><a href="xxxxxxxxxxxxxxx" id="manager_delete" class="delete">delete</a></td>
 		</tr>
 		{/foreach}
 		<form action="manage/{$collection->ascii_id}/managers" method="post">
@@ -41,6 +43,8 @@
 					</select>
 				</td>
 				<td>expiration control</td>
+				<td>
+				</td>
 				<td>
 					<input type="submit" value="add"/>
 				</td>

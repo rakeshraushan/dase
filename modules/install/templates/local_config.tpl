@@ -6,6 +6,8 @@ $conf['db']['name'] = '{$db.name}';
 $conf['db']['user'] = '{$db.user}';
 $conf['db']['pass'] = '{$db.pass}';
 
+$conf['table_prefix'] = '{$table_prefix}';
+
 $conf['main_title'] = '{$main_title}';
 $conf['path_to_local_css'] = '';
 $conf['page_logo']['link_target'] = '';

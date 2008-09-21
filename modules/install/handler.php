@@ -37,7 +37,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				//and is a superuser
 				$user = $request->getUser();
 				if ($user->isSuperuser()) {
-					$this->done($request);
+		//			$this->done($request);
 				} else {
 					$request->renderError(401);
 				}
@@ -146,6 +146,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		//since connection, not table count, is dependent on passed in settings
 		$tpl = new Dase_Template($request,true);
 		$tpl->assign('main_title',$request->get('main_title'));
+		$tpl->assign('table_prefix',$request->get('table_prefix'));
 		$tpl->assign('eid',$request->get('eid'));
 		$tpl->assign('password',$request->get('password'));
 		$tpl->assign('path_to_media',$request->get('path_to_media'));
@@ -172,6 +173,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	{
 		$type = $request->get('db_type');
 		//todo: i need an sqlite schema as well
+		$table_prefix = Dase_Config::get('table_prefix');
+		//the schema uses variable $table_prefix
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
 		$db->exec($query);

@@ -19,10 +19,15 @@ class Dase_DBO implements IteratorAggregate
 
 	function __construct( $table, $fields )
 	{
-		$this->table = $table;
+		$this->table = Dase_Config:get('table_prefix').$table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
 		}
+	}
+
+	public static function getTable()
+	{
+		return $this->table;
 	}
 
 	function __get( $key )

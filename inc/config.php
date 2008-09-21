@@ -7,6 +7,8 @@ $conf['db']['name'] = 'dase';
 $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
 
+$conf['table_prefix'] = '';
+
 $conf['main_title'] = "My DASe Archive";
 
 //eid & admin password
