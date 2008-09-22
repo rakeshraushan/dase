@@ -379,6 +379,7 @@ class Dase_Search
 			$tallies[$ascii_id]['name'] = $collection_lookup[$coll_id]['collection_name'];
 			$item_ids = array_merge($item_ids,$set);
 		}
+		//look into caching item_ids here to benefit first sort request?
 		//note: sorting all happens here!!! (kind of aspect-ily)
 		if ($this->request->has('sort')) {
 			$sort = $this->request->get('sort');
