@@ -17,17 +17,13 @@ class Dase_Search_Result
 		$this->count = count($item_ids);
 	}
 
-	private function _constructEcho() {
-//work on this!!!!
-	}
-
 	public function getResultSetAsJsonFeed($max = 500)
 	{
 		//todo: this needs lots of work!
 		$json_tag;
 		$json_tag['uri'] = 'ssssssss';
 		$json_tag['updated'] = date(DATE_ATOM);
-		$json_tag['name'] = 'search: '.$this->_constructEcho();
+		$json_tag['name'] = 'search: '.str_replace('&quot;','"',$this->_getQueryAsString());
 		$json_tag['is_public'] = 1;
 		$item_ids = array_slice($this->item_ids,0,$max);
 		foreach($item_ids as $item_id) {
@@ -153,8 +149,10 @@ class Dase_Search_Result
 				);
 			}
 		}
+		//here is where we place a collection link *only* if there is one collection
 		if (1 == count($this->tallies)) {
 			$feed->addLink(APP_ROOT.'/collection/'.$coll,'http://daseproject.org/relation/collection','text/html',null,$this->tallies[$coll]['name']);
+			$feed->addLink(APP_ROOT.'/collection/'.$coll.'/attributes.json','http://daseproject.org/relation/collection/attributes','application/json');
 		}
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->url);

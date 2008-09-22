@@ -264,9 +264,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	static function getLastCreated()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT created
-			FROM collection
+			FROM {$prefix}collection
 			ORDER BY created DESC
 			";
 		//returns first non-null created
@@ -296,9 +297,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	 */
 	function getManagers()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
-			FROM collection_manager m,dase_user u 
+			FROM {$prefix}collection_manager m,{$prefix}dase_user u 
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
 			ORDER BY m.dase_user_eid";
@@ -338,10 +340,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function changeAttributeSort($att_ascii_id,$new_so)
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$att_ascii_id_array = array();
 		$sql = "
 			SELECT ascii_id 
-			FROM attribute
+			FROM {$prefix}attribute
 			WHERE collection_id = ?
 			ORDER BY sort_order";
 		$sth = Dase_DBO::query($sql,array($this->id))->fetch(); 
@@ -352,7 +355,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		} 
 		array_splice($att_ascii_id_array,$new_so-1,0,$att_ascii_id);
 		$sql = "
-			UPDATE attribute
+			UPDATE {$prefix}attribute
 			SET sort_order = ?,
 			updated = ?
 			WHERE ascii_id = ?
@@ -375,9 +378,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemCount()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT count(item.id) as count
-			FROM item
+			FROM {$prefix}item
 			where collection_id = ?
 			";
 		return Dase_DBO::query($sql,array($this->id))->fetchColumn();
@@ -392,9 +396,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemIdRange($start,$count)
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT id 
-			FROM item
+			FROM {$prefix}item
 			WHERE collection_id = ?
 			ORDER BY updated DESC
 			";
@@ -421,10 +426,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function buildSearchIndex()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		//todo: make sure this->id is an integer
-		$db->query("DELETE FROM search_table WHERE collection_id = $this->id");
-		$db->query("DELETE FROM admin_search_table WHERE collection_id = $this->id");
+		$db->query("DELETE FROM {$prefix}search_table WHERE collection_id = $this->id");
+		$db->query("DELETE FROM {$prefix}admin_search_table WHERE collection_id = $this->id");
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		foreach ($items->find() as $item) {
@@ -433,10 +439,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			//NOTE: '= true' works for mysql AND postgres!
 			$sql = "
 				SELECT value_text
-				FROM value
+				FROM {$prefix}value v
 				WHERE item_id = ?
-				AND value_text != ''
-				AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
+				AND v.value_text != ''
+				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where a.in_basic_search = true)
 				";
 			$st = $db->prepare($sql);
 			$st->execute(array($item->id));
@@ -458,7 +464,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$composite_value_text = '';
 			$sql = "
 				SELECT value_text
-				FROM value
+				FROM {$prefix}value
 				WHERE item_id = ?
 				";
 			$st = $db->prepare($sql);

@@ -6,17 +6,18 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 {
 	public static function getCount($collection_ascii_id='')
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
-			FROM value
+			FROM {$prefix}value v
 			";
 		if ($collection_ascii_id) {
 			$sql .= "
-				, item, collection
-				WHERE value.item_id = item.id
-				AND collection.id = item.collection_id
-				AND collection.ascii_id = ?
+				, {$prefix}item i, {$prefix}collection c
+				WHERE v.item_id = i.id
+				AND c.id = i.collection_id
+				AND c.ascii_id = ?
 				";
 			$sth = $db->prepare($sql);
 			$sth->execute(array($collection_ascii_id));

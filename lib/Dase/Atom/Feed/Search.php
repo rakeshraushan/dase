@@ -55,6 +55,16 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		}
 	}
 
+	/** for single collection searches only */
+	function getAttributesLink()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('http://daseproject.org/relation/collection/attributes' == $el->getAttribute('rel')) {
+				return $el->getAttribute('href');
+			}
+		}
+	}
+
 	function getSearchTallies()
 	{
 		//may want to adjust this to use atom related links

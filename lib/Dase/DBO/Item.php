@@ -41,16 +41,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function deleteSearchIndexes()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		$sql = "
 			DELETE
-			FROM search_table 
+			FROM {$prefix}search_table 
 			WHERE item_id = $this->id
 			";
 		$db->query($sql);
 		$sql = "
 			DELETE
-			FROM admin_search_table 
+			FROM {$prefix}admin_search_table 
 			WHERE item_id = $this->id
 			";
 		$db->query($sql);
@@ -58,30 +59,30 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function buildSearchIndex()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		//todo: make sure item->id is an integer
 		$sql = "
 			DELETE
-			FROM search_table 
+			FROM {$prefix}search_table 
 			WHERE item_id = $this->id
 			";
 		$db->query($sql);
 		$sql = "
 			DELETE
-			FROM admin_search_table 
+			FROM {$prefix}admin_search_table 
 			WHERE item_id = $this->id
 			";
 		$db->query($sql);
-
 		//search table
 		$composite_value_text = '';
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT value_text
-			FROM value
-			WHERE item_id = $this->id
-			AND value_text != ''
-			AND value.attribute_id in (SELECT id FROM attribute where in_basic_search = true)
+			FROM {$prefix}value v
+			WHERE v.item_id = $this->id
+			AND v.value_text != ''
+			AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where a.in_basic_search = true)
 			";
 		$st = $db->prepare($sql);
 		$st->execute();
@@ -107,7 +108,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$composite_value_text = '';
 		$sql = "
 			SELECT value_text
-			FROM value
+			FROM {$prefix}value
 			WHERE item_id = $this->id
 			";
 		$st = $db->prepare($sql);
@@ -169,11 +170,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getMetadata($att_ascii_id = '')
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
 			";
@@ -197,11 +199,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getEditFormJson()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
 			SELECT a.id as att_id,a.ascii_id,a.attribute_name,a.html_input_type,v.value_text
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
 			ORDER BY a.sort_order,v.value_text
@@ -233,9 +236,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getValue($att_ascii_id)
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT v.value_text
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
 			AND a.ascii_id = ?
@@ -319,11 +323,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getMediaCount()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$this->collection || $this->getCollection();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
-			FROM media_file
+			FROM {$prefix}media_file
 			WHERE p_serial_number = ?
 			AND p_collection_ascii_id = ?
 			";
@@ -433,9 +438,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getTitle()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT v.value_text 
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE a.id = v.attribute_id
 			AND a.ascii_id = 'title'
 			AND v.item_id = ? 
@@ -449,9 +455,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getDescription()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT v.value_text 
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE a.id = v.attribute_id
 			AND a.ascii_id = 'description'
 			AND v.item_id = ? 
@@ -465,9 +472,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getRights()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT v.value_text 
-			FROM attribute a, value v
+			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE a.id = v.attribute_id
 			AND a.ascii_id = 'rights'
 			AND v.item_id = ? 
@@ -754,6 +762,31 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return $tags;
 		} else {
 			return false;
+		}
+	}
+
+	public static function sortIdArray($sort,$item_ids)
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT v.value_text
+			FROM {$prefix}attribute a, {$prefix}value v
+			WHERE v.item_id = ?
+			AND v.attribute_id = a.id
+			AND a.ascii_id = ?
+			LIMIT 1
+			";
+		$sth = $db->prepare($sql);
+		foreach ($item_ids as $item_id) {
+			$sth->execute(array($item_id,$sort));
+			$vt = $sth->fetchColumn();
+			$value_text = $vt ? $vt : 99999999;
+			$sortable_array[$item_id] = $value_text;
+		}
+		if (is_array($sortable_array)) {
+			asort($sortable_array);
+			return array_keys($sortable_array);
 		}
 	}
 }

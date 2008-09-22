@@ -23,11 +23,13 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		return $tag;
 	}
 
-	function persist() {
+	function persist()
+   	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT c.ascii_id as collection_ascii_id,i.serial_number
-			FROM tag_item t, collection c, item i
+			FROM {$prefix}tag_item t, {$prefix}collection c, {$prefix}item i
 			WHERE i.id = t.item_id
 			AND i.collection_id = c.id
 			AND t.id = ? 

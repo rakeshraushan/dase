@@ -2,14 +2,40 @@
 
 {block name="title"}Item Set{/block}
 
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/search_sorting.js"></script>
+{/block}
+
 {block name="content"}
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	{if $items->count}
-	<h4 class="startSlideshow">
-		<a href="#" id="startSlideshow">view as slideshow</a>
-	</h4>
+	<div class="pageControls">
+		<h4 class="startSlideshow">
+			<a href="#" id="startSlideshow">view as slideshow</a>
+		</h4>
+		<!-- for sorting results -->
+		<div id="attributesForm"></div>
+	</div>
 	{/if}
+
+
+	<!-- javascript template for sort by attribute pull-down-->
+	<textarea class="javascript_template" id="attributes_jst">
+		{literal}
+		<form action="search" method="get">
+			<select name="att_ascii_id">
+				<option value="">select an attribute</option>
+				{for att in atts}
+				<option value="${att.ascii_id}">${att.attribute_name}</option>
+				{/for}
+			</select>
+			<input type='submit' value='sort results'/>
+		</form>
+		{/literal}
+	</textarea>
+	<!-- end javascript template -->
+
 	<div id="contentHeader">
 		<h3><a href="{$items->collection.href}">{$items->collection.title}</a></h3>
 		<!-- SEARCH FORM -->
@@ -74,4 +100,5 @@
 {/if}
 <!-- we just need a place to stash the current url so our refine code can parse it -->
 <div id="self_url" class="pagedata">{$items->searchLink|replace:'+':' '}</div>
+<div id="attributes_json_url" class="pagedata">{$items->attributesLink}<div>
 {/block}
