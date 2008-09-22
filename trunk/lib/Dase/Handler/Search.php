@@ -112,6 +112,7 @@ class Dase_Handler_Search extends Dase_Handler
 			$url = str_replace('search?','search/item?',$r->url);
 			$r->renderRedirect(APP_ROOT.'/'.$url);
 		}
+		$tpl->assign('sort',$r->get('sort'));
 		$tpl->assign('items',$feed);
 		$r->renderResponse($tpl->fetch('item_set/search.tpl'));
 	}
