@@ -55,9 +55,10 @@ class Dase_ModuleHandler_Eid extends Dase_Handler
 				exit;
 			}
 
+			$prefix = Dase_Config::get('table_prefix');
 			$db = Dase_DB::get();
 			$sql = "
-				SELECT * FROM dase_user 
+				SELECT * FROM {$prefix}dase_user 
 				WHERE lower(eid) = ?
 				";	
 			$sth = $db->prepare($sql);

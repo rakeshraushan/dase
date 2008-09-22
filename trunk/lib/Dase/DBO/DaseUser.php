@@ -149,11 +149,12 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getCartJson()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$item_array = array();
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT ti.id,t.id,ti.p_collection_ascii_id,ti.p_serial_number
-			FROM tag t, tag_item ti
+			FROM {$prefix}tag t, {$prefix}tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.type = 'cart' 
 			AND t.dase_user_id = ?

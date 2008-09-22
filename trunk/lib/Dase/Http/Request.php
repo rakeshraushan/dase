@@ -185,7 +185,9 @@ class Dase_Http_Request
 			$types = $types ? $types : self::$types;
 			$mime_match = $mimeparse->best_match($types,$_SERVER['HTTP_ACCEPT']);
 			if (in_array($mime_match,$types)) {
-				return array_search($mime_match,self::$types); //returns format
+				$format = array_search($mime_match,self::$types); //returns format
+				Dase_Log::debug('conneg returning '.$format);
+				return $format;
 			}
 		}
 		//default is html for get requests
@@ -394,8 +396,11 @@ class Dase_Http_Request
 
 	private function getDbUser($eid) {
 		$db = Dase_DB::get();
+		$user= new Dase_DBO_DaseUser;
+		$table = $user->getTable();
 		$sql = "
-			SELECT * FROM dase_user
+			SELECT * 
+			FROM $table 
 			WHERE lower(eid) = ?
 			";	
 		$sth = $db->prepare($sql);

@@ -20,11 +20,12 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getValueCount()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
 		$db = Dase_DB::get();
-		$st = $db->prepare('SELECT count(*) FROM value WHERE attribute_id = ?');
+		$st = $db->prepare("SELECT count(*) FROM {$prefix}value WHERE attribute_id = ?");
 		$st->execute(array($this->id));	
 		return $st->fetchColumn();
 	}
@@ -95,6 +96,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getDisplayValues($coll = null,$limit=2000,$filter_key='',$filter_value='')
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$admin_sql = '';
 		$filter_sql = '';
 		if (!$this->id) {
@@ -104,17 +106,17 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		//presence of collection_id says it is an admin att
 		//todo: make sure $coll is a-z or '_'
 		if ($coll) {
-			$admin_sql = "AND item_id IN (SELECT id FROM item WHERE collection_id IN (SELECT id FROM collection WHERE ascii_id = '$coll'))";
+			$admin_sql = "AND item_id IN (SELECT id FROM {$prefix}item WHERE collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id = '$coll'))";
 		}
 		if ($filter_key && $filter_value) {
-			$filter_sql = "AND item_id IN (SELECT item_id FROM value v,attribute a WHERE v.value_text='$filter_value' and a.ascii_id = '$filter_key' and v.attribute_id = a.id)";
+			$filter_sql = "AND item_id IN (SELECT item_id FROM {$prefix}value v,{$prefix}attribute a WHERE v.value_text='$filter_value' and a.ascii_id = '$filter_key' and v.attribute_id = a.id)";
 		}
 		if ($limit) {
 			$limit_sql = "LIMIT $limit";
 		}
 		$sql = "
 			SELECT value_text, count(value_text)
-			FROM value
+			FROM {$prefix}value
 			WHERE attribute_id = ?
 			$admin_sql
 			$filter_sql

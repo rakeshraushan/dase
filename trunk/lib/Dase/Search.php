@@ -313,7 +313,7 @@ class Dase_Search
 		//if not explicitly requested, non-public collections will be omitted
 		if (!count($search['colls']) && isset($search_table_sql)) {
 			//todo: make sure this boolean query is portable!!!
-			//$search_table_sql .= " AND collection_id IN (SELECT id FROM collection WHERE is_public = '1')";
+			//$search_table_sql .= " AND collection_id IN (SELECT id FROM {$prefix}collection WHERE is_public = '1')";
 		}
 		if (isset($search_table_sql) && count($value_table_search_sets)) {
 			$sql = 
@@ -378,6 +378,11 @@ class Dase_Search
 			$tallies[$ascii_id]['total'] = count($set);
 			$tallies[$ascii_id]['name'] = $collection_lookup[$coll_id]['collection_name'];
 			$item_ids = array_merge($item_ids,$set);
+		}
+		//note: sorting all happens here!!! (kind of aspect-ily)
+		if ($this->request->has('sort')) {
+			$sort = $this->request->get('sort');
+			$item_ids = Dase_DBO_Item::sortIdArray($sort,$item_ids);
 		}
 		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->search_array);
 	}

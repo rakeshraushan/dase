@@ -25,7 +25,7 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	public static function getTable()
+	public function getTable()
 	{
 		return $this->table;
 	}

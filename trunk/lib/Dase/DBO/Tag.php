@@ -17,18 +17,19 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function getByUser($user)
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		//$db = Dase_DB::get();
 		//union allows us to get tags that have no items
 		$sql = "
 			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) as count
-			FROM tag t , tag_item ti
+			FROM {$prefix}tag t , {$prefix}tag_item ti
 			WHERE t.id = ti.tag_id
 			AND t.dase_user_id = ?
 			GROUP BY t.id,t.ascii_id,t.name,t.type
 			UNION
 			SELECT t.id,t.ascii_id,t.name,t.type,0
-			FROM tag t 
-			WHERE NOT EXISTS(SELECT * FROM tag_item ti WHERE ti.tag_id = t.id)
+			FROM {$prefix}tag t 
+			WHERE NOT EXISTS(SELECT * FROM {$prefix}tag_item ti WHERE ti.tag_id = t.id)
 			AND t.dase_user_id = ?
 			";
 		//$sth = $db->prepare($sql);
@@ -98,10 +99,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getItemCount()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*)
-			FROM tag_item 
+			FROM {$prefix}tag_item 
 			where tag_id = ?
 			";
 		$st = $db->prepare($sql);
@@ -111,10 +113,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getTagItemIds()
 	{
+		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT id 
-			FROM tag_item 
+			FROM {$prefix}tag_item 
 			where tag_id = ?
 			ORDER BY sort_order
 			";

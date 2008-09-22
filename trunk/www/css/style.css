@@ -327,6 +327,11 @@ div.controlsContainer {
 
 /*****  ITEM SET DISPLAY PAGE **************/
 
+div.pageControls {
+	float: right;
+	text-align: right;
+}
+
 table#itemSet {
 	margin-bottom: 0;
 }
@@ -422,7 +427,6 @@ table#sorter td div.tiny {
 	margin-bottom: 2px;
 }
 
-
 #removeFromSet {
 	float:right;
 }
@@ -430,6 +434,10 @@ table#sorter td div.tiny {
 #removeFromSet:hover {
 	background-color: #e33;
 	color: #fff;
+}
+
+#attributesForm {
+	float: right;
 }
 
 /************ SLIDESHOW DISPLAY **************/
@@ -440,10 +448,6 @@ body.black {
 
 body.white {
 	background-color: white;
-}
-
-h4.startSlideshow {
-	float: right;
 }
 
 div#slideshowContainer {

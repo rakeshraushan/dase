@@ -326,7 +326,10 @@ class Dase_Handler_Collection extends Dase_Handler
 			AND a.is_public = true;
 		";
 		$st = Dase_DBO::query($sql,array($c->id));
-		$sql = "SELECT count(DISTINCT value_text) FROM value WHERE attribute_id = ?";
+		$sql = "
+			SELECT count(DISTINCT value_text) 
+			FROM {$prefix}value 
+			WHERE attribute_id = ?";
 		$db = Dase_DB::get();
 		$sth = $db->prepare($sql);
 		$tallies = array();
