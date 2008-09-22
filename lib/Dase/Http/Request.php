@@ -150,8 +150,7 @@ class Dase_Http_Request
 			$header = $_SERVER['HTTP_CONTENT_TYPE'];
 		}
 		if (isset($header)) {
-			$parser = new Mimeparse;
-			list($type,$subtype,$params) = $parser->parse_mime_type($header);
+			list($type,$subtype,$params) = Dase_Util::parse_mime_type($header);
 			if (isset($params['type'])) {
 				return $type.'/'.$subtype.';type='.$params['type'];
 			} else {
@@ -176,20 +175,6 @@ class Dase_Http_Request
 				return $this->get('format');
 			}
 		}	
-		//lastly, look at accept header (conneg)
-		//really, this should wait and the resource
-		//should offer format options (instead, as we do
-		//here, of just supplying a pre-defined set)
-		if (isset($_SERVER['HTTP_ACCEPT'])) {
-			$mimeparse = new Mimeparse;
-			$types = $types ? $types : self::$types;
-			$mime_match = $mimeparse->best_match($types,$_SERVER['HTTP_ACCEPT']);
-			if (in_array($mime_match,$types)) {
-				$format = array_search($mime_match,self::$types); //returns format
-				Dase_Log::debug('conneg returning '.$format);
-				return $format;
-			}
-		}
 		//default is html for get requests
 		if ('get' == $this->method) {
 			return 'html';

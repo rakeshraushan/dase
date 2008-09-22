@@ -44,6 +44,26 @@ Class Dase_Util
 		return preg_replace('/__*/','_',$str);
 	}
 
+	/** 
+	 * from php port of Mimeparse
+	 * Python code (http://code.google.com/p/mimeparse/)
+	 * @author Joe Gregario, Andrew "Venom" K.
+	 */
+	public static function parse_mime_type($mime_type)
+	{
+		$parts = split(";", $mime_type);
+		$params = array();
+		foreach ($parts as $i=>$param) {
+			if (strpos($param, '=') !== false) {
+				list ($k, $v) = explode('=', trim($param));
+				$params[$k] = $v;
+			}
+		}
+		list ($type, $subtype) = explode('/', $parts[0]);
+		if (!$subtype) throw new Exception("malformed mime type");
+		return array(trim($type), trim($subtype), $params);
+	}
+
 	public static function sortByTagName($b,$a)
 	{
 		if ($a['name'] == $b['name']) {

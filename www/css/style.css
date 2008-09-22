@@ -370,6 +370,10 @@ table#itemSet td h5.collection_name {
 	color: #669;
 	margin-bottom: 0;
 }
+table#itemSet td h5.sorted_by {
+	font-weight: normal;
+	color: #a66;
+}
 table#itemSet td img {
 	border: 1px solid #ccf;
 }
