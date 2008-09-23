@@ -38,7 +38,7 @@ class Dase_Handler_Login extends Dase_Handler
 		$username = strtolower($request->get('username'));
 		$pass = $request->get('password');
 		$superusers = Dase_Config::get('superuser');
-		if ($superusers[$username] == $pass) {
+		if (isset($superusers[$username]) && $superusers[$username] == $pass) {
 			Dase_Cookie::set($username);
 			Dase_DBO_DaseUser::init($username);
 			//do this so cookie is passed along
