@@ -75,6 +75,15 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	public function getLabel($att) 
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+			if ($att == $dd->localName) {
+				return $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
+			}
+		}
+	}
+
 	function getMedia() {
 		$media_array = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'content') as $el) {

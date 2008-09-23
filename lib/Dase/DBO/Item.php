@@ -767,7 +767,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public static function sortIdArray($sort,$item_ids)
 	{
-		$test_att = Dase_DBO_Attribute;
+		$test_att = new Dase_DBO_Attribute;
 		$test_att->ascii_id = $sort;
 		if (!$test_att->findOne()) {
 			return $item_ids;

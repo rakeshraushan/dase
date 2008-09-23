@@ -21,9 +21,9 @@
 		<h5>
 			{$it->title|truncate:80:"..."}
 		</h5>
-		{if $sort}
-		{assign var=stitle value=$it|select:"$sort"}
-		<h5 class="sorted_by">[{$stitle}]</h5>
+		{if "" != $sort}
+		{assign var=sort_attribute_value value=$it|select:"$sort"}
+		<h5 class="sorted_by">{$it|label:$sort}: {$sort_attribute_value}</h5>
 		{/if}
 		<h5 class="collection_name">{$it->collection}</h5>
 	</td>

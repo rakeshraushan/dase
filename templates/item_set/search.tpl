@@ -15,7 +15,7 @@
 			<a href="#" id="startSlideshow">view as slideshow</a>
 		</h4>
 		<!-- for sorting results -->
-		<div id="attributesForm"></div>
+		<div id="sortByAttFormDiv"></div>
 	</div>
 	{/if}
 
@@ -23,7 +23,7 @@
 	<!-- javascript template for sort by attribute pull-down-->
 	<textarea class="javascript_template" id="attributes_jst">
 		{literal}
-		<form action="search" method="get">
+		<form id="sortByAttForm" action="search" method="get">
 			<select name="att_ascii_id">
 				<option value="">select an attribute</option>
 				{for att in atts}
