@@ -380,7 +380,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
-			SELECT count(item.id) as count
+			SELECT count(id) as count
 			FROM {$prefix}item
 			where collection_id = ?
 			";
