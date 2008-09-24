@@ -1,22 +1,17 @@
 Dase.install = {};
 
-Dase.install.initCheckForm = function() {
-	var form = Dase.$('check_form');
-
-	Dase.$('repos_check_button').onclick = function() {
-		Dase.$('init_db').className = 'hide';
-		Dase.$('init_db_msg').innerHTML = '';
-		var content_headers = {
-			'Content-Type':'application/x-www-form-urlencoded'
+Dase.install.resetErrors = function() {
+	var spans = document.getElementsByTagName('span');
+	for (var i=0;i<spans.length;i++) {
+		if (spans[i].className == 'error') {
+			spans[i].innerHTML = '';
 		}
-		Dase.ajax(Dase.base_href+'modules/install/pathchecker','post',function(resp) { 
-			parts = resp.split('|');
-			Dase.$('path_to_media_msg').className = parts[0];
-			Dase.$('path_to_media_msg').innerHTML = parts[1];
-		},Dase.form.serialize(form),null,null,content_headers); 
-		return false;
-	};
+	}
+	Dase.$('local_config_txt').className = 'hide';
+};
 
+Dase.pageInit = function() {
+	var form = Dase.$('configForm');
 	//deal with database type and sqlite db path input
 	var type_select = form.db_type;
 	var db_path = Dase.$('db_path');
@@ -24,113 +19,43 @@ Dase.install.initCheckForm = function() {
 		db_path.className = 'hide';
 	}
 	form.db_type.onchange = function() {
-		Dase.$('db_msg').innerHTML = '';
-		Dase.$('init_db').className = 'hide';
 		if ('sqlite' != type_select.options[type_select.options.selectedIndex].value) {
 			db_path.className = 'hide';
 		} else {
 			db_path.className = '';
 		}
 	}
-	Dase.$('db_check_button').onclick = function() {
-		Dase.$('init_db').className = 'hide';
-		Dase.$('init_db_msg').innerHTML = '';
-		var content_headers = {
-			'Content-Type':'application/x-www-form-urlencoded'
-		}
-		Dase.ajax(Dase.base_href+'modules/install/dbchecker','post',function(resp) { 
-			parts = resp.split('|');
-			var db_msg = Dase.$('db_msg');
-			db_msg.innerHTML = parts[1];
-			if ('ok' == parts[0]) {
-				db_msg.className = 'msg_ok';
-			}
-			if ('no' == parts[0]) {
-				db_msg.className = 'msg_no';
-				Dase.$('init_db').className = 'hide';
-			}
-			if ('ready' == parts[0]) {
-				db_msg.className = 'msg_ready';
-				Dase.removeClass(Dase.$('init_db'),'hide');
-			}
-		},Dase.form.serialize(form),null,null,content_headers); 
-		return false;
-	};
-	Dase.$('save_settings_button').onclick = function() {
-		if ('' == Dase.util.trim(form.eid.value)) {
-			alert('please enter username');
+	Dase.$('config_check_button').onclick = function() {
+		var myform = Dase.$('configForm');
+		Dase.install.resetErrors();
+		data = Dase.form.serialize(myform);
+		if ('' == myform.eid.value) {
+			Dase.$('eid_msg').innerHTML = 'username is required';
 			return false;
 		}
-		if ('' == Dase.util.trim(form.password.value)) {
-			alert('please enter password');
+		if ('' == myform.password.value) {
+			Dase.$('password_msg').innerHTML = 'password is required';
 			return false;
 		}
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		Dase.ajax(Dase.base_href+'modules/install/savesettings','post',function(resp) { 
-			parts = resp.split('|');
-			var db_msg = Dase.$('init_db_msg');
-			db_msg.innerHTML = parts[1];
-			if ('ok' == parts[0]) {
-				db_msg.className = 'msg_ok';
-			}
-			if ('no' == parts[0]) {
-				db_msg.className = 'msg_no';
-				Dase.$('db_msg').innerHTML = '';
-			}
-			if ('display' == parts[0]) {
-				db_msg.className = 'msg_no';
-				Dase.$('local_config_txt').value = parts[2];
+		Dase.ajax(Dase.base_href+'modules/install/config_checker','post',function(resp) { 
+				json = JSON.parse(resp);
+				if (!json.path) {
+				Dase.$('path_to_media_msg').innerHTML = 'path must be writable by web server';
+				}
+				if (!json.db) {
+				Dase.$('db_msg').innerHTML = 'could not connect to db';
+				}
+				if (json.path && json.db && json.config) {
+				Dase.$('config_check_msg').innerHTML = 'success!';
+				Dase.$('local_config_msg').innerHTML = 'copy the following to '+json.local_config_path+':';
+				Dase.$('local_config_txt').value = json.config;
 				Dase.removeClass(Dase.$('local_config_txt'),'hide');
-				Dase.$('save_settings_button').value = 'confirm settings';
-			}
-			if ('ready' == parts[0]) {
-				db_msg.className = 'msg_ok';
-				Dase.removeClass(Dase.$('init_db_button'),'hide');
-				Dase.$('local_config_txt').className = 'hide';
-			}
-		},Dase.form.serialize(form),null,null,content_headers); 
-		return false;
-	};
-	Dase.$('init_db_button').onclick = function() {
-		var db_msg = Dase.$('init_db_msg');
-		db_msg.innerHTML = "initializing database";
-		var content_headers = {
-			'Content-Type':'application/x-www-form-urlencoded'
-		}
-		Dase.ajax(Dase.base_href+'modules/install/dbinit','post',function(resp) { 
-			parts = resp.split('|');
-			switch (parts[0]) {
-				case 'ok':
-				db_msg.innerHTML = parts[1];
-				Dase.$('save_settings_button').className = 'hide';
-				Dase.$('init_db_button').className = 'hide';
-				db_msg.className = 'msg_ok';
-				Dase.$('db_msg').innerHTML = '';
-				Dase.removeClass(Dase.$('setup_db_button'),'hide');
-				break;
-				case 'no': 
-				db_msg.innerHTML = parts[1];
-				db_msg.className = 'msg_no';
-				Dase.$('db_msg').innerHTML = '';
-				break;
-				case 'nowrite':
-				db_msg.innerHTML = parts[1];
-				db_msg.className = 'msg_no';
-				Dase.$('local_config_txt').value = parts[2];
-				break;
-				default:
-				alert(parts[0]);
-				db_msg.innerHTML = 'sorry, there was an error';
-
-			}
-		},Dase.form.serialize(form),null,null,content_headers); 
+				}
+				return;
+		},data,null,null,content_headers); 
 		return false;
 	};
 };
-
-Dase.pageInit = function() {
-	Dase.install.initCheckForm();
-}
-
