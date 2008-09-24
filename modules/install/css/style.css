@@ -35,13 +35,25 @@ div.content {
 	padding: 15px;
 }
 
+table#formTable {
+}
+
+table#formTable th {
+	border: 1px solid #ccc;
+	padding: 4px;
+	text-align: right
+}
+
+table#formTable td {
+	border: 1px solid #ccc;
+	padding: 4px;
+}
+
 form input {
 	margin-bottom: .5em;
 }
 
 label {
-	float: left;
-	max-width: 150px;
 	color: #999;
 	font-size: .9em;
 	font-weight: bold;

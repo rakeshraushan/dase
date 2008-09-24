@@ -15,7 +15,7 @@
 			</div>
 			<div class="content">
 				<form id="check_form" action="dbchecker" method="post">
-					<table>
+					<table id="formTable">
 						<tr>
 							<th>
 								<label for="main_title">DASe Archive Title</label>
@@ -110,7 +110,7 @@
 								<input type="text" name="db_pass" value="{$conf.db.pass}"/>
 							</td>
 						</tr>
-						<tr>
+						<tr id="db_path">
 							<th>
 								<label for="db_name">Database Path (SQLite only)</label>
 							</th>
