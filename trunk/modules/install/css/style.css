@@ -40,14 +40,14 @@ table#formTable {
 
 table#formTable th {
 	border: 1px solid #ccc;
-	padding: 4px;
+	padding: 6px;
 	text-align: right;
 	width: 200px;
 }
 
 table#formTable td {
 	border: 1px solid #ccc;
-	padding: 4px;
+	padding: 6px;
 	width: 600px;
 }
 
@@ -56,8 +56,8 @@ form input {
 }
 
 label {
-	color: #999;
-	font-size: .9em;
+	color: #666;
+	font-size: .8em;
 	font-weight: bold;
 	margin-top: .5em;
 }
