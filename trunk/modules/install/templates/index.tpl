@@ -149,6 +149,7 @@
 								<input type="submit" id="save_settings_button" value="save settings"/>
 								<input type="submit" id="init_db_button" class="hide" value="initialize database"/>
 								<div id="init_db_msg"></div>
+								<input type="submit" id="setup_db_button" class="hide" value="create admin user and sample collection"/>
 								<textarea id="local_config_txt" class="hide" cols="80" rows="24" name="local_config"></textarea>
 							</td>
 						</tr>
