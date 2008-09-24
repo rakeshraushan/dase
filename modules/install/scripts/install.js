@@ -107,6 +107,8 @@ Dase.install.initCheckForm = function() {
 				Dase.$('save_settings_button').className = 'hide';
 				Dase.$('init_db_button').className = 'hide';
 				db_msg.className = 'msg_ok';
+				Dase.$('db_msg').innerHTML = '';
+				Dase.removeClass(Dase.$('setup_db_button'),'hide');
 				break;
 				case 'no': 
 				db_msg.innerHTML = parts[1];
