@@ -10,6 +10,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'dbchecker' => 'dbchecker',
 		'savesettings' => 'savesettings',
 		'dbinit' => 'dbinit',
+		'dbsetup' => 'dbsetup',
 		'pathchecker' => 'pathchecker',
 	);
 
@@ -178,8 +179,15 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
 		$db->exec($query);
-		//addresses problem w/ non-buffered query
-		$db = Dase_DB::getNew();
+		$count = count(Dase_DB::listTables());
+		Dase_Cache_File::expunge();
+		if ($count) {
+			$request->renderResponse("ok|Database has been initialized ($count tables created)");
+		}
+	}
+
+	public function postToDbsetup($request) 
+	{
 		$u = new Dase_DBO_DaseUser;
 		$u->eid = $request->get('eid');
 		$u->name = $request->get('eid');
