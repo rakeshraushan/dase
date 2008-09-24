@@ -15,20 +15,16 @@
 			</div>
 			<div class="content">
 				<form id="check_form" action="dbchecker" method="post">
-					<h1>Archive Information</h1>
-					<label for="main_title">Archive Title</label>
+					<label for="main_title">DASe Archive Title</label>
 					<input type="text" name="main_title" value="{$conf.main_title}"/>
-					<h1>Admin User Information</h1>
-					<label for="eid">Username</label>
+					<label for="eid">Admin Username</label>
 					<input type="text" name="eid" value="{$eid}"/>
-					<label for="password">Password</label>
+					<label for="password">Admin Password</label>
 					<input type="text" name="password" value="{$password}"/>
-					<h1>Media Repository Settings</h1>
 					<label for="path_to_media">Path to Media Directory (must be writable by web server)</label>
 					<input type="text" size="40" name="path_to_media" value="{$conf.path_to_media}"/>
 					<span id="path_to_media_msg"></span>
 					<input type="submit" id="repos_check_button" value="check directory permissions"/>
-					<h1>ImageMagick</h1>
 					<label for="convert_path">Path to ImageMagick "convert" Utility</label>
 					<input type="text" name="convert_path" value="{$convert_path}"/>
 					<h1>Database Settings</h1>
