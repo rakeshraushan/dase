@@ -95,7 +95,7 @@ Dase.install.initCheckForm = function() {
 	};
 	Dase.$('init_db_button').onclick = function() {
 		var db_msg = Dase.$('init_db_msg');
-		db_msg.innerHTML = "<blink>initializing database and importing test collection</blink>";
+		db_msg.innerHTML = "initializing database";
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}

@@ -178,11 +178,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		//the schema uses variable $table_prefix
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
-		$db->exec($query);
-		$count = count(Dase_DB::listTables());
-		Dase_Cache_File::expunge();
-		if ($count) {
-			$request->renderResponse("ok|Database has been initialized ($count tables created)");
+		if ($db->exec($query)) {
+			$request->renderResponse("ok|Database has been initialized");
+		} else {
+			$request->renderResponse("no|Sorry, there was an error");
 		}
 	}
 
