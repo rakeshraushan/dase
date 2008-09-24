@@ -7,7 +7,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'/' => 'info',
 		'index' => 'info',
 		'index/{msg}' => 'info',
-		'dbchecker' => 'dbchecker',
+		'config_checker' => 'config_checker',
 		'savesettings' => 'savesettings',
 		'dbinit' => 'dbinit',
 		'dbsetup' => 'dbsetup',
@@ -75,19 +75,17 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$request->renderRedirect();
 	}
 
-	public function postToPathchecker($request) 
+	public function postToConfigChecker($request) 
 	{
-		$resp = '';
+		$resp = array();
 		if (is_writeable($request->get('path_to_media'))) {
-			$resp = "msg_ready|This path is writeable|";
+			$resp['path'] = 1;
 		} else {
-			$resp = "msg_no|This path is NOT writeable|";
+			$resp['path'] = 0;
 		}
-		$request->renderResponse($resp);
-	}
 
-	public function postToDbchecker($request) 
-	{
+		$resp['db'] = 1;
+
 		$db = array();
 		$db['name'] = $request->get('db_name');
 		$db['path'] = $request->get('db_path');
@@ -103,71 +101,33 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		try {
 			$pdo = new PDO($dsn, $db['user'], $db['pass']);
 		} catch (PDOException $e) {
-			$request->renderResponse('no|connect failed: ' . $e->getMessage());
+			$resp['db'] = 0;
+			$resp['db_msg'] = $e->getMessage();
 		}
-		try {
-			$count = count(Dase_DB::listTables());
-			if ($count) {
-				$request->renderResponse("ok|Database connection was successful ($count tables exist)");
+		if ($resp['db'] && $resp['path']) {
+			$tpl = new Dase_Template($request,true);
+			$tpl->assign('main_title',$request->get('main_title'));
+			if ($request->get('table_prefix')) {
+				$tpl->assign('table_prefix',trim($request->get('table_prefix'),'_').'_');
 			}
-		} catch (PDOException $e) {
-			//if we are here, passed in settings worked, but Dase_Config settings (saved settings) did not
-		}
-		//since connection, not table count, is dependent on passed in settings
-		$request->renderResponse("ready|Database connection was successful.");
-	}
-
-	public function postToSavesettings($request) 
-	{
-		$db = array();
-		$db['name'] = $request->get('db_name');
-		$db['path'] = $request->get('db_path');
-		$db['type'] = $request->get('db_type');
-		$db['host'] = $request->get('db_host');
-		$db['user'] = $request->get('db_user');
-		$db['pass'] = $request->get('db_pass');
-		if ('sqlite' == $db['type']) {
-			$dsn = "sqlite:".$db['path'];
-		} else {
-			$dsn = $db['type'].':host='.$db['host'].';dbname='.$db['name'];
-		}
-		try {
-			$pdo = new PDO($dsn, $db['user'], $db['pass']);
-		} catch (PDOException $e) {
-			$request->renderResponse('no|connect failed: ' . $e->getMessage());
-		}
-		try {
-			$count = count(Dase_DB::listTables());
-			if ($count) {
-				$request->renderResponse("ok|Database is already initialized ($count tables exist)");
+			$tpl->assign('eid',$request->get('eid'));
+			$tpl->assign('password',$request->get('password'));
+			$tpl->assign('path_to_media',$request->get('path_to_media'));
+			$tpl->assign('convert_path',$request->get('convert_path'));
+			$tpl->assign('db',$db);
+			$tpl->assign('token',md5(time().'abc'));
+			$tpl->assign('ppd_token',md5(time().'def'));
+			$tpl->assign('service_token',md5(time().'ghi'));
+			$tpl->assign('db',$db);
+			$resp['config'] = $tpl->fetch('local_config.tpl');
+			if (!file_exists(DASE_PATH.'/inc/local_config.php')) {
+				$resp['local_config_path'] = DASE_PATH.'/inc/local_config.php';
+			} else {
+				//signal here that we are ready to continue
+				//$request->renderResponse('ready|Settings OK! Please initialize the database');
 			}
-		} catch (PDOException $e) {
-			//if we are here, passed in settings worked, but Dase_Config settings (saved settings) did not
 		}
-		//since connection, not table count, is dependent on passed in settings
-		$tpl = new Dase_Template($request,true);
-		$tpl->assign('main_title',$request->get('main_title'));
-		$tpl->assign('table_prefix',trim($request->get('table_prefix'),'_').'_');
-		$tpl->assign('eid',$request->get('eid'));
-		$tpl->assign('password',$request->get('password'));
-		$tpl->assign('path_to_media',$request->get('path_to_media'));
-		$tpl->assign('convert_path',$request->get('convert_path'));
-		$tpl->assign('db',$db);
-		$tpl->assign('token',md5(time().'abc'));
-		$tpl->assign('ppd_token',md5(time().'def'));
-		$tpl->assign('service_token',md5(time().'ghi'));
-		$tpl->assign('db',$db);
-		$config = $tpl->fetch('local_config.tpl');
-		$lc = DASE_PATH.'/inc/local_config.php';
-		if (!file_exists($lc)) {
-			$request->renderResponse(
-				'display|Save the following text as '.$lc.
-				', then click "confirm settings" button:|'.$config
-			);
-		} else {
-			$request->renderResponse('ready|Settings OK! Please initialize the database');
-		}
-		exit;
+		$request->renderResponse(Dase_Json::get($resp));
 	}
 
 	public function postToDbinit($request) 

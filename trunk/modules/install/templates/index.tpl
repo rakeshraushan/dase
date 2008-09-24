@@ -4,6 +4,7 @@
 		<base href="{$module_root}"/>
 		<title>DASe Installation & Configuration</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
+		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script> 
 		<script type="text/javascript" src="scripts/install.js"></script> 
@@ -14,7 +15,7 @@
 				DASe Installation & Configuration
 			</div>
 			<div class="content">
-				<form id="check_form" action="dbchecker" method="post">
+				<form id="configForm" action="set_config" method="post">
 					<table id="formTable">
 						<tr>
 							<th>
@@ -30,6 +31,7 @@
 							</th>
 							<td>
 								<input type="text" name="eid" value="{$eid}"/>
+								<span id="eid_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -38,6 +40,7 @@
 							</th>
 							<td>
 								<input type="text" name="password" value="{$password}"/>
+								<span id="password_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -46,8 +49,7 @@
 							</th>
 							<td>
 								<input type="text" size="40" name="path_to_media" value="{$conf.path_to_media}"/>
-								<span id="path_to_media_msg"></span>
-								<input type="submit" id="repos_check_button" value="check directory permissions"/>
+								<span id="path_to_media_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -56,6 +58,7 @@
 							</th>
 							<td>
 								<input type="text" name="convert_path" value="{$convert_path}"/>
+								<span id="convert_path_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -76,6 +79,7 @@
 									<option {if 'pgsql' == $conf.db.type}selected="selected"{/if} value="pgsql">PostgreSQL</option>
 									<option {if 'sqlite' == $conf.db.type}selected="selected"{/if} value="sqlite">SQLite</option>
 								</select>
+								<span id="db_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -84,6 +88,7 @@
 							</th>
 							<td>
 								<input type="text" name="db_host" value="{$conf.db.host}"/>
+								<span id="db_host_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -92,6 +97,7 @@
 							</th>
 							<td>
 								<input type="text" name="db_name" value="{$conf.db.name}"/>
+								<span id="db_name_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -100,6 +106,7 @@
 							</th>
 							<td>
 								<input type="text" name="db_user" value="{$conf.db.user}"/>
+								<span id="db_user_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
@@ -108,6 +115,7 @@
 							</th>
 							<td>
 								<input type="text" name="db_pass" value="{$conf.db.pass}"/>
+								<span id="db_pass_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr id="db_path">
@@ -115,33 +123,21 @@
 								<label for="db_path">Database Path (SQLite only)</label>
 							</th>
 							<td>
-								<input type="text" name="db_path" value="{$conf.db.path}"/>
+								<input type="text" size="40" name="db_path" value="{$conf.db.path}"/>
+								<span id="db_path_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
 							<th></th>
 							<td>
-								<input type="submit" id="db_check_button" value="check database settings"/>
-								<span id="db_msg"></span>
+								<input type="submit" name="config_check" id="config_check_button" value="check configuration settings"/>
+								<span id="config_check_msg" class="error"></span>
 							</td>
 						</tr>
 						<tr>
 							<th></th>
 							<td>
-								<input type="submit" id="save_settings_button" value="save settings"/>
-								<input type="submit" id="init_db_button" class="hide" value="initialize database"/>
-								<div id="init_db_msg"></div>
-							</td>
-						</tr>
-						<tr>
-							<th></th>
-							<td>
-								<input type="submit" id="setup_db_button" class="hide" value="create admin user and sample collection"/>
-							</td>
-						</tr>
-						<tr>
-							<th></th>
-							<td>
+								<span id="local_config_msg" class="error"></span>
 								<textarea id="local_config_txt" class="hide" cols="80" rows="28" name="local_config"></textarea>
 							</td>
 						</tr>

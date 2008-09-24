@@ -62,12 +62,13 @@ label {
 	margin-top: .5em;
 }
 
-.msg_ready {
+.success {
 	color: #0c0;
 }
-.msg_ok {
+.message {
 	color: #00c;
 }
-.msg_no {
+.error {
+	font-size: .9em;
 	color: #c00;
 }
