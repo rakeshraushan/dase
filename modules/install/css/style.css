@@ -41,7 +41,7 @@ table#formTable {
 table#formTable th {
 	border: 1px solid #ccc;
 	padding: 4px;
-	text-align: right
+	text-align: right;
 	width: 200px;
 }
 
