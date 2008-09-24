@@ -42,11 +42,13 @@ table#formTable th {
 	border: 1px solid #ccc;
 	padding: 4px;
 	text-align: right
+	width: 200px;
 }
 
 table#formTable td {
 	border: 1px solid #ccc;
 	padding: 4px;
+	width: 600px;
 }
 
 form input {
