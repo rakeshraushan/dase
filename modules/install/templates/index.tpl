@@ -80,7 +80,7 @@
 						</tr>
 						<tr>
 							<th>
-								<label for="db_name">Database Host</label>
+								<label for="db_host">Database Host</label>
 							</th>
 							<td>
 								<input type="text" name="db_host" value="{$conf.db.host}"/>
@@ -96,7 +96,7 @@
 						</tr>
 						<tr>
 							<th>
-								<label for="db_name">Database User</label>
+								<label for="db_user">Database User</label>
 							</th>
 							<td>
 								<input type="text" name="db_user" value="{$conf.db.user}"/>
@@ -104,7 +104,7 @@
 						</tr>
 						<tr>
 							<th>
-								<label for="db_name">Database Password</label>
+								<label for="db_pass">Database Password</label>
 							</th>
 							<td>
 								<input type="text" name="db_pass" value="{$conf.db.pass}"/>
@@ -112,7 +112,7 @@
 						</tr>
 						<tr id="db_path">
 							<th>
-								<label for="db_name">Database Path (SQLite only)</label>
+								<label for="db_path">Database Path (SQLite only)</label>
 							</th>
 							<td>
 								<input type="text" name="db_path" value="{$conf.db.path}"/>
