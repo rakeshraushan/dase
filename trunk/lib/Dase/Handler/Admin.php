@@ -3,7 +3,7 @@
 class Dase_Handler_Admin extends Dase_Handler
 {
 	public $resource_map = array(
-		'/' => 'index',
+		'/' => 'collection_form',
 		'attributes' => 'attributes',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
@@ -66,13 +66,6 @@ class Dase_Handler_Admin extends Dase_Handler
 		}
 		$tpl->assign('log',$log);
 		$r->renderResponse($tpl->fetch('admin/log.tpl'));
-	}
-
-
-	public function getIndex($r)
-	{
-		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('admin/layout.tpl'));
 	}
 
 	public function getCollections($r)
@@ -157,6 +150,8 @@ class Dase_Handler_Admin extends Dase_Handler
 				false === strpos($file->getPathname(),'Smarty') &&
 				false === strpos($file->getPathname(),'getid3') &&
 				false === strpos($file->getPathname(),'htaccess') &&
+				false === strpos($file->getPathname(),'svn') &&
+				'.' != array_shift(str_split($file->getFilename())) &&
 				$file->isFile()
 			) {
 				try {
@@ -200,6 +195,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getAttributes($r)
 	{
+		$atts = array();
 		$tpl = new Dase_Template($r);
 		$aa = new Dase_DBO_Attribute;
 		$aa->collection_id = 0;

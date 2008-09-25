@@ -8,10 +8,9 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'index' => 'info',
 		'index/{msg}' => 'info',
 		'config_checker' => 'config_checker',
-		'savesettings' => 'savesettings',
-		'dbinit' => 'dbinit',
-		'dbsetup' => 'dbsetup',
-		'pathchecker' => 'pathchecker',
+		'setup_tables' => 'setup_tables',
+		'create_admin' => 'create_admin',
+		'create_sample' => 'create_sample',
 	);
 
 	public function setup($request)
@@ -30,8 +29,21 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			echo $html;
 			exit;
 		}
+		if (!file_exists(DASE_PATH.'/inc/local_config.php')) {
+			//local_config.php is not setup
+			$this->db_set = 0;
+			return;
+		}
 		try {
-			//see if db is set and we have users
+			//try to connect
+			$db = Dase_DB::get();
+		} catch (PDOException $e) {
+			//local_config.php is not setup
+			$this->db_set = 0;
+			return;
+		}
+		try {
+			//see if we have users
 			$u = new Dase_DBO_DaseUser;
 			if ($u->findOne()) {
 				//if so, make sure user is logged in
@@ -42,10 +54,22 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				} else {
 					$request->renderError(401);
 				}
+			} else {
+				//if we are here, means local_config.php is OK, we need to setup tables and user
+				if ('info' == $request->resource) {
+					$this->getSetup($request);
+				}
 			}
 		} catch (Exception $e) {
 			$this->db_set = 0;
+			return;
 		}
+	}
+
+	public function getSetup($request) 
+	{
+		$tpl = new Dase_Template($request,true);
+		$request->renderResponse($tpl->fetch('setup.tpl'));
 	}
 
 	public function getInfo($request) 
@@ -83,8 +107,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		} else {
 			$resp['path'] = 0;
 		}
-
 		$resp['db'] = 1;
+		$resp['proceed'] = 0;
 
 		$db = array();
 		$db['name'] = $request->get('db_name');
@@ -119,42 +143,70 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$tpl->assign('ppd_token',md5(time().'def'));
 			$tpl->assign('service_token',md5(time().'ghi'));
 			$tpl->assign('db',$db);
-			$resp['config'] = $tpl->fetch('local_config.tpl');
 			if (!file_exists(DASE_PATH.'/inc/local_config.php')) {
 				$resp['local_config_path'] = DASE_PATH.'/inc/local_config.php';
+				$resp['config'] = $tpl->fetch('local_config.tpl');
 			} else {
-				//signal here that we are ready to continue
-				//$request->renderResponse('ready|Settings OK! Please initialize the database');
+				$resp['proceed'] = 1;
 			}
 		}
 		$request->renderResponse(Dase_Json::get($resp));
 	}
 
-	public function postToDbinit($request) 
+	public function postToSetupTables($request) 
 	{
-		$type = $request->get('db_type');
+		$count = count(Dase_DB::listTables());
+		if ($count) {
+			$resp['msg'] = "$count tables already exist.";
+			$resp['ok'] = 1;
+			$request->renderResponse(Dase_Json::get($resp));
+		}
+		$resp = array();
+		$dbconf = Dase_Config::get('db');
+		$type = $dbconf['type'];
 		//todo: i need an sqlite schema as well
 		$table_prefix = Dase_Config::get('table_prefix');
 		//the schema uses variable $table_prefix
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
-		if (false !== $db->exec($query)) {
-			$request->renderResponse("ok|Database has been initialized");
-		} else {
-			$request->renderResponse("no|Sorry, there was an error");
+		try {
+			$db->exec($query);
+			$resp['msg'] = "Database tables have been created.";
+			$resp['ok'] = 1;
+		} catch (PDOException $e) {
+			$resp['msg'] = "There was a problem creating database tables: ".$e->getMessage();
+		} catch (Exception $e) {
+			$resp['msg'] = "There was a problem creating database tables: ".$e->getMessage();
 		}
+		$request->renderResponse(Dase_Json::get($resp));
 	}
 
-	public function postToDbsetup($request) 
+	public function postToCreateAdmin($request) 
 	{
+		$resp = array();
+		$superusers = Dase_Config::get('superuser');
 		$u = new Dase_DBO_DaseUser;
-		$u->eid = $request->get('eid');
-		$u->name = $request->get('eid');
-		$u->insert();
-		$request->setUser($u);
-		$count = count(Dase_DB::listTables());
-		Dase_Cache_File::expunge();
+		$u->eid = array_shift(array_keys($superusers));
+		if ($u->findOne()) {
+			$resp['msg'] = "Admin user \"$u->eid\" already exists";
+			$resp['ok'] = 1;
+			$request->renderResponse(Dase_Json::get($resp));
+		}
+		$u->name = $u->eid;
+		if ($u->insert()) {
+			$resp['msg'] = "Admin user \"$u->eid\" created. (See local_config.php for password)";
+			$resp['ok'] = 1;
+		} else {
+			$resp['msg'] = "There was a problem creating admin user \"$u->eid\".";
+			$resp['ok'] = 0;
+		}
+		$request->renderResponse(Dase_Json::get($resp));
+	}
 
+	public function postToCreateSample($request)
+	{
+
+		$resp = array();
 		$url = "http://daseproject.org/collection/sample.atom";
 		$feed = Dase_Atom_Feed::retrieve($url);
 		$coll_ascii_id = $feed->getAsciiId();
@@ -167,9 +219,5 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$cm->insert();
 
 		$login_url = APP_ROOT.'/login/form';
-		if ($count) {
-			$request->renderResponse("ok|Database has been initialized ($count tables created) <a href=\"$login_url\">please login</a>");
-		}
-		$request->renderResponse("ok|Database has been initialized");
 	}
 }

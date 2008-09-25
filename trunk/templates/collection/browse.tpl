@@ -22,7 +22,7 @@
 			<input type="text" id="queryInput" name="q" size="30"/>
 			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}"/>
 			<!--
-			<select id="attributesSelect" class="hide"><!-- filled ajaxily --></select>
+			<select id="attributesSelect" class="hide"></select>
 			-->
 			<input type="submit" value="Search" class="button"/>
 		</div>
