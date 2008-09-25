@@ -56,7 +56,6 @@
 			<h1 class="alert">The optimal DASe experience requires Javascript!</h1>
 		</noscript>
 
-
 		<div id="logoffControl" class="login hide">
 			<a href="settings" class="edit" id="settings-link"><span id="userName"></span></a> 
 			|
@@ -68,9 +67,11 @@
 			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
+		{if $page_logo.src}
 		<div id="pageLogo">
 			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"/></a>
 		</div>
+		{/if}
 
 		<div id="header">
 			{$main_title}

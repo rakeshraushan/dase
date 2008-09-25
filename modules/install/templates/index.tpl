@@ -3,7 +3,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<base href="{$module_root}"/>
 		<title>DASe Installation & Configuration</title>
-		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
+		<link rel="stylesheet" type="text/css" href="{$module_root}css/style.css">
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script> 
@@ -15,7 +15,7 @@
 				DASe Installation & Configuration
 			</div>
 			<div class="content">
-				<form id="configForm" action="set_config" method="post">
+				<form id="configForm" action="config_checker" method="post">
 					<table id="formTable">
 						<tr>
 							<th>

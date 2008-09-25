@@ -12,14 +12,14 @@ class Dase_Handler_Collections extends Dase_Handler
 		"pk/{id}/{ddd}" => 'test',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
 	}
 
-	public function getTest($request) {
-		$user = $request->getUser();
+	public function getTest($r) {
+		$user = $r->getUser();
 		if ($user->isSuperuser()) {
-			$request->checkCache();
+			$r->checkCache();
 			print "hi $user->name";
 			exit;
 		} else {
@@ -27,36 +27,36 @@ class Dase_Handler_Collections extends Dase_Handler
 		}
 	}
 
-	public function postToCollections($request) 
+	public function postToCollections($r) 
 	{
-		$user = $request->getUser('http');
+		$user = $r->getUser('http');
 		if (!$user->isSuperuser()) {
-			$request->renderError(401,$user->eid.' is not permitted to create a collection');
+			$r->renderError(401,$user->eid.' is not permitted to create a collection');
 		}
-		$content_type = $request->getContentType();
+		$content_type = $r->getContentType();
 
 		if ('application/atom+xml;type=entry' == $content_type) {
-			$this->_newAtomCollection($request);
+			$this->_newAtomCollection($r);
 		} elseif ('application/json' == $content_type) {
-			$this->_newJsonCollection($request);
+			$this->_newJsonCollection($r);
 		} else {
-			$request->renderError(415,'cannot accept '.$content_type);
+			$r->renderError(415,'cannot accept '.$content_type);
 		}
 	}
 
-	private function _newAtomCollection($request)
+	private function _newAtomCollection($r)
 	{
 		$raw_input = file_get_contents("php://input");
-		$client_md5 = $request->getHeader('Content-MD5');
+		$client_md5 = $r->getHeader('Content-MD5');
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			//todo: fix this
-		//	$request->renderError(412,'md5 does not match');
+		//	$r->renderError(412,'md5 does not match');
 		}
 		$coll_entry = Dase_Atom_Entry::load($raw_input);
 		if ('collection' != $coll_entry->entrytype) {
-			$request->renderError(400,'must be a collection entry');
+			$r->renderError(400,'must be a collection entry');
 		}
-		$ascii_id = $coll_entry->create($request);
+		$ascii_id = $coll_entry->create($r);
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 		header("Location: ".APP_ROOT."/collection/".$ascii_id.'.atom');
@@ -64,46 +64,52 @@ class Dase_Handler_Collections extends Dase_Handler
 		exit;
 	}
 
-	private function _newJsonCollection($request)
+	private function _newJsonCollection($r)
 	{
-		$request->renderResponse('still working on JSON posts!');
+		$r->renderResponse('still working on JSON posts!');
 	}
 
-	public function getCollectionsJson($request) 
+	public function getCollectionsJson($r) 
 	{
-		$request->renderResponse(Dase_DBO_Collection::listAsJson());
+		$r->renderResponse(Dase_DBO_Collection::listAsJson());
 	}
 
-	public function getDataJson($request) 
+	public function getDataJson($r) 
 	{
-		$request->renderResponse(Dase_DBO_Collection::dataAsJson());
+		$r->renderResponse(Dase_DBO_Collection::dataAsJson());
 	}
 
-	public function getAclJson($request) 
+	public function getAclJson($r) 
 	{
-		$request->renderResponse(Dase_Json::get(Dase_Acl::generate()));
+		$r->renderResponse(Dase_Json::get(Dase_Acl::generate()));
 	}
 
-	public function getCollectionsAtom($request) 
+	public function getCollectionsAtom($r) 
 	{
-		if ($request->get('get_all')) {
+		if ($r->get('get_all')) {
 			$public_only = false;
 		} else {
 			$public_only = true;
 		}
-		$request->renderResponse(Dase_DBO_Collection::listAsAtom($public_only));
+		$r->renderResponse(Dase_DBO_Collection::listAsAtom($public_only));
 	}
 
-	public function getCollections($request) 
+	public function getCollections($r) 
 	{
-		$tpl = new Dase_Template($request);
+		$tpl = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/collections?format=atom');
+		//if no collections, redirect to archive admin screen
+		//will force login screen for non-superusers if no collections
+		$c = new Dase_DBO_Collection;
+		if (!$c->findCount() && $r->getUser()->isSuperuser()) {
+			$r->renderRedirect('admin');
+		}
 		$tpl->assign('collections',$feed);
 		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom'));
-		$request->renderResponse($tpl->fetch('collection/list.tpl'));
+		$r->renderResponse($tpl->fetch('collection/list.tpl'));
 	}
 
-	public function getItemTalliesJson($request) 
+	public function getItemTalliesJson($r) 
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
@@ -118,7 +124,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		foreach (Dase_DBO::query($sql)->fetchAll() as $row) {
 			$tallies[$row['ascii_id']] = $row['count'];
 		}
-		$request->renderResponse(Dase_Json::get($tallies),$request);
+		$r->renderResponse(Dase_Json::get($tallies),$r);
 	}
 }
 

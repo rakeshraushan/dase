@@ -44,6 +44,7 @@ html #maincontent {
 
 .list {
 	padding:10px 15px 15px 100px;
+	min-height: 8em;
 }
 
 .full {
