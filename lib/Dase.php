@@ -24,7 +24,6 @@ class Dase
 	public static function run()
 	{
 		$request = new Dase_Http_Request;
-		Dase_Log::start($request);
 		//http://www.jcinacio.com/2007/04/19/phps-__tostring-magic-method-not-so-magic-before-520/
 		Dase_Log::debug("\n-----------------\n".$request->__toString()."-----------------\n");
 		$classname = '';

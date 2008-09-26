@@ -2,38 +2,18 @@
 
 class Dase_Log 
 {
-	private static $logfile;
-	private static $log_level;
-	private static $request;
-	private static $started = 0;
+	private static $logfile = DASE_LOG;
+	private static $log_level = LOG_LEVEL;
 
-	public static function start($request)
+	/** allows destructor to work properly */
+	public static function start()
 	{
-		if (!self::$started) {
-			self::$request = $request; 
-			self::$logfile = DASE_LOG;
-			self::$log_level = LOG_LEVEL;
-		}
-	}
-
-	/** restart allows us to get request info 
-	 * (like http users) later in the cycle
-	 */
-	public static function restart($request)
-	{
-		self::$request = $request; 
 	}
 
 	private static function write($msg,$backtrace)
 	{
-		$user = self::$request->getUser('any');
-		if ($user) {
-			$eid = $user->eid;
-		} else {
-			$eid = '';
-		}
 		$date = date(DATE_W3C);
-		$msg = $date.'|user:'.$eid.'|pid:'.getmypid().':'.$msg."\n";
+		$msg = $date.'|pid:'.getmypid().':'.$msg."\n";
 		if(file_exists(self::$logfile)) {
 			@file_put_contents(self::$logfile,$msg,FILE_APPEND);
 		}
