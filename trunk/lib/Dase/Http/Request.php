@@ -55,6 +55,9 @@ class Dase_Http_Request
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
+		if (isset($_SERVER['HTTP_USER_AGENT'])) {
+			$string .= "[http_user_agent] => ".$_SERVER['HTTP_USER_AGENT']."\n";
+		}
 		$string .= "[resource] => $this->resource\n";
 		if ($this->error_message) {
 			$string .= "[error message] => $this->error_message\n";
@@ -362,6 +365,13 @@ class Dase_Http_Request
 		case 'none':
 			//allows nothing to happen
 			return;
+		case 'any':
+			//gets any existing user (http OR cookie)
+			//but does not force login, fails silently
+			if ($this->user) {
+				return $this->user;
+			}
+			return;
 		default:
 			$eid = Dase_Cookie::getEid();
 		}
@@ -391,6 +401,8 @@ class Dase_Http_Request
 		$sth = $db->prepare($sql);
 		if ($sth->execute(array($eid))) {
 			$this->user = new Dase_DBO_DaseUser($sth->fetch());
+			//attach new user to log
+			Dase_Log::restart($this);
 			return $this->user;
 		} else {
 			return false;
