@@ -55,8 +55,12 @@ class Dase_Http_Request
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
+		$string .= "[pid] => ".getmypid()."\n";
 		if (isset($_SERVER['HTTP_USER_AGENT'])) {
 			$string .= "[http_user_agent] => ".$_SERVER['HTTP_USER_AGENT']."\n";
+		}
+		if (isset($_SERVER['REMOTE_ADDR'])) {
+			$string .= "[remote_addr] => ".$_SERVER['REMOTE_ADDR']."\n";
 		}
 		$string .= "[resource] => $this->resource\n";
 		if ($this->error_message) {
