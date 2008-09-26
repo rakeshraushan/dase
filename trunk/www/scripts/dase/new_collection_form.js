@@ -33,9 +33,13 @@ Dase.pageInit = function() {
 		var uOmn = padzero(Math.abs(utcf) - Math.floor(Math.abs(utcf) / 60) * 60);
 		var oFsg = (utcf < 0) ? '-' : '+';
 
-		var datestring = ypad+'-'+mpad+'-'+dpad+'T'+SHour+':'+SMins+':'+SSecs+oFsg+uOhr+':'+uOmn
-		//todo: needs work!!!!!!!!!!!!!:
+		var datestring = ypad+'-'+mpad+'-'+dpad+'T'+SHour+':'+SMins+':'+SSecs+oFsg+uOhr+':'+uOmn;
 		var ascii_id = form.collection_name.value.replace(/(collection|archive)/i,'').replace(/ /gi,"_").replace(/(__|_$)/g,'').toLowerCase();
+		//make sure ascii_id has only 'word' characters
+		if (ascii_id.search(/[\W]/) >= 0) {
+			alert(ascii_id+' includes illegal characters');
+			return false;
+		}
 		data.id = Dase.base_href+'collection/'+ascii_id; 
 		data.date = datestring
 		data.ascii_id = ascii_id; 
