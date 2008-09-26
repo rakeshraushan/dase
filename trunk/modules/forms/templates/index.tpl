@@ -22,11 +22,11 @@
 			<div class="content">
 				<dl>
 					<dt>Your Name:</dt>
-					<dd>{$user.name}</dt>
+					<dd>{$user.name}</dd>
 					<dt>Your EID:</dt>
-					<dd>{$user.eid}</dt>
+					<dd>{$user.eid}</dd>
 					<dt>Your Unit:</dt>
-					<dd>{$user.unit}</dt>
+					<dd>{$user.unit}</dd>
 				</dl>
 				<p>Phase One of the new Human Resource Management System (HRMS) will launch on November 3, 2008. HRMS will replace the current Recruitment and Position Manager (RPM) and serve as the future means by which you will create a new position, reclassify a position, or fill an existing position.</p>
 
@@ -36,37 +36,37 @@
 
 				<p>Please list below those individuals (including yourself) who should receive HRMS training for Phase One. You may want to include both staff members who create recruiting documents and those who approve them.</p>
 				<h1>Trainees</h1>
-				<table class="trainee">
-					<tr>
-						<th>
-							<label for="first_name">First Name</label>
-						</th>
-						<th>
-							<label for="last_name">Last Name</label>
-						</th>
-						<th>
-							<label for="email">Email</label>
-						</th>
-						<th>
-							<label for="eid">EID</label>
-						</th>
-						<th>
-							<label for="logon_id">Logon ID</label>
-						</th>
-						<th>
-							<label for="Electronic Office">Electronic Office</label>
-						</th>
-						<th>
-							<label for="Electronic Desk">Electronic Desk</label>
-						</th>
-						<th>
-						</th>
-					</tr>
-					<tr>
-						<form action="data" method="post">
-							<input type="hidden" name="submitter_name" value="{$user.name}"/>
-							<input type="hidden" name="submitter_eid" value="{$user.eid}"/>
-							<input type="hidden" name="submitter_dept" value="{$user.unit}"/>
+				<form action="data" method="post">
+					<input type="hidden" name="submitter_name" value="{$user.name}"/>
+					<input type="hidden" name="submitter_eid" value="{$user.eid}"/>
+					<input type="hidden" name="submitter_dept" value="{$user.unit}"/>
+					<table class="trainee">
+						<tr>
+							<th>
+								<label for="first_name">First Name</label>
+							</th>
+							<th>
+								<label for="last_name">Last Name</label>
+							</th>
+							<th>
+								<label for="email">Email</label>
+							</th>
+							<th>
+								<label for="eid">EID</label>
+							</th>
+							<th>
+								<label for="logon_id">Logon ID</label>
+							</th>
+							<th>
+								<label for="Electronic Office">Electronic Office</label>
+							</th>
+							<th>
+								<label for="Electronic Desk">Electronic Desk</label>
+							</th>
+							<th>
+							</th>
+						</tr>
+						<tr>
 							<td>
 								<input type="text" name="first_name" value=""/>
 							</td>
@@ -91,37 +91,37 @@
 							<td>
 								<input type="submit" value="add"/>
 							</td>
-						</form>
-					</tr>
-					{foreach item=it from=$feed->entries}
-					<tr>
-						<td>
-							{$it|select:'first_name'}
-						</td>
-						<td>
-							{$it|select:'last_name'}
-						</td>
-						<td>
-							{$it|select:'email'}
-						</td>
-						<td>
-							{$it|select:'eid'}
-						</td>
-						<td>
-							{$it|select:'logon_id'}
-						</td>
-						<td>
-							{$it|select:'eoffice'}
-						</td>
-						<td>
-							{$it|select:'edesk'}
-						</td>
-						<td>
-							<a href="{$module_root}data/{$it->serialNumber}" class="delete">delete</a>
-						</td>
-					</tr>
-					{/foreach}
-				</table>
+						</tr>
+						{foreach item=it from=$feed->entries}
+						<tr>
+							<td>
+								{$it|select:'first_name'}
+							</td>
+							<td>
+								{$it|select:'last_name'}
+							</td>
+							<td>
+								{$it|select:'email'}
+							</td>
+							<td>
+								{$it|select:'eid'}
+							</td>
+							<td>
+								{$it|select:'logon_id'}
+							</td>
+							<td>
+								{$it|select:'eoffice'}
+							</td>
+							<td>
+								{$it|select:'edesk'}
+							</td>
+							<td>
+								<a href="{$module_root}data/{$it->serialNumber}" class="delete">delete</a>
+							</td>
+						</tr>
+						{/foreach}
+					</table>
+				</form>
 				{if $admin_user}
 				<h3><a href="data">view all</a></h3>
 				{/if}
@@ -131,7 +131,7 @@
 			<img src="{$app_root}www/images/its.gif" title="LAITS" alt="LAITS" align="middle" height="33" width="79"><a href="http://www.laits.utexas.edu/its/" target="_blank">Liberal Arts ITS</a>
 			| <a href="mailto:dase@mail.laits.utexas.edu">email</a> 
 			|
-			 
+
 			<a href="http://daseproject.org"><img 11="" alt="DASe powered icon" title="DASe powered!" src="{$app_root}www/images/dasepowered.png" height="" width="71"></a>
 		</div>
 	</body>

@@ -36,8 +36,8 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
 		$tpl->assign('collection',$this->collection);
 		$cb = time();
-		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?c='.$this->collection->ascii_id.'&q=%&tstamp='.$cb));
-		$r->renderResponse($tpl->fetch('data.tpl'));
+		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?max=999999&c='.$this->collection->ascii_id.'&q=%&tstamp='.$cb));
+		$r->renderResponse($tpl->fetch('data.tpl'),false);
 
 	}
 
@@ -83,7 +83,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 			$tpl->assign('admin_user',1);
 		}
 		$cb = time();
-		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?'.$this->collection->ascii_id.'.submitter_eid='.$this->user->eid.'&tstamp='.$cb));
-		$r->renderResponse($tpl->fetch('index.tpl'));
+		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?max=999999&'.$this->collection->ascii_id.'.submitter_eid='.$this->user->eid.'&tstamp='.$cb));
+		$r->renderResponse($tpl->fetch('index.tpl'),false);
 	}
 }
