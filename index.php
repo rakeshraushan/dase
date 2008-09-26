@@ -57,5 +57,4 @@ function __autoload($class_name) {
 }
 
 Dase_Timer::start();
-Dase_Log::start();
 Dase::run();
