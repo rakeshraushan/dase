@@ -365,13 +365,6 @@ class Dase_Http_Request
 		case 'none':
 			//allows nothing to happen
 			return;
-		case 'any':
-			//gets any existing user (http OR cookie)
-			//but does not force login, fails silently
-			if ($this->user) {
-				return $this->user;
-			}
-			return;
 		default:
 			$eid = Dase_Cookie::getEid();
 		}
@@ -401,8 +394,6 @@ class Dase_Http_Request
 		$sth = $db->prepare($sql);
 		if ($sth->execute(array($eid))) {
 			$this->user = new Dase_DBO_DaseUser($sth->fetch());
-			//attach new user to log
-			Dase_Log::restart($this);
 			return $this->user;
 		} else {
 			return false;
