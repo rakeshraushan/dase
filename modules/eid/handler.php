@@ -91,7 +91,9 @@ class Dase_ModuleHandler_Eid extends Dase_Handler
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
 		Dase_Cookie::clear();
-		$request->renderRedirect('login/form');
+		//redirect messes up safari!!
+		//$request->renderRedirect('login/form');
+		$request->renderOk();
 	}
 
 }
