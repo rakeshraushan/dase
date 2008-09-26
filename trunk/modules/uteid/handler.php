@@ -1,5 +1,5 @@
 <?php
-class Dase_ModuleHandler_Eid extends Dase_Handler
+class Dase_ModuleHandler_Uteid extends Dase_Handler
 {
 	public $resource_map = array(
 		'/' => 'login',
