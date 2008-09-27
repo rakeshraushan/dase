@@ -59,7 +59,7 @@ class Dase_File_Video extends Dase_File
 	{
 		$collection = $item->getCollection();
 		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/quicktime.jpg');
+			copy(DASE_PATH . '/www/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -78,7 +78,7 @@ class Dase_File_Video extends Dase_File
 	{
 		$collection = $item->getCollection();
 		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/quicktime.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/quicktime.jpg');
+			copy(DASE_PATH . '/www/images/thumb_icons/quicktime.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/quicktime.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;

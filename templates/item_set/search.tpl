@@ -100,5 +100,5 @@
 {/if}
 <!-- we just need a place to stash the current url so our refine code can parse it -->
 <div id="self_url" class="pagedata">{$items->searchLink|replace:'+':' '}</div>
-<div id="attributes_json_url" class="pagedata">{$items->attributesLink}<div>
+<div id="attributes_json_url" class="pagedata">{$items->attributesLink}</div>
 {/block}
