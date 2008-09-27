@@ -91,10 +91,10 @@ class Dase_Handler_Collection extends Dase_Handler
 		$output = '';
 		$sql = "
 			SELECT serial_number 
-			FROM {$prefix}item
-			WHERE collection_id = ?
-			AND id IN
-			(SELECT value.item_id
+			FROM {$prefix}item i
+			WHERE i.collection_id = ?
+			AND i.id IN
+			(SELECT v.item_id
 			FROM {$prefix}value v, {$prefix}attribute a
 			WHERE v.attribute_id = a.id
 			AND a.ascii_id = 'admin_checksum'
