@@ -123,7 +123,7 @@
 					</table>
 				</form>
 				{if $admin_user}
-				<h3><a href="data">view all</a></h3>
+				<h3><a href="data">view all</a> | <a href="csv">view all as csv </a></h3>
 				{/if}
 			</div>
 		</div>
