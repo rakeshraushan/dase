@@ -278,17 +278,21 @@ class Dase_Atom_Feed extends Dase_Atom
 		$set = array();
 		$got_attributes = 0;
 		foreach ($this->getEntries() as $entry) {
+			$metadata = $entry->getMetadata();
+			//base attribute set on first entry
 			if (!$got_attributes) {
-				foreach ($entry->getMetadata() as $att_ascii => $keyval) {
+				foreach ($metadata as $att_ascii => $keyval) {
 					$atts[] = $att_ascii;
 				} 
 				$set[] = $atts;
 				$got_attributes = 1;
 			}
 			$item = array();
-			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
-				if (in_array($att_ascii,$atts)) {
-					$item[array_search($att_ascii,$atts)] = $keyval['values'][0];
+			foreach ($atts as  $att_ascii) {
+				if (isset($metadata[$att_ascii])) {
+					$item[$att_ascii] = $metadata[$att_ascii]['values'][0];
+				} else {
+					$item[$att_ascii] = '';
 				}
 			} 
 			$set[] = $item;
