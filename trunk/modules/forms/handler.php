@@ -6,6 +6,7 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		'/' => 'form',
 		'index' => 'form',
 		'data' => 'data',
+		'csv' => 'csv',
 		'data/{serial_number}' => 'data',
 	);
 
@@ -39,6 +40,28 @@ class Dase_ModuleHandler_Forms extends Dase_Handler {
 		$tpl->assign('feed',Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?max=999999&c='.$this->collection->ascii_id.'&q=%&tstamp='.$cb));
 		$r->renderResponse($tpl->fetch('data.tpl'),false);
 
+	}
+
+	public function getCsv($r) 
+	{
+		if (!$this->user->can('read',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',Utlookup::getRecord($this->user->eid));
+		$tpl->assign('collection',$this->collection);
+		$cb = time();
+		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/search.atom?max=999999&c='.$this->collection->ascii_id.'&q=%&tstamp='.$cb);
+		$csv = '';
+		foreach ($feed->asSimpleArray() as $row) {
+			foreach ($row as $cell) {
+				$cell = str_replace('"','\"',$cell);
+				$csv .= "\"$cell\",";
+			}
+			$csv .= "\n";
+		}
+		$r->response_mime_type = 'text/plain';
+		$r->renderResponse($csv);
 	}
 
 	public function postToData($r)
