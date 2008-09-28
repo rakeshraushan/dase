@@ -271,6 +271,28 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $this;
 	}
 
+	/** should allow for csv output */
+	public function asSimpleArray()
+	{
+		$atts = array();
+		$entries = array();
+		$got_attributes = 0;
+		foreach ($this->getEntries() as $entry) {
+			if (!$got_attributes) {
+				foreach ($entry->getMetadata() as $att_ascii => $keyval) {
+					$atts[] = $att_ascii;
+				} 
+				$entries[] = $atts;
+				$got_attributes = 1;
+			}
+			$item = array();
+			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
+				$item[array_search($att_ascii,$atts] = $keyval[0];
+			} 
+			$entries[] = $item;
+		}
+	}
+
 	public function sortBy($att) 
 	{
 		$entries_deep = array();
