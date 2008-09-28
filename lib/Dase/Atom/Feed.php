@@ -282,13 +282,13 @@ class Dase_Atom_Feed extends Dase_Atom
 				foreach ($entry->getMetadata() as $att_ascii => $keyval) {
 					$atts[] = $att_ascii;
 				} 
-				$entries[] = $atts;
+				$set[] = $atts;
 				$got_attributes = 1;
 			}
 			$item = array();
 			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
 				if (in_array($att_ascii,$atts)) {
-					$item[array_search($att_ascii,$atts)] = $keyval;
+					$item[array_search($att_ascii,$atts)] = $keyval['values'][0];
 				}
 			} 
 			$set[] = $item;
