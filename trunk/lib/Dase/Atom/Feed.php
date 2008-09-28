@@ -275,7 +275,7 @@ class Dase_Atom_Feed extends Dase_Atom
 	public function asSimpleArray()
 	{
 		$atts = array();
-		$entries = array();
+		$set = array();
 		$got_attributes = 0;
 		foreach ($this->getEntries() as $entry) {
 			if (!$got_attributes) {
@@ -291,8 +291,9 @@ class Dase_Atom_Feed extends Dase_Atom
 					$item[array_search($att_ascii,$atts)] = $keyval;
 				}
 			} 
-			$entries[] = $item;
+			$set[] = $item;
 		}
+		return $set;
 	}
 
 	public function sortBy($att) 
