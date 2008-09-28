@@ -288,7 +288,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$item = array();
 			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
 				if (in_array($att_ascii,$atts)) {
-					$item[array_search($att_ascii,$atts)] = $keyval[0];
+					$item[array_search($att_ascii,$atts)] = $keyval;
 				}
 			} 
 			$entries[] = $item;
