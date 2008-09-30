@@ -3,6 +3,8 @@
 = Atom Categories =
 
 *scheme:* http://daseproject.org/category/feedtype
+
+
 possible terms:
   * one
   * two 
