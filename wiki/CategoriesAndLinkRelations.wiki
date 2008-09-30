@@ -1,0 +1,16 @@
+# DASe Atom Categories and Link Relations
+
+= Atom Categories =
+
+*scheme:* http://daseproject.org/category/feedtype
+possible terms:
+  * one
+  * two 
+
+
+= Atom Link relations =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
