@@ -794,4 +794,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return array_keys($sortable_array);
 		}
 	}
+
+	/** expires any cache that might hold stale metadata */
+	public function expireCaches()
+	{
+		// attributes json (includes tallies)
+		$c = $this->getCollection();
+		$cache_id = "get|collection/".$c->ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
+		Dase_Cache::get($cache_id)->expire();
+	
+	}
 }

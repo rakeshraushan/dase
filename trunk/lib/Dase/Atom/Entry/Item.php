@@ -283,6 +283,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 			}
 		} 
+		$item->expireCaches();
 		$item->buildSearchIndex();
 		return $item;
 	}
