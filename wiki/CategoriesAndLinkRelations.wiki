@@ -58,7 +58,11 @@ scheme prefix is: http://daseproject.org/category/
 
 ==Atom Link relations ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+prefix is: http://daseproject.org/relation/
+
+* media-collection
+* feed-link
+* search-item
+* tag 
+* collection
+* collection/attributes  
