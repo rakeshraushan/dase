@@ -4,17 +4,29 @@
 == Atom Categories ==
 
 http://daseproject.org/category/feedtype
-  * one
-  * two 
+  * collection
+  * search
+  * attributes
+
 http://daseproject.org/category/entrytype
   * one
   * two 
+
 http://daseproject.org/category/collection
   * collection_ascii_id | collection_name
 
-http://daseproject.org/category/feedtype
-  * one
-  * two 
+http://daseproject.org/category/item/serial_number
+  * serial_number
+
+http://daseproject.org/category/item/status
+  * public
+  * delete
+  * ??
+  * ??
+
+http://daseproject.org/category/item/type
+  * <the item type>
+
 http://daseproject.org/category/feedtype
   * one
   * two 
