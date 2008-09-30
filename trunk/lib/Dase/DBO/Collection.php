@@ -28,12 +28,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}
 
-	public function expunge()
+	public function expunge($messages = false)
 	{
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		foreach ($items->find() as $item) {
 			Dase_Log::info("item $this->ascii_id:$item->serial_number deleted");
+			if ($messages) {
+				print "item $this->ascii_id:$item->serial_number deleted\n";
+			}
 			$item->expunge();
 		}
 		$item_types = new Dase_DBO_ItemType;
@@ -44,7 +47,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $this->id;
 		foreach ($atts->find() as $a) {
-			Dase_Log::info("attribute $this->asci_id:$a->ascii_id deleted");
 			$a->delete();
 		}	
 		$cms = new Dase_DBO_CollectionManager;
@@ -54,6 +56,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		$this->delete();
 		Dase_Log::info("$this->ascii_id deleted");
+		if ($messages) {
+			print "$this->ascii_id collection deleted\n";
+		}
 	}
 
 	function getSerialNumbers()
