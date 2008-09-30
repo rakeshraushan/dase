@@ -35,12 +35,14 @@ class Dase_Handler_Collection extends Dase_Handler
 				$r->renderError(401);
 			}
 		}
+		/* todo: i guess anyone can read?
 		if ('atom' == $r->format) {
 			$this->user = $r->getUser('http');
 			if (!$this->user->can('read',$this->collection)) {
 			$r->renderError(401);
 			}
 		}
+		 */
 	}
 
 	public function getSerialNumbersTxt($r)
