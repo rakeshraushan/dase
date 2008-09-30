@@ -1,4 +1,4 @@
-#DASe Atom Categories and Link Relations
+#summary DASe Atom Categories and Link Relations
 
 = Atom Categories =
 
