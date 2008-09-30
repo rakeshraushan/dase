@@ -5,55 +5,20 @@
 
 scheme prefix is: http://daseproject.org/category/
 
-=== feedtype ===
-  * collection
-  * collection_list
-  * search
-  * item
-  * tag
-
-=== entrytype ===
-  * attribute
-  * collection
-  * item
-
-=== collection ===
-  * <collection_ascii_id> | <collection_name>
-
-=== collection/item_count ===
-  * <count of items in collection>
-
-=== item/serial_number ===
-  * <serial_number>
-
-=== item/status ===
-  * public
-  * delete
-  * draft
-=== item/type ===
-  * <the item type>
-
-=== place_in_set ===
-  * <place (int)>
-
-=== visibility ===
+  * feedtype (collection | collection_list | search | item | tag)
+  * entrytype (attribute | collection | item)
+  * collection  (<collection_ascii_id>)
+  * collection/item_count
+  * item/serial_number 
+  * item/status (public | draft | delete )
+  * item/type
+  * place_in_set
+  * visibility (public | private)
   * public
   * private
-
-=== number_in_set ===
-  * <place in set (sort order)>
-
-=== tag/background ===
-  * <color or hex code>
-
-=== tag/type ===
-  * set
-  * slideshow
-  * cart
-  * admin
-  
-=== tag_item_id ===
-  * <tag_item_id>
+  * tag/background (<color or hex code>)
+  * tag/type (set | slideshow | cart | admin)
+  * tag_item_id
 
 
 ==Atom Link relations ==
