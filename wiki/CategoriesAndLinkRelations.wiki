@@ -5,20 +5,22 @@
 
 scheme prefix is: http://daseproject.org/category/
 
-  * feedtype (collection | collection_list | search | item | tag)
-  * entrytype (attribute | collection | item)
   * collection  (<collection_ascii_id>)
   * collection/item_count
+  * entrytype (attribute | collection | item)
+  * feedtype (collection | collection_list | search | item | tag)
   * item/serial_number 
   * item/status (public | draft | delete )
   * item/type
   * place_in_set
-  * visibility (public | private)
-  * public
   * private
+  * public
   * tag/background (<color or hex code>)
-  * tag/type (set | slideshow | cart | admin)
   * tag_item_id
+  * tag/type (set | slideshow | cart | admin)
+  * visibility (public | private)
+
+
 
 
 ==Atom Link relations ==
