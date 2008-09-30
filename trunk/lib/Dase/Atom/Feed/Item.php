@@ -49,19 +49,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 			$media_array[] = $file;
 		}
 		return $media_array;
-		/*
-		foreach ($this->root->getElementsByTagName('link') as $el) {
-			if (strpos($el->getAttribute('rel'),'relation/media')) {
-				$file['href'] = $el->getAttribute('href');
-				$file['type'] = $el->getAttribute('type');
-				$file['width'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'width');
-				$file['height'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'height');
-				$file['label'] = $el->getAttribute('title');
-				$media_array[] = $file;
-			}
-		}
-		return $media_array;
-		 */
 	}
 
 	function getMetadata() {
