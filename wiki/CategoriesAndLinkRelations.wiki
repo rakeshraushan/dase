@@ -60,9 +60,9 @@ scheme prefix is: http://daseproject.org/category/
 
 prefix is: http://daseproject.org/relation/
 
-* media-collection
-* feed-link
-* search-item
-* tag 
-* collection
-* collection/attributes  
+  * media-collection
+  * feed-link
+  * search-item
+  * tag 
+  * collection
+  * collection/attributes  
