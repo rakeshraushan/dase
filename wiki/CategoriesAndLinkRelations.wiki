@@ -32,8 +32,8 @@ http://daseproject.org/category/item/status
 http://daseproject.org/category/item/type
   * <the item type>
 
-http://daseproject.org/category/number_in_set
-  * <number>
+http://daseproject.org/category/place_in_set
+  * <place (int)>
 
 http://daseproject.org/category/visibility
   * public
