@@ -13,7 +13,7 @@ http://daseproject.org/category/entrytype
   * two 
 
 http://daseproject.org/category/collection
-  * collection_ascii_id | collection_name
+  * <collection_ascii_id> | <collection_name>
 
 http://daseproject.org/category/item/serial_number
   * serial_number
