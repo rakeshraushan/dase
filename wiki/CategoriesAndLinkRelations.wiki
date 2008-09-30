@@ -6,12 +6,12 @@
 http://daseproject.org/category/feedtype
   * one
   * two 
-http://daseproject.org/category/feedtype
+http://daseproject.org/category/entrytype
   * one
   * two 
-http://daseproject.org/category/feedtype
-  * one
-  * two 
+http://daseproject.org/category/collection
+  * collection_ascii_id | collection_name
+
 http://daseproject.org/category/feedtype
   * one
   * two 
