@@ -326,7 +326,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$item->injectAtomEntryData($entry);
 				$setnum++;
 				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
-				$entry->addCategory($setnum,'http://daseproject.org/category/number_in_set');
+				$entry->addCategory($setnum,'http://daseproject.org/category/place_in_set');
 				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 			}
 		}
