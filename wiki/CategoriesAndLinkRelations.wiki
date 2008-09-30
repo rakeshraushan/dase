@@ -26,10 +26,11 @@ scheme prefix is: http://daseproject.org/category/
 ==Atom Link relations ==
 
 prefix is: http://daseproject.org/relation/
-
-  * media-collection
+  
+  * collection
+  * collection/attributes 
   * feed-link
+  * media-collection
   * search-item
   * tag 
-  * collection
-  * collection/attributes  
+ 
