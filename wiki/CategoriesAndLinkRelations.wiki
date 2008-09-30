@@ -1,7 +1,7 @@
 #summary DASe Atom Categories and Link Relations
 #labels Featured
 
-= Atom Categories =
+== Atom Categories ==
 
 *scheme:* http://daseproject.org/category/feedtype
 
@@ -11,7 +11,7 @@ possible terms:
   * two 
 
 
-= Atom Link relations =
+==Atom Link relations ==
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
