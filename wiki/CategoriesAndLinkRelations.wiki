@@ -3,10 +3,7 @@
 
 == Atom Categories ==
 
-*scheme:* http://daseproject.org/category/feedtype
-
-
-possible terms:
+http://daseproject.org/category/feedtype
   * one
   * two 
 
