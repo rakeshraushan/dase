@@ -12,9 +12,11 @@ class Dase_Http_Auth
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);
+			//Dase_Log::debug(substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12));
 
 			//for service users:
 			$service_users = Dase_Config::get('serviceuser');
+			//if eid is among service users, get password w/ service_token as salt
 			if (isset($service_users[$eid])) {
 				$passwords[] = md5(Dase_Config::get('service_token').$eid);
 			}
