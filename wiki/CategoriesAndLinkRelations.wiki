@@ -3,7 +3,7 @@
 
 == Atom Categories ==
 
-!http://daseproject.org/category/feedtype
+http://daseproject.org/category/feedtype!
   * collection
   * collection_list
   * search
