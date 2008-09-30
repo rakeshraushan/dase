@@ -48,6 +48,8 @@ http://daseproject.org/category/tag/background
 http://daseproject.org/category/tag/type
   * set
   * slideshow
+  * cart
+  * admin
   
 http://daseproject.org/category/tag_item_id
   * <tag_item_id>
