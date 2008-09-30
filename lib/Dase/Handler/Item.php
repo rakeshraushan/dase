@@ -318,6 +318,7 @@ class Dase_Handler_Item extends Dase_Handler
 			Dase_Log::debug('error',$e->getMessage());
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
+		$item->expireCaches();
 		$item->buildSearchIndex();
 		//the returned atom entry links to derivs!
 		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
