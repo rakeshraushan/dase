@@ -3,55 +3,56 @@
 
 == Atom Categories ==
 
-http://daseproject.org/category/feedtype
+scheme prefix is: http://daseproject.org/category/
+
+=== feedtype ===
   * collection
   * collection_list
   * search
   * item
   * tag
 
-http://daseproject.org/category/entrytype
+=== entrytype ===
   * attribute
   * collection
   * item
 
-http://daseproject.org/category/collection
+=== collection ===
   * <collection_ascii_id> | <collection_name>
 
-http://daseproject.org/category/collection/item_count
+=== collection/item_count ===
   * <count of items in collection>
 
-http://daseproject.org/category/item/serial_number
+=== item/serial_number ===
   * <serial_number>
 
-http://daseproject.org/category/item/status
+=== item/status ===
   * public
   * delete
   * draft
-
-http://daseproject.org/category/item/type
+=== item/type ===
   * <the item type>
 
-http://daseproject.org/category/place_in_set
+=== place_in_set ===
   * <place (int)>
 
-http://daseproject.org/category/visibility
+=== visibility ===
   * public
   * private
 
-http://daseproject.org/category/number_in_set
+=== number_in_set ===
   * <place in set (sort order)>
 
-http://daseproject.org/category/tag/background
+=== tag/background ===
   * <color or hex code>
 
-http://daseproject.org/category/tag/type
+=== tag/type ===
   * set
   * slideshow
   * cart
   * admin
   
-http://daseproject.org/category/tag_item_id
+=== tag_item_id ===
   * <tag_item_id>
 
 
