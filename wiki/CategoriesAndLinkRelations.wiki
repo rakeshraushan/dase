@@ -27,11 +27,10 @@ scheme prefix is: http://daseproject.org/category/
 
 prefix is: http://daseproject.org/relation/
   
-  * collection
-  * collection/attributes 
-  * feed-link
-  * media-collection
-  * search-item
-  * search-item-link
+  * collection (a link to the collection that this feed/entry applies to)
+  * collection/attributes
+  * feed-link (used to populate the "up" link on a search item)
+  * media-collection (each item "contains" a media collection)
+  * search-item 
   * tag 
  
