@@ -31,6 +31,6 @@ prefix is: http://daseproject.org/relation/
   * collection/attributes
   * feed-link (used to populate the "up" link on a search item)
   * media-collection (each item "contains" a media collection)
-  * search-item 
-  * tag 
+  * search-item (w/in a search result, appearing in an entry)
+  * tag ("up" link in tag set)
  
