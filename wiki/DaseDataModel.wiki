@@ -2,3 +2,8 @@
 #labels Featured
 
 http://daseproject.org/images/dase_er.001.jpg
+
+ * each DASe deployment (a.k.a. archive) is comprised of Collections
+ * each Collection contains Items and an Item can only be in one collection
+ * Items have Media Files associated with them and a Media File can only be associated with one Item.  Typical, multiple files will represent different representations of the same resource (e.g., a small, medium, and large version of an image)
+ * Items have metadata associated with them.  The metadata takes the form of key-value pairs.  (DASe uses the word "attribute" instead of "key").  
