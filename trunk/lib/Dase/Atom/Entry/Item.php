@@ -102,15 +102,12 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function selectMedia($size) 
 	{
-		//todo: fix this!!
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		//return $x->query("media:group/media:content/media:category[. = '$size']")
-		//	->item(0)->parentNode->getAttribute('url');
-		$nodes = $x->query("media:group/media:content/media:category[. = '$size']");
-		foreach ($nodes as $node) {
-			return $node->parentNode->getAttribute('url');
+		$elem =  $x->query("media:group/media:content/media:category[. = '$size']",$this->root)->item(0)->parentNode;
+		if ($elem) {
+			return $elem->getAttribute('url');
 		}
 	}
 
