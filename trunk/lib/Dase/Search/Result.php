@@ -167,7 +167,7 @@ class Dase_Search_Result
 			$item->item_type || $item->getItemType();
 			$entry = $feed->addEntry();
 			$item->injectAtomEntryData($entry);
-			$entry->addCategory($setnum,'http://daseproject.org/category/place_in_set');
+			$entry->addCategory($setnum,'http://daseproject.org/category/position');
 			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
 		return $feed->asXml();

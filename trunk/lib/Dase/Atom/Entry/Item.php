@@ -137,10 +137,10 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->_collection;
 	}
 
-	function getPlaceInSet()
+	function getPosition()
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/place_in_set' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/position' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
 		}

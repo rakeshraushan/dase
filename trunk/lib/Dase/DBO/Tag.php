@@ -172,10 +172,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if (!count($sort_array)) {
 			return;
 		}
-		foreach ($sort_array as $id => $place) {
+		foreach ($sort_array as $id => $position) {
 			$tag_item = new Dase_DBO_TagItem;
 			$tag_item->load($id);
-			$tag_item->sort_order = $place;
+			$tag_item->sort_order = $position;
 			$tag_item->update();
 		}
 		$sort_order = 0;
@@ -326,7 +326,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$item->injectAtomEntryData($entry);
 				$setnum++;
 				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
-				$entry->addCategory($setnum,'http://daseproject.org/category/place_in_set');
+				$entry->addCategory($setnum,'http://daseproject.org/category/position');
 				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 			}
 		}

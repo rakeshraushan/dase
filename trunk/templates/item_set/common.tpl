@@ -7,7 +7,7 @@
 	<td>
 		<div class="checkNum">
 			<input type="checkbox" name="item_unique[]" value="{$it->unique}"/>
-			<span class="placeInSet">{$it->placeInSet}.</span>
+			<span class="position">{$it->position}.</span>
 		</div>
 		<div class="cartAdd">
 			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$it->unique}">add to cart</a>

@@ -28,8 +28,8 @@
 				</td>
 			</tr>
 			{foreach key=j item=it from=$tag_feed->entries}
-			<tr id="row{$it->placeInSet}">
-				<td><input type="text" name="sort_item[{$it->tagItemId}]" class="{$it->placeInSet}" value="{$it->placeInSet}" size="2"/></td>
+			<tr id="row{$it->position}">
+				<td><input type="text" name="sort_item[{$it->tagItemId}]" class="{$it->position}" value="{$it->position}" size="2"/></td>
 				<td>
 					<a href="#" class="topper" id="sort_item[{$it->tagItemId}]"><div class="tiny">top</div><img src="www/images/tango-icons/go-up.png"/></a>
 				</td>
