@@ -1,3 +1,4 @@
 #summary Dase Data Model in a Nutshell
+#labels Featured
 
 http://daseproject.org/images/dase_er.001.jpg
