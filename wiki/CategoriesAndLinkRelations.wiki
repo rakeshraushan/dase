@@ -32,5 +32,6 @@ prefix is: http://daseproject.org/relation/
   * feed-link
   * media-collection
   * search-item
+  * search-item-link
   * tag 
  
