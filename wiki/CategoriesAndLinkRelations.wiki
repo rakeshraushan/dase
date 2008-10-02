@@ -12,7 +12,7 @@ scheme prefix is: http://daseproject.org/category/
   * item/serial_number 
   * item/status (public | draft | delete )
   * item/type
-  * place_in_set
+  * position
   * private
   * public
   * tag/background (<color or hex code>)
