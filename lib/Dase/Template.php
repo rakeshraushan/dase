@@ -34,6 +34,7 @@ class Dase_Template {
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
+		$this->smarty->register_function('detect_ie', '_smarty_function_detect_ie');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
 		$this->smarty->register_modifier('filter', '_smarty_dase_atom_feed_filter');
 		$this->smarty->register_modifier('sortby', '_smarty_dase_atom_feed_sortby');
@@ -180,3 +181,11 @@ function _smarty_swisdk_extends($params, &$smarty)
 	$ss->_derived = $params['file'];
 } 
 
+function _smarty_function_detect_ie($params, &$smarty)
+{
+	if (isset($_SERVER['HTTP_USER_AGENT']) && 
+		(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false))
+		$smarty->assign('ie', true);
+	else
+		$smarty->assign('ie', false);
+}
