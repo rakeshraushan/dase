@@ -10,4 +10,4 @@
   * (what about ingester -- service that accept an item and fetches enclosure)
 
 * <dase_url>/item/<collection_ascii_id>/<serial_number>/service
-  * includes atompub collection to post a media file to an item 
+  * includes atompub collection to post a media file to an item's media collection
