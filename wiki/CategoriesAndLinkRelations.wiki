@@ -7,22 +7,23 @@ scheme prefix is: http://daseproject.org/category/
 
   * collection  (<collection_ascii_id>)
   * collection/item_count
-  * collection/visibility (public | private)
+  * collection/visibility (public | private)*
 
   * entrytype (attribute | collection | item)
   * feedtype (collection | collection_list | search | item | tag)
 
   * item/serial_number (<serial_number>)
-  * item/status (public | draft | delete )
-  * item/type (<type_ascii_id>)
+  * item/status (public | draft | delete )*
+  * item/type (<type_ascii_id>)*
 
-  * tag/background (<color or hex code>)
-  * tag/type (set | slideshow | cart | admin)
-  * tag/visibility (public | private)
+  * tag/background (<color or hex code>)*
+  * tag/type (set | slideshow | cart | admin)*
+  * tag/visibility (public | private)*
 
   * tag_item/id (<integer>)
-  * tag_item/position (<integer>)
+  * tag_item/position (<integer>)*
 
+\* can be changed w/ AtomPub
 
 ==Atom Link relations ==
 
