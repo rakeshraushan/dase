@@ -23,7 +23,7 @@ scheme prefix is: http://daseproject.org/category/
   * tag_item/id (<integer>)
   * tag_item/position (<integer>)*
 
-\* can be changed w/ AtomPub
+* can be changed w/ !AtomPub
 
 ==Atom Link relations ==
 
