@@ -7,3 +7,4 @@
   * includes atompub collection to add/update an item
   * includes atompub collection to add/update a media resource (will create the item also, if necessary)
   * includes atompub collection to add/update an attribute
+  * (what about ingester -- service that accept an item and fetches enclosure)
