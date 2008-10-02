@@ -14,7 +14,7 @@ scheme prefix is: http://daseproject.org/category/
 
   * item/serial_number (<serial_number>)
   * item/status (public | draft | delete )
-  * item/type (<type_ascii_id>)*
+  * item/type (<type_ascii_id>) 
 
   * tag/background (<color or hex code>)
   * tag/type (set | slideshow | cart | admin)
