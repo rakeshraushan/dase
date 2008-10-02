@@ -1,4 +1,9 @@
 #a list of the atompub service document URLs in DASe.
 
 * <dase_url>/service
-  * create a new collection
+  * includes atompub collection to add/update a dase collection
+
+* <dase_url>/collection/<collection_ascii_id>/service
+  * includes atompub collection to add/update an item
+  * includes atompub collection to add/update a media resource (will create the item also, if necessary)
+  * includes atompub collection to add/update an attribute
