@@ -314,7 +314,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		} else {
 			$pub = "private";
 		}
-		$feed->addCategory($pub,"http://daseproject.org/category/visibility");
+		$feed->addCategory($pub,"http://daseproject.org/category/tag/visibility");
 		$feed->addCategory($this->background,"http://daseproject.org/category/tag/background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
@@ -325,7 +325,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$entry = $feed->addEntry();
 				$item->injectAtomEntryData($entry);
 				$setnum++;
-				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
+				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item/id');
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
 				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 			}
@@ -352,7 +352,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+		$entry->addCategory($pub,"http://daseproject.org/category/tag/visibility");
 		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
 		return $entry->asXml();
 	}

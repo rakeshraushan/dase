@@ -647,3 +647,9 @@ span.position {
 	text-decoration: blink;
 }
 
+.instruction {
+	font-style: italic;
+	margin-bottom: 0px;
+	font-size: .9em;
+}
+

@@ -149,7 +149,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getTagItemId()
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/tag_item_id' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/tag_item/id' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
 		}

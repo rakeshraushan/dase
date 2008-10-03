@@ -61,29 +61,29 @@
 		</noscript>
 
 
-		<div id="top">
-			<div id="logoffControl" class="login hide">
-				logged in as <span id="userName"></span> 
-				|
-				<a href="settings" class="edit" id="settings-link">settings</a>
-				|
-				<a href="help" class="edit">help</a>
-				|
-				<a href="logoff" class="edit" id="logoff-link">logout</a>
-				<div id="eid" class="pagedata"></div>
-			</div>
-
-			<div id="loginControl" class="login hide">
-				<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
-			</div>
-
-			<div id="wordmark">
-				<a href="http://www.utexas.edu"><img src="www/images/UTwordmark.jpg" alt="ut logo"/></a>
-			</div>
+		<div id="logoffControl" class="login hide">
+			logged in as <span id="userName"></span> 
+			|
+			<a href="settings" class="edit" id="settings-link">settings</a>
+			|
+			<a href="help" class="edit">help</a>
+			|
+			<a href="logoff" class="edit" id="logoff-link">logout</a>
+			<div id="eid" class="pagedata"></div>
 		</div>
 
+		<div id="loginControl" class="login hide">
+			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
+		</div>
+
+		{if $page_logo.src}
+		<div id="pageLogo">
+			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"/></a>
+		</div>
+		{/if}
+
 		<div id="header">
-			<!-- background image here-->	
+			{$main_title}
 		</div>
 
 		<div id="sidebar">

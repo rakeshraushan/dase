@@ -4,6 +4,7 @@
 <div id="contentHeader">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Attributes for {$collection->collection_name}</h1>
+	<h3 class="instruction">Click on attribute name to edit.</h3>
 	<!--
 	<h2>{$user->ppd}</h2>
 	-->

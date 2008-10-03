@@ -53,6 +53,11 @@ class Dase_Handler_Media extends Dase_Handler
 		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
+	public function getMediaFileMp3($r)
+	{
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
 	/** used for swap-out */
 	public function putMediaFile($r)
 	{
