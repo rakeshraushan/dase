@@ -262,7 +262,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			} else {
 				$pub = "private";
 			}
-			$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+			$entry->addCategory($pub,"http://daseproject.org/category/collection/visibility");
 		}
 		return $feed->asXML();
 	}
