@@ -20,7 +20,7 @@ scheme prefix is: http://daseproject.org/category/
   * tag/type (set | slideshow | cart | admin)
   * tag/visibility (owner | user | public)
 
-  * tag_item/id (<integer>)
+  * tag_item/id (<integer>) -- sorter uses this
   * tag_item/position (<integer>)
 
 tbd: split out read access and write access. 
