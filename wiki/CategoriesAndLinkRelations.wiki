@@ -7,7 +7,7 @@ scheme prefix is: http://daseproject.org/category/
 
   * collection  (<collection_ascii_id>)
   * collection/item_count
-  * collection/visibility (public | private)
+  * collection/visibility (manager | user | public)
 
   * entrytype (attribute | collection | item)
   * feedtype (collection | collection_list | search | item | tag)
@@ -18,7 +18,7 @@ scheme prefix is: http://daseproject.org/category/
 
   * tag/background (<color or hex code>)
   * tag/type (set | slideshow | cart | admin)
-  * tag/visibility (public | private)
+  * tag/visibility (owner | user | public)
 
   * tag_item/id (<integer>)
   * tag_item/position (<integer>)
