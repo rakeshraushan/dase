@@ -2,6 +2,7 @@
 #labels Featured
 
 == Atom Categories ==
+_atom categories are used for DASe-specific metadata_
 
 scheme prefix is: http://daseproject.org/category/
 
