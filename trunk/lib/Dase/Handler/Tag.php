@@ -130,8 +130,8 @@ class Dase_Handler_Tag extends Dase_Handler
 	public function postToTagSorter($r)
 	{
 		$u = $r->getUser();
-		if (!$u->can('read',$this->tag)) {
-			$r->renderError(401,$u->eid .' is not authorized to read this resource');
+		if (!$u->can('write',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to write this resource');
 		}
 		$sort_array = $r->get('set_sort_item',true);
 		$this->tag->sort($sort_array);

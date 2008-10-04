@@ -172,20 +172,22 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if (!count($sort_array)) {
 			return;
 		}
-		foreach ($sort_array as $id => $position) {
-			$tag_item = new Dase_DBO_TagItem;
-			$tag_item->load($id);
-			$tag_item->sort_order = $position;
+		//reconstitute set w/ original order
+		$orig_set = array();
+		foreach ($this->getTagItems() as $ti) {
+			$orig_set[] = clone $ti;
+		}
+
+		foreach ($sort_array as $old_position => $new_position) {
+			$tag_item = $orig_set[$old_position-1];
+			$tag_item->sort_order = $new_position;
 			$tag_item->update();
+			unset($orig_set[$old_position-1]); //remove from array
 		}
 		$sort_order = 0;
-		foreach ($this->getTagItems() as $ti) {
-			//always skip tag_items that were changed
-			if (in_array($ti->id,array_keys($sort_array))) {
-				continue;
-			}
+		foreach ($orig_set as $ti) {
 			$sort_order++;
-			//also skip sort_orders that were used in a change
+			//skip sort_orders that were used in a change
 			while (in_array($sort_order,$sort_array)) {
 				$sort_order++;
 			}
@@ -325,7 +327,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$entry = $feed->addEntry();
 				$item->injectAtomEntryData($entry);
 				$setnum++;
-				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item/id');
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
 				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 			}
