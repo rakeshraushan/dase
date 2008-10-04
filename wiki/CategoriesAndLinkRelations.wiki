@@ -23,6 +23,9 @@ scheme prefix is: http://daseproject.org/category/
   * tag_item/id (<integer>)
   * tag_item/position (<integer>)
 
+tbd: split out read access and write access. 
+figure out how tag visibility overrides collection visibility for items in tag.
+
 
 ==Atom Link relations ==
 
