@@ -13,7 +13,6 @@ scheme prefix is: http://daseproject.org/category/
   * entrytype (attribute | collection | item)
   * feedtype (collection | collection_list | search | item | tag)
 
-  * item/serial_number (<serial_number>)
   * item/status (public | draft | delete )
   * item/type (<type_ascii_id>) 
 
