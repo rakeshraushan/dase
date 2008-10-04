@@ -1,4 +1,6 @@
 Dase.pageInit = function() {
+	//javascript will change the 'name' attribute from
+	//sort_item to set_sort_item
 	form = Dase.$('sortForm');
 	if (!form) return;
 	inputs = document.getElementsByTagName('input');

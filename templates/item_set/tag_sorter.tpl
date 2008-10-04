@@ -29,10 +29,9 @@
 			</tr>
 			{foreach key=j item=it from=$tag_feed->entries}
 			<tr id="row{$it->position}">
-				<!-- note: need to use tag_item_id, since item serial_number may not be unique in set -->
-				<td><input type="text" name="sort_item[{$it->tagItemId}]" class="{$it->position}" value="{$it->position}" size="2"/></td>
+				<td><input type="text" name="sort_item[{$it->position}]" class="{$it->position}" value="{$it->position}" size="2"/></td>
 				<td>
-					<a href="#" class="topper" id="sort_item[{$it->tagItemId}]"><div class="tiny">top</div><img src="www/images/tango-icons/go-up.png"/></a>
+					<a href="#" class="topper" id="sort_item[{$it->position}]"><div class="tiny">top</div><img src="www/images/tango-icons/go-up.png"/></a>
 				</td>
 				<td class="sortImage">
 					<img alt="" src="{$it->thumbnailLink}"/>
