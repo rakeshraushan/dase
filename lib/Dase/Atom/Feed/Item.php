@@ -161,12 +161,9 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 	function getSerialNumber() 
 	{
 		if (!$this->serial_number) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item/serial_number' == $el->getAttribute('scheme')) {
-					$this->serial_number =  $el->getAttribute('term');
-					break;
-				}
-			}
+			//serial numbers are modelled the same way as 
+			//ascii ids (last segment of id)
+			$this->serial_number = $this->getAsciiId();
 		}
 		return $this->serial_number;
 	}
