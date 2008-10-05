@@ -1,8 +1,8 @@
 #summary The DASe URL-based search interface allows users to query an archive for items.  The search results can be returned as an Atom feed or a JSON serialization.
 
-// search syntax:
-query name is 'q'
-include phrases in quotes (' or ")
+=search syntax:=
+- query name is 'q'
+- include phrases in quotes (' or ")
 use '-' to omit a word or phrase
 for attribute searches, name is '<coll_ascii_id>~<attribute_ascii_id>'
 use tilde (as in example) for auto substring/phrase search
