@@ -343,7 +343,8 @@ Dase.initItemEditing = function(eid) {
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
-		//get jstemplates
+		//get jstemplates by making an ajax request
+		//see templates/item/jstemplates.tpl
 		Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
 			Dase.updateItemStatus();
@@ -1108,7 +1109,7 @@ Dase.initAddMetadata = function()
 
 Dase.initGetInputForm = function(form) {
 	coll = Dase.$('collectionAsciiId').innerHTML;
-	form.att_ascii_id.onchange = function() {
+	form.att_ascii_id.onchange = function() { //this is the attribute selector
 		var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
 		Dase.getJSON(url,function(resp) {
 			resp.coll_ser = Dase.$('collSer').innerHTML;
@@ -1128,10 +1129,9 @@ Dase.initGetInputForm = function(form) {
 					var templateObj = TrimPath.parseDOMTemplate('metadata_jst');
 					Dase.$('metadata').innerHTML = templateObj.process(data);
 				});
-			//},jQuery(this).serialize(),null,null,content_headers); 
 			},Dase.form.serialize(this),null,null,content_headers); 
-			//Dase.addClass(Dase.$('addMetadataFormTarget'),'hide');
 			Dase.$('addMetadataFormTarget').innerHTML = '';
+			form.att_ascii_id.selectedIndex = 0; //reset attribute selector
 			return false;
 		};
 	});
