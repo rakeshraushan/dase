@@ -1,0 +1,1 @@
+#summary The DASe URL-based search interface allows users to query an archive for items.  The search results can be returned as an Atom feed or a JSON serialization.
