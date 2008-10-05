@@ -26,6 +26,7 @@
 	<div id="tagEid" class="pagedata">{$items->eid}</div>
 	<div id="tagName" class="pagedata">{$items->name}</div>
 	<div id="tagAsciiId" class="pagedata">{$items->asciiId}</div>
+	<div id="tagType" class="pagedata">{$items->tagType}</div>
 	<div class="spacer"></div>
 </div>
 {/block}

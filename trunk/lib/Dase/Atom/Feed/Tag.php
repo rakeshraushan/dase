@@ -33,4 +33,13 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		return $this->getLink('http://daseproject.org/relation/tag');
 	}
 
+	function getTagType()
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/tag/type' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 }
