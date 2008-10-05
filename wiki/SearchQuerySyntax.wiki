@@ -16,14 +16,14 @@
   * Parentheses have not functional significance.
 
  
-exact match:
+==exact match:==
 test.title=farewell+to+arms 
          
-match substring:
+==match substring:==
 test~title=farewell+to+a
 
-match item_type:
+==match item_type:==
 type=test:picture 
  
-qualified search:
+==qualified search:==
 q=title:farewell+to+arms
