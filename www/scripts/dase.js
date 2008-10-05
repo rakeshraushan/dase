@@ -826,11 +826,11 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 };
 
 Dase.initAddToCart = function() {
-	var tag_type_data = Dase.$('tag_type');
+	var tag_type_data = Dase.$('tagType');
 	if (tag_type_data) {
 		var tag_type = tag_type_data.innerHTML;
 		//do not display 'add to cart' for user colls & slideshows
-		if ('slideshow' == tag_type || 'user_collection' == tag_type) {
+		if ('slideshow' == tag_type || 'set' == tag_type) {
 			Dase.initCart(); 
 			return;
 		}
