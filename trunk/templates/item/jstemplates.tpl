@@ -54,13 +54,15 @@
 	</form>
 </textarea>
 
-<textarea class="javascript_template" id="input_form_textarea_jst">
-	<form action="item/${coll_ser}/metadata" method="post">
+<pre class="javascript_template" id="input_form_textarea_jst">
+    <form action="item/${coll_ser}/metadata" method="post">
 		<input type="hidden" name="ascii_id" value="${ascii_id}"/>
-		<textarea name="value"></textarea>
+        <p>
+		   <textarea name="value"></textarea>
+        </p>
 		<input type="submit" value="add"/>
 	</form>
-</textarea>
+</pre>
 
 <textarea class="javascript_template" id="input_form_radio_jst">
 	<form action="item/${coll_ser}/metadata" method="post">
@@ -94,42 +96,46 @@
 	<form action="item/${coll_ser}/metadata" method="post">
 		<input type="hidden" name="ascii_id" value="${ascii_id}"/>
 		<p>
-		<select name="value"/>
+		<select name="value">
 			{for v in values }
 			<option value="${v}"/>${v}</option>
 			{/for}
-			</p>
-			<input type="submit" value="add"/>
-		</form>
-	</textarea>
+		</select>
+		</p>
+		<input type="submit" value="add"/>
+	</form>
+</textarea>
 
-	<textarea class="javascript_template" id="input_form_listbox_jst">
-		<form action="item/${coll_ser}/metadata" method="post">
-			<input type="hidden" name="${ascii_id}"/>
-			<textarea name="values"></textarea>
-			<input type="submit" value="add"/>
-		</form>
-	</textarea>
+<pre class="javascript_template" id="input_form_listbox_jst">
+	<form action="item/${coll_ser}/metadata" method="post">
+		<input type="hidden" name="${ascii_id}"/>
+        <p>
+		<textarea name="values"></textarea>
+        </p>
+		<input type="submit" value="add"/>
+	</form>
+</pre>
 
-	<textarea class="javascript_template" id="input_form_no_edit_jst">
-		<form action="item/${coll_ser}/metadata" method="post">
-			<input type="hidden" name="ascii_id" value="${ascii_id}"/>
-			<input type="text" disabled="disabled" name="value"/>
-			<input type="submit" value="add"/>
-		</form>
-	</textarea>
+<textarea class="javascript_template" id="input_form_no_edit_jst">
+	<form action="item/${coll_ser}/metadata" method="post">
+		<input type="hidden" name="ascii_id" value="${ascii_id}"/>
+		<input type="text" disabled="disabled" name="value"/>
+		<input type="submit" value="add"/>
+	</form>
+</textarea>
 
-	<textarea class="javascript_template" id="input_form_text_with_menu_jst">
-		<form action="item/${coll_ser}/metadata" method="post">
-			<input type="hidden" name="ascii_id" value="${ascii_id}"/>
-			<input type="text" name="value"/>
-			<input type="submit" value="add"/>
-			<p>
-			<select name="value"/>
-				{for v in values }
-				<option value="${v}"/>${v}</option>
-				{/for}
-				</p>
-			</form>
-		</textarea>
-		{/literal}
+<textarea class="javascript_template" id="input_form_text_with_menu_jst">
+	<form action="item/${coll_ser}/metadata" method="post">
+		<input type="hidden" name="ascii_id" value="${ascii_id}"/>
+		<input type="text" name="value"/>
+		<input type="submit" value="add"/>
+		<p>
+		<select name="value">
+			{for v in values }
+			<option value="${v}"/>${v}</option>
+			{/for}
+		</select>
+		</p>
+	</form>
+</textarea>
+{/literal}
