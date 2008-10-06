@@ -1,4 +1,5 @@
-#a list of the atompub service document URLs in DASe.
+#summary a list of the atompub service document URLs in DASe.
+#labels Featured
 
 * <dase_url>/service
   * includes atompub collection to add/update a dase collection
