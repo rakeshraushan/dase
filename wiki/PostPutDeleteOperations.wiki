@@ -1,4 +1,5 @@
 #summary Outlined here are all of the non-GET operations possible with DASe.
+#labels Featured
 
  * Collection.php: public function postToCollection($r) 
  * Collection.php: public function postToIngester($r) 
