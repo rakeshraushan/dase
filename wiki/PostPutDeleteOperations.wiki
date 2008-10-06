@@ -19,3 +19,15 @@
  * Tag.php:        public function postToTag($r) 
  * Tags.php:       public function postToTags($r)
  * User.php:       public function postToCart($r)
+
+ * Item.php:       public function putStatus($r)
+ * Item.php:       public function putItem($r)
+ * Manage.php:     public function putAttributeDefinedValues($r)
+ * Media.php:      public function putMediaFile($r)
+
+ * Collection.php: public function deleteCollection($r)
+ * Item.php:       public function deleteItem($r)
+ * Item.php:       public function deleteNote($r)
+ * Login.php:      public function deleteLogin($r)
+ * Tag.php:        public function deleteTagItems($r) 
+ * User.php:       public function deleteTagItem($r)
