@@ -8,6 +8,9 @@
 	<h4 class="startSlideshow">
 		<a href="#" id="startSlideshow">view as slideshow</a> |
 		<a href="tag/{$items->eid}/{$items->asciiId}/sorter">slide sorter</a>
+		{if $bulkedit}
+		| <a href="tag/{$items->eid}/{$items->asciiId}/bulk editor">bulk editor</a>
+		{/if}
 	</h4>
 	<h2>{$items->title} ({$items->count} items)</h2>
 	<h3>{$items->subtitle}</h3>

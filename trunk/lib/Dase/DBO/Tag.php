@@ -357,4 +357,26 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
 		return $entry->asXml();
 	}
+
+	public function isBulkEditable($user)
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT p_collection_ascii_id 
+			FROM {$prefix}tag_item 
+			where tag_id = ?
+			GROUP BY p_collection_ascii_id
+			";
+		$st = $db->prepare($sql);
+		$st->execute(array($this->id));
+		$colls = $st->fetchAll();
+		if (1 === count($colls)) {
+			$c = Dase_DBO_Collection::get($colls[0]['p_collection_ascii_id']);
+			if ($c && $user->can('write',$c)) {
+				return true;
+			}
+		}
+		return  false;
+	}
 }
