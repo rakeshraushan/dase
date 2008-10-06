@@ -111,6 +111,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('feed_url',$feed_url);
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		if ($u->can('admin',$this->tag)) {
+			$t->assign('bulkedit',1);
+		}
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

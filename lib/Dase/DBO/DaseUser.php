@@ -251,15 +251,23 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		if ('read' == $auth_level && $tag->is_public) {
 			return true;
 		} 
-		if ($tag->dase_user_id == $this->id) {
+		if ('write' == $auth_level && $tag->dase_user_id == $this->id) {
 			return true;
-		} else {
-			return false;
-		}	
+		} 
+		//in the case of tag, admin means tag includes items from one collection only
+		//and the user has write privileges for that collection
+		if ('admin' == $auth_level && 
+			$tag->dase_user_id == $this->id &&
+			$tag->isBulkEditable($this)
+		) {
+			return true;
+		} 
+		return false;
 	}
 
 	function can($auth_level,$entity)
 	{
+		//possible auth_levels: read, write, admin (other...?)
 		$class = get_class($entity);
 		switch ($class) {
 		case 'Dase_DBO_Attribute':
