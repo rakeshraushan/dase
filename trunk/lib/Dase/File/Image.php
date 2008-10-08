@@ -18,8 +18,7 @@ class Dase_File_Image extends Dase_File
 		if ('image/tiff' == $this->mime_type ){
 			$image = new Imagick($this->filepath);
 			if ($image->getNumberImages() > 1) {
-				Dase::error(400,"appears to be a multi-layered tiff");
-				//throw new Exception("Error: ".$title." appears to be a multi-layered tiff\n");
+				throw new Exception("Error: ".$title." appears to be a multi-layered tiff");
 			}
 		}
 		$this->getMetadata();

@@ -12,10 +12,10 @@ class Dase_Handler_Content extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}/values' => 'attribute_values',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
-		if ($request->has('collection_ascii_id')) {
-			$this->collection = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		if ($r->has('collection_ascii_id')) {
+			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		}
 	}
 

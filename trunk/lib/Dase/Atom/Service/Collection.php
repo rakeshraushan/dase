@@ -11,8 +11,11 @@ class Dase_Atom_Service_Collection extends Dase_Atom_Service
 		$this->dom = $dom;
 	}
 
-	public function addAccept($mime) {
-		$this->addElement('accept',$mime);
+	public function addAccept($mime,$multipart = false) {
+		$elem = $this->addElement('accept',$mime);
+		if ($multipart) {
+			$elem->setAttribute('alternate','multipart-related');
+		}
 		return $this;
 	}
 

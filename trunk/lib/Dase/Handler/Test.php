@@ -6,13 +6,13 @@ class Dase_Handler_Test extends Dase_Handler
 		'/' => 'test'
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
 	}
 
-	public function first($request)
+	public function first($r)
 	{
-		$t = new Dase_Template($request);
+		$t = new Dase_Template($r);
 		$test = new Dase_Test;
 		$c = new Dase_Cache_File('test');
 		$c->expire();
@@ -22,15 +22,15 @@ class Dase_Handler_Test extends Dase_Handler
 		$test->assertTrue(file_exists(CACHE_DIR.md5('test')),'yes cache file');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		$request->renderResponse($t->fetch('test/index.tpl'));
+		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 
-	public function search($request)
+	public function search($r)
 	{
 		$url = '';
 		$qs = urlencode('q=dd -ddd kl or opl  ff -g&c=vrc&c=test&c=fine');
 
-		$t = new Dase_Template($request);
+		$t = new Dase_Template($r);
 		$search = Dase_Search::get($url,$qs);
 		$sql = $search->createSql();
 		$placeholder_count = preg_match_all('/\?/',$sql,$matches);
@@ -39,16 +39,16 @@ class Dase_Handler_Test extends Dase_Handler
 		$test->assertTrue($placeholder_count == $param_count,'placeholder count eq params count');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		$request->renderResponse($t->fetch('test/index.tpl'));
+		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 
-	public function fail($request)
+	public function fail($r)
 	{
-		$t = new Dase_Template($request);
+		$t = new Dase_Template($r);
 		$test = new Dase_Test;
 		$test->assertTrue(false,'fail');
 		$t->assign('test',$test);
 		$t->assign('tests',get_class_methods('TestHandler'));
-		$request->renderResponse($t->fetch('test/index.tpl'));
+		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 }

@@ -532,7 +532,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$media_repos = APP_ROOT.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Config::get('media_types') as $type) {
-			$media_coll->addAccept($type);
+			$media_coll->addAccept($type,true);
 		}
 		$attributes_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/attributes.atom';
 		$ws->addCollection($attributes_repos,$this->collection_name.' Attributes')
