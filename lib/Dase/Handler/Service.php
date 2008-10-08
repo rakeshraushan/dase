@@ -6,16 +6,16 @@ class Dase_Handler_Service extends Dase_Handler
 		'/' => 'service',
 	);
 
-	public function setup($request)
+	public function setup($r)
 	{
 	}
 
-	public function getServiceTxt($request)
+	public function getServiceTxt($r)
 	{
-		$this->getService($request);
+		$this->getService($r);
 	}
 
-	public function getService($request)
+	public function getService($r)
 	{
 		$svc = new Dase_Atom_Service;	
 		$meta_workspace = $svc->addWorkspace('DASe MetaCollections Workspace');
@@ -24,8 +24,8 @@ class Dase_Handler_Service extends Dase_Handler
 		$meta_cats = $meta_coll->addCategorySet();
 		$meta_cats->addCategory('collection','http://daseproject.com/category/entrytype');
 
-		$request->response_mime_type = 'application/atomsvc+xml';
-		$request->renderResponse($svc->asXml());
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($svc->asXml());
 	}
 }
 

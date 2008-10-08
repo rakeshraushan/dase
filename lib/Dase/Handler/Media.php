@@ -113,7 +113,7 @@ class Dase_Handler_Media extends Dase_Handler
 		try {
 			$file = Dase_File::newFile($new_file,$type);
 			//since we are swapping in:
-			$item->deleteAdminvalues();
+			$item->deleteAdminValues();
 			//note: this deletes ALL media!!!
 			$item->deleteMedia();
 			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
