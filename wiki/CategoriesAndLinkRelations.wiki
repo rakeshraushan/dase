@@ -19,6 +19,7 @@ scheme prefix is: http://daseproject.org/category/
   * tag/background (<color or hex code>)
   * tag/type (set | slideshow | cart | admin)
   * tag/visibility (owner | user | public)
+  * tag/count (<count of items>)
 
   * tag_item/position (<integer>)
 
