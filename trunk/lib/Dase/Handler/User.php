@@ -24,6 +24,7 @@ class Dase_Handler_User extends Dase_Handler
 		}
 	}
 
+	/** ought to be in model */
 	public function getSetsAtom($r)
 	{
 		$feed = new Dase_Atom_Feed;
@@ -34,8 +35,16 @@ class Dase_Handler_User extends Dase_Handler
 		$feed->addAuthor();
 		$sets = new Dase_DBO_Tag;
 		$sets->dase_user_id = $this->user->id;
+		//definitely should be in model
+		$set_count_lookup = $this->user->getTagCountLookup();
 		foreach ($sets->find() as $set) {
-			$set->injectAtomEntryData($feed->addEntry('set'));
+			if (isset($set_count_lookup[$set->id])) {
+				$count = $set_count_lookup[$set->id];
+			} else {
+				$count = 0;
+			}
+			$entry = $set->injectAtomEntryData($feed->addEntry('set'));
+			$entry->addCategory($count,"http://daseproject.org/category/tag/count");
 		}
 		$r->renderResponse($feed->asXml());
 	}

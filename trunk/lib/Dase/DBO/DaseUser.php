@@ -283,4 +283,23 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
+	function getTagCountLookup()
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$tag_count = array();
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT tag.id, count(*) 
+			FROM {$prefix}tag_item,{$prefix}tag 
+			WHERE tag.id = tag_item.tag_id 
+			AND dase_user_id = ? 
+			GROUP BY tag.id
+			";
+		$sth = $db->prepare($sql);	
+		$sth->execute(array($this->id));
+		while (list($id,$count) = $sth->fetch()) {
+			$tag_count[$id] = $count;
+		}
+		return $tag_count;
+	}
 }

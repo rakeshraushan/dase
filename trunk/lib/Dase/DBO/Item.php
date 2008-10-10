@@ -10,11 +10,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public $media = array();
 	public $values = array();
 
-	const STATUS_PUBLIC = 'public';
-	const STATUS_DRAFT = 'draft';
-	const STATUS_DELETE = 'delete';
-	const STATUS_ARCHIVE = 'archive';
-
 	public static function create($collection_ascii_id,$serial_number=null,$eid=null)
 	{
 		if (!$eid) {
