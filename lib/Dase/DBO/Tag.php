@@ -5,15 +5,7 @@ require_once 'Dase/DBO/Autogen/Tag.php';
 class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag 
 {
 	private $user;
-
-	const TYPE_CART = 'cart';
-	const TYPE_SET = 'set';
-	const TYPE_SLIDESHOW = 'slideshow';
-	const TYPE_ADMIN = 'admin';
-
-	const TAG_VISIBILITY_PUBLIC = 'public';
-	const TAG_VISIBILITY_USER = 'user';
-	const TAG_VISIBILITY_OWNER = 'owner';
+	public $count;
 
 	public static function getByUser($user)
 	{
@@ -49,7 +41,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		} else {
 			$user->expireDataCache();
 			$tag->name = $tag_name;
-			$tag->type = self::TYPE_SET;
+			$tag->type = 'set';
 			$tag->background = 'white';
 			$tag->is_public = 0;
 			$tag->eid = $user->eid;
@@ -355,7 +347,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 		$entry->addCategory($pub,"http://daseproject.org/category/tag/visibility");
 		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
-		return $entry->asXml();
+		return $entry;
 	}
 
 	public function isBulkEditable($user)
