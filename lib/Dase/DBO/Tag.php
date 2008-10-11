@@ -5,12 +5,45 @@ require_once 'Dase/DBO/Autogen/Tag.php';
 class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag 
 {
 	private $user;
-	public $count;
 
 	public static function getByUser($user)
 	{
+		//first get counts then map them onto array
 		$prefix = Dase_Config::get('table_prefix');
-		//$db = Dase_DB::get();
+		$sql = "
+			SELECT tag.id, count(*) 
+			FROM {$prefix}tag_item,{$prefix}tag 
+			WHERE tag.id = tag_item.tag_id 
+			AND dase_user_id = ? 
+			GROUP BY tag.id
+			";
+		$lookup = array();
+		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) {
+			$lookup[$row['id']] = $row['count'];
+		}
+		$sql = "
+			SELECT * 
+			FROM {$prefix}tag 
+			WHERE dase_user_id = ?
+			";
+		$tags = array();
+		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) { 
+			if (isset($lookup[$row['id']])) {
+				$row['count'] = $lookup[$row['id']];
+			} else {
+				$row['count'] = 0;
+			}
+			$tags[] = $row;
+		}
+		return $tags;
+	}
+
+	public static function getByUserOrig($user)
+	{
+		//benchmarks show this function to be practically
+		//exactly the same speed as the new one (the new one
+		//gets me all of the columns in tag)
+		$prefix = Dase_Config::get('table_prefix');
 		//union allows us to get tags that have no items
 		$sql = "
 			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) as count
@@ -24,10 +57,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			WHERE NOT EXISTS(SELECT * FROM {$prefix}tag_item ti WHERE ti.tag_id = t.id)
 			AND t.dase_user_id = ?
 			";
-		//$sth = $db->prepare($sql);
-		//$sth->setFetchMode(PDO::FETCH_ASSOC);
-		//$sth->execute(array($user->id,$user->id));
-		//return $sth;
 		return Dase_DBO::query($sql,array($user->id,$user->id));
 	}
 
