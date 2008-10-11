@@ -41,7 +41,8 @@ CREATE TABLE {$table_prefix}collection (
     is_public boolean,
     created character varying(50),
     updated character varying(50),
-    visibility character varying(50)
+    visibility character varying(50),
+    item_count integer DEFAULT 0
 );
 
 CREATE TABLE {$table_prefix}collection_manager (
@@ -191,9 +192,11 @@ CREATE TABLE {$table_prefix}tag (
     admin_collection_id integer,
     ascii_id character varying(200),
     created character varying(50),
+    updated character varying(50),
     "type" character varying(50) DEFAULT 'set'::character varying,
     eid character varying(50),
-    visibility character varying(50)
+    visibility character varying(50),
+    item_count integer DEFAULT 0
 );
 
 CREATE TABLE {$table_prefix}value (

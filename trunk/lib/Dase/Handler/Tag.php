@@ -58,10 +58,12 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagAtom($r)
 	{
+		/*
 		$u = $r->getUser('http');
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
+		 */
 		$r->renderResponse($this->tag->asAtom());
 	}
 
@@ -99,7 +101,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	{
 		$u = $r->getUser();
 		if (!$u->can('read',$this->tag)) {
-			$r->renderError(401,$u->eid .' is not authorized to read this resource');
+			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($r);
@@ -178,6 +180,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		foreach ($item_uniques_array as $item_unique) {
 			$tag->addItem($item_unique);
 		}
+		$this->tag->updateCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("added $num items to $tag->name");
 	}
@@ -196,6 +199,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			$tag->removeItem($item_unique);
 		}
 		$tag->resortTagItems();
+		$tag->updateCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("removed $num items from $tag->name");
 	}

@@ -122,7 +122,7 @@
 				{for tag in tags}
 				{if 'subscription' == tag.type}
 				<li>
-				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name}</a>
+				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name} (${tag.count})</a>
 				</li>
 				{/if}
 				{/for}

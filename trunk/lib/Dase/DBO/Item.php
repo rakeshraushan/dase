@@ -410,6 +410,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteAdminValues();
 		$this->deleteSearchIndexes();
 		$this->deleteContent();
+		$this->deleteTagItems();
 		$this->delete();
 	}
 
@@ -419,6 +420,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$co->item_id = $this->id;
 		foreach ($co->find() as $doomed) {
 			$doomed->delete();
+		}
+	}
+
+	function deleteTagItems()
+	{
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->item_id = $this->id;
+		$tags = array();
+		foreach ($tag_item->find() as $doomed) {
+			$tag = $doomed->getTag();
+			$doomed->delete();
+			$tag->updateCount();
 		}
 	}
 

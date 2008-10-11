@@ -8,19 +8,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function getByUser($user)
 	{
-		//first get counts then map them onto array
 		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			SELECT tag.id, count(*) 
-			FROM {$prefix}tag_item,{$prefix}tag 
-			WHERE tag.id = tag_item.tag_id 
-			AND dase_user_id = ? 
-			GROUP BY tag.id
-			";
-		$lookup = array();
-		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) {
-			$lookup[$row['id']] = $row['count'];
-		}
 		$sql = "
 			SELECT * 
 			FROM {$prefix}tag 
@@ -28,11 +16,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			";
 		$tags = array();
 		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) { 
-			if (isset($lookup[$row['id']])) {
-				$row['count'] = $lookup[$row['id']];
-			} else {
-				$row['count'] = 0;
-			}
+			$row['count'] = $row['item_count'];
 			$tags[] = $row;
 		}
 		return $tags;
@@ -96,7 +80,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$this->delete();
 	}
 
-	function getItemCount()
+	function updateCount()
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
@@ -107,7 +91,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			";
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));
-		return $st->fetchColumn();
+		$count = $st->fetchColumn();
+		$this->item_count = $count;
+		//postgres boolean weirdness make this necessary
+		if (!$this->is_public) {
+			$this->is_public = 0;
+		}
+		$this->update();
 	}
 
 	function getTagItemIds()
@@ -227,8 +217,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_item->p_collection_ascii_id = $coll;
 		$tag_item->p_serial_number = $sernum;
 
-		//todo: I think this should be in a try-catch
-		return ($tag_item->insert());
+		try {
+			$tag_item->insert();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	function removeItem($item_unique)
@@ -297,7 +290,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	{
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
-		//$feed->setTitle($this->name.' ('.$this->getItemCount().' items)');
 		$feed->setTitle($this->name);
 		if ($this->description) {
 			$feed->setSubtitle($this->description);

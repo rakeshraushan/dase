@@ -340,7 +340,7 @@ class Dase_DBO implements IteratorAggregate
 	{
 		$db = $this->_dbGet();
 		foreach( $this->fields as $key => $val) {
-			if ('timestamp' != $key || $val) { //prevents null timestamp as update
+			if ('timestamp' != $key || !is_null($val)) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
 				$values[]= $val;
 			}
