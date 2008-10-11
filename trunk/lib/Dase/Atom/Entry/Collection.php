@@ -72,6 +72,15 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		}
 	}
 
+	function getItemCount()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/collection/item_count' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 	function __get($var) {
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);

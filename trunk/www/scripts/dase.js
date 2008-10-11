@@ -280,7 +280,6 @@ Dase.initUser = function(func) {
 		}
 		Dase.loginControl(Dase.user.eid);
 		Dase.multicheck("checkedCollection");
-		Dase.getItemTallies();
 	});
 };
 
@@ -422,6 +421,7 @@ Dase.placeUserCollections = function(eid) {
 			var span = document.createElement('span');
 			span.setAttribute('class','tally');
 			span.className = 'tally';
+			span.appendChild(document.createTextNode('('+c.item_count+')'));
 			li.appendChild(span);
 			coll_list.appendChild(li);
 		}
@@ -601,23 +601,6 @@ Dase.multicheck = function(c) {
 			}
 		};
 	}	   
-};
-
-Dase.getItemTallies = function() {
-	if (Dase.$("collectionList")) {
-		Dase.getJSON(Dase.base_href+"collections/item_tallies", function(json){
-			for(var ascii_id in json) {
-				var asc = Dase.$(ascii_id);
-				if (asc) {
-					var tally = Dase.$(ascii_id).getElementsByTagName('span')[0];
-					if (tally) {
-						tally.innerHTML = '(' + json[ascii_id] + ')';
-					} 
-				} 
-			} 
-			Dase.loadingMsg(false);
-		});
-	}
 };
 
 Dase.loadingMsg = function(displayBool) {

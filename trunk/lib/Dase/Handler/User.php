@@ -100,7 +100,7 @@ class Dase_Handler_User extends Dase_Handler
 				//will not need this when we use item_unique:
 				//writes are expensive ;-)
 				//$tag_item->persist();
-				$tag->updateCount();
+				$tag->updateItemCount();
 				$r->renderResponse("added cart item $tag_item->id");
 			} else {
 				$r->renderResponse("add to cart failed");
@@ -121,7 +121,7 @@ class Dase_Handler_User extends Dase_Handler
 		//todo: make this tag->eid == $u->eid
 		if ($tag->dase_user_id == $u->id) {
 			$tag_item->delete();
-			$tag->updateCount();
+			$tag->updateItemCount();
 			$r->renderResponse("tag item ".$r->get('tag_item_id')." deleted!",false);
 		} else {
 			$r->renderError(401,'user does not own tag');

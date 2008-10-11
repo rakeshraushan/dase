@@ -4,12 +4,6 @@ require_once 'Dase/DBO/Autogen/Collection.php';
 
 class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 {
-	public $item_count;
-
-	const COLLECTION_VISIBILITY_PUBLIC = 'public';
-	const COLLECTION_VISIBILITY_USER = 'user';
-	const COLLECTION_VISIBILITY_MANAGER = 'manager';
-
 	public static function get($ascii_id)
 	{
 		if (!$ascii_id) {
@@ -78,7 +72,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->updated);
-		$feed->addCategory($this->getItemCount(),"http://daseproject.org/category/collection/item_count");
+		$feed->addCategory($this->item_count,"http://daseproject.org/category/collection/item_count");
 		$feed->setId($this->getBaseUrl());
 		$feed->addAuthor();
 		$feed->addLink($this->getBaseUrl(),'alternate');
@@ -192,7 +186,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$coll_array = array();
 		$coll_array['name'] = $this->collection_name;
 		$coll_array['ascii_id'] = $this->ascii_id;
-		$coll_array['item_count'] = $this->getItemCount();
+		$coll_array['item_count'] = $this->item_count;
 		foreach ($this->getItems() as $item) {
 			$item_array['href'] = 'https://dase.laits.utexas.edu/'.$this->ascii_id.'/'.$item->serial_number;
 			$item_array['title'] = $item->getTitle();
@@ -226,7 +220,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			foreach ($c as $k => $v) {
 				$coll_array[$k] = $v;
 			}
-			$coll_array['count'] = $c->getItemCount();
 			$result[] = $coll_array;
 		}
 		return Dase_Json::get($result);
@@ -262,6 +255,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			} else {
 				$pub = "private";
 			}
+			$entry->addCategory($coll->item_count,"http://daseproject.org/category/collection/item_count");
 			$entry->addCategory($pub,"http://daseproject.org/category/collection/visibility");
 		}
 		return $feed->asXML();
@@ -381,15 +375,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $att->find();
 	}
 
-	function getItemCount()
+	function updateItemCount()
 	{
-		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			SELECT count(id) as count
-			FROM {$prefix}item
-			where collection_id = ?
-			";
-		return Dase_DBO::query($sql,array($this->id))->fetchColumn();
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->id;
+		$this->item_count = $items->findCount();
+		$this->updated = date(DATE_ATOM);
+		//postgres boolean weirdness make this necessary
+		if (!$this->is_public) {
+			$this->is_public = 0;
+		}
+		$this->update();
 	}
 
 	function getItems()
@@ -507,6 +503,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->updated = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
 			$item->insert();
+			$this->updateItemCount();
 			return $item;
 		} else {
 			$item->status = 'public';
@@ -517,6 +514,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->serial_number = sprintf("%09d",$item->id);
 			$item->updated = date(DATE_ATOM);
 			$item->update();
+			$this->updateItemCount();
 			return $item;
 		}
 	}
