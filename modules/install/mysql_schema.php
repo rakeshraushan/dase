@@ -51,6 +51,7 @@ CREATE TABLE `{$table_prefix}collection` (
 `created` varchar(50) default NULL,
 `description` varchar(2000) default NULL,
 `collection_name` varchar(200) default NULL,
+`item_count` int(11) default 0,
 `ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -226,9 +227,11 @@ CREATE TABLE `{$table_prefix}tag` (
 `eid` varchar(50) default NULL,
 `type` varchar(50) default NULL,
 `created` varchar(50) default NULL,
+`updated` varchar(50) default NULL,
 `ascii_id` varchar(200) default NULL,
 `background` varchar(20) default NULL,
 `description` varchar(200) default NULL,
+`item_count` int(11) default 0,
 `name` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

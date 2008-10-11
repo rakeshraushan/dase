@@ -79,7 +79,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				$sub_tag['ascii_id'] = "a" . $sub->tag_id;
 				$sub_tag['name'] = $tag->name;
 				$sub_tag['type'] = 'subscription';
-				$sub_tag['count'] = '';
+				$sub_tag['count'] = $tag->item_count;
 			}
 			$tag_array[] = $sub_tag;
 		}
@@ -249,6 +249,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			return false;
 		}
 		if ('read' == $auth_level && $tag->is_public) {
+			return true;
+		} 
+		if ('read' == $auth_level && $tag->dase_user_id == $this->id) {
 			return true;
 		} 
 		if ('write' == $auth_level && $tag->dase_user_id == $this->id) {
