@@ -10,7 +10,7 @@ scheme prefix is: http://daseproject.org/category/
   * collection/item_count
   * collection/visibility (manager | user | public)
 
-  * entrytype (attribute | collection | item)
+  * entrytype (attribute | collection | item | set)
   * feedtype (collection | collection_list | search | item | tag)
 
   * item/status (public | draft | delete )
