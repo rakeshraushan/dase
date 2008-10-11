@@ -38,28 +38,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tags;
 	}
 
-	public static function getByUserOrig($user)
-	{
-		//benchmarks show this function to be practically
-		//exactly the same speed as the new one (the new one
-		//gets me all of the columns in tag)
-		$prefix = Dase_Config::get('table_prefix');
-		//union allows us to get tags that have no items
-		$sql = "
-			SELECT t.id,t.ascii_id,t.name,t.type,count(ti.id) as count
-			FROM {$prefix}tag t , {$prefix}tag_item ti
-			WHERE t.id = ti.tag_id
-			AND t.dase_user_id = ?
-			GROUP BY t.id,t.ascii_id,t.name,t.type
-			UNION
-			SELECT t.id,t.ascii_id,t.name,t.type,0
-			FROM {$prefix}tag t 
-			WHERE NOT EXISTS(SELECT * FROM {$prefix}tag_item ti WHERE ti.tag_id = t.id)
-			AND t.dase_user_id = ?
-			";
-		return Dase_DBO::query($sql,array($user->id,$user->id));
-	}
-
 	public static function create($tag_name,$user)
 	{
 		$tag = new Dase_DBO_Tag;
