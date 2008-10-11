@@ -80,19 +80,12 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$this->delete();
 	}
 
-	function updateCount()
+	function updateItemCount()
 	{
-		$prefix = Dase_Config::get('table_prefix');
-		$db = Dase_DB::get();
-		$sql = "
-			SELECT count(*)
-			FROM {$prefix}tag_item 
-			where tag_id = ?
-			";
-		$st = $db->prepare($sql);
-		$st->execute(array($this->id));
-		$count = $st->fetchColumn();
-		$this->item_count = $count;
+		$tag_items = new Dase_DBO_TagItem;
+		$tag_items->tag_id = $this->id;
+		$this->item_count = $tag_items->findCount();
+		$this->updated = date(DATE_ATOM);
 		//postgres boolean weirdness make this necessary
 		if (!$this->is_public) {
 			$this->is_public = 0;
@@ -204,7 +197,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
 	}
 
-	function addItem($item_unique)
+	function addItem($item_unique,$updateCount=false)
 	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
@@ -219,12 +212,16 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 		try {
 			$tag_item->insert();
+			//this is too expensive when many items are being added in one request
+			if ($updateCount) {
+				$this->updateItemCount();
+			}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
 	}
 
-	function removeItem($item_unique)
+	function removeItem($item_unique,$update_count=false)
 	{
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->tag_id = $this->id;
@@ -237,7 +234,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_item->p_collection_ascii_id = $coll;
 		$tag_item->p_serial_number = $sernum;
 		if ($tag_item->findOne()) {
-			return ($tag_item->delete());
+			$tag_item->delete();
+			//this is too expensive when many items are being removed in one request
+			if ($updateCount) {
+				$this->updateItemCount();
+			}
 		}
 	}
 

@@ -401,8 +401,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function expunge()
 	{
-		$this->collection || $this->getCollection();
-		$filename = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/deleted/'.$this->serial_number.'.atom';
+		$c = $this->getCollection();
+		$filename = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/deleted/'.$this->serial_number.'.atom';
 		file_put_contents($filename,$this->asAtom());
 		
 		$this->deleteMedia();
@@ -412,6 +412,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteContent();
 		$this->deleteTagItems();
 		$this->delete();
+		$c->updateItemCount();
 	}
 
 	function deleteContent()
@@ -431,7 +432,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($tag_item->find() as $doomed) {
 			$tag = $doomed->getTag();
 			$doomed->delete();
-			$tag->updateCount();
+			$tag->updateItemCount();
 		}
 	}
 

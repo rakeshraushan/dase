@@ -8,7 +8,6 @@ class Dase_Handler_Collections extends Dase_Handler
 		'/' => 'collections',
 		'data' => 'data',
 		'acl' => 'acl',
-		'item_tallies' => 'item_tallies',
 		"pk/{id}/{ddd}" => 'test',
 	);
 
@@ -107,24 +106,6 @@ class Dase_Handler_Collections extends Dase_Handler
 		$tpl->assign('collections',$feed);
 		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom'));
 		$r->renderResponse($tpl->fetch('collection/list.tpl'));
-	}
-
-	public function getItemTalliesJson($r) 
-	{
-		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			select c.ascii_id,count(i.id) 
-			as count
-			from {$prefix}collection c, {$prefix}item i
-			where c.id = i.collection_id
-			and i.status = 'public' 
-			group by c.id, c.ascii_id
-			";
-		$tallies = array();
-		foreach (Dase_DBO::query($sql)->fetchAll() as $row) {
-			$tallies[$row['ascii_id']] = $row['count'];
-		}
-		$r->renderResponse(Dase_Json::get($tallies),$r);
 	}
 }
 

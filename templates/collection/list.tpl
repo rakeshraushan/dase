@@ -15,7 +15,7 @@
 			<li id="{$c->asciiId}">
 			<input name="c" value="{$c->asciiId}" checked="checked" type="checkbox"/>
 			<a href="collection/{$c->asciiId}" class="checkedCollection">{$c->name|escape}</a>
-			<span class="tally"></span>
+			<span class="tally">({$c->itemCount})</span>
 			</li>
 			{/foreach}
 			<li id="specialAccessLabel" class="hide"><h4>Special Access Collections</h4></li>

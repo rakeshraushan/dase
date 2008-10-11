@@ -110,6 +110,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 					'collection_name' => $c->collection_name,
 					'ascii_id' => $c->ascii_id,
 					'is_public' => $c->is_public,
+					'item_count' => $c->item_count,
 					'auth_level' => $auth_level
 				);
 			}

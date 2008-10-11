@@ -180,13 +180,14 @@ class Dase_Handler_Tag extends Dase_Handler
 		foreach ($item_uniques_array as $item_unique) {
 			$tag->addItem($item_unique);
 		}
-		$this->tag->updateCount();
+		$this->tag->updateItemCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("added $num items to $tag->name");
 	}
 
 	public function deleteTagItems($r) 
 	{
+		//move some of this into model
 		$tag = $this->tag;
 		$u = $r->getUser();
 		$u->expireDataCache();
@@ -199,7 +200,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			$tag->removeItem($item_unique);
 		}
 		$tag->resortTagItems();
-		$tag->updateCount();
+		$tag->updateItemCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("removed $num items from $tag->name");
 	}
