@@ -57,42 +57,7 @@ class Dase_File_Audio extends Dase_File
 
 	public function addToCollection($item,$check_for_dups) 
 	{
-		$c = $item->getCollection();
-		$this->getMetadata();
-		//prevents 2 files in same collection w/ same md5
-		if ($check_for_dups) {
-			$mf = new Dase_DBO_MediaFile;
-			$mf->p_collection_ascii_id = $c->ascii_id;
-			$mf->md5 = $this->metadata['md5'];
-			if ($mf->findOne()) {
-				throw new Exception('duplicate file');
-			}
-		}
-		$ext = Dase_File::$types_map[$this->metadata['mime_type']]['ext'];
-		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$item->serial_number.'.'.$ext;
-		//should this be try-catch?
-		if ($this->copyTo($target)) {
-			$media_file = new Dase_DBO_MediaFile;
-			//follows search.yahoo.com/mrss attributes
-			$meta = array(
-				'file_size','height','width','mime_type','updated','md5'
-			);
-			foreach ($meta as $term) {
-				if (isset($this->metadata[$term])) {
-					$media_file->$term = $this->metadata[$term];
-				}
-			}
-			$media_file->item_id = $item->id;
-			$media_file->filename = $item->serial_number.'.mp3';
-			$media_file->size = $this->size;
-			$media_file->p_serial_number = $item->serial_number;
-			$media_file->p_collection_ascii_id = $c->ascii_id;
-			$media_file->insert();
-			foreach ($this->metadata as $term => $text) {
-				//will only insert item metadata when attribute name matches 'admin_'+att_name
-				$item->setValue('admin_'.$term,$text);
-			}
-		}
+		$media_file = parent::addToCollection($item,$check_for_dups);
 		$this->makeThumbnail($item);
 		$this->makeViewitem($item);
 		return $media_file;
