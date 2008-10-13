@@ -10,7 +10,7 @@ html #maincontent {
 }
 
 #header {
-	background-color: #444;
+	background-color: #222;
 	color: #fff;
 	font-weight: bold;
 	font-size: 1.8em;
@@ -63,6 +63,7 @@ html #maincontent {
 #browse {
 	background-color:#f2dfc1;
 }
+
 #browse td {
 	border: 1px solid #d9c8ad;
 }
@@ -336,7 +337,7 @@ div.pageControls {
 }
 
 table#itemSet {
-	margin-bottom: 0;
+	margin-bottom: 4px;
 }
 table#itemSet td {
 	padding: .25em .5em;
@@ -434,19 +435,19 @@ table#sorter td div.tiny {
 	margin-bottom: 2px;
 }
 
-#removeFromForm,#setExpungerForm {
-	float:right;
-	margin-right: 1em;
+div.widget {
+	float: left;
+	padding: 25px;
+	margin-right: 0px;
+	background-color: #e6d4b8;
 }
 
-#removeFromSet:hover {
-	background-color: #c33;
-	color: #fff;
+#removeFromSet:hover, #setExpungerButton:hover {
+	color: red;
 }
 
-#setExpungerButton:hover {
-	background-color: #c33;
-	color: #fff;
+#checkall {
+	margin-bottom: 2em;
 }
 
 #attributesForm {
@@ -620,13 +621,6 @@ div#test-data .success {
 }
 div#test-data .failure {
 	color: #c00;
-}
-
-div#saveChecked {
-	margin: 1em 0 0 0;
-}
-div#saveChecked select.plainSelect {
-	margin: 0 5px 0 0;
 }
 
 span.nolink {

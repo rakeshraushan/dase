@@ -20,16 +20,25 @@
 			{include file='item_set/common.tpl' start=$startIndex}
 		</table>
 		<a href="" id="checkall">check/uncheck all</a>
-		<div id="saveChecked"></div>
+		<div>&nbsp;</div>
+		<div class="widget">
+			<div id="saveChecked"></div>
+		</div>
 	</form>
-	<!-- why "get"?????? -->
-	<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
-		<input type="hidden" name="submit_confirm" value="are you sure?"/>
-		<input type="submit" id="setExpungerButton" value="delete set"/>
-	</form>
-	<form method="get" id="removeFromForm" action="{$items->tagLink}">
-		<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items from set"/>
-	</form>
+	{if $is_admin}
+	<div class="widget">
+		<form method="get" id="removeFromForm" action="{$items->tagLink}">
+			<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items"/>
+		</form>
+	</div>
+	<div class="widget">
+		<!-- why "get"?????? -->
+		<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
+			<input type="hidden" name="submit_confirm" value="are you sure?"/>
+			<input type="submit" id="setExpungerButton" value="delete entire set"/>
+		</form>
+	</div>
+	{/if}
 	<div id="tagEid" class="pagedata">{$items->eid}</div>
 	<div id="tagName" class="pagedata">{$items->name}</div>
 	<div id="tagAsciiId" class="pagedata">{$items->asciiId}</div>

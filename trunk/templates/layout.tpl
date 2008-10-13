@@ -134,12 +134,12 @@
 
 			<!-- javascript template for save-to pull down-->
 			<textarea class="javascript_template" id="saveto_jst">
-				<select id='saveToSelect' class='plainSelect' name='collection_ascii_id'>
+				<select id='saveToSelect' name='collection_ascii_id'>
 					<option value=''>save checked items to...</option>
 					{literal}
 					{for tag in tags}
 					{if 'subscription' != tag.type && 'admin' != tag.type}
-					<option value='${tag.ascii_id}'>${tag.type}:${tag.name}</option>
+					<option value='${tag.ascii_id}'>${tag.name} (${tag.count})</option>
 					{/if}
 					{/for}
 					{/literal}

@@ -87,7 +87,10 @@
 		{/if}
 		{if $items->count}
 		<a href="" id="checkall">check/uncheck all</a>
-		<div id="saveChecked"></div>
+		<div>&nbsp;</div>
+		<div class="widget">
+			<div id="saveChecked"></div>
+		</div>
 		{/if}
 	</form>
 	<div class="spacer"></div>
