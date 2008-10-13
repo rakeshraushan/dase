@@ -236,12 +236,9 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderResponse($tpl->fetch('manage/uploader.tpl'));
 	}
 
-	/** here we create an item, then AtomPub POST a file with the sernum as slug */
-	/* (cool, but bandwidth wasteful and slow) */
 	public function postToUploader($r)
 	{
 		//todo: check ppd?
-		//todo: 'compose' this as series of atompub posts
 		$num = $r->get('num');
 		$input_name = 'uploader_'.$num.'_file';
 		if (
@@ -256,22 +253,6 @@ class Dase_Handler_Manage extends Dase_Handler
 			$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
 			$item->setValue('title',$name);
 
-			/*
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, APP_ROOT.'/media/'.$this->collection->ascii_id.'?auth=http');
-			$upload = file_get_contents($path);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $upload);
-			curl_setopt($ch, CURLOPT_USERPWD,$this->user->eid.':'.$this->user->getHttpPassword());
-			$str  = array(
-				"Slug: $item->serial_number",
-				"Content-type: $type"
-			);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			Dase_Log::debug(curl_exec($ch));
-			curl_close($ch);  
-			 */
 			$file = Dase_File::newFile($path,$type);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false);

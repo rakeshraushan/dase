@@ -23,6 +23,10 @@
 		<div id="saveChecked"></div>
 	</form>
 	<!-- why "get"?????? -->
+	<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
+		<input type="hidden" name="submit_confirm" value="are you sure?"/>
+		<input type="submit" id="setExpungerButton" value="delete set"/>
+	</form>
 	<form method="get" id="removeFromForm" action="{$items->tagLink}">
 		<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items from set"/>
 	</form>

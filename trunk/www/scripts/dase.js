@@ -968,10 +968,12 @@ Dase.initRemoveItems = function() {
 	if (!itemSet) return;
 	var items = itemSet.getElementsByTagName('input');
 	//place the button on the page
+	/*
 	if (items.length > 3) {
 		units = Dase.$('content').clientWidth - Dase.$('itemSet').clientWidth - 45;
 		button.style.marginRight =  units+'px';
 	}
+	*/
 	button.onclick = function() {
 		var item_uniques_array = [];
 		var inputs = itemSet.getElementsByTagName('input');
@@ -1301,6 +1303,15 @@ Dase.getJsonUrl = function() {
 	return false;
 }
 
+/* generic, declarative form submission confirmation */
+Dase.initSubmitConfirm = function() {
+	elems = document.getElementsByName('submit_confirm');
+	for (var i=0;i<elems.length;i++) {
+		elems[i].parentNode.onsubmit = function() {
+			return confirm(this.submit_confirm.value);
+		}
+	}
+}
 
 Dase.addLoadEvent(function() {
 	Dase.setCollectionAtts();
@@ -1310,6 +1321,7 @@ Dase.addLoadEvent(function() {
 	Dase.initToggle();
 	Dase.initSaveTo();
 	Dase.initRemoveItems();
+	Dase.initSubmitConfirm();
 	Dase.initLogoff();
 	Dase.initContentNotes();
 	Dase.initAttributeEdit();

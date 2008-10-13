@@ -59,6 +59,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	/** be careful w/ this -- we do not archive before deleting */
 	function expunge()
 	{
+		if (!$this->id) {
+			throw new Exception("invalid");
+		} 
 		$tag_items = new Dase_DBO_TagItem;
 		$tag_items->tag_id = $this->id;
 
