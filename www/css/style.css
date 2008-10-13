@@ -10,12 +10,14 @@ html #maincontent {
 }
 
 #header {
-	background-color: #333;
+	background-color: #444;
 	color: #fff;
 	font-weight: bold;
 	font-size: 1.8em;
+	font-size: 1.5em;
+	line-height: 1em;
 	margin-top: 0px;
-	padding:13px 0 10px 18px;
+	padding:11px 0 10px 18px;
 }
 
 #sidebar {
@@ -432,12 +434,18 @@ table#sorter td div.tiny {
 	margin-bottom: 2px;
 }
 
-#removeFromSet {
+#removeFromForm,#setExpungerForm {
 	float:right;
+	margin-right: 1em;
 }
 
 #removeFromSet:hover {
-	background-color: #e33;
+	background-color: #c33;
+	color: #fff;
+}
+
+#setExpungerButton:hover {
+	background-color: #c33;
 	color: #fff;
 }
 

@@ -20,7 +20,9 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		{if $local_css}
 		<link rel="stylesheet" type="text/css" href="{$local_css}"/>
+		{/if}
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<!-- atompub discovery -->
@@ -122,7 +124,7 @@
 				{for tag in tags}
 				{if 'subscription' == tag.type}
 				<li>
-				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name} (${tag.count})</a>
+				<a href='tag/${tag.id}'>${tag.name} (${tag.count})</a>
 				</li>
 				{/if}
 				{/for}

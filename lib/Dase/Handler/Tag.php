@@ -9,6 +9,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
+		'{eid}/{tag_ascii_id}/expunger' => 'tag_expunger',
 		//for set delete:
 		'{eid}/{tag_ascii_id}/items' => 'tag_items',
 		'item/{tag_id}/{tag_item_id}' => 'tag_item',
@@ -183,6 +184,23 @@ class Dase_Handler_Tag extends Dase_Handler
 		$this->tag->updateItemCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("added $num items to $tag->name");
+	}
+
+	public function postToTagExpunger($r) 
+	{
+		$tag = $this->tag;
+		$u = $r->getUser();
+		$u->expireDataCache();
+		if (!$u->can('write',$tag)) {
+			$r->renderError(401);
+		}
+		try {
+			$tag->expunge();
+		} catch (Exception $e) {
+			$r->renderError(400,$e->getMessage());
+		}
+		$params['msg'] = 'successfully deleted set';
+		$r->renderRedirect("collections",$params);
 	}
 
 	public function deleteTagItems($r) 

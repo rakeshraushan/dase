@@ -131,6 +131,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$div = new SimpleXMLElement('<div/>');
 		$div->addAttribute('class',$this->serial_number);
 		$img = $div->addChild('img');
+		//todo: error if item does not have thumbnail
 		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
 		$img->addAttribute('class','thumbnail');
 		$contents = $div->addChild('ul');
