@@ -1,9 +1,5 @@
 {extends file="layout.tpl"}
 {block name="head"}
-<!--
-<script src="http://www.google.com/jsapi"></script>
-<script type="text/javascript">google.load('jquery','1');</script>
--->
 <script type="text/javascript" src="www/scripts/dase/form.js"></script>
 {/block}
 {block name="title"}View Item{/block}

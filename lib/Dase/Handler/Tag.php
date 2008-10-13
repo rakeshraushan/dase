@@ -115,6 +115,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($u->can('admin',$this->tag)) {
 			$t->assign('bulkedit',1);
 		}
+		if ($u->can('write',$this->tag)) {
+			$t->assign('is_admin',1);
+		}
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

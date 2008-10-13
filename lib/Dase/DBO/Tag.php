@@ -239,7 +239,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if ($tag_item->findOne()) {
 			$tag_item->delete();
 			//this is too expensive when many items are being removed in one request
-			if ($updateCount) {
+			if ($update_count) {
 				$this->updateItemCount();
 			}
 		}
@@ -366,7 +366,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$st = $db->prepare($sql);
 		$st->execute(array($this->id));
 		$colls = $st->fetchAll();
-		if (1 === count($colls)) {
+		if (1 === count($colls) && $colls[0]['p_collection_ascii_id']) {
 			$c = Dase_DBO_Collection::get($colls[0]['p_collection_ascii_id']);
 			if ($c && $user->can('write',$c)) {
 				return true;
