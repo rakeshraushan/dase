@@ -8,28 +8,24 @@
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->serialNumber}</div>
 	<div id="contentHeader">
-		<h1><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a> : <span class="searchEcho">{$item->query}</span></h1>
+		<h2 class="collectionLink"><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h2>  
+		<h3 class="searchEcho">Item {$item->position} of {$item->opensearchTotal} for <span class="searchEcho">{$item->query}</span></h3>
 		{if $item->opensearchTotal > 1}
-		<h4>
+		<h4 class="prevNext">
+			{if $item->previous}
 			<a href="{$item->previous}">prev</a> |
+			{else}
+			<a class="nolink" href="{$item->feedLink}">prev</a> |
+			{/if}
 			<a href="{$item->feedLink}">up</a> |
+			{if $item->next}
 			<a href="{$item->next}">next</a> 
+			{else}
+			<a class="nolink" href="{$item->feedLink}">next</a> 
+			{/if}
 		</h4>
 		{/if}
 	</div> <!-- close contentHeader -->
-	<div class="controlsContainer">
-		<div id="adminPageControls" class="hide">
-			<!-- is there a better place for this?-->
-			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
-			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
-			|
-			<!--
-			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
-			|
-			-->
-			<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
-		</div>
-	</div>
 	<table id="item">
 		<tr>
 			<td class="image">
@@ -51,7 +47,19 @@
 				</table>
 			</td>
 			<td class="metadata">
-
+				<div class="controlsContainer">
+					<div id="adminPageControls" class="">
+						<!-- is there a better place for this?-->
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
+						|
+						<!--
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
+						|
+						-->
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
+					</div>
+				</div>
 				<!-- adding metadata section-->
 				<div id="addMetadata" class="hide">
 					<!-- note: javascript templates are retrieved asynchronously -->

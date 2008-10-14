@@ -117,7 +117,6 @@ a.edit { color: #00c; }
 a.current { color: #00c; font-weight: bold;}
 
 /********* STANDARD STYLES *******************/
-
 #contentHeader h1,
 #contentHeader h2,
 #contentHeader h3,
@@ -165,11 +164,11 @@ ul#collectionList a.checkedCollection:active {
 /********* COLLECTION BROWSE ****************/
 
 div#browseColumns {
-	margin: 1em 0;
+	margin: 4px 0;
 }
 div#browseColumns a {
 	display:block;
-	line-height:1.7em;
+	line-height:1.6em;
 	font-weight: bold;
 }
 div#browseColumns a.hide {
@@ -295,21 +294,14 @@ div#itemLinks a {
 }
 
 div#adminPageControls {
+	float: right;
 	text-align: right;
-	margin-top: -10px;
 	margin-right: 10px;
-	min-height: 18px;
 }
 
 div#adminStatusControls {
 	text-align: right;
-	margin-top: -10px;
 	margin-right: 10px;
-	min-height: 18px;
-}
-
-div.controlsContainer {
-	min-height: 8px;
 }
 
 #metadata_form label {
@@ -322,11 +314,20 @@ div.controlsContainer {
 	border: 1px solid #999;
 	-moz-border-radius: 5px;
 	padding: .5em 2em;
-	margin: 0 0 2em 0;
+	margin: -.5em 0 2em 0;
 }
 
 #addMetadataFormTarget {
 	margin: 2em 0;
+}
+
+h3.searchEcho {
+	font-size: 13px;
+}
+
+h2.collectionLink {
+	color: #000;
+	font-size: 1em; 
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/
@@ -623,7 +624,7 @@ div#test-data .failure {
 	color: #c00;
 }
 
-span.nolink {
+a.nolink, span.nolink {
 	color: #999;
 }
 
@@ -653,5 +654,12 @@ span.position {
 	font-style: italic;
 	margin-bottom: 0px;
 	font-size: .9em;
+}
+
+h3.utilLabel {
+	color: #700c0c;
+	margin-bottom: 0px;
+	margin-top: 1em;
+	font-size: 11px;
 }
 

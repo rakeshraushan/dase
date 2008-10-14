@@ -14,21 +14,22 @@
 	{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 	<div id="collectionAsciiId" class="hide">{$collection->asciiId}</div>
 	<div class="contentHeader">
-		<h1>{$collection->name|escape} ({$collection->itemCount} items)</h1>
+		<h2 class="collectionLink">{$collection->name|escape} ({$collection->itemCount} items)</h2>
 		<h3>{$collection->description|escape}</h3>
 	</div>
 	<form method="get" action="search">
 		<div>
+			<h3 class="utilLabel">Search:</h3>
 			<input type="text" id="queryInput" name="q" size="30"/>
 			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}"/>
 			<!--
 			<select id="attributesSelect" class="hide"></select>
 			-->
-			<input type="submit" value="Search" class="button"/>
+			<input type="submit" value="go" class="button"/>
 		</div>
 	</form>
+	<h3 class="utilLabel">Browse:</h3>
 	<div id="browseColumns">
-		<h3>Browse:</h3>
 		<div id="catColumn">
 			<h4>Select Attribute Group:</h4>
 			<a href="collection/{$collection->asciiId}/attributes/public" id="collectionAtts" class="spill">Collection Attributes</a>
