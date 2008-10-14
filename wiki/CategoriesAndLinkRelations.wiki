@@ -21,7 +21,7 @@ scheme prefix is: http://daseproject.org/category/
   * tag/visibility (owner | user | public)
   * tag/count (<count of items>)
 
-  * tag_item/position (<integer>)
+  *  position (<integer>)
 
 tbd: split out read access and write access. 
 figure out how tag visibility overrides collection visibility for items in tag.
