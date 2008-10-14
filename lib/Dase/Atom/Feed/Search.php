@@ -96,6 +96,11 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 
 	function getStartIndex()
 	{
+		$x = new DomXPath($this->dom);
+		foreach (Dase_Atom::$ns as $k => $v) {
+			$x->registerNamespace($k,$v);
+		}
+		return $this->getXpathValue("opensearch:startIndex");
 		return $this->getAtomElementText('startIndex','os');
 	}
 }

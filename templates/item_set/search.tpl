@@ -37,11 +37,14 @@
 	<!-- end javascript template -->
 
 	<div id="contentHeader">
-		<h3><a href="{$items->collection.href}">{$items->collection.title}</a></h3>
+		{if $items->collection}
+		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>
+		{/if}
+		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}</h3>
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="60" value="{$items->query}"/>
+				<input id="queryInput" type="text" name="q" size="40" value="{$items->query}"/>
 				<!--
 				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
 				-->

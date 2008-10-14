@@ -53,6 +53,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$feed->addLink($tag->getLink(),"http://daseproject.org/relation/feed-link");
 		$tag_item_id_array = $tag->getTagItemIds();
 		$position = array_search($this->id,$tag_item_id_array) + 1;
+		$feed->addCategory($position,"http://daseproject.org/category/position",$tag->type);
 
 		if (1 == $position) {
 			$prev_id = array_pop($tag_item_id_array);
@@ -68,7 +69,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		}
 		//overloading opensearch elements here 
 		$feed->setOpensearchTotalResults($tag->item_count);
-		$feed->setOpensearchQuery($tag->name.' ('.$position.' of '.count($tag_item_id_array).')');
+		$feed->setOpensearchQuery($tag->name);
 
 
 		//$feed->addLink($tag->getLink().'/'.$prev_id,"previous");

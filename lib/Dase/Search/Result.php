@@ -204,6 +204,7 @@ class Dase_Search_Result
 			$item->injectAtomEntryData($feed->addEntry());
 			$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
 			$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$num);
+			$feed->addCategory($num,"http://daseproject.org/category/position");
 			$feed->addLink(APP_ROOT.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');
 			if ($next) {
 				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$next,'next','application/xhtml+xml');

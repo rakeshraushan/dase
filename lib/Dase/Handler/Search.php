@@ -107,11 +107,18 @@ class Dase_Handler_Search extends Dase_Handler
 		$tpl->assign('feed_url',$feed_url);
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
 		//single hit goes directly to item
-		if (1 == $feed->getCount()) {
+		$count = $feed->getCount();
+		if (1 == $count) {
 			$tpl->assign('item',$feed);
 			$url = str_replace('search?','search/item?',$r->url);
 			$r->renderRedirect(APP_ROOT.'/'.$url);
 		}
+		$end = $this->start+$this->max-1;
+		if ($end > $count) {
+			$end = $count;
+		}
+		$tpl->assign('start',$this->start);
+		$tpl->assign('end',$end);
 		$tpl->assign('sort',$r->get('sort'));
 		$tpl->assign('items',$feed);
 		$r->renderResponse($tpl->fetch('item_set/search.tpl'));
