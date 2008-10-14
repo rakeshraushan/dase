@@ -266,6 +266,7 @@ Dase.initUser = function(func) {
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
+			Dase.user.cart_count = json[eid].cart_count;
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
 			Dase.placeUserCollections(eid);
@@ -844,19 +845,14 @@ Dase.initAddToCart = function() {
 
 Dase.initCart = function() {
 	Dase.loadingMsg(true);
-	/* so cart totals are only displayed when viewing item set. hmmmm. */
+	var label = Dase.$('cartLink');
+	if (label) {
+		label.innerHTML = "My Cart ("+Dase.user.cart_count+")";
+	}
 	var sr = Dase.$('itemSet');
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
 	function(json) { 
-		var label = Dase.$('cartLink');
-		if (label) {
-			if (undefined !== json.length) {
-				label.innerHTML = "My Cart ("+json.length+")";
-			} else {
-				label.innerHTML = "My Cart (" + 0 + ")";
-			}
-		}
 		for (var i=0;i<json.length;i++) {
 			var in_cart = Dase.$('addToCart_'+ json[i].item_unique);
 			if  (in_cart) {

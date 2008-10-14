@@ -28,6 +28,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
+	/** create cart if none exists, also returns cart count */
 	public function initCart()
 	{
 		$tag = new Dase_DBO_Tag;
@@ -40,6 +41,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$tag->created = date(DATE_ATOM);
 			$tag->insert();
 		}
+		return $tag->item_count;
 	}
 
 	public function getHttpPassword()
@@ -121,7 +123,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public function getData()
 	{
 		$user_data = array();
-		//this is taking too long:
+		//todo: is this is taking too long:
+		$user_data[$this->eid]['cart_count'] = $this->initCart();
 		$user_data[$this->eid]['tags'] = $this->getTags();
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
 		$user_data[$this->eid]['name'] = $this->name;
