@@ -849,7 +849,7 @@ Dase.initCart = function() {
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
 	function(json) { 
-		var label = Dase.$('cartLabel');
+		var label = Dase.$('cartLink');
 		if (label) {
 			if (undefined !== json.length) {
 				label.innerHTML = "My Cart ("+json.length+")";
