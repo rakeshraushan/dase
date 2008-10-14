@@ -89,12 +89,7 @@
 		<div id="sidebar">
 			<ul id="menu">
 				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
-				<li id="cart-menu"><a href="" class="main" id="cartLabel">My Cart</a>
-				<ul class="hide" id="cart-submenu">
-					<li><a href="" class="create" id="cartLink">view cart</a></li>
-					<li><a href="" class="create">empty cart</a></li>
-				</ul>
-				</li>
+				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
 				<ul class="hide" id="sets-submenu">
 					<li></li>
