@@ -339,6 +339,7 @@ div.pageControls {
 
 table#itemSet {
 	margin-bottom: 4px;
+	width: 100%;
 }
 table#itemSet td {
 	padding: .25em .5em;

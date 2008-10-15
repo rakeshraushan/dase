@@ -10,7 +10,7 @@
 			<span class="position">{$it->position}.</span>
 		</div>
 		<div class="cartAdd">
-			<span class="hide">in cart</span> <a href="#" class="hide" id="addToCart_{$it->unique}">add to cart</a>
+			<span class="hide">in cart</span> <a href="{$it->unique}" class="hide" id="addToCart_{$it->unique}">add to cart</a>
 		</div>
 		<div class="image">
 			<a href="{$it->itemLink}">

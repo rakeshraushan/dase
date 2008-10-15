@@ -9,9 +9,11 @@
 {block name="content"}
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
-	<h4 class="startSlideshow">
-		<a href="tag/{$tag_feed->eid}/{$tag_feed->asciiId}">return to set</a>
-	</h4>
+	<div class="pageControls">
+		<h4 class="startSlideshow">
+			<a href="tag/{$tag_feed->eid}/{$tag_feed->asciiId}">return to set</a>
+		</h4>
+	</div>
 	<h2>{$tag_feed->title} ({$tag_feed->count} items)</h2>
 	<h3>{$tag_feed->subtitle}</h3>
 
