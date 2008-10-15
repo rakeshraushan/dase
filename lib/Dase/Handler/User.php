@@ -6,6 +6,7 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/data' => 'data',
 		'{eid}/settings' => 'settings',
 		'{eid}/cart' => 'cart',
+		'{eid}/cart/emptier' => 'cart_emptier',
 		'{eid}/sets' => 'sets',
 		'{eid}/auth' => 'http_password',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
@@ -85,7 +86,8 @@ class Dase_Handler_User extends Dase_Handler
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
 			$tag_item = new Dase_DBO_TagItem;
-			list($coll,$sernum) = explode('/',$r->get('item_unique'));
+			$item_uniq = str_replace(APP_ROOT.'/','',$r->get('item_unique'));
+			list($coll,$sernum) = explode('/',$item_uniq);
 
 			//todo: compat 
 			$item = Dase_DBO_Item::get($coll,$sernum);
@@ -105,6 +107,25 @@ class Dase_Handler_User extends Dase_Handler
 			} else {
 				$r->renderResponse("add to cart failed");
 			}
+		} else {
+			$r->renderResponse("no such cart");
+		}
+	}
+
+	public function postToCartEmptier($r)
+	{
+		$u = $this->user;
+		$u->expireDataCache();
+		$tag = new Dase_DBO_Tag;
+		$tag->dase_user_id = $u->id;
+		$tag->type = 'cart';
+		if ($tag->findOne()) {
+			foreach ($tag->getTagItems() as $ti) {
+				$ti->delete();
+			}
+			$tag->updateItemcount();
+			$params['msg'] = "Your cart has been emptied.";
+			$r->renderRedirect("user/$u->eid/cart",$params);
 		} else {
 			$r->renderResponse("no such cart");
 		}
@@ -145,6 +166,7 @@ class Dase_Handler_User extends Dase_Handler
 			$json_url = APP_ROOT.'/tag/'.$tag->id.'.json';
 			$t->assign('json_url',$json_url);
 			$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
+			$t->assign('is_admin',1);
 			$r->renderResponse($t->fetch('item_set/tag.tpl'));
 		} else {
 			$r->renderError(404);

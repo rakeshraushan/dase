@@ -72,18 +72,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$subs = new Dase_DBO_Subscription;
 		$subs->dase_user_id = $this->id;
 		foreach($subs->find() as $sub) {
-			$tag = new Dase_DBO_Tag;
-			$tag->load($sub->tag_id);
-			if ($tag->name && $tag->ascii_id) {
+			$sub_tag = array();
+			$tag = $sub->getTag();
+			if ($tag->is_public && $tag->name && $tag->ascii_id) {
 				$sub_tag['id'] = $tag->id;
-				//note that I am overloading the ascii_id place w/ the id
-				//to ensure uniqueness
-				$sub_tag['ascii_id'] = "a" . $sub->tag_id;
 				$sub_tag['name'] = $tag->name;
 				$sub_tag['type'] = 'subscription';
 				$sub_tag['count'] = $tag->item_count;
-			}
-			$tag_array[] = $sub_tag;
+				$tag_array[] = $sub_tag;
+			} 
 		}
 		uasort($tag_array, array('Dase_Util','sortByTagName'));
 		return $tag_array;

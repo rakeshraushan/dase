@@ -608,10 +608,12 @@ Dase.loadingMsg = function(displayBool) {
 	var loading = Dase.$('ajaxMsg');
 	if (!loading) return;
 	if (displayBool) {
+		grayOut(true);
 		Dase.removeClass(loading,'hide');
 		loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
+		grayOut(false);
 		Dase.addClass(loading,'hide');
 		loading.innerHTML = '';
 	}
@@ -820,6 +822,9 @@ Dase.initAddToCart = function() {
 		}
 	}
 	var sr = Dase.$('itemSet');
+	if (!sr) {
+		sr = Dase.$('item');
+	}
 	if (!sr) return;
 	var anchors = sr.getElementsByTagName('a');
 	for (var i=0;i<anchors.length;i++) {
@@ -827,12 +832,12 @@ Dase.initAddToCart = function() {
 			anchors[i].onclick = function(e) {
 				this.innerHTML = '(remove)';
 				Dase.removeClass(this.parentNode.getElementsByTagName('span')[0],'hide');
-				var inputElem = this.parentNode.parentNode.getElementsByTagName('input')[0];
+	//			var inputElem = this.parentNode.parentNode.getElementsByTagName('input')[0];
 				var item = {};
-				item.item_unique = inputElem.value;
+				item.item_unique = this.href;
 				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
 				function(resp) { 
-				alert(resp);
+					//alert(resp);
 					Dase.initUser(); 
 					Dase.initSaveTo();
 				});
@@ -850,6 +855,9 @@ Dase.initCart = function() {
 		label.innerHTML = "My Cart ("+Dase.user.cart_count+")";
 	}
 	var sr = Dase.$('itemSet');
+	if (!sr) {
+		sr = Dase.$('item');
+	}
 	if (!sr) return;
 	Dase.getJSON(Dase.base_href + 'user/' + Dase.user.eid + "/cart",
 	function(json) { 
@@ -874,7 +882,7 @@ Dase.initCart = function() {
 					this.innerHTML = 'add to cart';
 					this.id = 'addToCart_' + this.item_unique;
 					var delete_url = this.href;
-					this.href = '#';
+					this.href = this.item_unique;
 					Dase.addClass(this.parentNode.getElementsByTagName('span')[0],'hide');
 					Dase.ajax(delete_url,'DELETE',function(resp) {
 						Dase.initUser(); 
@@ -1327,4 +1335,102 @@ Dase.addLoadEvent(function() {
 		Dase.pageInit();
 	}
 });
+
+
+// from http://www.hunlock.com/blogs/Snippets:_Howto_Grey-Out_The_Screen
+function grayOutOrig(vis, options) {
+  // Pass true to gray out screen, false to ungray
+  // options are optional.  This is a JSON object with the following (optional) properties
+  // opacity:0-100         // Lower number = less grayout higher = more of a blackout 
+  // zindex: #             // HTML elements with a higher zindex appear on top of the gray out
+  // bgcolor: (#xxxxxx)    // Standard RGB Hex color code
+  // grayOut(true, {'zindex':'50', 'bgcolor':'#0000FF', 'opacity':'50'});
+  // Because options is JSON opacity/zindex/bgcolor are all optional and can appear
+  // in any order.  Pass only the properties you need to set.
+  var options = options || {}; 
+  var zindex = options.zindex || 50;
+  var opacity = options.opacity || 70;
+  var opaque = (opacity / 100);
+  var bgcolor = options.bgcolor || '#000000';
+  var dark=document.getElementById('darkenScreenObject');
+  if (!dark) {
+    // The dark layer doesn't exist, it's never been created.  So we'll
+    // create it here and apply some basic styles.
+    // If you are getting errors in IE see: http://support.microsoft.com/default.aspx/kb/927917
+    var tbody = document.getElementsByTagName("body")[0];
+    var tnode = document.createElement('div');           // Create the layer.
+        tnode.style.position='absolute';                 // Position absolutely
+        tnode.style.top='0px';                           // In the top
+        tnode.style.left='0px';                          // Left corner of the page
+        tnode.style.overflow='hidden';                   // Try to avoid making scroll bars            
+        tnode.style.display='none';                      // Start out Hidden
+        tnode.id='darkenScreenObject';                   // Name it so we can find it later
+    tbody.appendChild(tnode);                            // Add it to the web page
+    dark=document.getElementById('darkenScreenObject');  // Get the object.
+  }
+  if (vis) {
+    // Calculate the page width and height 
+    if( document.body && ( document.body.scrollWidth || document.body.scrollHeight ) ) {
+        var pageWidth = document.body.scrollWidth+'px';
+        var pageHeight = document.body.scrollHeight+'px';
+    } else if( document.body.offsetWidth ) {
+      var pageWidth = document.body.offsetWidth+'px';
+      var pageHeight = document.body.offsetHeight+'px';
+    } else {
+       var pageWidth='100%';
+       var pageHeight='100%';
+    }   
+    //set the shader to cover the entire page and make it visible.
+    dark.style.opacity=opaque;                      
+    dark.style.MozOpacity=opaque;                   
+    dark.style.filter='alpha(opacity='+opacity+')'; 
+    dark.style.zIndex=zindex;        
+    dark.style.backgroundColor=bgcolor;  
+    dark.style.width= pageWidth;
+    dark.style.width= pageWidth;
+    dark.style.height= pageHeight;
+    dark.style.display='block';				 
+  } else {
+     dark.style.display='none';
+  }
+}
+
+// from http://www.hunlock.com/blogs/Snippets:_Howto_Grey-Out_The_Screen
+function grayOut(vis) {
+  var options = {}; 
+  var zindex = options.zindex || 50;
+  var opacity = options.opacity || 40;
+  var opaque = (opacity / 100);
+  var bgcolor = options.bgcolor || '#999999';
+  var dark=document.getElementById('darkenScreenObject');
+  if (!dark) {
+    // The dark layer doesn't exist, it's never been created.  So we'll
+    // create it here and apply some basic styles.
+    // If you are getting errors in IE see: http://support.microsoft.com/default.aspx/kb/927917
+    var tbody = document.getElementsByTagName("body")[0];
+    var tnode = document.createElement('div');           // Create the layer.
+        tnode.style.position='absolute';                 // Position absolutely
+        tnode.style.top='41px';                           // In the top
+        tnode.style.left='0px';                          // Left corner of the page
+		tnode.style.width = '20px';
+        tnode.style.overflow='hidden';                   // Try to avoid making scroll bars            
+        tnode.style.display='none';                      // Start out Hidden
+        tnode.id='darkenScreenObject';                   // Name it so we can find it later
+    tbody.appendChild(tnode);                            // Add it to the web page
+    dark=document.getElementById('darkenScreenObject');  // Get the object.
+  }
+  if (vis) {
+    // Calculate the page width and height 
+    dark.style.opacity=opaque;                      
+    dark.style.MozOpacity=opaque;                   
+    dark.style.filter='alpha(opacity='+opacity+')'; 
+    dark.style.zIndex=zindex;        
+    dark.style.backgroundColor=bgcolor;  
+    dark.style.width= '16.2%';
+    dark.style.height= '124px';
+    dark.style.display='block';				 
+  } else {
+     dark.style.display='none';
+  }
+}
 
