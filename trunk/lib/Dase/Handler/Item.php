@@ -127,7 +127,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$note = new Dase_DBO_Content;
+		$note = new Dase_DBO_Comment;
 		$note->load($r->get('note_id'));
 		if ($user->eid == $note->updated_by_eid) {
 			$note->delete();
@@ -175,7 +175,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
-		$this->item->addContent($bits,$user->eid);
+		$this->item->addComment($bits,$user->eid);
 		$this->item->buildSearchIndex();
 		$r->renderResponse('added content: '.$bits);
 	}
@@ -235,7 +235,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'cannot post media to this item');
 		}
-		$r->renderResponse($this->item->getContentsJson());
+		$r->renderResponse($this->item->getCommentsJson());
 	}
 
 	public function postToMedia($r) 

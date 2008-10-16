@@ -85,15 +85,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}
-		foreach ($this->getContents() as $c) {
-			$composite_value_text .= $c->text . " ";
-		}
-		$this->collection || $this->getCollection();
+
+		//todo: fix this to get the latest version of content only
+		$content = $this->getContents();
+		$composite_value_text .= $content->text . " ";
+		$c = $this->getCollection();
 		$search_table = new Dase_DBO_SearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
-		$search_table->collection_ascii_id = $this->collection->ascii_id;
+		$search_table->collection_ascii_id = $c->ascii_id;
 		$search_table->updated = date(DATE_ATOM);
 		if ($composite_value_text) {
 			$search_table->insert();
@@ -111,14 +112,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		while ($value_text = $st->fetchColumn()) {
 			$composite_value_text .= $value_text . " ";
 		}
-		foreach ($this->getContents() as $c) {
-			$composite_value_text .= $c->text . " ";
-		}
+		$content = $this->getContents();
+		$composite_value_text .= $content->text . " ";
 		$search_table = new Dase_DBO_AdminSearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
 		$search_table->collection_id = $this->collection_id;
-		$search_table->collection_ascii_id = $this->collection->ascii_id;
+		$search_table->collection_ascii_id = $c->ascii_id;
 		$search_table->updated = date(DATE_ATOM);
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
@@ -373,6 +373,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteAdminValues();
 		$this->deleteSearchIndexes();
 		$this->deleteContent();
+		$this->deleteComments();
 		$this->deleteTagItems();
 		$this->delete();
 		$c->updateItemCount();
@@ -381,6 +382,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function deleteContent()
 	{
 		$co = new Dase_DBO_Content;
+		$co->item_id = $this->id;
+		foreach ($co->find() as $doomed) {
+			$doomed->delete();
+		}
+	}
+
+	function deleteComments()
+	{
+		$co = new Dase_DBO_Comments;
 		$co->item_id = $this->id;
 		foreach ($co->find() as $doomed) {
 			$doomed->delete();
@@ -491,6 +501,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory('public','http://daseproject.org/category/item/status');
 		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
+
+//todo: use latest content as first choice -- if that is not there, then do what follows
 
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
@@ -687,34 +699,60 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($status);
 	}
 
-	public function getContents()
+	public function getContents($get_all=false)
 	{
 		$contents = new Dase_DBO_Content;
 		$contents->item_id = $this->id;
-		return $contents->find();
+		$contents->orderBy('updated DESC');
+		if ($get_all) {
+			return $contents->find();
+		} else {
+			return $contents->findOne();
+		}
 	}
 
-	public function getContentsJson()
+	public function getComments()
 	{
-		$content = '';
-		foreach ($this->getContents() as $c_obj) {
+		$comments = new Dase_DBO_Comment;
+		$comments->item_id = $this->id;
+		return $comments->find();
+	}
+
+	public function getCommentsJson()
+	{
+		$comments = '';
+		foreach ($this->getComments() as $c_obj) {
 			$c['id'] = $c_obj->id;
 			$c['updated'] = $c_obj->updated;
 			$c['eid'] = $c_obj->updated_by_eid;
 			$c['text'] = $c_obj->text;
-			$content[] = $c;
+			$comments[] = $c;
 		}
-		return Dase_Json::get($content);
+		return Dase_Json::get($comments);
 	}
 
-	public function addContent($text,$eid)
+	public function setContent($text,$eid)
 	{
-		$this->collection || $this->getCollection();
-		$note = new Dase_DBO_Content;
+		$c = $this->getCollection();
+		$content = new Dase_DBO_Content;
+		$content->item_id = $this->id;
+		//todo: security! filter input....
+		$content->text = $text;
+		$content->p_collection_ascii_id = $c->ascii_id;
+		$content->p_serial_number = $this->serial_number;
+		$content->updated = date(DATE_ATOM);
+		$content->updated_by_eid = $eid;
+		$content->insert();
+	}
+
+	public function addComment($text,$eid)
+	{
+		$c = $this->getCollection();
+		$note = new Dase_DBO_Comment;
 		$note->item_id = $this->id;
 		//todo: security! filter input....
 		$note->text = $text;
-		$note->p_collection_ascii_id = $this->collection->ascii_id;
+		$note->p_collection_ascii_id = $c->ascii_id;
 		$note->p_serial_number = $this->serial_number;
 		$note->updated = date(DATE_ATOM);
 		$note->updated_by_eid = $eid;
