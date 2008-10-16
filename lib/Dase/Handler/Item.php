@@ -4,7 +4,6 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
-		'{collection_ascii_id}/{serial_number}/micro' => 'microformat',
 		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
@@ -43,15 +42,6 @@ class Dase_Handler_Item extends Dase_Handler
 	public function getMediaCount($r)
 	{
 		$r->renderResponse($this->item->getMediaCount());
-	}
-
-	public function getMicroformat($r)
-	{
-		$user = $r->getUser();
-		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'user cannot read this item');
-		}
-		$r->renderResponse($this->item->asMicroformat());
 	}
 
 	public function getTags($r)

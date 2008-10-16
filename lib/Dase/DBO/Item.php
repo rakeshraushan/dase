@@ -126,44 +126,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		Dase_Log::info("built indexes for " . $this->serial_number);
 	}
 
-	public function asMicroformat() 
-	{
-		$div = new SimpleXMLElement('<div/>');
-		$div->addAttribute('class',$this->serial_number);
-		$img = $div->addChild('img');
-		//todo: error if item does not have thumbnail
-		$img->addAttribute('src',$this->getMediaUrl('thumbnail'));
-		$img->addAttribute('class','thumbnail');
-		$contents = $div->addChild('ul');
-		$contents->addAttribute('class','notes');
-		foreach ($this->getContents() as $cont) {
-			$content_note = $contents->addChild('li',htmlspecialchars($cont->text));
-			$content_note->addAttribute('class',$cont->updated_by_eid .' '.$cont->updated);
-		}
-		$keyvals = $div->addChild('dl');
-		$keyvals->addAttribute('class','metadata');
-		foreach ($this->getMetadata() as $row) {
-			//php dom will escape text for me here....
-			$attname = $keyvals->addChild('dt',$row['attribute_name']);
-			$attname->addAttribute('class',$row['ascii_id']);
-			$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
-		}
-		$media = $div->addChild('ul');
-
-		foreach ($this->getMedia() as $med) {
-			$media_file = $media->addChild('li');
-			$media_file->addAttribute('class',$med->size);
-			$media_link = $media_file->addChild('a',$med->filename);
-			$media_link->addAttribute('href',$med->getLink());
-			$media_link->addAttribute('type',$med->mime_type);
-			$media_link->addAttribute('title',$med->size);
-			//$media_content->setAttribute('width',$med->width);
-			//$media_content->setAttribute('height',$med->height);
-			//$media_content->setAttribute('fileSize',$med->file_size);
-		}
-		return $div->asXml();
-	}
-
 	public function getMetadata($att_ascii_id = '')
 	{
 		$prefix = Dase_Config::get('table_prefix');
