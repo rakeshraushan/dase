@@ -40,7 +40,11 @@
 		{if $items->collection}
 		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>
 		{/if}
+		{if $items->count}
 		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}</h3>
+		{else}
+		<h3 class="searchEcho">Search Results: 0 items found</h3>
+		{/if}
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
