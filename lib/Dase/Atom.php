@@ -22,6 +22,8 @@ class Dase_Atom
 		'media' => 'http://search.yahoo.com/mrss/',
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',
 		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+		'thr' => 'http://purl.org/syndication/thread/1.0',
+
 	);
 
 	function __get($var) {

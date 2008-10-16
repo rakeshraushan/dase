@@ -81,16 +81,14 @@
 				<div id="itemLinks">
 					<span class="hide">in cart</span> <a href="{$item->unique}" class="hide" id="addToCart_{$item->unique}">add to cart</a>
 					|
-					<!--
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
-					-->
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a> 
 				</div>
 				<div class="spacer"></div>
 				<div id="notesForm" class="hide">
 					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" name="notes_form" id="notesForm" method="post">
-						<textarea rows="7" cols="60" id="note" name="note"></textarea>
+						<textarea rows="4" cols="50" id="note" name="note"></textarea>
 						<p>
 						<input type="submit" value="add note"/>
 						</p>

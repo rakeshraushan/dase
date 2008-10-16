@@ -9,11 +9,12 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
+		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
 		'{collection_ascii_id}/{serial_number}/templates' => 'input_templates',
-		'{collection_ascii_id}/{serial_number}/notes/{note_id}' => 'note',
+		'{collection_ascii_id}/{serial_number}/comments/{comment_id}' => 'comment',
 	);
 
 	protected function setup($r)

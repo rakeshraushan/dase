@@ -57,6 +57,10 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed',
 			'entry' => 'Dase_Atom_Entry',
 		),
+		'comments' => array(
+			'feed' => 'Dase_Atom_Feed',
+			'entry' => 'Dase_Atom_Entry_Comment',
+		),
 	);
 	protected $feedtype;
 
@@ -150,9 +154,11 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	function addEntry($type = '')
 	{
-		$entry = new Dase_Atom_Entry($this->dom);
-		if ($type) {
+		if ($type && isset(Dase_Atom_Entry::$types_map[$type])) {
+			$entry = new Dase_Atom_Entry::$types_map[$type]($this->dom);
 			$entry->setEntryType($type);
+		} else {
+			$entry = new Dase_Atom_Entry($this->dom);
 		}
 		//entries will be appended in asXml method
 		$this->_entries[] = $entry;
