@@ -469,6 +469,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		if (!$this->id) { return false; }
 		$d = Dase_Atom::$ns['d'];
+		$thr = Dase_Atom::$ns['thr'];
 		$c = $this->getCollection();
 		$type = $this->getItemType();
 		//todo: I think this can be simplified when DASe 1.0 is retired
@@ -489,6 +490,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//for AtomPub -- is this correct??
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','edit' );
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media','http://daseproject.org/relation/media-collection' );
+
+		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );
+		$thr_count = $this->getCommentsCount();
+		if ($thr_count) {
+			$replies->setAttributeNS($thr,'thr:count',$thr_count);
+			$replies->setAttributeNS($thr,'thr:updated',$this->getCommentsUpdated());
+		}
 		$entry->setUpdated($updated);
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
@@ -503,6 +511,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 
 //todo: use latest content as first choice -- if that is not there, then do what follows
+	
+
+		/************** content *******************/
 
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($entry->setContent());
@@ -522,6 +533,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 		}
+
+		/************** end content *******************/
 
 		//much of the following can go in Dase_Atom_Entry
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
@@ -587,6 +600,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//todo: this needs to be passed in?
 		$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
 		$this->injectAtomEntryData($feed->addEntry());
+		//add comments
+		foreach ($this->getComments() as $comment) {
+			$entry = $feed->addEntry('comment');
+			$comment->injectAtomEntryData($entry);
+		}
 		return $feed->asXml();
 	}
 
@@ -614,13 +632,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	}
 
 	public function getAtomPubServiceDoc() {
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$app = new Dase_Atom_Service;
-		$workspace = $app->addWorkspace($this->collection->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media',$this->collection->collection_name.' Item '.$this->serial_number.' Media'); 
+		$workspace = $app->addWorkspace($c->collection_name.' Item '.$this->serial_number.' Workspace');
+		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/media',$c->collection_name.' Item '.$this->serial_number.' Media'); 
 		foreach(Dase_Config::get('media_types') as $type) {
 			$media_coll->addAccept($type);
 		}
+		$comments_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
+		$comments_coll->addAccept('text/plain');
+		$comments_coll->addAccept('text/html');
+		$comments_coll->addAccept('application/xhtml+xml');
 		return $app->asXml();
 	}
 
@@ -702,6 +724,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			return $contents->findOne();
 		}
+	}
+
+	public function getCommentsCount()
+	{
+		$comments = new Dase_DBO_Comment;
+		$comments->item_id = $this->id;
+		return $comments->findCount();
+	}
+
+	public function getCommentsUpdated()
+	{
+		$comments = new Dase_DBO_Comment;
+		$comments->item_id = $this->id;
+		$comments->orderBy('updated DESC');
+		$latest = $comments->findOne();
+		return $latest->updated;
 	}
 
 	public function getComments()

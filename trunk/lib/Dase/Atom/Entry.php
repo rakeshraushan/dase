@@ -11,6 +11,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		'item' => 'Dase_Atom_Entry_Item',
 		'attribute' => 'Dase_Atom_Entry_Attribute',
 		'collection' => 'Dase_Atom_Entry_Collection',
+		'comment' => 'Dase_Atom_Entry_Comment',
 	);
 
 	//note: dom is the dom object and root is the root
