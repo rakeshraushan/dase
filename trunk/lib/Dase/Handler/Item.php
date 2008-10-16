@@ -176,7 +176,8 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		fclose($fp);
 		$this->item->addComment($bits,$user->eid);
-		$this->item->buildSearchIndex();
+		//notes should NOT be globally searchable
+		//$this->item->buildSearchIndex();
 		$r->renderResponse('added content: '.$bits);
 	}
 

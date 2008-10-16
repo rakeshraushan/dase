@@ -512,13 +512,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$img->addAttribute('src',$thumb_url);
 			$img->addAttribute('class','thumbnail');
 		}
-		//$div->addChild('p',htmlspecialchars($this->getDescription()));
-		$contents = $div->addChild('ul');
-		foreach ($this->getContents() as $cont) {
-			$content_note = $contents->addChild('li',htmlspecialchars($cont->text));
-			$content_note->addAttribute('eid',$cont->updated_by_eid);
-			$content_note->addAttribute('date',$cont->updated);
-		}
 		$keyvals = $div->addChild('dl');
 		$keyvals->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
