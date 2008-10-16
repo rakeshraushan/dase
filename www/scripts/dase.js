@@ -1003,7 +1003,7 @@ Dase.initRemoveItems = function() {
 	};
 };
 
-Dase.initContentNotes = function() {
+Dase.initNotes = function() {
 	Dase.getNotes();
 	var notes = Dase.$('notes');
 	var notes_link = Dase.$('notesLink');
@@ -1327,7 +1327,7 @@ Dase.addLoadEvent(function() {
 	Dase.initRemoveItems();
 	Dase.initSubmitConfirm();
 	Dase.initLogoff();
-	Dase.initContentNotes();
+	Dase.initNotes();
 	Dase.initAttributeEdit();
 	Dase.initSlideshowLink();
 	Dase.initShowHtpasswd();
