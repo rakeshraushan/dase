@@ -54,6 +54,17 @@ CREATE TABLE {$table_prefix}collection_manager (
     created character varying(50)
 );
 
+CREATE TABLE {$table_prefix}comment (
+    id serial NOT NULL,
+    text text,
+    "type" character varying(10),
+    item_id integer,
+    p_collection_ascii_id character varying(100),
+    p_serial_number character varying(100),
+    updated character varying(100),
+    updated_by_eid character varying(100)
+);
+
 CREATE TABLE {$table_prefix}content (
     id serial NOT NULL,
     text text,

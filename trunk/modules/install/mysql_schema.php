@@ -69,6 +69,19 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `{$table_prefix}comment`;
+CREATE TABLE `{$table_prefix}comment` (
+`id` int(11) NOT NULL auto_increment,
+`item_id` int(11) default NULL,
+`text` text default NULL,
+`updated_by_eid` varchar(100) default NULL,
+`updated` varchar(100) default NULL,
+`p_serial_number` varchar(100) default NULL,
+`p_collection_ascii_id` varchar(100) default NULL,
+`type` varchar(10) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `{$table_prefix}content`;
 CREATE TABLE `{$table_prefix}content` (
 `id` int(11) NOT NULL auto_increment,

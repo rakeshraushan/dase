@@ -82,8 +82,6 @@
 					<span class="hide">in cart</span> <a href="{$item->unique}" class="hide" id="addToCart_{$item->unique}">add to cart</a>
 					|
 					<!--
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/micro">micro</a> 
-					|
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
 					-->
