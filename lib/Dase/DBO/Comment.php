@@ -37,6 +37,8 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 		$entry->addAuthor($this->updated_by_eid);
 		//for AtomPub -- is this correct??
 		$entry->addLink($this->getBaseUrl());
+		$entry->addLink($this->getBaseUrl().'.atom','self','application/atom+xml');
+		$entry->addLink($this->getBaseUrl().'.atom','edit','application/atom+xml');
 		$entry->setUpdated($this->updated);
 		$entry->setId($this->getBaseUrl());
 		if (!$this->type) { $this->type = 'text/html'; }

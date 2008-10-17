@@ -230,6 +230,12 @@ Dase.removeFromArray = function(ar,val) {
 	}
 }
 
+Dase.pageReload = function(msg) {
+	var curr = window.location.href;
+	curr = curr.split('?')[0];
+	window.location.href = curr+'?msg='+msg;
+}
+
 /* end utilities */
 
 Dase.getEid = function() {
@@ -1035,7 +1041,7 @@ Dase.getNotes = function() {
 	function(resp) {
 		var html = '';
 		for (var i=0;i<resp.length;i++) {
-			html += '<li>'+resp[i].text;
+			html += '<li class="note">'+resp[i].text.replace(/\n/g,'<br/>');
 			html += ' <a href="'+notesLink.href+'/'+resp[i].id+'" class="delete note">(x)</a>';
 			html += '</li>';
 		}

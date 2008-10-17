@@ -48,6 +48,7 @@
 			</td>
 			<td class="metadata">
 				<div class="controlsContainer">
+					{if $is_admin}
 					<div id="adminPageControls" class="">
 						<!-- is there a better place for this?-->
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
@@ -59,6 +60,7 @@
 						-->
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
 					</div>
+					{/if}
 				</div>
 				<!-- adding metadata section-->
 				<div id="addMetadata" class="hide">
@@ -83,22 +85,18 @@
 					|
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" id="notesLink">user notes</a> 
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" id="notesLink">user notes</a> 
 				</div>
 				<div class="spacer"></div>
 				<div id="notesForm" class="hide">
-					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/notes" name="notes_form" id="notesForm" method="post">
+					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
 						<textarea rows="4" cols="50" id="note" name="note"></textarea>
 						<p>
 						<input type="submit" value="add note"/>
 						</p>
 					</form>
 				</div>
-				<ul id="notes">
-					{foreach item=note from=$item->notes}
-					<li>{$note.text}</li>
-					{/foreach}
-				</ul>
+				<ul id="notes"><!-- ajax fills--></ul>
 			</td>
 		</tr>
 	</table>
