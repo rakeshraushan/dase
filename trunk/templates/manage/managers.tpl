@@ -1,5 +1,9 @@
 {extends file="manage/layout.tpl"}
 
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/managers.js"></script>
+{/block}
+
 {block name="content"}
 <div id="contentHeader">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
@@ -9,7 +13,7 @@
 	-->
 </div>
 <div id="collectionData">
-	<table class="dataDisplay">
+	<table class="dataDisplay" id="managers">
 		<tr>
 			<th>Name</th>
 			<th>Eid</th>
@@ -25,7 +29,11 @@
 			<td>{$m->auth_level}</td>
 			<td>{$m->expiration}</td>
 			<td>{$m->created}</td>
-			<td><a href="xxxxxxxxxxxxxxx" id="manager_delete" class="delete">delete</a></td>
+			<td>
+				{if $m->dase_user_eid != $user->eid}
+				<a href="manage/{$collection->ascii_id}/managers/{$m->dase_user_eid}" class="delete manager">delete</a>
+				{/if}
+			</td>
 		</tr>
 		{/foreach}
 		<form action="manage/{$collection->ascii_id}/managers" method="post">

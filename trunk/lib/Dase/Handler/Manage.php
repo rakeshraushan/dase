@@ -13,6 +13,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/managers' => 'managers',
+		'{collection_ascii_id}/managers/{manager_eid}' => 'manager',
 		'{collection_ascii_id}/settings' => 'settings',
 		'{collection_ascii_id}/indexer' => 'indexer',
 		'{collection_ascii_id}/uploader' => 'uploader',
@@ -82,6 +83,20 @@ class Dase_Handler_Manage extends Dase_Handler
 		}
 		$r->renderResponse($this->collection->getAttributesJson($so));
 	}
+
+	public function deleteManager($r)
+	{
+		$manager = new Dase_DBO_CollectionManager;
+		$manager->dase_user_eid = $r->get('manager_eid');
+		$manager->collection_ascii_id = $this->collection->ascii_id;
+		$manager->findOne();
+		$eid = $manager->dase_user_eid;
+		if ($manager->id && $manager->dase_user_eid && $manager->collection_ascii_id) {
+			$manager->delete();
+		}
+		$r->renderResponse('deleted manager '.$eid);
+	}
+
 
 	public function getAttributeForm($r)
 	{

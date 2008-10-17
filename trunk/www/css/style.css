@@ -282,8 +282,14 @@ table#item td.metadata textarea {
 }
 
 table#item td.metadata ul#notes {
-	line-height: 1.8em;
 	margin: 1em 0;
+}
+
+table#item td.metadata ul#notes li {
+	margin: 10px 0;
+	width: 50%;
+	padding: 10px;
+	background-color: #eee;
 }
 
 div#itemLinks {

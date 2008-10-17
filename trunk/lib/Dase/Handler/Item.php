@@ -8,7 +8,6 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
-		'{collection_ascii_id}/{serial_number}/notes' => 'notes',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
@@ -103,6 +102,9 @@ class Dase_Handler_Item extends Dase_Handler
 			$user->eid,$user->getHttpPassword()
 		);
 
+		if ($user->can('write',$this->item)) {
+			$t->assign('is_admin',1);
+		}
 		$t->assign('item',$feed);
 		$r->renderResponse($t->fetch('item/transform.tpl'));
 	}
@@ -122,19 +124,20 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($t->fetch('item/jstemplates.tpl'));
 	}
 
-	public function deleteNote($r)
+	public function deleteComment($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$note = new Dase_DBO_Comment;
-		$note->load($r->get('note_id'));
-		if ($user->eid == $note->updated_by_eid) {
-			$note->delete();
+		$comment = new Dase_DBO_Comment;
+		$comment->load($r->get('comment_id'));
+		if ($user->eid == $comment->updated_by_eid) {
+			$comment->delete();
 		}
-		$this->item->buildSearchIndex();
-		$r->renderResponse('deleted note '.$note->id);
+		//todo: I don't think we are indexing comments (??)
+		//$this->item->buildSearchIndex();
+		$r->renderResponse('deleted comment '.$comment->id);
 	}
 
 	public function getStatusJson($r)
@@ -163,7 +166,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('status updated');
 	}
 
-	public function postToNotes($r)
+	public function postToComments($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('read',$this->item)) {
@@ -176,8 +179,9 @@ class Dase_Handler_Item extends Dase_Handler
 			$bits .= fread($fp, 4096);
 		}
 		fclose($fp);
+		$bits = trim($bits);
 		$this->item->addComment($bits,$user->eid);
-		//notes should NOT be globally searchable
+		//comments should NOT be globally searchable
 		//$this->item->buildSearchIndex();
 		$r->renderResponse('added content: '.$bits);
 	}
@@ -231,13 +235,14 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($meta));
 	}
 
-	public function getNotesJson($r)
+	public function getCommentsJson($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'cannot post media to this item');
+			$r->renderError(401,'cannot read comments on this item');
 		}
-		$r->renderResponse($this->item->getCommentsJson());
+		//todo: should displayed comments be limited to this user???
+		$r->renderResponse($this->item->getCommentsJson($user->eid));
 	}
 
 	public function postToMedia($r) 

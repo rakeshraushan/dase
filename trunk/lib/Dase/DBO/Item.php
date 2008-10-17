@@ -742,17 +742,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $latest->updated;
 	}
 
-	public function getComments()
+	public function getComments($eid='')
 	{
 		$comments = new Dase_DBO_Comment;
 		$comments->item_id = $this->id;
+		if ($eid) {
+			$comments->updated_by_eid = $eid;
+		}
 		return $comments->find();
 	}
 
-	public function getCommentsJson()
+	public function getCommentsJson($eid='')
 	{
 		$comments = '';
-		foreach ($this->getComments() as $c_obj) {
+		foreach ($this->getComments($eid) as $c_obj) {
 			$c['id'] = $c_obj->id;
 			$c['updated'] = $c_obj->updated;
 			$c['eid'] = $c_obj->updated_by_eid;
