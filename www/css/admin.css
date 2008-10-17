@@ -1,21 +1,14 @@
-div#adminHeader {
+div#manageHeader {
 	background-color: #333;
-	color: #ccc;
+	color: #fff;
 	font-weight: bold;
+	font-size: 1.8em;
 	margin-top: 0px;
-	padding:4px;
-	padding-left: 18px;
+	padding:13px 0 10px 18px;
 }
 
-div#adminHeader p {
-	color: white;
-	margin:0;
-	font-size: 1.7em;
-	padding:6px 0 0 0;
-}
-
-div#admin {
-	background-color:#eef1f8;
+div#manage {
+	background-color:#f3f8ff;
 }
 
 
@@ -41,20 +34,27 @@ div#sidebar
 
 ul#menu a {
 	display:block;
+	color: #000;
+	color: #353a41;
 	padding: 9px 9px 9px 18px;
-	margin: 4px 0px;
+	margin: 5px 0px;
 }
 ul#menu img {
 	border: 0;
 }
 ul#menu  li  {
 	/* fixes ie problem */
-	background-color: #d5deed;
+	background-color: #ecd7d6;
+	background-color: #e7ff9c;
+	background-color: #76a452;
+	background-color: #8fb96e;
+	background-color: #c2dafb;
 	-moz-border-radius: 5px;
 }
 ul#menu li:hover {
-	background-color: #eef1f8;
-	background-color: #f4f6fc;
+	background-color: #f7efee;
+	background-color: #e7ff9c;
+	background-color: #a8bdda;
 }
 
 sup {
@@ -62,116 +62,53 @@ sup {
 	font-size: 1em;
 }
 
-table.dataDisplay {
-	background-color: #ffebcc;
-}
-
-table.dataDisplay  td {
-	text-align: center;
-}
-
-/* allows some cells to be left-aligned */
-table.dataDisplay  td.data {
-	text-align: left;
-}
-
-table.dataDisplay  td.editForm {
-	text-align: left;
-	vertical-align: top;
-	padding: 1em 1em 1em 2em;
-}
-
-table.dataDisplay  td.editForm ul.defined {
-	margin-bottom: 2em;
-}
-
-table.dataDisplay  td.editForm .submitControl {
-	float: left;
-	margin-right: 1em;
-}
-
-table.dataDisplay  td.editForm .deleteControl {
-	float: right;
-	margin-right: 2em;
-}
-
-table.dataDisplay  td.editForm .deleteControl input {
-	padding: 1px;
-	border: 1px solid #c00;
-    -moz-border-radius: 5px;
-}
-
-table.dataDisplay  td.editForm .deleteControl input:hover {
-	color: white;
-	background-color: red;
-}
-
-table.dataDisplay  td.editForm label{
-	display: block;
-	color: #666;
-}
-
-table.dataDisplay  th {
-	color: #333;
-	background-color: #f2dfc1;
-}
-
-table.dataDisplay  th div.current{
+div#classInfo {
 	margin-top: 1em;
-	color: #999;
-	max-width: 300px;
+	width: 70%;
 }
 
-table.dataDisplay  th.rows {
-	text-align: right;
+div#classInfo h1 {
+	padding: 10px;
+	background-color: #d4d8de;
+	color: #000;
 }
 
-#defined_values_form textarea {
-	min-height: 6em;
-	margin-bottom: 1em;
+div#classInfo h2 {
+	padding: 5px 10px;
+	background-color: #eee;
+}
+div#classInfo h3 {
+	margin: 10px;
 }
 
-/* uploader widget styles */
+div#classInfo p {
+	margin: 10px;
+	font-size: 1.1em;
+}
 
-.uploader_target {
+div#classInfo ul {
+	margin: 10px;
+	line-height: 1.3em;
+}
+
+span.mods {
+	color: #669;
+	margin-right: .5em;
+}
+
+span.declaring {
+	color: #666;
+	margin-right: .5em;
+}
+
+span.method {
+	color: #333;
+	font-weight: bold;
+	margin-right: .5em;
+}
+
+.javascript_template {
 	display: none;
 }
 
-/* uploader widget styles */
-input[type=file] {
-	font-size: 1.2em;
-	width: 80%;
-}
-
-iframe {
-	display: none;
-}
-
-ul#recent li {
-	width: 60%;
-    padding: .5em;
-    margin: 1em;
-    list-style-type: none;
-    -moz-border-radius: 5px;
-    background-color: #ddd;
-}
-
-ul#results li {
-	width: 60%;
-    padding: .5em;
-    margin: 1em;
-    list-style-type: none;
-    -moz-border-radius: 5px;
-}
-
-ul#results li.ok {
-    background-color: #c5facf;
-    color: #030;
-}
-
-ul#results li.error {
-    background-color: #fac5ef;
-    color: #300;
-	height: 2em;
-}
 

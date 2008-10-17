@@ -47,11 +47,11 @@
 				</table>
 			</td>
 			<td class="metadata">
+				<!-- is there a better place for this?-->
+				<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 				<div class="controlsContainer">
 					{if $is_admin}
 					<div id="adminPageControls" class="">
-						<!-- is there a better place for this?-->
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
 						|
 						<!--

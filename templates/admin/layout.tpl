@@ -16,7 +16,7 @@
 
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/admin.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<script type="text/javascript" src="www/scripts/http.js"></script>
