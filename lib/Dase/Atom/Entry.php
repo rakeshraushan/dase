@@ -161,7 +161,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function getSummaryType() 
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'summary') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'summary') as $el) {
 			return $el->getAttribute('type');
 		}
 	}
@@ -173,7 +173,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function getContentType() 
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content') as $el) {
 			return $el->getAttribute('type');
 		}
 	}
@@ -190,7 +190,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function getEntryType() 
 	{
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}

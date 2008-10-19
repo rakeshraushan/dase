@@ -487,7 +487,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setRights($this->getRights());
 		//for AtomPub
 		$entry->setEdited($updated);
-		//for AtomPub -- is this correct??
+		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number,'alternate');
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','edit' );
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media','http://daseproject.org/relation/media-collection' );
 
@@ -508,7 +508,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			$entry->addCategory('public','http://daseproject.org/category/item/status');
 		}
-		$entry->addLink($this->getBaseUrl(),'alternate' );
 
 		/************** content *******************/
 		$content = $this->getContents();
@@ -559,8 +558,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			if ($med->size != 'thumbnail' && $med->size != 'viewitem') {
 				$media_content = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
 				$media_content->setAttribute('url',$med->getLink());
-				$media_content->setAttribute('width',$med->width);
-				$media_content->setAttribute('height',$med->height);
+				if ($med->width && $med->height) {
+					$media_content->setAttribute('width',$med->width);
+					$media_content->setAttribute('height',$med->height);
+				}
 				$media_content->setAttribute('fileSize',$med->file_size);
 				$media_content->setAttribute('type',$med->mime_type);
 				$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
