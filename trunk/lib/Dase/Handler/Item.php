@@ -9,6 +9,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
+		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
@@ -78,6 +79,15 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($this->item->getAtomPubServiceDoc());
+	}
+
+	public function getContentJson($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->getContentJson());
 	}
 
 	public function getItemJson($r)
@@ -183,7 +193,18 @@ class Dase_Handler_Item extends Dase_Handler
 		$this->item->addComment($bits,$user->eid);
 		//comments should NOT be globally searchable
 		//$this->item->buildSearchIndex();
-		$r->renderResponse('added content: '.$bits);
+		$r->renderResponse('added comment: '.$bits);
+	}
+
+	public function postToContent($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		if ($this->item->setContent($r->get('content'),$user->eid)) {
+			$r->renderResponse('added content');
+		}
 	}
 
 	public function postToMetadata($r)

@@ -29,6 +29,24 @@
 	</form>
 </textarea>
 
+<!-- textual content form -->
+<!-- note: cannot iterate properly w/in pre tag. urghhhh -->
+
+<pre class="javascript_template" id="textual_content_jst">
+	<h1>Add/Edit Textual Content</h1>
+	<form action="item/${coll_ser}/content" method="post" id="textualContentForm">
+		<p>
+            {if content.latest.text}
+			<h4>last updated ${content.latest.date}</h4>
+            {/if}
+			<textarea cols="50" rows="15" name="content">${content.latest.text}</textarea>
+		</p>
+        <p>
+            <input type="submit" value="update"/>
+        </p>
+	</form>
+</pre>
+
 <!-- form to request input form -->
 
 <textarea class="javascript_template" id="select_att_jst">

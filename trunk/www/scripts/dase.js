@@ -232,8 +232,11 @@ Dase.removeFromArray = function(ar,val) {
 
 Dase.pageReload = function(msg) {
 	var curr = window.location.href;
-	curr = curr.split('?')[0];
-	window.location.href = curr+'?msg='+msg;
+	if (msg) {
+		curr = curr.split('?')[0]+'?msg='+msg;
+	} else {
+		window.location.href = curr;
+	}
 }
 
 /* end utilities */
@@ -345,17 +348,20 @@ Dase.initItemEditing = function(eid) {
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');
 	if (!edit_link) return;
+	var templates_url = Dase.$('jsTemplatesUrl').href;
+	if (!templates_url) return;
 	var controls = Dase.$('adminPageControls');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
 		//get jstemplates by making an ajax request
 		//see templates/item/jstemplates.tpl
-		Dase.ajax(Dase.$('jsTemplatesUrl').href,'get',function(resp) {
+		Dase.ajax(templates_url,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
 			Dase.updateItemStatus();
 			Dase.initEditLink(edit_link);
 			Dase.initAddMetadata();
+			Dase.initAddContent();
 		});
 	}
 	return;
@@ -1083,24 +1089,59 @@ Dase.initEditLink = function(el) {
 Dase.initAddMetadata = function()
 {
 	var mlink = Dase.$('addMetadataLink');
-	var mform = Dase.$('addMetadata');
+	var mform = Dase.$('ajaxFormHolder');
 	var coll = Dase.$('collectionAsciiId').innerHTML;
 	if (!mlink || !mform) return;
 	mlink.onclick = function() {
 		if (Dase.toggle(mform)) {
 			mform.innerHTML = '<div class="loading">Loading...</div>';
-			Dase.getJSON(Dase.base_href + "collection/" + coll + "/attributes",
-			function(json){
-			var data = { 'atts': json };
-			var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
-			mform.innerHTML = templateObj.process(data);
-			var getForm = Dase.$('getInputForm');
-			Dase.initGetInputForm(getForm);
-		});
+			Dase.getJSON(this.href, function(json){
+			    var data = { 'atts': json };
+				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
+				mform.innerHTML = templateObj.process(data);
+				var getForm = Dase.$('getInputForm');
+				Dase.initGetInputForm(getForm);
+			});
+		}
+		return false;
 	}
-	return false;
 }
-}
+
+Dase.initAddContent = function()
+{
+	var clink = Dase.$('addContentLink');
+	var cform = Dase.$('ajaxFormHolder');
+	var coll = Dase.$('collectionAsciiId').innerHTML;
+	if (!clink || !cform) return;
+	clink.onclick = function() {
+		if (Dase.toggle(cform)) {
+			cform.innerHTML = '<div class="loading">Loading...</div>';
+			Dase.getJSON(this.href, function(json){
+				//note: we do not use versions in jst due to problems iterating w/in pre tag
+			    var data = { 'content': json };
+				data.coll_ser = Dase.$('collSer').innerHTML;
+				var templateObj = TrimPath.parseDOMTemplate("textual_content_jst");
+				cform.innerHTML = templateObj.process(data);
+				var contentForm = Dase.$('textualContentForm');
+				Dase.initContentForm(contentForm);
+			});
+		}
+		return false;
+	}
+};
+
+Dase.initContentForm = function(form) {
+	form.onsubmit = function() {
+		var content_headers = {
+			'Content-Type':'application/x-www-form-urlencoded'
+		}
+		Dase.ajax(this.action,'post',function(resp) { 
+			Dase.pageReload();
+		},Dase.form.serialize(this),null,null,content_headers); 
+		Dase.toggle(Dase.$('ajaxFormHolder'));
+		return false;
+	}
+};
 
 Dase.initGetInputForm = function(form) {
 	coll = Dase.$('collectionAsciiId').innerHTML;
@@ -1113,7 +1154,7 @@ Dase.initGetInputForm = function(form) {
 			}
 			var templateObj = TrimPath.parseDOMTemplate('input_form_'+resp.html_input_type+'_jst');
 			Dase.$('addMetadataFormTarget').innerHTML = templateObj.process(resp);
-			var input_form = Dase.$('addMetadata').getElementsByTagName('form')[1];
+			var input_form = Dase.$('ajaxFormHolder').getElementsByTagName('form')[1];
 			input_form.onsubmit = function() {
 				var content_headers = {
 					'Content-Type':'application/x-www-form-urlencoded'

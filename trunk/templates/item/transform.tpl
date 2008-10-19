@@ -50,7 +50,6 @@
 				<!-- is there a better place for this?-->
 				<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 				<div class="controlsContainer">
-					{if $is_admin}
 					<div id="adminPageControls" class="">
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
 						|
@@ -58,15 +57,15 @@
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
 						|
 						-->
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="addMetadataLink">add metadata</a>
+						<a href="collection/{$item->collectionAsciiId}/attributes" class="edit" id="addMetadataLink">add metadata</a>
+						|
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/content" class="edit" id="addContentLink">add/edit textual content</a>
 					</div>
-					{/if}
 				</div>
-				<!-- adding metadata section-->
-				<div id="addMetadata" class="hide">
+
+				<div id="ajaxFormHolder" class="hide">
 					<!-- note: javascript templates are retrieved asynchronously -->
 				</div>
-				<!-- end adding metadata section-->
 
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
@@ -77,6 +76,9 @@
 					{/foreach}
 					{/foreach}
 				</dl>
+				<div class="itemContent">
+					{$item->content|markdown}
+				</div>
 				<div id="metadata_form_div" class="hide"></div>
 
 
