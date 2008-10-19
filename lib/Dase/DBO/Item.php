@@ -510,30 +510,30 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$entry->addLink($this->getBaseUrl(),'alternate' );
 
-//todo: use latest content as first choice -- if that is not there, then do what follows
-	
-
 		/************** content *******************/
-
-		//switch to the simple xml interface here
-		$div = simplexml_import_dom($entry->setContent());
-		$img = $div->addChild('img');
-		$thumb_url = $this->getMediaUrl('thumbnail');
-		if ($thumb_url) {
-			$img->addAttribute('src',$thumb_url);
-			$img->addAttribute('class','thumbnail');
+		$content = $this->getContents();
+		if ($content && $content->text) {
+			$entry->setContent($content->text,$content->type);
+		} else {
+			//switch to the simple xml interface here
+			$div = simplexml_import_dom($entry->setContent());
+			$thumb_url = $this->getMediaUrl('thumbnail');
+			if ($thumb_url) {
+				$img = $div->addChild('img');
+				$img->addAttribute('src',$thumb_url);
+				$img->addAttribute('class','thumbnail');
+			}
 		}
-		$keyvals = $div->addChild('dl');
-		$keyvals->addAttribute('class','metadata');
+		//	$keyvals = $div->addChild('dl');
+		//	$keyvals->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
 			//php dom will escape text for me here (no, it won't!!)....
-			$attname = $keyvals->addChild('dt',htmlspecialchars($row['attribute_name']));
-			$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
+			//$attname = $keyvals->addChild('dt',htmlspecialchars($row['attribute_name']));
+			//$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
 			//$val->addAttribute('class',$row['ascii_id']);
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 		}
-
 		/************** end content *******************/
 
 		//much of the following can go in Dase_Atom_Entry
@@ -765,6 +765,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($comments);
 	}
 
+	public function getContentJson()
+	{
+		$c_obj = $this->getContents();
+		$content['latest']['text'] = $c_obj->text;
+		$content['latest']['date'] = $c_obj->updated;
+		return Dase_Json::get($content);
+	}
+
 	public function setContent($text,$eid)
 	{
 		$c = $this->getCollection();
@@ -776,7 +784,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content->p_serial_number = $this->serial_number;
 		$content->updated = date(DATE_ATOM);
 		$content->updated_by_eid = $eid;
-		$content->insert();
+		return $content->insert();
 	}
 
 	public function addComment($text,$eid)

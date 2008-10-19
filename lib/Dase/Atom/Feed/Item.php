@@ -176,6 +176,11 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
 	}
 
+	function getContent()
+	{
+		return $this->getEntry()->getContent();
+	}
+
 	/** note this is different than the same method in feed:search */
 	function getSearchEcho()
 	{

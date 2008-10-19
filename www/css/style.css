@@ -292,6 +292,13 @@ table#item td.metadata ul#notes li {
 	background-color: #eee;
 }
 
+table#item td.metadata div.itemContent {
+	margin: 10px 0;
+	width: 80%;
+	padding: 10px;
+	background-color: #ffc;
+}
+
 div#itemLinks {
 	margin: 2em 0;
 }
@@ -315,7 +322,7 @@ div#adminStatusControls {
 	font-weight:bold;
 }
 
-#addMetadata {
+#ajaxFormHolder {
 	background-color: #ffc;
 	border: 1px solid #999;
 	-moz-border-radius: 5px;
