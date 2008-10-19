@@ -73,6 +73,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$collection = $this->getCollection();
 		$entry->setTitle($this->attribute_name);
 		$entry->setId(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
+		$entry->addLink(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype','Attribute');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
