@@ -157,9 +157,9 @@ class Dase_Atom
 		}
 	}
 
+	//belongs in Atom/Entry.php ??
 	function getEnclosure() 
 	{
-	
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ('enclosure' == $el->getAttribute('rel')) {
 				$enc['href'] = $el->getAttribute('href');
