@@ -18,18 +18,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	const INPUT_NOEDIT = 'no_edit';
 	const INPUT_DYNAMIC = 'text_with_menu';
 
-	function getValueCount()
-	{
-		$prefix = Dase_Config::get('table_prefix');
-		if (!$this->id) {
-			throw new Exception('attribute not instantiated/loaded'); 
-		}
-		$db = Dase_DB::get();
-		$st = $db->prepare("SELECT count(*) FROM {$prefix}value WHERE attribute_id = ?");
-		$st->execute(array($this->id));	
-		return $st->fetchColumn();
-	}
-
 	public static function findOrCreate($collection_ascii_id,$attribute_ascii_id) 
 	{
 		$att = new Dase_DBO_Attribute;
