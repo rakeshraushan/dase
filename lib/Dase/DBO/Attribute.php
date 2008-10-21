@@ -272,6 +272,8 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$feed->setId(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
 		$feed->setFeedType('attribute_values');
 		$feed->setTitle('values for '.$collection_ascii_id.'.'.$this->ascii_id);
+		//since we do not have a class for an attribute_value feed, stick ascii_id in subtitle
+		$feed->setSubtitle($this->ascii_id);
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
 		$feed->addLink(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
