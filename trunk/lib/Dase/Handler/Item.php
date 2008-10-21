@@ -64,6 +64,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
+
 		if ('entry' == $r->get('type')) {
 			$r->renderResponse($this->item->asAtomEntry());
 		} else {

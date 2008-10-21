@@ -484,6 +484,43 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return true;
 	}
 
+	function getSearchIndexArray()
+	{
+		$search_index_array = array();
+		$prefix = Dase_Config::get('table_prefix');
+		foreach ($this->getItems() as $item) {
+			$composite_value_text = '';
+			$sql = "
+				SELECT value_text
+				FROM {$prefix}value v
+				WHERE v.item_id = $item->id
+				AND v.value_text != ''
+				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where collection_id != 0)
+				";
+			foreach (Dase_DBO::query($sql) as $row) {
+				$composite_value_text .= " ".$row['value_text'];
+			}
+			$search_index_array[$item->serial_number] = $composite_value_text;
+		}
+		return $search_index_array;
+	}
+
+	public function getItemsByAttAsAtom($attribute_ascii_id)
+	{
+		$feed = $this->getBaseAtomFeed();
+		$feed->setFeedType('items');
+		$att = Dase_DBO_Attribute::get($this->ascii_id,$attribute_ascii_id);
+		$vals = new Dase_DBO_Value;
+		$vals->attribute_id = $att->id;
+		foreach ($vals->find() as $val) {
+			$item = new Dase_DBO_Item;
+			$item->load($val->item_id);
+			$entry = $item->injectAtomEntryData($feed->addEntry());
+			$entry->setSummary($item->getValue($attribute_ascii_id));
+		}
+		return $feed->asXML();
+	}
+
 	function createNewItem($serial_number=null,$eid=null)
 	{
 		if (!$eid) {
