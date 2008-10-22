@@ -6,7 +6,7 @@ _atom categories are used for DASe-specific metadata. some are actionable_
 
 scheme prefix is: http://daseproject.org/category/
 
-  * collection  (<collection_ascii_id>)
+  * collection  (collection_ascii_id)
   * collection/item_count
   * collection/visibility (manager | user | public)
 
@@ -14,14 +14,16 @@ scheme prefix is: http://daseproject.org/category/
   * feedtype (collection | collection_list | search | item | tag)
 
   * item/status (public | draft | delete )
-  * item/type (<type_ascii_id>) 
+  * item/type (type_ascii_id) 
 
-  * tag/background (<color or hex code>)
+  * tag/background (color or hex code)
   * tag/type (set | slideshow | cart | admin)
   * tag/visibility (owner | user | public)
-  * tag/count (<count of items>)
+  * tag/count (count of items)
 
-  *  position (<integer>)
+  * attribute/html_input_type ('text'|'textarea'|'radio'|'checkbox'|'select'|'listbox'|'no_edit'|'text_with_menu)
+
+  *  position (integer)
 
 tbd: split out read access and write access. 
 figure out how tag visibility overrides collection visibility for items in tag.
