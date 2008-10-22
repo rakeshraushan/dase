@@ -18,8 +18,11 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			$att->is_on_list_display = 1;
 			$att->is_public = 1;
 			$att->in_basic_search = 1;
-			$att->html_input_type = 'text';
+			$att->html_input_type = $this->getHtmlInputType();
 			$att->insert();
+			foreach ($this->getDefinedValues() as $dv) {
+				$att->addDefinedValue($dv);
+			}
 			$att->resort();
 		} else {
 			throw new Dase_Exception('attribute exists');
@@ -32,6 +35,25 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 	function update($request,$collection) 
 	{
 		throw new Exception('not yet implemented');
+	}
+
+	function getHtmlInputType()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/attribute/html_input_type' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+		//default
+		return 'text';
+	}
+
+	function getDefinedValues() {
+		$defined = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'defined_value') as $dd) {
+			$defined[] = $dd->nodeValue;
+		}
+		return $defined;
 	}
 
 	function __get($var) {
