@@ -199,7 +199,7 @@ class Dase_Atom
 	{
 		//only works w/ simple string
 		if ($this->root->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)) {
-			return $this->root->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue;
+			return trim($this->root->getElementsByTagNameNS(Dase_Atom::$ns[$ns_prefix],$name)->item(0)->nodeValue);
 		}
 	}
 

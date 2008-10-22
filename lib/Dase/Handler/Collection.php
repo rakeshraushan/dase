@@ -197,6 +197,24 @@ class Dase_Handler_Collection extends Dase_Handler
 	}
 
 
+	public function postToAttributes($r) 
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$content_type = $r->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
+			$this->_newAtomAttribute($r);
+		} elseif ('application/json' == $content_type) {
+			$this->_newJsonAttribute($r);
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
 	public function postToCollection($r) 
 	{
 		$user = $r->getUser('http');
@@ -263,9 +281,39 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 	}
 
+	private function _newAtomAttribute($r)
+	{
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $r->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+			$r->renderError(412,'md5 does not match');
+		}
+		$att_entry = Dase_Atom_Entry::load($raw_input);
+		if ('attribute' != $att_entry->entrytype) {
+			$att_entry->setEntryType('attribute');
+			$r->renderError(400,'must be an attribute entry');
+		}
+		try {
+			$att = $att_entry->insert($r,$this->collection);
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
+			echo $att->asAtomEntry();
+			exit;
+		} catch (Dase_Exception $e) {
+			$r->renderError(409,$e->getMessage());
+		}
+	}
+
 	private function _newJsonItem($r)
 	{
 		$r->renderResponse('still working on JSON posts!');
+	}
+
+	private function _newJsonAttribute($r)
+	{
+		$r->renderResponse('still working on Attribute posts!');
 	}
 
 	public function rebuildIndexes($r) 

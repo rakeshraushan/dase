@@ -16,12 +16,21 @@ class Dase_Handler_Attribute extends Dase_Handler
 		}
 		if ($r->has('att_ascii_id')) {
 			$this->attribute = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		} 
+		if (!$this->attribute) {
+			$r->renderError('404');
 		}
 	}
 
 	public function getAttributeJson($r) 
 	{
 		$r->renderResponse($this->attribute->asJson());
+	}
+
+	public function getAttributeAtom($r) 
+	{
+		$entry = new Dase_Atom_Entry;
+		$r->renderResponse($this->attribute->injectAtomEntryData($entry)->asXml());
 	}
 
 	/** implicit 1000 limit */
