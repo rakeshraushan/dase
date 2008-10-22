@@ -319,7 +319,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
-			$r->renderError(500);
+			$r->renderError(500,'cannot write file');
 		}
 
 		@fwrite( $ifp, $bits );

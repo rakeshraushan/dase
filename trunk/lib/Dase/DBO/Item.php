@@ -88,7 +88,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		//todo: fix this to get the latest version of content only
 		$content = $this->getContents();
-		$composite_value_text .= $content->text . " ";
+		if ($content && $content->text) {
+			$composite_value_text .= $content->text . " ";
+		}
 		$c = $this->getCollection();
 		$search_table = new Dase_DBO_SearchTable;
 		$search_table->value_text = $composite_value_text;
@@ -113,7 +115,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$composite_value_text .= $value_text . " ";
 		}
 		$content = $this->getContents();
-		$composite_value_text .= $content->text . " ";
+		if ($content && $content->text) {
+			$composite_value_text .= $content->text . " ";
+		}
 		$search_table = new Dase_DBO_AdminSearchTable;
 		$search_table->value_text = $composite_value_text;
 		$search_table->item_id = $this->id;
@@ -390,7 +394,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function deleteComments()
 	{
-		$co = new Dase_DBO_Comments;
+		$co = new Dase_DBO_Comment;
 		$co->item_id = $this->id;
 		foreach ($co->find() as $doomed) {
 			$doomed->delete();

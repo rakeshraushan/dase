@@ -9,14 +9,32 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	public $collection = null;
 	public $display_values = array();
 
-	const INPUT_TEXT = 'text';
-	const INPUT_TEXTAREA = 'textarea';
-	const INPUT_RADIO = 'radio';
-	const INPUT_CHECKBOX = 'checkbox';
-	const INPUT_SELECT = 'select';
-	const INPUT_LISTBOX = 'listbox';
-	const INPUT_NOEDIT = 'no_edit';
-	const INPUT_DYNAMIC = 'text_with_menu';
+	public static $types_map = array(
+		'text' => array('label'=>'Text'),
+		'textarea' => array('label'=>'Textarea'),
+		'radio' => array('label'=>'Radio Button'),
+		'checkbox' => array('label'=>'Checkbox'),
+		'select' => array('label'=>'Select Menu'),
+		'listbox' => array('label'=>'MultiValue Magic Box'),
+		'no_edit' => array('label'=>'Non-editable'),
+		'text_with_menu' => array('label'=>'Text w/ Dynamic Menu'),
+	);
+
+	public static function get($collection_ascii_id,$ascii_id)
+	{
+		if ($collection_ascii_id && $ascii_id) {
+			$a = new Dase_DBO_Attribute;
+			$a->ascii_id = $ascii_id;
+			if ('admin_' == substr($ascii_id,0,6)) {
+				$a->collection_id = 0;
+			} else {
+				$a->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+			}
+			return($a->findOne());
+		} else {
+			throw new Exception('missing a method parameter value');
+		}
+	}
 
 	public static function findOrCreate($collection_ascii_id,$attribute_ascii_id) 
 	{
@@ -56,12 +74,19 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $att;
 	}
 
+	function asAtomEntry()
+	{
+		$entry = new Dase_Atom_Entry;
+		return $this->injectAtomEntryData($entry)->asXml();
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$collection = $this->getCollection();
 		$entry->setTitle($this->attribute_name);
 		$entry->setId(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
 		$entry->addLink(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
+		$entry->addLink(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id,'edit');
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype','Attribute');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
@@ -69,7 +94,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$updated = $this->updated;
 		}
 		$entry->setUpdated($updated);
-		$entry->addAuthor('ss');
+		$entry->addAuthor();
 		/*
 		$div = simplexml_import_dom($entry->setContent());
 
@@ -148,20 +173,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			//nothin'
 		}
 		return $values;
-	}
-
-	public static function get($collection_ascii_id,$ascii_id)
-	{
-		if ($collection_ascii_id && $ascii_id) {
-			$a = new Dase_DBO_Attribute;
-			$a->ascii_id = $ascii_id;
-			if ('admin_' == substr($ascii_id,0,6)) {
-				$a->collection_id = 0;
-			} else {
-				$a->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
-			}
-			return($a->findOne());
-		}
 	}
 
 	public static function getAdmin($ascii_id)
