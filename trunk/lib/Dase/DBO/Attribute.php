@@ -216,6 +216,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $defined;
 	}
 
+	function addDefinedValue($text) {
+		$dv = new Dase_DBO_DefinedValue;
+		$dv->attribute_id = $this->id;
+		$dv->value_text = $text;
+		$dv->insert();
+	}
+
 	function getCurrentValues() {
 		$current = array();
 		$vals = new Dase_DBO_Value;
