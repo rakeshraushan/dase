@@ -163,6 +163,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		$resp = array();
 		$dbconf = Dase_Config::get('db');
+		print $dbconf; exit;
 		$type = $dbconf['type'];
 		//todo: i need an sqlite schema as well
 		$table_prefix = Dase_Config::get('table_prefix');
