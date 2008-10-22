@@ -264,6 +264,12 @@ CREATE SEQUENCE {$table_prefix}content_seq
     NO MINVALUE
     CACHE 1;
 
+CREATE SEQUENCE {$table_prefix}comment_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
 CREATE SEQUENCE {$table_prefix}dase_user_seq
     INCREMENT BY 1
     NO MAXVALUE
