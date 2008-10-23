@@ -2,17 +2,8 @@
 
 This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://library.duke.edu/blogs/digital-collections/2008/10/10/a-metadata-tool-that-scales/).  I'll run down each point here and describe how DASe does/doesn't address the need
 
-Add your content here.
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
-
-Digitization
+= Digitization =
 
 * Supports identification – an itemized list representing each scan in the collection. This list includes 1st pass descriptive metadata, structural metadata (how the components of an item are related to  one
 another) and location metadata (box #, folder #, album, chapter, etc) identifiers, item type and dimensions.
