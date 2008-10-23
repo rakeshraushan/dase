@@ -3,7 +3,9 @@
 This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://library.duke.edu/blogs/digital-collections/2008/10/10/a-metadata-tool-that-scales/).  I'll run down each point here and describe how DASe does/doesn't address the need
 
 
-== Digitization ==
+== Digitization and Description Use Cases ==
+
+=== digitization ===
 
   * Supports identification – an itemized list representing each scan in the collection. This list includes 1st pass descriptive metadata, structural metadata (how the components of an item are related to  one another) and location metadata (box #, folder #, album, chapter, etc) identifiers, item type and dimensions.
 
@@ -19,7 +21,7 @@ This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://li
 
   * Generates checksums – Creates checksums of files that move through the system to ensure that the files have not become altered.
 
-== Description ==
+=== description ===
 
   * Supports Duke Core (multiple metadata schema) metadata creation – Duke Core, a modified version of qualified Dublin Core, is the standard metadata schema developed for digital collections at the Duke libraries by the Metadata Advisory Group.
 
