@@ -8,8 +8,7 @@ This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://li
   * Supports identification – an itemized list representing each scan in the collection. This list includes 1st pass descriptive metadata, structural metadata (how the components of an item are related to  one
 another) and location metadata (box #, folder #, album, chapter, etc) identifiers, item type and dimensions.
 
-  * Check out systems – The ability to create an arbitrary grouping of consecutive components that can be “checked out” by a scanner operator during the scanning/QC process. These units include information about
-the physical location of the materials and any pertinent information needed to scan. Needs to enable multiple users at the same time.
+  * Check out systems – The ability to create an arbitrary grouping of consecutive components that can be “checked out” by a scanner operator during the scanning/QC process. These units include information about the physical location of the materials and any pertinent information needed to scan. Needs to enable multiple users at the same time.
 
   * Reporting interface – In conjunction with the checkout system above the system needs to be able to report statistics such as total number of items in a collection, number of items left to scan and/or qc, the average amount of time it take to scan a “unit.”
 
@@ -37,13 +36,11 @@ the physical location of the materials and any pertinent information needed to s
 
   * See digital object while editing metadata.  Users should be able to see the digital object while they are creating or editing the corresponding metadata.  Does not have to be the highest-resolution image, but a working version.
 
-  * Displays record status – Allows catalogers to specify the state of a record.  System should allow catalogers to specify this status and list records in a way that provides at-a-glance overview of work remaining
-within a collection.
+  * Displays record status – Allows catalogers to specify the state of a record.  System should allow catalogers to specify this status and list records in a way that provides at-a-glance overview of work remaining within a collection.
 
   * Handle item-level metadata-only records – Some of our digital collections are metadata only. The tool must allow users to create and edit metadata records that do not have an attached digital object.
 
-  * User Interface simple and intuitive, distributed system.  Could be web-based – The interface should be simple and intuitive, and should allow multiple users to work at the same time, though they should not
-be able to edit the same record at the same time.  A web-based tool would allow users to work on digital collections from anywhere and would not require them to use a computer with particular software installed.
+  * User Interface simple and intuitive, distributed system.  Could be web-based – The interface should be simple and intuitive, and should allow multiple users to work at the same time, though they should not be able to edit the same record at the same time.  A web-based tool would allow users to work on digital collections from anywhere and would not require them to use a computer with particular software installed.
 
   * Supports UTF-8 universal character sets – Metadata for Duke’s digital collections often includes special characters (diacritics, non-Roman characters, etc.). The tool must accommodate UTF-8 character sets.
 
