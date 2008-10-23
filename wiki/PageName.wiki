@@ -5,8 +5,7 @@ This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://li
 
 == Digitization ==
 
-  * Supports identification – an itemized list representing each scan in the collection. This list includes 1st pass descriptive metadata, structural metadata (how the components of an item are related to  one
-another) and location metadata (box #, folder #, album, chapter, etc) identifiers, item type and dimensions.
+  * Supports identification – an itemized list representing each scan in the collection. This list includes 1st pass descriptive metadata, structural metadata (how the components of an item are related to  one another) and location metadata (box #, folder #, album, chapter, etc) identifiers, item type and dimensions.
 
   * Check out systems – The ability to create an arbitrary grouping of consecutive components that can be “checked out” by a scanner operator during the scanning/QC process. These units include information about the physical location of the materials and any pertinent information needed to scan. Needs to enable multiple users at the same time.
 
