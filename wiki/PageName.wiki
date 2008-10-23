@@ -1,6 +1,6 @@
 #summary "A Metadata Tool that Scales"
 
-= This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://library.duke.edu/blogs/digital-collections/2008/10/10/a-metadata-tool-that-scales/).  I'll run down each point here and describe how DASe does/doesn't address the need =
+This was a post on the Duke Digital Collection Blog on Oct 10, 2008. ( http://library.duke.edu/blogs/digital-collections/2008/10/10/a-metadata-tool-that-scales/).  I'll run down each point here and describe how DASe does/doesn't address the need
 
 Add your content here.
 
