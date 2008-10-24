@@ -1,10 +1,5 @@
 {extends file="admin/layout.tpl"}
 
-{block name="head"}
-<script type="text/javascript">
-</script>
-{/block}
-
 {block name="content"}
 <div id="contentHeader">
 	<h1>Dase Users</h1>

@@ -97,9 +97,12 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getUser($r)
 	{
-		echo $r->get('eid');exit;
-		//$tpl = new Dase_Template($r);
-		//$r->renderResponse($tpl->fetch('admin/users.tpl'));
+		$user = Dase_DBO_DaseUser::get($r->get('eid'));
+		$tpl = new Dase_Template($r);
+		$tpl->assign('user',$user);
+		$tpl->assign('tags',$user->getTags());
+		$tpl->assign('collections',$user->getCollections());
+		$r->renderResponse($tpl->fetch('admin/user.tpl'));
 	}
 
 	public function getManagerEmail($r) 
