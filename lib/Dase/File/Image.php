@@ -155,7 +155,12 @@ class Dase_File_Image extends Dase_File
 	function makeThumbnail($item,$rotate)
 	{
 		$collection = $item->getCollection();
-		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$item->serial_number.'_100.jpg';  
+		$subdir = Dase_Util::getSubdir($item->serial_number);
+		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$subdir.'/'.$item->serial_number.'_100.jpg';  
+		$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$subdir;  
+		if (!file_exists($subdir_path)) {
+			mkdir($subdir_path);
+		}
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
 		if (!file_exists($thumbnail)) {
 			Dase_Log::info("failed to write $thumbnail");
@@ -183,7 +188,12 @@ class Dase_File_Image extends Dase_File
 	function makeViewitem($item,$rotate)
 	{
 		$collection = $item->getCollection();
-		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$item->serial_number.'_400.jpg';  
+		$subdir = Dase_Util::getSubdir($item->serial_number);
+		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$subdir.'/'.$item->serial_number.'_400.jpg';  
+		$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$subdir;  
+		if (!file_exists($subdir_path)) {
+			mkdir($subdir_path);
+		}
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
 		if (!file_exists($viewitem)) {
 			Dase_Log::info("failed to write $viewitem");
@@ -235,8 +245,13 @@ class Dase_File_Image extends Dase_File
 		);
 		$last_width = '';
 		$last_height = '';
+		$subdir = Dase_Util::getSubdir($item->serial_number);
 		foreach ($image_properties as $size => $size_info) {
-			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
+			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$subdir.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
+			$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$subdir;  
+			if (!file_exists($subdir_path)) {
+				mkdir($subdir_path);
+			}
 			$command = "$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage";
 			$results = exec($command);
 			if (!file_exists($newimage)) {
