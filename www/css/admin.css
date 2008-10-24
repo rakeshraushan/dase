@@ -101,6 +101,15 @@ ul#userList a {
  color: #900; 
 }
 
+#userInfo {
+	margin: 20px;
+}
+
+#userInfo h3 {
+	margin: 10px 0;
+	color: #900;
+}
+
 ul#userList a:hover {
 	text-decoration: underline;
 }
