@@ -129,7 +129,12 @@ abstract class Dase_File
 				throw new Exception('duplicate file');
 			}
 		}
-		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$item->serial_number.'.'.$this->ext;
+		$subdir =  Dase_Util::getSubdir($item->serial_number);
+		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir.'/'.$item->serial_number.'.'.$this->ext;
+		$subdir_path = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir;  
+		if (!file_exists($subdir_path)) {
+			mkdir($subdir_path);
+		}
 		if (file_exists($target)) {
 			//make a timestamped backup
 			copy($target,$target.'.bak.'.time());

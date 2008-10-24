@@ -117,6 +117,7 @@ class Dase_Handler_Media extends Dase_Handler
 			//note: this deletes ALL media!!!
 			$item->deleteMedia();
 			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
+			unlink($new_file);
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
@@ -147,13 +148,41 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 	}
 
+	private function _fixSizeExt($serial_number,$size)
+	{
+		switch ($size) {
+		case 'thumbnail':
+			return str_replace('_100','',$serial_number);
+		case 'viewitem':
+			return str_replace('_400','',$serial_number);
+		case 'small':
+			return str_replace('_640','',$serial_number);
+		case 'medium':
+			return str_replace('_800','',$serial_number);
+		case 'large':
+			return str_replace('_1024','',$serial_number);
+		}
+		return $serial_number;
+	}
+
 	private function _getFilePath($collection_ascii_id,$serial_number,$size,$format)
 	{
+		//look first in subdir
+		$subdir = Dase_Util::getSubdir($this->_fixSizeExt($serial_number,$size));
 		$path = Dase_Config::get('path_to_media').'/'.
 			$collection_ascii_id.'/'.
 			$size.'/'.
+			$subdir.'/'.
 			$serial_number.'.'.$format;
-		return $path;
+		if (file_exists($path)) {
+			return $path;
+		} else {
+			$path = Dase_Config::get('path_to_media').'/'.
+				$collection_ascii_id.'/'.
+				$size.'/'.
+				$serial_number.'.'.$format;
+			return $path;
+		}
 	}
 
 	public function postToCollection($r)
