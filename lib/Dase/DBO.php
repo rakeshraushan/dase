@@ -87,7 +87,7 @@ class Dase_DBO implements IteratorAggregate
 	{
 		if ( 
 			array_key_exists( $field, $this->fields) &&
-			in_array($operator,array('is','like','=','!=','<','>'))
+			in_array(strtolower($operator),array('is','ilike','like','=','!=','<','>'))
 		) {
 			$this->qualifiers[] = array(
 				'field' => $field,

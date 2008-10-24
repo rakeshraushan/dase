@@ -91,6 +91,20 @@ div#classInfo ul {
 	line-height: 1.3em;
 }
 
+#userCount {
+	margin-top: 12px;
+	color: #666;
+}
+
+ul#userList a {
+ line-height: 1.5em;
+ color: #900; 
+}
+
+ul#userList a:hover {
+	text-decoration: underline;
+}
+
 span.mods {
 	color: #669;
 	margin-right: .5em;

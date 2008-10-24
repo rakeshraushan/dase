@@ -82,23 +82,16 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getUsersJson($r)
 	{
-		if ($r->has('limit')) {
-			$limit = $r->get('limit');
-		} else {
-			$limit = 100;
-		}
-		$r->renderResponse(Dase_DBO_DaseUser::listAsJson($limit));
+		$r->renderResponse(Dase_DBO_DaseUser::listAsJson());
 	}
 
 	public function getUsers($r)
 	{
-		if ($r->has('limit')) {
-			$limit = $r->get('limit');
-		} else {
-			$limit = 100;
-		}
 		$tpl = new Dase_Template($r);
-		$tpl->assign('limit',$limit);
+		$q = $r->get('q');
+		if ($q) {
+			$tpl->assign('users',Dase_DBO_DaseUser::findByNameSubstr($q));
+		}
 		$r->renderResponse($tpl->fetch('admin/users.tpl'));
 	}
 
