@@ -28,6 +28,20 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
+	public static function findByNameSubstr($str)
+	{
+		$set = array();
+		$users = new Dase_DBO_DaseUser;
+		$like = Dase_DB::getCaseInsensitiveLikeOp();
+		$users->addWhere('name','%'.$str.'%',$like);
+		$users->orderBy('name');
+		foreach ($users->find() as $u) {
+			//so we can count easily
+			$set[] = clone $u;
+		}
+		return $set;
+	}
+
 	/** create cart if none exists, also returns cart count */
 	public function initCart()
 	{
@@ -50,15 +64,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $this->http_password;
 	}
 
-	public static function listAsJson($limit = 10)
+	public static function listAsJson($limit=0)
 	{
 		$u = new Dase_DBO_DaseUser;
-		$u->setLimit($limit);
+		if ($limit) {
+			$u->setLimit($limit);
+		}
 		$user_array = array();
 		foreach ($u->find() as $user) {
-			foreach ($user as $k => $v) {
-				$user_array[$user->eid][$k] = $v;
-			}
+			$user_array[$user->eid] = $user->name;
 		}
 		return Dase_Json::get($user_array);
 	}

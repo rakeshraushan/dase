@@ -2,40 +2,23 @@
 
 {block name="head"}
 <script type="text/javascript">
-	{literal}
-	Dase.pageInit = function() {
-		var url = Dase.base_href+'admin/users.json';
-		Dase.getJSON(url,function(json){
-				var data = { 'users': json };
-				var templateObj = TrimPath.parseDOMTemplate("users_jst");
-				Dase.$('userList').innerHTML = templateObj.process(data);
-				},null,Dase.$('userList').className);
-	};
-{/literal}
 </script>
 {/block}
 
 {block name="content"}
 <div id="contentHeader">
 	<h1>Dase Users</h1>
-	<!--
-	<h2>{$user->ppd}</h2>
-	-->
+	<form id="namesearch" action="admin/users" method="get">
+		<input type="text" name="q"/>
+		<input type="submit" value="search"/>
+	</form>
 </div>
-<div id="userList" class="limit={$limit}"></div>
-
-<!-- javascript template -->
-<textarea class="javascript_template" id="users_jst">
-	{literal}
-	<ul>
-		{for u in users}
-		<li><a href="admin/user/${u.eid}">${u.eid}</a> ${u.name}</li>
-		{/for}
-	</ul>
-	{/literal}
-</textarea>
-<!-- end javascript template -->
-
+<h2 id="userCount">{$users|@count} users found</h2>
+<ul id="userList">
+	{foreach item=user from=$users}
+	<li><a href="admin/user/{$user->eid}"><strong>{$user->eid}</strong>: {$user->name}</a></li>
+	{/foreach}
+</ul>
 {/block} 
 
 
