@@ -773,8 +773,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getContentJson()
 	{
 		$c_obj = $this->getContents();
-		$content['latest']['text'] = $c_obj->text;
-		$content['latest']['date'] = $c_obj->updated;
+		$content = array();
+		if ($c_obj) {
+			$content['latest']['text'] = $c_obj->text;
+			$content['latest']['date'] = $c_obj->updated;
+		} else {
+			$content['latest']['text'] = '';
+			$content['latest']['date'] = ''; 
+		}
 		return Dase_Json::get($content);
 	}
 

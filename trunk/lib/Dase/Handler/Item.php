@@ -117,7 +117,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$t->assign('is_admin',1);
 		}
 		$t->assign('item',$feed);
-		$r->renderResponse($t->fetch('item/transform.tpl'));
+		$r->renderResponse($t->fetch('item/display.tpl'));
 	}
 
 	public function getEditFormJson($r)

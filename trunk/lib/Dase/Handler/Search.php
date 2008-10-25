@@ -92,7 +92,7 @@ class Dase_Handler_Search extends Dase_Handler
 			$r->renderError(404,'no such item');
 		}
 		$tpl->assign('item',$feed);
-		$r->renderResponse($tpl->fetch('item/transform.tpl'));
+		$r->renderResponse($tpl->fetch('item/display.tpl'));
 	}
 
 	public function getSearch($r)

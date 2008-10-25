@@ -1,6 +1,7 @@
 {extends file="layout.tpl"}
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/form.js"></script>
+<script type="text/javascript" src="www/scripts/dase/item_display.js"></script>
 {/block}
 {block name="title"}View Item{/block}
 {block name="content"}
@@ -76,9 +77,11 @@
 					{/foreach}
 					{/foreach}
 				</dl>
+				{if $item->content}
 				<div class="itemContent">
 					{$item->content|markdown}
 				</div>
+				{/if}
 				<div id="metadata_form_div" class="hide"></div>
 
 

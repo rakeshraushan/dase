@@ -168,7 +168,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$t = new Dase_Template($r);
 		//$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
-		$r->renderResponse($t->fetch('item/transform.tpl'));
+		$r->renderResponse($t->fetch('item/display.tpl'));
 	}
 
 	public function postToTag($r) 
