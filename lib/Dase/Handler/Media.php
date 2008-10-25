@@ -152,15 +152,32 @@ class Dase_Handler_Media extends Dase_Handler
 	{
 		switch ($size) {
 		case 'thumbnail':
-			return str_replace('_100','',$serial_number);
+			if ('_100' == substr($serial_number,-4)) {
+				return substr($serial_number,0,-4);
+			}
 		case 'viewitem':
-			return str_replace('_400','',$serial_number);
+			if ('_400' == substr($serial_number,-4)) {
+				return substr($serial_number,0,-4);
+			}
 		case 'small':
-			return str_replace('_640','',$serial_number);
+			if ('_640' == substr($serial_number,-4)) {
+				return substr($serial_number,0,-4);
+			}
 		case 'medium':
-			return str_replace('_800','',$serial_number);
+			if ('_800' == substr($serial_number,-4)) {
+				return substr($serial_number,0,-4);
+			}
 		case 'large':
-			return str_replace('_1024','',$serial_number);
+			if ('_1024' == substr($serial_number,-5)) {
+				return substr($serial_number,0,-5);
+			}
+		case 'full':
+			if ('_2700' == substr($serial_number,-5)) {
+				return substr($serial_number,0,-5);
+			}
+			if ('_3600' == substr($serial_number,-5)) {
+				return substr($serial_number,0,-5);
+			}
 		}
 		return $serial_number;
 	}
