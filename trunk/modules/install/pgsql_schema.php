@@ -26,11 +26,24 @@ CREATE TABLE {$table_prefix}attribute (
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
+CREATE TABLE {$table_prefix}attribute_category (
+    id serial NOT NULL,
+    attribute_id integer,
+    category_id integer
+);
+
 CREATE TABLE {$table_prefix}attribute_item_type (
     id serial NOT NULL,
     item_type_id integer NOT NULL,
     attribute_id integer NOT NULL,
     cardinality character varying(20) DEFAULT '0:m'::character varying
+);
+
+CREATE TABLE {$table_prefix}category (
+    id serial NOT NULL,
+    term character varying(200),
+    scheme character varying(200),
+    label character varying(200)
 );
 
 CREATE TABLE {$table_prefix}collection (
@@ -43,6 +56,12 @@ CREATE TABLE {$table_prefix}collection (
     updated character varying(50),
     visibility character varying(50),
     item_count integer DEFAULT 0
+);
+
+CREATE TABLE {$table_prefix}collection_category (
+    id serial NOT NULL,
+    collection_id integer,
+    category_id integer
 );
 
 CREATE TABLE {$table_prefix}collection_manager (
@@ -124,6 +143,18 @@ CREATE TABLE {$table_prefix}item_link (
     title character varying(100),
     length integer,
     item_unique character varying(100)
+);
+
+CREATE TABLE {$table_prefix}item_category (
+    id serial NOT NULL,
+    item_id integer,
+    category_id integer
+);
+
+CREATE TABLE {$table_prefix}item_link_category (
+    id serial NOT NULL,
+    item_link_id integer,
+    category_id integer
 );
 
 CREATE TABLE {$table_prefix}item_type (
@@ -210,6 +241,18 @@ CREATE TABLE {$table_prefix}tag (
     item_count integer DEFAULT 0
 );
 
+CREATE TABLE {$table_prefix}tag_category (
+    id serial NOT NULL,
+    tag_id integer,
+    category_id integer
+);
+
+CREATE TABLE {$table_prefix}tag_item_category (
+    id serial NOT NULL,
+    tag_item_id integer,
+    category_id integer
+);
+
 CREATE TABLE {$table_prefix}value (
     id serial NOT NULL,
     item_id integer,
@@ -227,6 +270,42 @@ CREATE TABLE {$table_prefix}value_revision_history (
     collection_ascii_id character varying(200),
     "timestamp" character varying(50)
 );
+
+CREATE SEQUENCE {$table_prefix}attribute_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}collection_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}item_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}item_link_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}tag_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}tag_item_category_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 CREATE SEQUENCE {$table_prefix}admin_search_table_seq
     INCREMENT BY 1
