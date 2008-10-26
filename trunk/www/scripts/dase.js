@@ -281,7 +281,9 @@ Dase.initUser = function(func) {
 			Dase.placeUserCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
-			Dase.initItemEditing(eid);
+			if (Dase.initItemEditing) {
+				Dase.initItemEditing(eid);
+			}
 			Dase.initCart();
 			Dase.initAddToCart();
 			if (func) {
@@ -1069,7 +1071,6 @@ Dase.addLoadEvent(function() {
 	Dase.initRemoveItems();
 	Dase.initSubmitConfirm();
 	Dase.initLogoff();
-	Dase.initNotes();
 	Dase.initAttributeEdit();
 	Dase.initSlideshowLink();
 	Dase.initShowHtpasswd();
