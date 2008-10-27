@@ -15,7 +15,7 @@ based on intrinsic factors:
   * tag/count (count of items)
   *  position (integer)
 
-can be "set" and live in category table:
+can be "set" dynamically (either not required, or there is an obvious default value)
   * collection/visibility (manager | user | public)
   * tag/background (color or hex code)
   * tag/type (set | slideshow | cart | admin)
