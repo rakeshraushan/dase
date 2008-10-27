@@ -8,20 +8,20 @@ scheme prefix is: http://daseproject.org/category/
 
   * collection  (collection_ascii_id)
   * collection/item_count
-  * collection/visibility (manager | user | public)*
+  * collection/visibility (manager | user | public)\*
 
   * entrytype (attribute | collection | item | set)
   * feedtype (collection | collection_list | search | item | tag)
 
-  * item/status (public | draft | delete )*
+  * item/status (public | draft | delete )\*
   * item/type (type_ascii_id)
 
-  * tag/background (color or hex code)*
-  * tag/type (set | slideshow | cart | admin)*
-  * tag/visibility (owner | user | public)*
+  * tag/background (color or hex code)\*
+  * tag/type (set | slideshow | cart | admin)\*
+  * tag/visibility (owner | user | public)\*
   * tag/count (count of items)
 
-  * attribute/html_input_type ('text'|'textarea'|'radio'|'checkbox'|'select'|'listbox'|'no_edit'|'text_with_menu)*
+  * attribute/html_input_type ('text'|'textarea'|'radio'|'checkbox'|'select'|'listbox'|'no_edit'|'text_with_menu)\*
 
   *  position (integer)
 
