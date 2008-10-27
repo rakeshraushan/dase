@@ -8,8 +8,7 @@ scheme prefix is: http://daseproject.org/category/
 
   * collection  (collection_ascii_id)
   * collection/item_count
-  * collection/visibility (manager | user | public)\*
-
+  * collection/visibility (manager | user | public)'*'
   * entrytype (attribute | collection | item | set)
   * feedtype (collection | collection_list | search | item | tag)
 
