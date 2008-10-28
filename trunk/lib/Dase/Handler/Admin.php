@@ -17,6 +17,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'phpinfo' => 'phpinfo',
 		'user/{eid}' => 'user',
 		'users' => 'users',
+		'cache' => 'cache',
 	);
 
 	public function setup($r)
@@ -26,6 +27,12 @@ class Dase_Handler_Admin extends Dase_Handler
 		if ( 'modules' != $r->resource && !$user->isSuperuser()) {
 			$r->renderError(401);
 		}
+	}
+
+	public function deleteCache($r)
+	{
+		Dase_Cache_File::expunge();
+		$r->renderResponse('cache deleted');
 	}
 
 	public function getModules($r)

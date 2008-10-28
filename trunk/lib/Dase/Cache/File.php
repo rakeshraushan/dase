@@ -22,11 +22,13 @@ class Dase_Cache_File extends Dase_Cache
 
 	public static function expunge() 
 	{
-		foreach (new DirectoryIterator(CACHE_DIR) as $file) {
-			if (! $file->isDot()) {
-				if (is_writable($file->getPathname())) {
-					unlink($file->getPathname());
-				}
+		//from PHP Cookbook 2nd. ed p. 718
+		$iter = new RecursiveDirectoryIterator(CACHE_DIR);
+		foreach (new RecursiveIteratorIterator($iter,RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+			if ($file->isDir()) {
+				rmdir($file->getPathname());
+			} else {
+				unlink($file->getPathname());
 			}
 		}
 	}
