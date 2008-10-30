@@ -7,6 +7,7 @@ _atom categories are used for DASe-specific metadata. some are actionable_
 scheme prefix is: http://daseproject.org/category/
 
 based on intrinsic factors:
+  * error (error)
   * collection  (collection_ascii_id)
   * collection/item_count
   * entrytype (attribute | collection | item | set)
