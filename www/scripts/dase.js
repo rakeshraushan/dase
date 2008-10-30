@@ -529,12 +529,23 @@ Dase.loadingMsg = function(displayBool) {
 	var loading = Dase.$('ajaxMsg');
 	if (!loading) return;
 	if (displayBool) {
+		//disable clicking
+		//note: i am not sure this click management even works
+		Dase.$('sidebar').onclick = function() { 
+			Dase.loadingMsg(true); 
+			return false; 
+		};
+		Dase.$('content').onclick = function() { 
+			Dase.loadingMsg(true); 
+			return false; 
+		};
 		Dase.removeClass(loading,'hide');
 		//loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
+		Dase.$('sidebar').onclick = null;
+		Dase.$('content').onclick = null;
 		Dase.addClass(loading,'hide');
-		loading.innerHTML = '';
 	}
 }
 
@@ -542,9 +553,6 @@ Dase.placeUserTags = function(user) {
 	if (!Dase.$('sets_jst')) return;
 	var templateObj = TrimPath.parseDOMTemplate("sets_jst");
 	Dase.$('sets-submenu').innerHTML = templateObj.process(user);
-
-	var templateObj = TrimPath.parseDOMTemplate("subscriptions_jst");
-	Dase.$('subscription-submenu').innerHTML = templateObj.process(user);
 
 	var templateObj = TrimPath.parseDOMTemplate("saveto_jst");
 	var target = Dase.$('saveChecked');
@@ -772,6 +780,10 @@ Dase.initCart = function() {
 	var label = Dase.$('cartLink');
 	if (label) {
 		label.innerHTML = "My Cart ("+Dase.user.cart_count+")";
+	}
+	var cartCount = Dase.$('cartCount');
+	if (cartCount) {
+		cartCount.innerHTML = Dase.user.cart_count;
 	}
 	var sr = Dase.$('itemSet');
 	if (!sr) {

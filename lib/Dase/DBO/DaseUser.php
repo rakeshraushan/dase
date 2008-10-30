@@ -77,24 +77,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_array);
 	}
 
-	public function getTags()
+	public function getTags($update_count = false)
 	{
 		$tag_array = array();
 		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
 			$tag_array[] = $row;
-		}
-		$subs = new Dase_DBO_Subscription;
-		$subs->dase_user_id = $this->id;
-		foreach($subs->find() as $sub) {
-			$sub_tag = array();
-			$tag = $sub->getTag();
-			if ($tag->is_public && $tag->name && $tag->ascii_id) {
-				$sub_tag['id'] = $tag->id;
-				$sub_tag['name'] = $tag->name;
-				$sub_tag['type'] = 'subscription';
-				$sub_tag['count'] = $tag->item_count;
-				$tag_array[] = $sub_tag;
-			} 
 		}
 		uasort($tag_array, array('Dase_Util','sortByTagName'));
 		return $tag_array;

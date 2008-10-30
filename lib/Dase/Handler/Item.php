@@ -4,7 +4,8 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
-		'{collection_ascii_id}/{serial_number}/edit' => 'edit_form',
+		//for updating metadata:
+		'{collection_ascii_id}/{serial_number}/edit' => 'metadata_set',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
@@ -222,6 +223,21 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('added metadata');
 	}
 
+	public function postToMetadataSet($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot post to metadata');
+		}
+		$meta = $r->get('meta');
+		print_r($meta); exit;
+		foreach ($r->get('value',true) as $val) {
+			$this->item->setValue($att_ascii,$val);
+		}
+		$this->item->buildSearchIndex();
+		$r->renderResponse('added metadata');
+	}
+
 	public function putItem($r)
 	{
 		$user = $r->getUser('http');
@@ -251,7 +267,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderError(500);
 	}
 
-	public function getMetadataJson($r)
+	public function getMetadataSetJson($r)
 	{
 		$meta =	$this->item->getMetadata();
 		$r->renderResponse(Dase_Json::get($meta));

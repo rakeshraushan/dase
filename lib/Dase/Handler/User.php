@@ -20,7 +20,7 @@ class Dase_Handler_User extends Dase_Handler
 		} else {
 			$this->user = $r->getUser();
 		}
-		if ($r->get('eid') != $this->user->eid) {
+		if ($r->get('eid') != $this->user->eid ) {
 			$r->renderError(401,'One must be so careful these days.');
 		}
 	}

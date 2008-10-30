@@ -102,7 +102,7 @@
 				</a>
 				</li>
 			</ul>
-			<h5 id="ajaxMsg"></h5>
+			<h5 id="ajaxMsg">loading page data...</h5>
 		</div> <!-- closes sidebar -->
 
 		<div id="content">

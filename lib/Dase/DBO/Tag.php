@@ -65,20 +65,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_items = new Dase_DBO_TagItem;
 		$tag_items->tag_id = $this->id;
 
-		$subscr = new Dase_DBO_Subscription;
-		$subscr->tag_id = $this->id;
-
 		if ($tag_items->findCount() > 50) {
 			throw new Exception("dangerous-looking tag deletion (more than 50 tag items)");
 		} 
-		if ($subscr->findCount() > 2) {
-			throw new Exception("dangerous-looking tag deletion (more than 2 subscribers)");
-		} 
 		foreach ($tag_items->find() as $doomed_tag_item) {
 			$doomed_tag_item->delete();
-		}
-		foreach ($subscr->find() as $doomed_subscr) {
-			$doomed_subscr->delete();
 		}
 		$this->delete();
 	}

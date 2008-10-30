@@ -40,10 +40,10 @@
 	{literal}
 	<ul>
 		{for c in collections}
-		{if c.count < 5 }
-		<li><a href="collection/${c.ascii_id}">${c.collection_name} (${c.ascii_id}) ${c.count} items</a> <a href="collection/${c.ascii_id}" id="${c.collection_name}" class="delete">[delete]</a> </li>
+		{if c.item_count < 5 }
+		<li><a href="collection/${c.ascii_id}">${c.collection_name} (${c.ascii_id}) ${c.item_count} items</a> <a href="collection/${c.ascii_id}" id="${c.collection_name}" class="delete">[delete]</a> </li>
 		{else}
-		<li><a href="collection/${c.ascii_id}">${c.collection_name} (${c.ascii_id}) ${c.count} items</a></li>
+		<li><a href="collection/${c.ascii_id}">${c.collection_name} (${c.ascii_id}) ${c.item_count} items</a></li>
 		{/if}
 		{/for}
 	</ul>

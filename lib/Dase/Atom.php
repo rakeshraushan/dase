@@ -18,6 +18,7 @@ class Dase_Atom
 		'dcterms' => 'http://purl.org/dc/terms/',
 		'd' => 'http://daseproject.org/ns/1.0',
 		'gd' =>'http://schemas.google.com/g/2005',
+		'gsx' =>'http://schemas.google.com/spreadsheets/2006/extended',
 		'h' => 'http://www.w3.org/1999/xhtml',
 		'media' => 'http://search.yahoo.com/mrss/',
 		'opensearch' => 'http://a9.com/-/spec/opensearch/1.1/',

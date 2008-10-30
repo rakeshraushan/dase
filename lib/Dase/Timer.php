@@ -36,7 +36,7 @@ class Dase_Timer
 		if (empty (self::$instance)) {
 			throw new Exception( 'timer was not started' ); 
 		}
-		return round(self::microtime_float() - self::$instance->_start,2);
+		return round(self::microtime_float() - self::$instance->_start,4);
 	}
 }
 
