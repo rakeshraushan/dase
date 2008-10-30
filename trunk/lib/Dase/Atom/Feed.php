@@ -156,6 +156,15 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
+	function getError() 
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/error' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 	function addEntry($type = '')
 	{
 		if ($type && isset(Dase_Atom_Entry::$types_map[$type])) {

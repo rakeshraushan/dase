@@ -388,10 +388,10 @@ class Dase_Http_Request
 	private function getDbUser($eid) {
 		$db = Dase_DB::get();
 		$user= new Dase_DBO_DaseUser;
-		$table = $user->getTable();
+		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT * 
-			FROM $table 
+			FROM {$prefix}dase_user 
 			WHERE lower(eid) = ?
 			";	
 		$sth = $db->prepare($sql);
@@ -409,7 +409,7 @@ class Dase_Http_Request
 			return filter_var_array($ar, FILTER_SANITIZE_STRING);
 		} else {
 			foreach ($ar as $k => $v) {
-				$ar[$k] = strip_tags($v);
+					$ar[$k] = strip_tags($v);
 			}
 			return $ar;
 		}
@@ -475,6 +475,13 @@ class Dase_Http_Request
 	{
 		$response = new Dase_Http_Response($this);
 		$response->error($code,$msg);
+		exit;
+	}
+
+	public function renderAtomError($code,$msg='')
+	{
+		$response = new Dase_Http_Response($this);
+		$response->atomError($code,$msg);
 		exit;
 	}
 }

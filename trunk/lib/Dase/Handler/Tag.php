@@ -154,7 +154,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag_item = new Dase_DBO_TagItem;
 		$tag_item->load($r->get('tag_item_id'));
 		if ($tag_item->tag_id != $this->tag->id) {
-			$r->renderError(404);
+			$r->renderAtomError(404);
 		} 
 		$r->renderResponse($tag_item->asAtom());
 	}

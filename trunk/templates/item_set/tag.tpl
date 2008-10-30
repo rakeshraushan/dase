@@ -16,7 +16,7 @@
 		</h4>
 	</div>
 	{/if}
-	<h2>{$items->title} ({$items->count} items)</h2>
+	<h2>{$items->title} (<span {if 'cart' == $items->tagType}id="cartCount"{/if}>{$items->count}</span> items)</h2>
 	<h3>{$items->subtitle}</h3>
 	{if $items->count}
 	<form id="saveToForm" method="post" action="save">	

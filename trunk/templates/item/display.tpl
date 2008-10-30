@@ -5,12 +5,18 @@
 {/block}
 {block name="title"}View Item{/block}
 {block name="content"}
-<div class="full" id="{$item->tagType|lower}">
+<div class="full" id="{$item->tagType|lower|default:'set'}">
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->serialNumber}</div>
 	<div id="contentHeader">
+
+		{if $item->error}
+		<h2>{$item->title}</h2>
+		{else}
 		<h2 class="collectionLink"><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h2>  
 		<h3 class="searchEcho">Item {$item->position} of {$item->opensearchTotal} for <span class="searchEcho">{$item->query}</span></h3>
+		{/if}
+
 		{if $item->opensearchTotal > 1}
 		<h4 class="prevNext">
 			{if $item->previous}
@@ -51,7 +57,7 @@
 				<!-- is there a better place for this?-->
 				<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 				<div class="controlsContainer">
-					<div id="adminPageControls" class="">
+					<div id="adminPageControls" class="hide">
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
 						|
 						<!--
@@ -82,16 +88,17 @@
 					{$item->content|markdown}
 				</div>
 				{/if}
-				<div id="metadata_form_div" class="hide"></div>
-
 
 				<div id="itemLinks">
 					<span class="hide">in cart</span> <a href="{$item->unique}" class="hide" id="addToCart_{$item->unique}">add to cart</a>
 					|
+					<!--
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" id="notesLink">user notes</a> 
+					-->
+					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" id="notesLink">add a user note</a> 
 				</div>
+
 				<div class="spacer"></div>
 				<div id="notesForm" class="hide">
 					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
@@ -108,7 +115,7 @@
 	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->serialNumber}/status"></div>
 
 	{if $item->editLink}
-	<!-- this is an atompub thing -->
+	<!-- this is an atompub thing and it will supply the action for the edit metadata form-->
 	<div><a class="hide" id="editLink" href="{$item->editLink}">edit item</a></div>
 	{/if}
 </div> <!-- close content -->

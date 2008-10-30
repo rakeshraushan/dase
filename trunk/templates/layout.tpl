@@ -90,12 +90,6 @@
 				</ul>
 				</li>
 
-				<li id="subscription-menu"><a href="" class="main">My Subscriptions</a>
-				<ul class="hide" id="subscription-submenu">
-					<li></li>
-					<!-- insert javascript template output -->
-				</ul>
-				</li>
 			</ul>
 
 			<!-- javascript template for sets-->
@@ -113,27 +107,13 @@
 			</textarea>
 			<!-- end javascript template -->
 
-			<!-- javascript template for subscriptions-->
-			<textarea class="javascript_template" id="subscriptions_jst">
-				{literal}
-				{for tag in tags}
-				{if 'subscription' == tag.type}
-				<li>
-				<a href='tag/${tag.id}'>${tag.name} (${tag.count})</a>
-				</li>
-				{/if}
-				{/for}
-				{/literal}
-			</textarea>
-			<!-- end javascript template -->
-
 			<!-- javascript template for save-to pull down-->
 			<textarea class="javascript_template" id="saveto_jst">
 				<select id='saveToSelect' name='collection_ascii_id'>
 					<option value=''>save checked items to...</option>
 					{literal}
 					{for tag in tags}
-					{if 'subscription' != tag.type && 'admin' != tag.type}
+					{if 'admin' != tag.type}
 					<option value='${tag.ascii_id}'>${tag.name} (${tag.count})</option>
 					{/if}
 					{/for}
@@ -162,9 +142,7 @@
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
 				<a href="manage" class="hide" id="manageLink"></a> |
-				<!--
-				<insert-timer/> seconds |
-				-->
+				{php}echo Dase_Timer::getElapsed();{/php} seconds |
 				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 			</div><!--closes footer-->
 			<div id="debugData" class="pagedata"></div>

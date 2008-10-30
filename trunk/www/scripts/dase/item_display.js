@@ -99,7 +99,7 @@ Dase.getNotes = function() {
 
 Dase.initEditLink = function(el) {
 	var metadata = Dase.$('metadata');
-	var form_div = Dase.$('metadata_form_div');
+	var form_div = Dase.$('ajaxFormHolder');
 	if (!metadata) return;
 	if (!form_div) return;
 	el.onclick = function() {
@@ -183,6 +183,7 @@ Dase.initGetInputForm = function(form) {
 			Dase.$('addMetadataFormTarget').innerHTML = templateObj.process(resp);
 			var input_form = Dase.$('ajaxFormHolder').getElementsByTagName('form')[1];
 			input_form.onsubmit = function() {
+				Dase.loadingMsg(true);
 				var content_headers = {
 					'Content-Type':'application/x-www-form-urlencoded'
 				}
@@ -203,12 +204,14 @@ Dase.initGetInputForm = function(form) {
 }
 
 Dase.buildForm = function(json,href) {
-	var html_form = '<form id="metadata_form" method="post" action="'+href+'">';
+	var html_form = '<h1>Edit Metadata</h1>';
+	html_form += '<form id="metadata_form" method="post" action="'+href+'">';
 	html_form += '<p><input type="submit" value="save changes"></p>';
 	for (var i=0;i<json.length;i++) {
-		html_form += '<label for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
-		/*html_form += '<label for="'+json[i].att_ascii_id+'">'+json[i].html_input_type+'</label>';*/
-		html_form += '<p>'+Dase.getFormElement(json[i])+'</p>';
+		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
+			html_form += '<label for="'+json[i].ascii_id+'">'+json[i].attribute_name+'</label>';
+			html_form += '<p>'+Dase.getFormElement(json[i])+'</p>';
+		}
 	}
 	html_form += '<p><input type="submit" value="save changes"></p>';
 	html_form += "</form>";
@@ -218,7 +221,7 @@ Dase.buildForm = function(json,href) {
 Dase.getFormElement = function(set) {
 	var element_html = '';
 	var type = set.html_input_type;
-	var name = set.att_ascii_id;
+	var name = set.ascii_id;
 	var value = set.value_text;
 	var values = set.values;
 	if (value.length > 50) {
@@ -233,22 +236,22 @@ Dase.getFormElement = function(set) {
 		case 'select':
 		break;
 		case 'text': 
-		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		case 'textarea': 
-		element_html += '<textarea name="'+name+'" rows="5">'+value+'"</textarea>';
+		element_html += '<textarea name="meta['+name+']" rows="5">'+value+'"</textarea>';
 		break;
 		case 'no_edit': 
 		element_html += value;
 		break;
 		case 'listbox': 
-		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		case 'text_with_menu':
-		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		default:
-		element_html += '<input type="text" name="'+name+'" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
 	}
 	return element_html;
 };

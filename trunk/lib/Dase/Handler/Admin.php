@@ -107,7 +107,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$user = Dase_DBO_DaseUser::get($r->get('eid'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('user',$user);
-		$tpl->assign('tags',$user->getTags());
+		$tpl->assign('tags',$user->getTags(true));
 		$tpl->assign('collections',$user->getCollections());
 		$r->renderResponse($tpl->fetch('admin/user.tpl'));
 	}

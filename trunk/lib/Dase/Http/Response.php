@@ -172,6 +172,19 @@ class Dase_Http_Response
 		exit;
 	}
 
+	public function atomError($code,$msg='')
+	{
+		$feed = new Dase_Atom_Feed;
+		if (isset(self::$codes[$code])) {
+			$message = $code.' '.self::$codes[$code]; 
+		}
+		$feed->setTitle($message . ' '.$msg);
+		$feed->addAuthor();
+		$feed->addCategory('error','http://daseproject.org/category/error');
+		echo $feed->asXml();
+		exit;
+	}
+
 	public function ok($msg = '')
 	{
 		header("HTTP/1.1 200 Ok");

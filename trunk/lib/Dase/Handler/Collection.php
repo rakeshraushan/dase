@@ -168,7 +168,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$user->isSuperuser()) {
 			$r->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
-		if ($this->collection->getItemCount() < 5) {
+		if ($this->collection->item_count < 5) {
 			$archive_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive';
 			if (!file_exists($archive_dir)) {
 				mkdir($archive_dir);
