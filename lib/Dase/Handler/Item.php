@@ -276,6 +276,11 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($meta));
 	}
 
+	public function getMetadataJson($r)
+	{
+		$this->getMetadataSetJson($r);
+	}
+
 	public function getCommentsJson($r)
 	{
 		$user = $r->getUser();

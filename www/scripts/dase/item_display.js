@@ -103,24 +103,31 @@ Dase.initEditMetadata = function(el) {
 	if (!metadata) return;
 	if (!form_div) return;
 	el.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
 		Dase.toggle(metadata);
 		Dase.toggle(form_div);
 		Dase.getJSON(el.href,function(json) {
 			//build form and insert it into page
-			form_div.innerHTML = '<h1>Edit Metadata</h1>'+Dase.buildEditMetadataForm(json,el.href);
+			form_div.innerHTML = '<h1>Edit Metadata</h1><div id="editMetadata">'+Dase.buildEditMetadataForm(json,el.href)+'</div>';
 			var forms = form_div.getElementsByTagName('form');
 			for (var i=0;i<forms.length;i++) {
 				forms[i].onsubmit = function() {
-					Dase.loadingMsg(true);
+					//Dase.loadingMsg(true);
+					this.className = 'updated';
 					var content_headers = {
 						'Content-Type':'application/x-www-form-urlencoded'
 					}
 					Dase.ajax(this.action,'post',function(resp) { 
-						var input_el = Dase.$('val_'+resp);
-						var val = input_el.value;
-						input_el.style.backgroundColor='#ff0';
-						var label_el = Dase.$('label_'+resp);
-						label_el.innerHTML = label_el.innerHTML + " updated!";
+						Dase.$('val_'+resp).onfocus = function() {
+							Dase.removeClass(Dase.$('label_'+resp),'updated');
+						};
+						Dase.$('label_'+resp).className = 'updated';
+						Dase.highlight(Dase.$('form_'+resp),500,'updated');
 					},Dase.form.serialize(this),null,null,content_headers); 
 					return false;
 				}
@@ -137,6 +144,12 @@ Dase.initAddMetadata = function()
 	var coll = Dase.$('collectionAsciiId').innerHTML;
 	if (!mlink || !mform) return;
 	mlink.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
 		if (Dase.toggle(mform)) {
 			mform.innerHTML = '<div class="loading">Loading...</div>';
 			Dase.getJSON(this.href, function(json){
@@ -158,6 +171,12 @@ Dase.initAddContent = function()
 	var coll = Dase.$('collectionAsciiId').innerHTML;
 	if (!clink || !cform) return;
 	clink.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
 		if (Dase.toggle(cform)) {
 			cform.innerHTML = '<div class="loading">Loading...</div>';
 			Dase.getJSON(this.href, function(json){

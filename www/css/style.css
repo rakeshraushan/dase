@@ -306,6 +306,16 @@ div#itemLinks {
 div#itemLinks a {
 }
 
+div#pageReloader {
+	float: right;
+	text-align: right;
+	margin-right: 10px;
+}
+
+#item td a#pageReloaderLink {
+	font-weight: bold;  
+}
+
 div#adminPageControls {
 	float: right;
 	text-align: right;
@@ -341,6 +351,20 @@ h3.searchEcho {
 h2.collectionLink {
 	color: #000;
 	font-size: 1em; 
+}
+
+div#editMetadata form {
+	padding: 2px 2px 1px 5px;
+	margin: -5px;
+}
+
+div#editMetadata form.updated {
+	background-color: #cfc;
+}
+
+div#editMetadata form label.updated:after {
+	content: ' updated';
+	color: #6a6;
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/
@@ -695,5 +719,9 @@ h3.utilLabel {
 	margin-bottom: 0px;
 	margin-top: 1em;
 	font-size: 11px;
+}
+
+.highlight {
+	background-color: #ffc;
 }
 

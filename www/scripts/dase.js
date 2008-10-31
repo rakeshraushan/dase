@@ -213,6 +213,9 @@ Dase.removeChildren = function(target) {
 }
 
 Dase.highlight = function(target,time,cname) {
+	if (!time) {
+		time = 1500;
+	}
 	if (!cname) {
 		cname = 'highlight';
 	}
