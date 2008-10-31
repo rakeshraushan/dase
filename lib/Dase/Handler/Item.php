@@ -229,13 +229,16 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot post to metadata');
 		}
-		$meta = $r->get('meta');
-		print_r($meta); exit;
-		foreach ($r->get('value',true) as $val) {
-			$this->item->setValue($att_ascii,$val);
+		foreach ($r->get('val',true) as $key => $val) {
+			$value = new Dase_DBO_Value;
+			$value->load($key);
+			$value->value_text = $val;
+			//todo: need to do revision history!!
+			$value->update();
+			//$this->item->setValue($att_ascii,$val);
 		}
 		$this->item->buildSearchIndex();
-		$r->renderResponse('added metadata');
+		$r->renderResponse($key);
 	}
 
 	public function putItem($r)

@@ -18,7 +18,7 @@ Dase.initItemEditing = function(eid) {
 		Dase.ajax(templates_url,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
 			Dase.updateItemStatus();
-			Dase.initEditLink(edit_link);
+			Dase.initEditMetadata(edit_link);
 			Dase.initAddMetadata();
 			Dase.initAddContent();
 		});
@@ -97,7 +97,7 @@ Dase.getNotes = function() {
 	});
 };
 
-Dase.initEditLink = function(el) {
+Dase.initEditMetadata = function(el) {
 	var metadata = Dase.$('metadata');
 	var form_div = Dase.$('ajaxFormHolder');
 	if (!metadata) return;
@@ -107,10 +107,27 @@ Dase.initEditLink = function(el) {
 		Dase.toggle(form_div);
 		Dase.getJSON(el.href,function(json) {
 			//build form and insert it into page
-			form_div.innerHTML = Dase.buildForm(json,el.href);
+			form_div.innerHTML = '<h1>Edit Metadata</h1>'+Dase.buildEditMetadataForm(json,el.href);
+			var forms = form_div.getElementsByTagName('form');
+			for (var i=0;i<forms.length;i++) {
+				forms[i].onsubmit = function() {
+					Dase.loadingMsg(true);
+					var content_headers = {
+						'Content-Type':'application/x-www-form-urlencoded'
+					}
+					Dase.ajax(this.action,'post',function(resp) { 
+						var input_el = Dase.$('val_'+resp);
+						var val = input_el.value;
+						input_el.style.backgroundColor='#ff0';
+						var label_el = Dase.$('label_'+resp);
+						label_el.innerHTML = label_el.innerHTML + " updated!";
+					},Dase.form.serialize(this),null,null,content_headers); 
+					return false;
+				}
+			}
 		});
 		return false;
-	}
+	};
 };
 
 Dase.initAddMetadata = function()
@@ -157,6 +174,7 @@ Dase.initAddContent = function()
 	}
 };
 
+//for adding textual content (atom:content) 
 Dase.initContentForm = function(form) {
 	form.onsubmit = function() {
 		var content_headers = {
@@ -203,24 +221,23 @@ Dase.initGetInputForm = function(form) {
 }
 }
 
-Dase.buildForm = function(json,href) {
-	var html_form = '<h1>Edit Metadata</h1>';
-	html_form += '<form id="metadata_form" method="post" action="'+href+'">';
-	html_form += '<p><input type="submit" value="save changes"></p>';
+Dase.buildEditMetadataForm = function(json,href) {
+	var html_form = '';
 	for (var i=0;i<json.length;i++) {
 		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
-			html_form += '<label for="'+json[i].ascii_id+'">'+json[i].attribute_name+'</label>';
-			html_form += '<p>'+Dase.getFormElement(json[i])+'</p>';
+		html_form += '<form method="post" id="form_'+json[i].id+'" action="'+href+'">';
+		html_form += '<label id="label_'+json[i].id+'" for="'+json[i].ascii_id+'">'+json[i].attribute_name+'</label>';
+		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" value="update"> <!--<input type="submit" value="delete">--></p>';
+		html_form += "</form>";
 		}
 	}
-	html_form += '<p><input type="submit" value="save changes"></p>';
-	html_form += "</form>";
 	return html_form;
 };
 
 Dase.getFormElement = function(set) {
 	var element_html = '';
 	var type = set.html_input_type;
+	var id = set.id;
 	var name = set.ascii_id;
 	var value = set.value_text;
 	var values = set.values;
@@ -236,22 +253,22 @@ Dase.getFormElement = function(set) {
 		case 'select':
 		break;
 		case 'text': 
-		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" id="val_'+id+'" name="val['+id+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		case 'textarea': 
-		element_html += '<textarea name="meta['+name+']" rows="5">'+value+'"</textarea>';
+		element_html += '<textarea id="val_'+id+'" name="val['+id+']" rows="5">'+value+'"</textarea>';
 		break;
 		case 'no_edit': 
 		element_html += value;
 		break;
 		case 'listbox': 
-		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" id="val_'+id+'" name="val['+id+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		case 'text_with_menu':
-		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" id="val_'+id+'" name="val['+id+']" value="'+value+'" size="'+value.length+'"/>';
 		break;
 		default:
-		element_html += '<input type="text" name="meta['+name+']" value="'+value+'" size="'+value.length+'"/>';
+		element_html += '<input type="text" id="val_'+id+'" name="val['+id+']" value="'+value+'" size="'+value.length+'"/>';
 	}
 	return element_html;
 };
