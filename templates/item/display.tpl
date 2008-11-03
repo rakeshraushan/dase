@@ -52,6 +52,7 @@
 					{/if}
 					{/foreach}
 				</table>
+				<span class="addToCart hide">in cart</span> <a href="{$item->unique}" class="addToCart hide" id="addToCart_{$item->unique}">add to cart</a>
 			</td>
 			<td class="metadata">
 				<!-- is there a better place for this?-->
@@ -59,7 +60,7 @@
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="editLink">edit</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/metadata" class="edit" id="editLink">edit</a>
 						|
 						<!--
 						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
@@ -85,14 +86,12 @@
 					{/foreach}
 				</dl>
 				{if $item->content}
-				<div class="itemContent">
+				<div id="itemContent">
 					{$item->content|markdown}
 				</div>
 				{/if}
 
 				<div id="itemLinks">
-					<span class="hide">in cart</span> <a href="{$item->unique}" class="hide" id="addToCart_{$item->unique}">add to cart</a>
-					|
 					<!--
 					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
 					|

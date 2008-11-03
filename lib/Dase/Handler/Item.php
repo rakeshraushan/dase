@@ -4,11 +4,12 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
-		//for updating metadata:
-		'{collection_ascii_id}/{serial_number}/edit' => 'metadata_set',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
+		//used for get and post
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
+		//used for put and delete
+		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
@@ -121,13 +122,13 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($t->fetch('item/display.tpl'));
 	}
 
-	public function getEditFormJson($r)
+	public function getMetadataJson($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'user cannot write this item');
 		}
-		$r->renderResponse($this->item->getEditFormJson());
+		$r->renderResponse($this->item->getMetadataJson());
 	}
 
 	public function getInputTemplates($r)
@@ -223,22 +224,34 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('added metadata');
 	}
 
-	public function postToMetadataSet($r)
+	public function putMetadata($r)
+	{
+		$value_text = file_get_contents("php://input");
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot put metadata');
+		}
+		if (!$r->has('value_id')) {
+			$r->renderError(400,'missing identifier');
+		}
+		$value_id = $r->get('value_id');
+		$this->item->updateMetadata($r,$value_id,strip_tags($value_text));
+		$r->renderResponse($value_id.'|'.$value_text);
+	}
+
+	public function deleteMetadata($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot post to metadata');
+			$r->renderError(401,'cannot delete metadata');
 		}
-		foreach ($r->get('val',true) as $key => $val) {
-			$value = new Dase_DBO_Value;
-			$value->load($key);
-			$value->value_text = $val;
-			//todo: need to do revision history!!
-			$value->update();
-			//$this->item->setValue($att_ascii,$val);
+		if (!$r->has('value_id')) {
+			$r->renderError(400,'missing identifier');
 		}
-		$this->item->buildSearchIndex();
-		$r->renderResponse($key);
+		//try/catch??
+		$value_id = $r->get('value_id');
+		$this->item->removeMetadata($r,$value_id);
+		$r->renderResponse('deleted');
 	}
 
 	public function putItem($r)
@@ -268,17 +281,6 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 		}
 		$r->renderError(500);
-	}
-
-	public function getMetadataSetJson($r)
-	{
-		$meta =	$this->item->getMetadata();
-		$r->renderResponse(Dase_Json::get($meta));
-	}
-
-	public function getMetadataJson($r)
-	{
-		$this->getMetadataSetJson($r);
 	}
 
 	public function getCommentsJson($r)

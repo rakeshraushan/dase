@@ -159,13 +159,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getEditFormJson()
+	//used for edit metadata form
+	public function getMetadataJson()
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
-			SELECT a.id as att_id,a.ascii_id,a.attribute_name,a.html_input_type,v.value_text
+			SELECT a.id as att_id,a.ascii_id,a.attribute_name,a.html_input_type,v.value_text,v.id as value_id, a.collection_id
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -175,15 +176,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
 			$set = array();
+			$set['value_id'] = $row['value_id'];
+			$set['collection_id'] = $row['collection_id'];
+			$set['att_ascii_id'] = $row['ascii_id'];
+			$set['attribute_name'] = $row['attribute_name'];
+			$set['html_input_type'] = $row['html_input_type'];
+			$set['value_text'] = $row['value_text'];
 			if (in_array($row['html_input_type'],array('radio','checkbox','select','text_with_menu'))) {
 				$att = new Dase_DBO_Attribute;
 				$att->load($row['att_id']);
 				$set['values'] = $att->getFormValues();
 			}
-			$set['att_ascii_id'] = $row['ascii_id'];
-			$set['attribute_name'] = $row['attribute_name'];
-			$set['html_input_type'] = $row['html_input_type'];
-			$set['value_text'] = $row['value_text'];
 			$metadata[] = $set;
 		}
 		return Dase_Json::get($metadata);
@@ -309,6 +312,45 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			return false;
 		}
+	}
+
+	function updateMetadata($request,$value_id,$value_text)
+	{
+		$c = $this->getCollection();
+		$v = new Dase_DBO_Value;
+		$v->load($value_id);
+		$att = $v->getAttribute();
+		$rev = new Dase_DBO_ValueRevisionHistory;
+		$rev->added_text = $value_text;
+		$rev->attribute_name = $att->attribute_name;
+		$rev->collection_ascii_id = $c->ascii_id;
+		$rev->dase_user_eid = $request->getUser()->eid;
+		$rev->deleted_text = $v->value_text;
+		$rev->item_serial_number = $this->serial_number;
+		$rev->timestamp = date(DATE_ATOM);
+		$rev->insert();
+		$v->value_text = $value_text;
+		$v->update();
+		$this->buildSearchIndex();
+	}
+
+	function removeMetadata($request,$value_id)
+	{
+		$c = $this->getCollection();
+		$v = new Dase_DBO_Value;
+		$v->load($value_id);
+		$att = $v->getAttribute();
+		$rev = new Dase_DBO_ValueRevisionHistory;
+		$rev->added_text = '';
+		$rev->attribute_name = $att->attribute_name;
+		$rev->collection_ascii_id = $c->ascii_id;
+		$rev->dase_user_eid = $request->getUser()->eid;
+		$rev->deleted_text = $v->value_text;
+		$rev->item_serial_number = $this->serial_number;
+		$rev->timestamp = date(DATE_ATOM);
+		$rev->insert();
+		$v->delete();
+		$this->buildSearchIndex();
 	}
 
 	function setValue($att_ascii_id,$value_text)

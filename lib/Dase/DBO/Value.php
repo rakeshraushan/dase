@@ -4,6 +4,8 @@ require_once 'Dase/DBO/Autogen/Value.php';
 
 class Dase_DBO_Value extends Dase_DBO_Autogen_Value 
 {
+	public $attribute =  null;
+
 	public static function getCount($collection_ascii_id='')
 	{
 		$prefix = Dase_Config::get('table_prefix');
@@ -26,5 +28,15 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 			$sth->execute();
 		}
 		return $sth->fetchColumn();
+	}
+
+	public function getAttribute()
+	{
+		if (!$this->attribute) {
+			$att = new Dase_DBO_Attribute;
+			$att->load($this->attribute_id);
+			$this->attribute = $att;
+		}
+		return $this->attribute;
 	}
 }
