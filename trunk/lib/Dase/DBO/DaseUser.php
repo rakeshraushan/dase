@@ -149,7 +149,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_data);
 	}
 
-	public function getCartJson()
+	public function getCartArray()
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$item_array = array();
@@ -170,7 +170,12 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				'tag_id' => $tag_id
 			);
 		}
-		return Dase_Json::get($item_array);
+		return $item_array;
+	}
+
+	public function getCartJson()
+	{
+		return Dase_Json::get($this->getCartArray());
 	}
 
 	function expireDataCache()

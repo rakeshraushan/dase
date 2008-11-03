@@ -46,7 +46,6 @@
 
 		{if $json_url}
 		<link rel="alternate" type="application/json" href="{$json_url}"/>
-		<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
 		{/if}
 
 	</head>
