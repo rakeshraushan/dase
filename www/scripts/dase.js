@@ -269,6 +269,7 @@ Dase.initUser = function(func) {
 		return;
 	}
 	Dase.loadingMsg(true);
+	//per HATEOS, ought to come from a URI template in hypertext
 	var url = Dase.base_href + "user/"+eid+ "/data"
 	Dase.getJSON(url,function(json){
 		for (var eid in json) {
@@ -747,7 +748,7 @@ Dase.initAddToCart = function() {
 		var tag_type = tag_type_data.innerHTML;
 		//do not display 'add to cart' for user colls & slideshows
 		if ('slideshow' == tag_type || 'set' == tag_type) {
-			Dase.initCart(); 
+			//Dase.initCart(); 
 			return;
 		}
 	}
@@ -884,7 +885,7 @@ Dase.initSaveTo = function() {
 		},
 		//should *always* handle errors w/ an error callback:
 		function(resp) {
-			alert('Our sincerest apologies.  And error has occurred');
+			alert('Our sincerest apologies.  An error has occurred');
 		});
 		return false;
 	};
@@ -1022,20 +1023,6 @@ function bind(obj, method) {
 	return function() { return method.apply(obj, arguments); }
 }
 
-Dase.initSlideshowLink = function() {
-	var sslink = Dase.$('startSlideshow');
-	if (!sslink) return;
-	var json_url = Dase.getJsonUrl();
-	if (!json_url) {
-		Dase.addClass(sslink,'hide');
-		return;
-	}
-	sslink.onclick = function() {
-		Dase.slideshow.start(json_url,Dase.user.eid,Dase.user.htpasswd);
-		return false;
-	}
-}
-
 Dase.initShowHtpasswd = function() {
 	var link = Dase.$('htpasswdToggle');
 	if (!link) return;
@@ -1085,7 +1072,6 @@ Dase.addLoadEvent(function() {
 	Dase.initSubmitConfirm();
 	Dase.initLogoff();
 	Dase.initAttributeEdit();
-	Dase.initSlideshowLink();
 	Dase.initShowHtpasswd();
 	if (Dase.pageInit && typeof Dase.pageInit === 'function') {
 		Dase.pageInit();

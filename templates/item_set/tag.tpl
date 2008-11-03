@@ -1,5 +1,10 @@
 {extends file="layout.tpl"}
 
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
+{/block}
+
 {block name="title"}Item Set{/block}
 
 {block name="content"}
@@ -11,7 +16,7 @@
 			<a href="#" id="startSlideshow">view as slideshow</a> |
 			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">slide sorter</a>
 			{if $bulkedit}
-			| <a href="tag/{$items->eid}/{$items->asciiId}/bulk editor">bulk editor</a>
+			| <a href="tag/{$items->eid}/{$items->asciiId}/bulk editor" id="bulkEditor">bulk editor</a>
 			{/if}
 		</h4>
 	</div>

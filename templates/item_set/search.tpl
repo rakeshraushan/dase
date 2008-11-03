@@ -4,6 +4,8 @@
 
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/search_sorting.js"></script>
+<script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
 {/block}
 
 {block name="content"}
