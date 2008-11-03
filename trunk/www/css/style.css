@@ -74,9 +74,11 @@ html #maincontent {
 
 #slideshow {
 	background-color:#d5deed;
+	background-color:#ceead8;
 }
 #slideshow td {
 	border: 1px solid #9cacc6
+	border: 1px solid #9dbda9;
 }
 
 #set {
@@ -292,7 +294,7 @@ table#item td.metadata ul#notes li {
 	background-color: #eee;
 }
 
-table#item td.metadata div.itemContent {
+table#item td.metadata div#itemContent {
 	margin: 10px 0;
 	width: 80%;
 	padding: 10px;
@@ -309,7 +311,8 @@ div#itemLinks a {
 div#pageReloader {
 	float: right;
 	text-align: right;
-	margin-right: 10px;
+	margin-right: 20px;
+	padding-top: 3px;
 }
 
 #item td a#pageReloaderLink {
@@ -336,12 +339,12 @@ div#adminStatusControls {
 	background-color: #ffc;
 	border: 1px solid #999;
 	-moz-border-radius: 5px;
-	padding: .5em 2em;
+	padding: 1em 2em 1em 2em;
 	margin: -.5em 0 2em 0;
 }
 
 #addMetadataFormTarget {
-	margin: 2em 0;
+	margin: 1em 0;
 }
 
 h3.searchEcho {
@@ -354,8 +357,14 @@ h2.collectionLink {
 }
 
 div#editMetadata form {
-	padding: 2px 2px 1px 5px;
-	margin: -5px;
+	border: 1px solid #dda;
+	padding: 2px 2px 1px 10px;
+	margin-bottom: -1px;
+}
+
+div#editMetadata form label {
+	color:#339;
+	font-weight: bold;
 }
 
 div#editMetadata form.updated {
@@ -365,6 +374,23 @@ div#editMetadata form.updated {
 div#editMetadata form label.updated:after {
 	content: ' updated';
 	color: #6a6;
+}
+
+fieldset  {
+	margin-bottom 1em;
+}
+
+fieldset p {
+	margin: 0 0 2px 0;
+	padding: 0;
+}
+
+.addToCart {
+	font-weight: bold;
+}
+
+a.addToCart {
+	color: #700c0c;
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/

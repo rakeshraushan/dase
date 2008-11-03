@@ -167,7 +167,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			foreach ($v->find() as $value) {
 				$values[] = $value->value_text;
 			}
-			$values = array_unique($values);
+			$values = array_values(array_unique($values));
 			asort($values);
 		} else {
 			//nothin'

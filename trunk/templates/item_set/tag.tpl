@@ -3,7 +3,7 @@
 {block name="title"}Item Set{/block}
 
 {block name="content"}
-<div class="full" id="browse">
+<div class="full" id="{$items->tagType|lower|default:'set'}">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	{if $items->count}
 	<div class="pageControls">
