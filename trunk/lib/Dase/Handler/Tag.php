@@ -6,6 +6,8 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/list' => 'tag_list',
+		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
@@ -98,7 +100,17 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->renderResponse($t->fetch('item_set/jstemplates.tpl'));
 	}
 
-	public function getTag($r)
+	public function getTagList($r)
+	{
+		$this->getTag($r,'list');
+	}
+
+	public function getTagGrid($r)
+	{
+		$this->getTag($r,'grid');
+	}
+
+	public function getTag($r,$display='')
 	{
 		$u = $r->getUser();
 		if (!$u->can('read',$this->tag)) {
@@ -118,6 +130,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($u->can('write',$this->tag)) {
 			$t->assign('is_admin',1);
 		}
+		$t->assign('display',$display);
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

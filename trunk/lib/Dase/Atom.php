@@ -148,12 +148,19 @@ class Dase_Atom
 		return $this->getLink('previous');
 	}
 
-	function getLink($rel='alternate') 
+	function getLink($rel='alternate',$title='') 
 	{
-	
+
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ($rel == $el->getAttribute('rel')) {
-				return $el->getAttribute('href');
+			//allow filtering on title
+			if ($title) {
+				if ($rel == $el->getAttribute('rel') && $title == $el->getAttribute('title')) {
+					return $el->getAttribute('href');
+				}
+			} else {
+				if ($rel == $el->getAttribute('rel')) {
+					return $el->getAttribute('href');
+				}
 			}
 		}
 	}

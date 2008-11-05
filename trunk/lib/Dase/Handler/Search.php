@@ -120,6 +120,11 @@ class Dase_Handler_Search extends Dase_Handler
 		$tpl->assign('end',$end);
 		$tpl->assign('sort',$r->get('sort'));
 		$tpl->assign('items',$feed);
+		if ('list' == $r->get('display')) {
+			$tpl->assign('display','list');
+		} else {
+			$tpl->assign('display','grid');
+		}
 		$r->renderResponse($tpl->fetch('item_set/search.tpl'));
 	}
 }
