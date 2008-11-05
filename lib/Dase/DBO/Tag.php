@@ -289,12 +289,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		$feed->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
+		$feed->setId(APP_ROOT . '/tag/'. $this->user->eid . '/' . $this->ascii_id);
 		$feed->setUpdated($this->getUpdated());
 		$feed->addAuthor($this->user->eid);
 		$feed->setFeedType('tag');
-		$feed->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id.'.atom','self');
-		$feed->addLink(APP_ROOT.'/user/'.$this->user->eid.'/tag/'.$this->ascii_id);
+		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','','','list');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','','','grid');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {

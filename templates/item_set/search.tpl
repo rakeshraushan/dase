@@ -13,9 +13,6 @@
 	<div id="msg" class="alert hide"></div>
 	{if $items->count}
 	<div class="pageControls">
-		<h4 class="startSlideshow">
-			<a href="#" id="startSlideshow">view as slideshow</a>
-		</h4>
 		<!-- for sorting results -->
 		<div id="sortByAttFormDiv"></div>
 	</div>
@@ -43,7 +40,7 @@
 		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>
 		{/if}
 		{if $items->count}
-		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}</h3>
+		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}  <span id="displaySelect">[ <a href="{$request->path}">grid</a> | <a href="{$request->path}?display=list">list</a> | <a href="#" id="startSlideshow">slideshow</a> ]<span></h3>
 		{else}
 		<h3 class="searchEcho">Search Results: 0 items found</h3>
 		{/if}
@@ -77,7 +74,11 @@
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}
-			{include file='item_set/common.tpl' start=$startIndex}
+			{if 'list' == $display}
+			{include file='item_set/common_list.tpl' start=$startIndex}
+			{else}
+			{include file='item_set/common_grid.tpl' start=$startIndex}
+			{/if}
 		</table>
 		{if $items->count > $items->max}
 		<h4 class="pagerControl">

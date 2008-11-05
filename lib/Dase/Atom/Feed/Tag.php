@@ -28,9 +28,29 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		return $this->getLink('self');
 	}
 
-	function getTagLink()
+	function getListLink()
 	{
-		return $this->getLink('http://daseproject.org/relation/tag');
+		return $this->getLink('alternate','list');
+	}
+
+	function getGridLink()
+	{
+		return $this->getLink('alternate','grid');
+	}
+
+	/** beware: this just gets the first coll_ascii_id it comes to 
+	 * */
+	function getCollectionAsciiId()
+	{
+		if (!$this->_collectionAsciiId) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
+					$this->_collectionAsciiId = $el->getAttribute('term');
+					break;
+				}
+			}
+		}
+		return $this->_collectionAsciiId;
 	}
 
 	function getTagType()

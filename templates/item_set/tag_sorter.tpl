@@ -10,7 +10,7 @@
 <div class="full" id="browse">
 	<div id="msg" class="alert hide"></div>
 	<div class="pageControls">
-		<h4 class="startSlideshow">
+		<h4>
 			<a href="tag/{$tag_feed->eid}/{$tag_feed->asciiId}">return to set</a>
 		</h4>
 	</div>

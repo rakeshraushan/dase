@@ -472,6 +472,48 @@ table#itemSet td a.moveto img {
 	height: 12px;
 }
 
+/**************************
+ *                        *
+ *     list display       *
+ *                        *
+ * ************************/
+
+table#itemSet tr.item td.metadata {
+	width: 100%;
+	padding: 1.2em;
+	text-align:left;
+	vertical-align: top;
+}
+
+div#browse table#itemSet tr.item td.thumb {
+	background-color: #d9c8ad;
+	border-color: #c8b79c;
+	min-width: 200px;
+}
+
+div#set table#itemSet tr.item td.thumb {
+	background-color: #9dbda9;
+	border-color: #8cac98;
+	min-width: 200px;
+}
+
+div#cart table#itemSet tr.item td.thumb {
+	background-color: #cdb0ae;
+	border-color: #947672;
+	min-width: 200px;
+}
+
+tr.item td.metadata dl {
+	margin-bottom: .5em;
+	margin-top: .5em;
+}
+tr.item td.metadata dt {
+	color:#339;
+	font-weight:bold;
+}
+
+/**** end list display *****/
+
 table#sorter {
 	border: 1px solid #bbb;
 }
@@ -523,6 +565,15 @@ div.widget {
 
 #attributesForm {
 	float: right;
+}
+
+#displaySelect {
+	font-size: .8em;
+	color: #666;
+	font-weight: bold;
+}
+
+#displaySelect a {
 }
 
 /************ SLIDESHOW DISPLAY **************/
