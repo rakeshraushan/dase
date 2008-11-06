@@ -6,6 +6,8 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/templates' => 'bulk_edit_templates',
+		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
@@ -36,6 +38,12 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(404,'no such tag');
 		}
 	}	
+
+	public function getBulkEditTemplates($r)
+	{
+		$t = new Dase_Template($r);
+		$r->renderResponse($t->fetch('item_set/jstemplates.tpl'));
+	}
 
 	public function postToSorter($r)
 	{
@@ -182,6 +190,23 @@ class Dase_Handler_Tag extends Dase_Handler
 		//$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item/display.tpl'));
+	}
+
+	public function postToMetadata($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('admin',$this->tag)) {
+			$r->renderError(401,'cannot post tag metadata');
+		}
+		$att_ascii = $r->get('ascii_id');
+		foreach ($this->tag->getTagItems() as $tag_item) {
+			$item = $tag_item->getItem();
+			foreach ($r->get('value',true) as $val) {
+				$item->setValue($att_ascii,$val);
+			}
+			$item->buildSearchIndex();
+		}
+		$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
 	}
 
 	public function postToTag($r) 

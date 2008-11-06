@@ -16,7 +16,7 @@
 			
 			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">slide sorter</a>
 			{if $bulkedit}
-			| <a href="tag/{$items->eid}/{$items->asciiId}/bulk editor" id="bulkEditor">bulk editor</a>
+			| <a href="collection/{$items->collectionAsciiId}/attributes" id="bulkEditor">bulk editor</a>
 			{/if}
 		</h4>
 	</div>
@@ -24,6 +24,9 @@
 	<h2>{$items->title} (<span {if 'cart' == $items->tagType}id="cartCount"{/if}>{$items->count}</span> items) <span id="displaySelect">[ <a href="{$items->gridLink}">grid</a> | <a href="{$items->listLink}">list</a> | <a href="#" id="startSlideshow">slideshow</a> ]<span></h2>
 	<h3>{$items->subtitle}</h3>
 	{if $items->count}
+	<div id="ajaxFormHolder" class="hide">
+		<!-- js templates retrieved asynchronously -->
+	</div>
 	<form id="saveToForm" method="post" action="save">	
 		<table id="itemSet">
 			{assign var=startIndex value=$items->startIndex}
@@ -65,11 +68,13 @@
 	{/if}
 	<div id="tagEid" class="pagedata">{$items->eid}</div>
 	<div id="tagName" class="pagedata">{$items->name}</div>
-	{if $bulkedit}
-	<div id="collectionAsciiId" class="pagedata">{$items->collectionAsciiId}</div>
-	{/if}
 	<div id="tagAsciiId" class="pagedata">{$items->asciiId}</div>
 	<div id="tagType" class="pagedata">{$items->tagType}</div>
+	{if $bulkedit}
+	<!-- the presence of the following means editing is authorized -->
+	<a href="tag/{$items->eid}/{$items->asciiId}/templates" class="pagedata" id="jsTemplatesUrl"></a>
+	<div id="collectionAsciiId" class="pagedata">{$items->collectionAsciiId}</div>
+	{/if}
 	<div class="spacer"></div>
 </div>
 {/block}

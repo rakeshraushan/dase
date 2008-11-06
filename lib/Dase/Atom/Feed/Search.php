@@ -43,6 +43,16 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		return $this->getXpathValue("atom:subtitle/h:div/h:div[@class='searchEcho']");
 	}
 
+	function getListLink()
+	{
+		return $this->getLink('alternate','list');
+	}
+
+	function getGridLink()
+	{
+		return $this->getLink('alternate','grid');
+	}
+
 	/** for single collection searches only */
 	function getCollection()
 	{
