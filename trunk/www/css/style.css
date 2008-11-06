@@ -480,7 +480,7 @@ table#itemSet td a.moveto img {
 
 table#itemSet tr.item td.metadata {
 	width: 100%;
-	padding: 1.2em;
+	padding: .4em 1.2em;
 	text-align:left;
 	vertical-align: top;
 }
@@ -569,11 +569,13 @@ div.widget {
 
 #displaySelect {
 	font-size: .8em;
-	color: #666;
 	font-weight: bold;
+	color: #999;
+	margin-left: 1em;
 }
 
 #displaySelect a {
+	color: #669;
 }
 
 /************ SLIDESHOW DISPLAY **************/

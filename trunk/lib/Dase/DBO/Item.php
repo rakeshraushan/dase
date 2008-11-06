@@ -735,12 +735,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			APP_ROOT.'/media/'.
 			$this->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 		}
-		foreach ($this->getContents() as $c) {
+		$c = $this->getContents();
+		if ($c) {
 			$content[$c->id]['updated'] = $c->updated;
 			$content[$c->id]['eid'] = $c->updated_by_eid;
 			$content[$c->id]['text'] = $c->text;
 			$item_array['content'][] = $content;
 		}
+
 		return $item_array;
 	}
 
@@ -762,6 +764,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($status);
 	}
 
+	/** pass in true to get all versions */
 	public function getContents($get_all=false)
 	{
 		$contents = new Dase_DBO_Content;
