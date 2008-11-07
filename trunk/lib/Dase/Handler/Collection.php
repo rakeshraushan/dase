@@ -88,24 +88,11 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsByMd5Txt($r) 
 	{
-		$prefix = Dase_Config::get('table_prefix');
-		$output = '';
-		$sql = "
-			SELECT serial_number 
-			FROM {$prefix}item i
-			WHERE i.collection_id = ?
-			AND i.id IN
-			(SELECT v.item_id
-			FROM {$prefix}value v, {$prefix}attribute a
-			WHERE v.attribute_id = a.id
-			AND a.ascii_id = 'admin_checksum'
-			AND v.value_text = ?)
-			";
-		foreach (Dase_DBO::query($sql,array($this->collection->id,$r->get('md5')))->fetchAll() as $row) {
-			$output .= $row['serial_number'].'|'; 
-		}
-		if ($output) {
-			$r->renderResponse($output);
+		$file = new Dase_DBO_MediaFile;
+		$file->md5 = $r->get('md5');
+		$file->p_collection_ascii_id = $this->collection->ascii_id;
+		if ($file->findOne()) {
+			$r->renderResponse($file->p_serial_number.'|');
 		} else {
 			$r->renderError(404,'no item with checksum '.$r->get('md5'));
 		}
