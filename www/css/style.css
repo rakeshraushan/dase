@@ -743,10 +743,10 @@ table#colors td {
 }
 
 div#test-data .success {
-	color: #090;
+	color: #070;
 }
 div#test-data .failure {
-	color: #c00;
+	color: #900;
 }
 
 a.nolink, span.nolink {
