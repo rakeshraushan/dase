@@ -140,7 +140,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
-			AND a.is_on_list_display = 't'
+			AND (a.is_on_list_display = 't' OR a.is_on_list_display = 1)
 			";
 		$bound_params[] = $this->id;
 		if ($att_ascii_id) {
