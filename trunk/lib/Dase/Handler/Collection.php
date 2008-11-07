@@ -152,6 +152,10 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getArchiveAtom($r) 
 	{
+		$user = $r->getUser('http');
+		if (!$user->isSuperuser()) {
+			$r->renderError(401,$user->eid.' is not permitted to access the archive of this collection');
+		}
 		$limit = $r->get('limit');
 		$r->renderResponse($this->collection->asAtomArchive($limit));
 	}

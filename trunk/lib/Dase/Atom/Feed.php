@@ -89,6 +89,11 @@ class Dase_Atom_Feed extends Dase_Atom
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
+		//do not need to verify certificate
+		//from http://blog.taragana.com/index.php/archive/how-to-use-curl-in-php-for-authentication-and-ssl-communication/
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
 		//this will NOT work in safemode
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
 		if ($user && $pwd) {
