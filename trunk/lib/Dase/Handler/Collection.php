@@ -92,7 +92,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$file->md5 = $r->get('md5');
 		$file->p_collection_ascii_id = $this->collection->ascii_id;
 		if ($file->findOne()) {
-			$r->renderResponse($file->p_serial_number.'|');
+			$r->renderResponse($file->p_serial_number.' is a duplicate');
 		} else {
 			$r->renderError(404,'no item with checksum '.$r->get('md5'));
 		}
