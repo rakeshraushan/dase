@@ -109,6 +109,7 @@ CREATE TABLE {$table_prefix}dase_user (
     current_search_cache_id integer,
     current_collections character varying(2000),
     backtrack character varying(2000),
+    service_key_md5 character varying(200),
     template_composite character varying(2000)
 );
 

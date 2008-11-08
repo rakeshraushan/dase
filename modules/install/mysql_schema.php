@@ -138,6 +138,7 @@ CREATE TABLE `{$table_prefix}dase_user` (
 `last_cb_access` varchar(50) default NULL,
 `cb` varchar(200) default NULL,
 `name` varchar(200) default NULL,
+`service_key_md5` varchar(200) default NULL,
 `eid` varchar(255) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
