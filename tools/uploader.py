@@ -8,10 +8,11 @@ import urllib
 import wx
 import base64
 import string
-import sys
 
-DASE_HOST = 'littlehat.com'
-DASE_BASE = '/dase'
+DASE_HOST = 'daseupload.laits.utexas.edu'
+DASE_BASE = '/'
+PROTOCOL = 'https'
+
 
 class UploaderPanel(wx.Panel):
     def __init__(self, parent, *args, **kwargs):
@@ -20,15 +21,15 @@ class UploaderPanel(wx.Panel):
 
         self.parent = parent 
         atom_ns = "http://www.w3.org/2005/Atom"
-        d = minidom.parse(urllib.urlopen('http://'+DASE_HOST+DASE_BASE+'/collections.atom?get_all=1'))
+        d = minidom.parse(urllib.urlopen(PROTOCOL+'://'+DASE_HOST+DASE_BASE.rstrip('/')+'/collections.atom?get_all=1'))
         entries = d.getElementsByTagNameNS(atom_ns,'entry')
-        self.coll = ''
         self.coll_dict = {}
         self.colls = []
         for entry in entries:
             title = entry.getElementsByTagNameNS(atom_ns,'title')[0].firstChild.nodeValue
             self.colls.append(title)
             self.coll_dict[title] = entry.getElementsByTagNameNS(atom_ns,'id')[0].firstChild.nodeValue.split('/').pop()
+    
         self.chooser = wx.Choice(self, -1, (85, 18), choices=self.colls)
         self.chooser.Bind(wx.EVT_CHOICE,self.choose_coll)
         dirButton = wx.Button(self, label='Select Directory')
@@ -65,34 +66,30 @@ class UploaderPanel(wx.Panel):
     def picker(self,event):
         dialog = wx.DirDialog(None, "Choose a Directory", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
         if dialog.ShowModal() == wx.ID_OK:
-            self.directory.SetValue(dialog.GetPath())
+            dirname = dialog.GetPath()
+            self.directory.SetValue(dirname)
+#           self.write('uploading files from '+dirname+' into '+self.coll)
             dialog.Destroy
 
     def upload_file(self,event):
         u = self.username.GetValue()
         p = self.password.GetValue()
-        coll = self.coll
         if not self.coll:
-            self.write("No collection selected!")
             return
-        if '401' == str(self.checkAuth(coll,u,p)):
-            self.write('Unauthorized User')
+        if '401' == str(self.checkAuth(DASE_HOST,self.coll,u,p)):
+            self.write('unauthorized')
             return
         path = self.directory.GetValue()+'/'
-        if '/' == path:
-            self.write('Please select a directory')
-            return
-        file_count = sum((len(f) for _, _, f in os.walk(path)))
-        self.write("Preparing to upload "+str(file_count)+" files")
-        self.write(" ")
         for f in os.listdir(path):
             if not fnmatch.fnmatch(f,'.*'):
                 (mime_type,enc) = mimetypes.guess_type(path+f)
                 self.write("uploading "+f)
-                status = self.postFile(path,f,coll,mime_type,u,p)
-                if ('201' == status):
-                    self.write("success!!")
-        self.write("Uploading Complete");
+                status = self.postFile(path,f,DASE_HOST,self.coll,mime_type,u,p)
+                if (201 == status):
+                    self.write("server says... "+str(status)+" OK!!\n")
+                else:
+                    self.write("problem with "+f+"("+str(status)+")\n")
+        self.write("operations completed")
 
     def write(self,txt):
         orig = self.contents.GetValue()
@@ -102,38 +99,57 @@ class UploaderPanel(wx.Panel):
             self.contents.SetValue(txt)
         wx.YieldIfNeeded()
 
-    def postFile(self,path,filename,coll,mime_type,u,p):
+    def postFile(self,path,filename,DASE_HOST,coll,mime_type,u,p):
         auth = 'Basic ' + string.strip(base64.encodestring(u + ':' + p))
         f = file(path+filename, "rb")
-        body = f.read()                                                                     
-        http = httplib.HTTP(DASE_HOST);
-        http.putrequest("POST",DASE_BASE+'/media/'+coll)
-        http.putheader("Content-Type",mime_type);
-        (basename,ext)=os.path.splitext(filename)
-        http.putheader("Slug",basename);
-        http.putheader("Content-Length",str(len(body)))
-        http.putheader('Authorization', auth )
-        http.endheaders()
-        http.send(body)
-        errcode,errmsg,headers = http.getreply()
-        return str(errcode) 
+        self.body = f.read()                                                                     
+        h = self.getHTTP()
+        headers = {
+            "Content-Type":mime_type,
+            "Content-Length":str(len(self.body)),
+            "Authorization":auth,
+            "Slug":filename,
+        };
 
-    def checkAuth(self,coll,u,p):
+        md5sum = md5.new(self.body).hexdigest()
+        if not self.checkMd5(coll,md5sum):
+            h.request("POST",DASE_BASE.rstrip('/')+'/media/'+coll,self.body,headers)
+            r = h.getresponse()
+            return (r.status)
+
+    def getHTTP(self):
+        if ('https' == PROTOCOL):
+            h = httplib.HTTPSConnection(DASE_HOST,443)
+        else:
+            h = httplib.HTTPConnection(DASE_HOST,80)
+        return h
+
+
+    def checkAuth(self,DASE_HOST,coll,u,p):
         auth = 'Basic ' + string.strip(base64.encodestring(u + ':' + p))
-        body = ''                                                                     
-        http = httplib.HTTP(DASE_HOST);
-        http.putrequest("POST",DASE_BASE+'/collection/'+coll)
-        http.putheader('Authorization', auth )
-        http.endheaders()
-        http.send(body)
-        errcode,errmsg,headers = http.getreply()
-        return str(errcode) 
+        headers = {
+            "Authorization":auth,
+        };
+        h = self.getHTTP()
+        h.request("POST",DASE_BASE.rstrip('/')+'/media/'+coll,None,headers)
+        r = h.getresponse()
+        return (r.status)
 
     def choose_coll(self,event):
         self.coll = self.coll_dict[self.colls[self.chooser.GetSelection()]]
 
     def close(self,event):
         frame.Destroy()
+
+    def checkMd5(self,coll,md5):
+        h = self.getHTTP() 
+        h.request("GET",DASE_BASE.rstrip('/')+'/collection/'+coll+'/items/by/md5/'+md5+'.txt')  
+        r = h.getresponse()
+        if 200 == r.status:
+            self.write(r.read())
+            return True
+        else:
+            return False
 
 class UploaderFrame(wx.Frame):
     """ Main Frame holding the Panel. """
