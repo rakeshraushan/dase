@@ -494,9 +494,13 @@ div#browse table#itemSet tr.item td.thumb {
 }
 
 div#set table#itemSet tr.item td.thumb {
-	background-color: #9dbda9;
-	border-color: #8cac98;
+	background-color: #9cacc6;
+	border-color: #6480ae;
 	min-width: 200px;
+}
+
+div#set table#itemSet tr.item td.thumb .collection_name {
+	color: #333;
 }
 
 div#cart table#itemSet tr.item td.thumb {
