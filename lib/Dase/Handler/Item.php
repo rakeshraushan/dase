@@ -31,7 +31,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function deleteItem($r)
 	{
-		$user = $r->getUser('http');
+		$user = $r->getUser('service');
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'user cannot delete this item');
 		}
@@ -295,7 +295,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function postToMedia($r) 
 	{
-		$user = $r->getUser('http');
+		$user = $r->getUser('service');
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot post media to this item');
 		}

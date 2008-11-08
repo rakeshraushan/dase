@@ -43,7 +43,9 @@
 					<tr>
 						<td><a href="{$m.href}"><img src="www/images/media-icons/{$m.label}.png" alt="image icon"/></a></td>
 						<td><a href="{$m.href}">{$m.label}</a></td>
-						<td><a href="{$m.href}">{if $m.height && $m.width}({$m.width}x{$m.height}){/if}</a></td>
+						{if $m.height && $m.width}
+						<td><a href="{$m.href}">({$m.width}x{$m.height})</a></td>
+						{/if}
 						<!--
 						<td><a href="{$m.href}">{$m.fileSize}K</a></td>
 						<td><a href="{$m.href}">{$m.type}</a></td>
@@ -79,6 +81,19 @@
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
 					{foreach item=set key=ascii_id from=$item->metadata}
+					{if 'yes' eq $set.public}
+					<dt>{$set.attribute_name}</dt>
+					{foreach item=value from=$set.values}
+					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+					{/foreach}
+					{/if}
+					{/foreach}
+				</dl>
+				<div>
+					<a href="#" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
+				</div>
+				<dl id="adminMetadata" class="{$item->collectionAsciiId} hide">
+					{foreach item=set key=ascii_id from=$item->adminMetadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
 					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>

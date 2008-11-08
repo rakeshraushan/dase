@@ -365,6 +365,9 @@ class Dase_Http_Request
 		case 'http':
 			$eid = Dase_Http_Auth::getEid();
 			break;
+		case 'service':
+			$eid = Dase_Http_Auth::getEid(true);
+			break;
 		case 'none':
 			//allows nothing to happen
 			return;
