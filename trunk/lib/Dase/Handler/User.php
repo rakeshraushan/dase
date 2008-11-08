@@ -9,6 +9,7 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/cart/emptier' => 'cart_emptier',
 		'{eid}/sets' => 'sets',
 		'{eid}/auth' => 'http_password',
+		'{eid}/key' => 'key',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
 		'{eid}/{collection_ascii_id}/recent' => 'recent_items',
 	);
@@ -185,6 +186,23 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$r->renderResponse($u->getHttpPassword());
+	}
+
+	public function postToKey($r)
+	{
+		$u = $this->user;
+		$params = array();
+		if (strlen($r->get('key')) > 5 ) {
+			$u->service_key_md5 = md5($r->get('key'));
+			if (!$u->has_access_exception) {
+				$u->has_access_exception = 0;
+			}
+			$u->update();
+			$params['msg'] = "your service key has been saved";
+		} else {
+			$params['msg'] = "your service key must be at least 6 characters";
+		}
+		$r->renderRedirect("user/$u->eid/settings",$params);
 	}
 }
 

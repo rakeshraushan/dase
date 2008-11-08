@@ -88,12 +88,13 @@
 					<!-- insert javascript template output -->
 				</ul>
 				</li>
+				<!--
 				<li id="settings-menu"><a href="" class="main">My Preferences</a>
 				<ul class="hide" id="settings-submenu">
 					<li><a href="">test</a></li>
-					<!-- insert javascript template output -->
 				</ul>
 				</li>
+				-->
 			</ul>
 
 			<!-- javascript template for sets-->

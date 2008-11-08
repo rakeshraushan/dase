@@ -7,7 +7,7 @@ class Dase_Http_Auth
 	 * authorization happens after the eid is verified.  After that,
 	 * authorization level will be determined based on other criteria
 	 */
-	public static function getEid()
+	public static function getEid($check_db = false)
 	{
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
@@ -25,6 +25,15 @@ class Dase_Http_Auth
 			$su = Dase_Config::get('superuser');
 			if (isset($su[$eid])) {
 				$passwords[] = $su[$eid];
+			}
+
+			if ($check_db) {
+				$u = Dase_DBO_DaseUser::get($eid);
+				$pass_md5 = md5($_SERVER['PHP_AUTH_PW']);
+				if ($pass_md5 == $u->service_key_md5) {
+					Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
+					return $eid;
+				}
 			}
 
 			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {

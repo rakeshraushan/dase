@@ -1023,15 +1023,6 @@ function bind(obj, method) {
 	return function() { return method.apply(obj, arguments); }
 }
 
-Dase.initShowHtpasswd = function() {
-	var link = Dase.$('htpasswdToggle');
-	if (!link) return;
-	link.onclick = function() {
-		Dase.toggle(Dase.$('htpasswd'));
-		return false;
-	}
-}
-
 Dase.getFeedUrl = function() {
 	var links = document.getElementsByTagName('link');
 	for (var i=0;i<links.length;i++) {
@@ -1072,7 +1063,6 @@ Dase.addLoadEvent(function() {
 	Dase.initSubmitConfirm();
 	Dase.initLogoff();
 	Dase.initAttributeEdit();
-	Dase.initShowHtpasswd();
 	if (Dase.pageInit && typeof Dase.pageInit === 'function') {
 		Dase.pageInit();
 	}

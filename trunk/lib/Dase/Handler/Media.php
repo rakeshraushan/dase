@@ -204,7 +204,7 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function postToCollection($r)
 	{
-		$user = $r->getUser('http');
+		$user = $r->getUser('service');
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$user->can('write',$c)) {
 			$r->renderError(401,'cannot post media to this collection');

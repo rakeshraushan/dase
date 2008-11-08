@@ -136,11 +136,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id
+			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id, a.is_on_list_display, a.is_public
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
-			AND (a.is_on_list_display = 't' OR a.is_on_list_display = 1)
 			";
 		$bound_params[] = $this->id;
 		if ($att_ascii_id) {
@@ -579,6 +578,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			//$val->addAttribute('class',$row['ascii_id']);
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
+			if ($row['is_on_list_display']) {
+				$meta->setAttribute('d:display','yes');
+			} else {
+				$meta->setAttribute('d:display','no');
+			}
+			if ($row['is_public']) {
+				$meta->setAttribute('d:public','yes');
+			} else {
+				$meta->setAttribute('d:public','no');
+			}
 		}
 		/************** end content *******************/
 
