@@ -650,16 +650,25 @@ a#slideshowExit {
 /*********** FORM STYLES *********************/
 
 form.adminForm {
-	margin: 5px;
 	padding: 3px;
 	border: 1px solid #999;
-	width: 400px;
+	width: 330px;
+	margin-bottom: 2em;
+}
+form.adminForm p {
+	margin: 5px;
 }
 form.adminForm input {
 	margin: 5px;
+	margin-top: 0;
+}
+form.adminForm input[type=text] {
+	width: 300px;
 }
 form.adminForm label {
+	display:block;
 	margin: 5px;
+	margin-bottom: 0;
 	font-weight: bold;
 	color: #666;
 }
