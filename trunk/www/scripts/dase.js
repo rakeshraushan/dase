@@ -539,10 +539,6 @@ Dase.loadingMsg = function(displayBool) {
 			Dase.loadingMsg(true); 
 			return false; 
 		};
-		Dase.$('content').onclick = function() { 
-			Dase.loadingMsg(true); 
-			return false; 
-		};
 		Dase.removeClass(loading,'hide');
 		//loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
