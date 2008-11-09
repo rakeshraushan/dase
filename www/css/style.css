@@ -72,6 +72,11 @@ html #maincontent {
 	background-color:#eef1f8;
 }
 
+#resources {
+	background-color:#eef1f8;
+	background-color:#dde0e7;
+}
+
 #slideshow {
 	background-color:#d5deed;
 	background-color:#ceead8;
@@ -812,5 +817,16 @@ h3.utilLabel {
 
 #serviceKeyForm {
 	margin-top: 2em;
+}
+
+#resources dt a {
+	font-size: 1.2em;
+	color:#339;
+	font-weight:bold;
+}
+
+#resources h1 {
+	font-size: 1.8em;
+	color: #000;
 }
 
