@@ -34,6 +34,13 @@ border-top: 1px solid #fff;
 #menu ul#admin-submenu a:hover { background-color: #eef1f8; }
 
   
+#menu li#resources-menu a.main { border: 1px solid #6480ae; border-left: 18px solid #6480ae; background-color: #ffffff; }
+#menu li#resources-menu a:hover , a:active { background-color: #d5deed; }
+#menu ul#resources-submenu { background-color: #d5deed; }
+#menu ul#resources-submenu a { background-color: #d5deed; }
+#menu ul#resources-submenu a:hover { background-color: #eef1f8; }
+
+  
 #menu li#slideshow-menu a.main { border: 1px solid #263b5e; border-left: 18px solid #263b5e; background-color: #ffffff; }
 #menu li#slideshow-menu a:hover , a:active { background-color: #d5deed; }
 #menu ul#slideshow-submenu { background-color: #d5deed; }

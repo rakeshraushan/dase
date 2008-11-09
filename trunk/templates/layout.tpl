@@ -144,8 +144,10 @@
 			<div id="footer">
 				<a href="admin" class="hide" id="adminLink"></a> |
 				<a href="apps/help" id="helpModule">FAQ</a> | 
+				<a href="resources">Resources</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
+				<a href="resources">Resources</a> | 
 				<a href="manage" class="hide" id="manageLink"></a> |
 				{php}echo Dase_Timer::getElapsed();{/php} seconds |
 				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
