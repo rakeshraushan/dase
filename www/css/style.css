@@ -839,3 +839,14 @@ h3.utilLabel {
 	color: #000;
 }
 
+ul#menuGrayed a {
+display:block;
+color: #aaa;
+padding: 4px 7px;
+margin: 2px 0px;
+}
+ul#menuGrayed  li  {
+/* fixes ie problem */
+display:inline;
+}
+#menuGrayed li a.main { border: 1px solid #aaa; border-left: 18px solid #aaa; background-color: #ffffff; }

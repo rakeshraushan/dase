@@ -13,7 +13,7 @@
 		</p>
 		<p>
 		<label for="scheme">Scheme:</label>
-		<input type="text" name="scheme" value="http://daseproject.org/category/"/>
+		<input type="text" name="scheme" value=""/>
 		</p>
 		<p>
 		<label for="label">Label:</label>

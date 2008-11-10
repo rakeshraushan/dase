@@ -79,7 +79,7 @@
 		</div>
 
 		<div id="sidebar">
-			<ul id="menu">
+			<ul id="menu" class="hide">
 				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
 				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
@@ -95,6 +95,12 @@
 				</ul>
 				</li>
 				-->
+			</ul>
+
+			<ul id="menuGrayed">
+				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
+				<li id="cart-menu"><a href="" class="main">My Cart</a></li>
+				<li id="sets-menu"><a href="" class="main">My Sets</a></li>
 			</ul>
 
 			<!-- javascript template for sets-->
@@ -144,7 +150,6 @@
 			<div id="footer">
 				<a href="admin" class="hide" id="adminLink"></a> |
 				<a href="apps/help" id="helpModule">FAQ</a> | 
-				<a href="resources">Resources</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
 				<a href="resources">Resources</a> | 
