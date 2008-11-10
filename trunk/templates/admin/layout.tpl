@@ -65,7 +65,7 @@
 		</div>
 
 		<div id="sidebar">
-			<ul id="menu">
+			<ul id="menu" class="hide">
 				<li>
 				<a href="collections">
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>

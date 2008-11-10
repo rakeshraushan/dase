@@ -66,7 +66,39 @@
 		</div>
 
 		<div id="sidebar">
-			<ul id="menu">
+			<ul id="menu" class="hide">
+				<li>
+				<a href="collection/{$collection->ascii_id}">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to {$collection->collection_name}</sup>
+				</a>
+				</li>
+				<li class="settings-tab">
+				<a href="manage/{$collection->ascii_id}/settings">
+					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
+				</a>
+				</li>
+				<li class="attributes-tab">
+				<a href="manage/{$collection->ascii_id}/attributes">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
+				</a>
+				</li>
+				<li class="item_types-tab">
+				<a href="manage/{$collection->ascii_id}/item_types">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
+				</a>
+				</li>
+				<li class="managers-tab">
+				<a href="manage/{$collection->ascii_id}/managers">
+					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
+				</a>
+				</li>
+				<li class="uploader-tab">
+				<a href="manage/{$collection->ascii_id}/uploader">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
+				</a>
+				</li>
+			</ul>
+			<ul id="menuGrayed">
 				<li>
 				<a href="collection/{$collection->ascii_id}">
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to {$collection->collection_name}</sup>
@@ -113,9 +145,12 @@
 			<a href="apps/help" id="helpModule">FAQ</a> | 
 			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 			<a href="copyright">Copyright/Usage Statement</a> | 
+			<a href="resources">Resources</a> | 
+			<a href="manage" class="hide" id="manageLink"></a> |
 			<!--
 			{$timer} seconds |
 			-->
+			{php}echo Dase_Timer::getElapsed();{/php} seconds |
 			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 		</div><!--closes footer-->
 		<div id="debugData" class="pagedata"></div>

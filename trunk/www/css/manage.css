@@ -57,6 +57,20 @@ ul#menu li:hover {
 	background-color: #f4f6fc;
 }
 
+ul#menuGrayed a {
+	display:block;
+	padding: 9px 9px 9px 18px;
+	margin: 4px 0px;
+	background-color: #ddd;
+}
+ul#menuGrayed img {
+	border: 0;
+}
+ul#menuGrayed  li  {
+	background-color: #aaa;
+	-moz-border-radius: 5px;
+}
+
 sup {
 	margin-left: 10px;
 	font-size: 1em;

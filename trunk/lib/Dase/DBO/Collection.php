@@ -73,6 +73,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		$feed->setUpdated($this->updated);
 		$feed->addCategory($this->item_count,"http://daseproject.org/category/collection/item_count");
+		//todo: is this too expensive??
+		$comm = $this->getCommunity();
+		if ($comm) {
+			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
+		}
 		$feed->setId($this->getBaseUrl());
 		$feed->addAuthor();
 		$feed->addLink($this->getBaseUrl(),'alternate');
@@ -575,5 +580,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			->addCategorySet()
 			->addCategory('attribute','http://daseproject.org/category/entrytype');
 		return $svc->asXml();
+	}
+
+	public function setCommunity($community_term,$community_label='')
+	{
+		Dase_DBO_Category::set($this,'community',$community_term,$community_label);
+	}
+
+	public function getCommunity()
+	{
+		return Dase_DBO_Category::get($this,'community');
 	}
 }

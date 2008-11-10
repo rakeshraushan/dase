@@ -293,6 +293,8 @@ Dase.initUser = function(func) {
 			if (func) {
 				func();
 			}
+			Dase.addClass(Dase.$('menuGrayed'),'hide');
+			Dase.removeClass(Dase.$('menu'),'hide');
 		}
 		Dase.loginControl(Dase.user.eid);
 		Dase.multicheck("checkedCollection");
@@ -533,18 +535,10 @@ Dase.loadingMsg = function(displayBool) {
 	var loading = Dase.$('ajaxMsg');
 	if (!loading) return;
 	if (displayBool) {
-		//disable clicking
-		//note: i am not sure this click management even works
-		Dase.$('sidebar').onclick = function() { 
-			Dase.loadingMsg(true); 
-			return false; 
-		};
 		Dase.removeClass(loading,'hide');
 		//loading.innerHTML = 'loading page data...';
 		setTimeout('Dase.loadingMsg(false)',1500);
 	} else {
-		Dase.$('sidebar').onclick = null;
-		Dase.$('content').onclick = null;
 		Dase.addClass(loading,'hide');
 	}
 }
