@@ -74,7 +74,11 @@ class UploaderPanel(wx.Panel):
     def upload_file(self,event):
         u = self.username.GetValue()
         p = self.password.GetValue()
+        if not hasattr(self,'coll'):
+            self.write('Please select a Collection!')
+            return
         if not self.coll:
+            self.write('Please select a Collection!')
             return
         if '401' == str(self.checkAuth(DASE_HOST,self.coll,u,p)):
             self.write('unauthorized')
