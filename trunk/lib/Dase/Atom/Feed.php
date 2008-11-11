@@ -59,7 +59,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		),
 		'sets' => array(
 			'feed' => 'Dase_Atom_Feed',
-			'entry' => 'Dase_Atom_Entry',
+			'entry' => 'Dase_Atom_Entry_Set',
 		),
 		'comments' => array(
 			'feed' => 'Dase_Atom_Feed',

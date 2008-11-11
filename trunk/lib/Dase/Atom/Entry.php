@@ -1,4 +1,5 @@
 <?php
+
 class Dase_Atom_Entry extends Dase_Atom
 {
 	protected $edited_is_set;
@@ -8,10 +9,11 @@ class Dase_Atom_Entry extends Dase_Atom
 	protected $summary_is_set;
 	protected $entrytype;
 	public static $types_map = array(
-		'item' => 'Dase_Atom_Entry_Item',
 		'attribute' => 'Dase_Atom_Entry_Attribute',
 		'collection' => 'Dase_Atom_Entry_Collection',
 		'comment' => 'Dase_Atom_Entry_Comment',
+		'item' => 'Dase_Atom_Entry_Item',
+		'set' => 'Dase_Atom_Entry_Set',
 	);
 
 	//note: dom is the dom object and root is the root
@@ -216,5 +218,21 @@ class Dase_Atom_Entry extends Dase_Atom
 			$this->edited_is_set = true;
 		}
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
+	}
+
+	function getAuthorName()
+	{
+		return $this->getXpathValue("atom:author/atom:name");
+	}
+
+	function getCategories() {
+		$categories = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			$category['term'] = $cat->getAttribute('term');
+			$category['label'] = $cat->getAttribute('label');
+			$category['scheme'] = $cat->getAttribute('scheme');
+			$categories[] = $category;
+		}
+		return $categories;
 	}
 }

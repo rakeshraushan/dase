@@ -6,6 +6,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/edit' => 'edit',
 		'{eid}/{tag_ascii_id}/templates' => 'bulk_edit_templates',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
@@ -263,5 +264,42 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("removed $num items from $tag->name");
 	}
+
+	public function getEdit($r)
+	{
+		$r->response_mime_type = 'application/atom+xml';
+		$entry = new Dase_Atom_Entry_Set;
+		$this->tag->injectAtomEntryData($entry);
+		$r->renderResponse($entry->asXml());
+	}
+
+	public function putEdit($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->tag)) {
+			$r->renderError(401,'cannot update set');
+		}
+		$content_type = $r->getContentType();
+		if ('application/atom+xml;type=entry' == $content_type ||
+			'application/atom+xml' == $content_type
+		) {
+			$raw_input = file_get_contents("php://input");
+			$client_md5 = $r->getHeader('Content-MD5');
+			//if Content-MD5 header isn't set, we just won't check
+			if ($client_md5 && md5($raw_input) != $client_md5) {
+				$r->renderError(412,'md5 does not match');
+			}
+			$set_entry = Dase_Atom_Entry::load($raw_input);
+			if ('set' != $set_entry->entrytype) {
+				$r->renderError(400,'must be a set entry');
+			}
+			$set = $set_entry->update($r);
+			if ($set) {
+				$r->renderOk();
+			}
+		}
+		$r->renderError(500);
+	}
+
 }
 

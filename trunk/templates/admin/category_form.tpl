@@ -26,9 +26,9 @@
 	<h2>Existing Categories</h2>
 	<table>
 		<tr>
-			<td>term</td>
-			<td>scheme</td>
-			<td>label</td>
+			<th>term</th>
+			<th>scheme</th>
+			<th>label</th>
 		</tr>
 		{foreach item=cat from=$cats}
 		<tr>

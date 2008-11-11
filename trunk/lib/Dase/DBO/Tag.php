@@ -17,7 +17,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tags = array();
 		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) { 
 			$row['count'] = $row['item_count'];
-			$tags[] = $row;
+			if ($row['ascii_id']) { //compat: skip tags w/o ascii_id
+				$tags[] = $row;
+			}
 		}
 		return $tags;
 	}
@@ -44,6 +46,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function get($ascii_id,$eid)
 	{
+		if (!$ascii_id || !$eid) {
+			return false;
+		}
 		$user = Dase_DBO_DaseUser::get($eid);
 		$tag = new Dase_DBO_Tag;
 		$tag->ascii_id = $ascii_id;
@@ -333,8 +338,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->setUpdated($this->getUpdated());
 		$entry->addAuthor($this->user->eid);
 		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
+		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/edit','edit' );
 		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id);
-
+		//todo: beware expense??
+		foreach (Dase_DBO_Category::getAll($this) as $cat) {
+			$entry->addCategory($cat->term,$cat->getScheme(),$cat->label);
+		}
+		$entry->addCategory("set","http://daseproject.org/category/entrytype");
 		$entry->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {
 			$pub = "public";
@@ -344,6 +354,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->addCategory($pub,"http://daseproject.org/category/tag/visibility");
 		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
 		return $entry;
+	}
+
+	public function deleteCategories()
+	{
+		foreach (Dase_DBO_Category::getAll($this) as $cat) {
+			Dase_DBO_Category::remove($this,$cat->scheme);
+		}
 	}
 
 	public function isBulkEditable($user)

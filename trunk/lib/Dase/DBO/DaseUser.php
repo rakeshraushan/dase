@@ -315,7 +315,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function getTagsAsAtom()
 	{
-		//look at Dase_DBO_Tag::getByUser and maybe merge them
+		//todo: look at Dase_DBO_Tag::getByUser and maybe merge them
 		//that one uses arrays, this, objects (so we get the 'inject...' method)
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->eid.' sets');
@@ -327,13 +327,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$tags->dase_user_id = $this->id;
 		$tag_count_lookup = $this->getTagCountLookup();
 		foreach ($tags->find() as $tag) {
-			if (isset($tag_count_lookup[$tag->id])) {
-				$count = $tag_count_lookup[$tag->id];
-			} else {
-				$count = 0;
+			if ($tag->ascii_id) { //compat: make sure tag has ascii_id
+				if (isset($tag_count_lookup[$tag->id])) {
+					$count = $tag_count_lookup[$tag->id];
+				} else {
+					$count = 0;
+				}
+				$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
+				$entry->addCategory($count,"http://daseproject.org/category/tag/count");
 			}
-			$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
-			$entry->addCategory($count,"http://daseproject.org/category/tag/count");
 		}
 		return $feed->asXml();
 	}
