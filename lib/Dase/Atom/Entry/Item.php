@@ -292,6 +292,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$item->update();
 		$metadata = $this->getMetadata();
 		//only deletes collection-specific (not admin) metadata
+		//then replaces it
 		$item->deleteValues();
 		foreach (array_keys($metadata) as $ascii_id) {
 			foreach ($metadata[$ascii_id]['values'] as $val) {

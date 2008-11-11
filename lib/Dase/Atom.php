@@ -264,6 +264,7 @@ class Dase_Atom
 	function getName()
 	{
 		//how we generally model names in DASe
+		//nb. may be confused w/ author/name
 		return $this->getTitle();
 	}
 

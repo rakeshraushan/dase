@@ -1,4 +1,5 @@
 <?php
+
 class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 {
 	function __construct($dom=null,$root=null)
@@ -8,7 +9,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 
 	function create($request)
 	{
-		$atom_author = $this->getXpathValue("atom:author/atom:name");
+		$atom_author = $this->getAuthorName();
 		$user = $request->getUser('http');
 		if ($atom_author != $user->eid) {
 			$request->renderError(401,'users do not match');
