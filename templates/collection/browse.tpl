@@ -15,7 +15,7 @@
 	<div id="collectionAsciiId" class="hide">{$collection->asciiId}</div>
 	<div class="contentHeader">
 		<h2 class="collectionLink">{$collection->name|escape} ({$collection->itemCount} items)</h2>
-		<h3>{$collection->description|escape}</h3>
+		<h3 class="collectionDescription">{$collection->description|escape}</h3>
 	</div>
 	<form method="get" action="search">
 		<div>
