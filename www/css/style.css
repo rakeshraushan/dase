@@ -367,6 +367,7 @@ h3.collectionDescription {
 	color: #333;
 	font-style: italic; 
 	font-weight: normal;
+	width: 70%;
 }
 
 div#editMetadata form {
