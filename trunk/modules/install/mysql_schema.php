@@ -2,7 +2,6 @@
 
 $query =<<<EOF
 
-DROP TABLE IF EXISTS `{$table_prefix}admin_search_table`;
 CREATE TABLE `{$table_prefix}admin_search_table` (
 `id` int(11) NOT NULL auto_increment,
 `status_id` int(11) default NULL,
@@ -14,7 +13,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}attribute`;
 CREATE TABLE `{$table_prefix}attribute` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
@@ -32,7 +30,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}attribute_category`;
 CREATE TABLE `{$table_prefix}attribute_category` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -41,7 +38,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}attribute_item_type`;
 CREATE TABLE `{$table_prefix}attribute_item_type` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -51,7 +47,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}category`;
 CREATE TABLE `{$table_prefix}category` (
 `id` int(11) NOT NULL auto_increment,
 `term` varchar(200) default NULL,
@@ -61,7 +56,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}collection`;
 CREATE TABLE `{$table_prefix}collection` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
@@ -76,7 +70,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}collection_category`;
 CREATE TABLE `{$table_prefix}collection_category` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` int(11) default NULL,
@@ -84,7 +77,6 @@ CREATE TABLE `{$table_prefix}collection_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}collection_manager`;
 CREATE TABLE `{$table_prefix}collection_manager` (
 `id` int(11) NOT NULL auto_increment,
 `created` varchar(50) default NULL,
@@ -96,7 +88,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}comment`;
 CREATE TABLE `{$table_prefix}comment` (
 `id` int(11) NOT NULL auto_increment,
 `item_id` int(11) default NULL,
@@ -109,7 +100,6 @@ CREATE TABLE `{$table_prefix}comment` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}content`;
 CREATE TABLE `{$table_prefix}content` (
 `id` int(11) NOT NULL auto_increment,
 `item_id` int(11) default NULL,
@@ -123,7 +113,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}dase_user`;
 CREATE TABLE `{$table_prefix}dase_user` (
 `id` int(11) NOT NULL auto_increment,
 `has_access_exception` tinyint(1) default NULL,
@@ -144,7 +133,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}defined_value`;
 CREATE TABLE `{$table_prefix}defined_value` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -153,7 +141,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}input_template`;
 CREATE TABLE `{$table_prefix}input_template` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -162,7 +149,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}item`;
 CREATE TABLE `{$table_prefix}item` (
 `id` int(11) NOT NULL auto_increment,
 `item_type_id` int(11) default NULL,
@@ -176,7 +162,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}item_category`;
 CREATE TABLE `{$table_prefix}item_category` (
 `id` int(11) NOT NULL auto_increment,
 `item_id` int(11) default NULL,
@@ -184,7 +169,6 @@ CREATE TABLE `{$table_prefix}item_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}item_link`;
 CREATE TABLE `{$table_prefix}item_link` (
 `id` int(11) NOT NULL auto_increment,
 `length` int(11) default NULL,
@@ -196,7 +180,6 @@ CREATE TABLE `{$table_prefix}item_link` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}item_link_category`;
 CREATE TABLE `{$table_prefix}item_link_category` (
 `id` int(11) NOT NULL auto_increment,
 `item_link_id` int(11) default NULL,
@@ -205,7 +188,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}item_type`;
 CREATE TABLE `{$table_prefix}item_type` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` int(11) default NULL,
@@ -216,7 +198,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}media_file`;
 CREATE TABLE `{$table_prefix}media_file` (
 `id` int(11) NOT NULL auto_increment,
 `file_size` int(11) default NULL,
@@ -234,7 +215,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}search_cache`;
 CREATE TABLE `{$table_prefix}search_cache` (
 `id` int(11) NOT NULL auto_increment,
 `is_stale` tinyint(1) default NULL,
@@ -253,7 +233,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}search_table`;
 CREATE TABLE `{$table_prefix}search_table` (
 `id` int(11) NOT NULL auto_increment,
 `status_id` int(11) default NULL,
@@ -265,7 +244,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}subscription`;
 CREATE TABLE `{$table_prefix}subscription` (
 `id` int(11) NOT NULL auto_increment,
 `tag_id` int(11) default NULL,
@@ -274,7 +252,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}tag`;
 CREATE TABLE `{$table_prefix}tag` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
@@ -294,7 +271,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}tag_category`;
 CREATE TABLE `{$table_prefix}tag_category` (
 `id` int(11) NOT NULL auto_increment,
 `tag_id` int(11) default NULL,
@@ -302,7 +278,6 @@ CREATE TABLE `{$table_prefix}tag_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}tag_item`;
 CREATE TABLE `{$table_prefix}tag_item` (
 `id` int(11) NOT NULL auto_increment,
 `sort_order` int(11) default NULL,
@@ -317,7 +292,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}tag_item_category`;
 CREATE TABLE `{$table_prefix}tag_item_category` (
 `id` int(11) NOT NULL auto_increment,
 `tag_item_id` int(11) default NULL,
@@ -325,7 +299,6 @@ CREATE TABLE `{$table_prefix}tag_item_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `{$table_prefix}value`;
 CREATE TABLE `{$table_prefix}value` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -336,7 +309,6 @@ KEY `value_text` (`value_text`(50))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `{$table_prefix}value_revision_history`;
 CREATE TABLE `{$table_prefix}value_revision_history` (
 `id` int(11) NOT NULL auto_increment,
 `added_text` text default NULL,
