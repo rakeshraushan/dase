@@ -11,6 +11,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
+		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
@@ -51,6 +52,20 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->checkCache();
 		$sernums = $this->collection->getSerialNumbers();
 		$r->renderResponse(join('|',$sernums));
+	}
+
+	public function getItemsTxt($r) 
+	{
+		$output = '';
+		foreach ($this->collection->getItems() as $item) {
+			$output .= $item->serial_number; 
+			//pass in 'display' params to view att value
+			foreach ($r->get('display',true) as $member) {
+				$output .= '|'.$item->getValue($member);
+			}
+			$output .= "\n";
+		}
+		$r->renderResponse($output);
 	}
 
 	public function getItemsThatLackMediaTxt($r) 
