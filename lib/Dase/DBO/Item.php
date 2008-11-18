@@ -267,7 +267,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
+		$m->addWhere('file_size','null','is not');
+		//todo: make sure file_size has values!
 		$m->orderBy('file_size DESC');
+		//$m->orderBy('width DESC');
 		return $m->findOne();
 	}
 

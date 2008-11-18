@@ -24,12 +24,6 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 	{
 		$c = $this->getCollection();
 		$size = $this->size;
-		if ('viewitem' == $size) {
-			$size = '400';
-		}
-		if ('thumbnail' == $size) {
-			$size = 'thumbnails';
-		}
 		return Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/' . $size . '/' . $this->filename; 
 	}
 
