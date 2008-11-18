@@ -273,88 +273,6 @@ CREATE TABLE {$table_prefix}value_revision_history (
 );
 
 
-ALTER TABLE {$table_prefix}attribute_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_category_seq'::text)
-
-ALTER TABLE {$table_prefix}collection_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}collection_category_seq'::text)
-
-ALTER TABLE {$table_prefix}item_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_category_seq'::text)
-
-ALTER TABLE {$table_prefix}item_link_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_link_category_seq'::text)
-
-ALTER TABLE {$table_prefix}tag_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_category_seq'::text)
-
-ALTER TABLE {$table_prefix}tag_item_category
-ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_category_seq'::text)
-
-ALTER TABLE {$table_prefix}admin_search_table
-ALTER id SET DEFAULT nextval('public.{$table_prefix}admin_search_table_seq'::text)
-
-ALTER TABLE {$table_prefix}attribute
-ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_seq'::text)
-
-ALTER TABLE {$table_prefix}attribute_item_type
-ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_item_type_seq'::text)
-
-ALTER TABLE {$table_prefix}collection
-ALTER id SET DEFAULT nextval('public.{$table_prefix}collection_seq'::text)
-
-ALTER TABLE {$table_prefix}collection_manager
-ALTER id SET DEFAULT nextval('public.{$table_prefix}collection_manager_seq'::text)
-
-ALTER TABLE {$table_prefix}content
-ALTER id SET DEFAULT nextval('public.{$table_prefix}content_seq'::text)
-
-ALTER TABLE {$table_prefix}comment
-ALTER id SET DEFAULT nextval('public.{$table_prefix}comment_seq'::text)
-
-ALTER TABLE {$table_prefix}dase_user
-ALTER id SET DEFAULT nextval('public.{$table_prefix}dase_user_seq'::text)
-
-ALTER TABLE {$table_prefix}defined_value
-ALTER id SET DEFAULT nextval('public.{$table_prefix}defined_value_seq'::text)
-
-ALTER TABLE {$table_prefix}item
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_seq'::text)
-
-ALTER TABLE {$table_prefix}input_template
-ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text)
-
-ALTER TABLE {$table_prefix}item_link
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_link_seq'::text)
-
-ALTER TABLE {$table_prefix}item_type
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_seq'::text)
-
-ALTER TABLE {$table_prefix}media_file
-ALTER id SET DEFAULT nextval('public.{$table_prefix}media_file_seq'::text)
-
-ALTER TABLE {$table_prefix}tag_item
-ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_seq'::text)
-
-ALTER TABLE {$table_prefix}search_cache
-ALTER id SET DEFAULT nextval('public.{$table_prefix}search_cache_seq'::text)
-
-ALTER TABLE {$table_prefix}search_table
-ALTER id SET DEFAULT nextval('public.{$table_prefix}search_table_seq'::text)
-
-ALTER TABLE {$table_prefix}subscription
-ALTER id SET DEFAULT nextval('public.{$table_prefix}subscription_seq'::text)
-
-ALTER TABLE {$table_prefix}tag
-ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_seq'::text)
-
-ALTER TABLE {$table_prefix}value
-ALTER id SET DEFAULT nextval('public.{$table_prefix}value_seq'::text)
-
-ALTER TABLE {$table_prefix}value_revision_history
-ALTER id SET DEFAULT nextval('public.{$table_prefix}value_revision_history_seq'::text)
-
-
 CREATE SEQUENCE {$table_prefix}attribute_category_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -516,6 +434,60 @@ CREATE SEQUENCE {$table_prefix}value_revision_history_seq
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
+
+ALTER TABLE {$table_prefix}attribute_category ALTER id SET DEFAULT nextval("public.{$table_prefix}attribute_category_seq"::text)
+
+ALTER TABLE {$table_prefix}collection_category ALTER id SET DEFAULT nextval("public.{$table_prefix}collection_category_seq"::text)
+
+ALTER TABLE {$table_prefix}item_category ALTER id SET DEFAULT nextval("public.{$table_prefix}item_category_seq"::text)
+
+ALTER TABLE {$table_prefix}item_link_category ALTER id SET DEFAULT nextval("public.{$table_prefix}item_link_category_seq"::text)
+
+ALTER TABLE {$table_prefix}tag_category ALTER id SET DEFAULT nextval("public.{$table_prefix}tag_category_seq"::text)
+
+ALTER TABLE {$table_prefix}tag_item_category ALTER id SET DEFAULT nextval("public.{$table_prefix}tag_item_category_seq"::text)
+
+ALTER TABLE {$table_prefix}admin_search_table ALTER id SET DEFAULT nextval("public.{$table_prefix}admin_search_table_seq"::text)
+
+ALTER TABLE {$table_prefix}attribute ALTER id SET DEFAULT nextval("public.{$table_prefix}attribute_seq"::text)
+
+ALTER TABLE {$table_prefix}attribute_item_type ALTER id SET DEFAULT nextval("public.{$table_prefix}attribute_item_type_seq"::text)
+
+ALTER TABLE {$table_prefix}collection ALTER id SET DEFAULT nextval("public.{$table_prefix}collection_seq"::text)
+
+ALTER TABLE {$table_prefix}collection_manager ALTER id SET DEFAULT nextval("public.{$table_prefix}collection_manager_seq"::text)
+
+ALTER TABLE {$table_prefix}content ALTER id SET DEFAULT nextval("public.{$table_prefix}content_seq"::text)
+
+ALTER TABLE {$table_prefix}comment ALTER id SET DEFAULT nextval("public.{$table_prefix}comment_seq"::text)
+
+ALTER TABLE {$table_prefix}dase_user ALTER id SET DEFAULT nextval("public.{$table_prefix}dase_user_seq"::text)
+
+ALTER TABLE {$table_prefix}defined_value ALTER id SET DEFAULT nextval("public.{$table_prefix}defined_value_seq"::text)
+
+ALTER TABLE {$table_prefix}item ALTER id SET DEFAULT nextval("public.{$table_prefix}item_seq"::text)
+
+ALTER TABLE {$table_prefix}input_template ALTER id SET DEFAULT nextval("public.{$table_prefix}input_template_seq"::text)
+
+ALTER TABLE {$table_prefix}item_link ALTER id SET DEFAULT nextval("public.{$table_prefix}item_link_seq"::text)
+
+ALTER TABLE {$table_prefix}item_type ALTER id SET DEFAULT nextval("public.{$table_prefix}item_type_seq"::text)
+
+ALTER TABLE {$table_prefix}media_file ALTER id SET DEFAULT nextval("public.{$table_prefix}media_file_seq"::text)
+
+ALTER TABLE {$table_prefix}tag_item ALTER id SET DEFAULT nextval("public.{$table_prefix}tag_item_seq"::text)
+
+ALTER TABLE {$table_prefix}search_cache ALTER id SET DEFAULT nextval("public.{$table_prefix}search_cache_seq"::text)
+
+ALTER TABLE {$table_prefix}search_table ALTER id SET DEFAULT nextval("public.{$table_prefix}search_table_seq"::text)
+
+ALTER TABLE {$table_prefix}subscription ALTER id SET DEFAULT nextval("public.{$table_prefix}subscription_seq"::text)
+
+ALTER TABLE {$table_prefix}tag ALTER id SET DEFAULT nextval("public.{$table_prefix}tag_seq"::text)
+
+ALTER TABLE {$table_prefix}value ALTER id SET DEFAULT nextval("public.{$table_prefix}value_seq"::text)
+
+ALTER TABLE {$table_prefix}value_revision_history ALTER id SET DEFAULT nextval("public.{$table_prefix}value_revision_history_seq"::text)
 
 EOF;
 
