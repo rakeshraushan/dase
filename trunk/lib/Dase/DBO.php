@@ -31,7 +31,7 @@ class Dase_DBO implements IteratorAggregate
 		return $this->table;
 		} else {
 			$prefix = Dase_Config::get('table_prefix');
-			return substr_replace($this->table,$prefix,0,strlen($prefix));
+			return substr_replace($this->table,'',0,strlen($prefix));
 		}
 	}
 
