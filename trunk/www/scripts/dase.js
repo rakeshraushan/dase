@@ -641,9 +641,8 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 	}
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var returnStr = xmlhttp.responseText;
 			if (my_func) {
-				my_func(returnStr);
+				my_func(xmlhttp.responseText);
 			}
 		} 
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 201) {
@@ -654,7 +653,7 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 		} 
 		if (xmlhttp.readyState == 4 && xmlhttp.status != 200 && xmlhttp.status != 201) {
 			if (error_func) {
-				error_func(returnStr);
+				error_func(xmlhttp.responseText);
 			}
 		} 
 	};
