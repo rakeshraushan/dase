@@ -646,10 +646,16 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 				my_func(returnStr);
 			}
 		} 
-		if (xmlhttp.readyState == 4 && xmlhttp.status != 200) {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 201) {
 			if (my_func) {
 				//todo: think about this
 				my_func(xmlhttp.getResponseHeader('Location'));
+			}
+		} 
+		if (xmlhttp.readyState == 4 && xmlhttp.status != 200 && xmlhttp.status != 201) {
+			if (my_func) {
+				//todo: think about this
+				my_func(xmlhttp.responseText);
 			}
 		} 
 	};
