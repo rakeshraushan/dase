@@ -55,7 +55,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$tag->created = date(DATE_ATOM);
 			$tag->insert();
 		}
-		//postgres specific?
 		if (!$tag->item_count) {
 			$tag->item_count = 0;
 		}
@@ -85,6 +84,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	{
 		$tag_array = array();
 		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
+			if (!$row['item_count']) {
+				$row['item_count'] = 0;
+			}
 			$tag_array[] = $row;
 		}
 		uasort($tag_array, array('Dase_Util','sortByTagName'));
