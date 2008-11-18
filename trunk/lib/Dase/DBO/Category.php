@@ -27,7 +27,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		//note: lots of "convention" assumed here
 		//concerning table naming
 		//pass in an object, scheme and (optionally) term
-		$etable = $entity_obj->getTable();
+		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
@@ -67,7 +67,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 	public static function add($entity_obj,$scheme,$term,$label='')
 	{
 		//Dase_Log::debug('+++++++++++++++++++++++++'.$scheme.$term.$label);
-		$etable = $entity_obj->getTable();
+		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 
@@ -127,7 +127,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 	public static function getAll($entity_obj)
 	{
 		$categories = array();
-		$etable = $entity_obj->getTable();
+		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
