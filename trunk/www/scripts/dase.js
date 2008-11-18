@@ -619,7 +619,7 @@ Dase.getHtml = function(url,elem_id,my_func) {
 	};
 };
 
-Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers) {
+Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers,error_func) {
 	if (!method) {
 		method = 'POST';
 	}
@@ -653,9 +653,8 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 			}
 		} 
 		if (xmlhttp.readyState == 4 && xmlhttp.status != 200 && xmlhttp.status != 201) {
-			if (my_func) {
-				//todo: think about this
-				my_func(xmlhttp.responseText);
+			if (error_func) {
+				error_func(returnStr);
 			}
 		} 
 	};

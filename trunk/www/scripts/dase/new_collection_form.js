@@ -54,7 +54,10 @@ Dase.pageInit = function() {
 			Dase.ajax(Dase.base_href='collections','post',function(resp) {
 				var loc = resp;
 				window.location = loc.replace(/\.atom/,"");
-			},atom,Dase.user.eid,Dase.user.htpasswd,content_headers);
+			},atom,Dase.user.eid,Dase.user.htpasswd,content_headers, function(resp) {
+				//error function
+				alert(resp);
+			});
 		}
 		return false;
 	}
