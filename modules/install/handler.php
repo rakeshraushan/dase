@@ -170,9 +170,13 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
 		try {
-			$db->exec($query);
-			$resp['msg'] = "Database tables have been created.";
-			$resp['ok'] = 1;
+			if (false === $db->exec($query)) {
+				$error_info = $db->errorInfo();
+				$resp['msg'] = $error_info[2];
+			} else {
+				$resp['msg'] = "Database tables have been created.";
+				$resp['ok'] = 1;
+			}
 		} catch (PDOException $e) {
 			$resp['msg'] = "There was a problem creating database tables: ".$e->getMessage();
 		} catch (Exception $e) {
