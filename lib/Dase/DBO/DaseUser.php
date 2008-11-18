@@ -55,6 +55,10 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$tag->created = date(DATE_ATOM);
 			$tag->insert();
 		}
+		//postgres specific?
+		if (!$tag->item_count) {
+			$tag->item_count = 0;
+		}
 		return $tag->item_count;
 	}
 
@@ -99,6 +103,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$coll = new Dase_DBO_Collection;
 		$coll->orderBy('collection_name');
 		foreach($coll->find() as $c) {
+			if (!$c->item_count) {
+				$c->item_count = 0;
+			}
 			if ((1 == $c->is_public) || (in_array($c->ascii_id,array_keys($special_colls)))) {
 				if (isset($special_colls[$c->ascii_id])) {
 					$auth_level = $special_colls[$c->ascii_id];
