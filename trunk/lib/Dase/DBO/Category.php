@@ -104,7 +104,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public static function get($entity_obj,$scheme)
 	{
-		$etable = $entity_obj->getTable();
+		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;

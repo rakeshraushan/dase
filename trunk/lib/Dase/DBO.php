@@ -25,9 +25,14 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	public function getTable()
+	public function getTable($include_prefix = true)
 	{
+		if ($include_prefix) {
 		return $this->table;
+		} else {
+			$prefix = Dase_Config::get('table_prefix');
+			return substr_replace($this->table,$prefix,0,strlen($prefix));
+		}
 	}
 
 	function __get( $key )
