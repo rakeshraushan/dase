@@ -3,6 +3,7 @@ Dase.pageInit = function() {
 }
 
 Dase.initItemEditing = function(eid) {
+	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
 	var edit_link = Dase.$('editLink');

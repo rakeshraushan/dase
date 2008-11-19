@@ -5,6 +5,9 @@ class Dase_Handler_User extends Dase_Handler
 	public $resource_map = array(
 		'{eid}/data' => 'data',
 		'{eid}/settings' => 'settings',
+		'{eid}/settings/preferred' => 'preferred_collections',
+		'{eid}/display' => 'display',
+		'{eid}/controls' => 'controls',
 		'{eid}/cart' => 'cart',
 		'{eid}/cart/emptier' => 'cart_emptier',
 		'{eid}/sets' => 'sets',
@@ -67,7 +70,7 @@ class Dase_Handler_User extends Dase_Handler
 		$cache = Dase_Cache::get($r->get('eid') . '_data');
 		$data = $cache->getData(3000);
 		if (!$data) {
-			$data = $r->getUser()->getData();
+			$data = $r->getUser()->getDataJson();
 			$cache->setData($data);
 		}
 		$r->renderResponse($data);
@@ -176,13 +179,15 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getSettings($r)
 	{
+		$u= $this->user;
 		$t = new Dase_Template($r);
-		$t->assign('user',$this->user);
-		$t->assign('http_password',$this->user->getHttpPassword());
+		$u->collections = $u->getCollections();
+		$t->assign('user',$u);
+		$t->assign('http_password',$u->getHttpPassword());
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);
 	}
 
-	public function postToSettings($r)
+	public function postToPreferredCollections($r)
 	{
 		$u = $this->user;
 		//filter this!!!
@@ -219,6 +224,37 @@ class Dase_Handler_User extends Dase_Handler
 			$params['msg'] = "your service key must be at least 6 characters";
 		}
 		$r->renderRedirect("user/$u->eid/settings",$params);
+	}
+
+	public function postToDisplay($r)
+	{
+		Dase_Cookie::set('max',$r->get('max'));
+		Dase_Cookie::set('display',$r->get('display'));
+
+		$u = $this->user;
+		$u->max_items = $r->get('max');
+		$u->display = $r->get('display');
+		if (!$u->has_access_exception) {
+			$u->has_access_exception = 0;
+		}
+		$u->update();
+		$u->expireDataCache();
+		$r->renderRedirect("user/$u->eid/settings");
+	}
+
+	public function postToControls($r)
+	{
+		$u = $this->user;
+		//we will use the 'cb' column for controls show/hide for compat
+		if ($r->has('controls')) {
+			$u->cb = $r->get('controls');
+			if (!$u->has_access_exception) {
+				$u->has_access_exception = 0;
+			}
+			$u->update();
+			$u->expireDataCache();
+		}
+		$r->renderRedirect("user/$u->eid/settings");
 	}
 }
 

@@ -96,6 +96,7 @@
 				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
 				<li id="cart-menu"><a href="" class="main">My Cart</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a></li>
+				<li id="sets-menu"><a href="" class="main">My Preferences</a></li>
 			</ul>
 
 			<!-- javascript template for sets-->

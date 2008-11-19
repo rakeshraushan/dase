@@ -23,6 +23,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			//todo: this should trigger (in calling function) a redirect to settings/register page
 			return false;
 		} else {
+			$user->initDisplayPreferences();
 			$user->initCart();
 			return true;
 		}
@@ -40,6 +41,12 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$set[] = clone $u;
 		}
 		return $set;
+	}
+
+	public function initDisplayPreferences()
+	{
+		Dase_Cookie::set('max',$this->max_items);
+		Dase_Cookie::set('display',$this->display);
 	}
 
 	/** create cart if none exists, also returns cart count */
@@ -154,8 +161,14 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['last_action'] = $this->last_action;
 		$user_data[$this->eid]['last_item'] = $this->last_item;
 		$user_data[$this->eid]['max_items'] = $this->max_items;
+		$user_data[$this->eid]['controls'] = $this->cb;
 		$user_data[$this->eid]['template_composite'] = $this->template_composite;
-		return Dase_Json::get($user_data);
+		return $user_data;
+	}
+
+	public function getDataJson()
+	{
+		return Dase_Json::get($this->getData());
 	}
 
 	public function getCartArray()
@@ -199,6 +212,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			return true;
 		}
 		return false;
+	}
+
+	public function isManager()
+	{
+		$cm = new Dase_DBO_CollectionManager; 
+		$cm->collection_ascii_id = $collection->ascii_id;
+		$cm->dase_user_eid = $this->eid;
+		$cm->addWhere('auth_level','none','!=');
+		return $cm->findOne();
 	}
 
 	function checkAttributeAuth($attribute,$auth_level)

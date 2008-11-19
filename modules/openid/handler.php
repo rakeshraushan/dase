@@ -50,7 +50,7 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 			//life is simpler w/o dots in eid:
 			$eid = str_replace('.','_',$eid);
 			$eid = str_replace('/','_',$eid);
-			Dase_Cookie::set($eid);
+			Dase_Cookie::setEid($eid);
 			if (!Dase_DBO_DaseUser::init($eid)) {
 				$u = new Dase_DBO_DaseUser;
 				$u->eid = $eid;

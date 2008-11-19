@@ -281,6 +281,8 @@ Dase.initUser = function(func) {
 			Dase.user.current_collections = json[eid].current_collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.user.cart_count = json[eid].cart_count;
+			//whether or not ot display editing controls
+			Dase.user.controls = json[eid].controls;
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
 			Dase.placeUserCollections(eid);

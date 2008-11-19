@@ -6,13 +6,22 @@ class Dase_Handler_Search extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'search',
 		'serial_numbers' => 'serial_numbers',
-		'refine' => 'search_refined',
 		'item' => 'search_item',
 		'{md5_hash}' => 'search_by_hash',
 	);
 
 	protected function setup($r)
 	{
+		//setting $r allows cache-ability
+		if (Dase_Cookie::get('max')) {
+			$r->set('max',Dase_Cookie::get('max'));
+			$r->setQueryStringParam('max',Dase_Cookie::get('max'));
+		}
+
+		if (Dase_Cookie::get('display')) {
+			$r->set('display',Dase_Cookie::get('display'));
+		}
+
 		if ($r->has('max')) {
 			$this->max = $r->get('max');
 		} else {
