@@ -88,13 +88,8 @@
 					<!-- insert javascript template output -->
 				</ul>
 				</li>
-				<!--
-				<li id="settings-menu"><a href="" class="main">My Preferences</a>
-				<ul class="hide" id="settings-submenu">
-					<li><a href="">test</a></li>
-				</ul>
+				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
 				</li>
-				-->
 			</ul>
 
 			<ul id="menuGrayed">

@@ -278,11 +278,13 @@ Dase.initUser = function(func) {
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
+			Dase.user.current_collections = json[eid].current_collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.user.cart_count = json[eid].cart_count;
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
 			Dase.placeUserCollections(eid);
+			Dase.placePreferredCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
 			if (Dase.initItemEditing) {
@@ -326,6 +328,10 @@ Dase.placeUserName = function(eid) {
 		nameElem.innerHTML = eid;
 		var settingsElem = Dase.$('settings-link');
 		settingsElem.href = 'user/'+eid+'/settings';
+		var settingsMenuLinkElem = Dase.$('settings-menu-link');
+		if (settingsMenuLinkElem) {
+			settingsMenuLinkElem.href = 'user/'+eid+'/settings';
+		}
 		var eidElem = Dase.$('eid');
 		eidElem.innerHTML = eid;
 	}
@@ -410,6 +416,38 @@ Dase.placeUserCollections = function(eid) {
 	if (hasSpecial) {
 		//this simply shows the "Special Access Collections" subhead
 		Dase.removeClass(Dase.$('specialAccessLabel'),'hide');
+	}
+};
+
+Dase.placePreferredCollections = function(eid) {
+	var form = Dase.$('homeSearchForm');
+	if (!form) return;
+	var colls = Dase.user.current_collections.split('|');
+	if (1 == colls.length) {
+		if (!Dase.$(colls[0])) {
+			return;
+		}
+	}
+	var preferred = {};
+	for (var i=0;i<colls.length;i++) {
+		preferred[colls[i]] = true;
+	}
+	inputs = form.getElementsByTagName('input');
+	var prefs = new Array();
+	for (var i=0;i<inputs.length;i++) {
+		var inp = inputs[i];
+		if ('c' == inp.name) {
+			if (preferred[inp.value]) {
+				inp.checked = true;
+				var link = inp.parentNode.getElementsByTagName('a')[0];
+				link.className = 'checkedCollection';
+			} else {
+				inp.checked = false;
+				inp.className = 'check';
+				var link = inp.parentNode.getElementsByTagName('a')[0];
+				link.className = '';
+			}
+		}
 	}
 };
 

@@ -51,7 +51,7 @@ Dase.pageInit = function() {
 			'Content-MD5':hex_md5(atom),
 		}
 		if (confirm("You are about to create collection with ascii id\n\n"+ascii_id+"\n\nOK?")) {
-			Dase.ajax(Dase.base_href='collections','post',function(resp) {
+			Dase.ajax(Dase.base_href+'collections','post',function(resp) {
 				var loc = resp;
 				window.location = loc.replace(/\.atom/,"");
 			},atom,Dase.user.eid,Dase.user.htpasswd,content_headers, function(resp) {

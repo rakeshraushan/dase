@@ -60,6 +60,14 @@ html #maincontent {
 
 /************ PAGE STYLES **************************/ 
 
+#results {
+	background-color:#e2d5af;
+}
+
+#results td {
+	border:1px solid #c2b58f;
+}
+
 #browse {
 	background-color:#f2dfc1;
 }
@@ -111,6 +119,7 @@ html #maincontent {
 
 #searchTallies {
 	background-color: #e6d4b8;
+	background-color: #d2c59f;
 }
 
 /********** STANDARD CLASSES ********************/
@@ -150,8 +159,12 @@ a.current { color: #00c; font-weight: bold;}
 }
 /************ COLLECTION LIST ***************/
 
+div.searchForm {
+	margin: 6px 0;
+}
+
 ul#collectionList {
-	margin: .7em 0;
+	margin: 6px 0;
 }
 ul#collectionList li {
 	line-height: 1.6em;
@@ -499,9 +512,11 @@ table#itemSet tr.item td.metadata {
 	vertical-align: top;
 }
 
-div#browse table#itemSet tr.item td.thumb {
+div#results table#itemSet tr.item td.thumb {
 	background-color: #d9c8ad;
 	border-color: #c8b79c;
+	background-color:#BBAE86;
+	border:1px solid #998D64;
 	min-width: 200px;
 }
 
@@ -527,7 +542,16 @@ tr.item td.metadata dl {
 }
 tr.item td.metadata dt {
 	color:#339;
+	float: left;
 	font-weight:bold;
+	line-height: 1.6em;
+	margin-right: 8px;
+}
+tr.item td.metadata dd {
+	color:#339;
+	font-weight:bold;
+	line-height: 1.6em;
+	margin-left: 80px;
 }
 
 /**** end list display *****/
@@ -575,10 +599,6 @@ div.widget {
 
 #removeFromSet:hover, #setExpungerButton:hover {
 	color: red;
-}
-
-#checkall {
-	margin-bottom: 2em;
 }
 
 #attributesForm {
@@ -642,7 +662,7 @@ div#slideshowSizes a {
 }
 
 div#slideshowSizes a.currentSize {
-	font-size: 1.8em;
+	font-size: 1.4em;
 }
 
 a#slideshowExit {

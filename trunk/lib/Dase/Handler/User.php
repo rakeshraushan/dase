@@ -182,6 +182,22 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);
 	}
 
+	public function postToSettings($r)
+	{
+		$u = $this->user;
+		//filter this!!!
+		$preferred_colls = file_get_contents("php://input");
+		$u->current_collections = $preferred_colls;
+		//see if this messes up access exception setting (bool)
+		//try/catch??
+		if (!$u->has_access_exception) {
+			$u->has_access_exception = 0;
+		}
+		$u->update();
+		$u->expireDataCache();
+		$r->renderResponse('ok');
+	}
+
 	public function getHttpPassword($r) 
 	{
 		$u = $this->user;

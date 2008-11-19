@@ -1,14 +1,21 @@
 {extends file="layout.tpl"}
 {block name="title"}DASe: Collections List{/block} 
 
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/collection_list.js"></script>
+{/block}
+
 {block name="content"}
 <div class="list" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h5>Search selected collection(s):</h5> 
-	<form method="get" action="search">
-		<div>
+	<form id="homeSearchForm" method="get" action="search">
+		<div class="searchForm">
 			<input type="text" name="q" size="30"/>
 			<input type="submit" value="Search" class="button"/>
+		</div>
+		<div>
+			<a href="#" id="checkall">check/uncheck all</a>
 		</div>
 		<ul id="collectionList" class="multicheck">
 			{foreach item=c from=$collections->entries}
@@ -20,9 +27,6 @@
 			{/foreach}
 			<li id="specialAccessLabel" class="hide"><h4>Special Access Collections</h4></li>
 		</ul>
-		<div>
-			<a href="" id="checkall">check/uncheck all</a>
-		</div>
 	</form>
 </div>
 {/block}
