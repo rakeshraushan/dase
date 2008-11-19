@@ -319,6 +319,15 @@ class Dase_Http_Request
 		}
 	}
 
+	public function setQueryStringParam($key,$val)
+	{
+		$this->query_string = $this->getQueryString();
+		$this->query_string = preg_replace("!$key=[^&]*!","$key=$val",$this->query_string,1,$count);
+		if (!$count) {
+			$this->addQueryString("$key=$val");
+		}
+	}
+
 	public function getPath($strip_extension=true)
 	{
 		//returns full path w/o domain & w/o query string

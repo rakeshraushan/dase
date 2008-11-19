@@ -72,7 +72,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 				$db_user->eid = strtolower($ut_user->eid); 
 				$db_user->insert();
 			}
-			Dase_Cookie::set($db_user->eid);
+			Dase_Cookie::setEid($db_user->eid);
 			Dase_DBO_DaseUser::init($db_user->eid);
 			//$request->renderRedirect("login/$db_user->eid");
 			$request->renderRedirect();

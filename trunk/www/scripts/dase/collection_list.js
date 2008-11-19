@@ -14,7 +14,7 @@ Dase.pageInit = function() {
 			'Content-Type':'text/plain',
 		}
 		var pref_set = prefs.join('|');
-		url = Dase.$('settings-link').href;
+		url = Dase.$('settings-link').href+'/preferred';
 		//post preferred collections to dase
 		Dase.ajax(url,'post',function(resp) {
 		//	alert(resp);
