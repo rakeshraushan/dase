@@ -1,4 +1,4 @@
-Dase.pageInit = function() {
+Dase.initSearchSorting = function() {
 	var url_elem = Dase.$('attributes_json_url');
 	var div = Dase.$('sortByAttFormDiv');
 	if (!url_elem || !div) return;

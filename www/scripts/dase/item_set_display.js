@@ -1,6 +1,7 @@
 Dase.pageInit = function() {
 	Dase.initSlideshowLink();
 	Dase.initBulkEditLink();
+	Dase.initSearchSorting();
 }
 
 Dase.initBulkEditLink = function() {
