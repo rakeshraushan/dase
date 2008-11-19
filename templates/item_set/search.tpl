@@ -9,7 +9,7 @@
 {/block}
 
 {block name="content"}
-<div class="full" id="browse">
+<div class="full" id="results">
 	<div id="msg" class="alert hide"></div>
 	{if $items->count}
 	<div class="pageControls">

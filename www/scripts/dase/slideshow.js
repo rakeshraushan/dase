@@ -38,6 +38,14 @@ Dase.slideshow.start = function(url,username,htpasswd) {
 	Dase.getJSON(url,rendering_func,null,null,username,htpasswd);
 };
 
+Dase.slideshow.minifyLinks = function() {
+	var sizes = Dase.$('slideshowSizes');
+	var links = sizes.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		links[i].className = '';
+	}
+}
+
 Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
 	img.src = slides[num][Dase.slideshow.defaultSize];
 	if (!slides[num][Dase.slideshow.defaultSize]) {
@@ -60,19 +68,14 @@ Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
 			size_link.size = size;
 			size_link.onclick = function() {
 				Dase.slideshow.defaultSize = this.size;
+				Dase.slideshow.minifyLinks();
 				this.className = 'currentSize';
-				var cur = Dase.$('current');
-				if (cur) {
-					cur.className = '';
-				}
-				this.id = 'current';
 				img.src =this.href;
 				return false;
 			}
 			Dase.createElem(sizes,' | ','span');
 			if (size_link.size == Dase.slideshow.defaultSize) {
 				size_link.className = 'currentSize';
-				size_link.id = 'current';
 			} else {
 				size_link.className = '';
 			}

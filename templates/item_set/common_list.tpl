@@ -8,9 +8,6 @@
 			<input type="checkbox" name="item_unique[]" value="{$it->unique}"/>
 			<span class="position">{$it->position}.</span>
 		</div>
-		<div class="cartAdd">
-			<span class="hide">in cart</span> <a href="{$it->unique}" class="hide" id="addToCart_{$it->unique}">add to cart</a>
-		</div>
 		<div class="image">
 			<a href="{$it->itemLink}">
 				<img alt="no image" src="{$it->thumbnailLink}"/>
@@ -24,6 +21,9 @@
 		<h5 class="collection_name">[{$it->collection}]</h5>
 	</td>
 	<td class="metadata">
+		<div class="cartAdd">
+			<span class="hide">in cart</span> <a href="{$it->unique}" class="hide" id="addToCart_{$it->unique}">add to cart</a>
+		</div>
 		<dl id="metadata" class="{$it->collectionAsciiId}">
 			{foreach item=set key=ascii_id from=$it->metadata}
 			{if 'yes' eq $set.display}
