@@ -62,4 +62,13 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		}
 	}
 
+	function getBackground()
+	{
+		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/tag/background' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 }

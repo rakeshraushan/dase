@@ -48,12 +48,25 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$item = $this->getItem();
 		$tag = $this->getTag();
 		$feed = new Dase_Atom_Feed;
-		$item->injectAtomFeedData($feed);
-		$feed->addCategory($tag->type,"http://daseproject.org/category/tag/type",$tag->type);
+
+		$c = $item->getCollection();
+		if (is_numeric($item->updated)) {
+			$updated = date(DATE_ATOM,$item->updated);
+		} else {
+			$updated = $item->updated;
+		}
+		$feed->setUpdated($updated);
+		$feed->setTitle($item->getTitle());
+		$feed->setId(APP_ROOT.'/tag/item/'.$tag->id.'/'.$this->id);
+		$feed->setGenerator('DASe','http://daseproject.org','1.0');
+		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
+
+		//$feed->addCategory($tag->type,"http://daseproject.org/category/tag/type",$tag->type);
+		$feed->addCategory('set',"http://daseproject.org/category/tag/type");
 		$feed->addLink($tag->getLink(),"http://daseproject.org/relation/feed-link");
 		$tag_item_id_array = $tag->getTagItemIds();
 		$position = array_search($this->id,$tag_item_id_array) + 1;
-		$feed->addCategory($position,"http://daseproject.org/category/position",$tag->type);
+		$feed->addCategory($position,"http://daseproject.org/category/position");
 
 		if (1 == $position) {
 			$prev_id = array_pop($tag_item_id_array);
@@ -74,12 +87,14 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 		//$feed->addLink($tag->getLink().'/'.$prev_id,"previous");
 		//$feed->addLink($tag->getLink().'/'.$next_id,"next");
+		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$this->id.'.atom',"self");
 		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$prev_id,"previous");
 		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$next_id,"next");
 		$feed->setFeedType('tagitem');
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$position.' of '.count($tag_item_id_array));
 		$entry = $item->injectAtomEntryData($feed->addEntry());
+		$entry->setSummary($this->annotation);
 		//todo: atompub edit link.  for now (3/31/08) user must 'tag' an item
 		//in order for it to be editable
 		$edit_link = (str_replace(APP_ROOT,APP_ROOT.'/edit',$entry->getId()));

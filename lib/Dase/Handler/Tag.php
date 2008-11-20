@@ -6,6 +6,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/background' => 'background',
 		'{eid}/{tag_ascii_id}/edit' => 'edit',
 		'{eid}/{tag_ascii_id}/templates' => 'bulk_edit_templates',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
@@ -19,6 +20,8 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/items' => 'tag_items',
 		'item/{tag_id}/{tag_item_id}' => 'tag_item',
 		'{eid}/{tag_ascii_id}/{tag_item_id}' => 'tag_item',
+		'item/{tag_id}/{tag_item_id}/annotation' => 'annotation',
+		'{eid}/{tag_ascii_id}/{tag_item_id}/annotation' => 'annotation',
 		'{eid}/{tag_ascii_id}/item/{collection_ascii_id}/{serial_number}' => 'tag_item',
 	);
 
@@ -208,6 +211,35 @@ class Dase_Handler_Tag extends Dase_Handler
 			$item->buildSearchIndex();
 		}
 		$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
+	}
+
+	public function postToBackground($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->tag)) {
+			$r->renderError(401,'not authorized to set background');
+		}
+		$this->tag->setBackground($r->get('background'));
+		if ('list' == $r->get('display')) {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
+		} else {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id);
+		}
+	}
+
+	public function postToAnnotation($r) 
+	{
+		$u = $r->getUser();
+		$tag = $this->tag;
+		if (!$u->can('write',$tag)) {
+			$r->renderError(401);
+		}
+		$tag_item = new Dase_DBO_TagItem;
+		$tag_item->load($r->get('tag_item_id'));
+		$tag_item->annotation = $r->get('annotation');
+		$tag_item->updated = date(DATE_ATOM);
+		$tag_item->update();
+		$r->renderRedirect('tag/item/'.$tag->id.'/'.$tag_item->id);
 	}
 
 	public function postToTag($r) 

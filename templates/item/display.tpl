@@ -133,5 +133,17 @@
 	<!-- this is an atompub thing and it will supply the action for the edit metadata form-->
 	<div><a class="hide" id="editLink" href="{$item->editLink}">edit item</a></div>
 	{/if}
-</div> <!-- close content -->
+</div> 
+{if 'set' == $item->tagType}
+		<div class="tagAdmin">
+			<h4>annotate slide</h4>
+			{if $item->entry->summary}
+			<p class="annotation">{$item->entry->summary}</p>
+			{/if}
+			<form id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
+				<textarea name="annotation"></textarea>
+				<input type="submit" value="save"/>
+			</form>
+		</div>
+{/if}
 {/block} 

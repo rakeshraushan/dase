@@ -86,12 +86,12 @@ html #maincontent {
 }
 
 #slideshow {
-	background-color:#d5deed;
 	background-color:#ceead8;
+	background-color:#d5deed;
 }
 #slideshow td {
-	border: 1px solid #9cacc6
 	border: 1px solid #9dbda9;
+	border: 1px solid #9cacc6
 }
 
 #set {
@@ -420,6 +420,16 @@ a.addToCart {
 	color: #700c0c;
 }
 
+p.annotation {
+	padding: 10px;
+	background-color: #ddd;
+	width: 300px;
+}
+
+form#setAnnotationForm textarea {
+	width: 300px;
+}
+
 /*****  ITEM SET DISPLAY PAGE **************/
 
 div.pageControls {
@@ -586,7 +596,7 @@ table#sorter td div.tiny {
 
 div.widget {
 	float: left;
-	margin-right: 60px;
+	margin-right: 20px;
 }
 
 #removeFromSet {
@@ -616,14 +626,36 @@ div.widget {
 	color: #669;
 }
 
+.tagAdmin {
+	background-color:#b5becd;
+	padding:10px 15px 15px 30px;
+}
+
 /************ SLIDESHOW DISPLAY **************/
+
+#backgroundColorSelect {
+	padding: 10px;
+	width: 30%;
+}
 
 body.black {
 	background-color: black;
+	color:white;
 }
 
 body.white {
 	background-color: white;
+	color: #999;
+}
+
+body.gray {
+	background-color: gray;
+	color: #333;
+}
+
+body.hotpink {
+	background-color: hotpink;
+	color: #f00078;
 }
 
 div#slideshowContainer {
@@ -631,11 +663,19 @@ div#slideshowContainer {
 	width: 95%;
 }
 
+div#slideshowContainer p.annotation {
+	background-color: inherit;
+	color: inherit;
+	font-weight: bold;
+	font-size: 1.8em;
+	margin: 5px auto;
+}
+
 h1#slideshowTitle {
 	float: left;
 	margin: 1em;
 	font-size: 1.4em;
-	color: #999;
+	color: inherit;
 }
 
 div#slideshowControls {
@@ -647,7 +687,7 @@ div#slideshowControls {
 div#slideshowControls a {
 	font-size: 1.4em;
 	font-weight: bold;
-	color: #999;
+	color: inherit;
 }
 
 div#slideshowSizes {
@@ -658,20 +698,21 @@ div#slideshowSizes {
 
 div#slideshowSizes a {
 	font-weight: bold;
-	color: #999;
+	color: inherit;
 }
 
 div#slideshowSizes a.currentSize {
 	font-size: 1.4em;
+	color: inherit;
 }
 
 a#slideshowExit {
-	color: #999;
 	position: fixed;
 	top: 1em;
 	right: 1.5em;
 	font-size: 1.5em;
 	font-weight: bold;
+	color: inherit;
 }
 
 /*********** SETTINGS PAGE *********************/
