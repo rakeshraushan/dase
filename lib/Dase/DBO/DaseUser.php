@@ -154,7 +154,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		// is an expectation that it should be persisted).
 		// this is all stuff that the client should be managing
 		//
-		$user_data[$this->eid]['current_collections'] = $this->current_collections;
+		$user_data[$this->eid]['current_collections'] = $this->current_collections ? $this->current_collections : '';
 		$user_data[$this->eid]['backtrack'] = $this->backtrack;
 		$user_data[$this->eid]['current_search_cache_id'] = $this->current_search_cache_id;
 		$user_data[$this->eid]['display'] = $this->display;
