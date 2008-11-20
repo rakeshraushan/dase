@@ -12,7 +12,8 @@ class Dase_Handler_Search extends Dase_Handler
 
 	protected function setup($r)
 	{
-		//setting $r allows cache-ability
+		//setting $r allows app cache-ability
+		//but...breaks intermediate caching (work on that)
 		if (Dase_Cookie::get('max')) {
 			$r->set('max',Dase_Cookie::get('max'));
 			$r->setQueryStringParam('max',Dase_Cookie::get('max'));

@@ -92,6 +92,15 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$this->update();
 	}
 
+	function setBackground($background)
+	{
+		$this->background = $background;
+		if (!$this->is_public) {
+			$this->is_public = 0;
+		}
+		return $this->update();
+	}
+
 	function getTagItemIds()
 	{
 		$prefix = Dase_Config::get('table_prefix');
@@ -322,6 +331,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$setnum++;
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
 				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+				if ($tag_item->annotation) {
+					$entry->setSummary($tag_item->annotation);
+				}
 			}
 		}
 		return $feed->asXml();

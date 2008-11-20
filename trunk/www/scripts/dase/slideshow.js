@@ -26,14 +26,15 @@ Dase.slideshow.start = function(url,username,htpasswd) {
 				var imgObj = new Image();
 				imgObj.src = json.items[i].media.medium;
 			}
-			slides[slides.length] = json.items[i].media;
+			slides[slides.length] = json.items[i];
 		}
 		var next = Dase.createElem(controls,'next >','a');
 		next.href = '#';
 		Dase.createElem(document.body,null,'div','spacer');
 		var container = Dase.createElem(document.body,null,'div',null,'slideshowContainer');
 		var img = Dase.createElem(container,null,'img');
-		Dase.slideshow.viewSlide(slides,0,img,prev,next);
+		var annotation = Dase.createElem(container,null,'p','annotation');
+		Dase.slideshow.viewSlide(slides,0,img,annotation,prev,next);
 	};
 	Dase.getJSON(url,rendering_func,null,null,username,htpasswd);
 };
@@ -46,12 +47,12 @@ Dase.slideshow.minifyLinks = function() {
 	}
 }
 
-Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
-	img.src = slides[num][Dase.slideshow.defaultSize];
-	if (!slides[num][Dase.slideshow.defaultSize]) {
+Dase.slideshow.viewSlide = function(slides,num,img,annotation,prev,next) {
+	img.src = slides[num]['media'][Dase.slideshow.defaultSize];
+	if (!slides[num]['media'][Dase.slideshow.defaultSize]) {
 		for (var i=0;i<Dase.slideshow.sizes.length;i++) {
-			if (slides[num][Dase.slideshow.sizes[i]]) {
-				img.src = slides[num][Dase.slideshow.sizes[i]];
+			if (slides[num]['media'][Dase.slideshow.sizes[i]]) {
+				img.src = slides[num]['media'][Dase.slideshow.sizes[i]];
 				break;
 			}
 		}
@@ -61,10 +62,14 @@ Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
 	var tally = Dase.$('num_of_num');
 	var place = num+1;
 	tally.innerHTML = ': '+place+' of '+slides.length;
-	for (size in slides[num]) {
+	annotation.innerHTML = null;
+	if (slides[num]['annotation']) {
+		annotation.innerHTML = slides[num]['annotation'];
+	}
+	for (size in slides[num]['media']) {
 		if (size != 'thumbnail' && size != 'viewitem') {
 			var size_link = Dase.createElem(sizes,size,'a');
-			size_link.href = slides[num][size];
+			size_link.href = slides[num]['media'][size];
 			size_link.size = size;
 			size_link.onclick = function() {
 				Dase.slideshow.defaultSize = this.size;
@@ -87,7 +92,7 @@ Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
 		} else {
 			prev_num = num - 1;
 		}
-		Dase.slideshow.viewSlide(slides,prev_num,img,prev,next);
+		Dase.slideshow.viewSlide(slides,prev_num,img,annotation,prev,next);
 		return false;
 	}
 	next.onclick = function() {
@@ -96,7 +101,7 @@ Dase.slideshow.viewSlide = function(slides,num,img,prev,next) {
 		} else {
 			next_num = num + 1;
 		}
-		Dase.slideshow.viewSlide(slides,next_num,img,prev,next);
+		Dase.slideshow.viewSlide(slides,next_num,img,annotation,prev,next);
 		return false;
 	}
 	img.onclick = next.onclick;
