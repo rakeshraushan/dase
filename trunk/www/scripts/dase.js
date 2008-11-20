@@ -422,6 +422,7 @@ Dase.placeUserCollections = function(eid) {
 };
 
 Dase.placePreferredCollections = function(eid) {
+	if (!Dase.user.current_collections) return;
 	var form = Dase.$('homeSearchForm');
 	if (!form) return;
 	var colls = Dase.user.current_collections.split('|');
