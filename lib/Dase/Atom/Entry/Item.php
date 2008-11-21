@@ -164,7 +164,18 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getCollectionAsciiId().'/'.$this->getSerialNumber();
 	}
 
-	/** does NOT retrieve admin metadata */
+	/** used for GET->update->PUT operations **/
+	function replaceMetadata($metadata_array) {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
+			if ('admin_' != substr($dd->localName,0,6)) {
+				$this->root->removeChild($dd);
+			}
+		}
+		foreach ($metadata_array as $k => $v) {
+			$this->addElement('d:'.$k,$v,Dase_Atom::$ns['d']);
+		}
+	}
+
 	function getMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {

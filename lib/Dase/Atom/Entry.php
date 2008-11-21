@@ -1,5 +1,18 @@
 <?php
 
+/*** a minimal atom entry
+ 
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:daseproject.org,2008:temp</id>
+  <author><name/></author>
+  <title>title</title>
+  <updated>2008-01-01T00:00:00Z</updated>
+  <link href="http://daseproject.org/atom/entry/template.html"/>
+</entry>
+
+*********/
+
 class Dase_Atom_Entry extends Dase_Atom
 {
 	protected $edited_is_set;
@@ -42,6 +55,29 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	public static function retrieve($url,$user='',$pwd='') 
+	{
+		Dase_Log::debug('retrieving atom entry: '.$url);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
+		//do not need to verify certificate
+		//from http://blog.taragana.com/index.php/archive/how-to-use-curl-in-php-for-authentication-and-ssl-communication/
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+		//this will NOT work in safemode
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
+		if ($user && $pwd) {
+			curl_setopt($ch, CURLOPT_USERPWD,"$user:$pwd");
+		}
+		$xml = curl_exec($ch);
+		curl_close($ch);
+
+		return self::load($xml);
+	}
+
 	public static function load($xml) 
 	{
 		//reader object
@@ -73,6 +109,31 @@ class Dase_Atom_Entry extends Dase_Atom
 		$entry->entrytype = 'none';
 		return $entry;
 	}
+
+	public function putToUrl($url,$user,$pwd)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->asXml());
+		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pwd);
+		$str  = array(
+			"Content-Type: application/atom+xml;type=entry"
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		Dase_Log::debug($result);
+		$info = curl_getinfo($ch);
+		curl_close($ch);  
+		if ('200' == $info['http_code']) {
+			return 'ok';
+		} else {
+			return $result;
+		}
+	}
+
+
 
 	function __get($var) 
 	{
