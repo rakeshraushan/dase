@@ -39,12 +39,10 @@ class Dase_Atom
 	//convenience method for atom elements
 	function addElement($tagname,$text='',$ns='') 
 	{
-		if ($ns) {
-			$elem = $this->root->appendChild($this->dom->createElementNS($ns,$tagname));
-		} else {
-			$elem = $this->root->appendChild($this->dom->createElementNS(Dase_Atom::$ns['atom'],$tagname));
-			//$elem = $this->root->appendChild($this->dom->createElement($tagname));
+		if (!$ns) {
+			$ns = Dase_Atom::$ns['atom'];
 		}
+		$elem = $this->root->appendChild($this->dom->createElementNS($ns,$tagname));
 		if ($text || '0' === $text) { //so '0' works
 			$elem->appendChild($this->dom->createTextNode($text));
 		}
