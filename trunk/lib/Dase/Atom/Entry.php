@@ -73,9 +73,13 @@ class Dase_Atom_Entry extends Dase_Atom
 			curl_setopt($ch, CURLOPT_USERPWD,"$user:$pwd");
 		}
 		$xml = curl_exec($ch);
+		$info = curl_getinfo($ch);
 		curl_close($ch);
-
-		return self::load($xml);
+		if ('200' == $info['http_code']) {
+			return self::load($xml);
+		} else {
+			return $info['http_code'];
+		}
 	}
 
 	public static function load($xml) 
