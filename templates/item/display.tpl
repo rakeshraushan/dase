@@ -7,7 +7,7 @@
 {block name="content"}
 <div class="full" id="{$item->tagType|lower|default:'set'}">
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
-	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->serialNumber}</div>
+	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->entry->serialNumber}</div>
 	<div id="contentHeader">
 
 		{if $item->error}
@@ -58,19 +58,19 @@
 			</td>
 			<td class="metadata">
 				<!-- is there a better place for this?-->
-				<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
+				<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/metadata" class="edit" id="editLink">edit</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/metadata" class="edit" id="editLink">edit</a>
 						|
 						<!--
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
 						|
 						-->
 						<a href="collection/{$item->collectionAsciiId}/attributes" class="edit" id="addMetadataLink">add metadata</a>
 						|
-						<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/content" class="edit" id="addContentLink">add/edit textual content</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" class="edit" id="addContentLink">add/edit textual content</a>
 					</div>
 				</div>
 
@@ -108,15 +108,15 @@
 
 				<div id="itemLinks">
 					<!--
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}.atom?auth=cookie">atom</a> 
+					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?auth=cookie">atom</a> 
 					|
 					-->
-					<a href="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" id="notesLink">add a user note</a> 
+					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
 				</div>
 
 				<div class="spacer"></div>
 				<div id="notesForm" class="hide">
-					<form action="item/{$item->collectionAsciiId}/{$item->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
+					<form action="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
 						<textarea rows="4" cols="50" id="note" name="note"></textarea>
 						<p>
 						<input type="submit" value="add note"/>
@@ -127,7 +127,7 @@
 			</td>
 		</tr>
 	</table>
-	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->serialNumber}/status"></div>
+	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status"></div>
 
 	{if $item->editLink}
 	<!-- this is an atompub thing and it will supply the action for the edit metadata form-->
