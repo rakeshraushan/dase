@@ -67,10 +67,10 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 
-		if ('entry' == $r->get('type')) {
-			$r->renderResponse($this->item->asAtomEntry());
-		} else {
+		if ('feed' == $r->get('type')) {
 			$r->renderResponse($this->item->asAtom());
+		} else {
+			$r->renderResponse($this->item->asAtomEntry());
 		}
 	}
 
@@ -111,7 +111,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
 		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
-			APP_ROOT.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom',
+			APP_ROOT.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom?type=feed',
 			$user->eid,$user->getHttpPassword()
 		);
 

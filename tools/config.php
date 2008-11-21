@@ -6,7 +6,6 @@ define('CACHE_DIR', DASE_PATH . '/cache/');
 define("DASE_CONFIG", DASE_PATH . '/inc/config.php');
 
 define('DASE_LOG', DASE_PATH . '/var/log/dase.log');
-define('LOG_LEVEL',3);
 ini_set('include_path',ini_get('include_path').':'. DASE_PATH .'/lib:'); 
 
 function __autoload($class_name) {
