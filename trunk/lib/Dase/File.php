@@ -118,13 +118,13 @@ abstract class Dase_File
 				throw new Exception("Error: ".$title." appears to be a multi-layered tiff");
 			}
 		}
-		$this->getMetadata();
+		$metadata = $this->getMetadata();
 
 		//prevents 2 files in same collection w/ same md5
 		if ($check_for_dups) {
 			$mf = new Dase_DBO_MediaFile;
 			$mf->p_collection_ascii_id = $c->ascii_id;
-			$mf->md5 = $this->metadata['md5'];
+			$mf->md5 = $metadata['md5'];
 			if ($mf->findOne()) {
 				throw new Exception('duplicate file');
 			}
@@ -146,8 +146,8 @@ abstract class Dase_File
 				'file_size','height','width','mime_type','updated','md5'
 			);
 			foreach ($meta as $term) {
-				if (isset($this->metadata[$term])) {
-					$media_file->$term = $this->metadata[$term];
+				if (isset($metadata[$term])) {
+					$media_file->$term = $metadata[$term];
 				}
 			}
 			$media_file->item_id = $item->id;
@@ -157,7 +157,7 @@ abstract class Dase_File
 			$media_file->p_collection_ascii_id = $c->ascii_id;
 			$media_file->insert();
 			//will only insert item metadata when attribute name matches 'admin_'+att_name
-			foreach ($this->metadata as $term => $text) {
+			foreach ($metadata as $term => $text) {
 				$item->setValue('admin_'.$term,$text);
 			}
 		}
@@ -174,8 +174,6 @@ abstract class Dase_File
 		//for admin_ attributes:
 		$this->metadata['upload_date_time'] = date(DATE_ATOM);
 		$this->metadata['checksum'] = $this->metadata['md5'];
-
-
 		return $this->metadata;
 	}	
 

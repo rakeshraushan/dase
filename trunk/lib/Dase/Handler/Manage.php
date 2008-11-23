@@ -258,6 +258,8 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToUploader($r)
 	{
+		//this needs to be reworked
+		//to follow batch protocol: postToCollection, the postToMedia
 		//todo: check ppd?
 		$num = $r->get('num');
 		$input_name = 'uploader_'.$num.'_file';
