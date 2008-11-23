@@ -163,6 +163,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['max_items'] = $this->max_items;
 		$user_data[$this->eid]['controls'] = $this->cb;
 		$user_data[$this->eid]['template_composite'] = $this->template_composite;
+		$user_data[$this->eid]['token_date'] = date('Ymd',time());
 		return $user_data;
 	}
 

@@ -258,11 +258,8 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToUploader($r)
 	{
-		//this needs to be reworked
-		//to follow batch protocol: postToCollection, the postToMedia
 		//todo: check ppd?
-		$num = $r->get('num');
-		$input_name = 'uploader_'.$num.'_file';
+		$input_name = 'uploaded_file';
 		if (
 			isset($_FILES[$input_name]) && 
 			is_file($_FILES[$input_name]['tmp_name'])
@@ -282,17 +279,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		} else {
 			$r->renderError(400,'could not upload file');
 		}
-		$params['status'] = 'ok';
-		$params['num'] = $num;
-		$params['message'] = 'ok';
-		$params['filename'] = $name;
-		$params['filesize'] = filesize($path);
-		$params['filetype'] = $type;
-		$params['title'] = $item->serial_number;
-		$params['item_url'] = $item->getBaseUrl();
-		$params['thumbnail_url'] = $item->getMediaUrl('thumbnail');
-		Dase_Log::debug(join('|',$params));
-		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/upload/status',$params);
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
 	}
 
 	public function getUploadStatus($r)

@@ -262,6 +262,17 @@ Dase.getEid = function() {
 	}
 };
 
+Dase.checkTokenDate = function(my_func) {
+	var url = Dase.base_href + "date";
+	Dase.ajax(url,'GET',function(resp) {
+		if (Dase.user.token_date != resp) {
+			alert('uh oh '+resp+' != '+Dase.user.token_date);
+		} else {
+			my_func();
+		}
+	});
+}
+
 Dase.initUser = function(func) {
 	var eid = Dase.getEid();
 	if (!eid) {
@@ -281,6 +292,9 @@ Dase.initUser = function(func) {
 			Dase.user.current_collections = json[eid].current_collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.user.cart_count = json[eid].cart_count;
+			//use this to verify that browser & server have same date
+			//used in token seeding
+			Dase.user.token_date = json[eid].token_date;
 			//whether or not ot display editing controls
 			Dase.user.controls = json[eid].controls;
 			Dase.placeUserName(eid);
@@ -666,6 +680,7 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 	}
 	var xmlhttp = Dase.createXMLHttpRequest();
 	if (username && password) {
+		//too expensive??
 		xmlhttp.open(method,url,true,username,password);
 	} else {
 		xmlhttp.open(method,url,true);
