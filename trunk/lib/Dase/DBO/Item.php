@@ -366,9 +366,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//always begins 'admin_'
 		//NOTE: we now create att if it does not exist
 		if (false === strpos($att_ascii_id,'admin_')) {
-			$att = Dase_DBO_Atrribute::findOrCreate($c->ascii_id,$att_ascii_id);
+			$att = Dase_DBO_Attribute::findOrCreate($c->ascii_id,$att_ascii_id);
 		} else {
-			$att = Dase_DBO_Atrribute::findOrCreateAdmin($att_ascii_id);
+			$att = Dase_DBO_Attribute::findOrCreateAdmin($att_ascii_id);
 		}
 		if ($att) {
 			$v = new Dase_DBO_Value;
