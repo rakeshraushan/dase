@@ -145,22 +145,6 @@ table.dataDisplay  th.rows {
 	margin-bottom: 1em;
 }
 
-/* uploader widget styles */
-
-.uploader_target {
-	display: none;
-}
-
-/* uploader widget styles */
-input[type=file] {
-	font-size: 1.2em;
-	width: 80%;
-}
-
-iframe {
-	display: none;
-}
-
 ul#recent li {
 	width: 60%;
     padding: .5em;
@@ -168,24 +152,3 @@ ul#recent li {
     list-style-type: none;
     -moz-border-radius: 5px;
     background-color: #ddd;
-}
-
-ul#results li {
-	width: 60%;
-    padding: .5em;
-    margin: 1em;
-    list-style-type: none;
-    -moz-border-radius: 5px;
-}
-
-ul#results li.ok {
-    background-color: #c5facf;
-    color: #030;
-}
-
-ul#results li.error {
-    background-color: #fac5ef;
-    color: #300;
-	height: 2em;
-}
-
