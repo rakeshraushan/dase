@@ -3,9 +3,6 @@
 {block name="content"}
 <div id="contentHeader">
 	<h1>Item Types for {$collection->collection_name}</h1>
-	<!--
-	<h2>{$user->ppd}</h2>
-	-->
 </div>
 <div id="collectionData">
 	<table class="dataDisplay">

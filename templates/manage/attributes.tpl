@@ -5,9 +5,6 @@
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Attributes for {$collection->collection_name}</h1>
 	<h3 class="instruction">Click on attribute name to edit.</h3>
-	<!--
-	<h2>{$user->ppd}</h2>
-	-->
 </div>
 <div id="collectionData">
 	<a href="manage/{$collection->ascii_id}/attribute/form" class="hide" id="attribute_form_link"></a>

@@ -373,7 +373,8 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getAttributeTalliesJson($r) 
 	{
 		$prefix = Dase_Config::get('table_prefix');
-		$r->checkCache(1500);
+		//todo: work on cacheing here
+		//$r->checkCache(1500);
 		if ($r->has('filter') && ('admin' == $r->get('filter'))) {
 			$r->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
 			exit;

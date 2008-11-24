@@ -145,7 +145,7 @@ table.dataDisplay  th.rows {
 	margin-bottom: 1em;
 }
 
-.recent li {
+#recent li {
 	width: 60%;
     padding: .5em;
     margin: 1em 1em 1em 0;

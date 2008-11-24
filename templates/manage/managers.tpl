@@ -8,9 +8,6 @@
 <div id="contentHeader">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Managers for {$collection->collection_name}</h1>
-	<!--
-	<h2>{$user->ppd}</h2>
-	-->
 </div>
 <div id="collectionData">
 	<table class="dataDisplay" id="managers">
@@ -30,9 +27,7 @@
 			<td>{$m->expiration}</td>
 			<td>{$m->created}</td>
 			<td>
-				{if $m->dase_user_eid != $user->eid}
 				<a href="manage/{$collection->ascii_id}/managers/{$m->dase_user_eid}" class="delete manager">delete</a>
-				{/if}
 			</td>
 		</tr>
 		{/foreach}

@@ -142,6 +142,7 @@
 		<div class="spacer"></div>
 
 		<div id="footer">
+			<a href="admin" class="hide" id="adminLink"></a> |
 			<a href="apps/help" id="helpModule">FAQ</a> | 
 			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 			<a href="copyright">Copyright/Usage Statement</a> | 
@@ -153,6 +154,7 @@
 			{php}echo Dase_Timer::getElapsed();{/php} seconds |
 			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 		</div><!--closes footer-->
+		<div id="collectionAsciiId" class="pagedata">{$collection->ascii_id}</div>
 		<div id="debugData" class="pagedata"></div>
 	</body>
 </html>

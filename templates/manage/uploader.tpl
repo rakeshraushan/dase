@@ -4,7 +4,7 @@
 <script type="text/javascript" src="www/scripts/dase/uploader.js"></script>
 {/block}
 
-{block name="title"}DASe: Upload Item{/block} 
+{block name="title"}DASe: Create New Item{/block} 
 
 {block name="content"}
 <div class="full">
@@ -23,13 +23,20 @@
 		</form>
 	</div>
 
-	<div class="recent">
-		<h2>{$recent_uploads->title}</h2>
-		<ul>
-			{foreach item=item from = $recent_uploads->entries}
-			<li><img src="{$item->thumbnailLink}"/><br/><a href="{$item->link}">{$item->title}</a></li>
-			{/foreach}
-		</ul>
-	</div>
+	<ul id="recent">
+	</ul>
+
 </div>
+<!-- javascript template for recent-->
+<textarea class="javascript_template" id="recent_jst">
+	{literal}
+	{for sernum in recent}
+	<li>
+	<a href='${sernum.item_record_href}'><img src="${sernum.thumbnail_href}"/></a>
+	<h4>${sernum.title}</h4>
+	</li>
+	{/for}
+	{/literal}
+</textarea>
+<!-- end javascript template -->
 {/block}

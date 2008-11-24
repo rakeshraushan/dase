@@ -2,7 +2,9 @@ Dase.pageInit = function() {
 	Dase.initNotes();
 }
 
-Dase.initItemEditing = function(eid) {
+//item editing needs to know user, 
+//so we use the 'pageInitUser' function
+Dase.pageInitUser = function(eid) {
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
