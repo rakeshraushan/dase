@@ -59,6 +59,28 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($feed->asXml());
 	}
 
+	public function getRecentItemsJson($r)
+	{
+		//implement http authorization!
+		$items = new Dase_DBO_Item;
+		$items->created_by_eid = $this->user->eid;
+		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
+		$items->orderBy('created DESC');
+		if ($r->has('limit')) {
+			$limit = $r->get('limit');
+		} else {
+			$limit = 50;
+		}
+		$items->setLimit($limit);
+		$recent = array();
+		foreach ($items->find() as $item) {
+			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
+			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail');
+			$recent['a'.$item->serial_number]['item_record_href'] = 'item/'.$item->getCollection()->ascii_id.'/'.$item->serial_number;
+		}
+		$r->renderResponse(Dase_Json::get($recent));
+	}
+
 	public function getDataJson($r)
 	{
 		//NOTE WELL!!!:

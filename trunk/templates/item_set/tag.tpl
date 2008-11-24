@@ -85,7 +85,6 @@
 					<option {if "black" == $items->background}selected="selected"{/if}>black</option>
 					<option {if "white" == $items->background}selected="selected"{/if}>white</option>
 					<option {if "gray" == $items->background}selected="selected"{/if}>gray</option>
-					<option {if "hotpink" == $items->background}selected="selected"{/if}>hotpink</option>
 				</select>
 				<input type="hidden" name="display" value="{$display}"/>
 				<input type="submit" value="save"/>

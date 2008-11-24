@@ -273,7 +273,7 @@ Dase.checkTokenDate = function(my_func) {
 	});
 }
 
-Dase.initUser = function(func) {
+Dase.initUser = function() {
 	var eid = Dase.getEid();
 	if (!eid) {
 		Dase.removeClass(Dase.$('loginControl'),'hide');
@@ -303,14 +303,13 @@ Dase.initUser = function(func) {
 			Dase.placePreferredCollections(eid);
 			Dase.placeCollectionAdminLink(eid);
 			Dase.placeManageLink(eid);
-			if (Dase.initItemEditing) {
-				Dase.initItemEditing(eid);
-			}
 			Dase.initCart();
 			Dase.initAddToCart();
-			if (func) {
-				func();
-			}
+			//our generic page-specific function
+			//that requires knowledge of the eid
+			if (Dase.pageInitUser && typeof Dase.pageInitUser === 'function') {
+				Dase.pageInitUser(eid);
+			} 
 			Dase.addClass(Dase.$('menuGrayed'),'hide');
 			Dase.removeClass(Dase.$('menu'),'hide');
 		}

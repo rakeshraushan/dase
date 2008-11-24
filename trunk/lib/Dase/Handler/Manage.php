@@ -37,7 +37,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getSettings($r)
 	{
 		$tpl = new Dase_Template($r);
-		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$cats = new Dase_DBO_Category;
 		$cats->scheme = 'community';
@@ -72,7 +71,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		} else {
 			$so = 'sort_order';
 		}
-		$tpl->assign('user',$this->user);
 		$tpl->assign('sort',$so);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes($so));
@@ -92,6 +90,9 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function deleteManager($r)
 	{
 		$manager = new Dase_DBO_CollectionManager;
+		if ($r->get('manager_eid') == $this->user->eid) {
+			$r->renderError('400','cannot delete yourself');
+		}
 		$manager->dase_user_eid = $r->get('manager_eid');
 		$manager->collection_ascii_id = $this->collection->ascii_id;
 		$manager->findOne();
@@ -198,7 +199,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getItemTypes($r)
 	{
 		$tpl = new Dase_Template($r);
-		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('item_types',$this->collection->getItemTypes());
 		$r->renderResponse($tpl->fetch('manage/item_types.tpl'));
@@ -207,7 +207,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getManagers($r)
 	{
 		$tpl = new Dase_Template($r);
-		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('managers',$this->collection->getManagers());
 		$r->renderResponse($tpl->fetch('manage/managers.tpl'));
@@ -244,15 +243,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getUploader($r)
 	{
 		$tpl = new Dase_Template($r);
-		$tpl->assign('user',$this->user);
 		$tpl->assign('collection',$this->collection);
-
-		$tpl->assign('recent_uploads_url',APP_ROOT.'/user/'.$this->user->eid.'/'.$this->collection->ascii_id.'/recent.atom?limit=10&auth=http');
-		$tpl->assign('recent_uploads',Dase_Atom_Feed::retrieve(APP_ROOT.'/user/'.$this->user->eid.'/'.$this->collection->ascii_id.'/recent.atom?limit=10&auth=http',$this->user->eid,$this->user->getHttpPassword()));
-		if ($r->has('prev_serial_number')) {
-			$tpl->assign('prev_serial_number',$r->get('prev_serial_number'));
-		}
-		$tpl->assign('num',$r->get('num')+1);
 		$r->renderResponse($tpl->fetch('manage/uploader.tpl'));
 	}
 
