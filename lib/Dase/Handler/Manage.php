@@ -259,11 +259,13 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function postToUploader($r)
 	{
 		//todo: check ppd?
-		$input_name = 'uploaded_file';
-		if (
-			isset($_FILES[$input_name]) && 
-			is_file($_FILES[$input_name]['tmp_name'])
-		) {
+		$input_name = '';
+		//form can use any 'name' it wishes
+		foreach ($_FILES as $k => $v) {
+			$input_name = $k;
+			break; //just get the first one
+		}
+		if ($input_name && is_file($_FILES[$input_name]['tmp_name'])) {
 			$name = $_FILES[$input_name]['name'];
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];

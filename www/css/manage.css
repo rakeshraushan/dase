@@ -145,10 +145,10 @@ table.dataDisplay  th.rows {
 	margin-bottom: 1em;
 }
 
-ul#recent li {
+.recent li {
 	width: 60%;
     padding: .5em;
-    margin: 1em;
+    margin: 1em 1em 1em 0;
     list-style-type: none;
     -moz-border-radius: 5px;
     background-color: #ddd;
