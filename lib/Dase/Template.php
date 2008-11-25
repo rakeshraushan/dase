@@ -49,6 +49,9 @@ class Dase_Template {
 		$this->smarty->assign('app_root', APP_ROOT.'/');
 		if ($request->module) {
 			$this->smarty->assign('module_root', APP_ROOT.'/modules/'.$request->module.'/');
+			if (file_exists(DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
+				$this->smarty->assign('module_menu', DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl');
+			}
 		}
 		$this->smarty->assign('msg', $request->get('msg'));
 		$this->smarty->assign('request', $request);

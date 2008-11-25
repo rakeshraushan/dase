@@ -90,6 +90,9 @@
 				</li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
 				</li>
+				{if $module_menu}
+				{include file="$module_menu"}
+				{/if}
 			</ul>
 
 			<ul id="menuGrayed">

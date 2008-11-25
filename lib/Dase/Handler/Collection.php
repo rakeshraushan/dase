@@ -251,9 +251,15 @@ class Dase_Handler_Collection extends Dase_Handler
 		'application/atom+xml' == $content_type ) {
 			//will try to fetch enclosure
 			$this->_newAtomItem($r,true);
+		} elseif ('text/uri-list' == $content_type ) {
+			$this->_newUriMediaResource($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
+	}
+
+	private function _newUriMediaResource($r)
+	{
 	}
 
 	private function _newAtomItem($r,$fetch_enclosure=false)
