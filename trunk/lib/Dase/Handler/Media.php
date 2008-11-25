@@ -70,10 +70,10 @@ class Dase_Handler_Media extends Dase_Handler
 			$r->renderError(401,'cannot put media to this item');
 		}
 		$coll = $item->getCollection();
-		$types = array('image/*','audio/*','video/*','application/pdf');
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
 			$r->renderError(411,'missing content length');
 		}
+		$types = Dase_Config::get('media_types');
 		//clean this up (prob from wordpress)
 		$content_type = $r->getContentType();
 		list($type,$subtype) = explode('/',$content_type);

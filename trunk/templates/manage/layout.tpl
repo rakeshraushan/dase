@@ -97,6 +97,9 @@
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>
+				{if $module_menu}
+				{include file="$module_menu"}
+				{/if}
 			</ul>
 			<ul id="menuGrayed">
 				<li>

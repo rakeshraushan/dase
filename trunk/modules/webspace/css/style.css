@@ -1,0 +1,15 @@
+a.checked {
+	color: #ba5d00;
+}
+
+div.file_list {
+	margin: 20px 0;
+}
+
+p.checker {
+	margin-top: 10px;
+}
+
+span.filesize {
+	color: #999;
+}
