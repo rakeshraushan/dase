@@ -6,6 +6,10 @@ div.file_list {
 	margin: 20px 0;
 }
 
+div.file_list li {
+	line-height: 1.8em;
+}
+
 p.checker {
 	margin-top: 10px;
 }

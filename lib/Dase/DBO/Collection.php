@@ -393,10 +393,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$this->update();
 	}
 
-	function getItems()
+	function getItems($limit='')
 	{
 		$item = new Dase_DBO_Item;
 		$item->collection_id = $this->id;
+		if ($limit && is_numeric($limit)) {
+			$item->setLimit($limit);
+		}
 		return $item->find();
 	}
 
