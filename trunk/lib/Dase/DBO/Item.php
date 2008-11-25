@@ -374,7 +374,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v = new Dase_DBO_Value;
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
-			$v->value_text = $value_text;
+			$v->value_text = trim($value_text);
 			return($v->insert());
 		} else {
 			//simply returns false if no such attribute

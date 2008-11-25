@@ -72,6 +72,10 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$output = '';
 		$i = 0;
+		$limit = '';
+		if ($r->has('limit')) {
+			$limit = $r->get('limit');
+		}
 		foreach ($this->collection->getItems() as $item) {
 			if (!$item->getMediaCount()) {
 				$i++;
@@ -81,6 +85,9 @@ class Dase_Handler_Collection extends Dase_Handler
 					$output .= '|'.$item->getValue($member);
 				}
 				$output .= "\n";
+			}
+			if ($limit && $i == $limit) {
+				break;
 			}
 		}
 		if ($r->has('get_count')) {
@@ -260,6 +267,30 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newUriMediaResource($r)
 	{
+		$eid = $r->getUser('http')->eid;
+		$url = file_get_contents("php://input");
+		$filename = array_pop(explode('/',$url));
+		$ext = array_pop(explode('.',$url));
+		$upload_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/uploaded_files';
+		if (!file_exists($upload_dir)) {
+			$request->renderError(401,'missing upload directory');
+		}
+		$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$eid);
+		$item->setValue('title',$filename);
+		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+		file_put_contents($new_file,file_get_contents($url));
+		try {
+			$file = Dase_File::newFile($new_file);
+			$media_file = $file->addToCollection($item,false);
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$request->renderError(500,'could not ingest uri resource ('.$e->getMessage().')');
+		}
+		header("HTTP/1.1 201 Created");
+		header("Content-Type: text/plain");
+		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+		echo $filename;
+		exit;
 	}
 
 	private function _newAtomItem($r,$fetch_enclosure=false)
