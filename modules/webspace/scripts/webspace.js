@@ -47,10 +47,14 @@ Dase.webspace.postUri = function(payload_url,img,a,span,coll,htuser,htpasswd) {
 	}
 	url = 'https://daseupload.laits.utexas.edu/collection/'+coll+'/ingester';
 	Dase.ajax(url,'POST',function(resp) {
-		a.href = resp;
-		a.className = 'uploaded';
-		span.innerHTML = 'uploaded '+span.innerHTML; 
 		Dase.addClass(img,'hide');
+		if ('http' == resp.substr(0,4)) {
+			a.href = resp;
+			a.className = 'uploaded';
+			span.innerHTML = 'uploaded '+span.innerHTML; 
+		} else {
+			alert(resp);
+		}
 	},payload_url,htuser,htpasswd,content_headers,function() {
 		Dase.addClass(img,'hide');
 		span.innerHTML = 'sorry, upload did not succeed';
