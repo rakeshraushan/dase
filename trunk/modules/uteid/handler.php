@@ -77,7 +77,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 			Dase_Cookie::setEid($db_user->eid);
 			Dase_DBO_DaseUser::init($db_user->eid);
 			if ($target) {
-				$r->renderRedirect(urldecode($target));
+				$request->renderRedirect(urldecode($target));
 			} else {
 				$request->renderRedirect();
 			}
