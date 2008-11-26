@@ -2,6 +2,10 @@ a.checked {
 	color: #ba5d00;
 }
 
+a.uploaded {
+	color: #338800;
+}
+
 div.file_list {
 	margin: 20px 0;
 }
@@ -10,10 +14,14 @@ div.file_list li {
 	line-height: 1.8em;
 }
 
-p.checker {
+p#checker {
 	margin-top: 10px;
 }
 
 span.filesize {
 	color: #999;
+}
+
+span.wspace {
+	font-weight: bold;
 }

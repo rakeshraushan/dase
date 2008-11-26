@@ -10,28 +10,38 @@
 	<h1>UTexas WebSpace Ingester</h1>
 	<div class="content">
 		<form action="manage/{$collection->ascii_id}/webspace" method="get">
-			<h3>enter webspace user account name (usually EID)</h3>
-			<input type="text" name="webspace_name" value="{$webspace_name}"/>
+			<span class="wspace">http://webspace.utexas.edu/</span><input type="text" size="{$webspace_path|strlen}" name="webspace_path" value="{$webspace_path}"/>
 			<input type="submit" value="retrieve file listing"/>
 		</form>
 		{if $files|@count}
 		<div class="file_list">
-			<form action="ingester">
+			<form id="ingester" action="ingester">
 				<ul class="multicheck" id="fileList">
 					{foreach item=file from=$files}
 					<li>
+					<img src="{$app_root}www/images/indicator.gif" class="hide"/>
 					<input type="checkbox" checked="checked" value="{$file.url}" name="file_to_upload"/>
 					<a class="checked" href="{$file.url}">{$file.name}</a>
 					<span class="filesize">({$file.length}K)</span>
 					</li>
 					{/foreach}
 				</ul>
-				<p class="checker">
+				<p id="checker">
 				<a href="#" id="checkall">check/uncheck all</a>
 				</p>
-				<input type="submit" value="upload checked files"/>
+				<input id="submitButton" type="submit" value="upload checked files"/>
 			</form>
 		</div>
+		{/if}
+		{if $paths|@count}
+		<h3>subdirectories</h3>
+		<ul>
+			{foreach item=path from=$paths}
+			<li>
+			<a href="manage/{$collection->ascii_id}/webspace?webspace_path={$path.path_rel}">/{$path.path_name}</a>
+			</li>
+			{/foreach}
+		</ul>
 		{/if}
 	</div>
 </div>

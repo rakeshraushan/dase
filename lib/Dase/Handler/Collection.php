@@ -276,19 +276,20 @@ class Dase_Handler_Collection extends Dase_Handler
 			$request->renderError(401,'missing upload directory');
 		}
 		$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$eid);
-		$item->setValue('title',$filename);
+		$item->setValue('title',urldecode($filename));
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
 		try {
 			$file = Dase_File::newFile($new_file);
-			$media_file = $file->addToCollection($item,false);
+			$media_file = $file->addToCollection($item,true); //check for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
-			$request->renderError(500,'could not ingest uri resource ('.$e->getMessage().')');
+			$item->expunge();
+			$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
 		}
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: text/plain");
-		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number);
 		echo $filename;
 		exit;
 	}
