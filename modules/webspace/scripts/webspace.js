@@ -55,9 +55,9 @@ Dase.webspace.postUri = function(payload_url,img,a,span,coll,htuser,htpasswd) {
 		} else {
 			alert(resp);
 		}
-	},payload_url,htuser,htpasswd,content_headers,function() {
+	},payload_url,htuser,htpasswd,content_headers,function(resp) {
 		Dase.addClass(img,'hide');
-		span.innerHTML = 'sorry, upload did not succeed';
+		span.innerHTML = 'sorry, upload did not succeed ('+resp+')';
 	});
 }
 
