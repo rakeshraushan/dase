@@ -45,7 +45,7 @@ Dase.webspace.postUri = function(payload_url,img,a,span,coll,htuser,htpasswd) {
 	var content_headers = {
 		'Content-Type':'text/uri-list'
 	}
-	url = Dase.base_href+'collection/'+coll+'/ingester';
+	url = 'https://daseupload.laits.utexas.edu/collection/'+coll+'/ingester';
 	Dase.ajax(url,'POST',function(resp) {
 		a.href = resp;
 		a.className = 'uploaded';
