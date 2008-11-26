@@ -273,7 +273,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$ext = array_pop(explode('.',$url));
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$request->renderError(401,'missing upload directory');
+			$r->renderError(401,'missing upload directory');
 		}
 		$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$eid);
 		$item->setValue('title',urldecode($filename));
