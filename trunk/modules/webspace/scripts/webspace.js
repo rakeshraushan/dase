@@ -41,11 +41,48 @@ Dase.webspace.multicheck = function(c) {
 	}	   
 };
 
-Dase.webspace.init = function() {
-	Dase.webspace.multicheck('checked');
-};
+Dase.webspace.postUri = function(payload_url,img,a,span,coll,htuser,htpasswd) {
+	var content_headers = {
+		'Content-Type':'text/uri-list'
+	}
+	url = Dase.base_href+'collection/'+coll+'/ingester';
+	Dase.ajax(url,'POST',function(resp) {
+		a.href = resp;
+		a.className = 'uploaded';
+		span.innerHTML = 'uploaded '+span.innerHTML; 
+		Dase.addClass(img,'hide');
+	},payload_url,htuser,htpasswd,content_headers,function() {
+		Dase.addClass(img,'hide');
+		span.innerHTML = 'sorry, upload did not succeed';
+	});
+}
+
+Dase.webspace.initForm = function() {
+	var form = Dase.$('ingester');
+	if (!form) return;
+	form.onsubmit = function() {
+		htuser = Dase.user.eid;
+		htpasswd = Dase.user.htpasswd;
+		coll = Dase.$('collectionAsciiId').innerHTML;
+		Dase.addClass(Dase.$('checker'),'hide');
+		Dase.addClass(Dase.$('submitButton'),'hide');
+		var list = Dase.$('fileList');
+		var files = list.getElementsByTagName('a');
+		for (var i=0;i<files.length;i++) {
+			var span = files[i].parentNode.getElementsByTagName('span')[0];
+			var inp = files[i].parentNode.getElementsByTagName('input')[0];
+			Dase.addClass(inp,'hide');
+			var img = files[i].parentNode.getElementsByTagName('img')[0];
+			Dase.removeClass(img,'hide');
+			var payload_url = files[i].href;
+			Dase.webspace.postUri(payload_url,img,files[i],span,coll,htuser,htpasswd);
+		}
+		return false;
+	}
+}
 
 Dase.pageInit = function() {
-	Dase.webspace.init();
+	Dase.webspace.multicheck('checked');
+	Dase.webspace.initForm();
 }
 

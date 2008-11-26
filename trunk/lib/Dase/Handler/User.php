@@ -36,7 +36,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getRecentItemsAtom($r)
 	{
-		//implement http authorization!
+		//todo: implement http authorization!
 		$items = new Dase_DBO_Item;
 		$items->created_by_eid = $this->user->eid;
 		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
@@ -61,7 +61,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getRecentItemsJson($r)
 	{
-		//implement http authorization!
+		//todo: implement http authorization!
 		$items = new Dase_DBO_Item;
 		$items->created_by_eid = $this->user->eid;
 		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
