@@ -47,6 +47,11 @@ class Dase_Http_Request
 
 	function __toString()
 	{
+		return $this->getLogData();
+	}
+
+	function getLogData()
+	{
 		$string = "\nREQUEST:\n";
 		$string .= "[format] => $this->format\n";
 		$string .= "[handler] => $this->handler\n";

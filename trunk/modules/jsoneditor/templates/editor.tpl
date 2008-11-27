@@ -3,6 +3,7 @@
 <head>
 <script src="JSONeditor.js"></script>
 <script>
+	{literal}
 onload=function(){
 	JSONeditor.start('tree','jform',false,true)
 	Opera=(navigator.userAgent.toLowerCase().indexOf("opera")!=-1)
@@ -12,6 +13,7 @@ onload=function(){
 		
 	if(Explorer7 && location.href.indexOf("file:")!=0){prompt("This is just to get input boxes started in IE7 - who deems them unsecure.","I like input boxes...")}
 }
+{/literal}
 </script>
 </head>
 <body>
