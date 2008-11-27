@@ -151,11 +151,9 @@ class Dase_Http_Response
 		} else {
 			header("HTTP/1.1 500 Internal Server Error");
 		}
-
 		if ($msg) {
 			$this->request->error_message = $msg;
 		}
-
 		$error_text = '';
 		if (ini_get('display_errors')) {
 			header("Content-Type: text/plain; charset=utf-8");
@@ -171,7 +169,11 @@ class Dase_Http_Response
 			$error_text .= "[http_error_code] => $code\n";
 		}
 		Dase_Log::debug($error_text);
-		print $error_text;
+		if ($msg) {
+			print $msg;
+		} else {
+			print $error_text;
+		}
 		exit;
 	}
 

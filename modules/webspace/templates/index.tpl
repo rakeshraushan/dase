@@ -46,6 +46,16 @@
 			</ul>
 		</div>
 		{/if}
+		{if $invalid_files|@count}
+		<div class="invalid_list">
+			<h3>unsupported files</h3>
+			<ul>
+				{foreach item=ifile from=$invalid_files}
+				<li>{$ifile.name} ({$ifile.type})</li>
+				{/foreach}
+			</ul>
+		</div>
+		{/if}
 	</div>
 </div>
 {/block}
