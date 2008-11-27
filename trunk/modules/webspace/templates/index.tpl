@@ -10,7 +10,9 @@
 	<h1>UTexas WebSpace Ingester</h1>
 	<div class="content">
 		<form action="manage/{$collection->ascii_id}/webspace" method="get">
-			<span class="wspace">http://webspace.utexas.edu/</span><input type="text" size="{$webspace_path|strlen}" name="webspace_path" value="{$webspace_path}"/>
+			<span
+				class="wspace">http://webspace.utexas.edu/</span><input
+			type="text" size="40" name="webspace_path" value="{$webspace_path}"/>
 			<input type="submit" value="retrieve file listing"/>
 		</form>
 		{if $files|@count}
