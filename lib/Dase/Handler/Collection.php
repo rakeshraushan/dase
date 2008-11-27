@@ -282,6 +282,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$file = Dase_File::newFile($new_file);
 			$media_file = $file->addToCollection($item,true); //check for dups
+			$item->buildSearchIndex();
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
 			$item->expunge();
