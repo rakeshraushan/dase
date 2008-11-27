@@ -156,19 +156,22 @@ class Dase_Http_Response
 			$this->request->error_message = $msg;
 		}
 
+		$error_text = '';
 		if (ini_get('display_errors')) {
 			header("Content-Type: text/plain; charset=utf-8");
-			print "DASe Error Report\n\n";
-			print "================================\n";
-			print "[http_error_code] => $code\n";
-			print $this->request;
-			print "================================\n";
+			$error_text .= "DASe Error Report\n\n";
+			$error_text .= "================================\n";
+			$error_text .= "[http_error_code] => $code\n";
+			$error_text .= $this->request->getLogData();
+			$error_text .= "================================\n";
 		} else {
 			//todo: pretty error message for production
 			header("Content-Type: text/plain; charset=utf-8");
-			print "DASe Error Report\n\n";
-			print "[http_error_code] => $code\n";
+			$error_text .= "DASe Error Report\n\n";
+			$error_text .= "[http_error_code] => $code\n";
 		}
+		Dase_Log::debug($error_text);
+		print $error_text;
 		exit;
 	}
 
