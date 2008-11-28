@@ -84,6 +84,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->getAtomPubServiceDoc());
 	}
 
+	/** this is for ajax retrieval of content versions */
 	public function getContentJson($r)
 	{
 		$user = $r->getUser();
@@ -91,6 +92,29 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->getContentJson());
+	}
+
+	/** this is for simply getting the content 
+	 * note that type MUST be a mime_type
+	 * */
+	public function getContent($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$cont = $this->item->getContents();	
+		if ('xhtml' == $cont->type) {
+			$mime_type = 'application/xhtml+xml';
+		} elseif ('html' == $cont->type) {
+			$mime_type = 'text/html';
+		} elseif ('text' == $cont->type) {
+			$mime_type = 'text/plain';
+		} else {
+			$mime_type = $cont->type;
+		}
+		$r->response_mime_type = $mime_type;
+		$r->renderResponse($cont->text);
 	}
 
 	public function getItemJson($r)

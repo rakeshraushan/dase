@@ -108,7 +108,7 @@ CREATE TABLE `{$table_prefix}content` (
 `updated` varchar(100) default NULL,
 `p_serial_number` varchar(100) default NULL,
 `p_collection_ascii_id` varchar(100) default NULL,
-`type` varchar(10) default NULL,
+`type` varchar(100) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

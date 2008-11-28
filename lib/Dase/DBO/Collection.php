@@ -572,6 +572,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
 			->addCategory('item','http://daseproject.org/category/entrytype');
+		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
+			->addAccept('application/json');
 		$media_repos = APP_ROOT.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Config::get('media_types') as $type) {

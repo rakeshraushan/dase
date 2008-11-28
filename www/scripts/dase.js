@@ -709,7 +709,7 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 			} 
 			if (xmlhttp.status != 200 && xmlhttp.status != 201) {
 				if (error_func) {
-					error_func(xmlhttp.responseText);
+					error_func(xmlhttp.status+' '+xmlhttp.responseText);
 				}
 			} 
 		}

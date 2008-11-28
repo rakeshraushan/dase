@@ -127,7 +127,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
 		$this->update();
-		Dase_Log::info("built indexes for " . $this->serial_number);
+		Dase_Log::debug("built indexes for " . $this->serial_number);
 	}
 
 	public function getMetadata($att_ascii_id = '')
@@ -562,7 +562,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/************** content *******************/
 		$content = $this->getContents();
 		if ($content && $content->text) {
-			$entry->setContent($content->text,$content->type);
+			if ('application/json' == $content->type) {
+				$entry->setExternalContent(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/content','application/json');
+			} else {
+				$entry->setContent($content->text,$content->type);
+			}
 		} else {
 			//switch to the simple xml interface here
 			$div = simplexml_import_dom($entry->setContent());
@@ -843,13 +847,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($content);
 	}
 
-	public function setContent($text,$eid)
+	public function setContent($text,$eid,$type="text")
 	{
 		$c = $this->getCollection();
 		$content = new Dase_DBO_Content;
 		$content->item_id = $this->id;
 		//todo: security! filter input....
 		$content->text = $text;
+		$content->type = $type;
 		$content->p_collection_ascii_id = $c->ascii_id;
 		$content->p_serial_number = $this->serial_number;
 		$content->updated = date(DATE_ATOM);

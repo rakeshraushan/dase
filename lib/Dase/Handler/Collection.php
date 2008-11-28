@@ -353,7 +353,32 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newJsonItem($r)
 	{
-		$r->renderResponse('still working on JSON posts!');
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$json = file_get_contents("php://input");
+		$client_md5 = $r->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($json) != $client_md5) {
+			$r->renderError(412,'md5 does not match');
+		}
+		$item = $this->collection->createNewItem(null,$user->eid);
+		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
+			$title = $_SERVER['HTTP_SLUG'];
+		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
+			$title = $_SERVER['HTTP_TITLE'];
+		} else {
+			$title = $item->serial_number;
+		}
+		$item->setValue('title',$title);
+		$item->setContent($json,$user->eid,'application/json');
+		$item->buildSearchIndex();
+		header("HTTP/1.1 201 Created");
+		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+		echo $item->asAtomEntry();
+		exit;
 	}
 
 	private function _newJsonAttribute($r)
