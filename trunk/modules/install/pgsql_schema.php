@@ -87,7 +87,7 @@ CREATE TABLE {$table_prefix}comment (
 CREATE TABLE {$table_prefix}content (
     id serial NOT NULL,
     text text,
-    "type" character varying(10),
+    "type" character varying(100),
     item_id integer,
     p_collection_ascii_id character varying(100),
     p_serial_number character varying(100),

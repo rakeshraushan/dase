@@ -151,6 +151,13 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	function setExternalContent($url,$mime_type)
+	{
+		$content = $this->addElement('content');
+		$content->setAttribute('src',$url);
+		$content->setAttribute('type',$mime_type);
+	}
+
 	function setContent($text='',$type='text')
 	{
 		if ($this->content_is_set) {
@@ -164,7 +171,7 @@ class Dase_Atom_Entry extends Dase_Atom
 				$content->setAttribute('type','html');
 			} else {
 				$content = $this->addElement('content',$text);
-				$content->setAttribute('type','text');
+				$content->setAttribute('type',$type);
 			}
 		} else {
 			$content = $this->addElement('content');
@@ -247,6 +254,13 @@ class Dase_Atom_Entry extends Dase_Atom
 	function getContent() 
 	{
 		return $this->getAtomElementText('content');
+	}
+
+	function getContentSrc() 
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content') as $el) {
+			return $el->getAttribute('src');
+		}
 	}
 
 	function getContentType() 
