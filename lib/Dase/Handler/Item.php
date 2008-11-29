@@ -294,10 +294,10 @@ class Dase_Handler_Item extends Dase_Handler
 			if ($client_md5 && md5($raw_input) != $client_md5) {
 				$r->renderError(412,'md5 does not match');
 			}
-			$item_entry = Dase_Atom_Entry::load($raw_input);
+			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			if ('item' != $item_entry->entrytype) {
-				//	$item_entry->setEntryType('item');
-				$r->renderError(400,'must be an item entry');
+				$item_entry->setEntryType('item');
+				//$r->renderError(400,'must be an item entry');
 			}
 			$item = $item_entry->update($r);
 			if ($item) {
