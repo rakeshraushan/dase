@@ -204,12 +204,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
-	public function getServiceAtom($r) 
-	{
-		$r->renderResponse($this->collection->getAtompubServiceDoc(),'application/atomsvc+xml');
-	}
-
-
 	public function postToAttributes($r) 
 	{
 		$user = $r->getUser('http');
@@ -303,10 +297,10 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$item_entry = Dase_Atom_Entry::load($raw_input);
+		$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		if ('item' != $item_entry->entrytype) {
 			$item_entry->setEntryType('item');
-			$r->renderError(400,'must be an item entry');
+			//$r->renderError(400,'must be an item entry');
 		}
 		//slug or title will be serial number
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
@@ -510,6 +504,11 @@ class Dase_Handler_Collection extends Dase_Handler
 		$c->buildSearchIndex();
 		$params['msg'] = "rebuilt indexes for $c->collection_name";
 		$r->renderRedirect('',$params);
+	}
+
+	public function getServiceAtom($r)
+	{
+		$this->getService($r);
 	}
 
 	public function getServiceTxt($r)

@@ -10,26 +10,25 @@ class Dase_Handler_Media extends Dase_Handler
 
 	protected function setup($r)
 	{
-		//finish!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//todo: finish
+		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
-		} else {
-			if ('put' != $r->method && 'post' != $r->method) {
-				$r->renderError(404);
-			}
+		} 
+		if ('get' != $r->method) {
+			$this->user = $r->getUser('service');
 		}
-
 
 		/*
 		if (!Dase_Acl::check($this->collection_ascii_id,$this->size)) {
 			if (!$path) {
-				$user = $r->getUser();
-				if (!$user) {
+				$this->user = $r->getUser();
+				if (!$this->user) {
 					$r->renderError(401,'cannot access media');
 				}
-				if (!Dase_Acl::check($this->collection_ascii_id,$this->size,$user->eid)) {
+				if (!Dase_Acl::check($this->collection_ascii_id,$this->size,$this->user->eid)) {
 					$r->renderError(401,'cannot access media');
 				}
 			}
@@ -65,8 +64,7 @@ class Dase_Handler_Media extends Dase_Handler
 		if (!$item) {
 			$r->renderError(404,'no such item');
 		}
-		$user = $r->getUser('http');
-		if (!$user->can('write',$item)) {
+		if (!$this->user->can('write',$item)) {
 			$r->renderError(401,'cannot put media to this item');
 		}
 		$coll = $item->getCollection();
@@ -123,11 +121,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
-		//the returned atom entry links to derivs!
-		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
-		header("Location:". $mle_url,TRUE,201);
-		$r->response_mime_type = 'application/atom+xml';
-		$r->renderResponse($media_file->asAtom());
+		$r->renderOk();
 	}
 
 	/** AtomPub Media Link Entry */
@@ -141,10 +135,31 @@ class Dase_Handler_Media extends Dase_Handler
 		$m->p_serial_number = $serial_number;
 		$m->size = $size; //meaning media directory
 		if ($m->findOne()) {
-			$mle_url = APP_ROOT .'/media/'.$m->p_collection_ascii_id.'/'.$m->size.'/'.$m->p_serial_number.'.atom';
-			header("Location:". $mle_url,TRUE,201);
-			$r->response_mime_type = 'application/atom+xml';
 			$r->renderResponse($m->asAtom());
+		} else {
+			$r->renderError(401);
+		}
+	}
+
+	public function deleteMediaFile($r)
+	{
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		if (!$this->user->can('write',$c)) {
+			$r->renderError(401,'cannot delete media in this collection');
+		}
+		$mf = new Dase_DBO_MediaFile;
+		if ($this->size && $this->collection_ascii_id && $this->serial_number) {
+			$mf->size = $this->size;
+			$mf->p_collection_ascii_id = $this->collection_ascii_id;
+			$mf->p_serial_number = $this->serial_number;
+			if ($mf->findOne()) {
+				$mf->delete();
+				$r->renderOk('deleted resource');
+			} else {
+				$r->renderError(401);
+			}
+		} else {
+			$r->renderError(400,'something missing');
 		}
 	}
 
@@ -202,17 +217,27 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 	}
 
+	public function getCollectionAtom($r) 
+	{
+		$c = Dase_DBO_Collection::get($this->collection_ascii_id);
+		if ($r->has('limit')) {
+		   $limit = $r->get('limit');
+		} else {
+			$limit = 20;
+		}
+		$r->renderResponse($c->mediaAsAtom($limit));
+	}
+
 	public function postToCollection($r)
 	{
-		$user = $r->getUser('service');
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		if (!$user->can('write',$c)) {
+		if (!$this->user->can('write',$c)) {
 			$r->renderError(401,'cannot post media to this collection');
 		}
 		//hand off to item handler
 		try {
 			$item_handler = new Dase_Handler_Item;
-			$item_handler->item = $c->createNewItem(null,$user->eid);
+			$item_handler->item = $c->createNewItem(null,$this->user->eid);
 			$item_handler->postToMedia($r);
 		} catch (Exception $e) {
 			$r->renderError(500,$e->getMessage());
