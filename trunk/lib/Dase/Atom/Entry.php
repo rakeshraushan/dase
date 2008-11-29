@@ -176,6 +176,12 @@ class Dase_Atom_Entry extends Dase_Atom
 			if ('html' == $type) {
 				$content = $this->addElement('content',htmlentities($text,ENT_COMPAT,'UTF-8'));
 				$content->setAttribute('type','html');
+			} elseif ('xhtml' == $type) {
+				$content = $this->addElement('content');
+				$content->setAttribute('type','xhtml');
+				$div = $content->appendChild($this->dom->createElement('div'));
+				$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
+				$div->appendChild($this->dom->createTextNode($text));
 			} else {
 				$content = $this->addElement('content',$text);
 				$content->setAttribute('type',$type);
