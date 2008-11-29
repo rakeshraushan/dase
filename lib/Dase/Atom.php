@@ -107,13 +107,14 @@ class Dase_Atom
 		return $this->getAtomElementText('id');
 	}
 
-	function setId($text) 
+	function setId($text='') 
 	{
 		if ($this->id) {
 			throw new Dase_Atom_Exception('id is already set');
-		} else {
-			$this->id = $text;
-		}
+		} elseif(!$text) {
+			$text = 'tag:daseproject.org,'.date("Y-m-d").':'.time();
+		} 
+		$this->id = $text;
 		$id_element = $this->addElement('id',$text);
 	}
 
@@ -248,8 +249,7 @@ class Dase_Atom
 	function asXml() 
 	{
 		if (!$this->id) {
-			$today = date("Y-m-d"); 
-			$this->setId('tag:daseproject.org,'.$today.':'.time());
+			$this->setId();
 		}
 		if (!$this->updated_is_set) {
 			$this->setUpdated(date(DATE_ATOM));
