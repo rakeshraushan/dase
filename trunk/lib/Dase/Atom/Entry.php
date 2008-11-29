@@ -47,7 +47,7 @@ class Dase_Atom_Entry extends Dase_Atom
 			} else {
 				$this->root = $dom->createElementNS(Dase_Atom::$ns['atom'],'entry');
 			}
-		} else {
+		} else { //no dom & no root
 			//creator object (standalone entry document)
 			$dom = new DOMDocument('1.0','utf-8');
 			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
@@ -82,7 +82,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	public static function load($xml) 
+	public static function load($xml,$force_type='') 
 	{
 		//reader object
 		$dom = new DOMDocument('1.0','utf-8');
@@ -96,22 +96,29 @@ class Dase_Atom_Entry extends Dase_Atom
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
 				$entrytype = $el->getAttribute('term');
-				$class = self::$types_map[$entrytype];
-				if ($class) {
-					$obj = new $class($dom,$root);
-					$obj->entrytype = $entrytype;
-					return $obj;
-				} else {
-					$entry = new Dase_Atom_Entry($dom,$root);
-					$entry->entrytype = 'none';
-					return $entry;
-				}
+				break;
 			}
 		}
-		//in case no category element
-		$entry = new Dase_Atom_Entry($dom);
-		$entry->entrytype = 'none';
-		return $entry;
+		if ($force_type) {
+			$entrytype = $force_type;
+		}
+		//todo: clean up this logic
+		if (isset($entrytype) && isset(self::$types_map[$entrytype])) {
+			$class = self::$types_map[$entrytype];
+			if ($class) {
+				$obj = new $class($dom,$root);
+				$obj->entrytype = $entrytype;
+				return $obj;
+			} else {
+				$entry = new Dase_Atom_Entry($dom,$root);
+				$entry->entrytype = 'none';
+				return $entry;
+			}
+		} else {
+			$entry = new Dase_Atom_Entry($dom);
+			$entry->entrytype = 'none';
+			return $entry;
+		}
 	}
 
 	public function putToUrl($url,$user,$pwd)

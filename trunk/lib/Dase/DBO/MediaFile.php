@@ -107,11 +107,13 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$entry->setUpdated($this->updated);
 		$entry->setSummary('');
 
-		//todo: atompub edit & edit-media links
-		$edit_media_url = APP_ROOT .'/edit-media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/media/'.$this->size;
-		$entry->addLink($edit_media_url,'edit-media');
-		$edit_url = APP_ROOT .'/edit/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/media/'.$this->size;
+		//for AtomPub
+		$entry->setEdited($this->updated);
+		$edit_url = APP_ROOT .'/media/'.$this->p_collection_ascii_id.'/'.$this->size.'/'.$this->p_serial_number.'.atom';
 		$entry->addLink($edit_url,'edit');
+		$ext = Dase_File::$types_map[$this->mime_type]['ext'];
+		$edit_media_url = APP_ROOT .'/media/'.$this->p_collection_ascii_id.'/'.$this->size.'/'.$this->p_serial_number.'.'.$ext;
+		$entry->addLink($edit_media_url,'edit-media');
 		$entry->setMediaContent($this->getLink(),$this->mime_type);
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
 		//todo: beef up w/ bitrate, samplingrate, etc.

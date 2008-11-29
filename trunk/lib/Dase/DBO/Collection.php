@@ -596,4 +596,22 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		return Dase_DBO_Category::get($this,'community');
 	}
+
+	public function mediaAsAtom($limit='20')
+	{
+		$feed = $this->getBaseAtomFeed();
+		$feed->setFeedType('collection');
+		$feed->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
+		$media = new Dase_DBO_MediaFile;
+		$media->p_collection_ascii_id = $this->ascii_id;
+		if ($limit && is_numeric($limit)) {
+			$media->setLimit($limit);
+		}
+		$media->orderBy('updated DESC, width DESC, filename DESC');
+		foreach ($media->find() as $m) {
+			//todo: state type (media?) of entry?
+			$m->injectAtomEntryData($feed->addEntry());
+		}
+		return $feed->asXml();
+	}
 }
