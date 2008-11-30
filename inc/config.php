@@ -50,6 +50,8 @@ if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
 
 //causes tokens to change daily
 $conf['token'] = $conf['token'].date('Ymd',time()); 
+$yesterday = time()-(24*60*60);
+$conf['old_token'] = $conf['token'].date('Ymd',$yesterday); 
 $conf['ppd_token'] = $conf['ppd_token'].date('Ymd',time());
 
 //mime types that collections accept

@@ -687,6 +687,7 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 			xmlhttp.setRequestHeader(k,content_headers[k]);
 		}
 	}
+	xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	if (msgBody) {
 		xmlhttp.send(msgBody);
 	} else {
@@ -759,6 +760,7 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 	if (username && password) {
 		xmlhttp.setRequestHeader('Authorization','Basic '+Base64.encode(username+':'+password));
 	}
+	xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	//xmlhttp.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1970 00:00:00 GMT');
 	xmlhttp.send(null);
 	xmlhttp.onreadystatechange = function() {

@@ -9,11 +9,19 @@ class Dase_Http_Auth
 	 */
 	public static function getEid($check_db = false)
 	{
-		Dase_Log::debug(print_r(apache_request_headers(),true));
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);
-			//Dase_Log::debug(substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12));
+
+			//xmlhttp requests are still fresh for one day after pwd changes
+			$request_headers = apache_request_headers();
+			//Dase_Log::debug(print_r($request_headers,true));
+			if (isset($request_headers['X-Requested-With']) &&
+				"XMLHttpRequest" == $request_headers['X-Requested-With']) 
+			{
+				$passwords[] = substr(md5(Dase_Config::get('old_token').$eid.'httpbasic'),0,12);
+			}
+
 
 			//for service users:
 			$service_users = Dase_Config::get('serviceuser');
