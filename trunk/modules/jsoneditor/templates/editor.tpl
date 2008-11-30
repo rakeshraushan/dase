@@ -1,16 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 	<head>
-		<base href="{$module_root}/"/>
+		<base href="{$module_root}"/>
 		<title>JSON Editor</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
 		<script src="{$app_root}www/scripts/json2.js"></script>
 		<script src="{$app_root}www/scripts/dase.js"></script>
-		<script src="scripts/JSONeditor.js"></script>
-		<script src="scripts/dase_json.js"></script>
+		<script src="{$module_root}/scripts/JSONeditor.js"></script>
+		<script src="{$module_root}/scripts/dase_json.js"></script>
 	</head>
 	<body>
-		<h1>JSON Editor</h1>
+		<h1 id="documentTitle">JSON Editor</h1>
 		<div id="tree"></div>
 		<div id="jform">
 			<form name="jsoninput" onsubmit="return treeBuilder.jsonChange(this)">
@@ -65,18 +65,27 @@
 		</div>
 		<div id="items">
 			<h3>load a JSON document</h3>
-			<form id="daseJsonForm" method="post"
+			<form id="daseJsonSaveForm" method="post">
+				<select name="docs">
+					<option selected="selected">select a document to load</option>
+					{foreach item=item from=$collection->entries}{if 'application/json' == $item->contentType}
+					<option value="{$item->contentSrc}">{$item->title}</option>
+					{/if}{/foreach}
+				</select>
+				<input type="submit" name="save" value="save"/>
+			</form>
+			<form id="daseJsonSaveAsForm" method="post"
 				action="{$app_root}collection/json_lists">
-					<select name="docs">
-						<option>select a document to load</option>
-						{foreach item=item from=$collection->entries}{if 'application/json' == $item->contentType}
-						<option value="{$item->contentSrc}">{$item->title}</option>
-						{/if}{/foreach}
-					</select>
-					<p>
-					<input type="submit" value="save current document as"/>
-					<input type="text" name="title"/>
-					</p>
+				<p>
+				<label>save current document as:</label>
+				<input type="text" name="title"/>
+				<input type="submit" value="save as"/>
+				</p>
+			</form>
+			<form id="daseJsonDeleteForm" method="delete">
+				<p>
+				<input type="submit" name="delete" class="delete" value="delete"/>
+				</p>
 			</form>
 		</div>
 	</body>

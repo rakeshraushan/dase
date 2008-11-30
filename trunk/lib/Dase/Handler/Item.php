@@ -223,13 +223,22 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('added comment: '.$bits);
 	}
 
+	/** this is used to UPDATE an item's content */
 	public function postToContent($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot write to this item');
 		}
-		if ($this->item->setContent($r->get('content'),$user->eid)) {
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' == $content_type) {
+			$content_type = 'text';
+			$content = $r->get('content');
+		} else {
+		//todo: filter this!
+			$content = file_get_contents("php://input");
+		}
+		if ($this->item->setContent($content,$user->eid,$content_type)) {
 			$r->renderResponse('added content');
 		}
 	}
