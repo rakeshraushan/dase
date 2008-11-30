@@ -6,6 +6,7 @@
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css">
 		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="{$app_root}www/scripts/Base64.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 

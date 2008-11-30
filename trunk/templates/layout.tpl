@@ -29,6 +29,7 @@
 		<link rel="service" type="application/atomsvc+xml" href="service"/>
 		{block name="servicedoc"}{/block}
 
+		<script type="text/javascript" src="www/scripts/Base64.js"></script>
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>

@@ -4,6 +4,7 @@
 		<base href="{$module_root}"/>
 		<title>DASe Installation & Configuration</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}css/style.css">
+		<script type="text/javascript" src="{$app_root}www/scripts/Base64.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script> 
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script> 
