@@ -67,6 +67,7 @@ Dase.webspace.initForm = function() {
 	if (!form) return;
 	form.onsubmit = function() {
 		var htuser = Dase.user.eid;
+		//todo: how does it get htpasswd?
 		var htpasswd = Dase.user.htpasswd;
 		coll = Dase.$('collectionAsciiId').innerHTML;
 		//Dase.addClass(Dase.$('checker'),'hide');
