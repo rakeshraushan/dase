@@ -9,6 +9,7 @@ class Dase_Http_Auth
 	 */
 	public static function getEid($check_db = false)
 	{
+		Dase_Log::debug(print_r(apache_request_headers(),true));
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);
@@ -42,6 +43,8 @@ class Dase_Http_Auth
 			} else {
 				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
 			}
+		} else {
+			Dase_Log::debug('PHP_AUTH_USER and/or PHP_AUTH_PW not set');
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');
 		header('HTTP/1.1 401 Unauthorized');

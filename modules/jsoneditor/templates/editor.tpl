@@ -4,6 +4,7 @@
 		<base href="{$module_root}"/>
 		<title>JSON Editor</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
+		<script src="{$app_root}www/scripts/Base64.js"></script>
 		<script src="{$app_root}www/scripts/json2.js"></script>
 		<script src="{$app_root}www/scripts/dase.js"></script>
 		<script src="{$module_root}/scripts/JSONeditor.js"></script>
@@ -14,6 +15,7 @@
 		<div id="tree"></div>
 		<div id="jform">
 			<form name="jsoninput" onsubmit="return treeBuilder.jsonChange(this)">
+				<!--
 				<div id="jExamples">Load an example:
 					<select name="jloadExamples" onchange="JSONeditor.loadExample(this.value)">
 						<option value="0">None/empty</option>
@@ -23,7 +25,10 @@
 						<option value="4">A menu system</option>
 						<option value="5">The source code of this JSON editor</option></select>
 					<br>
-					<br></div>Label:
+					<br>
+				</div>
+				-->
+				Label:
 				<br>
 				<input name="jlabel" type="text" value="" size="60" style="width:400px">
 				<br>

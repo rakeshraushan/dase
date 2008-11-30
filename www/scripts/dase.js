@@ -678,11 +678,9 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 		method = 'POST';
 	}
 	var xmlhttp = Dase.createXMLHttpRequest();
+	xmlhttp.open(method,url,true);
 	if (username && password) {
-		//too expensive??
-		xmlhttp.open(method,url,true,username,password);
-	} else {
-		xmlhttp.open(method,url,true);
+		xmlhttp.setRequestHeader('Authorization','Basic '+Base64.encode(username+':'+password));
 	}
 	if (content_headers) {
 		for (var k in content_headers) {
@@ -757,10 +755,9 @@ Dase.getJSON = function(url,my_func,error_func,params,username,password) {
 		url = url + '?cache_buster=' + date.getTime()+'&format=json';
 	}
 
+	xmlhttp.open('get',url,true);
 	if (username && password) {
-		xmlhttp.open('GET', url, true,username,password);
-	} else {
-		xmlhttp.open('GET', url, true);
+		xmlhttp.setRequestHeader('Authorization','Basic '+Base64.encode(username+':'+password));
 	}
 	//xmlhttp.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1970 00:00:00 GMT');
 	xmlhttp.send(null);
