@@ -14,8 +14,10 @@
 	<h1>Create New Item</h1>
 
 	<div class="uploader">
-		<h4>Attach a File (optional)</h4>
 		<form action="manage/{$collection->ascii_id}" method="post" enctype="multipart/form-data">
+			<label for="title">title</label>
+			<input type="text" name="title"/>
+			<label for="uploaded_file">attach a file</label>
 			<input type="file" name="uploaded_file" size="50"/>
 			<p>
 			<input type="submit" value="Create New Item"/>
@@ -33,7 +35,7 @@
 	{for sernum in recent}
 	<li>
 	<a href='${sernum.item_record_href}'><img src="${sernum.thumbnail_href}"/></a>
-	<h4>${sernum.title}</h4>
+	<h4><a href='${sernum.item_record_href}'>${sernum.title}</a></h4>
 	</li>
 	{/for}
 	{/literal}

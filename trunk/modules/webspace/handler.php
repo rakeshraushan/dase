@@ -24,21 +24,8 @@ class Dase_ModuleHandler_Webspace extends Dase_Handler_Manage {
 					$file['url'] = $enc->getAttribute('url');
 					$file['length'] = ceil((int) $enc->getAttribute('length')/1000);
 					$file['type'] = $enc->getAttribute('type');
-					$types = Dase_Config::get('media_types');
-					$good_type = '';
-					$content_type = $file['type'];
-					if (false !== strpos($content_type,'/')) {
-						list($type,$subtype) = explode('/',$content_type);
-						list($subtype) = explode(";",$subtype); // strip MIME parameters
-						foreach($types as $t) {
-							list($acceptedType,$acceptedSubtype) = explode('/',$t);
-							if($acceptedType == '*' || $acceptedType == $type) {
-								if($acceptedSubtype == '*' || $acceptedSubtype == $subtype)
-									$good_type = $type . "/" . $subtype;
-							}
-						}
-					}
 					$file['name'] = trim(urldecode(str_replace($webspace_url,'',$file['url'])),'/');
+					$good_type = Dase_Media::isAcceptable($file['type']);
 				}
 				if ($good_type) {
 					$files[] = $file;

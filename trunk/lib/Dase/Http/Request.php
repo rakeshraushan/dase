@@ -161,7 +161,7 @@ class Dase_Http_Request
 			$header = $_SERVER['HTTP_CONTENT_TYPE'];
 		}
 		if (isset($header)) {
-			list($type,$subtype,$params) = Dase_Util::parse_mime_type($header);
+			list($type,$subtype,$params) = Dase_Media::parseMimeType($header);
 			if (isset($params['type'])) {
 				return $type.'/'.$subtype.';type='.$params['type'];
 			} else {

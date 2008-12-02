@@ -14,7 +14,9 @@
 		<h2>{$item->title}</h2>
 		{else}
 		<h2 class="collectionLink"><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h2>  
+		{if $item->opensearchTotal}
 		<h3 class="searchEcho">Item {$item->position} of {$item->opensearchTotal} for <span class="searchEcho">{$item->query}</span></h3>
+		{/if}
 		{/if}
 
 		{if $item->opensearchTotal > 1}

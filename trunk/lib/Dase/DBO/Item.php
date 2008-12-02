@@ -250,14 +250,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->item_type;
 	}
 
-	public function getMedia()
+	public function getMedia($order_by='file_size')
 	{
 		Dase_Log::debug("getting media for " . $this->id);
 		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $c->ascii_id;
 		$m->p_serial_number = $this->serial_number;
-		$m->orderBy('file_size');
+		$m->orderBy($order_by);
 		return $m->find();
 	}
 
@@ -684,7 +684,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$feed = new Dase_Atom_Feed;
 		$this->injectAtomFeedData($feed);
-		foreach ($this->getMedia() as $m) {
+		foreach ($this->getMedia('updated DESC') as $m) {
 			$entry = $feed->addEntry();
 			$m->injectAtomEntryData($entry);
 		}
@@ -700,11 +700,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$c = $this->getCollection();
 		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($c->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/media',$c->collection_name.' Item '.$this->serial_number.' Media'); 
+		$media_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/media.atom',$c->collection_name.' Item '.$this->serial_number.' Media'); 
 		foreach(Dase_Config::get('media_types') as $type) {
 			$media_coll->addAccept($type);
 		}
-		$comments_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
+		$comments_coll = $workspace->addCollection(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
 		$comments_coll->addAccept('text/plain');
 		$comments_coll->addAccept('text/html');
 		$comments_coll->addAccept('application/xhtml+xml');
