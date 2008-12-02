@@ -9,12 +9,12 @@ class Dase_Http_Auth
 	 */
 	public static function getEid($check_db = false)
 	{
+		$request_headers = apache_request_headers();
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);
 
 			//xmlhttp requests are still fresh for one day after pwd changes
-			$request_headers = apache_request_headers();
 			//Dase_Log::debug(print_r($request_headers,true));
 			if (isset($request_headers['X-Requested-With']) &&
 				"XMLHttpRequest" == $request_headers['X-Requested-With']) 
@@ -52,6 +52,7 @@ class Dase_Http_Auth
 				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
 			}
 		} else {
+			Dase_Log::debug(print_r($request_headers,true));
 			Dase_Log::debug('PHP_AUTH_USER and/or PHP_AUTH_PW not set');
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');

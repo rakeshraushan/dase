@@ -260,12 +260,19 @@ class Dase_Handler_Manage extends Dase_Handler
 			$name = $_FILES[$input_name]['name'];
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
+			if (!Dase_Media::isAcceptable($type)) {
+				$r->renderError(415,'unsupported media type');
+			}
 			Dase_Log::info('uploading file '.$name.' type: '.$type);
 
 			$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
-			$item->setValue('title',$name);
+			if ($r->has('title')) {
+				$item->setValue('title',$r->get('title'));
+			} else {
+				$item->setValue('title',$name);
+			}
 
-			$file = Dase_File::newFile($path,$type);
+			$file = Dase_File::newFile($path,$type,$name);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false);
 			$item->buildSearchIndex();

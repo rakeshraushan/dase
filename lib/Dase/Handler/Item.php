@@ -337,18 +337,9 @@ class Dase_Handler_Item extends Dase_Handler
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
 			$r->renderError(411,'missing content length');
 		}
-		$types = Dase_Config::get('media_types');
-		//clean this up (prob from wordpress)
-		//415 if unsupported?
-		$content_type = $r->getContentType();
-		list($type,$subtype) = explode('/',$content_type);
-		list($subtype) = explode(";",$subtype); // strip MIME parameters
-		foreach($types as $t) {
-			list($acceptedType,$acceptedSubtype) = explode('/',$t);
-			if($acceptedType == '*' || $acceptedType == $type) {
-				if($acceptedSubtype == '*' || $acceptedSubtype == $subtype)
-					$type = $type . "/" . $subtype;
-			}
+		$content_type = Dase_Media::isAcceptable($r->getContentType());
+		if (!$content_type) {
+			$r->renderError(415,'not an accepted media type');
 		}
 		$fp = fopen("php://input", "rb");
 		$bits = NULL;
@@ -373,8 +364,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
 
-		$ext = $subtype;
-		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+		$new_file = $upload_dir.'/'.$item->serial_number;
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
@@ -387,7 +377,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$type);
+			$file = Dase_File::newFile($new_file,$content_type);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original

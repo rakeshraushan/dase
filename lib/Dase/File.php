@@ -39,6 +39,7 @@ abstract class Dase_File
 			$this->mime_type = $mime;
 			$this->extension = self::$types_map[$mime]['ext'];
 		} else {
+			//we need an extension if no mime type passed in
 			//todo: will be a problem if no extention is returned in path_parts
 			$this->extension = $path_parts['extension'];
 		}
@@ -168,7 +169,7 @@ abstract class Dase_File
 	{
 		$this->metadata['md5'] = md5_file($this->filepath);
 		$this->metadata['file_size'] = $this->file_size;
-		$this->metadata['filename'] = $this->basename;
+		$this->metadata['filename'] = $this->orig_name;
 		$this->metadata['updated'] = date(DATE_ATOM,filemtime($this->filepath)); 
 		$this->metadata['mime_type'] = $this->mime_type;
 		//for admin_ attributes:
