@@ -42,8 +42,15 @@ CREATE TABLE {$table_prefix}attribute_item_type (
 CREATE TABLE {$table_prefix}category (
     id serial NOT NULL,
     term character varying(200),
-    scheme character varying(200),
-    label character varying(200)
+    label character varying(200),
+    scheme_id integer
+);
+
+CREATE TABLE {$table_prefix}category_scheme (
+    id serial NOT NULL,
+    uri character varying(200),
+    description character varying(2000),
+    fixed integer
 );
 
 CREATE TABLE {$table_prefix}collection (
@@ -136,25 +143,9 @@ CREATE TABLE {$table_prefix}input_template (
     attribute_id integer
 );
 
-CREATE TABLE {$table_prefix}item_link (
-    id serial NOT NULL,
-    href character varying(2000),
-    rel character varying(100),
-    "type" character varying(50),
-    title character varying(100),
-    length integer,
-    item_unique character varying(100)
-);
-
 CREATE TABLE {$table_prefix}item_category (
     id serial NOT NULL,
     item_id integer,
-    category_id integer
-);
-
-CREATE TABLE {$table_prefix}item_link_category (
-    id serial NOT NULL,
-    item_link_id integer,
     category_id integer
 );
 
@@ -164,6 +155,13 @@ CREATE TABLE {$table_prefix}item_type (
     name character varying(200),
     ascii_id character varying(200) NOT NULL,
     description character varying(2000)
+);
+
+CREATE TABLE {$table_prefix}item_type_relation (
+    id serial NOT NULL,
+    parent_type_id integer,
+    child_type_id integer,
+    category_scheme_id character varying(200)
 );
 
 CREATE TABLE {$table_prefix}media_file (
@@ -291,12 +289,6 @@ CREATE SEQUENCE {$table_prefix}item_category_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}item_link_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}tag_category_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -328,6 +320,20 @@ CREATE SEQUENCE {$table_prefix}attribute_item_type_seq
     CACHE 1;
 
 CREATE SEQUENCE {$table_prefix}collection_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}category_scheme_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE SEQUENCE {$table_prefix}category_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -375,13 +381,14 @@ CREATE SEQUENCE {$table_prefix}input_template_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}item_link_seq
+CREATE SEQUENCE {$table_prefix}item_type_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}item_type_seq
+CREATE SEQUENCE {$table_prefix}item_type_relation_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -451,16 +458,20 @@ ALTER TABLE {$table_prefix}item_category
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_category_seq'::text);
 ";
 $query .= "
-ALTER TABLE {$table_prefix}item_link_category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_link_category_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}tag_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_category_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}tag_item_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_category_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}category 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}category_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}category_scheme 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}category_scheme_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}admin_search_table 
@@ -507,12 +518,12 @@ ALTER TABLE {$table_prefix}input_template
 ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text);
 ";
 $query .= "
-ALTER TABLE {$table_prefix}item_link 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_link_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}item_type 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}item_type_relation 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_relation_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}media_file 

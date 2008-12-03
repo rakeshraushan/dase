@@ -50,8 +50,16 @@ PRIMARY KEY (`id`)
 CREATE TABLE `{$table_prefix}category` (
 `id` int(11) NOT NULL auto_increment,
 `term` varchar(200) default NULL,
-`scheme` varchar(200) default NULL,
+`scheme_id` int(11) default NULL,
 `label` varchar(200) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `{$table_prefix}category_scheme` (
+`id` int(11) NOT NULL auto_increment,
+`uri` varchar(200) default NULL,
+`description` varchar(2000) default NULL,
+`fixed` tinyint(1) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -169,31 +177,20 @@ CREATE TABLE `{$table_prefix}item_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}item_link` (
-`id` int(11) NOT NULL auto_increment,
-`length` int(11) default NULL,
-`item_unique` varchar(100) default NULL,
-`title` varchar(100) default NULL,
-`type` varchar(50) default NULL,
-`rel` varchar(100) default NULL,
-`href` varchar(2000) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}item_link_category` (
-`id` int(11) NOT NULL auto_increment,
-`item_link_id` int(11) default NULL,
-`category_id` int(11) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE `{$table_prefix}item_type` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` int(11) default NULL,
 `description` varchar(2000) default NULL,
 `ascii_id` varchar(200) default NULL,
 `name` varchar(200) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `{$table_prefix}item_type_relation` (
+`id` int(11) NOT NULL auto_increment,
+`parent_type_id` int(11) default NULL,
+`child_type_id` int(11) default NULL,
+`category_scheme_id` int(11) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
