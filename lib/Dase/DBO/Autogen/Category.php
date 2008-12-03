@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Category extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'category',  array('label','scheme','term'));
+		parent::__construct( 'category',  array('label','scheme_id','term'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;
