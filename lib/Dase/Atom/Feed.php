@@ -1,4 +1,17 @@
 <?php
+
+/*** a minimal atom feed
+ 
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:daseproject.org,2008:temp</id>
+  <author><name/></author>
+  <title>title</title>
+  <updated>2008-01-01T00:00:00Z</updated>
+  <link href="http://daseproject.org/atom/entry/template.html"/>
+</entry>
+
+*********/
+
 class Dase_Atom_Feed extends Dase_Atom 
 {
 	protected $_entries = array();
@@ -16,6 +29,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		'attributes' => array(
 			'feed' => 'Dase_Atom_Feed_Collection',
 			'entry' => 'Dase_Atom_Entry_Attribute',
+		),
+		'category_scheme_list' => array(
+			'feed' => 'Dase_Atom_Feed_CategorySchemeList', 
+			'entry' => 'Dase_Atom_Entry_CategoryScheme'
 		),
 		'collection_list' => array(
 			'feed' => 'Dase_Atom_Feed_CollectionList', 

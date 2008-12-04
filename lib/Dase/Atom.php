@@ -210,7 +210,7 @@ class Dase_Atom
 		}
 	}
 
-	function getXpathValue($xpath) 
+	function getXpathValue($xpath,$context_node = null) 
 	{
 		if ('DOMDocument' != get_class($this->dom)) {
 			$c = get_class($this->dom);
@@ -220,7 +220,11 @@ class Dase_Atom
 		foreach (Dase_Atom::$ns as $k => $v) {
 			$x->registerNamespace($k,$v);
 		}
-		$it = $x->query($xpath)->item(0);
+		if ($context_node) {
+			$it = $x->query($xpath,$context_node)->item(0);
+		} else {
+			$it = $x->query($xpath)->item(0);
+		}
 		if ($it) {
 			return $it->nodeValue;
 		}
@@ -233,7 +237,7 @@ class Dase_Atom
 
 	function getUpdated() 
 	{
-		return $this->getAtomElementText('content');
+		return $this->getAtomElementText('updated');
 	}
 
 	function setUpdated($text) 

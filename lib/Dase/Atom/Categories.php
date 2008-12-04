@@ -13,7 +13,7 @@ class Dase_Atom_Categories extends Dase_Atom
 		}  else {
 			//creator object
 			$dom = new DOMDocument('1.0','utf-8');
-			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['app'],'categories'));
+			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['app'],'app:categories'));
 			$this->dom = $dom;
 		}
 	}
@@ -40,12 +40,12 @@ class Dase_Atom_Categories extends Dase_Atom
 		$this->root->setAttribute('scheme',$scheme);
 	}
 
-	function getFixed($yes_or_no) 
+	function getFixed() 
 	{
 		$this->root->getAttribute('fixed');
 	}
 
-	function getScheme($scheme) 
+	function getScheme() 
 	{
 		$this->root->getAttribute('scheme');
 	}
@@ -82,4 +82,5 @@ class Dase_Atom_Categories extends Dase_Atom
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();
 	}
+
 }
