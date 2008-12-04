@@ -5,7 +5,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'collection_form',
 		'attributes' => 'attributes',
-		'category/form' => 'category_form',
+		'category_scheme/form' => 'category_scheme_form',
 		'categories' => 'categories',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
@@ -192,13 +192,15 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/collection_form.tpl'));
 	}
 
-	public function getCategoryForm($r)
+	public function getCategorySchemeForm($r)
 	{
+		if ($r->has('uri')) {
+			echo $r->get('uri');
+			exit;
+		}
 		$tpl = new Dase_Template($r);
-		$cats = new Dase_DBO_Category;
-		$cats->orderBy('scheme, term');
-		$tpl->assign('cats',$cats->find());
-		$r->renderResponse($tpl->fetch('admin/category_form.tpl'));
+		$tpl->assign('schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/category/schemes.atom'));
+		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
 	}
 
 	public function postToCategories($r)

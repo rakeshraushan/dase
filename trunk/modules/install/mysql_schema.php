@@ -58,8 +58,11 @@ PRIMARY KEY (`id`)
 CREATE TABLE `{$table_prefix}category_scheme` (
 `id` int(11) NOT NULL auto_increment,
 `uri` varchar(200) default NULL,
+`name` varchar(200) default NULL,
 `description` varchar(2000) default NULL,
 `fixed` tinyint(1) default NULL,
+`created_by_eid` varchar(50) default NULL,
+`created` varchar(50) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

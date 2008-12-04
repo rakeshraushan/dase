@@ -17,6 +17,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		}
 	}
 
+	/** used by Dase_Handler_Tag::putEdit() */
 	function update($r) 
 	{
 		$user = $r->getUser();

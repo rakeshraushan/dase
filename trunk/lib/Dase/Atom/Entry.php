@@ -2,7 +2,6 @@
 
 /*** a minimal atom entry
  
-<?xml version="1.0" encoding="utf-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom">
   <id>tag:daseproject.org,2008:temp</id>
   <author><name/></author>
@@ -144,8 +143,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-
-
 	function __get($var) 
 	{
 		//allows smarty to invoke function as if getter
@@ -163,6 +160,21 @@ class Dase_Atom_Entry extends Dase_Atom
 		$content = $this->addElement('content');
 		$content->setAttribute('src',$url);
 		$content->setAttribute('type',$mime_type);
+	}
+
+	function setContentXml($xml,$type)
+	{
+		if ($this->content_is_set) {
+			throw new Dase_Atom_Exception('content is already set');
+		} else {
+			$this->content_is_set = true;
+		}
+		$content = $this->addElement('content');
+		$content->setAttribute('type',$type);
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->loadXml($xml);
+		$inner = $this->dom->importNode($dom->getElementsByTagName('*')->item(0),true);
+		$content->appendChild($inner);
 	}
 
 	function setContent($text='',$type='text')
@@ -283,6 +295,11 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	function getContentXmlNode() 
+	{
+		return $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content')->item(0)->getElementsByTagName('*')->item(0);
+	}
+
 	function getId() 
 	{
 		return $this->getAtomElementText('id');
@@ -314,7 +331,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function getAuthorName()
 	{
-		return $this->getXpathValue("atom:author/atom:name");
+		return $this->getXpathValue("atom:author/atom:name",$this->root);
 	}
 
 	function getCategories() {

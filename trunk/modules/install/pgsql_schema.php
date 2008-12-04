@@ -49,7 +49,10 @@ CREATE TABLE {$table_prefix}category (
 CREATE TABLE {$table_prefix}category_scheme (
     id serial NOT NULL,
     uri character varying(200),
+    name character varying(200),
     description character varying(2000),
+    created character varying(50),
+    created_by_eid character varying(50),
     fixed integer
 );
 

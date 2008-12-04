@@ -41,10 +41,11 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		}
 		$sql = "
 			SELECT e2cat.id 
-			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat
+			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
-			AND cat.scheme = ?
+			AND csh.id = cat.scheme_id
+			AND csh.uri.scheme = ?
 			$term_filter
 			";
 		foreach (Dase_DBO::query($sql,$params) as $row) {
@@ -57,11 +58,15 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public static function getLabel($scheme,$term)
 	{
-		$cat = new Dase_DBO_Category;
-		$cat->scheme = $scheme;
-		$cat->term = $term;
-		$cat->findOne();
-		return $cat->label;
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT cat.label 
+			FROM {$prefix}category cat, {$prefix}category_scheme csh
+			WHERE cat.term = ?
+			AND csh.id = cat.scheme_id
+			AND csh.uri = ?
+			";
+		return Dase_DBO::query($sql,array($term,$scheme))->fetchColumn();
 	}
 
 	public static function add($entity_obj,$scheme,$term,$label='')
@@ -111,11 +116,12 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		$params[] = $scheme;
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
-			SELECT cat.id, cat.scheme, cat.term, cat.label 
-			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat
+			SELECT cat.id, csh.uri as scheme, cat.term, cat.label 
+			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
-			AND cat.scheme = ?
+			AND csh.uri = ?
+			AND csh.id = cat.scheme_id
 			";
 		foreach (Dase_DBO::query($sql,$params) as $row) {
 			//todo: simply returns first one!!!!
@@ -133,10 +139,11 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		$params[] = $entity_obj->id;
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
-			SELECT cat.id, cat.scheme, cat.term, cat.label 
-			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat
+			SELECT cat.id, csh.uri as scheme, cat.term, cat.label 
+			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
+			AND csh.id = cat.scheme_id
 			";
 		foreach (Dase_DBO::query($sql,$params) as $row) {
 			$category = new Dase_DBO_Category($row);
@@ -147,25 +154,16 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public function getScheme()
 	{
-		if (!$this->scheme || 'none' == $this->scheme) {
+		if (!$this->scheme_id) {
 			return '';
 		}
-		if ('http' == substr($this->scheme,0,4)) {
-			return $this->scheme;
+		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme->load($this->scheme_id);
+		if ('http' == substr($scheme->uri,0,4)) {
+			return $scheme->uri;
 		} else {
-			return 'http://daseproject.org/category/'.$this->scheme;
+			return APP_ROOT.'/coolcat/'.$scheme->uri;
 		}
 	}
 
-	public static function listAsXml()
-	{
-		$atom_cats = new Dase_Atom_Categories;
-		$atom_cats->setFixed('no');
-		$cats = new Dase_DBO_Category;
-		foreach ($cats->find() as $cat) {
-			$atom_cats->addCategory($cat->term,$cat->getScheme(),$cat->label);
-		}
-		return $atom_cats->asXml();
-
-	}
 }

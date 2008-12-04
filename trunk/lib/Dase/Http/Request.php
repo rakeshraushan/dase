@@ -9,15 +9,16 @@ class Dase_Http_Request
 
 	public static $types = array(
 		'atom' =>'application/atom+xml',
-		'json' =>'application/json',
-		'html' =>'text/html',
-		'default' =>'text/html',
+		'cats' =>'application/atomcat+xml',
 		'css' =>'text/css',
-		'txt' =>'text/plain',
-		'jpg' =>'image/jpeg',
+		'default' =>'text/html',
 		'gif' =>'image/gif',
-		'pdf' =>'application/pdf',
+		'html' =>'text/html',
+		'jpg' =>'image/jpeg',
+		'json' =>'application/json',
 		'mp3' =>'audio/mpeg',
+		'pdf' =>'application/pdf',
+		'txt' =>'text/plain',
 	);
 	public $content_type;
 	public $error_message;
