@@ -254,14 +254,30 @@ class Dase_Atom_Entry extends Dase_Atom
 		//finish!!!!!!!!!!
 	}
 
-	function setSummary($text)
+	function setSummary($text,$type='')
 	{
 		if ($this->summary_is_set) {
 			throw new Dase_Atom_Exception('summary is already set');
 		} else {
 			$this->summary_is_set = true;
 		}
-		$summary = $this->addElement('summary',$text);
+		if ('html' == $type) {
+			$summary = $this->addElement('summary',htmlentities($text,ENT_COMPAT,'UTF-8'));
+			$summary->setAttribute('type','html');
+		} else {
+			$summary = $this->addElement('summary',$text);
+		}
+	}
+
+	/** we use the summary element to embed thumbnail */
+	function setThumbnail($url)
+	{
+		$summary = $this->addElement('summary');
+		$summary->setAttribute('type','xhtml');
+		$div = $summary->appendChild($this->dom->createElement('div'));
+		$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
+		$thumbnail = $div->appendChild($this->dom->createElement('img'));
+		$thumbnail->setAttribute('src',$url);
 	}
 
 	function getSummary() 

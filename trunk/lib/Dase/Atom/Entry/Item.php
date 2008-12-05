@@ -26,11 +26,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getLink('http://daseproject.org/relation/search-item');
 	}
 
-	function getMediaCollectionLink()
-	{
-		return $this->getLink('http://daseproject.org/relation/media-collection');
-	}
-
 	function getEditLink()
 	{
 		return $this->getLink('edit');

@@ -5,8 +5,8 @@ class Dase_Handler_Admin extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'collection_form',
 		'attributes' => 'attributes',
-		'category_scheme/form' => 'category_scheme_form',
-		'categories' => 'categories',
+		'category/scheme/form' => 'category_scheme_form',
+		'category/schemes' => 'category_schemes',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'docs' => 'docs',
@@ -25,8 +25,8 @@ class Dase_Handler_Admin extends Dase_Handler
 	public function setup($r)
 	{
 		//all routes here require superuser privileges
-		$user = $r->getUser();
-		if ( 'modules' != $r->resource && !$user->isSuperuser()) {
+		$this->user = $r->getUser();
+		if ( 'modules' != $r->resource && !$this->user->isSuperuser()) {
 			$r->renderError(401);
 		}
 	}
@@ -203,14 +203,17 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
 	}
 
-	public function postToCategories($r)
+	public function postToCategorySchemes($r)
 	{
-		$cat = new Dase_DBO_Category;
-		$cat->term = $r->get('term');
-		$cat->scheme = $r->get('scheme');
-		$cat->label = $r->get('label');
-		$cat->insert();
-		$r->renderRedirect('admin/category/form');
+		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme->name = $r->get('name');
+		$scheme->fixed = $r->get('fixed');
+		$scheme->uri = $r->get('uri');
+		$scheme->description = $r->get('description');
+		$scheme->created = date(DATE_ATOM);
+		$scheme->created_by_eid = $this->user->eid;
+		$scheme->insert();
+		$r->renderRedirect('admin/category/scheme/form');
 	}
 
 	public function getPalette($r)

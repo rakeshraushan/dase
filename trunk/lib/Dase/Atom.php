@@ -121,18 +121,19 @@ class Dase_Atom
 	function addLink($href,$rel='',$type='',$length='',$title='') 
 	{
 		$link = $this->addElement('link');
-		$link->setAttribute('href',$href);
+		//a felicitous attribute order
 		if ($rel) {
 			$link->setAttribute('rel',$rel);
 		}
+		if ($title) {
+			$link->setAttribute('title',$title);
+		}
+		$link->setAttribute('href',$href);
 		if ($type) {
 			$link->setAttribute('type',$type);
 		}
 		if ($length) {
 			$link->setAttribute('length',$length);
-		}
-		if ($title) {
-			$link->setAttribute('title',$title);
 		}
 		return $link;
 	}
