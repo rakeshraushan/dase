@@ -6,14 +6,14 @@
 <div class="list" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Add a Category Scheme:</h1>
-	<form class="adminForm" action="admin/categories" method="post">
+	<form class="adminForm" action="admin/category/schemes" method="post">
 		<p>
 		<label for="name">Name:</label>
 		<input type="text" name="name" value=""/>
 		</p>
 		<p>
 		<label for="scheme">Scheme URI:</label>
-		<input type="text" name="scheme" value=""/>
+		<input type="text" name="uri" value=""/>
 		</p>
 		<p>
 		<label for="label">Fixed:</label>

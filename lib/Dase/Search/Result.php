@@ -115,8 +115,8 @@ class Dase_Search_Result
 		$feed->addLink(APP_ROOT.'/'.$this->url.'&format=atom&start='.$start.'&max='.$max,'self');
 		//$feed->addLink($this->url,'alternate','text/html','',$search_title);
 		$feed->addLink($this->url,'alternate','text/html','','Search Result');
-		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=grid','alternate','text/html','','grid');
-		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=list','alternate','text/html','','list');
+		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=grid','related','text/html','','grid');
+		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=list','related','text/html','','list');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->setFeedType('search');
 		if (isset($next)) {

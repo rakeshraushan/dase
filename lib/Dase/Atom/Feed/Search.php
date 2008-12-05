@@ -45,12 +45,12 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 
 	function getListLink()
 	{
-		return $this->getLink('alternate','list');
+		return $this->getLink('related','list');
 	}
 
 	function getGridLink()
 	{
-		return $this->getLink('alternate','grid');
+		return $this->getLink('related','grid');
 	}
 
 	/** for single collection searches only */

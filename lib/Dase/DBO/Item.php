@@ -539,7 +539,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setEdited($updated);
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number,'alternate');
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','edit' );
-		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/media','http://daseproject.org/relation/media-collection' );
 
 		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );
 		$thr_count = $this->getCommentsCount();
@@ -567,23 +566,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				$entry->setContent($content->text,$content->type);
 			}
-		} else {
-			//switch to the simple xml interface here
-			$div = simplexml_import_dom($entry->setContent());
-			$thumb_url = $this->getMediaUrl('thumbnail');
-			if ($thumb_url) {
-				$img = $div->addChild('img');
-				$img->addAttribute('src',$thumb_url);
-				$img->addAttribute('class','thumbnail');
-			}
+		} 
+		$thumb_url = $this->getMediaUrl('thumbnail');
+		if ($thumb_url) {
+			$entry->setThumbnail($thumb_url);	
 		}
-		//	$keyvals = $div->addChild('dl');
-		//	$keyvals->addAttribute('class','metadata');
 		foreach ($this->getMetadata() as $row) {
-			//php dom will escape text for me here (no, it won't!!)....
-			//$attname = $keyvals->addChild('dt',htmlspecialchars($row['attribute_name']));
-			//$val = $keyvals->addChild('dd',htmlspecialchars($row['value_text']));
-			//$val->addAttribute('class',$row['ascii_id']);
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 			if ($row['is_on_list_display']) {
