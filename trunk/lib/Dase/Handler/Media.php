@@ -5,7 +5,7 @@ class Dase_Handler_Media extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/{size}/{serial_number}' => 'media_file',
-		'{collection_ascii_id}/{serial_number}' => 'media_file', //for 'PUT'
+		'{collection_ascii_id}/{serial_number}' => 'media', //for 'PUT'
 	);
 
 	protected function setup($r)
@@ -58,7 +58,7 @@ class Dase_Handler_Media extends Dase_Handler
 	}
 
 	/** used for swap-out */
-	public function putMediaFile($r)
+	public function putMedia($r)
 	{
 		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
 		if (!$item) {
@@ -118,42 +118,38 @@ class Dase_Handler_Media extends Dase_Handler
 	}
 
 	/** AtomPub Media Link Entry */
-	public function getMediaFileAtom($r)
+	public function getMediaAtom($r)
 	{
-		$collection_ascii_id = $r->get('collection_ascii_id');
-		$serial_number = $r->get('serial_number');
-		$size = $r->get('size');
-		$m = new Dase_DBO_MediaFile;
-		$m->p_collection_ascii_id = $collection_ascii_id;
-		$m->p_serial_number = $serial_number;
-		$m->size = $size; //meaning media directory
-		if ($m->findOne()) {
+		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		if (!$item) {
+			$r->renderError(404,'no such item');
+		}
+		$m = $item->getEnclosure();
+		if ($m) {
 			$r->renderResponse($m->asAtom());
 		} else {
-			$r->renderError(401);
+			$r->renderError(404);
 		}
 	}
 
-	public function deleteMediaFile($r)
+	public function deleteMedia($r)
 	{
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		if (!$this->user->can('write',$c)) {
-			$r->renderError(401,'cannot delete media in this collection');
+		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		if (!$item) {
+			$r->renderError(404,'no such item');
 		}
-		$mf = new Dase_DBO_MediaFile;
-		if ($this->size && $this->collection_ascii_id && $this->serial_number) {
-			$mf->size = $this->size;
-			$mf->p_collection_ascii_id = $this->collection_ascii_id;
-			$mf->p_serial_number = $this->serial_number;
-			if ($mf->findOne()) {
-				$mf->delete();
-				$r->renderOk('deleted resource');
-			} else {
-				$r->renderError(401);
-			}
-		} else {
-			$r->renderError(400,'something missing');
+		if (!$this->user->can('write',$item)) {
+			$r->renderError(401,'cannot delete media in this item');
 		}
+		try {
+			$item->deleteAdminValues();
+			$item->deleteMedia();
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$r->renderError(500,'could not delete media ('.$e->getMessage().')');
+		}
+		$item->buildSearchIndex();
+		$r->renderOk('deleted resource');
 	}
 
 	private function _fixSizeExt($serial_number,$size)
@@ -218,7 +214,7 @@ class Dase_Handler_Media extends Dase_Handler
 		} else {
 			$limit = 20;
 		}
-		$r->renderResponse($c->mediaAsAtom($limit));
+		$r->renderResponse($c->asAtom($limit));
 	}
 
 	public function postToCollection($r)

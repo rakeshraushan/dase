@@ -597,6 +597,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_DBO_Category::get($this,'community');
 	}
 
+/** should not be a separate feed
 	public function mediaAsAtom($limit='20')
 	{
 		$feed = $this->getBaseAtomFeed();
@@ -614,4 +615,5 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		return $feed->asXml();
 	}
+ */
 }

@@ -588,7 +588,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/************** end content *******************/
 
 		//much of the following can go in Dase_Atom_Entry
-		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
+		$media_link = $entry->addLink(APP_ROOT.'/media/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit-media');
+		$media_group = $entry->addChildElement($media_link,'media:group',null,Dase_Atom::$ns['media']);
 
 		foreach ($this->getMedia() as $med) {
 			if ($med->size == 'thumbnail') {

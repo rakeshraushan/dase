@@ -389,7 +389,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$item->expireCaches();
 		$item->buildSearchIndex();
 		//the returned atom entry links to derivs!
-		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->size.'/'.$media_file->p_serial_number.'.atom';
+		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
 		$r->response_mime_type = 'application/atom+xml';
 		$r->renderResponse($media_file->asAtom());
