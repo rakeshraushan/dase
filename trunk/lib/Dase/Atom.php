@@ -253,12 +253,6 @@ class Dase_Atom
 
 	function asXml() 
 	{
-		if (!$this->id) {
-			$this->setId();
-		}
-		if (!$this->updated_is_set) {
-			$this->setUpdated(date(DATE_ATOM));
-		}
 		//format output
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();

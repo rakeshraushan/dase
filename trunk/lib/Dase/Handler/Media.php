@@ -117,6 +117,22 @@ class Dase_Handler_Media extends Dase_Handler
 		$r->renderOk();
 	}
 
+	/** GET on edit-media url */
+	public function getMedia($r)
+	{
+		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		if (!$item) {
+			$r->renderError(404,'no such item');
+		}
+		$m = $item->getEnclosure();
+		if ($m) {
+			$format = Dase_File::$types_map[$m->mime_type]['ext'];
+			$r->serveFile($m->getLocalPath(),$m->mime_type);
+		} else {
+			$r->renderError(404);
+		}
+	}
+
 	/** AtomPub Media Link Entry */
 	public function getMediaAtom($r)
 	{

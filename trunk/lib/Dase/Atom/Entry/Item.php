@@ -39,10 +39,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getViewitemLink()
 	{
+		return "http://quickdraw.laits.utexas.edu/dase1/media/test/thumbnail/000447414_100.jpg";
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		$elem =  $x->query("media:group/media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
+		$elem =  $x->query("atom:link/media:group/media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
 		if ($elem) {
 			return $elem->getAttribute('url');
 		}
@@ -100,7 +101,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		$elem =  $x->query("media:group/media:content/media:category[. = '$size']",$this->root)->item(0)->parentNode;
+		$elem =  $x->query("atom:link/media:group/media:content/media:category[. = '$size']",$this->root)->item(0)->parentNode;
 		if ($elem) {
 			return $elem->getAttribute('url');
 		}
