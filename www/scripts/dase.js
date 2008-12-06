@@ -1000,61 +1000,6 @@ Dase.scrollTo = function (obj) {
 	}
 }
 
-
-// should probably be in page-specific script:
-Dase.initAttributeEdit = function() {
-	var att_form;
-	var att_form_link = Dase.$('attribute_form_link');
-	if (!att_form_link) return;
-	Dase.ajax(att_form_link.href,'get',function(txt) {
-		att_form = txt;
-	});
-	var att_data_link = Dase.$('attribute_data_link');
-	if (!att_data_link) return;
-	var atts_data;
-	Dase.getJSON(att_data_link.href,function(json) {
-		atts_data = json;
-	});
-	var table = Dase.$('attributesTable');
-	if (!table) return;
-	var links = table.getElementsByTagName('a');
-	for (var i=0;i<links.length;i++) {
-		var classes = links[i].className.split(" ");
-		if (classes && classes[1] && 'attribute' == classes[0]) {
-			links[i].onclick = function() {
-				Dase.loadingMsg(true);
-				var att_ascii = this.className.split(" ")[1];
-				var editRow = Dase.$('editRow-'+att_ascii);
-				Dase.toggle(editRow);
-				Dase.scrollTo(this);
-				var data = { 'att': atts_data['attributes'][att_ascii]};
-				//for select menu
-				data.att.ordered_atts = atts_data.ordered_atts;
-				data.sort = Dase.$('sort').innerHTML;
-				var templateObj = TrimPath.parseTemplate(att_form);
-				editRow.innerHTML = templateObj.process(data);
-				var d_button = Dase.$('deleteAtt');
-				if (d_button) {
-					d_button.onclick = function() {
-						return confirm('are you sure?');
-					};
-				}
-			 	var def_form = Dase.$('defined_values_form');
-				if (def_form) {
-					def_form.onsubmit = function() {
-						Dase.ajax(def_form.action,'put',function(resp) {
-							var jsonObj = JSON.parse(resp);
-							Dase.updateDefinedValues(jsonObj);
-						},this.defined_values_input.value);
-						return false;
-					};
-				}
-				return false;
-			};
-		}
-	}
-};
-
 Dase.updateDefinedValues = function(json) {
 	var ul = Dase.$('defined_values_list');
 	ul.innerHTML = '';
@@ -1112,7 +1057,6 @@ Dase.addLoadEvent(function() {
 	Dase.initRemoveItems();
 	Dase.initSubmitConfirm();
 	Dase.initLogoff();
-	Dase.initAttributeEdit();
 	if (Dase.pageInit && typeof Dase.pageInit === 'function') {
 		Dase.pageInit();
 	}

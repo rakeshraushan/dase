@@ -34,14 +34,37 @@ span#userName {
 	color: #ccc;
 }
 
+div#catColumn {
+	background-color: #d5deed;
+}
+
+div#catColumn a.spill {
+	background-color: #f7f9ff;
+	background-color: #fff;
+}
+
+div#attColumn {
+	width: 50%;
+	padding: 10px 20px;
+	background-color: #f4f6fc;
+	background-color: #f7f9ff;
+	background-color: #fff;
+}
+
 div#sidebar
 {
 	margin: 0px 3px;
+	width: 18%;
+}
+
+div#content,div#footer
+{
+	margin-left: 18.6%;
 }
 
 ul#menu a {
 	display:block;
-	padding: 9px 9px 9px 18px;
+	padding: 6px;
 	margin: 4px 0px;
 }
 ul#menu img {
@@ -59,7 +82,7 @@ ul#menu li:hover {
 
 ul#menuGrayed a {
 	display:block;
-	padding: 9px 9px 9px 18px;
+	padding: 6px;
 	margin: 4px 0px;
 	background-color: #ddd;
 }
