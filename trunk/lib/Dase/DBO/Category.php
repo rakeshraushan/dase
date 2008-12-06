@@ -45,7 +45,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
 			AND csh.id = cat.scheme_id
-			AND csh.uri.scheme = ?
+			AND csh.uri = ?
 			$term_filter
 			";
 		foreach (Dase_DBO::query($sql,$params) as $row) {

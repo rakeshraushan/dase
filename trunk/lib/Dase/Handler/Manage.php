@@ -74,7 +74,22 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('sort',$so);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes($so));
-		$r->renderResponse($tpl->fetch('manage/attributes.tpl'));
+		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
+	}
+
+	public function getAttribute($r)
+	{
+		if ($r->has('sort')) {
+			$so = $r->get('sort');
+		} else {
+			$so = 'sort_order';
+		}
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$tpl = new Dase_Template($r);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('attributes',$this->collection->getAttributes($so));
+		$tpl->assign('att',$att);
+		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
 	public function getAttributesJson($r)
@@ -103,12 +118,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderResponse('deleted manager '.$eid);
 	}
 
-
-	public function getAttributeForm($r)
-	{
-		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
-	}
 
 	public function postToAttribute($r)
 	{
