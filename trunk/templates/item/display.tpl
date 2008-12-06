@@ -109,10 +109,6 @@
 				{/if}
 
 				<div id="itemLinks">
-					<!--
-					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?auth=cookie">atom</a> 
-					|
-					-->
 					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
 				</div>
 
@@ -126,6 +122,10 @@
 					</form>
 				</div>
 				<ul id="notes"><!-- ajax fills--></ul>
+				<a
+					href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?type=feed&auth=cookie"
+					class="atomlogo"><img
+					src="www/images/atom.jpg"/></a> 
 			</td>
 		</tr>
 	</table>
