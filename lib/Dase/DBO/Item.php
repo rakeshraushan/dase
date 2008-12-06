@@ -512,7 +512,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND a.ascii_id = 'rights'
 			AND v.item_id = ? 
 			";
-		return Dase_DBO::query($sql,array($this->id))->fetchColumn();
+		$text = Dase_DBO::query($sql,array($this->id))->fetchColumn();
+		if (!$text) { $text = 'daseproject.org'; }
+		return $text;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
@@ -535,6 +537,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$entry->setTitle($this->getTitle());
 		$entry->setRights($this->getRights());
+		$entry->addAuthor($this->created_by_eid);
 		//for AtomPub
 		$entry->setEdited($updated);
 		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number,'alternate');

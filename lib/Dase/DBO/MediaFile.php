@@ -22,10 +22,22 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 	public function getLocalPath()
 	{
-		//fix this to account for subdirs!!
 		$c = $this->getCollection();
-		$size = $this->size;
-		return Dase_Config::get('path_to_media').'/'.$c->ascii_id . '/' . $size . '/' . $this->filename; 
+		$subdir = Dase_Util::getSubdir($this->p_serial_number,$this->size);
+		$path = Dase_Config::get('path_to_media').'/'.
+			$c->ascii_id.'/'.
+			$this->size.'/'.
+			$subdir.'/'.
+			$this->filename;
+		if (file_exists($path)) {
+			return $path;
+		} else {
+			$path = Dase_Config::get('path_to_media').'/'.
+				$c->ascii_id.'/'.
+				$this->size.'/'.
+				$this->filename;
+			return $path;
+		}
 	}
 
 	public function resize($geometry)
