@@ -319,27 +319,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $att->find();
 	}
 
-	function getAttributesJson($sort = 'sort_order')
+	function getAttributesSortedArray($sort = 'sort_order')
 	{
-		$att_array = array();
-		$last = 0;
-		$last_name = 'First';
-	
-		$att_array['ordered_atts']['_first'] = 'First';
+		$att_array[] = 'First';
 		foreach ($this->getAttributes($sort) as $att) {
-			$att_array['ordered_atts'][$att->ascii_id] = "after ".$att->attribute_name;
-			foreach ($att as $k => $v) {
-				$att_array['attributes'][$att->ascii_id][$k] = $v;
-			}
-			$att_array['attributes'][$att->ascii_id]['values'] = $att->getFormValues();
-			$att_array['attributes'][$att->ascii_id]['count'] = count($att_array['attributes'][$att->ascii_id]['values']);
-			$att_array['attributes'][$att->ascii_id]['collection_ascii_id'] = $this->ascii_id;
-			$att_array['attributes'][$att->ascii_id]['last'] = $last;
-			$att_array['attributes'][$att->ascii_id]['last_name'] = $last_name;
-			$last = $att->ascii_id;
-			$last_name = $att->attribute_name;
+			$att_array[] = "after ".$att->attribute_name;
 		}
-		return Dase_Json::get($att_array);
+		return $att_array;
 	}
 
 	function changeAttributeSort($att_ascii_id,$new_so)

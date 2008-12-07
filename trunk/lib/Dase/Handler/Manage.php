@@ -7,7 +7,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}' => 'uploader',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/remote_acl' => 'remote_acl',
-		'{collection_ascii_id}/attribute/form' => 'attribute_form',
+		'{collection_ascii_id}/attribute_form' => 'attribute_form',
 		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
 		'{collection_ascii_id}/attribute/{att_ascii_id}/defined_values' => 'attribute_defined_values',
 		'{collection_ascii_id}/attributes' => 'attributes',
@@ -66,40 +66,31 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getAttributes($r)
 	{
 		$tpl = new Dase_Template($r);
-		if ($r->has('sort')) {
-			$so = $r->get('sort');
-		} else {
-			$so = 'sort_order';
-		}
-		$tpl->assign('sort',$so);
 		$tpl->assign('collection',$this->collection);
-		$tpl->assign('attributes',$this->collection->getAttributes($so));
+		$tpl->assign('attributes',$this->collection->getAttributes());
 		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
 	public function getAttribute($r)
 	{
-		if ($r->has('sort')) {
-			$so = $r->get('sort');
-		} else {
-			$so = 'sort_order';
-		}
 		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
 		$tpl = new Dase_Template($r);
+		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);
-		$tpl->assign('attributes',$this->collection->getAttributes($so));
+		$tpl->assign('attributes',$this->collection->getAttributes());
 		$tpl->assign('att',$att);
 		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
-	public function getAttributesJson($r)
+	public function getAttributeForm($r)
 	{
-		if ($r->has('sort')) {
-			$so = $r->get('sort');
-		} else {
-			$so = 'sort_order';
-		}
-		$r->renderResponse($this->collection->getAttributesJson($so));
+		$att = new Dase_DBO_Attribute;
+		$tpl = new Dase_Template($r);
+		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('attributes',$this->collection->getAttributes());
+		$tpl->assign('att',$att);
+		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
 	public function deleteManager($r)
@@ -122,8 +113,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function postToAttribute($r)
 	{
 		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
-		$params['sort'] = $r->get('sort');
-		if ($r->has('method') && ('delete attribute' == $r->get('method'))) {
+		if ($r->has('method') && ('delete '.$att->attribute_name == $r->get('method'))) {
 			$d = $att->attribute_name;
 			$count = count($att->getCurrentValues());
 			if ($count) {
@@ -154,9 +144,39 @@ class Dase_Handler_Manage extends Dase_Handler
 		}
 		$att->html_input_type = $r->get('input_type');
 		$att->update();
-		$att->resort($r->get('sort_after'));
+		$att->resort($r->get('sort'));
 		$params['msg'] = "$att->attribute_name updated";
-		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attributes',$params);
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attribute/'.$att->ascii_id,$params);
+	}
+
+	public function postToAttributes($r)
+	{
+
+		$att_ascii_id = Dase_Util::dirify($r->get('attribute_name'));
+		//note if att_ascii_id MATCHES, we do not create a new att, we grab match
+		$att = Dase_DBO_Attribute::findOrCreate($this->collection->ascii_id,$att_ascii_id);
+		$att->attribute_name = $r->get('attribute_name');
+		$att->usage_notes = $r->get('usage_notes');
+		if ($r->has('is_on_list_display')) {
+			$att->is_on_list_display = 1;
+		} else {
+			$att->is_on_list_display = 0;
+		}
+		if ($r->has('in_basic_search')) {
+			$att->in_basic_search = 1;
+		} else {
+			$att->in_basic_search = 0;
+		}
+		if ($r->has('is_public')) {
+			$att->is_public = 1;
+		} else {
+			$att->is_public = 0;
+		}
+		$att->html_input_type = $r->get('input_type');
+		$att->update();
+		$att->resort('999');
+		$params['msg'] = "$att->attribute_name created";
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attribute/'.$att->ascii_id,$params);
 	}
 
 	public function putAttributeDefinedValues($r)
@@ -170,7 +190,11 @@ class Dase_Handler_Manage extends Dase_Handler
 		$defined_values = trim(file_get_contents("php://input"));
 		$pattern = "/[\n;]/";
 		$munged_string = preg_replace($pattern,'%',$defined_values);
+		$response = array();
 		$def_value_array = explode('%',$munged_string); 
+		$response['count'] = count($def_value_array);
+		$response['input'] = $att->html_input_type;
+		$response['defined'] = $def_value_array;
 		foreach ($def_value_array as $df_text) {
 			if (trim($df_text)) {
 				$def_value = new Dase_DBO_DefinedValue;
@@ -180,30 +204,20 @@ class Dase_Handler_Manage extends Dase_Handler
 			}
 		}
 		$r->response_mime_type = 'application/json';
-		$r->renderResponse(Dase_Json::get($def_value_array));
+		$r->renderResponse(Dase_Json::get($response));
 	}
 
-
-	public function postToAttributes($r)
+	public function getAttributeDefinedValuesJson($r)
 	{
-		$att = new Dase_DBO_Attribute;
-		$att->attribute_name = $r->get('attribute_name');
-		$att->ascii_id = Dase_Util::dirify($att->attribute_name);
-		if (!Dase_DBO_Attribute::get($this->collection->ascii_id,$att->ascii_id)) {
-			$att->collection_id = $this->collection->id;
-			$att->updated = date(DATE_ATOM);
-			$att->sort_order = 999;
-			$att->is_on_list_display = 1;
-			$att->is_public = 1;
-			$att->in_basic_search = 1;
-			$att->html_input_type = 'text';
-			$att->insert();
-			$att->resort();
-			$params['msg'] = "added $att->attribute_name";
-			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attributes',$params);
-		}
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$response = array();
+		$def_value_array = $att->getDefinedValues(); 
+		$response['count'] = count($def_value_array);
+		$response['input'] = $att->html_input_type;
+		$response['defined'] = $def_value_array;
+		$r->response_mime_type = 'application/json';
+		$r->renderResponse(Dase_Json::get($response));
 	}
-
 
 	public function getItemTypes($r)
 	{
