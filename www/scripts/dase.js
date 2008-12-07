@@ -1000,19 +1000,6 @@ Dase.scrollTo = function (obj) {
 	}
 }
 
-Dase.updateDefinedValues = function(json) {
-	var ul = Dase.$('defined_values_list');
-	ul.innerHTML = '';
-	var inp = Dase.$('defined_values_input');
-	inp.value = '';
-	var vals;
-	for (var i=0;i<json.length;i++) {
-		var v = json[i];
-		ul.innerHTML += '<li>'+v+'</li>';
-		inp.value += v+"\n";
-	}
-};
-
 //from http://aymanh.com/9-javascript-tips-you-may-not-know#BindingMethodsToObjects
 function bind(obj, method) {
 	return function() { return method.apply(obj, arguments); }

@@ -100,11 +100,12 @@ sup {
 }
 
 table.dataDisplay {
-	background-color: #ffebcc;
+	background-color: #f4f6fc;
 }
 
 table.dataDisplay  td {
 	text-align: center;
+	border: 1px solid #c4cddc;
 }
 
 /* allows some cells to be left-aligned */
@@ -122,20 +123,10 @@ table.dataDisplay  td.editForm ul.defined {
 	margin-bottom: 2em;
 }
 
-table.dataDisplay  td.editForm .submitControl {
-	float: left;
-	margin-right: 1em;
-}
 
-table.dataDisplay  td.editForm .deleteControl {
-	float: right;
-	margin-right: 2em;
-}
-
-table.dataDisplay  td.editForm .deleteControl input {
-	padding: 1px;
+input.deleteControl  {
 	border: 1px solid #c00;
-    -moz-border-radius: 5px;
+	margin-left: 20px;
 }
 
 table.dataDisplay  td.editForm .deleteControl input:hover {
@@ -150,13 +141,33 @@ table.dataDisplay  td.editForm label{
 
 table.dataDisplay  th {
 	color: #333;
-	background-color: #f2dfc1;
+	background-color: #d5deed;
+	border: 1px solid #c4cddc;
 }
 
 table.dataDisplay  th div.current{
 	margin-top: 1em;
 	color: #999;
 	max-width: 300px;
+}
+
+div.uploader {
+	color: #333;
+	background-color: #d5deed;
+	border: 1px solid #c4cddc;
+	padding: 10px;
+	width: 80%;
+}
+span.current {
+	font-weight: normal;
+	color: #99a;
+	width: 90%;
+}
+
+form#editAttribute textarea {
+	width: 100%;
+	height: 6em;
+	margin-top: 5px;
 }
 
 table.dataDisplay  th.rows {
@@ -166,6 +177,13 @@ table.dataDisplay  th.rows {
 #defined_values_form textarea {
 	min-height: 6em;
 	margin-bottom: 1em;
+	width: 95%;
+}
+
+#definedVals {
+	margin-top: 20px;
+	background-color: #d5deed;
+	padding: 10px;
 }
 
 #recent li {
@@ -183,3 +201,18 @@ label {
 	font-weight: bold;
 }
 
+.checkmark {
+	color: blue;
+	font-weight: bold;
+}
+
+div#browseColumns a#toggleAttributeEditForm {
+	font-size: .9em;
+	font-weight: normal;
+	color: blue;
+}
+
+p.getForm {
+	margin-top: 5px;
+	margin-bottom: 0;
+}
