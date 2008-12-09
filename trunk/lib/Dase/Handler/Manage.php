@@ -12,6 +12,10 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}/defined_values' => 'attribute_defined_values',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
+		'{collection_ascii_id}/item_type_form' => 'item_type_form',
+		'{collection_ascii_id}/item_type/{type_ascii_id}' => 'item_type',
+		'{collection_ascii_id}/item_type/{type_ascii_id}/attributes' => 'item_type_attributes',
+		'{collection_ascii_id}/item_type/{type_ascii_id}/attribute/{att_ascii_id}' => 'item_type_attribute',
 		'{collection_ascii_id}/managers' => 'managers',
 		'{collection_ascii_id}/managers/{manager_eid}' => 'manager',
 		'{collection_ascii_id}/settings' => 'settings',
@@ -32,6 +36,8 @@ class Dase_Handler_Manage extends Dase_Handler
 		if (!$this->user->can('admin',$this->collection)) {
 			$r->renderError(401);
 		}
+		//so proper menu item highlights
+		$r->set('tab',$r->resource);
 	}
 
 	public function getSettings($r)
@@ -78,7 +84,9 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes());
+		$tpl->assign('item_types',$att->getItemTypes());
 		$tpl->assign('att',$att);
+		$r->set('tab','attributes');
 		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
@@ -90,6 +98,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes());
 		$tpl->assign('att',$att);
+		$r->set('tab','attributes');
 		$r->renderResponse($tpl->fetch('manage/attribute_form.tpl'));
 	}
 
@@ -224,7 +233,111 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('item_types',$this->collection->getItemTypes());
-		$r->renderResponse($tpl->fetch('manage/item_types.tpl'));
+		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
+	}
+
+	public function getItemType($r)
+	{
+		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$tpl = new Dase_Template($r);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('type',$type);
+		$tpl->assign('attributes',$this->collection->getAttributes('attribute_name'));
+		$tpl->assign('item_types',$this->collection->getItemTypes());
+		$r->set('tab','item_types');
+		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
+	}
+
+	public function getItemTypeForm($r)
+	{
+		$type = new Dase_DBO_ItemType;
+		$tpl = new Dase_Template($r);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('type',$type);
+		$tpl->assign('item_types',$this->collection->getItemTypes());
+		$r->set('tab','item_types');
+		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
+	}
+
+	public function postToItemType($r)
+	{
+		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		//should redo this w/ http delete
+		if ($r->has('method') && ('delete '.$type->item_type_name == $r->get('method'))) {
+			$d = $type->name;
+			$count = $type->getItemsCount();
+			if ($count) {
+				$params['msg'] = "sorry, but there are $count items of type $type->name so it cannot be deleted";
+				$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_types',$params);
+			}
+			$type->expunge();
+			$params['msg'] = "$d deleted";
+			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_types',$params);
+		}
+		$type->name = $r->get('name');
+		$type->description = $r->get('description');
+		$type->update();
+		$params['msg'] = "$type->item_type_name updated";
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id,$params);
+	}
+
+	public function postToItemTypes($r)
+	{
+
+		$type_ascii_id = Dase_Util::dirify($r->get('name'));
+		//note if type_ascii_id MATCHES, we do not create a new type, we grab match
+		$type = Dase_DBO_ItemType::findOrCreate($this->collection->ascii_id,$type_ascii_id);
+		$type->name = $r->get('name');
+		$type->description = $r->get('description');
+		$type->update();
+		$params['msg'] = "$type->name created";
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id,$params);
+	}
+
+	public function postToItemTypeAttributes($r)
+	{
+		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$ita = new Dase_DBO_AttributeItemType;
+		$ita->attribute_id = $att->id;
+		$ita->item_type_id = $type->id;
+		if (!$ita->findOne()) {
+			$ita->cardinality = $r->get('cardinality');
+			$ita->insert();
+		}
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id);
+	}
+
+	public function getItemTypeAttributesJson($r)
+	{
+		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$response = array();
+		foreach ($type->getAttributes() as $att) {
+			$a['attribute_name'] = $att->attribute_name;
+			$a['id'] = $att->id;
+			$a['cardinality'] = $att->cardinality;
+			$a['collection_ascii_id'] = $this->collection->ascii_id;
+			$a['item_type_ascii'] = $type->ascii_id;
+			$a['att_ascii_id'] = $att->ascii_id;
+			$response[strtolower($att->attribute_name)] = $a;
+		}
+		ksort($response);
+		$r->renderResponse(Dase_Json::get($response));
+	}
+
+	public function deleteItemTypeAttribute($r)
+	{
+		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$ita = new Dase_DBO_AttributeItemType;
+		$ita->attribute_id = $att->id;
+		$ita->item_type_id = $type->id;
+		if ($ita->findOne()) {
+			$ita->delete();
+			$r->renderOk('done');
+		} else {
+			$r->renderError(400);
+		}
 	}
 
 	public function getManagers($r)

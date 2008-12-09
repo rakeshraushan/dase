@@ -79,9 +79,9 @@ class Dase_Atom
 		}
 	}
 
-	function addCategory($term,$scheme='',$label='') 
+	function addCategory($term,$scheme='',$label='',$text='') 
 	{
-		$cat = $this->addElement('category');
+		$cat = $this->addElement('category',$text);
 		$cat->setAttribute('term',$term);
 		if ($scheme) {
 			$cat->setAttribute('scheme',$scheme);
@@ -89,6 +89,7 @@ class Dase_Atom
 		if ($label) {
 			$cat->setAttribute('label',$label);
 		}
+		return $cat;
 	}
 
 	function addContributor($name_text,$uri_text = '',$email_text = '') 

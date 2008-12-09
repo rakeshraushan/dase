@@ -41,10 +41,13 @@ Dase.pageInit = function() {
 		}
 	}
 
-	Dase.$('toggleAttributeEditForm').onclick = function() {
-		Dase.toggle(Dase.$('editAttribute'));
-		return false;
-	};
+	var form_toggle = Dase.$('toggleAttributeEditForm');
+	if (form_toggle) {
+		form_toggle.onclick = function() {
+			Dase.toggle(Dase.$('editAttribute'));
+			return false;
+		};
+	}
 	var def_form = Dase.$('defined_values_form');
 	if (def_form) {
 		Dase.setDefinedValues(def_form);

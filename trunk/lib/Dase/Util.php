@@ -150,6 +150,16 @@ Class Dase_Util
 		}
 		return ($a_str < $b_str) ? -1 : 1;
 	}
+	/** like above but w/ arrays */
+	public static function sortByAttName($a,$b)
+	{
+		$a_str = strtolower($a['attribute_name']);
+		$b_str = strtolower($b['attribute_name']);
+		if ($a_str == $b_str) {
+			return 0;
+		}
+		return ($a_str < $b_str) ? -1 : 1;
+	}
 	public static function sortValuesByAttributeSortOrder($a,$b)
 	{
 		$a_so = $a->attribute->sort_order;

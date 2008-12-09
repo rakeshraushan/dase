@@ -47,6 +47,7 @@ class Dase_ModuleHandler_Webspace extends Dase_Handler_Manage {
 		$tpl->assign('invalid_files',$invalid_files);
 		$tpl->assign('paths',$paths);
 		$tpl->assign('webspace_path',$ws_path);
+		$r->set('tab','module');
 		$r->renderResponse($tpl->fetch(DASE_PATH.'/modules/webspace/templates/index.tpl'));
 	}
 }

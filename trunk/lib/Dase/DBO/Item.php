@@ -587,6 +587,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				$meta->setAttribute('d:public','no');
 			}
+
+			//an experiment in using atom:category:
+
+			/*
+			$meta = $entry->addCategory($row['ascii_id'],APP_ROOT.'/'.$c->ascii_id.'/metadata',$row['attribute_name'],$row['value_text']);
+			if ($row['is_on_list_display']) {
+				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:display','yes');
+			} else {
+				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:display','no');
+			}
+			if ($row['is_public']) {
+				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:public','yes');
+			} else {
+				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:public','no');
+			}
+			 */
 		}
 		/************** end content *******************/
 

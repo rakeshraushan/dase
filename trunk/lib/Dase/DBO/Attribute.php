@@ -233,6 +233,20 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $current;
 	}
 
+	function getItemTypes()
+	{
+		$item_types = array();
+		$att_it = new Dase_DBO_AttributeItemType;
+		$att_it->attribute_id = $this->id;
+		foreach($att_it->find() as $ait) {
+			$it = new Dase_DBO_ItemType;
+			$it->load($ait->item_type_id);
+			$item_types[] = $it;
+		}
+		$this->item_types = $item_types;
+		return $item_types;
+	}
+
 	function expunge() {
 		$dv = new Dase_DBO_DefinedValue;
 		$dv->attribute_id = $this->id;

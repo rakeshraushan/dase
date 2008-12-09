@@ -344,7 +344,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$this->user || $this->getUser(); 
 		$entry->setTitle($this->name);
 		if ($this->description) {
-			$entry->setSubtitle($this->description);
+			$entry->setSummary($this->description);
 		}
 		$entry->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
 		$entry->setUpdated($this->getUpdated());
