@@ -36,6 +36,7 @@ span#userName {
 
 div#catColumn {
 	background-color: #d5deed;
+	width: 27%;
 }
 
 div#catColumn a.spill {
@@ -49,6 +50,14 @@ div#attColumn {
 	background-color: #f4f6fc;
 	background-color: #f7f9ff;
 	background-color: #fff;
+}
+
+div#attColumn  h1 {
+	color: #009;
+}
+
+div#attColumn  h3 {
+	color: #006;
 }
 
 div#sidebar
@@ -186,6 +195,26 @@ table.dataDisplay  th.rows {
 	padding: 10px;
 }
 
+#itemTypes {
+	margin-top: 20px;
+	background-color:#eef1f8;
+	padding: 10px;
+}
+
+#itemTypes li {
+	list-style: inside;
+}
+
+div#browseColumns #itemTypes a {
+	display: inline;
+}
+
+#atts {
+	margin-top: 20px;
+	background-color: #d5deed;
+	padding: 10px;
+}
+
 #recent li {
 	width: 60%;
     padding: .5em;
@@ -215,4 +244,16 @@ div#browseColumns a#toggleAttributeEditForm {
 p.getForm {
 	margin-top: 5px;
 	margin-bottom: 0;
+}
+
+div#type_atts_list {
+	line-height: 1.8em;
+	list-style: disc;
+	margin-top: 10px;
+}
+div#type_atts_list ul li{
+	list-style: inside;
+}
+div#type_atts_list a {
+	display: inline;
 }

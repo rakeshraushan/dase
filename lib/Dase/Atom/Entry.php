@@ -254,30 +254,47 @@ class Dase_Atom_Entry extends Dase_Atom
 		//finish!!!!!!!!!!
 	}
 
-	function setSummary($text,$type='')
+	function setSummary($text,$type='',$replace = true)
 	{
-		if ($this->summary_is_set) {
-			throw new Dase_Atom_Exception('summary is already set');
+		//todo: clean up this logic
+		if ($replace) {
+			if ($text) {
+				$sum = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'summary')->item(0);
+				$this->root->removeChild($sum);
+			}
 		} else {
-			$this->summary_is_set = true;
+			if ($this->summary_is_set) {
+				throw new Dase_Atom_Exception('summary is already set');
+			} else {
+				$this->summary_is_set = true;
+			}
 		}
-		if ('html' == $type) {
-			$summary = $this->addElement('summary',htmlentities($text,ENT_COMPAT,'UTF-8'));
-			$summary->setAttribute('type','html');
+		//note that sending empty text deletes summary
+		if ($text) {
+			if ('html' == $type) {
+				$summary = $this->addElement('summary',htmlentities($text,ENT_COMPAT,'UTF-8'));
+				$summary->setAttribute('type','html');
+			} else {
+				$summary = $this->addElement('summary',$text);
+			}
 		} else {
-			$summary = $this->addElement('summary',$text);
+			$this->summary_is_set = false;
 		}
 	}
 
 	/** we use the summary element to embed thumbnail */
 	function setThumbnail($url)
 	{
+		if ($this->summary_is_set) {
+			return;
+		}
 		$summary = $this->addElement('summary');
 		$summary->setAttribute('type','xhtml');
 		$div = $summary->appendChild($this->dom->createElement('div'));
 		$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
 		$thumbnail = $div->appendChild($this->dom->createElement('img'));
 		$thumbnail->setAttribute('src',$url);
+		$this->summary_is_set = true;
 	}
 
 	function getSummary() 

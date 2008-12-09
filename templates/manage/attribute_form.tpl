@@ -35,7 +35,7 @@
 			</div>
 			{/if}
 			{if $att->ascii_id}
-			<h1>{$att->attribute_name} ({$att->ascii_id})</h1>
+			<h1>Attribute: {$att->attribute_name} ({$att->ascii_id})</h1>
 			{else}
 			<h1>Create An Attribute</h1>
 			{/if}
@@ -55,7 +55,9 @@
 				<label for="usage_notes">Usage Notes
 					<br/>
 					<span class="current">
+						{if $att->usage_notes}
 						[{$att->usage_notes}]
+						{/if}
 					</span>
 				</label>
 				<textarea type="text" name="usage_notes" >{$att->usage_notes}</textarea>
@@ -68,7 +70,6 @@
 					{/foreach}
 				</select>
 				</p>
-				<input type="hidden" name="att_ascii_id" value="{$att->ascii_id}"/>
 				<p>
 				<label for="input_type">Input Type</label>
 				<select name="input_type">
@@ -143,7 +144,7 @@
 			'select' == $att->html_input_type || 
 			'checkbox' == $att->html_input_type}
 			<div id="definedVals">
-				<h1>{$att->attribute_name} Defined Values</h1>
+				<h3>{$att->attribute_name} Defined Values</h3>
 				<form
 					id="defined_values_form"
 					action="manage/{$collection->ascii_id}/attribute/{$att->ascii_id}/defined_values.json" method="post">
@@ -164,6 +165,16 @@
 					<h3>sample form input</h3>
 					<div class="defined" id="defined_values_sample"></div>
 				</form>
+			</div>
+			{/if}
+			{if $item_types}
+			<div id="itemTypes">
+				<h3>Item Types using {$att->attribute_name}</h3>
+				<ul>
+					{foreach item=type from=$item_types}
+					<li><a href="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}">{$type->name}</a></li>
+					{/foreach}
+				</ul>
 			</div>
 			{/if}
 		</div>

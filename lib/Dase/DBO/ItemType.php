@@ -6,14 +6,28 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 {
 	public $attributes;
 
-	public static function get($ascii_id) 
+	public static function get($collection_ascii_id,$ascii_id)
 	{
-		if (!$ascii_id) {
-			return false;
+		if ($collection_ascii_id && $ascii_id) {
+			$item_type = new Dase_DBO_ItemType;
+			$item_type->ascii_id = $ascii_id;
+			$item_type->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+			return($item_type->findOne());
+		} else {
+			throw new Exception('missing a method parameter value');
 		}
-		$item_type = new Dase_DBO_ItemType;
-		$item_type->ascii_id = $ascii_id;
-		return $item_type->findOne();
+	}
+
+	public static function findOrCreate($collection_ascii_id,$ascii_id) 
+	{
+		$type = new Dase_DBO_ItemType;
+		$type->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+		$type->ascii_id = $ascii_id;
+		if (!$type->findOne()) {
+			$type->name = ucwords(str_replace('_',' ',$ascii_id));
+			$type->insert();
+		}
+		return $type;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
@@ -59,7 +73,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$att = new Dase_DBO_Attribute;
 			$att->load($ait->attribute_id);
 			$att->cardinality = $ait->cardinality; 
-			$att->is_identifier = $ait->is_identifier; 
 			$attributes[] = $att;
 		}
 		$this->attributes = $attributes;
@@ -70,6 +83,12 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$i = new Dase_DBO_Item;
 		$i->item_type_id = $this->id;
 		return $i->find();
+	}
+
+	function getItemsCount() {
+		$i = new Dase_DBO_Item;
+		$i->item_type_id = $this->id;
+		return $i->findCount();
 	}
 
 	function getItemsAsFeed() 
@@ -96,6 +115,9 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	function expunge()
 	{
+		if (!$this->id || !$this->ascii_id) {
+			throw new Exception('cannot delete unspecified type');
+		}
 		$ait = new Dase_DBO_AttributeItemType;
 		$ait->item_type_id = $this->id;
 		foreach ($ait->find() as $doomed) {

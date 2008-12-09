@@ -28,9 +28,13 @@
 
 
 		<style type="text/css">
-			ul#menu li.{$request->resource}-tab {literal}{{/literal}
+			ul#menu li.{$request->tab}-tab {literal}{{/literal}
 				background-color: #eef1f8;
 				background-color: #bbccdd;
+				background-color: #496eac;
+			{literal}}{/literal}
+			ul#menu li.{$request->tab}-tab a {literal}{{/literal}
+				color: #fff;
 			{literal}}{/literal}
 		</style>
 

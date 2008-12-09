@@ -135,7 +135,7 @@
 			<!-- end javascript template -->
 
 
-			<h5 id="ajaxMsg" class="hide">loading page data...</h5>
+			<h5 id="ajaxMsg" class="hide">loading...</h5>
 
 		</div> <!-- closes sidebar -->
 
