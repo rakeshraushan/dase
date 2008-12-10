@@ -12,3 +12,7 @@
   * modify set
   * add item to set
   * modify set_item
+  * add category scheme
+  * add item_type
+  * relate item_types
+ 
