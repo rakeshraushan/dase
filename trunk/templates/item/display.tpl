@@ -138,12 +138,12 @@
 </div> 
 {if 'set' == $item->tagType}
 		<div class="tagAdmin">
-			<h4>annotate slide</h4>
+			<h3>Annotation <a href="#" class="modify" id="annotationToggle">add/update</a></h3>
 			{if $item->entry->summary}
-			<p class="annotation">{$item->entry->summary}</p>
+			<p class="annotation" id="annotationText">{$item->entry->summary}</p>
 			{/if}
-			<form id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
-				<textarea name="annotation"></textarea>
+			<form class="hide" id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
+				<textarea name="annotation">{$item->entry->summary}</textarea>
 				<input type="submit" value="save"/>
 			</form>
 		</div>

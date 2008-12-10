@@ -24,9 +24,20 @@ Dase.pageInitUser = function(eid) {
 			Dase.initEditMetadata(edit_link);
 			Dase.initAddMetadata();
 			Dase.initAddContent();
+			Dase.initAddAnnotation();
 		});
 	}
 	return;
+};
+
+Dase.initAddAnnotation = function() {
+	var tog = Dase.$('annotationToggle');
+	if (!tog) return;
+	tog.onclick = function() {
+		Dase.toggle(Dase.$('annotationText'));
+		Dase.toggle(Dase.$('setAnnotationForm'));
+		return false;
+	};
 };
 
 Dase.updateItemStatus = function() {
@@ -43,7 +54,7 @@ Dase.updateItemStatus = function() {
 			return false;
 			}
 			});
-}
+};
 
 Dase.initNotes = function() {
 	Dase.getNotes();
@@ -207,7 +218,7 @@ Dase.initAddMetadata = function()
 		}
 		return false;
 	}
-}
+};
 
 Dase.initAddContent = function()
 {
@@ -287,7 +298,7 @@ Dase.initGetInputForm = function(form) {
 	});
 	return false;
 }
-}
+};
 
 Dase.buildEditMetadataForm = function(json,href) {
 	var html_form = '';

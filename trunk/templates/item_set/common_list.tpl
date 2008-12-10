@@ -19,6 +19,9 @@
 		<h5 class="sorted_by">{$it|label:$sort}: {$sort_attribute_value}</h5>
 		{/if}
 		<h5 class="collection_name">[{$it->collection}]</h5>
+		{if $it->summary}
+		<p class="thumbAnnotation">{$it->summary}</p>
+		{/if}
 	</td>
 	<td class="metadata">
 		<div class="cartAdd">

@@ -36,6 +36,18 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
+	public static function getAdmin($ascii_id)
+	{
+		if ($ascii_id) {
+			$a = new Dase_DBO_Attribute;
+			$a->ascii_id = $ascii_id;
+			$a->collection_id = 0;
+			return($a->findOne());
+		} else {
+			throw new Exception('missing a method parameter value');
+		}
+	}
+
 	public static function findOrCreate($collection_ascii_id,$attribute_ascii_id) 
 	{
 		$att = new Dase_DBO_Attribute;
