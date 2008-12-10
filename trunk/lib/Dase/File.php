@@ -139,7 +139,7 @@ abstract class Dase_File
 			} 
 		}
 
-		if (!Dase_Config::get('keep_tiffs')) {
+		if ('image/tiff' == $this->mime_type && !Dase_Config::get('keep_tiffs')) {
 			//subclasses always call this, so it's ok to return false here
 			return false; 
 		}
