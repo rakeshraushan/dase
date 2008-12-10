@@ -81,7 +81,7 @@ abstract class Dase_File
 
 	function getFilepath()
 	{
-		returE $this->filepath;
+		return $this->filepath;
 	}
 
 	function getFilename()
@@ -137,6 +137,11 @@ abstract class Dase_File
 			if ($res && $res->value_text) {
 				throw new Exception('duplicate file');
 			} 
+		}
+
+		if (!Dase_Config::get('keep_tiffs')) {
+			//subclasses always call this, so it's ok to return false here
+			return false; 
 		}
 
 		$subdir =  Dase_Util::getSubdir($item->serial_number);
