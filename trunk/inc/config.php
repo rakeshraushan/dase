@@ -39,6 +39,9 @@ $conf['max_items'] = 30;
 //$conf['default_handler'] = 'collections';
 $conf['default_handler'] = 'install';
 
+//keep tiffs 
+$conf['keep_tiffs'] = true;
+
 //local_config CAN OVERRIDE any of the above values
 if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 	include DASE_PATH . '/inc/local_config.php';

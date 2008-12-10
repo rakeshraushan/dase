@@ -44,7 +44,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$a->collection_id = 0;
 			return($a->findOne());
 		} else {
-			throw new Exception('missing a method parameter value');
+			throw new Exception('missing method parameter');
 		}
 	}
 
@@ -185,14 +185,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			//nothin'
 		}
 		return $values;
-	}
-
-	public static function getAdmin($ascii_id)
-	{
-		$a = new Dase_DBO_Attribute;
-		$a->ascii_id = $ascii_id;
-		$a->collection_id = 0;
-		return($a->findOne());
 	}
 
 	public static function listAdminAttIds()
