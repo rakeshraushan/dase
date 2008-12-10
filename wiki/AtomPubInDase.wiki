@@ -1,14 +1,14 @@
 #summary the things we need to do in DASe w/ AtomPub
 
 
-- create new item
-- add notes to item
-- upload media file
-- create attribute
-- modify attribute 
-- create collection
-- modify collection
-- create set
-- modify set
-- add item to set
-- modify set_item
+* create new item
+* add notes to item
+* upload media file
+* create attribute
+* modify attribute 
+* create collection
+* modify collection
+* create set
+* modify set
+* add item to set
+* modify set_item
