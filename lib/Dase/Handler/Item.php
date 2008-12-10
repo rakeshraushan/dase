@@ -385,10 +385,14 @@ class Dase_Handler_Item extends Dase_Handler
 			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
 			Dase_Log::debug('error',$e->getMessage());
+			//delete uploaded file
+			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
 		$item->expireCaches();
 		$item->buildSearchIndex();
+		//delete uploaded file
+		unlink($new_file);
 		//the returned atom entry links to derivs!
 		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);

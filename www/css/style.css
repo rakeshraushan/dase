@@ -133,6 +133,8 @@ a.delete { color:#c00; }
 a.edit { color: #00c; }
 .current { color: #00c; font-weight: bold;}
 a.current { color: #00c; font-weight: bold;}
+.modify {color: #00c;}
+a.modify {color: #00c;}
 
 /********* STANDARD STYLES *******************/
 #contentHeader h1,
@@ -422,16 +424,23 @@ p.annotation {
 	padding: 10px;
 	background-color: #ddd;
 	width: 300px;
+	min-height: 4em;
 }
 
 form#setAnnotationForm textarea {
-	width: 300px;
+	width: 312px;
+	min-height: 4em;
+	padding: 4px;
 }
 
 .atomLogo {
 	float: right;
 	margin-bottom: 10px;
 	margin-right: 20px;
+}
+
+h3 a.modify {
+	font-size: .8em;
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/
@@ -539,6 +548,14 @@ div#set table#itemSet tr.item td.thumb {
 	border-color: #6480ae;
 	min-width: 200px;
 }
+
+p.thumbAnnotation {
+	margin: 10px auto;
+	padding: 5px;
+	width: 80%;
+	background-color: #ddd;
+}
+
 
 div#set table#itemSet tr.item td.thumb .collection_name {
 	color: #333;

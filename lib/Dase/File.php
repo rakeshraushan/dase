@@ -81,7 +81,7 @@ abstract class Dase_File
 
 	function getFilepath()
 	{
-		return $this->filepath;
+		returE $this->filepath;
 	}
 
 	function getFilename()
@@ -123,19 +123,29 @@ abstract class Dase_File
 
 		//prevents 2 files in same collection w/ same md5
 		if ($check_for_dups) {
-			$mf = new Dase_DBO_MediaFile;
-			$mf->p_collection_ascii_id = $c->ascii_id;
-			$mf->md5 = $metadata['md5'];
-			if ($mf->findOne()) {
+			$checksum_att = Dase_DBO_Attribute::getAdmin('admin_checksum');
+			$prefix = Dase_Config::get('table_prefix');
+			$sql = "
+				SELECT v.value_text
+				FROM {$prefix}attribute a, {$prefix}value v
+				WHERE a.collection_id = ?
+				AND a.ascii_id = ?
+				AND v.attribute_id = a.id
+				LIMIT 1
+				";
+			$res = Dase_DBO::query($sql,array($c->id,$checksum_att->id),true)->fetch();
+			if ($res && $res->value_text) {
 				throw new Exception('duplicate file');
-			}
+			} 
 		}
+
 		$subdir =  Dase_Util::getSubdir($item->serial_number);
-		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir.'/'.$item->serial_number.'.'.$this->ext;
 		$subdir_path = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir;  
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
+
+		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir.'/'.$item->serial_number.'.'.$this->ext;
 		if (file_exists($target)) {
 			//make a timestamped backup
 			copy($target,$target.'.bak.'.time());
@@ -143,12 +153,14 @@ abstract class Dase_File
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
 			$media_file = new Dase_DBO_MediaFile;
-			$meta = array(
+			$mediafile_meta = array(
 				'file_size','height','width','mime_type','updated','md5'
 			);
-			foreach ($meta as $term) {
+			foreach ($mediafile_meta as $term) {
 				if (isset($metadata[$term])) {
 					$media_file->$term = $metadata[$term];
+					//since we record it in media_file do not need to record it in item
+					unset($metadata[$term]);
 				}
 			}
 			$media_file->item_id = $item->id;

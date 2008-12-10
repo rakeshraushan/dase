@@ -32,6 +32,9 @@
 				background-color: #eef1f8;
 				background-color: #bbccdd;
 				background-color: #496eac;
+				background-color: #6b8fce;
+				background-color: #8db2f0;
+				background-color: #7da2e0;
 			{literal}}{/literal}
 			ul#menu li.{$request->tab}-tab a {literal}{{/literal}
 				color: #fff;
