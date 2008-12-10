@@ -141,6 +141,9 @@ abstract class Dase_File
 
 		if ('image/tiff' == $this->mime_type && !Dase_Config::get('keep_tiffs')) {
 			//subclasses always call this, so it's ok to return false here
+			foreach ($metadata as $term => $text) {
+				$item->setValue('admin_'.$term,$text);
+			}
 			return false; 
 		}
 
