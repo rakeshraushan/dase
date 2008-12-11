@@ -19,6 +19,7 @@ class Dase_Http_Request
 		'mp3' =>'audio/mpeg',
 		'pdf' =>'application/pdf',
 		'txt' =>'text/plain',
+		'uris' =>'text/uri-list',
 	);
 	public $content_type;
 	public $error_message;
