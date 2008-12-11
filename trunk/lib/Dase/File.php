@@ -123,17 +123,19 @@ abstract class Dase_File
 
 		//prevents 2 files in same collection w/ same md5
 		if ($check_for_dups) {
-			$checksum_att = Dase_DBO_Attribute::getAdmin('admin_checksum');
 			$prefix = Dase_Config::get('table_prefix');
 			$sql = "
 				SELECT v.value_text
-				FROM {$prefix}attribute a, {$prefix}value v
-				WHERE a.collection_id = ?
+				FROM {$prefix}value v, {$prefix}item i, {$prefix}attribute a
+				WHERE i.collection_id = ?
 				AND a.ascii_id = ?
 				AND v.attribute_id = a.id
+				AND i.id = v.item_id
+				AND v.value_text = ?
 				LIMIT 1
 				";
-			$res = Dase_DBO::query($sql,array($c->id,$checksum_att->id),true)->fetch();
+			$hash = $metadata['md5'];
+			$res = Dase_DBO::query($sql,array($c->id,'admin_checksum',$hash),true)->fetch();
 			if ($res && $res->value_text) {
 				throw new Exception('duplicate file');
 			} 
@@ -167,8 +169,6 @@ abstract class Dase_File
 			foreach ($mediafile_meta as $term) {
 				if (isset($metadata[$term])) {
 					$media_file->$term = $metadata[$term];
-					//since we record it in media_file do not need to record it in item
-					unset($metadata[$term]);
 				}
 			}
 			$media_file->item_id = $item->id;
