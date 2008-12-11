@@ -178,9 +178,17 @@ class Dase_Search_Result
 
 	public function getItemAsAtomFeed($start,$max,$num)
 	{
-		//no need to send back a feed if count is 0
 		if (!$this->count) {
-			return false;
+			$feed = new Dase_Atom_Feed();
+			$feed->addAuthor();
+			$feed->setTitle('DASe Search Result');
+			$feed->setFeedType('searchitem');
+			$feed->addLink($this->url,'alternate','text/html','','Search Result');
+			$feed->setUpdated(date(DATE_ATOM));
+			$feed->setId(APP_ROOT.'/search/'.md5($this->url));
+			$feed->setOpensearchTotalResults(0);
+			$feed->setOpensearchQuery($this->_getQueryAsString());
+			return $feed->asXml();
 		}
 		$num = $num ? $num : 1;
 
