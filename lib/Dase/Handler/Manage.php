@@ -80,6 +80,9 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getAttribute($r)
 	{
 		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		if (!$att) {
+			$r->renderError(404,'so such item');
+		}
 		$tpl = new Dase_Template($r);
 		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);
