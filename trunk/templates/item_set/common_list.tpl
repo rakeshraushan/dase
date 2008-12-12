@@ -10,8 +10,9 @@
 		</div>
 		<div class="image">
 			<a href="{$it->itemLink}">
-				<img alt="no image" src="{$it->thumbnailLink}"/>
+				<img alt="no image" id="thumb{$it->serial_number}" src="{$it->thumbnailLink}"/>
 			</a>
+			<a href="{$it->viewitemLink}" class="zoomer" id="zoom{$it->serial_number}">[+]</a>
 		</div>
 		<div class="spacer"></div>
 		{if "" != $sort}
