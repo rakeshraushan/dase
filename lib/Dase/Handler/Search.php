@@ -85,11 +85,7 @@ class Dase_Handler_Search extends Dase_Handler
 		$search = new Dase_Search($r);
 		$search_result = $search->getResult();
 		$atom_feed = $search_result->getItemAsAtomFeed($this->start,$this->max,$r->get('num'));
-		if ($atom_feed) {
-			$r->renderResponse($atom_feed);
-		} else {
-			$r->renderError(404,'no such item');
-		}
+		$r->renderResponse($atom_feed);
 	}
 
 	public function getSearchItem($r)
@@ -97,7 +93,7 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$r->url.'&format=atom');
-		if (!$feed) {
+		if (!$feed->getOpensearchTotal()) {
 			$r->renderError(404,'no such item');
 		}
 		$tpl->assign('item',$feed);

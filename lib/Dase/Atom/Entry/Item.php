@@ -39,7 +39,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getViewitemLink()
 	{
-		return "http://quickdraw.laits.utexas.edu/dase1/media/test/thumbnail/000447414_100.jpg";
 		$x = new DomXPath($this->dom);
 		$x->registerNamespace('media',Dase_Atom::$ns['media']);
 		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);

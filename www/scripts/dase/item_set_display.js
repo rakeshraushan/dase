@@ -4,6 +4,7 @@ Dase.pageInit = function() {
 	if (Dase.initSearchSorting) {
 		Dase.initSearchSorting();
 	}
+	Dase.initZoomer();
 }
 
 Dase.initBulkEditLink = function() {
@@ -29,6 +30,44 @@ Dase.initBulkEditLink = function() {
 		return  false;
 	};
 	});
+}
+
+Dase.initZoomer = function() {
+	var table = Dase.$('itemSet');
+	if (!table) return;
+	var links = table.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		if ('zoomer' == links[i].className) {
+			var z = links[i];
+			z.onclick = function() {
+				var target = Dase.$('thumb'+this.id.replace(/zoom/,'')); //get img link
+				if (target) {
+					var thumblink = target.src;
+					target.src = this.href;
+					this.href = thumblink;
+					this.className = 'unzoomer';
+					this.innerHTML = '[-]';
+					Dase.initZoomer();
+				}
+				return false;
+			}
+		}
+		if ('unzoomer' == links[i].className) {
+			var z = links[i];
+			z.onclick = function() {
+				var target = Dase.$('thumb'+this.id.replace(/zoom/,'')); //get img link
+				if (target) {
+					var viewitemlink = target.src;
+					target.src = this.href;
+					this.href = viewitemlink; 
+					this.className = 'zoomer';
+					this.innerHTML = '[+]';
+					Dase.initZoomer();
+				}
+				return false;
+			}
+		}
+	}
 }
 
 Dase.initSlideshowLink = function() {
