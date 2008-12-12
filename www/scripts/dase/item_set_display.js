@@ -47,6 +47,7 @@ Dase.initZoomer = function() {
 					this.href = thumblink;
 					this.className = 'unzoomer';
 					this.innerHTML = '[-]';
+					Dase.showElem(target);
 					Dase.initZoomer();
 				}
 				return false;
@@ -62,6 +63,7 @@ Dase.initZoomer = function() {
 					this.href = viewitemlink; 
 					this.className = 'zoomer';
 					this.innerHTML = '[+]';
+					Dase.showElem(target);
 					Dase.initZoomer();
 				}
 				return false;

@@ -184,6 +184,12 @@ Dase.createHtmlSet = function(parent,set,tagName) {
 	}
 };
 
+Dase.showElem = function(elem) {
+	if (elem.scrollIntoView) {
+		elem.scrollIntoView();
+	}
+}
+
 Dase.createElem = function(parent,value,tagName,className,id) {
 	if (!parent) {
 		//alert('no parent');
