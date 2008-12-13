@@ -1,1 +1,28 @@
 #summary some notes on category schemes
+
+== Atom Categories ==
+
+
+
+
+from wiki:
+scheme prefix is: http://daseproject.org/category/
+
+based on intrinsic factors:
+  * error (error)
+  * collection  (collection_ascii_id)
+  * collection/item_count
+  * entrytype (attribute | collection | item | set)
+  * feedtype (collection | collection_list | search | item | tag)
+  * item/type (type_ascii_id)
+  * tag/count (count of items)
+  *  position (integer)
+
+can be "set" dynamically (either not required, or there is an obvious default value)
+  * collection/visibility (manager | user | public)
+  * tag/background (color or hex code)
+  * tag/type (set | slideshow | cart | admin)
+  * tag/visibility (owner | user | public)
+  * attribute/html_input_type ('text'|'textarea'|'radio'|'checkbox'|'select'|'listbox'|'no_edit'|'text_with_menu)
+  * item/status (public | draft | delete )
+tbd: split out read access and write access. 
