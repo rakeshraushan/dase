@@ -21,6 +21,10 @@ so how do we attach a budget item to a grant proposal?
 application has many budget items. application and budget_item are item_types. We related these in the database. Each budget_item has this category (w/ item_type you need to note relationship in scheme uri)
 {{{
 <category scheme="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/rel/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123"/>
+
+OR
+
+<category scheme="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/has/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123"/>
 }}}
 and application has this link:
 {{{
