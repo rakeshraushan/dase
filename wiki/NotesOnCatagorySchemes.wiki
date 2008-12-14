@@ -43,6 +43,8 @@ what needs relating:
   * item to category (easy -- category element)
   * collection to community
 
+some schemes are complete and some schemes should be documented as uri templates.
+
 in vra core -- and image is related to a building.  Say that building is respresented by an item in another item type. Do I grab the "title" from the buildings entry to put in "label" or do I put it as text content of atom:catgory (necessary is I use category to represent attribute/vals). 
 
 ==== question: how are schemes established? ====
