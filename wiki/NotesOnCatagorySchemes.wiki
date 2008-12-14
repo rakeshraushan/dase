@@ -4,6 +4,10 @@
 
 scheme uri is used in atom:category@scheme, but can also be used in atom:link@rel when atom:link@href expresses a query of all (pertinent) entities with a corresponding atom:category@scheme with a @term tthat matches the atom:id of the entity holding the atom:link.
 
+note: terms should (often) be an atom:id and if/when they are, automatically set up a child-to-parent relationship with that atom entity, a relationship defined by the scheme.
+
+
+
 ==== question: how are schemes established? ====
 
 
