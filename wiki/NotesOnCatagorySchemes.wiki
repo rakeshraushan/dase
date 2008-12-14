@@ -37,10 +37,13 @@ and application has this link:
 
 what needs relating:
 
-  - one 
-  - two
+  * item_type to item_type
+  * item_type to attributes
+  * item to item
+  * item to category (easy -- category element)
+  * collection to community
 
-
+in vra core -- and image is related to a building.  Say that building is respresented by an item in another item type. Do I grab the "title" from the buildings entry to put in "label" or do I put it as text content of atom:catgory (necessary is I use category to represent attribute/vals). 
 
 ==== question: how are schemes established? ====
 
