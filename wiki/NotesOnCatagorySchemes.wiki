@@ -14,7 +14,7 @@ nice (also solves problem of instance - specific scheme).
 
 idea -- what if "everything is an entry" in DASe (feeds, categories, attributes, items, item_types, set) and had three standard views: entry, category, feed.  Any entity could be made child of another by means of a category w/ term that was the atom:id of the parent (entry).   
 
-
+thought -- categories are the current version of @rev in an html link. http://www.w3.org/TR/html401/struct/links.html#adef-rev.  It defines a link back to here. (??).  Or maybe it is just different "kind" of link -- one that suggests a child of a parent.
 
 ==== question: how are schemes established? ====
 
