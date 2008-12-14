@@ -10,7 +10,7 @@ So...if I use categories for DASe metadata, the term would be the atom:id of the
 {{{
 <category term="http://www.laits.utexas.edu/dasebeta/attribute/test/description" label="Description" scheme="http://daseproject.org/schema/attribute">This is a really cool picture of a really cool thing</category>
 }}}
-nice.
+nice (also solves problem of instance - specific scheme).
 
 
 
