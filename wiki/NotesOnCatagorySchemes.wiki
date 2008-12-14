@@ -31,7 +31,15 @@ and application has this link:
 <link rel="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/rel/budget_item" href="http://www.laits.utexas.edu/dasebeta/search/grants/000123"/>
 }}}
 
+
 *note:* link@href always points to a *feed* (entry aggregation).  So...category points to an entry while links points to a feed.
+
+
+what needs relating:
+
+  - one 
+  - two
+
 
 
 ==== question: how are schemes established? ====
