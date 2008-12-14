@@ -16,6 +16,19 @@ idea -- what if "everything is an entry" in DASe (feeds, categories, attributes,
 
 thought -- categories are the current version of @rev in an html link. http://www.w3.org/TR/html401/struct/links.html#adef-rev.  It defines a link back to here. (??).  Or maybe it is just different "kind" of link -- one that suggests a child of a parent.
 
+so how do we attach a budget item to a grant proposal?
+
+application has many budget items. application and budget_item are item_types. We related these in the database. Each budget_item has this category (w/ item_type you need to note relationship in scheme uri)
+{{{
+<category scheme="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/rel/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123"/>
+}}}
+and application has this link:
+{{{
+<link rel="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/rel/budget_item" term="http://www.laits.utexas.edu/dasebeta/search/grants/000123"/>
+}}}
+
+
+
 ==== question: how are schemes established? ====
 
 
