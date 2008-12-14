@@ -33,7 +33,7 @@ figure out how tag visibility overrides collection visibility for items in tag.
 prefix is: http://daseproject.org/relation/
   
   * collection (a link to the collection that this feed/entry applies to)
-  * collection/attributes
+  * collection/attributes (link to the attributes for this collection)
   * feed-link (used to populate the "up" link on a search item)
   * search-item (w/in a search result, appearing in an entry)
  
