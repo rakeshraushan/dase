@@ -1,0 +1,23 @@
+#summary notes on the entities and relationships among them in DASe
+
+
+= Entities =
+
+  * collection
+  * item
+  * media file
+  * attribute
+  * item_type
+  * value (key/val) or 'triple' : item(s) -> attribute(p) -> value(o)
+  * content
+  * comment
+  * category (kind of a "meta" entity?)
+  * category_scheme
+  * defined value (unattached key/val) or 'double' : attribute(p) -> value(o)
+  * set (known as tag)
+  * set_item (known as tag_item) 
+  * user
+  * manager (triple of user -> auth_level -> collection)
+  * search result
+
+== relationships ==
