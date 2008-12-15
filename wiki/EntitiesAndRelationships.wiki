@@ -20,4 +20,13 @@
   * manager (triple of user -> auth_level -> collection)
   * search result
 
+== what do we do with entities? ==
+
+  * add instances
+  * delete instances
+  * modify instances
+  * aggregate instances
+  * create relationships
+  
+
 == relationships ==
