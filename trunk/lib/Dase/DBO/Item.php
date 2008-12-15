@@ -612,12 +612,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		foreach ($this->getMedia() as $med) {
 			if ($med->size == 'thumbnail') {
+				//$media_thumbnail = $entry->addElement('media:thumbnail','',Dase_Atom::$ns['media']);
 				$media_thumbnail = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'thumbnail'));
 				$media_thumbnail->setAttribute('url',$med->getLink());
 				$media_thumbnail->setAttribute('width',$med->width);
 				$media_thumbnail->setAttribute('height',$med->height);
 			}
 		   	if ($med->size == 'viewitem') {
+				//$media_viewitem = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
 				$media_viewitem = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
 				$media_viewitem->setAttribute('url',$med->getLink());
 				$media_viewitem->setAttribute('width',$med->width);
