@@ -3,6 +3,7 @@ Dase.initSearchSorting = function() {
 	var div = Dase.$('sortByAttFormDiv');
 	if (!url_elem || !div) return;
 	var url = url_elem.innerHTML;
+	if (!url) return;
 	Dase.getJSON(url,function(json){
 		var data = { 'atts': json };
 		var templateObj = TrimPath.parseDOMTemplate("attributes_jst");

@@ -105,6 +105,11 @@
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>
+				<li class="scheme-tab">
+				<a href="manage/{$collection->ascii_id}/schemes">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Category Scheme</sup>
+				</a>
+				</li>
 				{if $module_menu}
 				{include file="$module_menu"}
 				{/if}
@@ -138,6 +143,11 @@
 				<li class="uploader-tab">
 				<a href="manage/{$collection->ascii_id}/uploader">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
+				</a>
+				</li>
+				<li class="scheme-tab">
+				<a href="manage/{$collection->ascii_id}/schemes">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Category Scheme</sup>
 				</a>
 				</li>
 			</ul>

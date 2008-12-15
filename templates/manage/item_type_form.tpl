@@ -93,6 +93,31 @@ F
 				</div>
 			</div>
 			{/if}
+			{if $type->has_related}
+			<div id="related">
+				<h3>{$type->name} Attributes</h3>
+				<form
+					id="type_atts_form"
+					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" method="post">
+					<select name="att_ascii_id">
+						<option>select one:</option>
+						{foreach item=att from=$attributes}
+						<option value="{$att->ascii_id}">{$att->attribute_name}</option>
+						{/foreach}
+					</select>
+					<select name="cardinality">
+						<option value="0:m">cardinality 0:m</option>
+						<option value="0:1">cardinality 0:1</option>
+						<option value="1:m">cardinality 1:m</option>
+						<option value="1:1">cardinality 1:1</option>
+					</select>
+					<input type="submit" value="add"/>
+				</form>
+				<div id="type_atts_list">
+					<ul id="deletable"></ul>
+				</div>
+			</div>
+			{/if}
 		</div>
 		{/if}
 	</div>
