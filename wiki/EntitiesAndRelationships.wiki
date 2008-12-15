@@ -34,11 +34,15 @@
 
 == relationships ==
 
-  * collection has items
-  * collection has attributes
-  * item has key/vals
-  * item has media_files
-  * item_type has attributes
+  * collection -> items
+  * collection -> attributes
+  * item -> key/vals
+  * item -> media_files
+  * item_type -> attributes
   * item_type -> to -> item_type
-  * set has items
+  * set -> items
+
+
+
+
 
