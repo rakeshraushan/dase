@@ -20,6 +20,7 @@
   * manager (triple of user -> auth_level -> collection)
   * search result
 
+
 == what do we do with entities? ==
 
   * add instances
@@ -27,6 +28,17 @@
   * modify instances
   * aggregate instances
   * create relationships
-  
+  * undo relationships
+  * define new types of relationships?
+  * (maybe a relationship is an entity)
 
 == relationships ==
+
+  * collection has items
+  * collection has attributes
+  * item has key/vals
+  * item has media_files
+  * item_type has attributes
+  * item_type -> to -> item_type
+  * set has items
+
