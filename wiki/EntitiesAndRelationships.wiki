@@ -42,7 +42,10 @@
   * item_type -> to -> item_type
   * set -> items
 
+categories are a lightweight way to create new relationship types and to create/delete instances of that relationship.
 
+relationship-as-entry is another (when do we allow a new relationshipp to be created w/ AtomPub)
 
+How about...to create a category scheme, post an atom entry w/ content "text/uri-list" -- this is the scheme URI and include a title/description.
 
 
