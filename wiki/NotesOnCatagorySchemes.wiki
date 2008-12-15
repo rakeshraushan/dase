@@ -31,6 +31,15 @@ and application has this link:
 <link rel="http://www.laits.utexas.edu/dasebeta/item_type/grants/application/rel/budget_item" href="http://www.laits.utexas.edu/dasebeta/search/grants/000123"/>
 }}}
 
+=== take two ===
+{{{
+<entry>
+   <id>http://www.laits.utexas.edu/dasebeta/grants/000123</id>
+   <title>pkeane grant application</title>
+   <link rel="http://www.laits.utexas.edu/dasebeta/item_type/budget_item" href="http://www.laits.utexas.edu/dasebeta/item_type/budget_item?type=feed&filter=http://www.laits.utexas.edu/dasebeta/grants/000123"/>
+</entry>
+}}}
+
 
 *note:* link@href always points to a *feed* (entry aggregation).  So...category points to an entry while links points to a feed.
 
