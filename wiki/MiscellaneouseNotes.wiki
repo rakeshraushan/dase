@@ -1,0 +1,5 @@
+#summary a place for stray ideas
+
+how about allowing machine tags in attribute ascii_id for associating an attribute w/ a standard metadata scheme.
+
+e.g., dc:title, geo:lat, etc
