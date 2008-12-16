@@ -260,7 +260,9 @@ class Dase_Atom_Entry extends Dase_Atom
 		if ($replace) {
 			if ($text) {
 				$sum = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'summary')->item(0);
-				$this->root->removeChild($sum);
+				if ($sum) {
+					$this->root->removeChild($sum);
+				}
 			}
 		} else {
 			if ($this->summary_is_set) {
