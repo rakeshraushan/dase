@@ -34,18 +34,16 @@
 
 == relationships ==
 
-  * collection -> items
+  * collection -> items (default)
   * collection -> attributes
   * item -> key/vals
   * item -> media_files
   * item_type -> attributes
-  * item_type -> to -> item_type
-  * set -> items
+  * item_type -> item_type
+  * tag -> tag_items (default)
 
 categories are a lightweight way to create new relationship types and to create/delete instances of that relationship.
 
 relationship-as-entry is another (when do we allow a new relationshipp to be created w/ AtomPub)
 
 How about...to create a category scheme, post an atom entry w/ content "text/uri-list" -- this is the scheme URI and include a title/description.
-
-
