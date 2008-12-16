@@ -44,6 +44,23 @@
 
 categories are a lightweight way to create new relationship types and to create/delete instances of that relationship.
 
+== relationship patterns ==
+
+typically we try to express a relationship w/ a category element on the children and a link element on the parent.  For known relationships, the category on the child has scheme = URI of entity (abstract) and term = URI of entity (instance/concrete).  So:
+{{{
+<entry>
+  <category scheme="http://daseproject.org/term/collection" term="http://www.laits.utexas.edu/dasebeta/collection/test"/>
+</entry
+}}}
+and on parent:
+{{{
+<link rel="http://daseproject.org/term/attributes" href="http://www.laits.utexas.edu/dasebeta/collection/test/attributes"/>
+}}}
+
+Note that known relationships do not have a category scheme in the DB -- they are "known"
+
+
+
 relationship-as-entry is another (when do we allow a new relationshipp to be created w/ AtomPub)
 
 How about...to create a category scheme, post an atom entry w/ content "text/uri-list" -- this is the scheme URI and include a title/description.
