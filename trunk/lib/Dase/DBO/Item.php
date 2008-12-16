@@ -606,6 +606,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		/************** end content *******************/
 
+		$enc = $this->getEnclosure();
+		if ($enc) {
+			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
+		}
+
 		//much of the following can go in Dase_Atom_Entry
 		$media_link = $entry->addLink(APP_ROOT.'/media/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit-media');
 		$media_group = $entry->addChildElement($media_link,'media:group',null,Dase_Atom::$ns['media']);
@@ -641,10 +646,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
 				$media_category->appendChild($entry->dom->createTextNode($med->size));
 			}
-		}
-		$enc = $this->getEnclosure();
-		if ($enc) {
-			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
 		return $entry;
 	}

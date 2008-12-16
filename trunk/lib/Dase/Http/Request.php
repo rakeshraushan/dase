@@ -20,6 +20,7 @@ class Dase_Http_Request
 		'pdf' =>'application/pdf',
 		'txt' =>'text/plain',
 		'uris' =>'text/uri-list',
+		'uri' =>'text/uri-list',
 	);
 	public $content_type;
 	public $error_message;
