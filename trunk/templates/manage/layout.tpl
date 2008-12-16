@@ -19,7 +19,7 @@
 		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
-		<script type="text/javascript" src="www/scripts/Base64.js"></script>
+		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>

@@ -18,7 +18,7 @@
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/error-test.css"/>
 
-		<script type="text/javascript" src="scripts/Base64.js"></script>
+		<script type="text/javascript" src="scripts/webtoolkit.base64.js"></script>
 		<script type="text/javascript" src="scripts/http.js"></script>
 		<script type="text/javascript" src="scripts/json2.js"></script>
 		<script type="text/javascript" src="scripts/dase.js"></script>
