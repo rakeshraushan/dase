@@ -4,6 +4,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	protected $_collection;
 	protected $_collectionAsciiId;
 	protected $_status;
+	protected $_item_type;
 
 	function __construct($dom = null,$root = null)
 	{
@@ -117,6 +118,20 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		return $this->_status;
+	}
+
+	function getItemType()
+	{
+		if (!$this->_item_type) {
+			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+				if ('http://daseproject.org/category/item_type' == $el->getAttribute('scheme')) {
+					//note we get label here!
+					$this->_item_type =  $el->getAttribute('label');
+					break;
+				}
+			}
+		}
+		return $this->_item_type;
 	}
 
 	function getCollection()

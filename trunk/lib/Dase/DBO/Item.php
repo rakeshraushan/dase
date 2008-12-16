@@ -303,7 +303,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_DBO::query($sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
 	}
 
-	function setType($type_ascii_id)
+	function setItemType($type_ascii_id)
 	{
 		$type = new Dase_DBO_ItemType;
 		$type->ascii_id = $type_ascii_id;
@@ -553,7 +553,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setPublished($created);
 		$entry->setId($this->getBaseUrl());
 		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
-		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item/type',$this->item_type->label);
+		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->name);
 		$entry->addCategory('item','http://daseproject.org/category/entrytype');
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/item/status');

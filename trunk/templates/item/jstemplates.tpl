@@ -47,6 +47,24 @@
 	</form>
 </pre>
 
+<!-- item type form -->
+
+<textarea class="javascript_template" id="item_type_jst">
+	<h1>Set Item Type</h1>
+ 	<h3 id="currentItemType">current: (${current})</h3>
+	<form action="item/${coll_ser}/item_type" method="post" id="itemTypeForm">
+		<p>
+			<select name="item_type">
+			<option>select one:</option>
+			{for t in types}
+			<option value="${t.ascii_id}">${t.name}</option>
+			{/for}
+			</select>
+			<input type="submit" value="set"/>
+		</p>
+	</form>
+</textarea>
+
 <!-- form to request input form -->
 
 <textarea class="javascript_template" id="select_att_jst">

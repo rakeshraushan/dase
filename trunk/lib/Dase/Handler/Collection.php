@@ -12,6 +12,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items' => 'items',
+		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
@@ -45,6 +46,17 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		 */
+	}
+
+	public function getItemTypesJson($r)
+	{
+		$types = array();
+		foreach ($this->collection->getItemTypes() as $it) {
+			$type['ascii_id'] = $it->ascii_id;
+			$type['name'] = $it->name;
+			$types[] = $type;
+		}
+		$r->renderResponse(Dase_Json::get($types));
 	}
 
 	public function getSerialNumbersTxt($r)
