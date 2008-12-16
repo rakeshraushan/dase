@@ -193,7 +193,6 @@ CREATE TABLE `{$table_prefix}item_type_relation` (
 `id` int(11) NOT NULL auto_increment,
 `parent_type_id` int(11) default NULL,
 `child_type_id` int(11) default NULL,
-`category_scheme_id` int(11) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

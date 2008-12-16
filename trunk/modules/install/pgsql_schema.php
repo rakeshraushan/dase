@@ -163,8 +163,7 @@ CREATE TABLE {$table_prefix}item_type (
 CREATE TABLE {$table_prefix}item_type_relation (
     id serial NOT NULL,
     parent_type_id integer,
-    child_type_id integer,
-    category_scheme_id character varying(200)
+    child_type_id integer
 );
 
 CREATE TABLE {$table_prefix}media_file (
