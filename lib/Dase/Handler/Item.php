@@ -14,6 +14,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
+		'{collection_ascii_id}/{serial_number}/item_type' => 'item_type',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
 		'{collection_ascii_id}/{serial_number}/templates' => 'input_templates',
 		'{collection_ascii_id}/{serial_number}/comments/{comment_id}' => 'comment',
@@ -244,6 +245,20 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 	}
 
+	/** this is used to UPDATE an item's type (comes from a form)*/
+	public function postToItemType($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		if ($this->item->setItemType($r->get('item_type'))) {
+			$type = $this->item->getItemType()->name;
+			$this->item->expireCaches();
+			$r->renderResponse("set item type to $type");
+		}
+	}
+
 	public function postToMetadata($r)
 	{
 		$user = $r->getUser();
@@ -306,8 +321,8 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			if ('item' != $item_entry->entrytype) {
-				$item_entry->setEntryType('item');
-				//$r->renderError(400,'must be an item entry');
+				//$item_entry->setEntryType('item');
+				$r->renderError(400,'must be an item entry');
 			}
 			$item = $item_entry->update($r);
 			if ($item) {

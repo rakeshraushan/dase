@@ -24,6 +24,7 @@ Dase.pageInitUser = function(eid) {
 			Dase.initEditMetadata(edit_link);
 			Dase.initAddMetadata();
 			Dase.initAddContent();
+			Dase.initSetItemType();
 			Dase.initAddAnnotation();
 		});
 	}
@@ -246,8 +247,61 @@ Dase.initAddContent = function()
 			});
 		}
 		return false;
+	};
+};
+
+Dase.initSetItemType = function()
+{
+	var type_link = Dase.$('setItemTypeLink');
+	var type_form = Dase.$('ajaxFormHolder');
+	var coll = Dase.$('collectionAsciiId').innerHTML;
+	if (!type_link || !type_form) return;
+	type_link.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
+		if (Dase.toggle(type_form)) {
+			type_form.innerHTML = '<h1 class="loading">Loading...</h1>';
+			Dase.getJSON(this.href, function(json){
+				var data = {};
+				var current_elem = Dase.$('itemType');
+				if (current_elem) {
+					data.current = current_elem.innerHTML;
+				} else {
+					data.current = 'default/none';
+				}
+				data.coll_ser = Dase.$('collSer').innerHTML;
+			    data.types = json;
+				var templateObj = TrimPath.parseDOMTemplate("item_type_jst");
+				type_form.innerHTML = templateObj.process(data);
+				Dase.initItemTypeForm(Dase.$('itemTypeForm'));
+			});
+		}
+		return false;
+	};
+};
+
+Dase.initItemTypeForm = function(form) {
+	form.onsubmit = function() {
+		var content_headers = {
+			'Content-Type':'application/x-www-form-urlencoded'
+		}
+		var cur = Dase.$('currentItemType');
+		if (cur) {
+		   cur.innerHTML = "<h2>updating...</h2>";
+		}
+		Dase.ajax(this.action,'post',function(resp) { 
+			alert(resp);
+			Dase.pageReload();
+		},Dase.form.serialize(this),null,null,content_headers); 
+		Dase.toggle(Dase.$('ajaxFormHolder'));
+		return false;
 	}
 };
+
 
 //for adding textual content (atom:content) 
 Dase.initContentForm = function(form) {

@@ -73,6 +73,8 @@
 						<a href="collection/{$item->collectionAsciiId}/attributes" class="edit" id="addMetadataLink">add metadata</a>
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" class="edit" id="addContentLink">add/edit textual content</a>
+						|
+						<a href="collection/{$item->collectionAsciiId}/item_types" class="edit" id="setItemTypeLink">set item type</a>
 					</div>
 				</div>
 
@@ -101,6 +103,10 @@
 					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/foreach}
+					{if $item->entry->itemType}
+					<dt>Item Type</dt>
+					<dd id="itemType">{$item->entry->itemType}</dd>
+					{/if}
 				</dl>
 				{if $item->content}
 				<div id="itemContent">
