@@ -50,7 +50,7 @@ typically we try to express a relationship w/ a category element on the children
 {{{
 <entry>
   <category scheme="http://daseproject.org/term/collection" term="http://www.laits.utexas.edu/dasebeta/collection/test"/>
-</entry
+</entry>
 }}}
 and on parent:
 {{{
