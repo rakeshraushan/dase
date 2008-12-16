@@ -59,7 +59,7 @@ and on parent:
 
 Note that known relationships do not have a category scheme in the DB -- they are "known"
 
-
+Also -- category@term will be a URI when it is an actual atom:id -- no need when it is a "concept"  (like entrytype "item")
 
 relationship-as-entry is another (when do we allow a new relationshipp to be created w/ AtomPub)
 
