@@ -610,32 +610,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if ($enc) {
 			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
-
-		//much of the following can go in Dase_Atom_Entry
 		$media_link = $entry->addLink(APP_ROOT.'/media/'.$this->collection->ascii_id.'/'.$this->serial_number,'edit-media');
-		$media_group = $entry->addChildElement($media_link,'media:group',null,Dase_Atom::$ns['media']);
 
 		foreach ($this->getMedia() as $med) {
-			if ($med->size == 'thumbnail') {
-				//$media_thumbnail = $entry->addElement('media:thumbnail','',Dase_Atom::$ns['media']);
-				$media_thumbnail = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'thumbnail'));
+			if ('thumbnail' == $med->size) {
+				$media_thumbnail = $entry->addElement('media:thumbnail','',Dase_Atom::$ns['media']);
 				$media_thumbnail->setAttribute('url',$med->getLink());
 				$media_thumbnail->setAttribute('width',$med->width);
 				$media_thumbnail->setAttribute('height',$med->height);
-			}
-		   	if ($med->size == 'viewitem') {
-				//$media_viewitem = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-				$media_viewitem = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
-				$media_viewitem->setAttribute('url',$med->getLink());
-				$media_viewitem->setAttribute('width',$med->width);
-				$media_viewitem->setAttribute('height',$med->height);
-				$media_viewitem->setAttribute('fileSize',$med->file_size);
-				$media_viewitem->setAttribute('type',$med->mime_type);
-				$media_category = $media_viewitem->appendChild($entry->dom->createElement('media:category'));
-				$media_category->appendChild($entry->dom->createTextNode($med->size));
-			}
-			if ($med->size != 'thumbnail' && $med->size != 'viewitem') {
-				$media_content = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
+			} else {
+				$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
 				$media_content->setAttribute('url',$med->getLink());
 				if ($med->width && $med->height) {
 					$media_content->setAttribute('width',$med->width);
