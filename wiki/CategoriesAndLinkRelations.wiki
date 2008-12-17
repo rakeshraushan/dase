@@ -19,7 +19,7 @@ note: maybe there should be BOTH /properties and /entities namespaces
 || /visibility || any || owner, group, public || yes || property ||
 || /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes || property ||
 || /background || tag, tag_item || hex code or colorname || yes || property ||
-|| /metadata || item || term is att_ascii_id, value is value || yes || property+ ||
+|| /metadata || item || term is att_ascii_id (or coll:ascii_id), value is value || yes || property+ ||
 
 
 figure out how tag visibility overrides collection visibility for items in tag.
