@@ -20,7 +20,7 @@ note: maybe there should be BOTH /properties and /entities namespaces
 || /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes || property ||
 || /background || tag, tag_item || hex code or colorname || yes || property ||
 || /metadata || item || term is fully qualified att_ascii_id, value is value || yes || property+ ||
-|| /admin || item || value || no || property ||
+|| /admin_metadata || item || value || no || property ||
 
 
 
