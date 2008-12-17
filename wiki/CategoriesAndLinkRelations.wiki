@@ -4,26 +4,20 @@
 == Atom Categories ==
 _atom categories are used for DASe-specific metadata. some are actionable_
 
-scheme prefix is: http://daseproject.org/category/
+note: URL prefix is always http://daseproject.org/cat
 
-based on intrinsic factors:
-  * error (error)
-  * collection  (collection_ascii_id)
-  * collection/item_count
-  * entrytype (attribute | collection | item | set)
-  * feedtype (collection | collection_list | search | item | tag)
-  * item/type (type_ascii_id)
-  * tag/count (count of items)
-  *  position (integer)
+|| category scheme URL || category type it applies to || possible values || can be changed w/ PUT ||
+|| /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no ||
+|| /collection || collection || <collection_ascii_id> || no ||
+|| /item_type || item || <item_type_ascii_id> ||  yes ||
+|| /item_count || collection, tag || (int) ||  no ||
+|| /position || item, attribute || (int) ||  yes ||
+|| /tag_type || tag || slideshow, cart, set, ?? || yes ||
+|| /status || any || draft, delete, public ||  yes ||
+|| /visibility || any || owner, group, public || yes ||
+|| /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes ||
+|| /background || tag, tag_item || hex code or colorname || yes ||
 
-can be "set" dynamically (either not required, or there is an obvious default value)
-  * collection/visibility (manager | user | public)
-  * tag/background (color or hex code)
-  * tag/type (set | slideshow | cart | admin)
-  * tag/visibility (owner | user | public)
-  * attribute/html_input_type ('text'|'textarea'|'radio'|'checkbox'|'select'|'listbox'|'no_edit'|'text_with_menu)
-  * item/status (public | draft | delete )
-tbd: split out read access and write access. 
 
 figure out how tag visibility overrides collection visibility for items in tag.
 
@@ -53,10 +47,4 @@ note: URL preface is always http://daseproject.org/cat
 || /visibility || any || owner, group, public ||
 || /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || 
 || /background || tag, tag_item || hex code or colorname ||
- 
-
-
-
-
- 
  
