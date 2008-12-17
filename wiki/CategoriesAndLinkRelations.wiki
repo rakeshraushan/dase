@@ -36,5 +36,18 @@ prefix is: http://daseproject.org/relation/
   * collection/attributes (link to the attributes for this collection)
   * feed-link (used to populate the "up" link on a search item)
   * search-item (w/in a search result, appearing in an entry)
+
+
+== Category Schemes Table ==
+
+note: URL preface is always http://daseproject.org/cat
+
+|| category scheme URL || category type it applies to || possible values ||
+|| /type || * || item, collection, attribute, tag, search collection_list, attribute_list || 
+|| /collection || collection || <collection_ascii_id> ||
+
+
+
+
  
  
