@@ -4,7 +4,7 @@
 == Atom Categories ==
 _atom categories are used for DASe-specific metadata. some are actionable_
 
-note: URL prefix is always http://daseproject.org/cat
+note: URL prefix is always http://daseproject.org/terms
 
 || category scheme URL || category type it applies to || possible values || can be changed w/ PUT ||
 || /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no ||
