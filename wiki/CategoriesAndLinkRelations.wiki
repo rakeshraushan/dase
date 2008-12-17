@@ -51,7 +51,8 @@ note: URL preface is always http://daseproject.org/cat
 || /tag_type || tag || slideshow, cart, set, ?? ||
 || /status || any || draft, delete, public ||
 || /visibility || any || owner, group, public ||
-|| /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || /background || tag, tag_item || hex code or colorname ||
+|| /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || 
+|| /background || tag, tag_item || hex code or colorname ||
  
 
 
