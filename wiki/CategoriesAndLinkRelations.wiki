@@ -8,18 +8,18 @@ note: URL prefix is always http://daseproject.org/terms
 
 note: maybe there should be BOTH /properties and /entities namespaces
 
-|| category scheme URL || category type it applies to || possible values || can be changed w/ PUT ||
-|| /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no ||
-|| /collection || collection || <collection_ascii_id> || no ||
-|| /item_type || item || <item_type_ascii_id> ||  yes ||
-|| /item_count || collection, tag || (int) ||  no ||
-|| /position || item, attribute || (int) ||  yes ||
-|| /tag_type || tag || slideshow, cart, set, ?? || yes ||
-|| /status || any || draft, delete, public ||  yes ||
-|| /visibility || any || owner, group, public || yes ||
-|| /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes ||
-|| /background || tag, tag_item || hex code or colorname || yes ||
-|| /metadata || item || term is att_ascii_id, value is value ||
+|| category scheme URL || category type it applies to || possible "term" values || can be changed w/ PUT || identity, membership, or property ||
+|| /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no || property ||
+|| /collection || collection || <collection_ascii_id> || no || membership ||
+|| /item_type || item || <item_type_ascii_id> ||  yes || property, and membership ||
+|| /item_count || collection, tag || (int) ||  no || property ||
+|| /position || item, attribute || (int) ||  yes || property ||
+|| /tag_type || tag || slideshow, cart, set, ?? || yes || property ||
+|| /status || any || draft, delete, public ||  yes || property ||
+|| /visibility || any || owner, group, public || yes || property ||
+|| /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes || property ||
+|| /background || tag, tag_item || hex code or colorname || yes || property ||
+|| /metadata || item || term is att_ascii_id, value is value || yes || property+ ||
 
 
 figure out how tag visibility overrides collection visibility for items in tag.
