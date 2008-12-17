@@ -43,8 +43,12 @@ prefix is: http://daseproject.org/relation/
 note: URL preface is always http://daseproject.org/cat
 
 || category scheme URL || category type it applies to || possible values ||
-|| /type || * || item, collection, attribute, tag, search collection_list, attribute_list || 
+|| /type || all || item, collection, attribute, tag, search collection_list, attribute_list || 
 || /collection || collection || <collection_ascii_id> ||
+|| /item_type || item || <item_type_ascii_id> ||
+|| /item_count || collection, tag || (int) ||
+|| /position || item, attribute || (int) ||
+ 
 
 
 
