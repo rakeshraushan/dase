@@ -6,6 +6,8 @@ _atom categories are used for DASe-specific metadata. some are actionable_
 
 note: URL prefix is always http://daseproject.org/terms
 
+note: maybe there should be BOTH /properties and /entities namespaces
+
 || category scheme URL || category type it applies to || possible values || can be changed w/ PUT ||
 || /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no ||
 || /collection || collection || <collection_ascii_id> || no ||
@@ -17,6 +19,7 @@ note: URL prefix is always http://daseproject.org/terms
 || /visibility || any || owner, group, public || yes ||
 || /html_input_type || attribute || text, textarea, select, radio, checkbox, noedit, list || yes ||
 || /background || tag, tag_item || hex code or colorname || yes ||
+|| /metadata || item || term is att_ascii_id, value is value ||
 
 
 figure out how tag visibility overrides collection visibility for items in tag.
