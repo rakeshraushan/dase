@@ -9,3 +9,9 @@ So, to search over all of the items in "grants" collection that have a category 
 {{{
 http://www.laits.utexas.edu/dase/collection/grants.atom?category={collection/grants/item_type/budget_line}grants/0000123
 }}}
+
+To get all "sets" that are available for course Fine Arts 101, GET:
+
+{{{
+http://www.laits.utexas.edu/dase/tags.atom?category={scheme/utexas/courses}2008_fall_35410_FA_101
+}}}
