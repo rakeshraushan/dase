@@ -34,23 +34,23 @@ and application has this link:
 === take two ===
 {{{
 <entry>
-   <id>http://www.laits.utexas.edu/dasebeta/grants/000123</id>
+   <id>http://www.laits.utexas.edu/dasebeta/item/grants/000123</id>
    <title>pkeane grant application</title>
    <link rel="http://www.laits.utexas.edu/dasebeta/collection/grants/item_type/budget_item" href="http://www.laits.utexas.edu/dasebeta/grants/collection/grants/item_type/budget_item?type=feed&filter=http://www.laits.utexas.edu/dasebeta/item/grants/000123"/>
 </entry>
 
 <entry>
-   <id>http://www.laits.utexas.edu/dasebeta/grants/000124</id>
+   <id>http://www.laits.utexas.edu/dasebeta/item/grants/000124</id>
    <title>budget item: apple powerbook</title>
    <category scheme="http://daseproject.org/category/item_type" term="budget_item"/>
-   <category scheme="http://www.laits.utexas.edu/dasebeta/item_type/budget_item" term="http://www.laits.utexas.edu/dasebeta/grants/000123" label="budget item for pkeane grant application"/>
+   <category scheme="http://www.laits.utexas.edu/dasebeta/collection/grants/item_type/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123" label="budget item for pkeane grant application"/>
 </entry>
 
 <entry>
    <id>http://www.laits.utexas.edu/dasebeta/grants/000124</id>
    <title>budget item: printer cartridges</title>
    <category scheme="http://daseproject.org/category/item_type" term="budget_item"/>
-   <category scheme="http://www.laits.utexas.edu/dasebeta/item_type/budget_item" term="http://www.laits.utexas.edu/dasebeta/grants/000123" label="budget item for pkeane grant application"/>
+   <category scheme="http://www.laits.utexas.edu/dasebeta/collection/grants/item_type/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123" label="budget item for pkeane grant application"/>
 </entry>
 
 }}}
