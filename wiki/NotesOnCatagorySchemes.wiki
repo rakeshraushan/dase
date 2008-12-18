@@ -36,7 +36,7 @@ and application has this link:
 <entry>
    <id>http://www.laits.utexas.edu/dasebeta/grants/000123</id>
    <title>pkeane grant application</title>
-   <link rel="http://www.laits.utexas.edu/dasebeta/item_type/budget_item" href="http://www.laits.utexas.edu/dasebeta/item_type/budget_item?type=feed&filter=http://www.laits.utexas.edu/dasebeta/grants/000123"/>
+   <link rel="http://www.laits.utexas.edu/dasebeta/collection/grants/item_type/budget_item" href="http://www.laits.utexas.edu/dasebeta/grants/collection/grants/item_type/budget_item?type=feed&filter=http://www.laits.utexas.edu/dasebeta/item/grants/000123"/>
 </entry>
 
 <entry>
