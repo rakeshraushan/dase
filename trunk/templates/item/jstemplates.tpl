@@ -51,7 +51,7 @@
 
 <textarea class="javascript_template" id="item_type_jst">
 	<h1>Set Item Type</h1>
- 	<h3 id="currentItemType">current: (${current})</h3>
+ 	<h3 id="currentItemType">Current Item Type: ${current}</h3>
 	<form action="item/${coll_ser}/item_type" method="post" id="itemTypeForm">
 		<p>
 			<select name="item_type">

@@ -1,9 +1,10 @@
-F
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/item_type_form.js"></script>
 {/block}
+
+{block name="title"}DASe: {$collection->collection_name|escape}{/block} 
 
 {block name="content"}
 <div id="contentHeader">
@@ -70,10 +71,11 @@ F
 			</form>
 			{if $type->ascii_id}
 			<div id="atts">
-				<h3>{$type->name} Attributes</h3>
+				<h3>Attributes for "{$type->name}" Item Type</h3>
 				<form
 					id="type_atts_form"
-					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" method="post">
+					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" 
+					method="post">
 					<select name="att_ascii_id">
 						<option>select one:</option>
 						{foreach item=att from=$attributes}
@@ -89,45 +91,56 @@ F
 					<input type="submit" value="add"/>
 				</form>
 				<div id="type_atts_list">
-					<ul id="deletable"></ul>
+					<ul id="deletableAtts"></ul>
 				</div>
 			</div>
 			{/if}
-			{if $type->has_related}
 			<div id="related">
-				<h3>{$type->name} Attributes</h3>
+				<h3>Item Types related to "{$type->name}" Item Type</h3>
 				<form
-					id="type_atts_form"
-					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" method="post">
-					<select name="att_ascii_id">
+					id="type_rels_form"
+					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/relations.json" 
+					method="post">
+					<select name="item_type_unique">
 						<option>select one:</option>
-						{foreach item=att from=$attributes}
-						<option value="{$att->ascii_id}">{$att->attribute_name}</option>
+						{foreach item=t from=$item_types}
+						<option value="{$collection->ascii_id}/{$t->ascii_id}">{$t->name}</option>
 						{/foreach}
 					</select>
-					<select name="cardinality">
-						<option value="0:m">cardinality 0:m</option>
-						<option value="0:1">cardinality 0:1</option>
-						<option value="1:m">cardinality 1:m</option>
-						<option value="1:1">cardinality 1:1</option>
+					<select name="rel">
+						<option value="parent">parent</option>
+						<option value="child">child</option>
 					</select>
 					<input type="submit" value="add"/>
 				</form>
-				<div id="type_atts_list">
-					<ul id="deletable"></ul>
+				<div id="type_rels_list">
+					<ul id="deletableTypes"></ul>
 				</div>
 			</div>
-			{/if}
 		</div>
 		{/if}
 	</div>
 	<div class="spacer"></div>
 </div>
+
 <!-- javascript templates for atts-->
 <textarea class="javascript_template" id="type_atts_jst">
 	{literal}
 	{for a in atts}
 	<li><a href="manage/${a.collection_ascii_id}/attribute/${a.att_ascii_id}">${a.attribute_name}</a> (${a.cardinality}) <a href="manage/${a.collection_ascii_id}/item_type/${a.item_type_ascii}/attribute/${a.att_ascii_id}" class="delete">delete</a></li>
+	{/for}
+	{/literal}
+</textarea>
+<!-- end javascript template -->
+
+<!-- javascript templates for rels-->
+<textarea class="javascript_template" id="type_rels_jst">
+	{literal}
+	{for r in rels.parents}
+	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> (parent) <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
+	{/for}
+	{for r in rels.children}
+	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> (child) <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
 	{/for}
 	{/literal}
 </textarea>

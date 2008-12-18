@@ -6,6 +6,7 @@
 {block name="title"}View Item{/block}
 {block name="content"}
 <div class="full" id="{$item->tagType|lower|default:'set'}">
+	{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 	<div id="collectionAsciiId" class="pagedata">{$item->collectionAsciiId}</div>
 	<div id="collSer" class="pagedata">{$item->collectionAsciiId}/{$item->entry->serialNumber}</div>
 	<div id="contentHeader">
@@ -84,11 +85,11 @@
 
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
-					{foreach item=set key=ascii_id from=$item->metadata}
+					{foreach item=set key=ascii_id from=$item->entry->metadata}
 					{if 'yes' eq $set.public}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+					<dd><a href="search?{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/if}
 					{/foreach}
@@ -97,10 +98,10 @@
 					<a href="#" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 				</div>
 				<dl id="adminMetadata" class="{$item->collectionAsciiId} hide">
-					{foreach item=set key=ascii_id from=$item->adminMetadata}
+					{foreach item=set key=ascii_id from=$item->entry->adminMetadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="search?{$item->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+					<dd><a href="search?{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/foreach}
 					{if $item->entry->itemType}

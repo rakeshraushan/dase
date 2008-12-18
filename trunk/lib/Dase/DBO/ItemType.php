@@ -5,6 +5,9 @@ require_once 'Dase/DBO/Autogen/ItemType.php';
 class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType 
 {
 	public $attributes;
+	public $collection;
+	public $parents = array();
+	public $children = array();
 
 	public static function get($collection_ascii_id,$ascii_id)
 	{
@@ -111,6 +114,22 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$item->injectAtomEntryData($entry);
 		}
 		return $feed->asXml();
+	}
+
+	function getRelations()
+	{
+		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel->parent_type_id = $this->id;
+		foreach ($rel->find() as $r) {
+			$r->getChild()->getCollection();
+			$this->children[] = clone $r;
+		}
+		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel->child_type_id = $this->id;
+		foreach ($rel->find() as $r) {
+			$r->getParent()->getCollection();
+			$this->parents[] = clone $r;
+		}
 	}
 
 	function expunge()

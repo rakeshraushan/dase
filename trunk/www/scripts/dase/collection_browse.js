@@ -1,8 +1,7 @@
 Dase.pageInit = function() {
 	if (Dase.$('browseColumns')) {
-		var att_coll = Dase.$('attColumn');
-		Dase.getAttributes(att_coll.className);
-		att_coll.className = '';
+		var atts_link = Dase.$('collectionAtts');
+		Dase.getAttributes(atts_link.href);
 		var cats = Dase.$('catColumn').getElementsByTagName('a');
 		for (var i=0;i<cats.length;i++) {
 			var cat = cats[i];
@@ -22,13 +21,15 @@ Dase.pageInit = function() {
 Dase.getAttributes = function(url,sort) {
 	var params;
 	if (sort) {
-		params = 'sort='+sort;
+		params = 'filter=public&sort='+sort;
+	} else {
+		params = 'filter=public';
 	}
 	Dase.getJSON(url,function(json) {
 			var data = { 'atts': json };
 			var templateObj = TrimPath.parseDOMTemplate("atts_jst");
 			Dase.$('attColumn').innerHTML = templateObj.process(data);
-			Dase.getAttributeTallies(url+'/tallies');
+			Dase.getAttributeTallies(url.replace(/attributes/,'attribute_tallies'));
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
 			Dase.initAttSort();
 			},null,params);

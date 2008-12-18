@@ -29,11 +29,6 @@
 
 		<style type="text/css">
 			ul#menu li.{$request->tab}-tab {literal}{{/literal}
-				background-color: #eef1f8;
-				background-color: #bbccdd;
-				background-color: #496eac;
-				background-color: #6b8fce;
-				background-color: #8db2f0;
 				background-color: #7da2e0;
 			{literal}}{/literal}
 			ul#menu li.{$request->tab}-tab a {literal}{{/literal}
@@ -105,11 +100,6 @@
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>
-				<li class="scheme-tab">
-				<a href="manage/{$collection->ascii_id}/schemes">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Category Scheme</sup>
-				</a>
-				</li>
 				{if $module_menu}
 				{include file="$module_menu"}
 				{/if}
@@ -143,11 +133,6 @@
 				<li class="uploader-tab">
 				<a href="manage/{$collection->ascii_id}/uploader">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
-				</a>
-				</li>
-				<li class="scheme-tab">
-				<a href="manage/{$collection->ascii_id}/schemes">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Category Scheme</sup>
 				</a>
 				</li>
 			</ul>

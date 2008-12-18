@@ -16,21 +16,106 @@
 
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/error-test.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/test.css"/>
+		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
-		<script type="text/javascript" src="scripts/webtoolkit.base64.js"></script>
-		<script type="text/javascript" src="scripts/http.js"></script>
-		<script type="text/javascript" src="scripts/json2.js"></script>
-		<script type="text/javascript" src="scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
+		<script type="text/javascript" src="www/scripts/http.js"></script>
+		<script type="text/javascript" src="www/scripts/json2.js"></script>
+		<script type="text/javascript" src="www/scripts/md5.js"></script>
+		<script type="text/javascript" src="www/scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/form.js"></script>
+		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
+		{block name="head"}{/block}
+
+		<style type="text/css">
+			{block name="style"}{/block}
+			ul#menu li.{$request->resource}-tab {literal}{{/literal}
+				background-color: #7da2e0;
+			{literal}}{/literal}
+			ul#menu li.{$request->resource}-tab a {literal}{{/literal}
+				color: #fff;
+			{literal}}{/literal}
+		</style>
+
+		<!--[if lt IE 8]>
+		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
+		<![endif]-->
 
 	</head>
-
 	<body>
-		<div id="container">
-			{block name="test-data"}default text{/block}
-		</div><!-- closes id=container-->
-		<div id="tests">
-			{block name="tests"}default text{/block}
+
+		<div id="logoffControl" class="login hide">
+			<a href="settings" class="edit" id="settings-link"><span id="userName"></span></a> 
+			|
+			<a href="logoff" class="edit" id="logoff-link">logout</a>
+			<div id="eid" class="pagedata"></div>
 		</div>
+
+		<div id="loginControl" class="login hide">
+			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
+		</div>
+
+		<div id="manageHeader">
+			DASe Test Suite 
+		</div>
+
+		<div id="sidebar">
+			<ul id="menu" class="hide">
+				<li>
+				<a href="collections">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
+				</a>
+				</li>
+				<li class="cache-tab">
+				<a href="test/cache">
+					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Cache Test</sup>
+				</a>
+				</li>
+				<li class="search-tab">
+				<a href="test/search">
+					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Search Test</sup>
+				</a>
+				</li>
+				<li class="demo-tab">
+				<a href="test/demo">
+					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
+				</a>
+				</li>
+			</ul>
+			<ul id="menuGrayed">
+				<li>
+				<a href="collections">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
+				</a>
+				</li>
+				<li class="cache-tab">
+				<a href="test/cache">
+					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Cache Test</sup>
+				</a>
+				</li>
+				<li class="search-tab">
+				<a href="test/search">
+					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Search Test</sup>
+				</a>
+				</li>
+				<li class="demo-tab">
+				<a href="test/demo">
+					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
+				</a>
+				</li>
+			</ul>
+			<h5 id="ajaxMsg">loading...</h5>
+		</div> <!-- closes sidebar -->
+
+		<div id="content">
+			<div id="test" class="full">
+				{block name="content"}default content{/block}
+			</div>
+		</div>
+
+		<div class="spacer"></div>
+
+		<div id="debugData" class="pagedata"></div>
 	</body>
 </html>

@@ -241,7 +241,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$content = file_get_contents("php://input");
 		}
 		if ($this->item->setContent($content,$user->eid,$content_type)) {
-			$r->renderResponse('added content');
+			$r->renderResponse('content updated');
 		}
 	}
 
@@ -255,7 +255,10 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
 			$this->item->expireCaches();
-			$r->renderResponse("set item type to $type");
+			if (!$type) {
+				$type = 'default/none';
+			}
+			$r->renderResponse("item type is now $type");
 		}
 	}
 

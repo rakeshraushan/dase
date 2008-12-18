@@ -79,7 +79,11 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
 		 */
-		$r->renderResponse($this->tag->asAtom());
+		if ('entry' == $r->get('type')) {
+			$r->renderResponse($this->tag->asAtomEntry());
+		} else {
+			$r->renderResponse($this->tag->asAtom());
+		}
 	}
 
 	public function getTagJson($r)

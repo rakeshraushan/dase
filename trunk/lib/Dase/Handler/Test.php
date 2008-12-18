@@ -3,8 +3,9 @@
 class Dase_Handler_Test extends Dase_Handler
 {
 	public $resource_map = array(
-		'/' => 'test',
-		'first' => 'first',
+		'/' => 'demo',
+		'demo' => 'demo',
+		'cache' => 'cache',
 		'search' => 'search',
 		'fail' => 'fail',
 	);
@@ -13,7 +14,13 @@ class Dase_Handler_Test extends Dase_Handler
 	{
 	}
 
-	public function getFirst($r)
+	public function getDemo($r)
+	{
+		$t = new Dase_Template($r);
+		$r->renderResponse($t->fetch('test/demo.tpl'));
+	}
+
+	public function getCache($r)
 	{
 		$t = new Dase_Template($r);
 		$test = new Dase_Test;
@@ -24,7 +31,6 @@ class Dase_Handler_Test extends Dase_Handler
 		$c->setData('hello');
 		$test->assertTrue(file_exists(CACHE_DIR.md5('test')),'yes cache file');
 		$t->assign('test',$test);
-		$t->assign('tests',get_class_methods('TestHandler'));
 		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 
@@ -42,7 +48,6 @@ class Dase_Handler_Test extends Dase_Handler
 		$test = new Dase_Test;
 		$test->assertTrue($placeholder_count == $param_count,'placeholder count eq params count');
 		$t->assign('test',$test);
-		$t->assign('tests',get_class_methods('TestHandler'));
 		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 
@@ -52,7 +57,6 @@ class Dase_Handler_Test extends Dase_Handler
 		$test = new Dase_Test;
 		$test->assertTrue(false,'fail');
 		$t->assign('test',$test);
-		$t->assign('tests',get_class_methods('TestHandler'));
 		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 }

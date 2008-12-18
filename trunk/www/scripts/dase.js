@@ -242,10 +242,14 @@ Dase.removeFromArray = function(ar,val) {
 Dase.pageReload = function(msg) {
 	var curr = window.location.href;
 	if (msg) {
-		curr = curr.split('?')[0]+'?msg='+msg;
-	} else {
-		window.location.href = curr;
-	}
+		parts = curr.split('?');
+		curr = parts[0]+'?msg='+msg;
+		if (parts[1]) {
+			var part = parts[1].replace(/msg=[^&]*&?/,'');
+			curr += '&'+part;
+		}
+	} 
+	window.location.href = curr;
 }
 
 /* end utilities */

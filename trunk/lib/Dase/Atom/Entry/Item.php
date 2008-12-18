@@ -190,6 +190,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	/*
 	function getMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
@@ -211,6 +212,30 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				$metadata[$dd->localName]['display'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'display');
 				$metadata[$dd->localName]['public'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'public');
 				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
+			}
+		}
+		return $metadata;
+	}
+	 */
+
+	function getMetadata() {
+		$metadata = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/terms/metadata' == $el->getAttribute('scheme')) {
+				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
+				$metadata[$el->getAttribute('term')]['public'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'public');
+				$metadata[$el->getAttribute('term')]['display'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'display');
+			}
+		}
+		return $metadata;
+	}
+
+	function getAdminMetadata() {
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/terms/admin_metadata' == $el->getAttribute('scheme')) {
+				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
 			}
 		}
 		return $metadata;

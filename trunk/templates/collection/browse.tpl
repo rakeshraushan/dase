@@ -32,10 +32,10 @@
 	<div id="browseColumns">
 		<div id="catColumn">
 			<h4>Select Attribute Group:</h4>
-			<a href="collection/{$collection->asciiId}/attributes/public" id="collectionAtts" class="spill">Collection Attributes</a>
-			<a href="collection/{$collection->asciiId}/attributes/admin">Admin Attributes</a>
+			<a href="collection/{$collection->asciiId}/attributes" id="collectionAtts" class="spill">Collection Attributes</a>
+			<a href="collection/{$collection->asciiId}/admin_attributes">Admin Attributes</a>
 		</div>
-		<div id="attColumn" class="collection/{$collection->asciiId}/attributes/public"><!-- insert template output--></div>
+		<div id="attColumn"><!-- insert template output--></div>
 
 		<!-- javascript template -->
 		<textarea class="javascript_template" id="atts_jst">

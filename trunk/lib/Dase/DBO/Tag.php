@@ -339,6 +339,12 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $feed->asXml();
 	}
 
+	function asAtomEntry()
+	{
+		return $this->injectAtomEntryData(new Dase_Atom_Entry)->asXml();
+
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
 		$this->user || $this->getUser(); 

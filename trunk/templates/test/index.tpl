@@ -12,12 +12,12 @@
 {/block}
 
 
-{block name="test-data"}
+{block name="content"}
 <div id="test-data">
 	{if 0 == $test->failed}
-	<div class="masthead success"><h1>DASe Tests</h1></div>
+	<h1>DASe Test Results <img src="www/images/tango-icons/weather-clear.png"/></h1>
 	{else}
-	<div class="masthead failed"><h1>DASe Tests</h1></div>
+	<h1>DASe Test Results <img src="www/images/tango-icons/weather-showers.png"/></h1>
 	{/if}
 	<h5 class="test {$test->result}">{$test->name}</h5>
 	<h5>{$test->failed} failed out of {$test->total} run</h5>
