@@ -65,6 +65,8 @@ and application has this link:
 
 ...therefore this idea could be used to relate any item to any other item by way of collection OR item_type
 
+*note:* right now, I do not plan on implementing a cross-collection relationship mechanism in dase.  Presumably, that can be created in a module. 
+
 *note:* link@href always points to a *feed* (entry aggregation).  So...category points to an entry while links points to a feed.
 
 
