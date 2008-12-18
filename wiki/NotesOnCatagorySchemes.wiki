@@ -55,7 +55,9 @@ and application has this link:
 
 }}}
 
-*note:* the shared scheme/rel in this thing must always point at a collection (item_type is a kind of collection).  The category is saying "I am in this collection -- spefically in this role: @term" and the link is saying "I am related to a set of things in that collection -- here's how to retrieve 'em: @href"
+*note:* the shared scheme/rel in this thing must always point at a collection (item_type is a kind of collection).  The category is saying "I am in this collection -- specifically in this role: @term" and the link is saying "I am related to a set of things in that collection -- here's how to retrieve 'em: @href"
+
+...therefore this idea could be used to relate any item to any other item by way of collection OR item_type
 
 *note:* link@href always points to a *feed* (entry aggregation).  So...category points to an entry while links points to a feed.
 
