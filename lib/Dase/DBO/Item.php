@@ -140,6 +140,37 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
+			AND a.collection_id != 0
+			";
+		$bound_params[] = $this->id;
+		if ($att_ascii_id) {
+			$sql .= "
+				AND a.ascii_id = ?
+				";
+			$bound_params[] = $att_ascii_id;
+		}
+		$sql .= "
+			ORDER BY a.sort_order,v.value_text
+			";
+		$st = Dase_DBO::query($sql,$bound_params);
+		while ($row = $st->fetch()) {
+			$metadata[] = $row;
+		}
+	
+		return $metadata;
+	}
+
+	public function getAdminMetadata($att_ascii_id = '')
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$metadata = array();
+		$bound_params = array();
+		$sql = "
+			SELECT a.ascii_id, a.attribute_name,v.value_text,a.collection_id, v.id, a.is_on_list_display, a.is_public
+			FROM {$prefix}attribute a, {$prefix}value v
+			WHERE v.item_id = ?
+			AND v.attribute_id = a.id
+			AND a.collection_id = 0
 			";
 		$bound_params[] = $this->id;
 		if ($att_ascii_id) {
@@ -305,6 +336,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function setItemType($type_ascii_id)
 	{
+		if (!$type_ascii_id || 'none' == $type_ascii_id) {
+			$this->item_type_id = 0;
+			$this->update();
+			return true;
+		}
 		$type = new Dase_DBO_ItemType;
 		$type->ascii_id = $type_ascii_id;
 		$type->collection_id = $this->collection_id;
@@ -575,6 +611,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->setThumbnail($thumb_url);	
 		}
 		foreach ($this->getMetadata() as $row) {
+			/*
 			$meta = $entry->addElement('d:'.$row['ascii_id'],$row['value_text'],$d);
 			$meta->setAttribute('d:label',$row['attribute_name']);
 			if ($row['is_on_list_display']) {
@@ -587,11 +624,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				$meta->setAttribute('d:public','no');
 			}
+			 */
 
 			//an experiment in using atom:category:
 
-			/*
-			$meta = $entry->addCategory($row['ascii_id'],APP_ROOT.'/'.$c->ascii_id.'/metadata',$row['attribute_name'],$row['value_text']);
+			$meta = $entry->addCategory($c->ascii_id.'.'.$row['ascii_id'],'http://daseproject.org/terms/metadata',$row['attribute_name'],$row['value_text']);
+
 			if ($row['is_on_list_display']) {
 				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:display','yes');
 			} else {
@@ -602,7 +640,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				$meta->setAttributeNS(Dase_Atom::$ns['d'],'d:public','no');
 			}
-			 */
+		}
+
+		foreach ($this->getAdminMetadata() as $row) {
+			$meta = $entry->addCategory($row['ascii_id'],'http://daseproject.org/terms/admin_metadata',$row['attribute_name'],$row['value_text']);
 		}
 		/************** end content *******************/
 

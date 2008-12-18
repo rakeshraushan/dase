@@ -5,8 +5,8 @@ class Dase_Handler_Admin extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'collection_form',
 		'attributes' => 'attributes',
-		'category/scheme/form' => 'category_scheme_form',
-		'category/schemes' => 'category_schemes',
+		'category_scheme/form' => 'category_scheme_form',
+		'category_schemes' => 'category_schemes',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'docs' => 'docs',
@@ -199,7 +199,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			exit;
 		}
 		$tpl = new Dase_Template($r);
-		$tpl->assign('schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/category/schemes.atom'));
+		$tpl->assign('schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/schemes.atom'));
 		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
 	}
 
@@ -207,13 +207,13 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$scheme = new Dase_DBO_CategoryScheme;
 		$scheme->name = $r->get('name');
-		$scheme->fixed = $r->get('fixed');
+		$scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
 		$scheme->uri = $r->get('uri');
 		$scheme->description = $r->get('description');
 		$scheme->created = date(DATE_ATOM);
 		$scheme->created_by_eid = $this->user->eid;
 		$scheme->insert();
-		$r->renderRedirect('admin/category/scheme/form');
+		$r->renderRedirect('admin/category_scheme/form');
 	}
 
 	public function getPalette($r)

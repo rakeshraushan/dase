@@ -291,13 +291,13 @@ Dase.initItemTypeForm = function(form) {
 		}
 		var cur = Dase.$('currentItemType');
 		if (cur) {
-		   cur.innerHTML = "<h2>updating...</h2>";
+		   cur.innerHTML = "updating current item type...";
 		}
 		Dase.ajax(this.action,'post',function(resp) { 
-			alert(resp);
-			Dase.pageReload();
+			//alert(resp);
+			Dase.pageReload(resp);
 		},Dase.form.serialize(this),null,null,content_headers); 
-		Dase.toggle(Dase.$('ajaxFormHolder'));
+		//Dase.toggle(Dase.$('ajaxFormHolder'));
 		return false;
 	}
 };
@@ -314,7 +314,7 @@ Dase.initContentForm = function(form) {
 		   cont.innerHTML = "<h2>Loading content...</h2>";
 		}
 		Dase.ajax(this.action,'post',function(resp) { 
-			Dase.pageReload();
+			Dase.pageReload(resp);
 		},Dase.form.serialize(this),null,null,content_headers); 
 		Dase.toggle(Dase.$('ajaxFormHolder'));
 		return false;

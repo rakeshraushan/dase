@@ -1,9 +1,10 @@
 <?php
 
-class Dase_Handler_Category extends Dase_Handler
+class Dase_Handler_Scheme extends Dase_Handler
 {
 	public $resource_map = array(
-		'schemes' => 'schemes',
+		'/' => 'schemes',
+		'list' => 'schemes',
 	);
 
 	protected function setup($r)

@@ -341,9 +341,22 @@ div#pageReloader {
 }
 
 div#adminPageControls {
+	/*
 	float: right;
 	text-align: right;
 	margin-right: 10px;
+	*/
+	background-color: #eee;
+	padding: 4px 8px;
+	margin: -6px;
+	margin-bottom: 5px;
+}
+
+div#adminPageControls a {
+	font-size: 9px;
+}
+
+div.controlsContainer {
 }
 
 div#adminStatusControls {
@@ -441,6 +454,12 @@ form#setAnnotationForm textarea {
 
 h3 a.modify {
 	font-size: .8em;
+}
+
+h3#currentItemType {
+	font-size: .9em;
+	color: #666;
+	margin-top: 0;
 }
 
 /*****  ITEM SET DISPLAY PAGE **************/
@@ -770,31 +789,6 @@ a#slideshowExit {
 }
 
 /*********** FORM STYLES *********************/
-
-form.adminForm {
-	padding: 3px;
-	border: 1px solid #999;
-	width: 330px;
-	margin-bottom: 2em;
-}
-form.adminForm p {
-	margin: 5px;
-}
-form.adminForm input {
-	margin: 5px;
-	margin-top: 0;
-}
-form.adminForm input[type=text] {
-	width: 300px;
-}
-form.adminForm label {
-	display:block;
-	margin: 5px;
-	margin-bottom: 0;
-	font-weight: bold;
-	color: #666;
-}
-
 form#searchRefine {
 	margin: .8em 0;
 }
@@ -948,6 +942,10 @@ h3.utilLabel {
 
 #serviceKeyForm {
 	margin-top: 2em;
+}
+
+#resources dt {
+	margin-top: 10px;
 }
 
 #resources dt a {

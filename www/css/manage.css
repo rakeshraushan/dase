@@ -94,6 +94,7 @@ ul#menuGrayed a {
 	padding: 6px;
 	margin: 4px 0px;
 	background-color: #ddd;
+	-moz-border-radius: 5px;
 }
 ul#menuGrayed img {
 	border: 0;
@@ -215,6 +216,12 @@ div#browseColumns #itemTypes a {
 	padding: 10px;
 }
 
+#related {
+	margin-top: 10px;
+	background-color: #e5eefd;
+	padding: 10px;
+}
+
 #recent li {
 	width: 60%;
     padding: .5em;
@@ -255,5 +262,17 @@ div#type_atts_list ul li{
 	list-style: inside;
 }
 div#type_atts_list a {
+	display: inline;
+}
+
+div#type_rels_list {
+	line-height: 1.8em;
+	list-style: disc;
+	margin-top: 10px;
+}
+div#type_rels_list ul li{
+	list-style: inside;
+}
+div#type_rels_list a {
 	display: inline;
 }

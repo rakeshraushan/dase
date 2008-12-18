@@ -3,6 +3,14 @@
 class Dase_Atom_Categories extends Dase_Atom 
 {
 	protected $_categories = array();
+	public static $schemes = array(
+		//work on this
+		'http://daseproject.org/terms/type',
+		'http://daseproject.org/terms/type',
+		'http://daseproject.org/terms/type',
+		'http://daseproject.org/terms/type',
+		'http://daseproject.org/terms/type',
+	);
 
 	function __construct($dom = null)
 	{

@@ -4,23 +4,27 @@ class Dase_Handler_Collection extends Dase_Handler
 {
 	public $collection;
 	public $resource_map = array(
-		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
 		'{collection_ascii_id}/archive' => 'archive',
+		'{collection_ascii_id}/admin_attributes' => 'admin_attributes',
+		'{collection_ascii_id}/admin_attribute_tallies' => 'admin_attribute_tallies',
 		'{collection_ascii_id}/attributes' => 'attributes',
+		//todo: implement
+		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
+		'{collection_ascii_id}/attribute_tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/item_types' => 'item_types',
+		//todo implement:
+		'{collection_ascii_id}/item_type/{item_type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
 		'{collection_ascii_id}/items/marked/to_be_deleted' => 'items_marked_to_be_deleted',
-		'{collection_ascii_id}/attributes/tallies' => 'attribute_tallies',
-		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
-		'{collection_ascii_id}/attributes/{filter}/tallies' => 'attribute_tallies',
 	);
 
 	protected function setup($r)
@@ -51,6 +55,9 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getItemTypesJson($r)
 	{
 		$types = array();
+		$default['ascii_id'] = 'none';
+		$default['name'] = 'default/none';
+		$types[] = $default;
 		foreach ($this->collection->getItemTypes() as $it) {
 			$type['ascii_id'] = $it->ascii_id;
 			$type['name'] = $it->name;
@@ -415,9 +422,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ('public' == $filter) {
 			$attributes->is_public = true;
 		}
-		if ('admin' == $filter) {
-			$attributes->collection_id = 0;
-		}
 		if ($r->has('sort')) {
 			$so = $r->get('sort');
 		} else {
@@ -440,15 +444,38 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($att_array),$r);
 	}
 
+	public function getAdminAttributesJson($r) 
+	{
+		$r->checkCache();
+		$c = $this->collection;
+		$attributes = new Dase_DBO_Attribute;
+		$attributes->collection_id = 0;
+		if ($r->has('sort')) {
+			$so = $r->get('sort');
+		} else {
+			$so = 'sort_order';
+		}
+		$attributes->orderBy($so);
+		$att_array = array();
+		foreach($attributes->find() as $att) {
+			$att_array[] =
+				array(
+					'id' => $att->id,
+					'ascii_id' => $att->ascii_id,
+					'attribute_name' => $att->attribute_name,
+					'input_type' => $att->html_input_type,
+					'sort_order' => $att->sort_order,
+					'collection' => $r->get('collection_ascii_id')
+				);
+		}
+		$r->renderResponse(Dase_Json::get($att_array),$r);
+	}
+
 	public function getAttributeTalliesJson($r) 
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		//todo: work on cacheing here
 		//$r->checkCache(1500);
-		if ($r->has('filter') && ('admin' == $r->get('filter'))) {
-			$r->renderResponse(Dase_Json::get($this->_adminAttributeTalliesJson()));
-			exit;
-		}
 		$c = $this->collection;
 		$sql = "
 			SELECT id, ascii_id
@@ -473,7 +500,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($result));
 	}
 
-	private function _adminAttributeTalliesJson() 
+	public function getAdminAttributeTalliesJson($r) 
 	{
 		$prefix = Dase_Config::get('table_prefix');
 		$c = $this->collection;
@@ -500,7 +527,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 1;
-		return $result;
+		$r->renderResponse(Dase_Json::get($result));
 	}
 
 	public function itemsByTypeAsAtom($r) {

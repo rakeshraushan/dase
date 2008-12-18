@@ -57,32 +57,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $media_array;
 	}
 
-	function getMetadata() {
-		$metadata = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' != substr($dd->localName,0,6)) {
-				$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
-				$metadata[$dd->localName]['display'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'display');
-				$metadata[$dd->localName]['public'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'public');
-				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
-			}
-		}
-		return $metadata;
-	}
-
-	function getAdminMetadata() {
-		$metadata = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' == substr($dd->localName,0,6)) {
-				$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
-				$metadata[$dd->localName]['display'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'display');
-				$metadata[$dd->localName]['public'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'public');
-				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
-			}
-		}
-		return $metadata;
-	}
-
 	function getDescription()
 	{
 		return $this->getAtomElementText('summary');

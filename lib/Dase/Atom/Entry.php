@@ -226,10 +226,8 @@ class Dase_Atom_Entry extends Dase_Atom
 	function getGoogleMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['gsx'],'*') as $dd) {
-			if ('admin_' != substr($dd->localName,0,6)) {
-				$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
-				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
-			}
+			$metadata[$dd->localName]['attribute_name'] = $dd->localName;
+			$metadata[$dd->localName]['values'][] = $dd->nodeValue;
 		}
 		return $metadata;
 	}

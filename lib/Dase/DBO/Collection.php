@@ -413,10 +413,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemTypes()
 	{
+		$res = array();
 		$types = new Dase_DBO_ItemType;
 		$types->collection_id = $this->id;
 		$types->orderBy('name');
-		return $types->find();
+		foreach ($types->find() as $t) {
+			$res[] = clone $t;
+		}
+		return $res;
 	}
 
 	public function buildSearchIndex()
