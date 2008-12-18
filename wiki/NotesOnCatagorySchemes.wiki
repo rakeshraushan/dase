@@ -47,6 +47,8 @@ and application has this link:
    <id>http://www.laits.utexas.edu/dasebeta/item/grants/000124</id>
    <title>budget item: apple powerbook</title>
    <category scheme="http://daseproject.org/category/item_type" term="budget_item"/>
+   <!-- likewise, every item must ALSO look in item_category table and if so,
+        construct this category (easier than creating the link!) -->
    <category scheme="http://www.laits.utexas.edu/dasebeta/collection/grants/item_type/budget_item" term="http://www.laits.utexas.edu/dasebeta/item/grants/000123" label="budget item for pkeane grant application"/>
 </entry>
 
