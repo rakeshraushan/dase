@@ -42,7 +42,7 @@ class Dase_Handler_Scheme extends Dase_Handler
 			$r->renderError(401);
 		}
 		//todo: look up in item_type_relation table!!
-		$text = "This URI describes a 0:m relationship between the $parent->name type and the $child->name type";
+		$text = "This URI describes a 1:m relationship between the $parent->name type and the $child->name type";
 		$r->renderResponse($text);
 	}
 
