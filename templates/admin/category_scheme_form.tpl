@@ -1,9 +1,13 @@
 {extends file="admin/layout.tpl"}
 
+{block name="head"}
+<script type="text/javascript" src="www/scripts/dase/category_scheme_form.js"></script>
+{/block}
+
 {block name="title"}DASe: Add a Category Scheme{/block} 
 
 {block name="content"}
-<div class="list" id="browse">
+<div class="full" id="browse">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Add a Category Scheme:</h1>
 	<form class="adminForm" action="admin/category_schemes" method="post">
@@ -12,13 +16,13 @@
 		<input type="text" name="name" value=""/>
 		</p>
 		<p>
-		<label for="scheme">Scheme URI:<br/>{$app_root}category</label>
+		<label for="scheme">Scheme URI:<br/>{$app_root}scheme/</label>
 		<input type="text" name="uri" value=""/>
 		</p>
 		<p>
 		<label for="label">Fixed:</label>
 		<p>
-		<input type="radio" name="fixed" value="0"> no 
+		<input checked="checked" type="radio" name="fixed" value="0"> no 
 		</p>
 		<p>
 		<input type="radio" name="fixed" value="1"> yes
@@ -33,7 +37,7 @@
 		</p>
 	</form>
 	<h2>Existing Category Schemes</h2>
-	<table>
+	<table id="schemes">
 		<tr>
 			<th>name</th>
 			<th>uri</th>
@@ -51,7 +55,7 @@
 			<td>{$scheme->summary}</td>
 			<td>{$scheme->updated}</td>
 			<td>{$scheme->authorName}</td>
-			<td><a href="xx" class="delete">delete</a></td>
+			<td><a href="{$scheme->scheme|replace:$app_root:''}" class="delete">delete</a></td>
 		</tr>
 		{/foreach}
 	</table>

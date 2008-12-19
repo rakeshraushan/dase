@@ -180,6 +180,16 @@ CREATE TABLE `{$table_prefix}item_category` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `{$table_prefix}item_relation` (
+`id` int(11) NOT NULL auto_increment,
+`parent_item_id` int(11) default NULL,
+`child_item_id` int(11) default NULL,
+`item_type_relation_id` int(11) default NULL,
+`created` varchar(50) default NULL,
+`created_by_eid` varchar(50) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE `{$table_prefix}item_type` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` int(11) default NULL,

@@ -137,7 +137,7 @@
 <textarea class="javascript_template" id="type_rels_jst">
 	{literal}
 	{for r in rels.parents}
-	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> (parent) <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
+	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> <a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}">(parent)</a> <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
 	{/for}
 	{for r in rels.children}
 	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> (child) <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>

@@ -36,26 +36,34 @@ ul#menu a {
 	display:block;
 	color: #000;
 	color: #353a41;
-	padding: 9px 9px 9px 18px;
-	padding: 8px;
-	margin: 5px 0px;
+	padding: 6px;
+	margin: 4px 0px;
 }
 ul#menu img {
 	border: 0;
 }
 ul#menu  li  {
 	/* fixes ie problem */
-	background-color: #ecd7d6;
-	background-color: #e7ff9c;
-	background-color: #76a452;
-	background-color: #8fb96e;
 	background-color: #c2dafb;
 	-moz-border-radius: 5px;
 }
 ul#menu li:hover {
-	background-color: #f7efee;
-	background-color: #e7ff9c;
 	background-color: #a8bdda;
+}
+
+ul#menuGrayed a {
+	display:block;
+	padding: 6px;
+	margin: 4px 0px;
+	background-color: #ddd;
+	-moz-border-radius: 5px;
+}
+ul#menuGrayed img {
+	border: 0;
+}
+ul#menuGrayed  li  {
+	background-color: #aaa;
+	-moz-border-radius: 5px;
 }
 
 sup {
@@ -138,7 +146,7 @@ span.method {
 form.adminForm {
 	padding: 3px;
 	border: 1px solid #999;
-	width: 50%;
+	width: 450px;
 	margin-bottom: 2em;
 }
 form.adminForm p {
@@ -149,7 +157,7 @@ form.adminForm input {
 	margin-top: 0;
 }
 form.adminForm input[type=text] {
-	width: 300px;
+	width: 400px;
 }
 form.adminForm label {
 	display:block;
