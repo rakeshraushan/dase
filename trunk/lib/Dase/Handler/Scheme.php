@@ -5,6 +5,7 @@ class Dase_Handler_Scheme extends Dase_Handler
 	public $resource_map = array(
 		'{uri}' => 'scheme',
 		'rel/{collection_ascii_id}/{parent_type_ascii_id}/to/{child_type_ascii_id}' => 'relation',
+		'rel/{collection_ascii_id}/{parent_type_ascii_id}/to/{child_type_ascii_id}/form' => 'relation_form',
 		'{uri1}/{uri2}' => 'scheme',
 		'{uri1}/{uri2}/{uri3}' => 'scheme',
 		'{uri1}/{uri2}/{uri3}/{uri4}' => 'scheme',
@@ -28,6 +29,11 @@ class Dase_Handler_Scheme extends Dase_Handler
 			}	
 		}
 		return join('/',$uri_parts);
+	}
+
+	public function getRelationForm($r)
+	{
+		$r->renderResponse('working on it!');
 	}
 
 	public function getRelation($r)
