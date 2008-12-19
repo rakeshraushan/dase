@@ -12,6 +12,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
+		'{eid}/{tag_ascii_id}/data' => 'tag_data',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
@@ -126,6 +127,22 @@ class Dase_Handler_Tag extends Dase_Handler
 		$this->getTag($r,'grid');
 	}
 
+	public function getTagData($r)
+	{
+		$u = $r->getUser();
+		if (!$u->can('read',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
+		}
+		$http_pw = $u->getHttpPassword();
+		$t = new Dase_Template($r);
+		if ($this->tag->isSingleCollection()) {
+			$t->assign('is_single_collection',1);
+			$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+			$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		}
+		$r->renderResponse($t->fetch('item_set/data.tpl'));
+	}
+
 	public function getTag($r,$display='')
 	{
 		$u = $r->getUser();
@@ -147,6 +164,9 @@ class Dase_Handler_Tag extends Dase_Handler
 			$t->assign('is_admin',1);
 		}
 		$t->assign('display',$display);
+		if ($this->tag->isSingleCollection()) {
+			$t->assign('is_single_collection',1);
+		}
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

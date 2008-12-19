@@ -38,6 +38,11 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		return $this->getLink('alternate','grid');
 	}
 
+	function getDataLink()
+	{
+		return $this->getLink('alternate','data');
+	}
+
 	/** beware: this just gets the first coll_ascii_id it comes to 
 	 * */
 	function getCollectionAsciiId()

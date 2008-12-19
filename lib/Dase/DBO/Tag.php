@@ -311,6 +311,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
+		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
 		if ($this->is_public) {
@@ -399,6 +400,25 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			if ($c && $user->can('write',$c)) {
 				return true;
 			}
+		}
+		return  false;
+	}
+
+	public function isSingleCollection()
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT p_collection_ascii_id 
+			FROM {$prefix}tag_item 
+			where tag_id = ?
+			GROUP BY p_collection_ascii_id
+			";
+		$st = $db->prepare($sql);
+		$st->execute(array($this->id));
+		$colls = $st->fetchAll();
+		if (1 === count($colls) && $colls[0]['p_collection_ascii_id']) {
+			return true;
 		}
 		return  false;
 	}

@@ -137,10 +137,20 @@
 <textarea class="javascript_template" id="type_rels_jst">
 	{literal}
 	{for r in rels.parents}
-	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> <a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}">(parent)</a> <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
+	<li>
+	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
+	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}">(parent)</a> 
+	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
+	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}/form" class="modify">edit</a> 
+	</li>
 	{/for}
 	{for r in rels.children}
-	<li><a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> <a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}">(child)</a> <a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a></li>
+	<li>
+	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
+	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}">(child)</a> 
+	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
+	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}/form" class="modify">edit</a>
+	</li>
 	{/for}
 	{/literal}
 </textarea>

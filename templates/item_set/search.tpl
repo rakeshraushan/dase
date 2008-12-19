@@ -40,7 +40,12 @@
 		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>
 		{/if}
 		{if $items->count}
-		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}  <span id="displaySelect">[ <a href="{$items->gridLink}">grid</a> | <a href="{$items->listLink}">list</a> | <a href="#" id="startSlideshow">slideshow</a> ]<span></h3>
+		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}  
+			<span id="displaySelect">[ 
+				<a href="{$items->gridLink}">grid</a> | 
+				<a href="{$items->listLink}">list</a> | 
+				<a href="#" id="startSlideshow">slideshow</a> 
+				]<span></h3>
 		{else}
 		<h3 class="searchEcho">Search Results: 0 items found</h3>
 		{/if}
