@@ -152,6 +152,16 @@ CREATE TABLE {$table_prefix}item_category (
     category_id integer
 );
 
+CREATE TABLE {$table_prefix}item_relation (
+    id serial NOT NULL,
+    parent_item_id integer,
+    child_item_id integer,
+	item_type_relation_id integer,
+    created character varying(50) DEFAULT 0,
+    created_by_eid character varying(50)
+);
+
+
 CREATE TABLE {$table_prefix}item_type (
     id serial NOT NULL,
     collection_id integer DEFAULT 0 NOT NULL,
@@ -377,6 +387,13 @@ CREATE SEQUENCE {$table_prefix}item_seq
     NO MINVALUE
     CACHE 1;
 
+CREATE SEQUENCE {$table_prefix}item_relation_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
 CREATE SEQUENCE {$table_prefix}input_template_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -514,6 +531,10 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}defined_value_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}item 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}item_relation 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}item_relation_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}input_template 

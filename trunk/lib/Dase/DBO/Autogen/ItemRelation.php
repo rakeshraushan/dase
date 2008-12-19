@@ -9,11 +9,11 @@ require_once 'Dase/DBO.php';
  * 
  */
 
-class Dase_DBO_Autogen_ItemTypeRelation extends Dase_DBO 
+class Dase_DBO_Autogen_ItemRelation extends Dase_DBO 
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'item_type_relation',  array('category_scheme_id','child_type_id','parent_type_id'));
+		parent::__construct( 'item_relation',  array('child_item_id','created','created_by_eid','item_type_relation_id','parent_item_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

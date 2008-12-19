@@ -108,6 +108,48 @@
 				</a>
 				</li>
 			</ul>
+			<ul id="menuGrayed">
+				<li>
+				<a href="collections">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
+				</a>
+				</li>
+				<li class="docs-tab">
+				<a href="admin/docs">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>
+				</a>
+				</li>
+				<li class="log-tab">
+				<a href="admin/log">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>View Log</sup>
+				</a>
+				</li>
+				<li class="attributes-tab">
+				<a href="admin/attributes">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Admin Attributes</sup>
+				</a>
+				</li>
+				<li class="managers-tab">
+				<a href="admin/users">
+					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
+				</a>
+				</li>
+				<li class="category_scheme-tab">
+				<a href="admin/category_scheme/form">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Category Scheme</sup>
+				</a>
+				</li>
+				<li class="collection-tab">
+				<a href="admin/collection/form">
+					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Collection</sup>
+				</a>
+				</li>
+				<li class="remove-collection-tab">
+				<a href="admin/collections">
+					<img alt="icon" src="www/images/tango-icons/list-remove.png"/><sup>Delete a Collection</sup>
+				</a>
+				</li>
+			</ul>
 			<h5 id="ajaxMsg">loading...</h5>
 		</div> <!-- closes sidebar -->
 

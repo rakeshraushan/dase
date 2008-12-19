@@ -205,16 +205,26 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function postToCategorySchemes($r)
 	{
+		//need a similar method in Schemes that's more AtomPub-ish
 		$scheme = new Dase_DBO_CategoryScheme;
 		$scheme->name = $r->get('name');
 		$scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
-		$scheme->uri = $r->get('uri');
+		$scheme->uri = trim($r->get('uri'),'/');
+		if (!$scheme->uri || !$scheme->name) {
+			$params['msg'] = "missing information";
+			$r->renderRedirect('admin/category_scheme/form',$params);
+		}
+		if (substr_count($scheme->uri,'/') > 5) {
+			$params['msg'] = "URI has too many sections (max 6)";
+			$r->renderRedirect('admin/category_scheme/form',$params);
+		}
 		$scheme->description = $r->get('description');
 		$scheme->created = date(DATE_ATOM);
 		$scheme->created_by_eid = $this->user->eid;
 		$scheme->insert();
 		$r->renderRedirect('admin/category_scheme/form');
 	}
+
 
 	public function getPalette($r)
 	{
