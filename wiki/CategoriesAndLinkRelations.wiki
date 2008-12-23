@@ -12,6 +12,7 @@ note: maybe there should be BOTH /properties and /entities namespaces
 || /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no || membership  ||
 || /collection || collection || <collection_ascii_id> || no || membership ||
 || /item_type || item || <item_type_ascii_id> ||  yes || membership ||
+|| /parent_item_type || item || <item_type_ascii_id> || ?? || membership ||
 || /item_count || collection, tag || (int) ||  no || property ||
 || /position || item, attribute || (int) ||  yes || property ||
 || /tag_type || tag || slideshow, cart, set, ?? || yes || property ||
