@@ -1,0 +1,9 @@
+#summary notes on atompub collections in dase
+
+== every DASe collection defines a set of AtomPub collections
+  
+  * Items
+    * every item defines collections
+  * Attributes
+  * Item Types
+  * Media
