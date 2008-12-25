@@ -5,6 +5,6 @@
  * Items
   * Media
   * Comments (user notes)
-  * Attributes
-  * Item Types
-  * Media
+ * Attributes
+ * Item Types
+ * Media
