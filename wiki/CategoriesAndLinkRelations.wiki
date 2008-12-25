@@ -10,7 +10,7 @@ note: maybe there should be BOTH /properties and /entities namespaces
 
 || category scheme URL || category type it applies to || possible "term" values || can be changed w/ PUT || identity, membership, or property ||
 || /type || all || item, collection, attribute, tag, search collection_list, attribute_list, comment || no || membership  ||
-|| /collection || collection || <collection_ascii_id> || no || membership ||
+|| /collection || collection || {collection_ascii_id} || no || membership ||
 || /item_type || item || {item_type_ascii_id} ||  yes || membership ||
 || /parent_item_type || item || {item_type_ascii_id} || yes || membership ||
 || /item_type/{collection_ascii_id}/{item_type_ascii_id} || item || {serial_number} || yes || membership ||
