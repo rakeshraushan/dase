@@ -3,7 +3,8 @@
 == every DASe collection defines a set of AtomPub collections
   
   * Items
-    * every item defines collections
+    * Media
+    * Comments (user notes)
   * Attributes
   * Item Types
   * Media
