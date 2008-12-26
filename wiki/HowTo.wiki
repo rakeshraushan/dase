@@ -1,0 +1,8 @@
+#summary How to do all sorts of things AtomPubbily
+
+ # add an item to a DASe collection
+  * post atom:entry to collection items collection
+  * post atom:entry to a specific itrm_type collection
+  * post a media file to collection media collection
+ # add an attribute
+  * post an atom:entry to collection attributes collection
