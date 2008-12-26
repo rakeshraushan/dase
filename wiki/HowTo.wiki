@@ -8,3 +8,5 @@
   * post an atom:entry to collection attributes collection
  # set/replace attribute defined values
   * look for link@rel=http://daseproject.org/relation/defined_values and GET/PUT atomcat doc
+ # add a parent item to an item
+  * look at this item's item_type collection service doc to find app:categories of potential parents, then add a parent as a category, with parent sernum as term and parent item_type url as
