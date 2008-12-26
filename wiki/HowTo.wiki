@@ -6,3 +6,5 @@
   * post a media file to collection media collection
  # add an attribute
   * post an atom:entry to collection attributes collection
+ # set/replace attribute defined values
+  * look for link@rel=http://daseproject.org/relation/defined_values and GET/PUT atomcat doc
