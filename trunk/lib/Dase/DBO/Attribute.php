@@ -92,14 +92,27 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $this->injectAtomEntryData($entry)->asXml();
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	public function getBaseUrl()
 	{
 		$collection = $this->getCollection();
+		return APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id;
+	}
+
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	{
+		$base_url = $this->getBaseUrl();
 		$entry->setTitle($this->attribute_name);
-		$entry->setId(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
-		$entry->addLink(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id);
-		$entry->addLink(APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id,'edit');
+		$entry->setId($base_url);
+		$entry->addLink($base_url);
+		$entry->addLink($base_url,'edit');
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype','Attribute');
+		$entry->addCategory($this->html_input_type,'http://daseproject.org/category/html_input_type');
+		foreach ($this->getItemTypes() as $type) {
+			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/item_type',$type->name);
+		}
+		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
+			$entry->addLink($base_url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
+		}
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {
@@ -107,16 +120,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 		$entry->setUpdated($updated);
 		$entry->addAuthor();
-		/*
-		$div = simplexml_import_dom($entry->setContent());
-
-		$dl = $div->addChild('dl');
-		foreach ($this as $k => $v) {
-			$dt = $dl->addChild('dt',$k);
-			$dd = $dl->addChild('dd',$v);
-			$dd->addAttribute('class',$k);
-		}
-		 */
 		return $entry;
 	}
 
@@ -368,6 +371,18 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$this->update();
 		}
 	}
+
+	public function definedAsAtomcat()
+	{
+		$c = $this->getCollection(); 
+		$cats = new Dase_Atom_Categories();
+		$cats->setScheme(APP_ROOT.'/attribute/'.$c->ascii_id.'/'.$this->ascii_id.'/defined');
+		foreach ($this->getDefinedValues() as $d) {
+			$cats->addCategory($d);
+		}
+		return $cats->asXml();
+	}
+
 }
 
 

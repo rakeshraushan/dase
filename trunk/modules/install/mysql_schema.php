@@ -182,11 +182,12 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE `{$table_prefix}item_relation` (
 `id` int(11) NOT NULL auto_increment,
-`parent_item_id` int(11) default NULL,
-`child_item_id` int(11) default NULL,
+`parent_serial_number` varchar(200) default NULL,
+`child_serial_number` varcher(200) default NULL,
 `item_type_relation_id` int(11) default NULL,
 `created` varchar(50) default NULL,
 `created_by_eid` varchar(50) default NULL,
+`collection_ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -201,9 +202,10 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE `{$table_prefix}item_type_relation` (
 `id` int(11) NOT NULL auto_increment,
-`parent_type_id` int(11) default NULL,
-`child_type_id` int(11) default NULL,
+`parent_type_ascii_id` varchar(200) default NULL,
+`child_type_ascii_id` varchar(200) default NULL,
 `description` text default NULL,
+`collection_ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -223,7 +225,6 @@ CREATE TABLE `{$table_prefix}media_file` (
 `filename` varchar(2000) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE `{$table_prefix}search_cache` (
 `id` int(11) NOT NULL auto_increment,

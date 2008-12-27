@@ -62,7 +62,7 @@ class Dase_Handler {
 			$format = ucfirst($request->format);
 		}
 		//camel case
-		$resource = str_replace(' ','',ucwords(str_replace('_',' ',$resource)));
+		$resource = Dase_Util::camelize($resource);
 
 		$handler_method = $method.$resource.$format;
 		return $handler_method;

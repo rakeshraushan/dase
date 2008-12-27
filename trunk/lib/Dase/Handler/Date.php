@@ -1,6 +1,6 @@
 <?php
 
-/** used to synchronize clinet & server */
+/** used to synchronize client & server */
 class Dase_Handler_Date extends Dase_Handler
 {
 	public $resource_map = array(

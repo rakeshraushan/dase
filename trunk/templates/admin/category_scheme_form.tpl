@@ -16,7 +16,7 @@
 		<input type="text" name="name" value=""/>
 		</p>
 		<p>
-		<label for="scheme">Scheme URI:<br/>{$app_root}scheme/</label>
+		<label for="scheme">Scheme URI:<br/>{$app_root}category/</label>
 		<input type="text" name="uri" value=""/>
 		</p>
 		<p>
@@ -47,15 +47,15 @@
 			<th>created by</th>
 			<th></th>
 		</tr>
-		{foreach item=scheme from=$schemes->entries}
+		{foreach item=category_scheme from=$category_schemes->entries}
 		<tr>
-			<td>{$scheme->title}</td>
-			<td><a href="admin/category_scheme/form?uri={$scheme->scheme|escape:'url'}">{$scheme->scheme}</a></td>
-			<td>{$scheme->fixed}</td>
-			<td>{$scheme->summary}</td>
-			<td>{$scheme->updated}</td>
-			<td>{$scheme->authorName}</td>
-			<td><a href="{$scheme->scheme|replace:$app_root:''}" class="delete">delete</a></td>
+			<td>{$category_scheme->title}</td>
+			<td><a href="admin/category_scheme/form?uri={$category_scheme->scheme|escape:'url'}">{$category_scheme->scheme}</a></td>
+			<td>{$category_scheme->fixed}</td>
+			<td>{$category_scheme->summary}</td>
+			<td>{$category_scheme->updated}</td>
+			<td>{$category_scheme->authorName}</td>
+			<td><a href="{$category_scheme->scheme|replace:$app_root:''}" class="delete">delete</a></td>
 		</tr>
 		{/foreach}
 	</table>

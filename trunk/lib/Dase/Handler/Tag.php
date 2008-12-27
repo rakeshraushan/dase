@@ -140,6 +140,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
 			$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		}
+		//$r->response_mime_type = "application/octet-stream";
 		$r->renderResponse($t->fetch('item_set/data.tpl'));
 	}
 

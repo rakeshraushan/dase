@@ -33,10 +33,23 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $type;
 	}
 
+	public function getBaseUrl($collection_ascii_id='')
+	{
+		if (!$collection_ascii_id) {
+			$collection = $this->getCollection();
+			$collection_ascii_id = $collection->ascii_id;
+		}
+		return APP_ROOT.'/item_type/'.$collection_ascii_id.'/'.$this->ascii_id;
+	}
+
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
 	{
-		$entry->setTitle('Item Type '.$this->name);
-		$entry->setId(APP_ROOT.'/item_type/'.$collection->ascii_id.'/'.$this->ascii_id);
+		$base_url = $this->getBaseUrl($collection->ascii_id);
+		$entry->setTitle('Item Type: '.$this->name);
+		$entry->setId($base_url);
+		$entry->setSummary($this->description);
+		$entry->addLink($base_url.'.atom','edit');
+		$entry->addLink($base_url.'/attributes.atom','http://daseproject.org/relation/item_type/attributes');
 		$entry->addCategory('item_type','http://daseproject.org/category/entrytype','Item Type');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
@@ -44,18 +57,15 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$updated = $this->updated;
 		}
 		$entry->setUpdated($updated);
-		$entry->addAuthor('ss');
-		$div = simplexml_import_dom($entry->setContent());
-		$dl = $div->addChild('dl');
-		foreach ($this as $k => $v) {
-			$dt = $dl->addChild('dt',$k);
-			$dd = $dl->addChild('dd',$v);
-			$dd->addAttribute('class',$k);
-		}
+		$entry->addAuthor();
 		return $entry;
 	}
 
 	function getCollection() {
+
+		if ($this->collection) {
+			return $this->collection;
+		}
 		$c = new Dase_DBO_Collection;
 		$c->load($this->collection_id);
 		$this->collection = $c;
@@ -82,9 +92,13 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $attributes;
 	}
 
-	function getItems() {
+	function getItems($limit=0) {
 		$i = new Dase_DBO_Item;
 		$i->item_type_id = $this->id;
+		$i->orderBy('updated DESC');
+		if ($limit) {
+			$i->setLimit($limit);
+		}
 		return $i->find();
 	}
 
@@ -103,10 +117,10 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		$feed->setId(APP_ROOT . '/collection/'. $c->ascii_id . '/item_type/' . $this->ascii_id);
+		$feed->setId(APP_ROOT . '/item_type/'. $c->ascii_id . '/' . $this->ascii_id);
 		$feed->setUpdated(date(DATE_ATOM));
 		//figure out public/private tag thing (and whether token is needed)
-		$feed->addLink(APP_ROOT . '/atom/collection/' . $c->ascii_id . '/item_type/' . $this->ascii_id,'self');
+		$feed->addLink(APP_ROOT . '/item_type/' . $c->ascii_id . '/' . $this->ascii_id.'.atom','self');
 		$feed->addCategory($c->ascii_id,"http://daseproject.org/category/collection",$c->name);
 
 		foreach($this->getItems() as $item) {
@@ -116,20 +130,42 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $feed->asXml();
 	}
 
-	function getRelations()
+	function getAttributesFeed() 
+	{
+		$c = $this->getCollection();
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->name.' Attributes');
+		$feed->setId(APP_ROOT . '/item_type/'. $c->ascii_id . '/' . $this->ascii_id.'/attributes');
+		$feed->setUpdated(date(DATE_ATOM));
+		foreach($this->getAttributes() as $att) {
+			$entry = $feed->addEntry('attribute');
+			$att->injectAtomEntryData($entry);
+		}
+		return $feed->asXml();
+	}
+
+	function getParentRelations()
 	{
 		$rel = new Dase_DBO_ItemTypeRelation;
-		$rel->parent_type_id = $this->id;
+		$rel->child_type_ascii_id = $this->ascii_id;
+		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
 		foreach ($rel->find() as $r) {
-			$r->getChild()->getCollection();
-			$this->children[] = clone $r;
-		}
-		$rel = new Dase_DBO_ItemTypeRelation;
-		$rel->child_type_id = $this->id;
-		foreach ($rel->find() as $r) {
-			$r->getParent()->getCollection();
+			$r->getParent();
 			$this->parents[] = clone $r;
 		}
+		return $this->parents;
+	}
+
+	function getChildRelations()
+	{
+		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel->parent_type_ascii_id = $this->ascii_id;
+		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
+		foreach ($rel->find() as $r) {
+			$r->getChild();
+			$this->children[] = clone $r;
+		}
+		return $this->children;
 	}
 
 	function expunge()
@@ -144,5 +180,20 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$doomed->delete();
 		}
 		$this->delete();
+	}
+	
+	public function getAtompubServiceDoc() 
+	{
+		$c = $this->getCollection();
+		$svc = new Dase_Atom_Service;	
+		$ws = $svc->addWorkspace($this->name.' Item Type Workspace');
+		$coll = $ws->addCollection(APP_ROOT.'/item_type/'.$c->ascii_id.'/'.$this->ascii_id.'.atom',$this->name.' Items');
+		$coll->addAccept('application/atom+xml;type=entry');
+		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
+		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
+		foreach ($this->getAttributes() as $att) {
+			$atts->addCategory($c->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+		}
+		return $svc->asXml();
 	}
 }

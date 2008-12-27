@@ -173,6 +173,12 @@ span.current {
 	color: #99a;
 	width: 90%;
 }
+p.relationDesc {
+	margin: 0;
+	margin-left: 1.6em;
+	font-weight: normal;
+	color: #99a;
+}
 
 form#editAttribute textarea {
 	width: 100%;

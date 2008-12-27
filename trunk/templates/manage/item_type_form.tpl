@@ -94,22 +94,21 @@
 					<ul id="deletableAtts"></ul>
 				</div>
 			</div>
-			{/if}
 			<div id="related">
 				<h3>Item Types related to "{$type->name}" Item Type</h3>
 				<form
 					id="type_rels_form"
 					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/relations.json" 
 					method="post">
-					<select name="item_type_unique">
+					<select name="rel_type_ascii_id">
 						<option>select one:</option>
 						{foreach item=t from=$item_types}
-						<option value="{$collection->ascii_id}/{$t->ascii_id}">{$t->name}</option>
+						<option value="{$t->ascii_id}">{$t->name}</option>
 						{/foreach}
 					</select>
 					<select name="rel">
-						<option value="parent">parent</option>
 						<option value="child">child</option>
+						<option value="parent">parent</option>
 					</select>
 					<input type="submit" value="add"/>
 				</form>
@@ -117,6 +116,7 @@
 					<ul id="deletableTypes"></ul>
 				</div>
 			</div>
+			{/if}
 		</div>
 		{/if}
 	</div>
@@ -139,17 +139,37 @@
 	{for r in rels.parents}
 	<li>
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
-	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}">(parent)</a> 
+	(parent) 
 	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}/form" class="modify">edit</a> 
+	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" id="link/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" class="modify">edit title</a> 
+	{if r.title}
+	<p class="relationDesc">${r.title}</p>
+	{/if}
+	<form 
+		class="hide"
+		method="post" 
+		id="form/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}"> 
+		<input type="text" name="title" value="${r.title}"/>
+		<input type="submit" value="update"/>
+	</form>
 	</li>
 	{/for}
 	{for r in rels.children}
 	<li>
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
-	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}">(child)</a> 
+	(child) 
 	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}/form" class="modify">edit</a>
+	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" id="link/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" class="modify">edit title</a> 
+	{if r.title}
+	<p class="relationDesc">${r.title}</p>
+	{/if}
+	<form 
+		class="hide"
+		method="post" 
+		id="form/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}">
+		<input type="text" name="title" value="${r.title}"/>
+		<input type="submit" value="update"/>
+	</form>
 	</li>
 	{/for}
 	{/literal}

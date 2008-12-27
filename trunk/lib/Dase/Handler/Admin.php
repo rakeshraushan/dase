@@ -199,29 +199,29 @@ class Dase_Handler_Admin extends Dase_Handler
 			exit;
 		}
 		$tpl = new Dase_Template($r);
-		$tpl->assign('schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/schemes.atom'));
+		$tpl->assign('category_schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/category_schemes.atom'));
 		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
 	}
 
 	public function postToCategorySchemes($r)
 	{
-		//need a similar method in Schemes that's more AtomPub-ish
-		$scheme = new Dase_DBO_CategoryScheme;
-		$scheme->name = $r->get('name');
-		$scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
-		$scheme->uri = trim($r->get('uri'),'/');
-		if (!$scheme->uri || !$scheme->name) {
+		//need a similar method in CategorySchemes that's more AtomPub-ish
+		$category_scheme = new Dase_DBO_CategoryScheme;
+		$category_scheme->name = $r->get('name');
+		$category_scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
+		$category_scheme->uri = trim($r->get('uri'),'/');
+		if (!$category_scheme->uri || !$category_scheme->name) {
 			$params['msg'] = "missing information";
 			$r->renderRedirect('admin/category_scheme/form',$params);
 		}
-		if (substr_count($scheme->uri,'/') > 5) {
+		if (substr_count($category_scheme->uri,'/') > 5) {
 			$params['msg'] = "URI has too many sections (max 6)";
 			$r->renderRedirect('admin/category_scheme/form',$params);
 		}
-		$scheme->description = $r->get('description');
-		$scheme->created = date(DATE_ATOM);
-		$scheme->created_by_eid = $this->user->eid;
-		$scheme->insert();
+		$category_scheme->description = $r->get('description');
+		$category_scheme->created = date(DATE_ATOM);
+		$category_scheme->created_by_eid = $this->user->eid;
+		$category_scheme->insert();
 		$r->renderRedirect('admin/category_scheme/form');
 	}
 

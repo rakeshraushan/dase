@@ -5,11 +5,13 @@ Dase.pageInit = function() {
 //item editing needs to know user, 
 //so we use the 'pageInitUser' function
 Dase.pageInitUser = function(eid) {
+	var e = Dase.atom.entry('new entry');
+	alert(Dase.atompub.serialize(e));
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
-	var edit_link = Dase.$('editLink');
-	if (!edit_link) return;
+	var edit_metadata_link = Dase.$('editMetadataLink');
+	if (!edit_metadata_link) return;
 	var templates_url = Dase.$('jsTemplatesUrl').href;
 	if (!templates_url) return;
 	var controls = Dase.$('adminPageControls');
@@ -21,15 +23,63 @@ Dase.pageInitUser = function(eid) {
 		Dase.ajax(templates_url,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
 			Dase.updateItemStatus();
-			Dase.initEditMetadata(edit_link);
+			Dase.initEditMetadata(edit_metadata_link);
 			Dase.initAddMetadata();
 			Dase.initAddContent();
 			Dase.initSetItemType();
 			Dase.initAddAnnotation();
+			Dase.initSetParent(controls);
 		});
 	}
 	return;
 };
+
+Dase.initSetParent = function(controls) {
+	var mform = Dase.$('ajaxFormHolder');
+	var links = controls.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		if ('setParentLink' == links[i].className) {
+			links[i].onclick = function() {
+				var parent_type_url = this.href;
+				Dase.addClass(Dase.$('adminPageControls'),'hide');
+				Dase.removeClass(Dase.$('pageReloader'),'hide');
+				Dase.$('pageReloaderLink').onclick = function() {
+					Dase.pageReload();
+					return false;
+				}
+				if (Dase.toggle(mform)) {
+					mform.innerHTML = '<h1 class="loading">Loading...</h1>';
+					Dase.getJSON(parent_type_url,function(json) {
+						var data = {};
+						data.items=json.items;
+						data.count=json.items.length;
+						data.parent=json.type.name;
+						var templateObj = TrimPath.parseDOMTemplate("parent_link_jst");
+						mform.innerHTML = templateObj.process(data);
+						var pForm = Dase.$('setParentForm');
+						Dase.initSetParentForm(pForm,parent_type_url);
+					});
+					return false;
+				}
+			}
+		}
+	}
+}
+
+Dase.initSetParentForm = function(form,target_scheme) {
+	form.onsubmit = function() {
+		var edit_url = Dase.atompub.getEditLink();
+		Dase.atompub.getAtom(edit_url,function(atom){
+			var cats = atom.getElementsByTagName('category');
+			for (var i=0;i<cats.length;i++) {
+				if (target_scheme == cats[i].getAttribute('scheme')) {
+					alert(cats[i].getAttribute('label')+' is currently linked');
+				}
+			}
+		},Dase.user.eid,Dase.user.htpawsswd);
+		return false;
+	}
+}
 
 Dase.initAddAnnotation = function() {
 	var tog = Dase.$('annotationToggle');
@@ -89,7 +139,9 @@ Dase.getNotes = function() {
 	function(resp) {
 		var html = '';
 		for (var i=0;i<resp.length;i++) {
-			html += '<li class="note">'+resp[i].text.replace(/\n/g,'<br/>');
+			html += '<li class="note">'
+			html += '<h3><span class="username">'+resp[i].eid+'</span> '+resp[i].updated+'</h3>';
+			html +=	resp[i].text.replace(/\n/g,'<br/>');
 			html += ' <a href="'+notesLink.href+'/'+resp[i].id+'" class="delete note">(x)</a>';
 			html += '</li>';
 		}
@@ -132,25 +184,27 @@ Dase.initEditMetadata = function(el) {
 			form_div.innerHTML = '<h1 id="formText">loading form...</h1><div id="editMetadata">'+Dase.buildEditMetadataForm(json,el.href)+'</div>';
 			var forms = form_div.getElementsByTagName('form');
 			for (var i=0;i<forms.length;i++) {
-				forms[i].delete.onclick = function() {
-					var att_name = Dase.$('label_'+this.className).innerHTML;
-					var val_text = Dase.$('val_'+this.className).value;
-					if (!val_text) { val_text = ''; }
-					if (confirm("confirm delete\n\n"+att_name+"\n"+val_text)) {
-						//going up dom a bit too fragile??
-						//myform = this.parentNode.parentNode;
-						var myform = Dase.$('form_'+this.className);
-						myform.onsubmit = function() {
-							Dase.addClass(myform,'hide');
-							Dase.ajax(this.action,'delete',function(resp) { 
-							//	alert(resp);
-							});
-							return false;
-						}
-					} else {
-						return false;
+				if (forms[i].del) {
+					forms[i].del.onclick = function() {
+						var att_name = Dase.$('label_'+this.className).innerHTML;
+						var val_text = Dase.$('val_'+this.className).value;
+						if (!val_text) { val_text = ''; }
+						if (confirm("confirm delete\n\n"+att_name+"\n"+val_text)) {
+							//going up dom a bit too fragile??
+							//myform = this.parentNode.parentNode;
+							var myform = Dase.$('form_'+this.className);
+							myform.onsubmit = function() {
+								Dase.addClass(myform,'hide');
+								Dase.ajax(this.action,'delete',function(resp) { 
+									//	alert(resp);
+								});
+								return false;
+							}
+							} else {
+								return false;
+							}
+						};
 					}
-				};
 				forms[i].onsubmit = function() {
 					var value_text = '';
 					for (var k=0;k<this.elements.length;k++) {
@@ -360,7 +414,7 @@ Dase.buildEditMetadataForm = function(json,href) {
 		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
 		html_form += '<form method="post" id="form_'+json[i].value_id+'" action="'+href+'/'+json[i].value_id+'">';
 		html_form += '<label id="label_'+json[i].value_id+'" for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
-		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" value="update"> <input class="'+json[i].value_id+'" name="delete" type="submit" value="delete"></p>';
+		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
 		html_form += "</form>";
 		}
 	}

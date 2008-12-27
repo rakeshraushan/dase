@@ -14,6 +14,21 @@
 	{/for}
 </textarea>
 
+<!-- set parent link form -->
+
+<textarea class="javascript_template" id="parent_link_jst">
+	<h1>attach to ${parent} (${count})</h1>
+	<form id="setParentForm" action="xxxxxxxxx">
+	<select name="parent_ascii_id">
+	<option>select one:</option>
+	{for item in items}
+	<option value="${item.serial_number}">${item.title}</option>
+	{/for}
+	</select>
+	<input type="submit" value="create link"/>
+	</form>
+</textarea>
+
 <!-- item status form -->
 
 <textarea class="javascript_template" id="item_status_jst">

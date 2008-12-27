@@ -166,6 +166,17 @@ class Dase_Atom
 		}
 	}
 
+	function getRelatedLinks() 
+	{
+		$links = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('related' == $el->getAttribute('rel') && $el->getAttribute('title')) {
+				$links[$el->getAttribute('href')] = $el->getAttribute('title');
+			}
+		}
+		return $links;
+	}
+
 	//belongs in Atom/Entry.php ??
 	function getEnclosure() 
 	{

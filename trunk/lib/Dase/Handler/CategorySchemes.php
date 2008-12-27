@@ -1,22 +1,22 @@
 <?php
 
-class Dase_Handler_Schemes extends Dase_Handler
+class Dase_Handler_CategorySchemes extends Dase_Handler
 {
 	public $resource_map = array(
-		'/' => 'schemes',
+		'/' => 'category_schemes',
 	);
 
 	protected function setup($r)
 	{
 	}
 
-	public function getSchemes($r) 
+	public function getCategorySchemes($r) 
 	{
 		$r->response_mime_type = 'application/atom+xml';
 		$r->renderResponse(Dase_DBO_CategoryScheme::listAsFeed());
 	}
 
-	public function getSchemesAtom($r) 
+	public function getCategorySchemesAtom($r) 
 	{
 		$r->renderResponse(Dase_DBO_CategoryScheme::listAsFeed('name'));
 	}

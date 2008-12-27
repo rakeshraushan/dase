@@ -37,6 +37,20 @@ Dase.setTypeRels = function(form) {
 		links = Dase.$('deletableTypes').getElementsByTagName('a');
 		for (var i=0;i<links.length;i++) {
 			ln = links[i];
+			if (Dase.hasClass(ln,'modify')) {
+				ln.onclick = function() {
+					var form = Dase.$(this.id.replace(/link/,'form'));
+					form.action = this.href;
+					Dase.toggle(form);
+					form.onsubmit = function() {
+						Dase.ajax(this.action,'post',function(resp) {
+							Dase.pageInit();
+						},this.description.value);
+						return false;
+					};
+					return false;
+				};
+			}
 			if (Dase.hasClass(ln,'delete')) {
 				ln.onclick = function() {
 					if (confirm('are you sure?')) {

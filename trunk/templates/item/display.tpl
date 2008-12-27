@@ -1,7 +1,17 @@
 {extends file="layout.tpl"}
+
+{block name="head-links}
+{if $item->editLink}
+<!-- atompub -->
+<link rel="edit" type="application/atom+xml" href="{$item->editLink}"/>
+{/if}
+{/block}
+
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/form.js"></script>
 <script type="text/javascript" src="www/scripts/dase/item_display.js"></script>
+<script type="text/javascript" src="www/scripts/xml.js"></script>
+<script type="text/javascript" src="www/scripts/dase/atompub.js"></script>
 {/block}
 {block name="title"}View Item{/block}
 {block name="content"}
@@ -65,17 +75,30 @@
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/metadata" class="edit" id="editLink">edit</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/metadata" 
+							id="editMetadataLink">edit</a>
 						|
 						<!--
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/edit" class="edit" id="inputFormLink">input form</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/edit" 
+							class="edit" id="inputFormLink">input form</a>
 						|
 						-->
-						<a href="collection/{$item->collectionAsciiId}/attributes" class="edit" id="addMetadataLink">add metadata</a>
+						<a href="collection/{$item->collectionAsciiId}/attributes" 
+							id="addMetadataLink">add metadata</a>
 						|
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" class="edit" id="addContentLink">add/edit textual content</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" 
+							id="addContentLink">add/edit textual content</a>
 						|
-						<a href="collection/{$item->collectionAsciiId}/item_types" class="edit" id="setItemTypeLink">set item type</a>
+						<a href="collection/{$item->collectionAsciiId}/item_types" 
+							id="setItemTypeLink">set item type</a>
+						{if $item->entry->parentItemTypes|@count}
+						{foreach item=parent key=parent_ascii from=$item->entry->parentItemTypes}
+						|
+						<a href="item_type/{$item->collectionAsciiId}/{$parent_ascii}"
+							class="setParentLink">link to {$parent}</a>
+						{/foreach}
+						{/if}
+
 					</div>
 				</div>
 
@@ -94,6 +117,7 @@
 					{/if}
 					{/foreach}
 				</dl>
+				
 				<div>
 					<a href="#" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 				</div>
@@ -109,19 +133,26 @@
 					<dd id="itemType">{$item->entry->itemType}</dd>
 					{/if}
 				</dl>
+
 				{if $item->content}
 				<div id="itemContent">
 					{$item->content|markdown}
 				</div>
 				{/if}
 
-				<div id="itemLinks">
-					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
+				{if $item->entry->relatedLinks|@count}
+				<div id="relatedLinks">
+					<h3>related links</h3>
+					<ul>
+						{foreach key=href item=link from=$item->entry->relatedLinks}
+						<li><a href="{$href}">{$link}</a></li>
+						{/foreach}
+					</ul>
 				</div>
-
-				<div class="spacer"></div>
-				<div id="notesForm" class="hide">
-					<form action="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
+				{/if}
+				<div class="notesForm">
+					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
+					<form class="hide" action="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
 						<textarea rows="4" cols="50" id="note" name="note"></textarea>
 						<p>
 						<input type="submit" value="add note"/>
@@ -138,10 +169,6 @@
 	</table>
 	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status"></div>
 
-	{if $item->editLink}
-	<!-- this is an atompub thing and it will supply the action for the edit metadata form-->
-	<div><a class="hide" id="editLink" href="{$item->editLink}">edit item</a></div>
-	{/if}
 </div> 
 {if 'set' == $item->tagType}
 		<div class="tagAdmin">
