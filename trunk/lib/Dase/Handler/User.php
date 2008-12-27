@@ -4,6 +4,7 @@ class Dase_Handler_User extends Dase_Handler
 {
 	public $resource_map = array(
 		'{eid}/data' => 'data',
+		'{eid}/service' => 'service',
 		'{eid}/settings' => 'settings',
 		'{eid}/settings/preferred' => 'preferred_collections',
 		'{eid}/display' => 'display',
@@ -29,9 +30,45 @@ class Dase_Handler_User extends Dase_Handler
 		}
 	}
 
+	public function getService($r)
+	{
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->user->getAtompubServiceDoc());
+	}
+
 	public function getSetsAtom($r)
 	{
 		$r->renderResponse($this->user->getTagsAsAtom());
+	}
+
+	public function postToSets($r)
+	{
+		$content_type = $r->getContentType();
+		if ('application/atom+xml;type=entry' == $content_type ||
+			'application/atom+xml' == $content_type ) {
+				$raw_input = file_get_contents("php://input");
+				$client_md5 = $r->getHeader('Content-MD5');
+				//if Content-MD5 header isn't set, we just won't check
+				if ($client_md5 && md5($raw_input) != $client_md5) {
+					$r->renderError(412,'md5 does not match');
+				}
+				$set_entry = Dase_Atom_Entry::load($raw_input);
+				if ('set' != $set_entry->entrytype) {
+					$r->renderError(400,'must be a set entry');
+				}
+				try {
+					$set = $set_entry->insert($r);
+					header("HTTP/1.1 201 Created");
+					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+					header("Location: ".$set->getBaseUrl().'.atom?type=entry');
+					echo $set->asAtomEntry();
+					exit;
+				} catch (Dase_Exception $e) {
+					$r->renderError(409,$e->getMessage());
+				}
+			} else {
+				$r->renderError(415,'cannot accept '.$content_type);
+			}
 	}
 
 	public function getRecentItemsAtom($r)

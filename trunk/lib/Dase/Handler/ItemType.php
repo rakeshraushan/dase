@@ -28,9 +28,23 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($this->type->name);
 	}
 
+	public function getItemTypeAtom($r)
+	{
+		if ('feed' == $r->get('type')) {
+			$r->renderResponse($this->type->getItemsAsFeed());
+		} else {
+			$r->renderResponse($this->type->asAtomEntry());
+		}
+	}
+
 	public function getAttributesAtom($r)
 	{
 		$r->renderResponse($this->type->getAttributesFeed());
+	}
+
+	public function getAttributesCats($r)
+	{
+		$r->renderResponse($this->type->getAttributesAsCategories());
 	}
 
 	public function getItemTypeJson($r)

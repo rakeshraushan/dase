@@ -29,6 +29,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
+	public function getBaseUrl()
+	{
+		return APP_ROOT.'/user/'.$this->eid;
+	}
+
 	public static function findByNameSubstr($str)
 	{
 		$set = array();
@@ -357,6 +362,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$feed->addAuthor();
 		$tags = new Dase_DBO_Tag;
 		$tags->dase_user_id = $this->id;
+		$tags->orderBy('updated DESC');
 		$tag_count_lookup = $this->getTagCountLookup();
 		foreach ($tags->find() as $tag) {
 			if ($tag->ascii_id) { //compat: make sure tag has ascii_id
@@ -371,4 +377,15 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 		return $feed->asXml();
 	}
+
+	public function getAtompubServiceDoc() 
+	{
+		$svc = new Dase_Atom_Service;	
+		$ws = $svc->addWorkspace('User '.$this->eid.' Workspace');
+		$coll = $ws->addCollection($this->getBaseUrl().'/sets.atom','User '.$this->eid.' Sets');
+		$coll->addAccept('application/atom+xml;type=entry');
+		$coll->addCategorySet()->addCategory('set','http://daseproject.org/category/entrytype');
+		return $svc->asXml();
+	}
+
 }

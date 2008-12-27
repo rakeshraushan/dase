@@ -38,4 +38,33 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		}
 		return $set;
 	}
+
+	public function insert($r)
+	{
+		$user = $r->getUser();
+		$atom_author = $this->getAuthorName();
+		//should be exception??
+		if (!$atom_author || $atom_author != $user->eid) {
+			$request->renderError(401,'users do not match');
+		}
+		$set = new Dase_DBO_Tag;
+		$set->ascii_id = $this->getAsciiId();
+		$set->eid = $user->eid;
+		if ($set->findOne()) { 
+			$r->renderError(409,'set with that name exists');
+		}
+		$set->dase_user_id = $user->id;
+		$set->name = $this->getTitle();
+		$set->is_public = 0;
+		$set->type= 'set';
+		$set->created = date(DATE_ATOM);
+		$set->updated = date(DATE_ATOM);
+		$set->insert();
+		/*
+		foreach ($this->getCategories() as $category) {
+			Dase_DBO_Category::add($set,$category['scheme'],$category['term'],$category['label']);
+		}
+		 */
+		return $set;
+	}
 }

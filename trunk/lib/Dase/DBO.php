@@ -199,6 +199,7 @@ class Dase_DBO implements IteratorAggregate
 		if (count($set)) {
 			return $set[0];
 		}
+		return false;
 	}
 
 	function find()
