@@ -215,6 +215,11 @@ class Dase_Atom
 		$title = $this->addElement('title',$text);
 	}
 
+	function getTitle() 
+	{
+		return $this->getAtomElementText('title');
+	}
+
 	function getAtomElementText($name,$ns_prefix='atom') 
 	{
 		//only works w/ simple string
@@ -241,11 +246,6 @@ class Dase_Atom
 		if ($it) {
 			return $it->nodeValue;
 		}
-	}
-
-	function getTitle() 
-	{
-		return $this->getAtomElementText('title');
 	}
 
 	function getUpdated() 

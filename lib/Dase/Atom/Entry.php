@@ -105,6 +105,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $entry->item(0);
+		$entrytype = '';
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
 				$entrytype = $el->getAttribute('term');
@@ -351,12 +352,12 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getAtomElementText('id');
 	}
 
-	function setEntryType($type) 
+	function setEntrytype($type) 
 	{
 		$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
 	}
 
-	function getEntryType() 
+	function getEntrytype() 
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {

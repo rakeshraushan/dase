@@ -61,6 +61,12 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
+	public function getBaseUrl()
+	{
+		$u = $this->getUser();
+		return APP_ROOT.'/tag/'.$u->eid.'/'.$this->ascii_id;
+	}
+
 	/** be careful w/ this -- we do not archive before deleting */
 	function expunge()
 	{
@@ -123,15 +129,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$uniqs[] = $ti->p_collection_ascii_id.'/'.$ti->p_serial_number;
 		}
 		return $uniqs;
-	}
-
-	function getUpdated()
-	{
-		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->tag_id = $this->id;
-		$tag_item->orderBy('updated DESC');
-		$tag_item->findOne();
-		return $tag_item->updated;
 	}
 
 	function getTagItems()
@@ -304,7 +301,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setId(APP_ROOT . '/tag/'. $this->user->eid . '/' . $this->ascii_id);
-		$feed->setUpdated($this->getUpdated());
+		$feed->setUpdated($this->updated);
 		$feed->addAuthor($this->user->eid);
 		$feed->setFeedType('tag');
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
@@ -354,7 +351,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$entry->setSummary($this->description);
 		}
 		$entry->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
-		$entry->setUpdated($this->getUpdated());
+		$updated = $this->updated ? $this->updated : '2005-01-01T00:00:01-06:00';
+		$entry->setUpdated($updated);
 		$entry->addAuthor($this->user->eid);
 		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
 		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/edit','edit' );
