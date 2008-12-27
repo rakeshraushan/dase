@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_ItemTypeRelation extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'item_type_relation',  array('child_type_id','description','parent_type_id'));
+		parent::__construct( 'item_type_relation',  array('child_type_ascii_id','collection_ascii_id','parent_type_ascii_id','title'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

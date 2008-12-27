@@ -7,6 +7,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}/{att_ascii_id}' => 'attribute',
 		'{collection_ascii_id}/{att_ascii_id}/values' => 'attribute_values',
+		'{collection_ascii_id}/{att_ascii_id}/defined' => 'defined_values',
 	);
 
 	public function setup($r)
@@ -60,6 +61,13 @@ class Dase_Handler_Attribute extends Dase_Handler
 			$val = $r->get('filter_value');
 		}
 		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val));
+	}
+
+	public function getDefinedValues($r) 
+	{
+		$r->response_mime_type = 'applications/atomcat+xml';
+		$attr = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		$r->renderResponse($attr->definedAsAtomcat());
 	}
 
 }

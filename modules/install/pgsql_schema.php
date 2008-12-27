@@ -154,11 +154,12 @@ CREATE TABLE {$table_prefix}item_category (
 
 CREATE TABLE {$table_prefix}item_relation (
     id serial NOT NULL,
-    parent_item_id integer,
-    child_item_id integer,
+    parent_serial_number character varying(200),
+    child_serial_number character varying(200),
 	item_type_relation_id integer,
     created character varying(50) DEFAULT 0,
-    created_by_eid character varying(50)
+    created_by_eid character varying(50),
+    collection_ascii_id character varying(200)
 );
 
 
@@ -172,9 +173,10 @@ CREATE TABLE {$table_prefix}item_type (
 
 CREATE TABLE {$table_prefix}item_type_relation (
     id serial NOT NULL,
-    parent_type_id integer,
-    child_type_id integer,
+    parent_type_ascii_id character varying(200),
+    child_type_ascii_id character varying(200),
     description text,
+    collection_ascii_id character varying(200)
 );
 
 CREATE TABLE {$table_prefix}media_file (

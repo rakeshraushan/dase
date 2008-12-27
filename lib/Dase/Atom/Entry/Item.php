@@ -58,6 +58,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function getThumbnailBase64()
+	{
+		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
+		if ($elem) {
+			return base64_encode(file_get_contents($elem->getAttribute('url')));
+		}
+	}
+
 	public function select($att,$return_first = true) 
 	{
 		foreach ($this->metadata as $k => $v) {
@@ -132,6 +140,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		return $this->_item_type;
+	}
+
+	function getParentItemTypes()
+	{
+		$parent_types = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/parent_item_type' == $el->getAttribute('scheme')) {
+				$parent_types[$el->getAttribute('term')] = $el->getattribute('label');
+			}
+		}
+		return $parent_types;
 	}
 
 	function getCollection()
@@ -221,7 +240,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getMetadata() {
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/terms/metadata' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
 				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
 				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
 				$metadata[$el->getAttribute('term')]['public'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'public');
@@ -233,7 +252,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getAdminMetadata() {
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/terms/admin_metadata' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/admin_metadata' == $el->getAttribute('scheme')) {
 				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
 				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
 			}

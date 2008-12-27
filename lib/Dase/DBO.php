@@ -307,6 +307,7 @@ class Dase_DBO implements IteratorAggregate
 		}
 		Dase_Log::debug('[DBO findCount] '.$log_sql);
 		$sth->execute($bind);
+		//Dase_Log::debug('DB ERROR: '.print_r($sth->errorInfo(),true));
 		return $sth->fetchColumn();
 	}
 

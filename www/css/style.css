@@ -310,23 +310,37 @@ table#item td.metadata ul#notes {
 
 table#item td.metadata ul#notes li {
 	margin: 10px 0;
-	width: 50%;
-	padding: 10px;
+	width: 80%;
+	padding: 4px 10px;
 	background-color: #eee;
+}
+
+li.note h3 {
+	font-weight: normal;
+	font-size: .9em;
+}
+
+li.note h3 span.username {
+	color: #339;
+	font-weight: bold;
+}
+
+a#notesLink {
+	text-decoration: underline;
 }
 
 table#item td.metadata div#itemContent {
 	margin: 10px 0;
 	width: 80%;
-	padding: 10px;
+	padding: 4px 10px;
 	background-color: #ffc;
 }
 
-div#itemLinks {
-	margin: 2em 0;
-}
-
-div#itemLinks a {
+table#item td.metadata div#relatedLinks {
+	margin: 10px 0;
+	width: 80%;
+	padding: 4px 10px;
+	background-color: #eed;
 }
 
 div#pageReloader {
@@ -354,6 +368,7 @@ div#adminPageControls {
 
 div#adminPageControls a {
 	font-size: 9px;
+	color: #00c;
 }
 
 div.controlsContainer {
@@ -373,7 +388,7 @@ div#adminStatusControls {
 	background-color: #ffc;
 	border: 1px solid #999;
 	-moz-border-radius: 5px;
-	padding: 1em 2em 1em 2em;
+	padding: 8px 10px;
 	margin: -.5em 0 2em 0;
 }
 

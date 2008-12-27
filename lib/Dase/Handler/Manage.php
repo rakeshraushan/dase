@@ -315,23 +315,28 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToItemTypeRelations($r)
 	{
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
-		list($coll,$type_ascii) = explode('/',$r->get('item_type_unique'));
-		$rel_type = Dase_DBO_ItemType::get($coll,$type_ascii);
+		$type = $r->get('type_ascii_id');
+		$rel_type = $r->get('rel_type_ascii_id');
 		$rel = $r->get('rel');
+		$coll = $this->collection->ascii_id;
+		if (!Dase_DBO_ItemType::get($coll,$type) || !Dase_DBO_ItemType::get($coll,$rel_type)) {
+			$r->renderError(409);
+		}
 		if ('parent' == $rel) {
 			$itr = new Dase_DBO_ItemTypeRelation;
-			$itr->parent_type_id = $rel_type->id;
-			$itr->child_type_id = $type->id;
+			$itr->parent_type_ascii_id = $rel_type;
+			$itr->child_type_ascii_id = $type;
+			$itr->collection_ascii_id = $coll;
 			$itr->insert();
 		}	
 		if ('child' == $rel) {
 			$itr = new Dase_DBO_ItemTypeRelation;
-			$itr->parent_type_id = $type->id;
-			$itr->child_type_id = $rel_type->id;
+			$itr->parent_type_ascii_id = $type;
+			$itr->child_type_ascii_id = $rel_type;
+			$itr->collection_ascii_id = $coll;
 			$itr->insert();
 		}	
-		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id);
+		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type);
 	}
 
 	public function getItemTypeAttributesJson($r)
@@ -355,21 +360,26 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$res = array();
 		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
-		$type->getRelations();
-		foreach ($type->parents as $p) {
+		$res['parents'] = array();
+		$res['children'] = array();
+		foreach ($type->getParentRelations() as $p) {
 			$res['parents'][$p->parent->ascii_id]['relation_id'] = $p->id;
+			$res['parents'][$p->parent->ascii_id]['title'] = $p->title;
+			$res['parents'][$p->parent->ascii_id]['collection_ascii_id'] = $p->collection_ascii_id;
 			$res['parents'][$p->parent->ascii_id]['id'] = $p->parent->id;
 			$res['parents'][$p->parent->ascii_id]['name'] = $p->parent->name;
 			$res['parents'][$p->parent->ascii_id]['ascii_id'] = $p->parent->ascii_id;
-			$res['parents'][$p->parent->ascii_id]['collection_ascii_id'] = $p->parent->collection->ascii_id;
 		}
-		foreach ($type->children as $c) {
+		foreach ($type->getChildRelations() as $c) {
 			$res['children'][$c->child->ascii_id]['relation_id'] = $c->id;
+			$res['children'][$c->child->ascii_id]['title'] = $c->title;
+			$res['children'][$c->child->ascii_id]['collection_ascii_id'] = $c->collection_ascii_id;
 			$res['children'][$c->child->ascii_id]['id'] = $c->child->id;
 			$res['children'][$c->child->ascii_id]['name'] = $c->child->name;
 			$res['children'][$c->child->ascii_id]['ascii_id'] = $c->child->ascii_id;
-			$res['children'][$c->child->ascii_id]['collection_ascii_id'] = $c->child->collection->ascii_id;
 		}
+		ksort($res['parents']);
+		ksort($res['children']);
 		$r->renderResponse(Dase_Json::get($res));
 	}
 

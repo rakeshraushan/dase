@@ -9,16 +9,30 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 
 	public function getChild() 
 	{
-		$c = new Dase_DBO_ItemType;
-		$this->child = $c->load($this->child_type_id);
-		return $c;
+		$this->child = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->child_type_ascii_id);
+		return $this->child;
 	}
 
 	public function getParent() 
 	{
-		$p = new Dase_DBO_ItemType;
-		$this->parent = $p->load($this->parent_type_id);
-		return $p;
+		$this->parent = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->parent_type_ascii_id);
+		return $this->parent;
+	}
+
+	public function getBaseUri() 
+	{
+		return 'item_type/'.
+			$this->collection_ascii_id.'/'.
+			$this->child_type_ascii_id.'/children_of/'.
+			$this->parent_type_ascii_id;
+	}
+
+	public function getChildCount($parent_serial_number)
+	{
+		$ir = new Dase_DBO_ItemRelation;
+		$ir->item_type_relation_id = $this->id;
+		$ir->parent_serial_number = $parent_serial_number;
+		return ($ir->findCount());
 	}
 
 }

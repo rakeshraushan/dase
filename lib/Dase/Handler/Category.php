@@ -1,11 +1,9 @@
 <?php
 
-class Dase_Handler_Scheme extends Dase_Handler
+class Dase_Handler_Category extends Dase_Handler
 {
 	public $resource_map = array(
 		'{uri}' => 'scheme',
-		'rel/{collection_ascii_id}/{parent_type_ascii_id}/to/{child_type_ascii_id}' => 'relation',
-		'rel/{collection_ascii_id}/{parent_type_ascii_id}/to/{child_type_ascii_id}/form' => 'relation_form',
 		'{uri1}/{uri2}' => 'scheme',
 		'{uri1}/{uri2}/{uri3}' => 'scheme',
 		'{uri1}/{uri2}/{uri3}/{uri4}' => 'scheme',
@@ -29,32 +27,6 @@ class Dase_Handler_Scheme extends Dase_Handler
 			}	
 		}
 		return join('/',$uri_parts);
-	}
-
-	public function getRelationForm($r)
-	{
-		$r->renderResponse('working on it!');
-	}
-
-	public function getRelation($r)
-	{
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		if (!$c) {
-			$r->renderError(401);
-		}
-		$parent = Dase_DBO_ItemType::get($c->ascii_id,$r->get('parent_type_ascii_id'));
-		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
-		if (!$parent || !$child) {
-			$r->renderError(401);
-		}
-		//todo: look up in item_type_relation table!!
-		$text = "This URI describes a 1:m relationship between the $parent->name type and the $child->name type";
-		$r->renderResponse($text);
-	}
-
-	public function postToRelations($r)
-	{
-		//todo: implement this
 	}
 
 	public function getScheme($r) 

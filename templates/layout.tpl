@@ -20,6 +20,7 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		{block name="head-links"}{/block}
 		{if $local_css}
 		<link rel="stylesheet" type="text/css" href="{$local_css}"/>
 		{/if}

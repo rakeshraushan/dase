@@ -10,6 +10,17 @@
   <link href="http://daseproject.org/atom/entry/template.html"/>
 </entry>
 
+what google uses as post example:
+
+<entry xmlns='http://www.w3.org/2005/Atom'>
+ <author>
+  <name>Elizabeth Bennet</name>
+  <email>liz@gmail.com</email>
+ </author>
+ <title type='text'>Entry 1</title>
+ <content type='text'>This is my entry</content>
+</entry>
+
 *********/
 
 class Dase_Atom_Entry extends Dase_Atom
@@ -22,10 +33,12 @@ class Dase_Atom_Entry extends Dase_Atom
 	protected $entrytype;
 	public static $types_map = array(
 		'attribute' => 'Dase_Atom_Entry_Attribute',
+		'category_scheme' => 'Dase_Atom_Entry_CategoryScheme',
 		'collection' => 'Dase_Atom_Entry_Collection',
 		'comment' => 'Dase_Atom_Entry_Comment',
 		'item' => 'Dase_Atom_Entry_Item',
 		'set' => 'Dase_Atom_Entry_Set',
+		'item_type' => 'Dase_Atom_Entry_ItemType',
 	);
 
 	//note: dom is the dom object and root is the root

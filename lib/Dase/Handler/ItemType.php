@@ -1,0 +1,139 @@
+<?php
+
+class Dase_Handler_ItemType extends Dase_Handler
+{
+	public $type;
+	public $resource_map = array(
+		'/' => 'index',
+		'{collection_ascii_id}/{item_type_ascii_id}' => 'item_type',
+		//usually retrieved as app:categories
+		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
+		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
+		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
+		//usually retrieved as atom:feed
+		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'item_type_items',
+	);
+
+	protected function setup($r)
+	{
+		$this->type = Dase_DBO_ItemType::get($r->get('collection_ascii_id'),$r->get('item_type_ascii_id'));
+	}
+
+	public function getIndex($r) {
+		$r->renderResponse('greetings earth person');
+	}
+
+	public function getItemType($r)
+	{
+		$r->renderResponse($this->type->name);
+	}
+
+	public function getAttributesAtom($r)
+	{
+		$r->renderResponse($this->type->getAttributesFeed());
+	}
+
+	public function getItemTypeJson($r)
+	{
+		$res = array();
+		$items = array();
+		foreach ($this->type->getItems() as $it_obj) {
+			$it['serial_number'] = $it_obj->serial_number;
+			$it['title'] = $it_obj->getTitle();
+			$items[] = $it;
+		}
+		$res['items'] = $items;
+		$res['type']['name'] = $this->type->name;
+		$res['type']['ascii_id'] = $this->type->ascii_id;
+		$res['collection'] = $r->get('collection_ascii_id');
+		$r->renderResponse(Dase_Json::get($res));
+	}
+
+	public function getItemTypeItemsCats($r)
+	{
+		$t = $this->type;
+		$cats = new Dase_Atom_Categories;
+		$cats->setScheme($t->getBaseUrl());
+		$cats->setCardinality('zeroOrOne');
+		foreach ($t->getItems(500) as $item) {
+			$cats->addCategory($item->serial_number,'',$item->getTitle());
+		}
+		$r->renderResponse($cats->asXml());
+	}
+
+	public function getService($r)
+	{
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->type->getAtompubServiceDoc());
+	}
+
+	public function getRelationChildren($r)
+	{
+		$this->getRelationChildrenAtom($r);
+	}
+
+	public function getItemTypeItemsAtom($r)
+	{
+		//he we are getting (child) item_type items
+		//which have are related to parent item_type item
+		//specified
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT ir.child_serial_number
+			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
+			WHERE ir.collection_ascii_id = ?
+			AND itr.id = ir.item_type_relation_id
+			AND ir.parent_serial_number = ?
+			AND itr.child_type_ascii_id = ?
+			AND itr.parent_type_ascii_id = ?
+			";
+		$bound = array(
+			$r->get('collection_ascii_id'),
+			$r->get('parent_serial_number'),
+			$r->get('item_type_ascii_id'),
+			$r->get('parent_type_ascii_id'),
+		);
+		$st = Dase_DBO::query($sql,$bound);
+		$feed = new Dase_Atom_Feed;
+		$feed->setId(APP_ROOT.$r->getUrl());
+		$feed->updated = date(DATE_ATOM);
+		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
+		while ($sernum = $st->fetchColumn()) {
+			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
+			$entry = $feed->addEntry();
+			$item->injectAtomEntryData($entry);
+			//todo: need to override updated and author here??
+		}
+		$r->renderResponse($feed->asXml());
+	}
+	/* left over from scheme 
+	public function postToRelation($r) 
+	{
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		if (!$c) {
+			$r->renderError(401);
+		}
+		$parent = Dase_DBO_ItemType::get($c->ascii_id,$r->get('parent_type_ascii_id'));
+		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
+		if (!$parent || !$child) {
+			$r->renderError(401);
+		}
+		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel->parent_type_id = $parent->id;
+		$rel->child_type_id = $child->id;
+		if (!$rel->findOne()) {
+			$r->renderError(404);
+		}
+		$rel->title = trim(file_get_contents("php://input"));
+		$rel->update();
+		$r->renderResponse('updated relation');
+	}
+
+	public function postToRelations($r)
+	{
+		//todo: implement this
+	}
+
+	 */
+}
+

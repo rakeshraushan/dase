@@ -33,7 +33,7 @@
 			{assign var="seen" value="1"}
 			<tr>
 				<td>
-					<img alt="no image" id="thumb{$it->serial_number}" src="{$it->thumbnailLink}"/>
+					<img src="data:image/png;base64,{$it->thumbnailBase64}"/>
 				</td>
 				{foreach item=set key=ascii_id from=$it->metadata}
 				<td>

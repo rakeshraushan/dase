@@ -18,8 +18,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/item_types' => 'item_types',
+		'{collection_ascii_id}/item_types/service' => 'item_types_service',
 		//todo implement:
-		'{collection_ascii_id}/item_type/{item_type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
@@ -64,6 +64,11 @@ class Dase_Handler_Collection extends Dase_Handler
 			$types[] = $type;
 		}
 		$r->renderResponse(Dase_Json::get($types));
+	}
+
+	public function getItemTypesAtom($r)
+	{
+		$r->renderResponse($this->collection->getItemTypesAtom()->asXml());
 	}
 
 	public function getSerialNumbersTxt($r)
@@ -559,6 +564,12 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($this->collection->getAtompubServiceDoc());
+	}
+
+	public function getItemTypesService($r)
+	{
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->collection->getItemTypesAtompubServiceDoc());
 	}
 }
 

@@ -94,6 +94,25 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed;
 	}
 
+	function getItemTypesAtom() {
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->collection_name.' Item Types');
+		$feed->setUpdated($this->updated);
+		$comm = $this->getCommunity();
+		if ($comm) {
+			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
+		}
+		$feed->setId($this->getBaseUrl());
+		$feed->addAuthor();
+		$feed->addLink($this->getBaseUrl(),'alternate');
+		$feed->addLink($this->getBaseUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
+		$feed->setFeedType('item_types');
+		foreach ($this->getItemTypes() as $it) {
+			$it->injectAtomEntryData($feed->addEntry(),$this);
+		}
+		return $feed;
+	}
+
 	function asAtom($limit = 5)
 	{
 		$feed = $this->getBaseAtomFeed();
@@ -558,22 +577,58 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace($this->collection_name.' Workspace');
-		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' Items')
-			->addAccept('application/atom+xml;type=entry')
-			->addCategorySet()
-			->addCategory('item','http://daseproject.org/category/entrytype');
+		$coll = $ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' Items');
+		$coll->addAccept('application/atom+xml;type=entry');
+		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
+		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
+		foreach ($this->getAttributes() as $att) {
+			$atts->addCategory($this->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+		}
 		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
 			->addAccept('application/json');
 		$media_repos = APP_ROOT.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Config::get('media_types') as $type) {
-			$media_coll->addAccept($type,true);
+			//$media_coll->addAccept($type,true);
+			$media_coll->addAccept($type);
 		}
-		$attributes_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/attributes.atom';
-		$ws->addCollection($attributes_repos,$this->collection_name.' Attributes')
+		$item_types_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/item_types.atom';
+		$ws->addCollection($item_types_repos,$this->collection_name.' Item Types')
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
-			->addCategory('attribute','http://daseproject.org/category/entrytype');
+			->addCategory('item_type','http://daseproject.org/category/entrytype');
+		$attributes_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/attributes.atom';
+		$atts_repos = $ws->addCollection($attributes_repos,$this->collection_name.' Attributes');
+		$atts_repos->addAccept('application/atom+xml;type=entry')->addCategorySet()
+			->addCategory('attribute','http://daseproject.org/category/entrytype','',true);
+		$html_inp_types = $atts_repos->addAccept('application/atom+xml;type=entry')
+			->addCategorySet('yes','http://daseproject.org/category/html_input_type');
+		$html_inp_types->setCardinality('oneOrMore');
+		foreach (array('text','textarea','select','radio','checkbox','noedit','list') as $inp) {
+			$html_inp_types->addCategory($inp,'http://daseproject.org/category/html_input_type');
+		}
+		return $svc->asXml();
+	}
+
+	public function getItemTypesAtompubServiceDoc() 
+	{
+		$svc = new Dase_Atom_Service;	
+		$ws = $svc->addWorkspace($this->collection_name.' Item Types Workspace');
+		$item_types_repos = APP_ROOT.'/collection/'.$this->ascii_id.'/item_types.atom';
+		$coll = $ws->addCollection($item_types_repos,$this->collection_name.' Item Types');
+		$coll->addAccept('application/atom+xml;type=entry')
+			->addCategorySet()
+			->addCategory('item_type','http://daseproject.org/category/entrytype');
+		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
+		foreach ($this->getAttributes() as $att) {
+			$atts->addCategory($this->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+		}
+		$parent_types = $coll->addCategorySet('yes','http://daseproject.org/category/parent_item_type');
+		$child_types = $coll->addCategorySet('yes','http://daseproject.org/category/child_item_type');
+		foreach ($this->getItemTypes() as $it) {
+			$parent_types->addCategory($it->ascii_id,'',$it->name);
+			$child_types->addCategory($it->ascii_id,'',$it->name);
+		}
 		return $svc->asXml();
 	}
 

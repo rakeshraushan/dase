@@ -17,6 +17,7 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
+		{block name="head-links"}{/block}
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
 		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
@@ -135,6 +136,9 @@
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
 				</a>
 				</li>
+				{if $module_menu}
+				{include file="$module_menu"}
+				{/if}
 			</ul>
 			<h5 id="ajaxMsg" class="hide">loading...</h5>
 		</div> <!-- closes sidebar -->

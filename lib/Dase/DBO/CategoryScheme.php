@@ -15,9 +15,9 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 		$feed->addAuthor();
 		$feed->setFeedType('category_scheme_list');
 		foreach ($schemes->find() as $sch) {
-			$e = $feed->addEntry();
-			$e->setId(APP_ROOT.'/schema/'.$sch->uri);
-			$e->addLink(APP_ROOT.'/schema/'.$sch->uri,'edit' );
+			$e = $feed->addEntry('category_scheme');
+			$e->setId(APP_ROOT.'/category/'.$sch->uri);
+			$e->addLink(APP_ROOT.'/category/'.$sch->uri,'edit' );
 			$e->setUpdated($sch->created);
 			$e->addAuthor($sch->created_by_eid);
 			$e->setTitle($sch->name);
@@ -30,9 +30,9 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 	public function asAtomEntry()
 	{
 		$e = new Dase_Atom_Entry; 
-		$e->setId(APP_ROOT.'/scheme/'.$this->uri);
+		$e->setId(APP_ROOT.'/category/'.$this->uri);
 		$e->setUpdated($this->created);
-		$e->addLink(APP_ROOT.'/schema/'.$this->uri,'edit' );
+		$e->addLink(APP_ROOT.'/category/'.$this->uri,'edit' );
 		$e->addAuthor($this->created_by_eid);
 		$e->setTitle($this->name);
 		$e->setSummary($this->description);
@@ -48,7 +48,7 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 		} else {
 			$scheme->setFixed('no');
 		}
-		$scheme->setScheme(APP_ROOT.'/scheme/'.$this->uri);
+		$scheme->setScheme(APP_ROOT.'/category/'.$this->uri);
 		//$scheme->dom->formatOutput = true;
 		return $scheme->asXml();
 	}

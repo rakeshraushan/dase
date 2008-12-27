@@ -5,7 +5,7 @@ class Dase_Atom_Service_CategorySet extends Dase_Atom_Service
 	{
 		$this->root = $dom->createElement('categories');
 		if ($href) {
-			$this->root->setAttribute('href',$url);
+			$this->root->setAttribute('href',$href);
 			return;
 		}
 		if ($fixed) {
@@ -17,7 +17,20 @@ class Dase_Atom_Service_CategorySet extends Dase_Atom_Service
 		$this->dom = $dom;
 	}
 
-	function addCategory($term,$scheme='',$label='') 
+	function getCardinality() 
+	{
+		$this->root->getAttributeNS(Dase_Atom::$ns['d'],'d:occurrences');
+	}
+
+	function setCardinality($card) 
+	{
+		if (!in_array($card,array('zeroOrMore','oneOrMore'))) {
+			return;
+		}
+		$this->root->setAttributeNS(Dase_Atom::$ns['d'],'d:occurrences',$card);
+	}
+
+	function addCategory($term,$scheme='',$label='',$required=false) 
 	{
 		$cat = $this->addElement('category',null,Dase_Atom::$ns['atom']);
 		$cat->setAttribute('term',$term);
@@ -27,6 +40,8 @@ class Dase_Atom_Service_CategorySet extends Dase_Atom_Service
 		if ($label) {
 			$cat->setAttribute('label',$label);
 		}
+		if ($required) {
+			$cat->setAttributeNS(Dase_Atom::$ns['d'],'d:required','yes');
+		}
 	}
-
 }

@@ -43,6 +43,20 @@ Class Dase_Util
 		return substr(md5($serial_number),0,2);
 	}
 
+	public static function camelize($str)
+	{
+		$str = trim($str,'_');
+		if (false === strpos($str,'_')) {
+			return ucfirst($str);
+		} else {
+			return str_replace(' ','',ucwords(str_replace('_',' ',$str)));
+			//too clever:
+			//$set = explode('_',$str);
+			//array_walk($set, create_function('&$v,$k', '$v = ucfirst($v);'));
+			//return join('',$set);
+		}
+	}
+
 	public static function dirify($str)
 	{
 		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',$str));

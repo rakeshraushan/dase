@@ -40,12 +40,14 @@ class Dase
 				$new_include_path = ini_get('include_path').':'.MODULE_PATH.'/lib'; 
 				ini_set('include_path',$new_include_path); 
 				Dase_Log::debug('set include path to: '.$new_include_path);
+				//would this allow module names w/ underscores???
+				//$classname = 'Dase_ModuleHandler_'.Dase_Util::camelize($request->module);
 				$classname = 'Dase_ModuleHandler_'.ucfirst($request->module);
 			} else {
 				$request->renderError(404,"no such handler: $handler_file");
 			}
 		} else {
-			$classname = 'Dase_Handler_'.ucfirst($request->handler);
+			$classname = 'Dase_Handler_'.Dase_Util::camelize($request->handler);
 		}
 		if (class_exists($classname,true)) {
 			$handler = new $classname;
