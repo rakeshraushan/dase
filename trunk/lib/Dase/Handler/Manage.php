@@ -98,6 +98,12 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getAttributeForm($r)
 	{
 		$att = new Dase_DBO_Attribute;
+
+		//since this is new:
+		$att->is_public = 1;
+		$att->in_basic_search = 1;
+		$att->is_on_list_display = 1;
+
 		$tpl = new Dase_Template($r);
 		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);

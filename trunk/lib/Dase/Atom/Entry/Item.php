@@ -32,6 +32,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getLink('edit');
 	}
 
+	function getCategoriesLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/categories');
+	}
+
 	//not yet used???
 	function getDescription()
 	{
