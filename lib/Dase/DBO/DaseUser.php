@@ -92,6 +92,46 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_array);
 	}
 
+	public static function listAsAtom($limit=100)
+	{
+		$users = new Dase_DBO_DaseUser;
+		if ($limit) {
+			$users->setLimit($limit);
+		}
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle('DASe Users');
+		$feed->setId(APP_ROOT.'/users');
+		$feed->setFeedType('user_list');
+		//todo:fix this to *not* simply be a time stamp
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+		$feed->addLink(APP_ROOT.'/users.atom','self');
+		$users->orderBy('updated DESC');
+		foreach ($users->find() as $user) {
+			$entry = $feed->addEntry();
+			$entry->setTitle($user->name);
+			$entry->setId($user->getBaseUrl());
+			$entry->setUpdated($user->updated);
+			$entry->setEntryType('user');
+			$entry->setContent($user->eid);
+			$entry->addLink($user->getBaseUrl().'.atom','self');
+		}
+		return $feed->asXML();
+	}
+
+	public function asAtomEntry()
+	{
+		$entry = new Dase_Atom_Entry_User;
+		$entry->setTitle($this->name);
+		$entry->setId($this->getBaseUrl());
+		$entry->addAuthor();
+		$entry->setUpdated($this->updated);
+		$entry->setEntryType('user');
+		$entry->setContent($this->eid);
+		$entry->addLink($this->getBaseUrl().'.atom','self');
+		return $entry->asXML();
+	}
+
 	public function getTags($update_count = false)
 	{
 		$tag_array = array();
@@ -223,7 +263,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public function isManager()
 	{
 		$cm = new Dase_DBO_CollectionManager; 
-		$cm->collection_ascii_id = $collection->ascii_id;
 		$cm->dase_user_eid = $this->eid;
 		$cm->addWhere('auth_level','none','!=');
 		return $cm->findOne();

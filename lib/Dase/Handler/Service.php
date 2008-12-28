@@ -23,7 +23,10 @@ class Dase_Handler_Service extends Dase_Handler
 		$meta_coll->addAccept('application/atom+xml;type=entry');
 		$meta_cats = $meta_coll->addCategorySet();
 		$meta_cats->addCategory('collection','http://daseproject.com/category/entrytype');
-
+		$users_coll = $meta_workspace->addCollection(APP_ROOT.'/users','DASe Users');
+		$users_coll->addAccept('application/atom+xml;type=entry');
+		$users_cats = $users_coll->addCategorySet();
+		$users_cats->addCategory('user','http://daseproject.com/category/entrytype');
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($svc->asXml());
 	}

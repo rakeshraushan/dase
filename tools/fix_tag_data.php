@@ -10,8 +10,9 @@ foreach ($tags->find() as $tag) {
 	if (!$tag->eid) {
 		$u = new Dase_DBO_DaseUser;
 		$u->load($tag->dase_user_id);
-		$tag->eid = strtolower($u->eid);
+		$tag->eid = $u->eid;
 	}
+	$tag->eid = strtolower($tag->eid);
 	if (!$tag->is_public) {
 		$tag->is_public = 0;
 	}
