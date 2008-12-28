@@ -3,6 +3,7 @@
 class Dase_Handler_User extends Dase_Handler
 {
 	public $resource_map = array(
+		'{eid}' => 'user',
 		'{eid}/data' => 'data',
 		'{eid}/service' => 'service',
 		'{eid}/settings' => 'settings',
@@ -28,6 +29,11 @@ class Dase_Handler_User extends Dase_Handler
 		if ($r->get('eid') != $this->user->eid ) {
 			$r->renderError(401,'One must be so careful these days.');
 		}
+	}
+
+	public function getUserAtom($r) 
+	{
+		$r->renderResponse($this->user->asAtomEntry());
 	}
 
 	public function getService($r)

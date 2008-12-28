@@ -82,6 +82,10 @@ class Dase_Atom_Feed extends Dase_Atom
 			'feed' => 'Dase_Atom_Feed',
 			'entry' => 'Dase_Atom_Entry_Set',
 		),
+		'user_list' => array(
+			'feed' => 'Dase_Atom_Feed',
+			'entry' => 'Dase_Atom_Entry_User',
+		),
 		'comments' => array(
 			'feed' => 'Dase_Atom_Feed',
 			'entry' => 'Dase_Atom_Entry_Comment',

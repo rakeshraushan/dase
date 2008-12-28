@@ -280,6 +280,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		foreach ($item_uniques_array as $item_unique) {
 			$tag->addItem($item_unique);
 		}
+		//also sets 'updated':
 		$this->tag->updateItemCount();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("added $num items to $tag->name");

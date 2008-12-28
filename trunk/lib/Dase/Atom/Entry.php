@@ -37,8 +37,9 @@ class Dase_Atom_Entry extends Dase_Atom
 		'collection' => 'Dase_Atom_Entry_Collection',
 		'comment' => 'Dase_Atom_Entry_Comment',
 		'item' => 'Dase_Atom_Entry_Item',
-		'set' => 'Dase_Atom_Entry_Set',
 		'item_type' => 'Dase_Atom_Entry_ItemType',
+		'set' => 'Dase_Atom_Entry_Set',
+		'user' => 'Dase_Atom_Entry_User',
 	);
 
 	//note: dom is the dom object and root is the root
