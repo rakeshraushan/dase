@@ -171,10 +171,6 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 		return $this->getAtomElementText('subtitle');
 	}
 
-	function getEditLink() {
-		return $this->getEntry()->getEditLink();
-	}
-
 	function __get($var) {
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);

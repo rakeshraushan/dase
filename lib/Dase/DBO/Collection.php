@@ -38,11 +38,21 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($item_types->find() as $type) {
 			$type->expunge();
 		}
+		$coll_cats = new Dase_DBO_CollectionCategory;
+		$coll_cats->collection_id = $this->id;
+		foreach ($coll_cats->find() as $cc) {
+			$cc->delete();
+		}
 		$atts = new Dase_DBO_Attribute;
 		$atts->collection_id = $this->id;
 		foreach ($atts->find() as $a) {
 			$a->delete();
 		}	
+		$itrs = new Dase_DBO_ItemTypeRelation;
+		$itrs->collection_ascii_id = $this->ascii_id;
+		foreach ($itrs->find() as $itr) {
+			$itr->delete();
+		}
 		$cms = new Dase_DBO_CollectionManager;
 		$cms->collection_ascii_id = $this->ascii_id;
 		foreach ($cms->find() as $cm) {

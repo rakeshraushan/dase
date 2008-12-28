@@ -1,9 +1,10 @@
 {extends file="layout.tpl"}
 
 {block name="head-links}
-{if $item->editLink}
+{if $item->entry->editLink}
 <!-- atompub -->
-<link rel="edit" type="application/atom+xml" href="{$item->editLink}"/>
+<link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}"/>
+<link rel="categories" type="application/atomcat+xml" href="{$item->entry->categoriesLink}"/>
 {/if}
 {/block}
 

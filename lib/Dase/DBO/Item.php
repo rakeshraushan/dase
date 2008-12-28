@@ -461,8 +461,24 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteContent();
 		$this->deleteComments();
 		$this->deleteTagItems();
+		$this->deleteItemRelations();
 		$this->delete();
 		$c->updateItemCount();
+	}
+
+
+	function deleteItemRelations()
+	{
+		$irs = new Dase_DBO_ItemRelation;
+		$irs->parent_serial_number = $this->serial_number;
+		foreach ($irs->find() as $ir) {
+			$ir->delete();
+		}
+		$irs = new Dase_DBO_ItemRelation;
+		$irs->child_serial_number = $this->serial_number;
+		foreach ($irs->find() as $ir) {
+			$ir->delete();
+		}
 	}
 
 	function deleteContent()
@@ -595,12 +611,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addAuthor($this->created_by_eid);
 		//for AtomPub
 		$entry->setEdited($updated);
-		$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number,'alternate');
+		$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number,'alternate');
 		if ('default' == $type->ascii_id) {
-			$entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'.atom','edit' );
+			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','edit' );
+			$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/categories.cats','http://daseproject.org/categories','application/atomcat+xml','',$c->collection_name.' Categories' );
 		} else {
 			$entry->addLink($type->getBaseUrl().'/'.$this->serial_number.'.atom','edit' );
 			$entry->addLink($type->getBaseUrl().'/service','service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );
+			$entry->addLink($type->getBaseUrl().'/categories.cats','http://daseproject.org/relation/categories','application/atomcat+xml','',$type->name.' Categories' );
 		}
 
 		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );
