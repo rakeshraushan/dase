@@ -133,5 +133,3 @@ Dase.atom.entry = function(title) {
 	return doc;
 }; 
 
-
-

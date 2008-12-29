@@ -614,11 +614,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number,'alternate');
 		if ('default' == $type->ascii_id) {
 			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','edit' );
-			$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/categories.cats','http://daseproject.org/categories','application/atomcat+xml','',$c->collection_name.' Categories' );
+			$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$c->collection_name.' Attributes' );
+			//$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/attributes.cats','http://daseproject.org/relation/attributes','application/atomcat+xml','',$c->collection_name.' Attributes' );
 		} else {
 			$entry->addLink($type->getBaseUrl().'/'.$this->serial_number.'.atom','edit' );
 			$entry->addLink($type->getBaseUrl().'/service','service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );
-			$entry->addLink($type->getBaseUrl().'/categories.cats','http://daseproject.org/relation/categories','application/atomcat+xml','',$type->name.' Categories' );
+			$entry->addLink($type->getBaseUrl().'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
+			//$entry->addLink($type->getBaseUrl().'/attributes.cats','http://daseproject.org/relation/attributes','application/atomcat+xml','',$type->name.' Attributes' );
 		}
 
 		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );

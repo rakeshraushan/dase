@@ -5,8 +5,9 @@ Dase.pageInit = function() {
 //item editing needs to know user, 
 //so we use the 'pageInitUser' function
 Dase.pageInitUser = function(eid) {
-	var e = Dase.atom.entry('new entry');
-	alert(Dase.atompub.serialize(e));
+	//just an atom entry example
+	//var e = Dase.atom.entry('new entry');
+	//alert(Dase.atompub.serialize(e));
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
@@ -263,6 +264,23 @@ Dase.initAddMetadata = function()
 		}
 		if (Dase.toggle(mform)) {
 			mform.innerHTML = '<h1 class="loading">Loading...</h1>';
+			/*
+			Dase.atompub.getAtom(this.href, function(atom) {
+				var cats = atom.getElementsByTagName('category');
+				var atts = new Array();
+				for (var i=0;i<cats.length;i++) {
+					var att = {};
+					att.href = cats[i].getAttribute('term');
+					att.attribute_name = cats[i].getAttribute('label');
+					atts[atts.length] = att;
+				}
+				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
+			    var data = { 'atts': atts };
+				mform.innerHTML = templateObj.process(data);
+				var getForm = Dase.$('getInputForm');
+				Dase.initGetInputForm(getForm);
+			});
+			*/
 			Dase.getJSON(this.href, function(json){
 			    var data = { 'atts': json };
 				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
@@ -378,7 +396,10 @@ Dase.initContentForm = function(form) {
 Dase.initGetInputForm = function(form) {
 	coll = Dase.$('collectionAsciiId').innerHTML;
 	form.att_ascii_id.onchange = function() { //this is the attribute selector
-		var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
+	Dase.$('addMetadataFormTarget').innerHTML = 'loading form...';
+	//var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
+	//what if the attribute had it's own complete url in the original json?
+	var url = this.options[this.selectedIndex].value+'.json';
 		Dase.getJSON(url,function(resp) {
 			resp.coll_ser = Dase.$('collSer').innerHTML;
 			if (!resp.html_input_type) {

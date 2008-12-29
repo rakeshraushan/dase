@@ -417,6 +417,11 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($this->collection->getAttributesAtom()->asXml());
 	}
 
+	public function getAttributesCats($r) 
+	{
+		$r->renderResponse($this->collection->getAttributesAsCategories());
+	}
+
 	public function getAttributesJson($r) 
 	{
 		$filter = $r->has('filter') ? $r->get('filter') : '';
@@ -443,6 +448,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
 					'sort_order' => $att->sort_order,
+					'href' => $att->getBaseUrl(),
 					'collection' => $r->get('collection_ascii_id')
 				);
 		}
