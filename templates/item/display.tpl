@@ -4,7 +4,6 @@
 {if $item->entry->editLink}
 <!-- atompub -->
 <link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}"/>
-<link rel="categories" type="application/atomcat+xml" href="{$item->entry->categoriesLink}"/>
 {/if}
 {/block}
 
@@ -84,7 +83,7 @@
 							class="edit" id="inputFormLink">input form</a>
 						|
 						-->
-						<a href="collection/{$item->collectionAsciiId}/attributes" 
+						<a href="{$item->entry->attributesLink}" 
 							id="addMetadataLink">add metadata</a>
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" 

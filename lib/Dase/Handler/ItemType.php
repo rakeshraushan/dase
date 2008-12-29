@@ -10,6 +10,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
+		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
 		//usually retrieved as atom:feed
 		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'item_type_items',
 	);
@@ -45,6 +46,21 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public function getAttributesCats($r)
 	{
 		$r->renderResponse($this->type->getAttributesAsCategories());
+	}
+
+	public function getAttributesJson($r)
+	{
+		$r->renderResponse($this->type->getAttributesJson());
+	}
+
+	public function getCategoriesCats($r)
+	{
+		$r->renderResponse($this->type->getAttributesAsCategories());
+	}
+
+	public function getCategoriesJson($r)
+	{
+		$r->renderResponse($this->type->getAttributesJson());
 	}
 
 	public function getItemTypeJson($r)

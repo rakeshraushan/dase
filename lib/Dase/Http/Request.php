@@ -21,6 +21,7 @@ class Dase_Http_Request
 		'txt' =>'text/plain',
 		'uris' =>'text/uri-list',
 		'uri' =>'text/uri-list',
+		'xhtml' =>'application/xhtml+xml',
 	);
 	public $content_type;
 	public $error_message;

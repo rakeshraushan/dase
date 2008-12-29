@@ -163,13 +163,25 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	function getAttributesAsCategories() 
 	{
-		$c = $this->getCollection();
 		$cats = new Dase_Atom_Categories;
-		$cats->setScheme($this->getBaseUrl().'/attributes');
+		$cats->setScheme('http://daseproject.org/category/metadata');
 		foreach($this->getAttributes() as $att) {
-			$cats->addCategory($att->ascii_id,'',$att->attribute_name);
+			$cats->addCategory($att->getBaseUrl(),'',$att->attribute_name);
 		}
 		return $cats->asXml();
+	}
+
+	function getAttributesJson() 
+	{
+		$atts = array();
+		foreach ($this->getAttributes() as $att) {
+			$a['ascii_id'] = $att->ascii_id;
+			$a['attribute_name'] = $att->attribute_name;
+			$a['cardinality'] = $att->cardinality;
+			$a['href'] = $att->getBaseUrl();
+			$atts[] = $a;
+		}
+		return Dase_Json::get($atts);
 	}
 
 	function getParentRelations()

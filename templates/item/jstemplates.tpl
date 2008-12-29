@@ -88,7 +88,7 @@
 		<select name="att_ascii_id">
 			<option value="">select an attribute</option>
 			{for att in atts}
-			<option value="${att.ascii_id}">${att.attribute_name}</option>
+			<option value="${att.href}">${att.attribute_name}</option>
 			{/for}
 		</select>
 	</form>

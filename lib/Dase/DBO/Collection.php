@@ -340,6 +340,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_DBO::query($sql,array($this->ascii_id),true);
 	}
 
+	function getAttributesAsCategories() 
+	{
+		$cats = new Dase_Atom_Categories;
+		$cats->setScheme('http://daseproject.org/category/metadata');
+		foreach($this->getAttributes() as $att) {
+			$cats->addCategory($att->getBaseUrl(),'',$att->attribute_name);
+		}
+		return $cats->asXml();
+	}
+
 	function getAttributes($sort = 'sort_order')
 	{
 		$att = new Dase_DBO_Attribute;
