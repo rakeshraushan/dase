@@ -17,19 +17,6 @@ class Dase_Atom_Service_CategorySet extends Dase_Atom_Service
 		$this->dom = $dom;
 	}
 
-	function getCardinality() 
-	{
-		$this->root->getAttributeNS(Dase_Atom::$ns['d'],'d:occurrences');
-	}
-
-	function setCardinality($card) 
-	{
-		if (!in_array($card,array('zeroOrMore','oneOrMore'))) {
-			return;
-		}
-		$this->root->setAttributeNS(Dase_Atom::$ns['d'],'d:occurrences',$card);
-	}
-
 	function addCategory($term,$scheme='',$label='',$required=false) 
 	{
 		$cat = $this->addElement('category',null,Dase_Atom::$ns['atom']);

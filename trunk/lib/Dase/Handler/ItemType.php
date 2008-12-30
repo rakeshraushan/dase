@@ -84,7 +84,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$t = $this->type;
 		$cats = new Dase_Atom_Categories;
 		$cats->setScheme($t->getBaseUrl());
-		$cats->setCardinality('zeroOrOne');
 		foreach ($t->getItems(500) as $item) {
 			$cats->addCategory($item->serial_number,'',$item->getTitle());
 		}

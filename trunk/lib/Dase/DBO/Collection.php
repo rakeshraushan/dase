@@ -623,7 +623,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			->addCategory('attribute','http://daseproject.org/category/entrytype','',true);
 		$html_inp_types = $atts_repos->addAccept('application/atom+xml;type=entry')
 			->addCategorySet('yes','http://daseproject.org/category/html_input_type');
-		$html_inp_types->setCardinality('oneOrMore');
 		foreach (array('text','textarea','select','radio','checkbox','noedit','list') as $inp) {
 			$html_inp_types->addCategory($inp,'http://daseproject.org/category/html_input_type');
 		}

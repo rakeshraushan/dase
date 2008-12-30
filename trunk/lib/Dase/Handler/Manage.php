@@ -313,7 +313,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$ita->attribute_id = $att->id;
 		$ita->item_type_id = $type->id;
 		if (!$ita->findOne()) {
-			$ita->cardinality = $r->get('cardinality');
 			$ita->insert();
 		}
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id);
@@ -352,7 +351,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		foreach ($type->getAttributes() as $att) {
 			$a['attribute_name'] = $att->attribute_name;
 			$a['id'] = $att->id;
-			$a['cardinality'] = $att->cardinality;
 			$a['collection_ascii_id'] = $this->collection->ascii_id;
 			$a['item_type_ascii'] = $type->ascii_id;
 			$a['att_ascii_id'] = $att->ascii_id;

@@ -82,12 +82,6 @@
 						<option value="{$att->ascii_id}">{$att->attribute_name}</option>
 						{/foreach}
 					</select>
-					<select name="cardinality">
-						<option value="0:m">cardinality 0:m</option>
-						<option value="0:1">cardinality 0:1</option>
-						<option value="1:m">cardinality 1:m</option>
-						<option value="1:1">cardinality 1:1</option>
-					</select>
 					<input type="submit" value="add"/>
 				</form>
 				<div id="type_atts_list">
@@ -127,7 +121,7 @@
 <textarea class="javascript_template" id="type_atts_jst">
 	{literal}
 	{for a in atts}
-	<li><a href="manage/${a.collection_ascii_id}/attribute/${a.att_ascii_id}">${a.attribute_name}</a> (${a.cardinality}) <a href="manage/${a.collection_ascii_id}/item_type/${a.item_type_ascii}/attribute/${a.att_ascii_id}" class="delete">delete</a></li>
+	<li><a href="manage/${a.collection_ascii_id}/attribute/${a.att_ascii_id}">${a.attribute_name}</a> <a href="manage/${a.collection_ascii_id}/item_type/${a.item_type_ascii}/attribute/${a.att_ascii_id}" class="delete">delete</a></li>
 	{/for}
 	{/literal}
 </textarea>

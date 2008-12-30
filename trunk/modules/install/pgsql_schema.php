@@ -36,7 +36,6 @@ CREATE TABLE {$table_prefix}attribute_item_type (
     id serial NOT NULL,
     item_type_id integer NOT NULL,
     attribute_id integer NOT NULL,
-    cardinality character varying(20) DEFAULT '0:m'::character varying
 );
 
 CREATE TABLE {$table_prefix}category (

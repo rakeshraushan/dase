@@ -89,13 +89,13 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	function getAttributes()
 	{
+		//todo: fix this!!
 		$attributes = array();
 		$att_it = new Dase_DBO_AttributeItemType;
 		$att_it->item_type_id = $this->id;
 		foreach($att_it->find() as $ait) {
 			$att = new Dase_DBO_Attribute;
 			$att->load($ait->attribute_id);
-			$att->cardinality = $ait->cardinality; 
 			$attributes[] = $att;
 		}
 		$this->attributes = $attributes;
@@ -177,7 +177,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		foreach ($this->getAttributes() as $att) {
 			$a['ascii_id'] = $att->ascii_id;
 			$a['attribute_name'] = $att->attribute_name;
-			$a['cardinality'] = $att->cardinality;
 			$a['href'] = $att->getBaseUrl();
 			$atts[] = $a;
 		}
