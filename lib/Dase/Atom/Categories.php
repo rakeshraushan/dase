@@ -54,19 +54,6 @@ class Dase_Atom_Categories extends Dase_Atom
 		$this->root->getAttribute('scheme');
 	}
 
-	function getCardinality() 
-	{
-		$this->root->getAttributeNS(Dase_Atom::$ns['d'],'d:occurrences');
-	}
-
-	function setCardinality($card) 
-	{
-		if (!in_array($card,array('zeroOrOne','zeroOrMore','oneOrMore'))) {
-			return;
-		}
-		$this->root->setAttributeNS(Dase_Atom::$ns['d'],'d:occurrences',$card);
-	}
-
 	function getCategories() {
 		$default_scheme = $this->getScheme();
 		$categories = array();

@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_AttributeItemType extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'attribute_item_type',  array('attribute_id','cardinality','item_type_id'));
+		parent::__construct( 'attribute_item_type',  array('attribute_id','item_type_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

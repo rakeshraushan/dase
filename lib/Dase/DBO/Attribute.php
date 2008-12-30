@@ -4,7 +4,6 @@ require_once 'Dase/DBO/Autogen/Attribute.php';
 
 class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 {
-	public $cardinality;
 	public $collection = null;
 	public $display_values = array();
 

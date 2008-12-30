@@ -59,7 +59,7 @@ Class Dase_Util
 
 	public static function dirify($str)
 	{
-		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',$str));
+		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str)));
 		return preg_replace('/__*/','_',$str);
 	}
 

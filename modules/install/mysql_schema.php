@@ -42,7 +42,6 @@ CREATE TABLE `{$table_prefix}attribute_item_type` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
 `item_type_id` int(11) default NULL,
-`cardinality` varchar(20) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
