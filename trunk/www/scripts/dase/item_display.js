@@ -11,8 +11,6 @@ Dase.pageInitUser = function(eid) {
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
-	var edit_metadata_link = Dase.$('editMetadataLink');
-	if (!edit_metadata_link) return;
 	var templates_url = Dase.$('jsTemplatesUrl').href;
 	if (!templates_url) return;
 	var controls = Dase.$('adminPageControls');
@@ -23,11 +21,11 @@ Dase.pageInitUser = function(eid) {
 		//see templates/item/jstemplates.tpl
 		Dase.ajax(templates_url,'get',function(resp) {
 			Dase.$('jsTemplates').innerHTML = resp;
-			Dase.updateItemStatus();
-			Dase.initEditMetadata(edit_metadata_link);
+			Dase.initEditMetadata();
 			Dase.initAddMetadata();
 			Dase.initAddContent();
 			Dase.initSetItemType();
+			Dase.initSetItemStatus();
 			Dase.initAddAnnotation();
 			Dase.initSetParent(controls);
 		});
@@ -92,8 +90,38 @@ Dase.initAddAnnotation = function() {
 	};
 };
 
-Dase.updateItemStatus = function() {
-	var status_controls = Dase.$('adminStatusControls');
+Dase.initSetItemStatus = function() {
+	var status_link = Dase.$('setItemStatusLink');
+	var status_form = Dase.$('ajaxFormHolder');
+	var coll = Dase.$('collectionAsciiId').innerHTML;
+	if (!status_link || !status_form) return;
+	status_link.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
+		if (Dase.toggle(status_form)) {
+			status_form.innerHTML = '<h1 class="loading">Loading...</h1>';
+			Dase.getJSON(this.href, function(json){
+				var data = {};
+				var current_elem = Dase.$('itemType');
+				if (current_elem) {
+					data.current = current_elem.innerHTML;
+				} else {
+					data.current = 'default/none';
+				}
+				data.coll_ser = Dase.$('collSer').innerHTML;
+			    data.statuss = json;
+				var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
+				status_form.innerHTML = templateObj.process(data);
+				Dase.initItemStatusForm(Dase.$('itemStatusForm'));
+			});
+		}
+		return false;
+	};
+	/*
 	Dase.getJSON(Dase.base_href+status_controls.className+'.json',function(json){
 			var data = {'status':json};
 			var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
@@ -106,6 +134,7 @@ Dase.updateItemStatus = function() {
 			return false;
 			}
 			});
+			*/
 };
 
 Dase.initNotes = function() {
@@ -165,12 +194,12 @@ Dase.getNotes = function() {
 	});
 };
 
-Dase.initEditMetadata = function(el) {
+Dase.initEditMetadata = function() {
+	var link = Dase.$('editMetadataLink');
 	var metadata = Dase.$('metadata');
 	var form_div = Dase.$('ajaxFormHolder');
-	if (!metadata) return;
-	if (!form_div) return;
-	el.onclick = function() {
+	if (!metadata || !form_div || !link) return;
+	link.onclick = function() {
 		Dase.addClass(Dase.$('adminPageControls'),'hide');
 		Dase.removeClass(Dase.$('pageReloader'),'hide');
 		Dase.toggle(metadata);
@@ -180,9 +209,9 @@ Dase.initEditMetadata = function(el) {
 			Dase.pageReload();
 			return false;
 		}
-		Dase.getJSON(el.href,function(json) {
+		Dase.getJSON(link.href,function(json) {
 			//build form and insert it into page
-			form_div.innerHTML = '<h1 id="formText">loading form...</h1><div id="editMetadata">'+Dase.buildEditMetadataForm(json,el.href)+'</div>';
+			form_div.innerHTML = '<h1 id="formText">loading form...</h1><div id="editMetadata">'+Dase.buildEditMetadataForm(json)+'</div>';
 			var forms = form_div.getElementsByTagName('form');
 			for (var i=0;i<forms.length;i++) {
 				if (forms[i].del) {
@@ -429,11 +458,11 @@ Dase.initGetInputForm = function(form) {
 }
 };
 
-Dase.buildEditMetadataForm = function(json,href) {
+Dase.buildEditMetadataForm = function(json) {
 	var html_form = '';
 	for (var i=0;i<json.length;i++) {
 		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
-		html_form += '<form method="post" id="form_'+json[i].value_id+'" action="'+href+'/'+json[i].value_id+'">';
+		html_form += '<form method="post" id="form_'+json[i].value_id+'" action="'+json[i].url+'">';
 		html_form += '<label id="label_'+json[i].value_id+'" for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
 		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
 		html_form += "</form>";

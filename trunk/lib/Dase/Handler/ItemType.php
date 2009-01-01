@@ -6,6 +6,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'index',
 		'{collection_ascii_id}/{item_type_ascii_id}' => 'item_type',
+		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}' => 'item',
 		//usually retrieved as app:categories
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
@@ -18,10 +19,23 @@ class Dase_Handler_ItemType extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->type = Dase_DBO_ItemType::get($r->get('collection_ascii_id'),$r->get('item_type_ascii_id'));
+		if (!$this->type) {
+			$r->renderError(404);
+		}
 	}
 
 	public function getIndex($r) {
 		$r->renderResponse('greetings earth person');
+	}
+
+	public function getItemAtom($r)
+	{
+		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomEntry());
+	}
+
+	public function getItemJson($r)
+	{
+		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson());
 	}
 
 	public function getItemType($r)

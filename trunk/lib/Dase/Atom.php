@@ -92,6 +92,22 @@ class Dase_Atom
 		return $cat;
 	}
 
+	function getCategories() {
+		$categories = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			$category['term'] = $cat->getAttribute('term');
+			$category['scheme'] = $cat->getAttribute('scheme');
+			if ($cat->getAttribute('label')) {
+				$category['label'] = $cat->getAttribute('label');
+			}
+			if ($cat->nodeValue || '0' === $cat->nodeValue) {
+				$category['value'] = $cat->nodeValue;
+			}
+			$categories[] = $category;
+		}
+		return $categories;
+	}
+
 	function addContributor($name_text,$uri_text = '',$email_text = '') 
 	{
 		$contributor = $this->addElement('contributor');
@@ -139,6 +155,24 @@ class Dase_Atom
 		return $link;
 	}
 
+	function getLinks() {
+		$links = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $ln) {
+			$link['rel'] = $ln->getAttribute('rel');
+			$link['href'] = $ln->getAttribute('href');
+			$link['title'] = $ln->getAttribute('title');
+			$link['type'] = $ln->getAttribute('type');
+			$link['length'] = $ln->getAttribute('length');
+			foreach ($link as $k => $v) {
+				if (!$link[$k] && '0' !== $link[$k]) {
+					unset ($link[$k]);
+				}
+			}
+			$links[] = $link;
+		}
+		return $links;
+	}
+
 	function getNext() 
 	{
 		return $this->getLink('next');
@@ -147,6 +181,11 @@ class Dase_Atom
 	function getPrevious() 
 	{
 		return $this->getLink('previous');
+	}
+
+	function getServiceLink()
+	{
+		return $this->getLink('service');
 	}
 
 	function getLink($rel='alternate',$title='') 
@@ -268,13 +307,6 @@ class Dase_Atom
 		//format output
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();
-	}
-
-	function getName()
-	{
-		//how we generally model names in DASe
-		//nb. may be confused w/ author/name
-		return $this->getTitle();
 	}
 
 	function getAsciiId()

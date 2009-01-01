@@ -255,6 +255,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('type',$type);
 		$tpl->assign('attributes',$this->collection->getAttributes('attribute_name'));
 		$tpl->assign('item_types',$this->collection->getItemTypes());
+		$tpl->assign('edit_url',$type->getBaseUrl().'.atom');
 		$r->set('tab','item_types');
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
 	}
@@ -440,6 +441,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$mgr->auth_level = $r->get('auth_level');
 		$mgr->collection_ascii_id = $this->collection->ascii_id;
 		$mgr->created = date(DATE_ATOM);
+		$mgr->created_by_eid = $this->user->eid;
 		try {
 			$mgr->insert();
 			$params['msg'] = 'success!';

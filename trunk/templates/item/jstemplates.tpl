@@ -33,7 +33,7 @@
 
 <textarea class="javascript_template" id="item_status_jst">
 	<p>This item is <span class="current">${status.label}</span></p> 
-	<form id="updateStatus">
+	<form id="itemStatusForm">
 		<select name="status">
 			<option value="public" {if status.term == 'public'}selected="selected"{/if}>Public</option>
 			<option value="draft" {if status.term == 'draft'}selected="selected"{/if}>Draft (Admin View Only)</option>

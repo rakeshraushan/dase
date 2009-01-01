@@ -4,7 +4,7 @@
 		<base href="{$module_root}"/>
 		<title>JSON Editor</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
-		<script src="{$app_root}www/scripts/Base64.js"></script>
+		<script src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
 		<script src="{$app_root}www/scripts/json2.js"></script>
 		<script src="{$app_root}www/scripts/dase.js"></script>
 		<script src="{$module_root}/scripts/JSONeditor.js"></script>

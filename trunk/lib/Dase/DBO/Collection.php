@@ -350,6 +350,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $cats->asXml();
 	}
 
+	function getAttributesAsCategoriesJson() 
+	{
+		$cats = new Dase_Atom_Categories;
+		$cats->setScheme('http://daseproject.org/category/metadata');
+		foreach($this->getAttributes() as $att) {
+			$cats->addCategory($att->getBaseUrl(),'',$att->attribute_name);
+		}
+		return $cats->asJson();
+	}
+
 	function getAttributes($sort = 'sort_order')
 	{
 		$att = new Dase_DBO_Attribute;
@@ -602,7 +612,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
 		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($this->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+			$atts->addCategory($att->getBaseUrl(),'',$att->attribute_name);
 		}
 		$ws->addCollection(APP_ROOT.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
 			->addAccept('application/json');
@@ -640,7 +650,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			->addCategory('item_type','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
 		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($this->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+			$atts->addCategory($att->getBaseUrl(),'',$att->attribute_name);
 		}
 		$parent_types = $coll->addCategorySet('yes','http://daseproject.org/category/parent_item_type');
 		$child_types = $coll->addCategorySet('yes','http://daseproject.org/category/child_item_type');

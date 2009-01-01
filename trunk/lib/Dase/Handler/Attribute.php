@@ -5,6 +5,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 	public $attribute;
 	public $collection;
 	public $resource_map = array(
+		'admin_{att_ascii_id}' => 'admin_attribute',
 		'{collection_ascii_id}/{att_ascii_id}' => 'attribute',
 		'{collection_ascii_id}/{att_ascii_id}/values' => 'attribute_values',
 		'{collection_ascii_id}/{att_ascii_id}/defined' => 'defined_values',
@@ -15,12 +16,20 @@ class Dase_Handler_Attribute extends Dase_Handler
 		if ($r->has('collection_ascii_id')) {
 			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		}
-		if ($r->has('att_ascii_id')) {
+		if ($r->has('att_ascii_id') && $r->has('collection_ascii_id')) {
 			$this->attribute = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		} 
+		if ($r->has('att_ascii_id') && !$r->has('collection_ascii_id')) {
+			$this->attribute = Dase_DBO_Attribute::getAdmin('admin_'.$r->get('att_ascii_id'));
 		} 
 		if (!$this->attribute) {
 			$r->renderError('404');
 		}
+	}
+
+	public function getAdminAttribute($r)
+	{
+		$r->renderResponse($r->get('att_ascii_id'));
 	}
 
 	public function getAttributeJson($r) 

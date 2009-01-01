@@ -25,6 +25,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
 		'{collection_ascii_id}/items/marked/to_be_deleted' => 'items_marked_to_be_deleted',
+		'{collection_ascii_id}/managers' => 'managers',
+		'{collection_ascii_id}/manager/{eid}' => 'manager',
 	);
 
 	protected function setup($r)
@@ -424,6 +426,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributesJson($r) 
 	{
+		//$r->renderResponse($this->collection->getAttributesAsCategoriesJson());
 		$filter = $r->has('filter') ? $r->get('filter') : '';
 		$r->checkCache();
 		$c = $this->collection;

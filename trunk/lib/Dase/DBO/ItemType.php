@@ -231,7 +231,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
 		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($c->ascii_id.'.'.$att->ascii_id,'',$att->attribute_name);
+			$atts->addCategory($att->getBaseUrl(),'',$att->attribute_name);
 		}
 		return $svc->asXml();
 	}

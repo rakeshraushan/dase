@@ -160,5 +160,6 @@
 			</div><!--closes footer-->
 			<div id="debugData" class="pagedata"></div>
 			<div id="jsTemplates" class="pagedata"></div>
+			{include file='resources/atom_template.tpl'}
 		</body>
 	</html>

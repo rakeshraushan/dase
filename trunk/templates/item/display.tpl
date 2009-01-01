@@ -4,6 +4,8 @@
 {if $item->entry->editLink}
 <!-- atompub -->
 <link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}"/>
+<link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}"/>
+<link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}"/>
 {/if}
 {/block}
 
@@ -75,7 +77,7 @@
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/metadata" 
+						<a href="{$item->entry->metadataLink}" 
 							id="editMetadataLink">edit</a>
 						|
 						<!--
@@ -87,15 +89,17 @@
 							id="addMetadataLink">add metadata</a>
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" 
-							id="addContentLink">add/edit textual content</a>
+							id="addContentLink">edit content</a>
 						|
 						<a href="collection/{$item->collectionAsciiId}/item_types" 
 							id="setItemTypeLink">set item type</a>
-						{if $item->entry->parentItemTypes|@count}
-						{foreach item=parent key=parent_ascii from=$item->entry->parentItemTypes}
 						|
-						<a href="item_type/{$item->collectionAsciiId}/{$parent_ascii}"
-							class="setParentLink">link to {$parent}</a>
+						<a href="collection/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
+							id="setItemStatusLink">set status</a>
+						{if $item->entry->parentItemTypeLinks|@count}
+						{foreach item=parent key=href from=$item->entry->parentItemTypeLinks}
+						|
+						<a href="{$href}" class="setParentLink">link to {$parent}</a>
 						{/foreach}
 						{/if}
 
@@ -109,12 +113,10 @@
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
 					{foreach item=set key=ascii_id from=$item->entry->metadata}
-					{if 'yes' eq $set.public}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
 					<dd><a href="search?{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
-					{/if}
 					{/foreach}
 				</dl>
 				
@@ -167,8 +169,6 @@
 			</td>
 		</tr>
 	</table>
-	<div id="adminStatusControls" class="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status"></div>
-
 </div> 
 {if 'set' == $item->tagType}
 		<div class="tagAdmin">
