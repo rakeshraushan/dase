@@ -27,14 +27,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getLink('http://daseproject.org/relation/search-item');
 	}
 
-	function getEditLink()
-	{
-		return $this->getLink('edit');
-	}
-
 	function getAttributesLink()
 	{
 		return $this->getLink('http://daseproject.org/relation/attributes');
+	}
+
+	function getMetadataLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/metadata');
 	}
 
 	//not yet used???
@@ -124,7 +124,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		if (!$this->_status) {
 			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item/status' == $el->getAttribute('scheme')) {
+				if ('http://daseproject.org/category/status' == $el->getAttribute('scheme')) {
 					$this->_status =  $el->getAttribute('term');
 					break;
 				}
@@ -147,12 +147,12 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->_item_type;
 	}
 
-	function getParentItemTypes()
+	function getParentItemTypeLinks()
 	{
 		$parent_types = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/parent_item_type' == $el->getAttribute('scheme')) {
-				$parent_types[$el->getAttribute('term')] = $el->getattribute('label');
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('http://daseproject.org/relation/parent_item_type' == $el->getAttribute('rel')) {
+				$parent_types[$el->getAttribute('href')] = $el->getattribute('title');
 			}
 		}
 		return $parent_types;
@@ -246,10 +246,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
-				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
-				$metadata[$el->getAttribute('term')]['public'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'public');
-				$metadata[$el->getAttribute('term')]['display'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'display');
+				$aid = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$el->getAttribute('term')));
+				$metadata[$aid]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$aid]['values'][] = $el->nodeValue;
 			}
 		}
 		return $metadata;
@@ -258,8 +257,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getAdminMetadata() {
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/admin_metadata' == $el->getAttribute('scheme')) {
-				$metadata[$el->getAttribute('term')]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$el->getAttribute('term')]['values'][] = $el->nodeValue;
+				$aid = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$el->getAttribute('term')));
+				$metadata[$aid]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$aid]['values'][] = $el->nodeValue;
 			}
 		}
 		return $metadata;

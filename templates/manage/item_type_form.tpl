@@ -4,6 +4,13 @@
 <script type="text/javascript" src="www/scripts/dase/item_type_form.js"></script>
 {/block}
 
+{block name="head-links}
+{if $edit_url}
+<!-- atompub -->
+<link rel="edit" type="application/atom+xml" href="{$edit_url}"/>
+{/if}
+{/block}
+
 {block name="title"}DASe: {$collection->collection_name|escape}{/block} 
 
 {block name="content"}

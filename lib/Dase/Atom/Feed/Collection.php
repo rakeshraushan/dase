@@ -31,6 +31,11 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		}
 	}
 
+	function getName()
+	{
+		return $this->getTitle();
+	}
+
 	function getAttributes() 
 	{
 		$attributes = array();

@@ -50,6 +50,15 @@ Dase.atompub.getEditLink = function() {
 	}
 };
 
+Dase.atompub.getJsonEditLink = function() {
+	var links = document.getElementsByTagName('link');
+	for (var i=0;i<links.length;i++) {
+		if ('http://daseproject.org/relation/edit' == links[i].rel) {
+			return links[i].href;
+		}
+	}
+};
+
 Dase.atompub.getAtom = function(url,my_func,username,password) {
 	var xmlhttp = Dase.createXMLHttpRequest();
 	// this is to deal with IE6 cache behavior
@@ -133,3 +142,19 @@ Dase.atom.entry = function(title) {
 	return doc;
 }; 
 
+
+//demo function
+Dase.atompub.showResource = function() {
+	var url = Dase.atompub.getJsonEditLink();
+	if (!url) return;
+	Dase.getJSON(url,function(json) {
+		var data = {'atom':json};
+		var templateObj = TrimPath.parseDOMTemplate("atom_jst");
+		var atom = Dase.util.trim(templateObj.process(data));
+	},Dase.user.eid,Dase.user.htpasswd);
+};
+
+
+Dase.addLoadEvent(function() {
+	//Dase.atompub.showResource();
+});

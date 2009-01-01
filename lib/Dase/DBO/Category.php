@@ -12,7 +12,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		'entrytype',
 		'error',
 		'feedtype',
-		'item/status', 
+		'status', 
 		'item_type',
 		'position', 
 		'tag/background',

@@ -5,6 +5,8 @@ require_once 'Dase/DBO/Autogen/Attribute.php';
 class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 {
 	public $collection = null;
+	public $value;
+	public $form_values = array();
 	public $display_values = array();
 
 	public static $types_map = array(
@@ -92,6 +94,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	public function getBaseUrl()
 	{
+		if (false !== strpos($this->ascii_id,'admin_')) {
+			return APP_ROOT.'/attribute/'.$this->ascii_id;
+		}
 		$collection = $this->getCollection();
 		return APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id;
 	}
@@ -185,6 +190,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		} else {
 			//nothin'
 		}
+		$this->form_values = $values;
 		return $values;
 	}
 

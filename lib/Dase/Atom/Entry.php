@@ -348,11 +348,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content')->item(0)->getElementsByTagName('*')->item(0);
 	}
 
-	function getId() 
-	{
-		return $this->getAtomElementText('id');
-	}
-
 	function setEntrytype($type) 
 	{
 		$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
@@ -377,19 +372,38 @@ class Dase_Atom_Entry extends Dase_Atom
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
+	function getEditLink()
+	{
+		return $this->getLink('edit');
+	}
+
+	function getJsonEditLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/edit');
+	}
+
 	function getAuthorName()
 	{
 		return $this->getXpathValue("atom:author/atom:name",$this->root);
 	}
 
-	function getCategories() {
-		$categories = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
-			$category['term'] = $cat->getAttribute('term');
-			$category['label'] = $cat->getAttribute('label');
-			$category['scheme'] = $cat->getAttribute('scheme');
-			$categories[] = $category;
-		}
-		return $categories;
+	function asJson() 
+	{
+		$atom_array = array(
+			'id' => $this->getId(),
+			'title' => $this->getTitle(),
+			'updated' => $this->getUpdated(),
+			'entrytype' => $this->getEntrytype(),
+			'author_name' => $this->getAuthorName(),
+			'summary' => $this->getSummary(),
+			'rights' => $this->getRights(),
+			'content' => array(
+				'type' => $this->getContentType(),
+				'text' => $this->getContent(),
+			),
+			'category' => $this->getCategories(),
+			'link' => $this->getLinks(),
+		);
+		return Dase_Json::get($atom_array);
 	}
 }

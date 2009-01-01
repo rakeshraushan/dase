@@ -41,7 +41,11 @@ class Dase_Atom_Categories extends Dase_Atom
 
 	function getFixed() 
 	{
-		$this->root->getAttribute('fixed');
+		$fixed = $this->root->getAttribute('fixed');
+		if (!$fixed) {
+			$fixed = 'no';
+		}
+		return $fixed;
 	}
 
 	function setScheme($scheme) 
@@ -51,18 +55,22 @@ class Dase_Atom_Categories extends Dase_Atom
 
 	function getScheme() 
 	{
-		$this->root->getAttribute('scheme');
+		return $this->root->getAttribute('scheme');
 	}
 
-	function getCategories() {
+	function getCategories($cascade_root_scheme=true) {
 		$default_scheme = $this->getScheme();
 		$categories = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
-			$category['term'] = $cat->getAttributeNS(Dase_Atom::$ns['atom'],'term');
-			$category['label'] = $cat->getAttributeNS(Dase_Atom::$ns['atom'],'label');
-			$category['scheme'] = $cat->getAttributeNS(Dase_Atom::$ns['atom'],'scheme');
+			$category['term'] = $cat->getAttribute('term');
+			$category['label'] = $cat->getAttribute('label');
+			$category['scheme'] = $cat->getAttribute('scheme');
 			if (!$category['scheme']) {
-				$category['scheme'] = $default_scheme;
+				if ($cascade_root_scheme) {
+					$category['scheme'] = $default_scheme;
+				} else {
+					unset($category['scheme']);
+				}
 			}
 			$categories[] = $category;
 		}
@@ -85,6 +93,15 @@ class Dase_Atom_Categories extends Dase_Atom
 		//format output
 		$this->dom->formatOutput = true;
 		return $this->dom->saveXML();
+	}
+
+	function asJson()
+	{
+		$json = array();
+		$json['fixed'] = $this->getFixed();
+		$json['scheme'] = $this->getScheme();
+		$json['categories'] = $this->getCategories(false);
+		return Dase_Json::get($json);
 	}
 
 }
