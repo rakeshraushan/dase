@@ -20,16 +20,16 @@
 <div id="demo">
 	<h1>Atom/AtomPub Demo</h1>
 	<div class="demoForm">
-		<form action="{$app_root}" id="demoForm">
+		<form id="demoForm">
 			<p>
-			{$app_root}<br/><input type="text" size="80" name="path"/>
+			<input type="text" value="{$url}" name="path"/>
 			<p>
 			<input id="submitGet" type="submit" value="GET"/>
 			<input id="submitDelete" type="submit" value="DELETE"/>
 			</p>
 			</p>
 			<p>
-			<textarea name="formText" cols="80" rows="25">atom here</textarea>
+			<textarea name="formText" rows="25">{$atom_doc}</textarea>
 			</p>
 			<p>
 			<input id="submitPut" type="submit" value="PUT"/>

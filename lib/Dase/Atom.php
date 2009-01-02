@@ -108,6 +108,23 @@ class Dase_Atom
 		return $categories;
 	}
 
+	function getCategoriesByScheme($scheme) {
+		$categories = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			if ($scheme == $cat->getAttribute('scheme')) {
+				$category['term'] = $cat->getAttribute('term');
+				if ($cat->getAttribute('label')) {
+					$category['label'] = $cat->getAttribute('label');
+				}
+				if ($cat->nodeValue || '0' === $cat->nodeValue) {
+					$category['value'] = $cat->nodeValue;
+				}
+				$categories[] = $category;
+			}
+		}
+		return $categories;
+	}
+
 	function addContributor($name_text,$uri_text = '',$email_text = '') 
 	{
 		$contributor = $this->addElement('contributor');
@@ -209,6 +226,7 @@ class Dase_Atom
 	{
 		$links = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			//title is required!
 			if ('related' == $el->getAttribute('rel') && $el->getAttribute('title')) {
 				$links[$el->getAttribute('href')] = $el->getAttribute('title');
 			}

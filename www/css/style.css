@@ -477,6 +477,11 @@ h3#currentItemType {
 	margin-top: 0;
 }
 
+span.itemType {
+	color: #600;
+	font-weight: normal;
+}
+
 /*****  ITEM SET DISPLAY PAGE **************/
 
 div.pageControls {

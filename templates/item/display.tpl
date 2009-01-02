@@ -26,7 +26,8 @@
 		{if $item->error}
 		<h2>{$item->title}</h2>
 		{else}
-		<h2 class="collectionLink"><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h2>  
+		<h2 class="collectionLink"><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a>
+		</h2>  
 		{if $item->opensearchTotal}
 		<h3 class="searchEcho">Item {$item->position} of {$item->opensearchTotal} for <span class="searchEcho">{$item->query}</span></h3>
 		{/if}
@@ -77,6 +78,9 @@
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
+						<a href="{$app_root}test/demo?url={$item->entry->editLink|escape:'url'}" 
+							id="editLink">poster</a>
+						|
 						<a href="{$item->entry->metadataLink}" 
 							id="editMetadataLink">edit</a>
 						|
@@ -110,12 +114,16 @@
 					<!-- note: javascript templates are retrieved asynchronously -->
 				</div>
 
-				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a></h3>
+				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a>
+					{if $item->entry->itemType.term && 'default' != $item->entry->itemType.term}
+					<span class="itemType">({$item->entry->itemType.label})</span>
+					{/if}
+				</h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
-					{foreach item=set key=ascii_id from=$item->entry->metadata}
+					{foreach item=set from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="search?{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+					<dd><a href="search?{$set.search_term}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/foreach}
 				</dl>
@@ -130,10 +138,6 @@
 					<dd><a href="search?{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/foreach}
-					{if $item->entry->itemType}
-					<dt>Item Type</dt>
-					<dd id="itemType">{$item->entry->itemType}</dd>
-					{/if}
 				</dl>
 
 				{if $item->content}

@@ -142,7 +142,7 @@
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
 	(parent) 
 	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="scheme/rel/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" id="link/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" class="modify">edit title</a> 
+	<a href="item_type/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" id="link/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" class="modify">edit title</a> 
 	{if r.title}
 	<p class="relationDesc">${r.title}</p>
 	{/if}
@@ -160,7 +160,7 @@
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
 	(child) 
 	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="scheme/rel/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" id="link/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" class="modify">edit title</a> 
+	<a href="item_type/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" id="link/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" class="modify">edit title</a> 
 	{if r.title}
 	<p class="relationDesc">${r.title}</p>
 	{/if}

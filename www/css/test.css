@@ -138,4 +138,12 @@ span.method {
 	display: none;
 }
 
+form#demoForm input[type=text] {
+	width: 100%;
+}
+
+form#demoForm textarea {
+	width: 100%;
+}
+
 

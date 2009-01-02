@@ -19,9 +19,9 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		return $this->parent;
 	}
 
-	public function getBaseUri() 
+	public function getBaseUrl() 
 	{
-		return 'item_type/'.
+		return APP_ROOT.'/item_type/'.
 			$this->collection_ascii_id.'/'.
 			$this->child_type_ascii_id.'/children_of/'.
 			$this->parent_type_ascii_id;
