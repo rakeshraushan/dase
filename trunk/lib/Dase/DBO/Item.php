@@ -286,7 +286,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if ($this->item_type_id) {
 			$item_type->load($this->item_type_id);
 		} else {
-			$item_type->label = 'default';
+			$item_type->name = 'default';
 			$item_type->ascii_id = 'default';
 		}
 		$this->item_type = $item_type;
@@ -346,7 +346,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_DBO::query($sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
 	}
 
-	function setItemType($type_ascii_id)
+	function setItemType($type_ascii_id='')
 	{
 		if (!$type_ascii_id || 'none' == $type_ascii_id) {
 			$this->item_type_id = 0;
@@ -549,23 +549,37 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $title;
 	}
 
-	public function getParents()
+	public function getParentItems()
 	{
-		$cats = array();
+		$parent_items = array();
 		$c = $this->getCollection();
-		$relations = new Dase_DBO_ItemRelation;
-		$relations->collection_ascii_id = $c->ascii_id;
-		$relations->child_serial_number = $this->serial_number;
-		foreach ($relations->find() as $prel) {
-			$parent_type = $prel->getParentType();
-			$cat['scheme'] = $parent_type->getBaseUrl($c->asciii_id);
-			$cat['term'] = $prel->parent_serial_number;
-			$parent_item = Dase_DBO_Item::get($prel->collection_ascii_id,$prel->parent_serial_number);
-			$cat['label'] = $parent_type->name.': '.$parent_item->getTitle();
-			$cat['item_url'] = $parent_item->getBaseUrl();
-			$cats[] = $cat;
+		$item_relations = new Dase_DBO_ItemRelation;
+		$item_relations->collection_ascii_id = $c->ascii_id;
+		$item_relations->child_serial_number = $this->serial_number;
+		foreach ($item_relations->find() as $item_relation) {
+			$parent_type = $item_relation->getParentType();
+			$parent_item_as_cat['scheme'] = $parent_type->getBaseUrl($c->asciii_id);
+			$parent_item_as_cat['term'] = $item_relation->parent_serial_number;
+			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+				$item_relation->parent_serial_number);
+			$parent_item_as_cat['label'] = $parent_type->name.': '.$parent_item->getTitle();
+			$parent_item_as_cat['item_url'] = $parent_item->getBaseUrl();
+			//for GET->PUT syncing, esp to delete the relation
+			$parent_item_as_cat['relation_id'] = $item_relation->id;
+			$parent_items[] = $parent_item_as_cat;
 		}
-		return $cats;
+		return $parent_items;
+	}
+
+	public function getParentTypes()
+	{
+		$types = array();
+		foreach ($this->getItemType()->getParentRelations() as $rel) {
+			$parent_type = $rel->getParent();
+			$parent_type->specific_relation_id = $rel->id;
+			$types[] = $parent_type;
+		}
+		return $types;
 	}
 
 	function getDescription()
@@ -614,7 +628,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$c = $this->getCollection();
 		$type = $this->getItemType();
 
-
 		/* standard atom stuff */
 
 		$entry->setId($this->getBaseUrl());
@@ -634,7 +647,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 
 		//atompub
-		$entry->setEdited($updated);
+		$entry->setEdited($entry->getUpdated());
 
 		//alternate link
 		$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number,'alternate');
@@ -643,9 +656,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
 
 
+		/* edit, dase/edit (json), service, and attributes (json) links
+		 * for item.  If item has a type, that is the parent (atompub) collection
+		 * otherwise, the collection is the parent (atompub) collection
+		 */
+
 		if ('default' == $type->ascii_id) {
 			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','edit','application/atom+xml');
 			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.json','http://daseproject.org/relation/edit','application/json');
+			$entry->addLink($c->getBaseUrl().'/service','service','application/atomsvc+xml','',$c->collection_name.' Item Type Service Doc' );
 			$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$c->collection_name.' Attributes' );
 		} else {
 			$entry->addLink($type->getBaseUrl().'/item/'.$this->serial_number.'.atom','edit','application/atom+xml');
@@ -654,36 +673,52 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addLink($type->getBaseUrl().'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
 		}
 
+		/* threading extension */
+
 		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );
 		$thr_count = $this->getCommentsCount();
 		if ($thr_count) {
 			$replies->setAttributeNS($thr,'thr:count',$thr_count);
 			$replies->setAttributeNS($thr,'thr:updated',$this->getCommentsUpdated());
 		}
-		$entry->addCategory($this->collection->ascii_id,'http://daseproject.org/category/collection',$this->collection->collection_name);
-		$entry->addCategory($this->item_type->ascii_id,'http://daseproject.org/category/item_type',$this->item_type->name);
+
+		/* dase categories */
+
 		$entry->addCategory('item','http://daseproject.org/category/entrytype');
+		$entry->addCategory($this->collection->ascii_id,
+			'http://daseproject.org/category/collection',$this->collection->collection_name);
+		$entry->addCategory($this->item_type->ascii_id,
+			'http://daseproject.org/category/item_type',$this->item_type->name);
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/status');
 		} else {
 			$entry->addCategory('public','http://daseproject.org/category/status');
 		}
 
+		/* this simply creates a link to any children out there */
 		foreach ($type->getChildRelations() as $rel) {
-			$uri = APP_ROOT.'/'.$rel->getBaseUri();
-			$link = $entry->addLink($uri."/".$this->serial_number.'.atom','related','','',$rel->title);
-			$link->setAttributeNS(Dase_Atom::$ns['d'],'d:count',(string) $rel->getChildCount($this->serial_number));
+			$link = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.atom',
+				'related','','',$rel->title);
+			$link->setAttributeNS(Dase_Atom::$ns['d'],
+				'd:count',(string) $rel->getChildCount($this->serial_number));
 		}
 
-		foreach ($type->getParentRelations() as $rel) {
-			$ptype = $rel->getParent();
-			$entry->addCategory($ptype->getBaseUrl(),'http://daseproject.org/category/parent_item_type',$ptype->name);
-			$entry->addLink($ptype->getBaseUrl().'.json','http://daseproject.org/relation/parent_item_type','application/json','',$ptype->name);
+		/* creates  
+		 * a link to the parent types items (in json)
+		 * so you indicate linking is available AND
+		 * suitable for creating a pull-down menu
+		 */
+		foreach ($this->getParentTypes() as $pt) {
+			$entry->addLink($pt->getBaseUrl().'.json',
+				'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
 		}
 
-		foreach ($this->getParents() as $pcat) {
-			$entry->addCategory($pcat['term'],$pcat['scheme'],$pcat['label']);
-			$entry->addLink($pcat['item_url'],'related','','',$pcat['label']);
+		//adds a category for AND a link to any parent item(s)
+		foreach ($this->getParentItems() as $parent_item_as_cat) {
+			$entry->addCategory($parent_item_as_cat['term'],
+				$parent_item_as_cat['scheme'],$parent_item_as_cat['label']);
+			$entry->addLink($parent_item_as_cat['item_url'],
+				'related','','',$parent_item_as_cat['label']);
 		}
 
 		/* content */
@@ -691,7 +726,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content = $this->getContents();
 		if ($content && $content->text) {
 			if ('application/json' == $content->type) {
-				$entry->setExternalContent(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/content','application/json');
+				$entry->setExternalContent($this->getBaseUrl().'/content','application/json');
 			} else {
 				$entry->setContent($content->text,$content->type);
 			}

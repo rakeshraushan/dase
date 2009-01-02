@@ -330,7 +330,7 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 			$item = $item_entry->update($r);
 			if ($item) {
-				$r->renderOk();
+				$r->renderOk('item has been updated');
 			}
 		}
 		$r->renderError(500);

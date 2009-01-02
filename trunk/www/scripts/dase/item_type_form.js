@@ -45,7 +45,7 @@ Dase.setTypeRels = function(form) {
 					form.onsubmit = function() {
 						Dase.ajax(this.action,'post',function(resp) {
 							Dase.pageInit();
-						},this.description.value);
+						},this.title.value);
 						return false;
 					};
 					return false;

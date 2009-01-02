@@ -14,6 +14,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
 		//usually retrieved as atom:feed
 		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'item_type_items',
+		'{collection_ascii_id}/{item_type_ascii_id}/to/{child_type_ascii_id}' => 'relation',
 	);
 
 	protected function setup($r)
@@ -30,7 +31,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemAtom($r)
 	{
-		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomEntry());
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		if ($item) {
+			$r->renderResponse($item->asAtomEntry());
+		} else {
+			$r->renderError(404);
+		}
 	}
 
 	public function getItemJson($r)
@@ -149,14 +155,14 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		$r->renderResponse($feed->asXml());
 	}
-	/* left over from scheme 
+
 	public function postToRelation($r) 
 	{
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) {
 			$r->renderError(401);
 		}
-		$parent = Dase_DBO_ItemType::get($c->ascii_id,$r->get('parent_type_ascii_id'));
+		$parent = $this->type;
 		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
 		if (!$parent || !$child) {
 			$r->renderError(401);
@@ -177,6 +183,18 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//todo: implement this
 	}
 
-	 */
+	public function putItem($r) 
+	{
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		try {
+			$item_handler = new Dase_Handler_Item;
+			$item_handler->item = $item;
+			$item_handler->putItem($r);
+		} catch (Exception $e) {
+			$r->renderError(500,$e->getMessage());
+		}
+		//if something goes wrong and control returns here
+		$r->renderError(500,'error in put item (item type)');
+	}
 }
 

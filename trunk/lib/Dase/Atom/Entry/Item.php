@@ -3,8 +3,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 {
 	protected $_collection;
 	protected $_collectionAsciiId;
-	protected $_status;
-	protected $_item_type;
 
 	function __construct($dom = null,$root = null)
 	{
@@ -122,29 +120,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getStatus()
 	{
-		if (!$this->_status) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/status' == $el->getAttribute('scheme')) {
-					$this->_status =  $el->getAttribute('term');
-					break;
-				}
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/status' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
 			}
 		}
-		return $this->_status;
 	}
 
 	function getItemType()
 	{
-		if (!$this->_item_type) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/item_type' == $el->getAttribute('scheme')) {
-					//note we get label here!
-					$this->_item_type =  $el->getAttribute('label');
-					break;
-				}
+		$item_type['label'] = '';
+		$item_type['term'] = '';
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/item_type' == $el->getAttribute('scheme')) {
+				//note we get label here!
+				$item_type['label'] =  $el->getAttribute('label');
+				$item_type['term'] =  $el->getAttribute('term');
+				break;
 			}
 		}
-		return $this->_item_type;
+		return $item_type;
 	}
 
 	function getParentItemTypeLinks()
@@ -193,73 +188,48 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->_collectionAsciiId;
 	}
 
+
 	function getUnique()
 	{
 		return $this->getCollectionAsciiId().'/'.$this->getSerialNumber();
 	}
 
-	/** used for GET->update->PUT operations **/
-	function replaceMetadata($metadata_array) {
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' != substr($dd->localName,0,6)) {
-				//necessary to set array
-				$doomed[] = $dd;
-			}
-		}
-		foreach ($doomed as $goner) {
-			$this->root->removeChild($goner);
-		}
-		foreach ($metadata_array as $k => $v) {
-			$this->addElement('d:'.$k,$v,Dase_Atom::$ns['d']);
-		}
-	}
 
-	/*
-	function getMetadata() {
-		$metadata = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' != substr($dd->localName,0,6)) {
-				$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
-				$metadata[$dd->localName]['display'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'display');
-				$metadata[$dd->localName]['public'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'public');
-				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
-			}
-		}
-		return $metadata;
-	}
-
-	function getAdminMetadata() {
-		$metadata = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' == substr($dd->localName,0,6)) {
-				$metadata[$dd->localName]['attribute_name'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
-				$metadata[$dd->localName]['display'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'display');
-				$metadata[$dd->localName]['public'] = $dd->getAttributeNS(Dase_Atom::$ns['d'],'public');
-				$metadata[$dd->localName]['values'][] = $dd->nodeValue;
-			}
-		}
-		return $metadata;
-	}
-	 */
-
-	function getMetadata() {
+	function getMetadata($include_private_metadata=false) 
+	{
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
-				$aid = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$el->getAttribute('term')));
-				$metadata[$aid]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$aid]['values'][] = $el->nodeValue;
+				$term = $el->getAttribute('term');
+				$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
+				$att_ascii_id = array_pop(explode('/',$term));
+				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$att_ascii_id]['search_term'] = $search_term;
+				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 			}
+			if ($include_private_metadata &&
+				'http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
+					$term = $el->getAttribute('term');
+					$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
+					$att_ascii_id = array_pop(explode('/',$term));
+					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
+					$metadata[$att_ascii_id]['search_term'] = $search_term;
+					$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
+				}
 		}
 		return $metadata;
 	}
 
-	function getAdminMetadata() {
+	function getAdminMetadata() 
+	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/admin_metadata' == $el->getAttribute('scheme')) {
-				$aid = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$el->getAttribute('term')));
-				$metadata[$aid]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$aid]['values'][] = $el->nodeValue;
+				$term = $el->getAttribute('term');
+				$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
+				$att_ascii_id = array_pop(explode('/',$term));
+				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
+				$metadata[$att_ascii_id]['search_term'] = $search_term;
+				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 			}
 		}
 		return $metadata;
@@ -352,8 +322,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $item;
 	}
 
-	/** used w/ PUT request and does not add OR delete admin metadata,
-	 * only collection-specific metadata
+	/** used w/ PUT request -- affects categories:
+	 *  1. deletes and replaces status 
+	 *  2. deletes and replaces item_type (beware messing up semantics of existing relations)
+	 *  3. deletes and replaces all metadata & private metadata (NOT admin metadata)
+	 *  4. delete and replace any item relations to a parent item
 	 */
 	function update($request) 
 	{
@@ -363,14 +336,93 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if (!$c) { return; }
 		$item = Dase_DBO_Item::get($c->ascii_id,$sernum);
 		$item->updated = date(DATE_ATOM);
+
+		//1. status
+		$status = $this->getStatus();
+		if (($status != $item->status) && in_array($status,array('delete','draft','public'))) {
+			$item->status = $status;
+		}
+
 		$item->update();
-		$metadata = $this->getMetadata();
+
+		//2. item_type
+		//note that this *updates* db about item_type!
+		$item_type = $this->getItemType(); 
+		$orig_type = $item->getItemType();
+		if (!$item_type['term'] || 'default' == $item_type['term']) {
+			$item->setItemType();
+		} elseif ($orig_type->ascii_id != $item_type['term']) {
+			$item->setItemType($item_type['term']);
+		} else {
+			//nothin'
+		}
+
+		//cleanup invalid item_relations in DB
+		//super-expensive w/db calls
+		Dase_DBO_ItemRelation::cleanup($c->ascii_id,$sernum);
+
+		//3. metadata
+		$metadata = $this->getMetadata(true);
 		//only deletes collection-specific (not admin) metadata
 		//then replaces it
 		$item->deleteValues();
 		foreach (array_keys($metadata) as $ascii_id) {
 			foreach ($metadata[$ascii_id]['values'] as $val) {
 				$item->setValue($ascii_id,$val);
+			}
+		}
+
+		//4. replace parent item relations
+
+		/* sample parent item indicator
+			<category term="000524615" 
+			scheme="http://quickdraw.laits.utexas.edu/dase1/item_type/test/proposal" 
+			label="Proposal: Cool Art Website"/>
+		 */
+
+		$db_relations = array();
+		foreach ($item->getParentItems() as $parent_item) {
+			//note there can ONLY be one term per scheme 
+			//(item can only have one parent of given type)
+			$db_relations[$parent_item['scheme']]['term'] = $parent_item['term'];
+			$db_relations[$parent_item['scheme']]['relation_id'] = $parent_item['relation_id'];
+		}
+
+		$xml_relations = array();
+		//guarantees validity
+		foreach ($item->getParentTypes() as $p) {
+			$scheme = $p->getBaseUrl();
+			//get all categories in entry that express valid relations
+			foreach ($this->getCategoriesByScheme($scheme) as $cat) {
+				$xml_relations[$scheme]['term'] = $cat['term'];
+				//foreach valid rel in xml, lookup in db and find or create 
+				if (isset($db_relations[$scheme]) && $db_relations[$scheme]['term'] == $cat['term']) {
+					//do nothing since it is in db
+				} else {
+					//make sure parent is a legitimate item
+					if (Dase_DBO_Item::get($c->ascii_id,$cat['term'])) {
+						$item_relation = new Dase_DBO_ItemRelation;
+						$item_relation->collection_ascii_id = $c->ascii_id;
+						$item_relation->parent_serial_number = $cat['term'];
+						$item_relation->child_serial_number = $sernum;
+						$item_relation->created = date(DATE_ATOM);
+						$item_relation->created_by_eid = $request->getUser()->eid;
+						$item_relation->item_type_relation_id = $p->specific_relation_id;
+						$item_relation->insert();
+					}
+				}	
+			}
+		}
+		//foreach rel in db, lookup in xml and find or delete``
+		//note: db_rels won't include newly inserted item_rels
+		//but we know those are valid, so no need to check them
+		foreach ($db_relations as $scheme => $rel) {
+			if (!isset($xml_relations[$scheme]) || $xml_relations[$scheme]['term'] != $rel['term']) {
+				$doomed = new Dase_DBO_ItemRelation;
+				$doomed->load($rel['relation_id']);
+				if ($doomed) {
+					$doomed->delete();
+				}
 			}
 		}
 		$item->buildSearchIndex();

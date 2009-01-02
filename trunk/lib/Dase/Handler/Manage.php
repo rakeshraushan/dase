@@ -333,6 +333,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$itr->parent_type_ascii_id = $rel_type;
 			$itr->child_type_ascii_id = $type;
 			$itr->collection_ascii_id = $coll;
+			$itr->title = 'relation';
 			$itr->insert();
 		}	
 		if ('child' == $rel) {
@@ -340,6 +341,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$itr->parent_type_ascii_id = $type;
 			$itr->child_type_ascii_id = $rel_type;
 			$itr->collection_ascii_id = $coll;
+			$itr->title = 'relation';
 			$itr->insert();
 		}	
 		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type);
