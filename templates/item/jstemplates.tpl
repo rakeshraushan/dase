@@ -23,6 +23,7 @@
 	<input type="hidden" name="url" value="${url}"/>
 	<select name="serial_number">
 	<option>select one:</option>
+	<option>[none]</option>
 	{for item in items}
 	<option value="${item.serial_number}">${item.title}</option>
 	{/for}
