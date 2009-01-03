@@ -18,14 +18,17 @@
 
 <textarea class="javascript_template" id="parent_link_jst">
 	<h1>attach to ${parent} (${count})</h1>
+	<h3 id="currentLink"></h3>
 	<form id="setParentForm" action="xxxxxxxxx">
-	<select name="parent_ascii_id">
+	<input type="hidden" name="url" value="${url}"/>
+	<select name="serial_number">
 	<option>select one:</option>
 	{for item in items}
 	<option value="${item.serial_number}">${item.title}</option>
 	{/for}
 	</select>
-	<input type="submit" value="create link"/>
+	<input type="submit" value="create link" id="createLink"/>
+	<input type="submit" value="cancel" id="cancelLink"/>
 	</form>
 </textarea>
 

@@ -9,9 +9,9 @@
 {block name="tests"}
 <h2>Available Tests</h2>
 <ul>
-{foreach item=t from=$tests}
-<li><a href="{$app_root}test/{$t}">{$t}</a></li>
-{/foreach}
+	{foreach item=t from=$tests}
+	<li><a href="{$app_root}test/{$t}">{$t}</a></li>
+	{/foreach}
 </ul>
 {/block}
 
@@ -37,7 +37,7 @@
 			</p>
 		</form>
 	</div>
+	<div id="atomDisplay"></div>
 </div>
 {/block}
-
 

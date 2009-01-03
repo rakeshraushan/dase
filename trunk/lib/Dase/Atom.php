@@ -95,6 +95,7 @@ class Dase_Atom
 	function getCategories() {
 		$categories = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			$category = array();
 			$category['term'] = $cat->getAttribute('term');
 			$category['scheme'] = $cat->getAttribute('scheme');
 			if ($cat->getAttribute('label')) {

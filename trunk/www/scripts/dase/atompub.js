@@ -110,6 +110,21 @@ Dase.atompub.putAtom = function(url,xml_obj,my_func,username,password) {
 	};
 };
 
+Dase.atompub.putJson = function(url,json_obj,my_func,user,pass) {
+	var data = {'atom':json_obj};
+	var templateObj = TrimPath.parseDOMTemplate("atom_jst");
+	var atom = Dase.util.trim(templateObj.process(data));
+	var headers = {
+		'Content-Type':'application/atom+xml;type=entry'
+	}
+	Dase.ajax(url,'put',function(resp) { 
+		my_func(resp);
+	},atom,user,pass,headers,function(error) {
+		alert(error);
+	}); 
+}
+
+
 //from rhino book p.520
 Dase.atompub.serialize = function(xml_obj) {
 	if (typeof XMLSerializer != "undefined") {
@@ -143,18 +158,5 @@ Dase.atom.entry = function(title) {
 }; 
 
 
-//demo function
-Dase.atompub.showResource = function() {
-	var url = Dase.atompub.getJsonEditLink();
-	if (!url) return;
-	Dase.getJSON(url,function(json) {
-		var data = {'atom':json};
-		var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-		var atom = Dase.util.trim(templateObj.process(data));
-	},Dase.user.eid,Dase.user.htpasswd);
-};
-
-
 Dase.addLoadEvent(function() {
-	//Dase.atompub.showResource();
 });

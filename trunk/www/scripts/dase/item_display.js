@@ -52,6 +52,7 @@ Dase.initSetParent = function(controls) {
 						var data = {};
 						data.items=json.items;
 						data.count=json.items.length;
+						data.url=json.type.url;
 						data.parent=json.type.name;
 						var templateObj = TrimPath.parseDOMTemplate("parent_link_jst");
 						mform.innerHTML = templateObj.process(data);
@@ -66,16 +67,40 @@ Dase.initSetParent = function(controls) {
 }
 
 Dase.initSetParentForm = function(form,target_scheme) {
-	form.onsubmit = function() {
-		var edit_url = Dase.atompub.getEditLink();
-		Dase.atompub.getAtom(edit_url,function(atom){
-			var cats = atom.getElementsByTagName('category');
-			for (var i=0;i<cats.length;i++) {
-				if (target_scheme == cats[i].getAttribute('scheme')) {
-					alert(cats[i].getAttribute('label')+' is currently linked');
+	var edit_url = Dase.atompub.getJsonEditLink();
+	var atom_json;
+	Dase.getJSON(edit_url,function(json){
+		atom_json = json;
+		var parent_url = form.url.value;
+		for (var i=0;i<atom_json.category.length;i++) {
+			var cat = atom_json.category[i];
+			if (cat.scheme == parent_url) {
+				Dase.$('currentLink').innerHTML = 'currently linked to '+cat.label;
+				 Dase.$('cancelLink').onclick = function() {
+					Dase.addClass(Dase.$('ajaxFormHolder'),'hide');
+					Dase.removeClass(Dase.$('adminPageControls'),'hide');
+					Dase.addClass(Dase.$('pageReloader'),'hide');
+					form.onsubmit = function() {
+						return false;
+					}
+					return false;
+				}; 
+				//creating new link needs to remove previous
+				Dase.$('createLink').onclick = function() {
+					atom_json.category.splice(i,1);
 				}
 			}
-		},Dase.user.eid,Dase.user.htpawsswd);
+		}
+	},Dase.user.eid,Dase.user.htpasswd);
+	form.onsubmit = function() {
+		var cat = {};
+		cat.scheme = form.url.value;
+		cat.term = form.serial_number.options[form.serial_number.selectedIndex].value;
+		atom_json.category[atom_json.category.length] = cat;
+		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
+		   Dase.$('currentLink').innerHTML = "updating parent link...";
+		   Dase.pageReload();
+		},Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	}
 }
