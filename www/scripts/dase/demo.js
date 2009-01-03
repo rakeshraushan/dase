@@ -36,9 +36,16 @@ Dase.demo.processGet = function(form) {
 	},null,null,null,null,function(error) {
 		form.formText.value = error;
 	}); 
+	var json_url = form.path.value.replace(/\.atom/,'.json');
+	Dase.getJSON(json_url,function(json) {
+		var data = {'atom':json};
+		var templateObj = TrimPath.parseDOMTemplate("atom_display_jst");
+		Dase.$('atomDisplay').innerHTML = Dase.util.trim(templateObj.process(data));
+	},Dase.user.eid,Dase.user.htpasswd);
 };
 
 Dase.demo.processPut = function(form) {
+	Dase.$('atomDisplay').innerHTML = 'GET item to see display';
 	var headers = {
 		'Content-Type':'application/atom+xml;type=entry'
 	}

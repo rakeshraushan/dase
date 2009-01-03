@@ -95,6 +95,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$res['items'] = $items;
 		$res['type']['name'] = $this->type->name;
 		$res['type']['ascii_id'] = $this->type->ascii_id;
+		$res['type']['url'] = $this->type->getBaseUrl();
 		$res['collection'] = $r->get('collection_ascii_id');
 		$r->renderResponse(Dase_Json::get($res));
 	}

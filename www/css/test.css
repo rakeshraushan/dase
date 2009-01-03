@@ -146,4 +146,18 @@ form#demoForm textarea {
 	width: 100%;
 }
 
+table.atom th,td {
+	border-collapse: collapse;
+	border: 1px solid #999;
+}
+table.atom th {
+	color: #339;
+	background-color: #eee;
+	font-weight: bold;
+}
+
+table.list th {
+	text-align: right;
+}
+
 
