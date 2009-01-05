@@ -119,6 +119,8 @@ CREATE TABLE {$table_prefix}dase_user (
     current_collections character varying(2000),
     backtrack character varying(2000),
     service_key_md5 character varying(200),
+    created character varying(50) DEFAULT 0,
+    updated character varying(50) DEFAULT 0,
     template_composite character varying(2000)
 );
 
