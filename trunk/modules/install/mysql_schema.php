@@ -90,6 +90,7 @@ PRIMARY KEY (`id`)
 CREATE TABLE `{$table_prefix}collection_manager` (
 `id` int(11) NOT NULL auto_increment,
 `created` varchar(50) default NULL,
+`created_by_eid` varchar(50) default NULL,
 `expiration` varchar(50) default NULL,
 `auth_level` varchar(20) default NULL,
 `dase_user_eid` varchar(20) default NULL,
