@@ -79,6 +79,7 @@ CREATE TABLE {$table_prefix}collection_manager (
     dase_user_eid character varying(20),
     auth_level character varying(20),
     expiration character varying(50),
+    created_by_eid character varying(50),
     created character varying(50)
 );
 
