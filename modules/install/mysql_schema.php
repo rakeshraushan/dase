@@ -171,7 +171,6 @@ CREATE TABLE `{$table_prefix}item` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE `{$table_prefix}item_category` (
 `id` int(11) NOT NULL auto_increment,
 `item_id` int(11) default NULL,
@@ -182,7 +181,7 @@ PRIMARY KEY (`id`)
 CREATE TABLE `{$table_prefix}item_relation` (
 `id` int(11) NOT NULL auto_increment,
 `parent_serial_number` varchar(200) default NULL,
-`child_serial_number` varcher(200) default NULL,
+`child_serial_number` varchar(200) default NULL,
 `item_type_relation_id` int(11) default NULL,
 `created` varchar(50) default NULL,
 `created_by_eid` varchar(50) default NULL,
