@@ -98,8 +98,8 @@
 						<a href="collection/{$item->collectionAsciiId}/item_types" 
 							id="setItemTypeLink">set item type</a>
 						|
-						<a href="collection/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
-							id="setItemStatusLink">set status</a>
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
+							id="setItemStatusLink">set status (<span id="itemStatus">{$item->entry->status}</span>)</a>
 						{if $item->entry->parentItemTypeLinks|@count}
 						{foreach item=parent key=href from=$item->entry->parentItemTypeLinks}
 						|
@@ -116,7 +116,7 @@
 
 				<h3><a href="collection/{$item->collectionAsciiId}">{$item->collection}</a>
 					{if $item->entry->itemType.term && 'default' != $item->entry->itemType.term}
-					<span class="itemType">({$item->entry->itemType.label})</span>
+					<span id="itemType">({$item->entry->itemType.label})</span>
 					{/if}
 				</h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">

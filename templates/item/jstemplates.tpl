@@ -36,13 +36,15 @@
 <!-- item status form -->
 
 <textarea class="javascript_template" id="item_status_jst">
-	<p>This item is <span class="current">${status.label}</span></p> 
+	<h1>Item Status (${status})</h1>
+	<h3 id="currentStatus"></h3> 
 	<form id="itemStatusForm">
 		<select name="status">
-			<option value="public" {if status.term == 'public'}selected="selected"{/if}>Public</option>
-			<option value="draft" {if status.term == 'draft'}selected="selected"{/if}>Draft (Admin View Only)</option>
-			<option value="delete" {if status.term == 'delete'}selected="selected"{/if}>Marked for Deletion</option>
-			<option value="archive" {if status.term == 'archive'}selected="selected"{/if}>In Deep Storage</option>
+			<option>select status:</option>
+			<option value="public">public</option>
+			<option value="draft">draft</option>
+			<option value="delete">delete</option>
+			<option value="archive">archive</option>
 		</select>
 		<input type="submit" value="update status"/>
 	</form>

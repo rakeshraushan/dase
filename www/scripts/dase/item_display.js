@@ -20,6 +20,7 @@ Dase.pageInitUser = function(eid) {
 		//get jstemplates by making an ajax request
 		//see templates/item/jstemplates.tpl
 		Dase.ajax(templates_url,'get',function(resp) {
+			//retrieve templates and put on page
 			Dase.$('jsTemplates').innerHTML = resp;
 			Dase.initEditMetadata();
 			Dase.initAddMetadata();
@@ -88,7 +89,7 @@ Dase.initSetParentForm = function(form,target_scheme) {
 				//creating new link needs to remove previous
 				Dase.$('createLink').onclick = function() {
 					atom_json.category.splice(i,1);
-				}
+				};
 			}
 		}
 	},Dase.user.eid,Dase.user.htpasswd);
@@ -102,8 +103,8 @@ Dase.initSetParentForm = function(form,target_scheme) {
 		   Dase.pageReload();
 		},Dase.user.eid,Dase.user.htpasswd);
 		return false;
-	}
-}
+	};
+};
 
 Dase.initAddAnnotation = function() {
 	var tog = Dase.$('annotationToggle');
@@ -128,38 +129,37 @@ Dase.initSetItemStatus = function() {
 			return false;
 		}
 		if (Dase.toggle(status_form)) {
-			status_form.innerHTML = '<h1 class="loading">Loading...</h1>';
-			Dase.getJSON(this.href, function(json){
-				var data = {};
-				var current_elem = Dase.$('itemType');
-				if (current_elem) {
-					data.current = current_elem.innerHTML;
-				} else {
-					data.current = 'default/none';
-				}
-				data.coll_ser = Dase.$('collSer').innerHTML;
-			    data.statuss = json;
-				var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
-				status_form.innerHTML = templateObj.process(data);
-				Dase.initItemStatusForm(Dase.$('itemStatusForm'));
-			});
+			var status = Dase.$('itemStatus').innerHTML;
+			var data = {'status':status};
+			var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
+			status_form.innerHTML = templateObj.process(data);
+			Dase.initItemStatusForm(Dase.$('itemStatusForm'));
 		}
 		return false;
 	};
-	/*
-	Dase.getJSON(Dase.base_href+status_controls.className+'.json',function(json){
-			var data = {'status':json};
-			var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
-			status_controls.innerHTML = templateObj.process(data);
-			var form = Dase.$('updateStatus');
-			form.onsubmit = function() {
-			Dase.ajax(Dase.base_href+status_controls.className,'put',function(resp) {
-				Dase.updateItemStatus();
-				},form.status.value);
-			return false;
+
+};
+
+Dase.initItemStatusForm = function(form) {
+	var edit_url = Dase.atompub.getJsonEditLink();
+	var atom_json;
+	form.onsubmit = function() {
+		Dase.$('currentStatus').innerHTML = "updating status...";
+		Dase.getJSON(edit_url,function(json){
+			atom_json = json;
+			var target_scheme = 'http://daseproject.org/category/status';
+			for (var i=0;i<atom_json.category.length;i++) {
+				var cat = atom_json.category[i];
+				if (cat.scheme == target_scheme) {
+					atom_json.category[i].term = form.status.options[form.status.selectedIndex].value;
+				}
 			}
-			});
-			*/
+			Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
+				Dase.pageReload();
+			},Dase.user.eid,Dase.user.htpasswd);
+		},Dase.user.eid,Dase.user.htpasswd);
+		return false;
+	};
 };
 
 Dase.initNotes = function() {
