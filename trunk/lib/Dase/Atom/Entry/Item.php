@@ -289,6 +289,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
+		//item_relations
+		foreach ($item->getParentTypes() as $p) {
+			//guarantees validity
+			$scheme = $p->getBaseUrl();
+			//get all categories in entry that express valid relations
+			foreach ($this->getCategoriesByScheme($scheme) as $cat) {
+				//make sure parent is a legitimate item
+				if (Dase_DBO_Item::get($c->ascii_id,$cat['term'])) {
+					$item_relation = new Dase_DBO_ItemRelation;
+					$item_relation->collection_ascii_id = $c->ascii_id;
+					$item_relation->parent_serial_number = $cat['term'];
+					$item_relation->child_serial_number = $sernum;
+					$item_relation->created = date(DATE_ATOM);
+					$item_relation->created_by_eid = $request->getUser()->eid;
+					$item_relation->item_type_relation_id = $p->specific_relation_id;
+					$item_relation->insert();
+				}
+			}
+		}
+
 		$content = new Dase_DBO_Content;
 		$atom_content = $this->getContent();
 		if ($atom_content) {
