@@ -300,7 +300,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$item_relation = new Dase_DBO_ItemRelation;
 					$item_relation->collection_ascii_id = $c->ascii_id;
 					$item_relation->parent_serial_number = $cat['term'];
-					$item_relation->child_serial_number = $sernum;
+					$item_relation->child_serial_number = $item->serial_number;
 					$item_relation->created = date(DATE_ATOM);
 					$item_relation->created_by_eid = $request->getUser()->eid;
 					$item_relation->item_type_relation_id = $p->specific_relation_id;
