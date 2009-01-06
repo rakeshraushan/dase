@@ -157,11 +157,11 @@
 				</div>
 				{/if}
 
-				{if $item->entry->childLinks|@count}
+				{if $item->entry->childFeedLinks|@count}
 				<div id="relatedLinks">
 					<h3>child links</h3>
 					<ul>
-						{foreach key=href item=link from=$item->entry->childLinks}
+						{foreach key=href item=link from=$item->entry->childFeedLinks}
 						<li><a href="{$href}">{$link.title}</a> ({$link.count})</li>
 						{/foreach}
 					</ul>

@@ -248,12 +248,25 @@ class Dase_Atom
 		return $links;
 	}
 
-	function getChildLinks() 
+	function getChildFeedLinks() 
 	{
 		$links = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			//title is required!
-			if ('http://daseproject.org/relation/child' == $el->getAttribute('rel') && $el->getAttribute('title')) {
+			if ('http://daseproject.org/relation/childfeed' == $el->getAttribute('rel') && $el->getAttribute('title') && ('application/atom+xml' == $el->getAttribute('type'))) {
+				$links[$el->getAttribute('href')]['title'] = $el->getAttribute('title');
+				$links[$el->getAttribute('href')]['count'] = $el->getAttributeNS(Dase_Atom::$ns['thr'],'count');
+			}
+		}
+		return $links;
+	}
+
+	function getChildJsonFeedLinks() 
+	{
+		$links = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			//title is required!
+			if ('http://daseproject.org/relation/childfeed' == $el->getAttribute('rel') && $el->getAttribute('title') && ('application/json' == $el->getAttribute('type'))) {
 				$links[$el->getAttribute('href')]['title'] = $el->getAttribute('title');
 				$links[$el->getAttribute('href')]['count'] = $el->getAttributeNS(Dase_Atom::$ns['thr'],'count');
 			}
