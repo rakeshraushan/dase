@@ -275,7 +275,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
 		//should redo this w/ http delete
-		if ($r->has('method') && ('delete '.$type->item_type_name == $r->get('method'))) {
+		if ($r->has('_method') && ('delete '.$type->name == $r->get('_method'))) {
 			$d = $type->name;
 			$count = $type->getItemsCount();
 			if ($count) {
@@ -321,30 +321,32 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToItemTypeRelations($r)
 	{
-		$type = $r->get('type_ascii_id');
-		$rel_type = $r->get('rel_type_ascii_id');
+		$type_ascii = $r->get('type_ascii_id');
+		$rel_type_ascii = $r->get('rel_type_ascii_id');
 		$rel = $r->get('rel');
 		$coll = $this->collection->ascii_id;
-		if (!Dase_DBO_ItemType::get($coll,$type) || !Dase_DBO_ItemType::get($coll,$rel_type)) {
+		$type = Dase_DBO_ItemType::get($coll,$type_ascii);
+	   	$rel_type = Dase_DBO_ItemType::get($coll,$rel_type_ascii);
+		if (!$type || !$rel_type) {
 			$r->renderError(409);
 		}
 		if ('parent' == $rel) {
 			$itr = new Dase_DBO_ItemTypeRelation;
-			$itr->parent_type_ascii_id = $rel_type;
-			$itr->child_type_ascii_id = $type;
+			$itr->parent_type_ascii_id = $rel_type_ascii;
+			$itr->child_type_ascii_id = $type_ascii;
 			$itr->collection_ascii_id = $coll;
-			$itr->title = 'relation';
+			$itr->title = $rel_type->name.' '.$type->name.'s';
 			$itr->insert();
 		}	
 		if ('child' == $rel) {
 			$itr = new Dase_DBO_ItemTypeRelation;
-			$itr->parent_type_ascii_id = $type;
-			$itr->child_type_ascii_id = $rel_type;
+			$itr->parent_type_ascii_id = $type_ascii;
+			$itr->child_type_ascii_id = $rel_type_ascii;
 			$itr->collection_ascii_id = $coll;
-			$itr->title = 'relation';
+			$itr->title = $type->name.' '.$rel_type->name.'s';
 			$itr->insert();
 		}	
-		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type);
+		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type_ascii);
 	}
 
 	public function getItemTypeAttributesJson($r)

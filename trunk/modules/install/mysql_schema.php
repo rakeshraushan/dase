@@ -205,7 +205,7 @@ CREATE TABLE `{$table_prefix}item_type_relation` (
 `id` int(11) NOT NULL auto_increment,
 `parent_type_ascii_id` varchar(200) default NULL,
 `child_type_ascii_id` varchar(200) default NULL,
-`description` text default NULL,
+`title` varchar(200) default NULL,
 `collection_ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

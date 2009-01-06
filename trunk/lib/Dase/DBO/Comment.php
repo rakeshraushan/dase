@@ -44,7 +44,7 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 		if (!$this->type) { $this->type = 'text/html'; }
 		$entry->setContent($this->text,$this->type);
 		//add in-reply-to link
-		$entry->addInReplyTo($item->getBaseUrl(),$this->type,$this->getBaseUrl());
+		$entry->addInReplyTo($item->getBaseUrl(),$this->type,$item->getBaseUrl());
 		return $entry;
 	}
 

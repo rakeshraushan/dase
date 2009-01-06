@@ -146,12 +146,23 @@
 				</div>
 				{/if}
 
-				{if $item->entry->relatedLinks|@count}
+				{if $item->entry->parentLinks|@count}
 				<div id="relatedLinks">
-					<h3>related links</h3>
+					<h3>parent links</h3>
 					<ul>
-						{foreach key=href item=link from=$item->entry->relatedLinks}
-						<li><a href="{$href}">{$link}</a></li>
+						{foreach key=href item=link from=$item->entry->parentLinks}
+						<li><a href="{$href}">{$link.title}</a></li>
+						{/foreach}
+					</ul>
+				</div>
+				{/if}
+
+				{if $item->entry->childLinks|@count}
+				<div id="relatedLinks">
+					<h3>child links</h3>
+					<ul>
+						{foreach key=href item=link from=$item->entry->childLinks}
+						<li><a href="{$href}">{$link.title}</a> ({$link.count})</li>
 						{/foreach}
 					</ul>
 				</div>

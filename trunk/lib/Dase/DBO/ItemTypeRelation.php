@@ -27,6 +27,15 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 			$this->parent_type_ascii_id;
 	}
 
+	public function expunge()
+	{
+		$item_relations = new Dase_DBO_ItemRelation;
+		$item_relations->item_type_relation_id = $this->id;
+		foreach ($item_relations as $doomed) {
+			$doomed->delete();
+		}
+	}
+
 	public function getChildCount($parent_serial_number)
 	{
 		$ir = new Dase_DBO_ItemRelation;

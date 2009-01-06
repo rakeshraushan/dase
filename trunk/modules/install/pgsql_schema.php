@@ -177,7 +177,7 @@ CREATE TABLE {$table_prefix}item_type_relation (
     id serial NOT NULL,
     parent_type_ascii_id character varying(200),
     child_type_ascii_id character varying(200),
-    description text,
+    title character varying(200),
     collection_ascii_id character varying(200)
 );
 

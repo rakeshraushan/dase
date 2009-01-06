@@ -282,6 +282,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 			}
 		}
+
+		//item_type
+		$item_type = $this->getItemType(); 
+		if ($item_type['term']) {
+			$item->setItemType($item_type['term']);
+		}
+
 		$content = new Dase_DBO_Content;
 		$atom_content = $this->getContent();
 		if ($atom_content) {
@@ -339,7 +346,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//1. status
 		$status = $this->getStatus();
-		if (($status != $item->status) && in_array($status,array('delete','draft','public'))) {
+		if (($status != $item->status) && in_array($status,array('delete','draft','public','archive'))) {
 			$item->status = $status;
 		}
 
@@ -358,7 +365,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 
 		//cleanup invalid item_relations in DB
-		//super-expensive w/db calls
+		//super-expensive w/db calls ??
 		Dase_DBO_ItemRelation::cleanup($c->ascii_id,$sernum);
 
 		//3. metadata
@@ -384,19 +391,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		foreach ($item->getParentItems() as $parent_item) {
 			//note there can ONLY be one term per scheme 
 			//(item can only have one parent of given type)
-			$db_relations[$parent_item['scheme']]['term'] = $parent_item['term'];
-			$db_relations[$parent_item['scheme']]['relation_id'] = $parent_item['relation_id'];
+			//NO WRONG!!!  An item can have multiple parents of the same parent type
+			$uniq = $parent_item['scheme'].'/'.$parent_item['term'];
+			$db_relations[$uniq]['scheme'] = $parent_item['scheme'];
+			$db_relations[$uniq]['term'] = $parent_item['term'];
+			$db_relations[$uniq]['relation_id'] = $parent_item['relation_id'];
+			unset($uniq);
 		}
 
+		//find or create
 		$xml_relations = array();
 		//guarantees validity
 		foreach ($item->getParentTypes() as $p) {
 			$scheme = $p->getBaseUrl();
 			//get all categories in entry that express valid relations
 			foreach ($this->getCategoriesByScheme($scheme) as $cat) {
-				$xml_relations[$scheme]['term'] = $cat['term'];
+				$uniq = $scheme.'/'.$cat['term'];
+				$xml_relations[$uniq]['scheme'] = $scheme;
+				$xml_relations[$uniq]['term'] = $cat['term'];
 				//foreach valid rel in xml, lookup in db and find or create 
-				if (isset($db_relations[$scheme]) && $db_relations[$scheme]['term'] == $cat['term']) {
+				if (isset($db_relations[$uniq]) && $db_relations[$uniq]['term'] == $cat['term']) {
 					//do nothing since it is in db
 				} else {
 					//make sure parent is a legitimate item
@@ -411,13 +425,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 						$item_relation->insert();
 					}
 				}	
+				unset($uniq);
 			}
 		}
 		//foreach rel in db, lookup in xml and find or delete``
 		//note: db_rels won't include newly inserted item_rels
 		//but we know those are valid, so no need to check them
-		foreach ($db_relations as $scheme => $rel) {
-			if (!isset($xml_relations[$scheme]) || $xml_relations[$scheme]['term'] != $rel['term']) {
+		foreach ($db_relations as $uniq => $rel) {
+			if (!isset($xml_relations[$uniq]) || $xml_relations[$uniq]['term'] != $rel['term']) {
 				$doomed = new Dase_DBO_ItemRelation;
 				$doomed->load($rel['relation_id']);
 				if ($doomed) {

@@ -17,19 +17,19 @@
 <!-- set parent link form -->
 
 <textarea class="javascript_template" id="parent_link_jst">
-	<h1>attach to ${parent} (${count})</h1>
-	<h3 id="currentLink"></h3>
+	<h1>attach to ${parent_type_name}</h1>
+	<ul id="currentLinks"></ul>
 	<form id="setParentForm" action="xxxxxxxxx">
 	<input type="hidden" name="url" value="${url}"/>
 	<select name="serial_number">
-	<option>select one:</option>
-	<option>[none]</option>
+	<option>select one (of ${count})</option>
 	{for item in items}
 	<option value="${item.serial_number}">${item.title}</option>
 	{/for}
 	</select>
 	<input type="submit" value="create link" id="createLink"/>
 	<input type="submit" value="cancel" id="cancelLink"/>
+	<span id="updateMsg"></span>
 	</form>
 </textarea>
 
@@ -37,7 +37,6 @@
 
 <textarea class="javascript_template" id="item_status_jst">
 	<h1>Item Status (${status})</h1>
-	<h3 id="currentStatus"></h3> 
 	<form id="itemStatusForm">
 		<select name="status">
 			<option>select status:</option>
@@ -47,6 +46,7 @@
 			<option value="archive">archive</option>
 		</select>
 		<input type="submit" value="update status"/>
+	<span id="updateMsg"></span>
 	</form>
 </textarea>
 
@@ -71,8 +71,7 @@
 <!-- item type form -->
 
 <textarea class="javascript_template" id="item_type_jst">
-	<h1>Set Item Type</h1>
- 	<h3 id="currentItemType">Current Item Type: ${current}</h3>
+	<h1>Set Item Type ${current}</h1>
 	<form action="item/${coll_ser}/item_type" method="post" id="itemTypeForm">
 		<p>
 			<select name="item_type">
@@ -82,6 +81,7 @@
 			{/for}
 			</select>
 			<input type="submit" value="set"/>
+	<span id="updateMsg"></span>
 		</p>
 	</form>
 </textarea>
