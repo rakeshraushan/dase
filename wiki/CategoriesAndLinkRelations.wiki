@@ -38,5 +38,5 @@ prefix is: http://daseproject.org/relation/
   * feed-link (used to populate the "up" link on a search item)
   * search-item (w/in a search result, appearing in an entry)
   * item_type/attributes (links the attributes for this item_type)
-  * child
+  * childfeed (both application/atom+xml and application/json available)
   * parent
