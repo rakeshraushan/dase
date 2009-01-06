@@ -698,8 +698,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* this simply creates a link to any children out there */
 		foreach ($type->getChildRelations() as $rel) {
 			$link = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.atom',
-				'http://daseproject.org/relation/child','','',$rel->title);
+				'http://daseproject.org/relation/childfeed','application/atom+xml','',$rel->title);
 			$link->setAttributeNS(Dase_Atom::$ns['thr'],
+				'thr:count',(string) $rel->getChildCount($this->serial_number));
+			$jsonlink = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.json',
+				'http://daseproject.org/relation/childfeed','application/json','',$rel->title);
+			$jsonlink->setAttributeNS(Dase_Atom::$ns['thr'],
 				'thr:count',(string) $rel->getChildCount($this->serial_number));
 		}
 

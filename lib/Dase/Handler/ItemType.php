@@ -100,6 +100,17 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($res));
 	}
 
+	public function getService($r)
+	{
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($this->type->getAtompubServiceDoc());
+	}
+
+	public function getRelationChildren($r)
+	{
+		$this->getRelationChildrenAtom($r);
+	}
+
 	public function getItemTypeItemsCats($r)
 	{
 		$t = $this->type;
@@ -111,15 +122,34 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($cats->asXml());
 	}
 
-	public function getService($r)
+	public function getItemTypeItemsJson($r)
 	{
-		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->type->getAtompubServiceDoc());
-	}
-
-	public function getRelationChildren($r)
-	{
-		$this->getRelationChildrenAtom($r);
+		//he we are getting (child) item_type items
+		//which have are related to parent item_type item
+		//specified
+		$items = array();
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT ir.child_serial_number
+			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
+			WHERE ir.collection_ascii_id = ?
+			AND itr.id = ir.item_type_relation_id
+			AND ir.parent_serial_number = ?
+			AND itr.child_type_ascii_id = ?
+			AND itr.parent_type_ascii_id = ?
+			";
+		$bound = array(
+			$r->get('collection_ascii_id'),
+			$r->get('parent_serial_number'),
+			$r->get('item_type_ascii_id'),
+			$r->get('parent_type_ascii_id'),
+		);
+		$st = Dase_DBO::query($sql,$bound);
+		while ($sernum = $st->fetchColumn()) {
+			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
+			$items[$sernum] = $item->asArray();
+		}
+		$r->renderResponse(Dase_Json::get($items));
 	}
 
 	public function getItemTypeItemsAtom($r)
