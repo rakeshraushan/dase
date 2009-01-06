@@ -195,17 +195,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	}
 
 	function replaceMetadata($metadata_array) {
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ('admin_' != substr($dd->localName,0,6)) {
-				//necessary to set array
-				$doomed[] = $dd;
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
+				$doomed[] = $el;
+			}
+			if ('http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
+				$doomed[] = $el;
 			}
 		}
 		foreach ($doomed as $goner) {
 			$this->root->removeChild($goner);
 		}
 		foreach ($metadata_array as $k => $v) {
-			$this->addElement('d:'.$k,$v,Dase_Atom::$ns['d']);
+			$this->addElement($k,'http://daseproject.org/category/metadata','',$v);
 		}
 	}
 
