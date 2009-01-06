@@ -392,6 +392,21 @@ div#adminStatusControls {
 	margin: -.5em 0 2em 0;
 }
 
+#ajaxFormHolder h1 {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+#ajaxFormHolder ul {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#updateMsg {
+	color: #00c;
+	font-weight: bold;
+}
+
 #addMetadataFormTarget {
 	margin: 1em 0;
 }
@@ -469,24 +484,6 @@ form#setAnnotationForm textarea {
 
 h3 a.modify {
 	font-size: .8em;
-}
-
-h3#currentItemType {
-	font-size: .95em;
-	color: #66a;
-	margin-top: 0;
-}
-
-h3#currentLink {
-	font-size: .95em;
-	color: #66a;
-	margin-top: 0;
-}
-
-h3#currentStatus {
-	font-size: .95em;
-	color: #66a;
-	margin-top: 0;
 }
 
 span#itemType {

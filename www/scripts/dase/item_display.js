@@ -37,28 +37,61 @@ Dase.pageInitUser = function(eid) {
 Dase.initSetParent = function(controls) {
 	var mform = Dase.$('ajaxFormHolder');
 	var links = controls.getElementsByTagName('a');
+	//find the "link to parent links
 	for (var i=0;i<links.length;i++) {
 		if ('setParentLink' == links[i].className) {
 			links[i].onclick = function() {
 				var parent_type_url = this.href;
 				Dase.addClass(Dase.$('adminPageControls'),'hide');
 				Dase.removeClass(Dase.$('pageReloader'),'hide');
+				//init the page reloading 'close' link
 				Dase.$('pageReloaderLink').onclick = function() {
 					Dase.pageReload();
 					return false;
 				}
+				//display the form
 				if (Dase.toggle(mform)) {
 					mform.innerHTML = '<h1 class="loading">Loading...</h1>';
-					Dase.getJSON(parent_type_url,function(json) {
+					//retrieve the items of the parent type
+					Dase.getJSON(parent_type_url,function(pt_json) {
 						var data = {};
-						data.items=json.items;
-						data.count=json.items.length;
-						data.url=json.type.url;
-						data.parent=json.type.name;
+						data.items=pt_json.items;
+						data.count=pt_json.items.length;
+						data.url=pt_json.type.url;
+						data.parent_type_name=pt_json.type.name;
 						var templateObj = TrimPath.parseDOMTemplate("parent_link_jst");
+						//display the form
 						mform.innerHTML = templateObj.process(data);
-						var pForm = Dase.$('setParentForm');
-						Dase.initSetParentForm(pForm,parent_type_url);
+						var parents = [];
+						var edit_url = Dase.atompub.getJsonEditLink();
+						Dase.getJSON(edit_url,function(atom_json){
+							var parent_scheme = pt_json.type.url;
+							for (var i=0;i<atom_json.category.length;i++) {
+								var cat = atom_json.category[i];
+								if (cat.scheme == parent_scheme) {
+									var li = Dase.createElem(Dase.$('currentLinks'),null,'li');
+									var label = Dase.createElem(li,cat.label,'span');
+									var space = Dase.createElem(li,'  ','span');
+									var el = Dase.createElem(li,'(remove)','a','delete');
+									el.num = i;
+									el.li = li;
+									el.onclick = function(){
+										Dase.$('updateMsg').innerHTML = 'removing...';
+										var doomed = this.li;
+										atom_json.category.splice(this.num,1);
+										Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
+											Dase.addClass(doomed,'hide');
+											Dase.initSetParentForm(pForm,parent_type_url,atom_json);
+											Dase.$('updateMsg').innerHTML = '';
+										},Dase.user.eid,Dase.user.htpasswd);
+										return false;
+									}
+
+								}
+							}
+							var pForm = Dase.$('setParentForm');
+							Dase.initSetParentForm(pForm,parent_type_url,atom_json);
+						},Dase.user.eid,Dase.user.htpasswd);
 					});
 					return false;
 				}
@@ -67,39 +100,23 @@ Dase.initSetParent = function(controls) {
 	}
 }
 
-Dase.initSetParentForm = function(form,target_scheme) {
-	var edit_url = Dase.atompub.getJsonEditLink();
-	var atom_json;
-	Dase.getJSON(edit_url,function(json){
-		atom_json = json;
-		var parent_url = form.url.value;
-		for (var i=0;i<atom_json.category.length;i++) {
-			var cat = atom_json.category[i];
-			if (cat.scheme == parent_url) {
-				Dase.$('currentLink').innerHTML = 'currently linked to '+cat.label;
-				 Dase.$('cancelLink').onclick = function() {
-					Dase.addClass(Dase.$('ajaxFormHolder'),'hide');
-					Dase.removeClass(Dase.$('adminPageControls'),'hide');
-					Dase.addClass(Dase.$('pageReloader'),'hide');
-					form.onsubmit = function() {
-						return false;
-					}
-					return false;
-				}; 
-				//creating new link needs to remove previous
-				Dase.$('createLink').onclick = function() {
-					atom_json.category.splice(i,1);
-				};
-			}
+Dase.initSetParentForm = function(form,target_scheme,atom_json) {
+	Dase.$('cancelLink').onclick = function() {
+		Dase.addClass(Dase.$('ajaxFormHolder'),'hide');
+		Dase.removeClass(Dase.$('adminPageControls'),'hide');
+		Dase.addClass(Dase.$('pageReloader'),'hide');
+		form.onsubmit = function() {
+			return false;
 		}
-	},Dase.user.eid,Dase.user.htpasswd);
+		return false;
+	}; 
 	form.onsubmit = function() {
+		Dase.$('updateMsg').innerHTML = "creating parent link...";
 		var cat = {};
 		cat.scheme = form.url.value;
 		cat.term = form.serial_number.options[form.serial_number.selectedIndex].value;
 		atom_json.category[atom_json.category.length] = cat;
 		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-		   Dase.$('currentLink').innerHTML = "updating parent link...";
 		   Dase.pageReload();
 		},Dase.user.eid,Dase.user.htpasswd);
 		return false;
@@ -144,7 +161,7 @@ Dase.initItemStatusForm = function(form) {
 	var edit_url = Dase.atompub.getJsonEditLink();
 	var atom_json;
 	form.onsubmit = function() {
-		Dase.$('currentStatus').innerHTML = "updating status...";
+		Dase.$('updateMsg').innerHTML = "updating status...";
 		Dase.getJSON(edit_url,function(json){
 			atom_json = json;
 			var target_scheme = 'http://daseproject.org/category/status';
@@ -415,15 +432,10 @@ Dase.initItemTypeForm = function(form) {
 		var content_headers = {
 			'Content-Type':'application/x-www-form-urlencoded'
 		}
-		var cur = Dase.$('currentItemType');
-		if (cur) {
-		   cur.innerHTML = "updating current item type...";
-		}
+		Dase.$('updateMsg').innerHTML = 'updating...';
 		Dase.ajax(this.action,'post',function(resp) { 
-			//alert(resp);
 			Dase.pageReload(resp);
 		},Dase.form.serialize(this),null,null,content_headers); 
-		//Dase.toggle(Dase.$('ajaxFormHolder'));
 		return false;
 	}
 };

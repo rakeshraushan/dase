@@ -698,19 +698,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* this simply creates a link to any children out there */
 		foreach ($type->getChildRelations() as $rel) {
 			$link = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.atom',
-				'related','','',$rel->title);
-			$link->setAttributeNS(Dase_Atom::$ns['d'],
-				'd:count',(string) $rel->getChildCount($this->serial_number));
-		}
-
-		/* creates  
-		 * a link to the parent types items (in json)
-		 * so you indicate linking is available AND
-		 * suitable for creating a pull-down menu
-		 */
-		foreach ($this->getParentTypes() as $pt) {
-			$entry->addLink($pt->getBaseUrl().'.json',
-				'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
+				'http://daseproject.org/relation/child','','',$rel->title);
+			$link->setAttributeNS(Dase_Atom::$ns['thr'],
+				'thr:count',(string) $rel->getChildCount($this->serial_number));
 		}
 
 		//adds a category for AND a link to any parent item(s)
@@ -718,7 +708,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory($parent_item_as_cat['term'],
 				$parent_item_as_cat['scheme'],$parent_item_as_cat['label']);
 			$entry->addLink($parent_item_as_cat['item_url'],
-				'related','','',$parent_item_as_cat['label']);
+				'http://daseproject.org/relation/parent','','',$parent_item_as_cat['label']);
+		}
+
+		/* creates a link to the parent types items (in json)
+		 * so you indicate linking is available AND
+		 * suitable for creating a pull-down menu
+		 */
+		foreach ($this->getParentTypes() as $pt) {
+			$entry->addLink($pt->getBaseUrl().'.json',
+				'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
 		}
 
 		/* content */

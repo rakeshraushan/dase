@@ -67,10 +67,10 @@
 				<input type="submit" value="update"/>
 				<input
 				type="submit"
-				name="method"
+				name="_method"
 				id="deleteType"
 				class="deleteControl"
-				value="delete {$type->attribute_name}"/>
+				value="delete {$type->name}"/>
 				{else}
 				<input type="submit" value="create"/>
 				{/if}
@@ -141,36 +141,20 @@
 	<li>
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
 	(parent) 
-	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="item_type/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" id="link/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}" class="modify">edit title</a> 
+	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> 
 	{if r.title}
 	<p class="relationDesc">${r.title}</p>
 	{/if}
-	<form 
-		class="hide"
-		method="post" 
-		id="form/${r.collection_ascii_id}/${r.ascii_id}/to/{/literal}{$type->ascii_id}{literal}"> 
-		<input type="text" name="title" value="${r.title}"/>
-		<input type="submit" value="update"/>
-	</form>
 	</li>
 	{/for}
 	{for r in rels.children}
 	<li>
 	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
 	(child) 
-	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> |
-	<a href="item_type/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" id="link/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}" class="modify">edit title</a> 
+	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> 
 	{if r.title}
 	<p class="relationDesc">${r.title}</p>
 	{/if}
-	<form 
-		class="hide"
-		method="post" 
-		id="form/${r.collection_ascii_id}/{/literal}{$type->ascii_id}{literal}/to/${r.ascii_id}">
-		<input type="text" name="title" value="${r.title}"/>
-		<input type="submit" value="update"/>
-	</form>
 	</li>
 	{/for}
 	{/literal}

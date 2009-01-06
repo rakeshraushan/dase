@@ -178,12 +178,6 @@ Dase.toggle = function(el) {
 	}
 };
 
-Dase.createHtmlSet = function(parent,set,tagName) {
-	for (var i=0;i<set.length;i++) {
-		Dase.createElem(parent,set[i],tagName);
-	}
-};
-
 Dase.showElem = function(elem) {
 	if (elem.scrollIntoView) {
 		elem.scrollIntoView();
