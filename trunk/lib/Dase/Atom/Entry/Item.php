@@ -207,7 +207,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$this->root->removeChild($goner);
 		}
 		foreach ($metadata_array as $k => $v) {
-			$this->addElement($k,'http://daseproject.org/category/metadata','',$v);
+			$this->addCategory($k,'http://daseproject.org/category/metadata','',$v);
 		}
 	}
 
