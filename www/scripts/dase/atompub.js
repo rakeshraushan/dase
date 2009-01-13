@@ -157,6 +157,24 @@ Dase.atom.entry = function(title) {
 	return doc;
 }; 
 
+Dase.atom.jsonEntry = function(title,entrytype,categories) {
+	var atom = {};
+	var d = new Date();
+	atom.id = 'tag:daseproject.org,2008:'+d.valueOf();
+	atom.title = title;
+	atom.updated = Dase.atompub.getDate();
+	atom.author_name = 'daseproject';
+	atom.entrytype = entrytype;
+	atom.content = {};
+	atom.rights = 'internal';
+	atom.content.text = 'abcd';
+	atom.content.type = 'text';
+	if (categories) {
+		atom.category = categories;
+	}
+	return atom;
+};
+
 
 Dase.addLoadEvent(function() {
 });

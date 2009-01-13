@@ -172,5 +172,6 @@
 		<div class="spacer"></div>
 
 		<div id="debugData" class="pagedata"></div>
+		{include file='resources/atom_template.tpl'}
 	</body>
 </html>

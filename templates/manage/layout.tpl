@@ -167,5 +167,6 @@
 		</div><!--closes footer-->
 		<div id="collectionAsciiId" class="pagedata">{$collection->ascii_id}</div>
 		<div id="debugData" class="pagedata"></div>
+		{include file='resources/atom_template.tpl'}
 	</body>
 </html>

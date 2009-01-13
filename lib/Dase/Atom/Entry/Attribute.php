@@ -10,7 +10,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 	{
 		$att = new Dase_DBO_Attribute;
 		$att->attribute_name = $this->getTitle();
-		$att->ascii_id = $this->getAsciiId();
+		$att->ascii_id = Dase_Util::dirify($att->attribute_name);
 		if (!Dase_DBO_Attribute::get($collection->ascii_id,$att->ascii_id)) {
 			$att->collection_id = $collection->id;
 			$att->updated = date(DATE_ATOM);
@@ -26,7 +26,6 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			foreach ($this->getItemTypes() as $type) {
 				$att->addItemType($type);
 			}
-			$att->resort();
 		} else {
 			throw new Dase_Exception('attribute exists');
 		}
@@ -44,7 +43,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 	{
 		$item_types = array();
 		foreach ($this->getCategories() as $c) {
-			if ('http://daseproject.org/category/item_type' == $c['scheme']) {
+			if ('http://daseproject.org/category/parent_item_type' == $c['scheme']) {
 				$item_types[] = $c['term'];
 			}
 		}

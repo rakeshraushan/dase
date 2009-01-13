@@ -84,9 +84,9 @@
 					id="type_atts_form"
 					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" 
 					method="post">
-					<select id="att_select" name="att_ascii_id">
+					<select class="{$type->ascii_id}" id="att_select" name="att_ascii_id">
 						<option>select one:</option>
-						<option value="new_att_trigger">new attribute...</option>
+						<option class="{$collection->ascii_id}" value="new_att_trigger">new attribute...</option>
 						<option>----------------</option>
 						{foreach item=att from=$attributes}
 						<option value="{$att->ascii_id}">{$att->attribute_name}</option>

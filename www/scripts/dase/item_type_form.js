@@ -74,7 +74,26 @@ Dase.initCreateAttribute = function() {
 	select.onchange = function() {
 		if ('new_att_trigger' == this.options[this.selectedIndex].value) {
 			var att_name = prompt('type attribute name');
-			alert(Dase.atompub.serialize(Dase.atom.entry(att_name)));
+			var cats = [{
+				'term':this.className,
+				'scheme':'http://daseproject.org/category/parent_item_type'
+			}];
+			//this can all be cleaned up/compressed
+			var jsa = Dase.atom.jsonEntry(att_name,'attribute',cats);
+			var data = {'atom':jsa};
+			var templateObj = TrimPath.parseDOMTemplate("atom_jst");
+			atom_xml = Dase.util.trim(templateObj.process(data));
+			post_url = Dase.base_href+'collection/'+this.options[this.selectedIndex].className+'/attributes';
+			headers = {
+				'Content-Type':'application/atom+xml;type=entry',
+			}
+			Dase.ajax(post_url,'POST',function(resp) {
+				Dase.pageReload();
+			},atom_xml,Dase.user.eid,Dase.user.htpasswd,headers);
+			var atts_form = Dase.$('type_atts_form');
+			if (atts_form) {
+				Dase.setTypeAtts(atts_form);
+			}
 			return false;
 		} else {
 			return false;
