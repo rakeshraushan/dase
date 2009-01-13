@@ -295,8 +295,10 @@ class Dase_Http_Request
 				} else { //this deals with case of '&' in search term!
 					//like search?q=horse&q=red & green
 					//we still have $k left over from last list ($k,$v) = explode... 
-					$last = array_pop($url_params[$k]);
-					$url_params[$k][] = $last.'&'.$pair;
+					if (isset($k)) {
+						$last = array_pop($url_params[$k]);
+						$url_params[$k][] = $last.'&'.$pair;
+					}
 				} 
 			}
 		}
@@ -354,9 +356,16 @@ class Dase_Http_Request
 		}
 		if ($strip_extension) {
 			if (strpos($path,'.') !== false) {
-				list($path,$ext )= explode('.', $path);
+				$parts = explode('.', $path);
+				$ext = array_pop($parts);
+				if (isset(Dase_Http_Request::$types[$ext])) {
+					$path = join('.',$parts);
+				} else {	
+					//path remains what it originally was
+				}
 			}
 		}
+		//print $path; exit;
 		return $path;
 	}
 

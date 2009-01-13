@@ -36,6 +36,29 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		}
 	}
 
+	public function asAtomEntry()
+	{
+		$entry = new Dase_Atom_Entry;
+		$entry = $this->injectAtomEntryData($entry);
+		return $entry->asXml();
+	}
+
+	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	{
+		$base_url = $this->getBaseUrl();
+		$entry->setTitle('Item Type Relation: '.$this->title);
+		$entry->setId($base_url);
+		$entry->setSummary($this->description);
+		$entry->addLink($base_url.'.atom','edit');
+		$entry->addLink($this->getChild()->getBaseUrl(),'http://daseproject.org/relation/child_type');
+		$entry->addLink($this->getParent()->getBaseUrl(),'http://daseproject.org/relation/parent_type');
+		$entry->addCategory('item_type','http://daseproject.org/category/entrytype','Item Type Relation');
+		$entry->setUpdated(date(DATE_ATOM));
+		$entry->addAuthor();
+		return $entry;
+	}
+
+
 	public function getChildCount($parent_serial_number)
 	{
 		$ir = new Dase_DBO_ItemRelation;
@@ -43,5 +66,4 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		$ir->parent_serial_number = $parent_serial_number;
 		return ($ir->findCount());
 	}
-
 }

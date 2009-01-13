@@ -122,15 +122,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $st->fetchAll(PDO::FETCH_COLUMN);
 	}
 
-	function getItemUniques()
-	{
-		$uniqs = array();
-		foreach ($this->getTagItems() as $ti) {
-			$uniqs[] = $ti->p_collection_ascii_id.'/'.$ti->p_serial_number;
-		}
-		return $uniqs;
-	}
-
 	function getTagItems()
 	{
 		$tag_item = new Dase_DBO_TagItem;

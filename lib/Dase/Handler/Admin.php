@@ -10,6 +10,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'docs' => 'docs',
+		'tools' => 'tools',
 		'eid/{eid}' => 'ut_person',
 		'log' => 'log',
 		'manager/email' => 'manager_email',
@@ -33,8 +34,8 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function deleteCache($r)
 	{
-		Dase_Cache_File::expunge();
-		$r->renderResponse('cache deleted');
+		$num = Dase_Cache_File::expunge();
+		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 
 	public function getModules($r)
@@ -230,6 +231,12 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$r->renderResponse($tpl->fetch('admin/palette.tpl'));
+	}
+
+	public function getTools($r)
+	{
+		$tpl = new Dase_Template($r);
+		$r->renderResponse($tpl->fetch('admin/tools.tpl'));
 	}
 
 	public function getAttributes($r)

@@ -96,21 +96,6 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->renderResponse($this->tag->asJson());
 	}
 
-	public function getItemUniquesTxt($r)
-	{
-		$u = $r->getUser('http');
-		if (!$u->can('read',$this->tag)) {
-			$r->renderError(401);
-		}
-		$output = '';
-		foreach($this->tag->getItemUniques() as $iu) {
-			if ($iu) {
-				$output .= '|'.$iu;
-			}
-		}
-		$r->renderResponse($output);
-	}
-
 	public function getTagTemplate($r)
 	{
 		$t = new Dase_Template($r);

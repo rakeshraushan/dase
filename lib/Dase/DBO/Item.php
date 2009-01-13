@@ -163,6 +163,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
+	public function getMetadataAsCategories()
+	{
+		$cats = new Dase_Atom_Categories;
+		$cats->setScheme('http://daseproject.org/category/metadata');
+		foreach($this->getMetadata() as $m) {
+			$cats->addCategory(
+				$m['href'],'http://daseproject.org/category/metadata',
+				$m['attribute_name'],$m['value_text']);
+		}
+		return $cats->asXml();
+	}
+
 	public function getAdminMetadata($att_ascii_id = '')
 	{
 		$prefix = Dase_Config::get('table_prefix');
@@ -244,6 +256,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getValue($att_ascii_id)
 	{
+		//only returns first found
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT v.value_text
@@ -442,6 +455,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			if (!in_array($doomed->attribute_id,$admin_ids)) {
 				$doomed->delete();
 			}
+		}
+	}
+
+	//used with putMetadata method in item handler
+	//(which accepts application/atomcat+xml)
+	public function replaceMetadata($metadata_array)
+	{
+		$this->deleteValues();
+		foreach ($metadata_array as $att_ascii => $value_text) {
+			$this->setValue($att_ascii,$value_text);
 		}
 	}
 
@@ -776,7 +799,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* edit-media link */
 
-		$entry->addLink(APP_ROOT.'/media/'.$c->ascii_id.'/'.$this->serial_number,'edit-media');
+		$entry->addLink($this->getEditMediaUrl(),'edit-media');
 
 		/* media rss ext */
 
@@ -864,6 +887,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getBaseUrl() 
 	{
 		return APP_ROOT.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
+	}
+
+	public function getEditMediaUrl()
+	{
+		return APP_ROOT.'/media/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
 	}
 
 	public function getAtomPubServiceDoc() {
@@ -1049,6 +1077,27 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return $tags;
 		} else {
 			return false;
+		}
+	}
+
+	public static function sortIdArrayByUpdated($item_ids)
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT updated 
+			FROM {$prefix}item i
+			WHERE i.id = ? 
+			";
+		$sth = $db->prepare($sql);
+		foreach ($item_ids as $item_id) {
+			$sth->execute(array($item_id));
+			$updated = $sth->fetchColumn();
+			$sortable_array[$item_id] = $updated;
+		}
+		if (is_array($sortable_array)) {
+			arsort($sortable_array);
+			return array_keys($sortable_array);
 		}
 	}
 

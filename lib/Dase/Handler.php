@@ -21,7 +21,7 @@ class Dase_Handler {
 				//stash param names into $template_matches
 				$num = preg_match_all("/{([\w]*)}/",$uri_template,$template_matches);
 				if ($num) {
-					$uri_regex = preg_replace("/{[\w]*}/","([\w-,]*)",$uri_template);
+					$uri_regex = preg_replace("/{[\w]*}/","([\w-,.]*)",$uri_template);
 				}
 			}
 

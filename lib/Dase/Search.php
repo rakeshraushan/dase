@@ -195,6 +195,10 @@ class Dase_Search
 			}
 		}
 
+		//assume empty search means get all
+		if ($this->_isEmpty($search)) {
+			$search['find'] = array('%');
+		}
 		$this->search_array = $search;
 
 		// DONE parsing search string!!
@@ -209,6 +213,21 @@ class Dase_Search
 			$tokens[] = $nextToken;
 		}
 		return $tokens;
+	}
+
+	private function _isEmpty($search) 
+	{
+		if (
+			0 == count($search['find']) &&
+			0 == count($search['att']) &&
+			0 == count($search['omit']) &&
+			0 == count($search['qualified']) &&
+			null === $search['type']
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private function _testArray($a,$key)
@@ -384,6 +403,10 @@ class Dase_Search
 		if ($this->request->has('sort')) {
 			$sort = $this->request->get('sort');
 			$item_ids = Dase_DBO_Item::sortIdArray($sort,$item_ids);
+		} else {
+			if (1 == count($tallies)) { //we only sort single collection results
+				$item_ids = Dase_DBO_Item::sortIdArrayByUpdated($item_ids);
+			}
 		}
 		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->search_array);
 	}

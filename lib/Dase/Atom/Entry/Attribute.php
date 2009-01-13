@@ -23,6 +23,9 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			foreach ($this->getDefinedValues() as $dv) {
 				$att->addDefinedValue($dv);
 			}
+			foreach ($this->getItemTypes() as $type) {
+				$att->addItemType($type);
+			}
 			$att->resort();
 		} else {
 			throw new Dase_Exception('attribute exists');
@@ -37,11 +40,22 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 		throw new Exception('not yet implemented');
 	}
 
+	function getItemTypes()
+	{
+		$item_types = array();
+		foreach ($this->getCategories() as $c) {
+			if ('http://daseproject.org/category/item_type' == $c['scheme']) {
+				$item_types[] = $c['term'];
+			}
+		}
+		return $item_types;
+	}
+
 	function getHtmlInputType()
 	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/attribute/html_input_type' == $el->getAttribute('scheme')) {
-				return $el->getAttribute('term');
+		foreach ($this->getCategories() as $c) {
+			if ('http://daseproject.org/category/attribute/html_input_type' == $c['scheme']) {
+				return $c['term'];
 			}
 		}
 		//default
@@ -50,8 +64,10 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 
 	function getDefinedValues() {
 		$defined = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'defined_value') as $dd) {
-			$defined[] = $dd->nodeValue;
+		foreach ($this->getCategories() as $c) {
+			if ('http://daseproject.org/category/attribute/defined_value' == $c['scheme']) {
+				$defined[] = $c['term'];
+			}
 		}
 		return $defined;
 	}

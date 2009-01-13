@@ -7,6 +7,9 @@
 <link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}"/>
 <link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}"/>
 {/if}
+<!--
+<link rel="microsummary" href="{$app_root}item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/microsummary.txt"/>
+-->
 {/block}
 
 {block name="head"}
@@ -132,6 +135,10 @@
 					<a href="#" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 				</div>
 				<dl id="adminMetadata" class="{$item->collectionAsciiId} hide">
+					<dt>Serial Number</dt>
+					<dd>{$item->entry->serialNumber}</dd>
+					<dt>Updated</dt>
+					<dd>{$item->entry->updated}</dd>
 					{foreach item=set key=ascii_id from=$item->entry->adminMetadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}

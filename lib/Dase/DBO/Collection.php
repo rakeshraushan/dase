@@ -147,89 +147,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$entry->setEntryType('collection');
 		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
 		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id);
+		if ($this->is_public) {
+			$pub = "public";
+		} else {
+			$pub = "private";
+		}
+		$entry->addCategory($pub,"http://daseproject.org/category/collection/visibility");
+		$entry->addCategory($this->item_count,"http://daseproject.org/category/collection/item_count");
 		return $entry->asXml();
-	}
-
-	function asAtomFull() 
-	{
-		$feed = $this->getBaseAtomFeed();
-		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/full','self');
-		$cms = new Dase_DBO_CollectionManager;
-		$cms->collection_ascii_id = $this->ascii_id;
-		foreach ($cms->find() as $cm) {
-			$cm->injectAtomEntryData($feed->addEntry());
-		}
-		foreach ($this->getAttributes() as $att) {
-			$att->injectAtomEntryData($feed->addEntry(),$this);
-		}
-		foreach ($this->getItemTypes() as $type) {
-			$type->injectAtomEntryData($feed->addEntry(),$this);
-		}
-		return $feed->asXml();
-	}
-
-	function asAtomArchive($limit=0) {
-		//todo: this needs to be paged
-		$feed = $this->getBaseAtomFeed();
-		$feed->addLink(APP_ROOT.'/atom/collection/'.$this->ascii_id.'/archive','self');
-		$feed->setFeedType('archive');
-		foreach ($this->getAttributes() as $att) {
-			$att->injectAtomEntryData($feed->addEntry('attribute'));
-		}
-		foreach ($this->getAdminAttributes() as $att) {
-			$att->injectAtomEntryData($feed->addEntry('attribute'));
-		}
-		foreach ($this->getItemTypes() as $item_type) {
-			$item_type->injectAtomEntryData($feed->addEntry('item_type'),$this);
-		}
-		$items = new Dase_DBO_Item;
-		$items->collection_id = $this->id;
-		if ($limit && is_numeric($limit)) {
-			$items->setLimit($limit);
-		}
-		foreach ($items->find() as $item) {
-			$item->injectAtomEntryData($feed->addEntry('item'));
-		}
-		//returned XML will be VERY large
-		return $feed->asXml();
-	}
-
-	function asJsonArchive($limit=0) 
-	{
-		$coll_array['managers'] = array();
-		$coll_array['attributes'] = array();
-		$coll_array['items'] = array();
-		foreach ($this->getItems() as $item) {
-			$coll_array['items'][] = $item->asArray();
-		}
-		foreach ($this->getManagers() as $manager) {
-			$coll_array['managers'][] = $manager;
-		}
-		foreach ($this->getAttributes() as $attribute) {
-			$coll_array['attributes'][] = $attribute->asArray();
-		}
-		return Dase_Json::get($coll_array);
-	}
-
-	function asJsonCollection($page=1,$limit=50)
-	{
-		$offset = $limit * ($page-1);
-		if ($offset < 0) {
-			$offset = 0;
-		}
-		$coll_array = array();
-		$coll_array['name'] = $this->collection_name;
-		$coll_array['ascii_id'] = $this->ascii_id;
-		$coll_array['item_count'] = $this->item_count;
-		foreach ($this->getItems() as $item) {
-			$item_array['href'] = 'https://dase.laits.utexas.edu/'.$this->ascii_id.'/'.$item->serial_number;
-			$item_array['title'] = $item->getTitle();
-			$coll_array['members'][] = $item_array;
-		}
-		$next = $page+1;
-		$coll_array['next'] = $this->getBaseUrl().'.json?page='. $next;
-		$json = new Services_JSON;
-		return $json->encode($coll_array,true);
 	}
 
 	static function dataAsJson()
@@ -468,6 +393,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$types->orderBy('name');
 		foreach ($types->find() as $t) {
 			$res[] = clone $t;
+		}
+		return $res;
+	}
+
+	function getItemTypeRelations()
+	{
+		$res = array();
+		$rels = new Dase_DBO_ItemTypeRelation;
+		$rels->collection_ascii_id = $this->ascii_id;
+		foreach ($rels->find() as $r) {
+			$res[] = clone $r;
 		}
 		return $res;
 	}

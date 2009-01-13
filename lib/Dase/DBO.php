@@ -327,19 +327,21 @@ class Dase_DBO implements IteratorAggregate
 		} else {
 			$sth->setFetchMode(PDO::FETCH_ASSOC);
 		}
+
+		//logging
+		foreach ($params as $bp) {
+			$sql = preg_replace('/\?/',"'$bp'",$sql,1);
+		}
+		Dase_Log::debug("----------------------------");
+		Dase_Log::debug("[DBO query]".$sql);
+		Dase_Log::debug("----------------------------");
+
 		if (!$sth->execute($params)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
 				throw new Dase_DBO_Exception('could not execute query: '.$errs[2]);
 			}
-		} else {
-			foreach ($params as $bp) {
-				$sql = preg_replace('/\?/',"'$bp'",$sql,1);
-			}
-			Dase_Log::debug("----------------------------");
-			Dase_Log::debug("[DBO query]".$sql);
-			Dase_Log::debug("----------------------------");
-		}
+		} 
 		return $sth;
 	}
 

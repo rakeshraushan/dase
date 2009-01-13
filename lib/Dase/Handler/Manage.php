@@ -492,7 +492,14 @@ class Dase_Handler_Manage extends Dase_Handler
 			$media_file = $file->addToCollection($item,false);
 			$item->buildSearchIndex();
 		} else {
-			$r->renderError(400,'could not upload file');
+			//no file, if there is a title, assume it is a new item w/o media
+			if ($r->has('title')) {
+				$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
+				$item->setValue('title',$r->get('title'));
+				$item->buildSearchIndex();
+			} else {
+				$r->renderError(400,'could not upload file');
+			}
 		}
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
 	}

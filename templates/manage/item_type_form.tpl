@@ -1,6 +1,7 @@
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
+<script type="text/javascript" src="www/scripts/xml.js"></script>
 <script type="text/javascript" src="www/scripts/dase/item_type_form.js"></script>
 {/block}
 
@@ -83,8 +84,10 @@
 					id="type_atts_form"
 					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/attributes.json" 
 					method="post">
-					<select name="att_ascii_id">
+					<select id="att_select" name="att_ascii_id">
 						<option>select one:</option>
+						<option value="new_att_trigger">new attribute...</option>
+						<option>----------------</option>
 						{foreach item=att from=$attributes}
 						<option value="{$att->ascii_id}">{$att->attribute_name}</option>
 						{/foreach}
