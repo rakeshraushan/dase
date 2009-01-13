@@ -42,4 +42,9 @@ class Dase_Log
 			self::write($msg,$backtrace);
 		}
 	}
+
+	public static function truncate()
+	{
+		return file_put_contents(self::$logfile,"---- dase log ----\n\n");
+	}
 }
