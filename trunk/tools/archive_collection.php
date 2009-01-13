@@ -2,10 +2,17 @@
 
 include 'config.php';
 
+$coll = 'ica';
 $user = 'pkeane';
-$pass = 'oooo88';
-$coll = 'asian_studies';
+$pass = 'okthen';
 $target_dir = '/mnt/home/pkeane/dase_backup_sets';
+
+$auth = base64_encode($user.':'.$pass);
+$header = array("Authorization: Basic $auth");
+$opts = array( 'http' => array ('method'=>'GET','header'=>$header));
+$ctx = stream_context_create($opts);
+
+//example: file_get_contents($url,false,$ctx);
 
 if (!file_exists($target_dir)) {
 	mkdir($target_dir);
@@ -15,19 +22,38 @@ if (!file_exists($target_dir.'/'.$coll)) {
 	mkdir($target_dir.'/'.$coll);
 }
 
-foreach (file(APP_ROOT.'/collection/'.$coll.'/items.txt') as $ln) {
-	$sernum = trim($ln);
-	$base_url = str_replace('http://','http://'.$user.':'.$pass.'@',APP_ROOT);
-	$entry_xml = file_get_contents($base_url.'/item/'.$coll.'/'.$sernum.'.atom');
-	file_put_contents($target_dir.'/'.$coll.'/'.$sernum.'.atom',$entry_xml);
-	$entry = Dase_Atom_Entry::load($entry_xml);
-	$enc = $entry->getEnclosure();
-	$file_url = $enc['href'];
-	$file_name_parts = explode('/',$file_url);
-	$file_name = array_pop($file_name_parts);
-	if ($file_name) {
-		$file_url = str_replace('http://','http://'.$user.':'.$pass.'@',$file_url);
-		file_put_contents($target_dir.'/'.$coll.'/'.$file_name,file_get_contents($file_url));
-		print $sernum . "\n";
+if (!file_exists($target_dir.'/'.$coll.'/media')) {
+	mkdir($target_dir.'/'.$coll.'/media');
+}
+
+foreach (file(APP_ROOT.'/collection/'.$coll.'/archive.uris') as $ln) {
+	$ln = trim($ln);
+	if ('#' == substr($ln,0,1)) {
+		$entrytype = substr($ln,1);
+		$this_dir = $target_dir.'/'.$coll.'/'.$entrytype;
+		if (!file_exists($this_dir)) {
+			mkdir($this_dir);
+		}
+	} else {
+		$entry_xml = file_get_contents($ln,false,$ctx);
+		$filename = array_pop(explode('/',$ln));
+		file_put_contents($this_dir.'/'.$filename,$entry_xml);
+		print "writing $this_dir -> $filename\n";
 	}
+	/*
+	if ('items' == $entrytype) {	
+		$entry = Dase_Atom_Entry::load($entry_xml);
+		$enc = $entry->getEnclosure();
+		$file_url = $enc['href'];
+		$file_name_parts = explode('/',$file_url);
+		$file_name = array_pop($file_name_parts);
+		if ($file_name) {
+			file_put_contents(
+				$target_dir.'/'.$coll.'/media/'.$file_name,
+				file_get_contents($file_url,false,$ctx)
+			);
+			print "writing media file $file_name\n";
+		}
+	}
+	 */
 }

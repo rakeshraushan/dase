@@ -113,4 +113,14 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		return $this->getXpathValue("opensearch:startIndex");
 		return $this->getAtomElementText('startIndex','os');
 	}
+
+	/** convenience method to get first item */
+	function getEntry()
+	{
+		if (!$this->entry_dom) {
+			$this->entry_dom = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry')->item(0);
+		}
+		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
+	}
+
 }

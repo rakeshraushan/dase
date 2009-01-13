@@ -27,7 +27,7 @@ class Dase_File_Pdf extends Dase_File
 	{
 		$collection = $item->getCollection();
 		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/thumbnail/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/pdf.jpg');
+			copy(DASE_PATH . '/www/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -46,7 +46,7 @@ class Dase_File_Pdf extends Dase_File
 	{
 		$collection = $item->getCollection();
 		if (!file_exists(Dase_Config::get('path_to_media').'/'.$collection->ascii_id . "/viewitem/pdf.jpg")) {
-			copy(DASE_PATH . '/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/pdf.jpg');
+			copy(DASE_PATH . '/www/images/thumb_icons/pdf.jpg',Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/pdf.jpg');
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;

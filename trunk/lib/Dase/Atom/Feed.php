@@ -138,6 +138,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			exit;
 		}
 		$dom = new DOMDocument('1.0','utf-8');
+		//Dase_Log::debug($xml);
 		$dom->loadXML($xml);
 		return self::_init($dom);
 	}

@@ -4,12 +4,15 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
+		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
+		'{collection_ascii_id}/{serial_number}/microsummary' => 'microsummary',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		//used for get and post
+		//also atom categories PUT
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		//used for put and delete
-		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata',
+		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata_value',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
@@ -46,6 +49,11 @@ class Dase_Handler_Item extends Dase_Handler
 	public function getMediaCount($r)
 	{
 		$r->renderResponse($this->item->getMediaCount());
+	}
+
+	public function getMicrosummaryTxt($r)
+	{
+		$r->renderResponse($this->item->getTitle());
 	}
 
 	public function getTags($r)
@@ -156,6 +164,37 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot write this item');
 		}
 		$r->renderResponse($this->item->getMetadataJson());
+	}
+
+	public function getMetadataCats($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($this->item->getMetadataAsCategories());
+	}
+
+	public function getMetadataTxt($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		if ($r->has('display')) {
+			$meta = $this->item->getMetadata($r->get('display'));
+			if (isset($meta[0]) && isset($meta[0]['value_text'])) {
+				$r->renderResponse($meta[0]['value_text']);
+			} else {
+				$r->renderError(404);
+			}
+		} else {
+			$output = '';
+			foreach ($this->item->getMetadata() as $meta) {
+				$output .=  $meta['ascii_id'].':'.$meta['value_text']."\n";
+			}
+			$r->renderResponse($output);
+		}
 	}
 
 	public function getInputTemplates($r)
@@ -277,7 +316,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('added metadata');
 	}
 
-	public function putMetadata($r)
+	public function putMetadataValue($r)
 	{
 		$value_text = file_get_contents("php://input");
 		$user = $r->getUser();
@@ -292,7 +331,28 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($value_id.'|'.$value_text);
 	}
 
-	public function deleteMetadata($r)
+	public function putMetadata($r)
+	{
+		$content_type = $r->getContentType();
+		if ('application/atomcat+xml' == $content_type) {
+			$user = $r->getUser('http');
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot put metadata');
+			}
+			$cats = Dase_Atom_Categories::load(file_get_contents("php://input"));
+			$metadata_array = array();
+			foreach ($cats->getCategories() as $c) {
+				$term = array_pop(explode('/',$c['term']));
+				$metadata_array[$term] = $c['value'];
+			}
+			$this->item->replaceMetadata($metadata_array);
+			$r->renderOk('item metadata updated');
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	public function deleteMetadataValue($r)
 	{
 		$user = $r->getUser();
 		if (!$user->can('write',$this->item)) {
@@ -344,6 +404,44 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		//todo: should displayed comments be limited to this user???
 		$r->renderResponse($this->item->getCommentsJson($user->eid));
+	}
+
+	/** this allows us to swap in an item file from the interwebs */
+	public function postToIngester($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$content_type = $r->getContentType();
+		if ('text/uri-list' == $content_type ) {
+			$eid = $r->getUser('http')->eid;
+			$url = file_get_contents("php://input");
+			$filename = array_pop(explode('/',$url));
+			$ext = array_pop(explode('.',$url));
+			$upload_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/uploaded_files';
+			if (!file_exists($upload_dir)) {
+				$r->renderError(401,'missing upload directory');
+			}
+			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
+			file_put_contents($new_file,file_get_contents($url));
+			try {
+				$file = Dase_File::newFile($new_file,$content_type);
+				//since we are swapping in:
+				$item->deleteAdminValues();
+				//note: this deletes ALL media!!!
+				$item->deleteMedia();
+				$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
+				unlink($new_file);
+			} catch(Exception $e) {
+				Dase_Log::debug('error',$e->getMessage());
+				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
+			}
+			$item->buildSearchIndex();
+			$r->renderOk();
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
 	}
 
 	public function postToMedia($r) 

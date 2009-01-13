@@ -14,7 +14,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
 		//usually retrieved as atom:feed
 		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'item_type_items',
-		'{collection_ascii_id}/{item_type_ascii_id}/to/{child_type_ascii_id}' => 'relation',
+		'{collection_ascii_id}/{child_type_ascii_id}/children_of/{item_type_ascii_id}' => 'relation',
 	);
 
 	protected function setup($r)
@@ -187,6 +187,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($feed->asXml());
 	}
 
+	/** used to modify the title */
 	public function postToRelation($r) 
 	{
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
@@ -207,6 +208,26 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$rel->title = trim(file_get_contents("php://input"));
 		$rel->update();
 		$r->renderResponse('updated relation');
+	}
+
+	public function getRelationAtom($r) 
+	{
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		if (!$c) {
+			$r->renderError(401);
+		}
+		$parent = $this->type;
+		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
+		if (!$parent || !$child) {
+			$r->renderError(401);
+		}
+		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel->parent_type_id = $parent->id;
+		$rel->child_type_id = $child->id;
+		if (!$rel->findOne()) {
+			$r->renderError(404);
+		}
+		$r->renderResponse($rel->asAtomEntry());
 	}
 
 	public function postToRelations($r)

@@ -12,7 +12,7 @@ class Dase_Atom_Categories extends Dase_Atom
 	{
 		if ($dom) {
 			//reader object
-			$this->root = $dom;
+			$this->root = $dom->getElementsByTagNameNS(Dase_Atom::$ns['app'],'categories')->item(0);
 			$this->dom = $dom;
 		}  else {
 			//creator object
@@ -22,9 +22,21 @@ class Dase_Atom_Categories extends Dase_Atom
 		}
 	}
 
-	function addCategory($term,$scheme='',$label='') 
+	public static function load($xml) 
 	{
-		$cat = $this->addElement('category','',Dase_Atom::$ns['atom']);
+		//reader object
+		$dom = new DOMDocument('1.0','utf-8');
+		if (is_file($xml)) {
+			$dom->load($xml);
+		} else {
+			$dom->loadXml($xml);
+		}
+		return new Dase_Atom_Categories($dom);
+	}
+
+	function addCategory($term,$scheme='',$label='',$text = '') 
+	{
+		$cat = $this->addElement('category',$text,Dase_Atom::$ns['atom']);
 		$cat->setAttribute('term',$term);
 		if ($scheme) {
 			$cat->setAttribute('scheme',$scheme);
@@ -65,6 +77,7 @@ class Dase_Atom_Categories extends Dase_Atom
 			$category['term'] = $cat->getAttribute('term');
 			$category['label'] = $cat->getAttribute('label');
 			$category['scheme'] = $cat->getAttribute('scheme');
+			$category['value'] = $cat->nodeValue;
 			if (!$category['scheme']) {
 				if ($cascade_root_scheme) {
 					$category['scheme'] = $default_scheme;
@@ -103,5 +116,4 @@ class Dase_Atom_Categories extends Dase_Atom
 		$json['categories'] = $this->getCategories(false);
 		return Dase_Json::get($json);
 	}
-
 }

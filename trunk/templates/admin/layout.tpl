@@ -72,6 +72,11 @@
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
 				</a>
 				</li>
+				<li class="tools-tab">
+				<a href="admin/tools">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Maintenance Tools</sup>
+				</a>
+				</li>
 				<li class="docs-tab">
 				<a href="admin/docs">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Class Documentation</sup>
@@ -112,6 +117,11 @@
 				<li>
 				<a href="collections">
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
+				</a>
+				</li>
+				<li class="tools-tab">
+				<a href="admin/tools">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Maintenance Tools</sup>
 				</a>
 				</li>
 				<li class="docs-tab">

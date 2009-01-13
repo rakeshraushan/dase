@@ -68,6 +68,20 @@ Dase.setTypeRels = function(form) {
 	});
 };
 
+Dase.initCreateAttribute = function() {
+	var select = Dase.$('att_select');
+	if (!select) return;
+	select.onchange = function() {
+		if ('new_att_trigger' == this.options[this.selectedIndex].value) {
+			var att_name = prompt('type attribute name');
+			alert(Dase.atompub.serialize(Dase.atom.entry(att_name)));
+			return false;
+		} else {
+			return false;
+		}
+	};
+};
+
 Dase.pageInit = function() {
 	var del = Dase.$('deleteType');
 	if (del) {
@@ -84,4 +98,5 @@ Dase.pageInit = function() {
 	if (rels_form) {
 		Dase.setTypeRels(rels_form);
 	}
+	Dase.initCreateAttribute()
 };

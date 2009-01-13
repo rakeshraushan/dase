@@ -5,10 +5,11 @@ class Dase_Handler_Collection extends Dase_Handler
 	public $collection;
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/entry' => 'entry',
+		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
-		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/admin_attributes' => 'admin_attributes',
 		'{collection_ascii_id}/admin_attribute_tallies' => 'admin_attribute_tallies',
 		'{collection_ascii_id}/attributes' => 'attributes',
@@ -54,6 +55,30 @@ class Dase_Handler_Collection extends Dase_Handler
 		 */
 	}
 
+	public function getArchiveUris($r)
+	{
+		$output = "#collection\n";
+		$output .= $this->collection->getBaseUrl()."/entry.atom\n";
+		$output .= "#attributes\n";
+		foreach ($this->collection->getAttributes() as $att) {
+			$output .= $att->getBaseUrl().".atom\n";
+		}	
+		$output .= "#item_types\n";
+		foreach ($this->collection->getItemTypes() as $it) {
+			$output .= $it->getBaseUrl().".atom\n";
+		}	
+		$output .= "#item_type_relations\n";
+		foreach ($this->collection->getItemTypeRelations() as $itr) {
+			$output .= $itr->getBaseUrl().".atom\n";
+		}	
+		$output .= "#items\n";
+		foreach ($this->collection->getItems() as $item) {
+			$output .= $item->getBaseUrl().".atom\n";
+		}	
+		$r->renderResponse($output);
+
+	}
+
 	public function getItemTypesJson($r)
 	{
 		$types = array();
@@ -66,6 +91,11 @@ class Dase_Handler_Collection extends Dase_Handler
 			$types[] = $type;
 		}
 		$r->renderResponse(Dase_Json::get($types));
+	}
+
+	public function getEntryAtom($r)
+	{
+		$r->renderResponse($this->collection->asAtomEntry());
 	}
 
 	public function getItemTypesAtom($r)
@@ -89,6 +119,16 @@ class Dase_Handler_Collection extends Dase_Handler
 			foreach ($r->get('display',true) as $member) {
 				$output .= '|'.$item->getValue($member);
 			}
+			$output .= "\n";
+		}
+		$r->renderResponse($output);
+	}
+
+	public function getItemsUris($r) 
+	{
+		$output = '';
+		foreach ($this->collection->getItems() as $item) {
+			$output .= $item->getBaseUrl(); 
 			$output .= "\n";
 		}
 		$r->renderResponse($output);
@@ -120,6 +160,65 @@ class Dase_Handler_Collection extends Dase_Handler
 			$output = $i;
 		}
 		$r->renderResponse($output);
+	}
+
+	public function getItemsThatLackMediaUris($r) 
+	{
+		$output = '';
+		$i = 0;
+		$limit = '';
+		if ($r->has('limit')) {
+			$limit = $r->get('limit');
+		}
+		foreach ($this->collection->getItems() as $item) {
+			if (!$item->getMediaCount()) {
+				$i++;
+				//pass in 'display' params to view att value
+				foreach ($r->get('display',true) as $member) {
+					$output .= '#'.$item->getValue($member)."\n";
+				}
+				if ($r->get('showmedialink')) {
+					//returns list of media links, not item links!!
+					$output .= $item->getEditMediaUrl(); 
+				} else {
+					$output .= $item->getBaseUrl(); 
+				}
+				$output .= "\n";
+			}
+			if ($limit && $i == $limit) {
+				break;
+			}
+		}
+		if ($r->has('get_count')) {
+			$output = $i;
+		}
+		$r->renderResponse($output);
+	}
+
+	public function getItemsThatLackMediaJson($r) 
+	{
+		$items = array();
+		$i = 0;
+		$limit = '';
+		if ($r->has('limit')) {
+			$limit = $r->get('limit');
+		}
+		foreach ($this->collection->getItems() as $item) {
+			if (!$item->getMediaCount()) {
+				$i++;
+				$edit = $item->getBaseUrl(); 
+				$edit_media = $item->getEditMediaUrl(); 
+				$items[$edit]['edit'] = $edit;
+				$items[$edit]['edit-media'] = $edit_media;
+				foreach ($item->getMetadata() as $row) {
+					$items[$edit][$row['ascii_id']] = $row['value_text'];
+				}
+			}
+			if ($limit && $i == $limit) {
+				break;
+			}
+		}
+		$r->renderResponse(Dase_Json::get($items));
 	}
 
 	public function getItemsMarkedToBeDeletedTxt($r) 
@@ -171,36 +270,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($this->collection->asAtom($limit));
 	}
 
-	public function getArchive($r) 
-	{
-		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
-		file_put_contents($archive,$this->collection->asAtomArchive());
-		$r->serveFile($archive,'text/plain',true);
-	}
-
-	public function getArchiveJson($r) 
-	{
-		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time().'.json';
-		file_put_contents($archive,$this->collection->asJsonArchive());
-		$r->serveFile($archive,'text/plain',true);
-	}
-
-	public function getArchiveAtom($r) 
-	{
-		$user = $r->getUser('http');
-		if (!$user->isSuperuser()) {
-			$r->renderError(401,$user->eid.' is not permitted to access the archive of this collection');
-		}
-		$limit = $r->get('limit');
-		$r->renderResponse($this->collection->asAtomArchive($limit));
-	}
-
-	public function asAtomFull($r) 
-	{
-		$c = Dase_Collection::get($r->get('collection_ascii_id'));
-		$r->renderResponse($c->asAtomFull());
-	}
-
 	public function deleteCollection($r)
 	{
 		$user = $r->getUser('http');
@@ -208,14 +277,6 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
 		if ($this->collection->item_count < 5) {
-			$archive_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive';
-			if (!file_exists($archive_dir)) {
-				mkdir($archive_dir);
-				Dase_Log::info('created directory '.$archive_dir);
-				chmod($archive_dir,0775);
-			}
-			$archive = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/archive/'.$this->collection->ascii_id.'.atom';
-			file_put_contents($archive,$this->collection->asAtomArchive());
 			$this->collection->expunge();
 			$r->renderResponse('delete succeeded',false,200);
 		} else {

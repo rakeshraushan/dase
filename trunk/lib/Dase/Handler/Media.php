@@ -242,7 +242,13 @@ class Dase_Handler_Media extends Dase_Handler
 		//hand off to item handler
 		try {
 			$item_handler = new Dase_Handler_Item;
-			$item_handler->item = $c->createNewItem(null,$this->user->eid);
+			//allows us to dictate serial number
+			if (isset( $_SERVER['HTTP_SLUG'])) {
+				$sernum = $_SERVER['HTTP_SLUG'];
+			} else {
+				$sernum = null;
+			}
+			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);
 			$item_handler->postToMedia($r);
 		} catch (Exception $e) {
 			$r->renderError(500,$e->getMessage());

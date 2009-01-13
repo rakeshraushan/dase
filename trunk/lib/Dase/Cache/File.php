@@ -22,15 +22,19 @@ class Dase_Cache_File extends Dase_Cache
 
 	public static function expunge() 
 	{
+		$i = 0;
 		//from PHP Cookbook 2nd. ed p. 718
 		$iter = new RecursiveDirectoryIterator(CACHE_DIR);
 		foreach (new RecursiveIteratorIterator($iter,RecursiveIteratorIterator::CHILD_FIRST) as $file) {
 			if ($file->isDir()) {
+				$i++;
 				rmdir($file->getPathname());
 			} else {
+				$i++;
 				unlink($file->getPathname());
 			}
 		}
+		return $i;
 	}
 
 	function expire()

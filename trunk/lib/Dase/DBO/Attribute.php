@@ -54,7 +54,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$att->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
 		$att->ascii_id = $attribute_ascii_id;
 		if (!$att->findOne()) {
-			$att->attribute_name = ucwords(str_replace('_',' ',$attribute_ascii_id));
+			$att->attribute_name = ucwords(str_replace('_',' ',strtolower($attribute_ascii_id)));
 			$att->sort_order = 9999;
 			$att->in_basic_search = 1;
 			$att->is_on_list_display = 1;
@@ -256,6 +256,20 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 		$this->item_types = $item_types;
 		return $item_types;
+	}
+
+	function addItemType($item_type_ascii)
+	{
+		$c = $this->getCollection();
+		$type = Dase_DBO_ItemType::get($c->ascii_id,$item_type_ascii);
+		if ($type) {
+			$ita = new Dase_DBO_AttributeItemType;
+			$ita->attribute_id = $this->id;
+			$ita->item_type_id = $type->id;
+			if (!$ita->findOne()) {
+				$ita->insert();
+			}
+		}
 	}
 
 	function expunge() {
