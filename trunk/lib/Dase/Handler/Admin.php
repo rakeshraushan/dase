@@ -78,6 +78,15 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/log.tpl'));
 	}
 
+	public function deleteLog($r)
+	{
+		if (Dase_Log::truncate()) {
+			$r->renderResponse('log has been truncated');
+		} else {
+			$r->renderError(500);
+		}
+	}
+
 	public function getCollections($r)
 	{
 		$tpl = new Dase_Template($r);
