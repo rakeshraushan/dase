@@ -111,7 +111,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype','Attribute');
 		$entry->addCategory($this->html_input_type,'http://daseproject.org/category/html_input_type');
 		foreach ($this->getItemTypes() as $type) {
-			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/item_type',$type->name);
+			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/parent_item_type',$type->name);
 		}
 		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
 			$entry->addLink($base_url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
