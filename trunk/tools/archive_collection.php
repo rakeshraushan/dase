@@ -2,7 +2,7 @@
 
 include 'config.php';
 
-$coll = 'ica';
+$coll = 'itsprop';
 $user = 'pkeane';
 $pass = 'okthen';
 $target_dir = '/mnt/home/pkeane/dase_backup_sets';

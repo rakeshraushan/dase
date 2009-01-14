@@ -15,10 +15,21 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$request->renderError(401,'users do not match');
 		}
 
-		$collection_name = $this->getName();
-		$ascii_id = $this->getAsciiId();
+		$collection_name = $this->getTitle();
+		if (!$collection_name) {
+			$request->renderError(400,'no title');
+		}
+
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;
+		if ($r->has('ascii_id')) {
+			$ascii_id = $r->get('ascii_id'); //set in handler based on Slug
+		} else {
+			$ascii_id = $this->getAsciiId();
+		}
+		if (!$ascii_id) {
+			$ascii_id = $c->createAscii();
+		}
 		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
 			$request->renderError(409,'collection already exists');
 		}
@@ -81,11 +92,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 				return $el->getAttribute('term');
 			}
 		}
-	}
-
-	function getName()
-	{
-		return $this->getTitle();
 	}
 
 	function __get($var) {

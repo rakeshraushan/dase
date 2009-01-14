@@ -31,17 +31,12 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		}
 	}
 
-	function getName()
-	{
-		return $this->getTitle();
-	}
-
 	function ingest($request,$fetch_enclosures=false) 
 	{
 		$user = $request->getUser();
 		$coll_ascii_id = $this->getAsciiId();
 		$count = $this->getItemCount();
-		$collection_name = $this->getName();
+		$collection_name = $this->getTitle();
 		$ascii_id = $this->getAsciiId();
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;

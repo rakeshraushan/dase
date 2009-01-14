@@ -16,7 +16,7 @@
 				if (!confirm('Do you REALLY want to delete \n'+this.id+' ??')) return false;
 				Dase.ajax(this.href,'delete',function(resp) {
 					alert(resp);
-					Dase.pageInit();
+					Dase.pageReload();
 					},null,Dase.user.eid,Dase.user.htpasswd);
 				return false;
 				} } }

@@ -23,10 +23,8 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/settings' => 'settings',
 		'{collection_ascii_id}/indexer' => 'indexer',
 		'{collection_ascii_id}/uploader' => 'uploader',
-		'{collection_ascii_id}/upload/status' => 'upload_status',
 		'{collection_ascii_id}/attributes/{filter}' => 'attributes',
 	);
-	public $upload_responses = array('status','num','message','filename','filesize','filetype','title','item_url','thumbnail_url');
 
 	protected function setup($r)
 	{
@@ -502,16 +500,6 @@ class Dase_Handler_Manage extends Dase_Handler
 			}
 		}
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
-	}
-
-	public function getUploadStatus($r)
-	{
-		foreach ($this->upload_responses as $f) {
-			$data[$f]=$r->get($f);
-		}
-		//it is json, but needs to be rendered as text/html
-		//since it is going to an iframe
-		$r->renderResponse(Dase_Json::get($data));
 	}
 
 	public function getArchive($r) 

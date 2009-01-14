@@ -302,8 +302,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ('application/atom+xml;type=entry' == $content_type ||
 		'application/atom+xml' == $content_type ) {
 			$this->_newAtomAttribute($r);
-		} elseif ('application/json' == $content_type) {
-			$this->_newJsonAttribute($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
@@ -392,8 +390,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		//slug or title will be serial number
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
 			$r->set('serial_number',$_SERVER['HTTP_SLUG']);
-		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
-			$r->set('serial_number',$_SERVER['HTTP_TITLE']);
 		}
 		try {
 			$item = $item_entry->insert($r,$fetch_enclosure);
@@ -460,11 +456,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
 		echo $item->asAtomEntry();
 		exit;
-	}
-
-	private function _newJsonAttribute($r)
-	{
-		$r->renderResponse('still working on Attribute posts!');
 	}
 
 	public function rebuildIndexes($r) 
