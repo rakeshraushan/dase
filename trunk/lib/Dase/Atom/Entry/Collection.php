@@ -94,6 +94,11 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		}
 	}
 
+	function getName() 
+	{
+		return $this->getTitle();
+	}
+
 	function __get($var) {
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);
