@@ -33,7 +33,9 @@ class Dase_Handler_Collections extends Dase_Handler
 			$r->renderError(401,$user->eid.' is not permitted to create a collection');
 		}
 		$content_type = $r->getContentType();
-		if ('application/atom+xml;type=entry' == $content_type) {
+		if ('application/atom+xml;type=entry' == $content_type ||
+			'application/atom+xml' == $content_type
+		) {
 			$raw_input = file_get_contents("php://input");
 			$client_md5 = $r->getHeader('Content-MD5');
 			if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -55,7 +57,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry();
 			exit;
 		} else {
-			$r->renderError(415,'cannot accept '.$content_type);
+			$r->renderError(415,'cannoot accept '.$content_type);
 		}
 	}
 
