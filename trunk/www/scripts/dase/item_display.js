@@ -5,9 +5,6 @@ Dase.pageInit = function() {
 //item editing needs to know user, 
 //so we use the 'pageInitUser' function
 Dase.pageInitUser = function(eid) {
-	//just an atom entry example
-	//var e = Dase.atom.entry('new entry');
-	//alert(Dase.atompub.serialize(e));
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;

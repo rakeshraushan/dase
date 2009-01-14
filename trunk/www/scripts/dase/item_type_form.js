@@ -1,5 +1,9 @@
 Dase.setTypeAtts = function(form) {
-	Dase.ajax(form.action,'get',function(resp) {
+	form.reset();
+	var d = new Date();
+	//bust cache for frequent updating
+	var url = form.action+'?cb='+d.getTime();
+	Dase.ajax(url,'get',function(resp) {
 		var json = JSON.parse(resp);
 		var data = { 
 			'atts': json 
@@ -88,12 +92,11 @@ Dase.initCreateAttribute = function() {
 				'Content-Type':'application/atom+xml;type=entry',
 			}
 			Dase.ajax(post_url,'POST',function(resp) {
-				Dase.pageReload();
+				var atts_form = Dase.$('type_atts_form');
+				if (atts_form) {
+					Dase.setTypeAtts(atts_form);
+				}
 			},atom_xml,Dase.user.eid,Dase.user.htpasswd,headers);
-			var atts_form = Dase.$('type_atts_form');
-			if (atts_form) {
-				Dase.setTypeAtts(atts_form);
-			}
 			return false;
 		} else {
 			return false;

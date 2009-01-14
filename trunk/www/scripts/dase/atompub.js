@@ -83,32 +83,6 @@ Dase.atompub.getAtom = function(url,my_func,username,password) {
 	};
 };
 
-Dase.atompub.putAtom = function(url,xml_obj,my_func,username,password) {
-	//work on this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	var xmlhttp = Dase.createXMLHttpRequest();
-	// this is to deal with IE6 cache behavior
-	var date = new Date();
-	url = url + '?cache_buster=' + date.getTime();
-	xmlhttp.open('put',url,true);
-	if (username && password) {
-		xmlhttp.setRequestHeader('Authorization','Basic '+Base64.encode(username+':'+password));
-	}
-	var atom = Dase.atompub.serialize(xml_obj);
-	xmlhttp.setRequestHeader("Content-Type",'application/atom+xml;type=entry; charset=UTF-8;'),
-	xmlhttp.setRequestHeader('Content-MD5',hex_md5(atom));
-	xmlhttp.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	xmlhttp.send(null);
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4) {
-			if (xmlhttp.status == 200 && xmlhttp.responseText) {
-				if (my_func) {
-					my_func(xmlhttp.responseText);
-				} 
-			}
-		} 
-		return false;
-	};
-};
 
 Dase.atompub.putJson = function(url,json_obj,my_func,user,pass) {
 	var data = {'atom':json_obj};
@@ -123,39 +97,6 @@ Dase.atompub.putJson = function(url,json_obj,my_func,user,pass) {
 		alert(error);
 	}); 
 }
-
-
-//from rhino book p.520
-Dase.atompub.serialize = function(xml_obj) {
-	if (typeof XMLSerializer != "undefined") {
-		return (new XMLSerializer()).serializeToString(xml_obj);
-	} else if (xml_obj.xml) {
-		return xml_obj.xml;
-	} else {
-		throw "XML.serialize is not supported or cannot serialize " + xml_obj;
-	}
-}
-
-Dase.atom.entry = function(title) {
-	var doc =  XML.newDocument('atom:entry',Dase.atom.ns);
-	var title_elem = doc.createElementNS(Dase.atom.ns, "atom:title");
-	title_elem.appendChild(doc.createTextNode(title));
-	//var root = doc.getElementsByTagName('atom:entry')[0];
-	var root = doc.firstChild;
-	root.appendChild(title_elem);
-	var updated_elem = doc.createElementNS(Dase.atom.ns, "atom:updated");
-	updated_elem.appendChild(doc.createTextNode(Dase.atompub.getDate()));
-	root.appendChild(updated_elem);
-	var author_elem = doc.createElementNS(Dase.atom.ns, "atom:author");
-	var name_elem = doc.createElementNS(Dase.atom.ns, "atom:name");
-	author_elem.appendChild(name_elem);
-	root.appendChild(author_elem);
-	var content_elem = doc.createElementNS(Dase.atom.ns, "atom:content");
-	content_elem.setAttribute('type','text');
-	content_elem.appendChild(doc.createTextNode('just some text'));
-	root.appendChild(content_elem);
-	return doc;
-}; 
 
 Dase.atom.jsonEntry = function(title,entrytype,categories) {
 	var atom = {};

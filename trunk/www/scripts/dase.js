@@ -305,8 +305,8 @@ Dase.initUser = function() {
 			Dase.placeUserTags(Dase.user);
 			Dase.placeUserCollections(eid);
 			Dase.placePreferredCollections(eid);
-			Dase.placeCollectionAdminLink(eid);
-			Dase.placeManageLink(eid);
+			Dase.placeCollectionManageLink(eid);
+			Dase.placeAdminLink(eid);
 			Dase.initCart();
 			Dase.initAddToCart();
 			//our generic page-specific function
@@ -376,23 +376,29 @@ Dase.checkAdminStatus = function(eid) {
 	return false;
 };
 
-Dase.placeManageLink = function(eid) {
-	var manageLink = Dase.$('manageLink');
-	if (manageLink && Dase.user.is_superuser) {
-		manageLink.setAttribute('href','admin');
-		manageLink.innerHTML = 'DASe Archive Admin';
-		Dase.removeClass(manageLink,'hide');
+Dase.placeAdminLink = function(eid) {
+	var adminLink = Dase.$('adminLink');
+	if (adminLink && Dase.user.is_superuser) {
+		adminLink.innerHTML = 'DASe Archive Admin';
+		Dase.removeClass(adminLink,'hide');
 	}
 };
 
-Dase.placeCollectionAdminLink = function(eid) {
+Dase.placeCollectionManageLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
-	var adminLink = Dase.$('adminLink');
+	var manageLink = Dase.$('manageLink');
+	var menuItem = Dase.$('manage-menu');
+	var menuItemLink = Dase.$('manage-menu-link');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
-		adminLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
-		adminLink.innerHTML = 'Manage '+auth_info.collection_name;
-		Dase.removeClass(adminLink,'hide');
+		manageLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
+		manageLink.innerHTML = 'Manage '+auth_info.collection_name;
+		Dase.removeClass(manageLink,'hide');
+		if (menuItemLink && menuItem && auth_info.collection_ascii_id) {
+			menuItemLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
+			menuItemLink.innerHTML = 'Manage '+auth_info.collection_name;
+			Dase.removeClass(menuItem,'hide');
+		}
 	}
 };
 

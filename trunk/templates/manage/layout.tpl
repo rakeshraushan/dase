@@ -153,12 +153,12 @@
 		<div class="spacer"></div>
 
 		<div id="footer">
-			<a href="admin" class="hide" id="adminLink"></a> |
+			<a href="manage" class="hide" id="manageLink"></a> |
 			<a href="apps/help" id="helpModule">FAQ</a> | 
 			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 			<a href="copyright">Copyright/Usage Statement</a> | 
 			<a href="resources">Resources</a> | 
-			<a href="manage" class="hide" id="manageLink"></a> |
+			<a href="admin" class="hide" id="adminLink"></a> |
 			<!--
 			{$timer} seconds |
 			-->

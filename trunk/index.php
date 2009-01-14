@@ -53,7 +53,7 @@ function __autoload($class_name) {
 			return;
 		}
 	}  
-	Dase_Log::info("could not autoload $class_file");
+	Dase_Log::debug("could not autoload $class_file");
 }
 
 Dase_Timer::start();

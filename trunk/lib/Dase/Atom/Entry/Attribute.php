@@ -26,6 +26,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			foreach ($this->getItemTypes() as $type) {
 				$att->addItemType($type);
 			}
+			$att->resort();
 		} else {
 			throw new Dase_Exception('attribute exists');
 		}

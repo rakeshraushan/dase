@@ -92,6 +92,8 @@
 				</li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
 				</li>
+				<li id="manage-menu" class="hide"><a href="settings" id="manage-menu-link" class="main"></a>
+				</li>
 				{if $module_menu}
 				{include file="$module_menu"}
 				{/if}
@@ -149,12 +151,12 @@
 		<div class="spacer"/>
 
 			<div id="footer">
-				<a href="admin" class="hide" id="adminLink"></a> |
+				<a href="manage" class="hide" id="manageLink"></a> |
 				<a href="apps/help" id="helpModule">FAQ</a> | 
 				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 				<a href="copyright">Copyright/Usage Statement</a> | 
 				<a href="resources">Resources</a> | 
-				<a href="manage" class="hide" id="manageLink"></a> |
+				<a href="admin" class="hide" id="adminLink"></a> |
 				{php}echo Dase_Timer::getElapsed();{/php} seconds |
 				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 			</div><!--closes footer-->

@@ -37,7 +37,7 @@ class Dase
 				define('MODULE_PATH',DASE_PATH.'/modules/'.$request->module);
 				Dase_Config::reload();
 				//modules can carry their own libraries
-				$new_include_path = ini_get('include_path').':'.MODULE_PATH.'/lib'; 
+				$new_include_path = ini_get('include_path').':modules/'.$request->module.'/lib'; 
 				ini_set('include_path',$new_include_path); 
 				Dase_Log::debug('set include path to: '.$new_include_path);
 				//would this allow module names w/ underscores???
