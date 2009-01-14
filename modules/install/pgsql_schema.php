@@ -35,7 +35,7 @@ CREATE TABLE {$table_prefix}attribute_category (
 CREATE TABLE {$table_prefix}attribute_item_type (
     id serial NOT NULL,
     item_type_id integer NOT NULL,
-    attribute_id integer NOT NULL,
+    attribute_id integer NOT NULL
 );
 
 CREATE TABLE {$table_prefix}category (

@@ -22,6 +22,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return APP_ROOT . '/collection/' . $this->ascii_id;
 	}
 
+	public function createAscii() {
+		if (!$this->collection_name) {
+			return false;
+		}
+		$ascii_id = trim(preg_replace('/(collection|archive)/i','',$this->collection_name));
+		$ascii_id = preg_replace('/ /i',"_",$ascii_id);
+		$ascii_id = strtolower(preg_replace('/(__|_$)/','',$ascii_id));
+		return $ascii_id;
+	}
+
 	public function expunge($messages = false)
 	{
 		$items = new Dase_DBO_Item;
@@ -144,6 +154,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$entry = new Dase_Atom_Entry();
 		$entry->setId(APP_ROOT.'/collection/'.$this->ascii_id);
+		$entry->setTitle($this->collection_name);
 		$entry->setEntryType('collection');
 		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id.'.atom','self');
 		$entry->addLink(APP_ROOT.'/collection/'.$this->ascii_id);
