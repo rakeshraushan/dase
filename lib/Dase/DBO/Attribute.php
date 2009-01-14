@@ -358,7 +358,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public function resort($target) 
+	public function resort($target = 0) 
 	{
 		$seen  = false;
 		$new_sort_order = 0;
@@ -372,7 +372,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				$this->update();
 				$seen = true;
 			} 
-			if ($att->ascii_id == $this->ascii_id) {
+			if ($target && $att->ascii_id == $this->ascii_id) {
 				//skip
 			} else {
 				if ($seen) {
@@ -383,7 +383,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				$att->update();
 			}
 		}
-		if (!$seen) { //meaning target is last or higher
+		if ($target && !$seen) { //meaning target is last or higher
 			$this->sort_order = $new_sort_order;
 			$this->fixBools();
 			$this->update();

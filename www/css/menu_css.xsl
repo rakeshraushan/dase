@@ -16,6 +16,9 @@ ul#menu  li  {
 /* fixes ie problem */
 display:inline;
 }
+ul#menu  li.hide  {
+display:none;
+}
 ul#menu  li  ul {
 margin-left:18px;
 }
