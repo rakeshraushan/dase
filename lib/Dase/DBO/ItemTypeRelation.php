@@ -7,6 +7,16 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 	public $child;
 	public $parent;
 
+	public static function get($collection_ascii_id,$ascii_id)
+	{
+		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr->collection_ascii_id = $collection_ascii_id;
+		list($child_ascii,$parent_ascii) = explode('_children_of_',trim($ascii_id,'.atom'));
+		$itr->child_type_ascii_id = $child_ascii;
+		$itr->parent_type_ascii_id = $parent_ascii;
+		return $itr->findOne();
+	}
+
 	public function getChild() 
 	{
 		$this->child = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->child_type_ascii_id);
