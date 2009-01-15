@@ -402,6 +402,9 @@ class Dase_Http_Request
 			$eid = Dase_Cookie::getEid();
 		}
 
+		//eids are always lowercase
+		$eid = strtolower($eid);
+
 		if ($eid) {
 			return $this->getDbUser($eid);
 		} else {
