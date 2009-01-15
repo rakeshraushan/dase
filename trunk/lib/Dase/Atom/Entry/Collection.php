@@ -70,7 +70,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			}
 			$cm = new Dase_DBO_CollectionManager;
 			$cm->collection_ascii_id = $ascii_id;
-			$cm->dase_user_eid = $atom_author; //checked above to be same as current user
+			$cm->dase_user_eid = $user->eid;
 			$cm->auth_level = 'superuser';
 			$cm->created = date(DATE_ATOM);
 			$cm->created_by_eid = $user->eid;
