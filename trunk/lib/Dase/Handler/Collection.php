@@ -20,6 +20,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/item_types/service' => 'item_types_service',
+		'{collection_ascii_id}/item_type_relations' => 'item_type_relations',
 		//todo implement:
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
@@ -308,6 +309,22 @@ class Dase_Handler_Collection extends Dase_Handler
 	}
 
 	public function postToItemTypes($r) 
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$content_type = $r->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
+			$this->_newAtomItemType($r);
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	public function postToItemTypeRelations($r) 
 	{
 		$user = $r->getUser('http');
 		if (!$user->can('write',$this->collection)) {
