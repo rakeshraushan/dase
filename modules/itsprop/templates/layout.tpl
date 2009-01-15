@@ -36,9 +36,11 @@
 		<div id="container">
 			<div id="masthead">
 				<div class="itspropBanner">
+					{if $user}
 					<div class="controls">
-
+						<a href="logout" class="logout">logout {$user->eid}</a>
 					</div>
+					{/if}
 					<h1>Liberal Arts Instructional Technology Services</h1>
 					<h2>Technology Grants</h2>
 				</div>
@@ -48,23 +50,23 @@
 
 				<ul id="menu">
 					<li class="home">
-					<a href="u/{$user-eid}/home" class="main">Home</a>
+					<a href="person/{$user->eid}/home" class="main">Home</a>
 					</li>
 					<li>
-					<a href="u/{$user-eid}" class="main">User Information</a>
+					<a href="person/{$user->eid}" class="main">User Information</a>
 					</li>
 					<li>
-					<a href="u/{$user-eid}/proposal/form" class="main">Create a Proposal</a>
+					<a href="person/{$user->eid}/proposal/form" class="main">Create a Proposal</a>
 					</li>
 					<!-- user proposals here -->
 					<li>
-					<a href="admin/{$user-eid}/users" class="main">Manage Users</a>
+					<a href="admin/{$user->eid}/users" class="main">Manage Users</a>
 					</li>
 					<li>
-					<a href="admin/{$user-eid}/departments" class="main">Manage Departments</a>
+					<a href="admin/{$user->eid}/departments" class="main">Manage Departments</a>
 					</li>
 					<li>
-					<a href="admin/{$user-eid}/proposals" class="main">Proposals List</a>
+					<a href="admin/{$user->eid}/proposals" class="main">Proposals List</a>
 					</li>
 				</ul>
 				<div class="loadingMsg" id="ajaxMsg"></div>
