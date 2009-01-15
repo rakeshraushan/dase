@@ -296,6 +296,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getItemTypeRelationAtom($r) 
 	{
 		$itr = Dase_DBO_ItemTypeRelation::get($r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
+		print_r($itr);exit;
 		$r->renderResponse($itr->asAtomEntry());
 	}
 

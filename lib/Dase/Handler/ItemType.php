@@ -222,8 +222,9 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$r->renderError(401);
 		}
 		$rel = new Dase_DBO_ItemTypeRelation;
-		$rel->parent_type_id = $parent->id;
-		$rel->child_type_id = $child->id;
+		$rel->collection_ascii_id = $r->get('collection_ascii_id');
+		$rel->parent_type_ascii_id = $parent->ascii_id;
+		$rel->child_type_ascii_id = $child->ascii_id;
 		if (!$rel->findOne()) {
 			$r->renderError(404);
 		}
