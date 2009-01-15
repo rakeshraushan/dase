@@ -123,10 +123,10 @@
 					{/if}
 				</h3>
 				<dl id="metadata" class="{$item->collectionAsciiId}">
-					{foreach item=set from=$item->entry->metadata}
+					{foreach item=set key=att_ascii_id from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="search?{$set.search_term}={$value|escape:'url'}">{$value}</a></dd>
+					<dd><a href="search?{$item->collectionAsciiId}.{$att_ascii_id}={$value|escape:'url'}">{$value}</a></dd>
 					{/foreach}
 					{/foreach}
 				</dl>
