@@ -36,7 +36,12 @@ foreach (file(APP_ROOT.'/collection/'.$coll.'/archive.uris') as $ln) {
 		}
 	} else {
 		$entry_xml = file_get_contents($ln,false,$ctx);
-		$filename = array_pop(explode('/',$ln));
+		if ('item_type_relations' == $entrytype) {
+			$parts = (explode('/',$ln));
+			$filename = join('_',array_slice($parts,-3,3));
+		} else {
+			$filename = array_pop(explode('/',$ln));
+		}
 		file_put_contents($this_dir.'/'.$filename,$entry_xml);
 		print "writing $this_dir -> $filename\n";
 	}
