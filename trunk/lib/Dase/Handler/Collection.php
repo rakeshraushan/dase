@@ -90,7 +90,14 @@ class Dase_Handler_Collection extends Dase_Handler
 		foreach ($this->collection->getItemTypes() as $it) {
 			$type['ascii_id'] = $it->ascii_id;
 			$type['name'] = $it->name;
-			$type['attributes'] = $it->getAttributes();
+			$type['attributes'] = array();
+			foreach ($it->getAttributes() as $att) {
+				$base_url = $att->getBaseUrl();
+				$type['attributes'][$att->ascii_id] = array(
+					'url' => $base_url,
+					'name' => $att->attribute_name,
+				);
+			}
 			$types[] = $type;
 		}
 		$r->renderResponse(Dase_Json::get($types));
