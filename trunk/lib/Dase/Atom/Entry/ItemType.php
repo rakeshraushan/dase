@@ -17,4 +17,25 @@ class Dase_Atom_Entry_ItemType extends Dase_Atom_Entry
 			return parent::__get($var);
 		}
 	}
+
+	function insert($r,$collection) 
+	{
+		//think about using Slug also
+		$ascii_id = $this->getAsciiId();
+		if (!$ascii_id) {
+			$ascii_id = Dase_Util::dirify($this->getTitle());
+		}
+		if (!Dase_DBO_ItemType::get($collection->ascii_id,$ascii_id)) {
+			$type = new Dase_DBO_ItemType;
+			$type->ascii_id = $ascii_id;
+			$type->name = $this->getTitle();
+			$type->collection_id = $collection->id;
+			$type->description = $this->getSummary();
+			$type->insert();
+			return $type;
+		} else {
+			throw new Dase_Exception('item type exists');
+		}
+	}
+
 }

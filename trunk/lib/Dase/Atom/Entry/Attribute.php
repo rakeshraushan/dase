@@ -6,10 +6,11 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 		parent::__construct($dom,$root);
 	}
 
-	function insert($request,$collection) 
+	function insert($r,$collection) 
 	{
 		$att = new Dase_DBO_Attribute;
 		$att->attribute_name = $this->getTitle();
+		//think about using getAscii or Slug also
 		$att->ascii_id = Dase_Util::dirify($att->attribute_name);
 		if (!Dase_DBO_Attribute::get($collection->ascii_id,$att->ascii_id)) {
 			$att->collection_id = $collection->id;
@@ -35,7 +36,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 
 	/** used w/ PUT request 
 	 */
-	function update($request,$collection) 
+	function update($r,$collection) 
 	{
 		throw new Exception('not yet implemented');
 	}

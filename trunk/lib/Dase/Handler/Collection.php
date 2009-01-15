@@ -307,6 +307,22 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 	}
 
+	public function postToItemTypes($r) 
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$content_type = $r->getContentType();
+
+		if ('application/atom+xml;type=entry' == $content_type ||
+		'application/atom+xml' == $content_type ) {
+			$this->_newAtomItemType($r);
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
 	public function postToCollection($r) 
 	{
 		$user = $r->getUser('http');
@@ -385,7 +401,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		if ('item' != $item_entry->entrytype) {
 			$item_entry->setEntryType('item');
-			//$r->renderError(400,'must be an item entry');
+			$r->renderError(400,'must be an item entry');
 		}
 		//slug or title will be serial number
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
@@ -422,6 +438,30 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".APP_ROOT."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
 			echo $att->asAtomEntry();
+			exit;
+		} catch (Dase_Exception $e) {
+			$r->renderError(409,$e->getMessage());
+		}
+	}
+
+	private function _newAtomItemType($r)
+	{
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $r->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+			$r->renderError(412,'md5 does not match');
+		}
+		$type_entry = Dase_Atom_Entry::load($raw_input);
+		if ('item_type' != $att_entry->entrytype) {
+			$r->renderError(400,'must be an item type entry');
+		}
+		try {
+			$att = $type_entry->insert($r,$this->collection);
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
+			echo $type->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());

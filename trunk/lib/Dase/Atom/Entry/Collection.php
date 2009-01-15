@@ -7,24 +7,18 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		parent::__construct($dom,$root);
 	}
 
-	function create($request)
+	function create($r)
 	{
 		$atom_author = $this->getAuthorName();
-		$user = $request->getUser('http');
-		if ($atom_author != $user->eid) {
-			//todo: think abt this re import
-			//$request->renderError(401,'users do not match');
-		}
-
+		$user = $r->getUser('http');
 		$collection_name = $this->getTitle();
 		if (!$collection_name) {
-			$request->renderError(400,'no title');
+			$r->renderError(400,'no title');
 		}
-
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;
-		if ($request->has('ascii_id')) {
-			$ascii_id = $request->get('ascii_id'); //set in handler based on Slug
+		if ($r->has('ascii_id')) {
+			$ascii_id = $r->get('ascii_id'); //set in handler based on Slug
 		} else {
 			$ascii_id = $this->getAsciiId();
 		}
@@ -32,12 +26,12 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$ascii_id = $c->createAscii();
 		}
 		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
-			$request->renderError(409,'collection already exists');
+			$r->renderError(409,'collection already exists');
 		}
 		$c->ascii_id = $ascii_id;
 		$media_dir =  Dase_Config::get('path_to_media').'/'.$ascii_id;
 		if (file_exists($media_dir)) {
-			$request->renderError(409,'collection media archive exists');
+			$r->renderError(409,'collection media archive exists');
 		}
 		$c->is_public = 0;
 		$c->created = date(DATE_ATOM);
@@ -75,7 +69,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$cm->created = date(DATE_ATOM);
 			$cm->created_by_eid = $user->eid;
 			if ($cm->insert()) {
-				Dase_Log::info('created admin user '.$ascii_id.'::'.$atom_author);
+				Dase_Log::info('created admin user '.$ascii_id.'::'.$user->eid);
 			} else {
 				Dase_Log::info('could not create admin user');
 			}
