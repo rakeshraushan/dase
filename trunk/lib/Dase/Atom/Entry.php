@@ -163,6 +163,29 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	public function postToUrl($url,$user,$pwd)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->asXml());
+		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pwd);
+		$str  = array(
+			"Content-Type: application/atom+xml;type=entry"
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		Dase_Log::debug($result);
+		$info = curl_getinfo($ch);
+		curl_close($ch);  
+		if ('201' == $info['http_code']) {
+			return 'ok';
+		} else {
+			return $result;
+		}
+	}
+
 	function __get($var) 
 	{
 		//allows smarty to invoke function as if getter
