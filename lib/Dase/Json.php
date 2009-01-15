@@ -11,5 +11,11 @@ class Dase_Json
 			return $js->encode($data);
 		}
 	}
+
+	public static function toPhp($json)
+	{
+		$js = new Services_JSON;
+		return $js->decode($json);
+	}
 }
 

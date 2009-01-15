@@ -9,7 +9,7 @@ if (!file_exists($class_dir . '/DBO')) {
 	mkdir ($class_dir . '/DBO', 0755);
 }
 if (!file_exists($class_dir . '/DBO/Autogen')) {
-	mkdir ($class_dir . '/DBiO/Autogen', 0755);
+	mkdir ($class_dir . '/DBO/Autogen', 0755);
 }
 
 function capFirst (&$item,$key) {
