@@ -32,8 +32,8 @@ class Dase_Atom_Entry_ItemTypeRelation extends Dase_Atom_Entry
 	{
 		$itr = new Dase_DBO_ItemTypeRelation;
 		$itr->collection_ascii_id = $collection->ascii_id;
-		$itr->child_type_ascii_id = array_pop(explode('/',$this->getChildType));
-		$itr->parent_type_ascii_id = array_pop(explode('/',$this->getParentType));
+		$itr->child_type_ascii_id = array_pop(explode('/',$this->getChildType()));
+		$itr->parent_type_ascii_id = array_pop(explode('/',$this->getParentType()));
 		if (!$itr->findOne()) {
 			$itr->title = $this->getTitle();
 			$itr->insert();
