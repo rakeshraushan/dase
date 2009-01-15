@@ -12,7 +12,8 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$atom_author = $this->getAuthorName();
 		$user = $request->getUser('http');
 		if ($atom_author != $user->eid) {
-			$request->renderError(401,'users do not match');
+			//todo: think abt this re import
+			//$request->renderError(401,'users do not match');
 		}
 
 		$collection_name = $this->getTitle();
@@ -22,8 +23,8 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 
 		$c = new Dase_DBO_Collection;
 		$c->collection_name = $collection_name;
-		if ($r->has('ascii_id')) {
-			$ascii_id = $r->get('ascii_id'); //set in handler based on Slug
+		if ($request->has('ascii_id')) {
+			$ascii_id = $request->get('ascii_id'); //set in handler based on Slug
 		} else {
 			$ascii_id = $this->getAsciiId();
 		}
