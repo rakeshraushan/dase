@@ -2,12 +2,12 @@
 
 $user = 'pkeane';
 $pass = 'itsprop8';
-$coll = 'plan2';
+$coll = 'itsprop';
 $base = '/mnt/home/pkeane/dase_backup_sets';
 $archive = $base.'/'.$coll;
 $dase_url = 'http://dev.laits.utexas.edu/itsprop/new';
 
-$new_ascii = 'xx'.$coll;
+$new_ascii = $coll;
 
 //create collection
 print postFile($archive.'/collection/entry.atom',$dase_url.'/collections',$user,$pass,$new_ascii);
