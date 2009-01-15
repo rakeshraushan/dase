@@ -45,6 +45,12 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function getLogin($r)
 	{
 		$user = Uteid::login($r);
+		$ldap = Utlookup::getRecord($user->eid));
+		$person = new Dase_Atom_Entry_Item;
+		$person->setTitle($ldap['name']);
+		$person->addMetadata(APP_ROOT.'/attribute/itsprop/'.'eid$ldap = 
+		exit;
+
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/home');
 	}
 
