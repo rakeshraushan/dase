@@ -10,11 +10,14 @@ $dase_url = 'http://dev.laits.utexas.edu/itsprop/new';
 $new_ascii = 'batchtest';
 
 //create collection
+print "creating collection\n";
 print postFile($archive.'/collection/entry.atom',$dase_url.'/collections',$user,$pass,$new_ascii);
+print "\n";
 
 //create item types 
 foreach (new DirectoryIterator($archive.'/item_types') as $file) {
 	if (!$file->isDot()) {
+		print $file."\n";
 		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii.'/item_types',$user,$pass);
 		print "\n";
 	}
@@ -23,7 +26,8 @@ foreach (new DirectoryIterator($archive.'/item_types') as $file) {
 //create attributes
 foreach (new DirectoryIterator($archive.'/attributes') as $file) {
 	if (!$file->isDot()) {
-		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii.'/attributes',$user,$pass);
+		print $file."\n";
+//		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii.'/attributes',$user,$pass);
 		print "\n";
 	}
 }

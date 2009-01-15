@@ -453,7 +453,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->renderError(412,'md5 does not match');
 		}
 		$type_entry = Dase_Atom_Entry::load($raw_input);
-		if ('item_type' != $att_entry->entrytype) {
+		if ('item_type' != $type_entry->entrytype) {
 			$r->renderError(400,'must be an item type entry');
 		}
 		try {
