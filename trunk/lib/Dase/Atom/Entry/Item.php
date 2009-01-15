@@ -211,14 +211,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
-	function addMetadata($att_uri,$value_text)
+	function addMetadata($att_ascii_id,$value_text)
 	{
-		$this->addCategory(
-			$att_uri,
-			'http://daseproject.org/category/metadata',
-			'',
-			$value_text,
-		);
+		$this->addCategory($att_ascii_id,'http://daseproject.org/category/metadata','',$value_text);
 	}
 
 	function getMetadata($include_private_metadata=false) 
@@ -226,20 +221,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
-				$term = $el->getAttribute('term');
-				$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
-				$att_ascii_id = array_pop(explode('/',$term));
+				$att_ascii_id = $el->getAttribute('term');
 				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$att_ascii_id]['search_term'] = $search_term;
 				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 			}
 			if ($include_private_metadata &&
 				'http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
-					$term = $el->getAttribute('term');
-					$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
-					$att_ascii_id = array_pop(explode('/',$term));
+					$att_ascii_id = $el->getAttribute('term');
 					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-					$metadata[$att_ascii_id]['search_term'] = $search_term;
 					$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 				}
 		}
@@ -250,11 +239,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/admin_metadata' == $el->getAttribute('scheme')) {
-				$term = $el->getAttribute('term');
-				$search_term = str_replace('/','.',str_replace(APP_ROOT.'/attribute/','',$term));
-				$att_ascii_id = array_pop(explode('/',$term));
+				$att_ascii_id = $el->getAttribute('term');
 				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$att_ascii_id]['search_term'] = $search_term;
 				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 			}
 		}

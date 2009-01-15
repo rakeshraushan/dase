@@ -776,17 +776,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 			if ($row['is_public']) {
 				$meta = $entry->addCategory(
-					$row['href'],'http://daseproject.org/category/metadata',
+					$row['ascii_id'],'http://daseproject.org/category/metadata',
 					$row['attribute_name'],$row['value_text']);
 			} else {
 				$meta = $entry->addCategory(
-					$row['href'],'http://daseproject.org/category/private_metadata',
+					$row['ascii_id'],'http://daseproject.org/category/private_metadata',
 					$row['attribute_name'],$row['value_text']);
 			}
 		}
 		foreach ($this->getAdminMetadata() as $row) {
 			$meta = $entry->addCategory(
-				$row['href'],'http://daseproject.org/category/admin_metadata',
+				$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
 				$row['attribute_name'],$row['value_text']);
 		}
 
