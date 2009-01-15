@@ -49,7 +49,7 @@ class Dase_Atom_Entry extends Dase_Atom
 	//this is a free-standing entry document, it means the
 	//'entry' element
 
-	function __construct(DOMDocument $dom=null,DOMElement $root=null)
+	function __construct(DOMDocument $dom=null,DOMElement $root=null,$entrytype=null)
 	{
 		if (!$dom && $root) {
 			throw new Dase_Atom_Exception('dom doc needs to be passed into constructor with domnode');
@@ -66,6 +66,9 @@ class Dase_Atom_Entry extends Dase_Atom
 			$dom = new DOMDocument('1.0','utf-8');
 			$this->root = $dom->appendChild($dom->createElementNS(Dase_Atom::$ns['atom'],'entry'));
 			$this->dom = $dom;
+		}
+		if ($entrytype) {
+			$this->setEntrytype($entrytype);
 		}
 	}
 
@@ -352,7 +355,9 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function setEntrytype($type) 
 	{
-		$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
+		if (!$this->getEntrytype) {
+			$this->addCategory($type,'http://daseproject.org/category/entrytype'); 
+		}
 	}
 
 	function getEntrytype() 

@@ -6,7 +6,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function __construct($dom = null,$root = null)
 	{
-		parent::__construct($dom,$root);
+		parent::__construct($dom,$root,'item');
 	}
 
 	function getSerialNumber() 
