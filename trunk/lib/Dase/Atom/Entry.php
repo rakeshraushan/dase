@@ -102,6 +102,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		if (is_file($xml)) {
 			$dom->load($xml);
 		} else {
+			//todo: throw exception or something here
 			$dom->loadXml($xml);
 		}
 		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
