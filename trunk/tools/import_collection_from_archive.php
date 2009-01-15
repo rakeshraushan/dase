@@ -2,12 +2,12 @@
 
 $user = 'pkeane';
 $pass = 'itsprop8';
-$coll = 'itsprop';
+$coll = 'plan2';
 $base = '/mnt/home/pkeane/dase_backup_sets';
 $archive = $base.'/'.$coll;
 $dase_url = 'http://dev.laits.utexas.edu/itsprop/new';
 
-$new_ascii = 'batchtest';
+$new_ascii = 'xx'.$coll;
 
 //create collection
 print postFile($archive.'/collection/entry.atom',$dase_url.'/collections',$user,$pass,$new_ascii);
@@ -40,6 +40,15 @@ foreach (new DirectoryIterator($archive.'/attributes') as $file) {
 	}
 }
 
+//create items
+foreach (new DirectoryIterator($archive.'/items') as $file) {
+	if (!$file->isDot()) {
+		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii,$user,$pass);
+		print ' item: '.$file."  ";
+		print "\n";
+	}
+}
+
 
 function postFile($file_path,$url,$user,$pass,$slug='') {
 	$ch = curl_init();
@@ -58,7 +67,7 @@ function postFile($file_path,$url,$user,$pass,$slug='') {
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$response = curl_exec($ch);
-	print $response."\n";
+	//print $response."\n";
 	curl_close($ch);
 	$status_code = array(); 
 	preg_match('/\d\d\d/', $response, $status_code); 

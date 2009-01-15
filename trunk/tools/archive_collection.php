@@ -2,7 +2,7 @@
 
 include 'config.php';
 
-$coll = 'itsprop';
+$coll = 'plan2';
 $user = 'pkeane';
 $pass = 'okthen';
 $target_dir = '/mnt/home/pkeane/dase_backup_sets';
