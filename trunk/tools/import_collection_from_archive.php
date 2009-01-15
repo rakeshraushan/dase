@@ -58,6 +58,7 @@ function postFile($file_path,$url,$user,$pass,$slug='') {
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$response = curl_exec($ch);
+	print $response."\n";
 	curl_close($ch);
 	$status_code = array(); 
 	preg_match('/\d\d\d/', $response, $status_code); 

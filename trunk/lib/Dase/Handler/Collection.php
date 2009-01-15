@@ -20,6 +20,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/item_types/service' => 'item_types_service',
+		'{collection_ascii_id}/item_type_relation/{item_type_relation_ascii_id}' => 'item_type_relation',
 		'{collection_ascii_id}/item_type_relations' => 'item_type_relations',
 		//todo implement:
 		'{collection_ascii_id}/items/recent' => 'recent_items',
@@ -292,6 +293,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
+	public function getItemTypeRelationAtom($r) 
+	{
+		$itr = Dase_DBO_ItemTypeRelation::get($r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
+		$r->renderResponse($itr->asAtomEntry());
+	}
+
 	public function postToAttributes($r) 
 	{
 		$user = $r->getUser('http');
@@ -334,7 +341,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 		if ('application/atom+xml;type=entry' == $content_type ||
 		'application/atom+xml' == $content_type ) {
-			$this->_newAtomItemType($r);
+			$this->_newAtomItemTypeRelation($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
@@ -474,11 +481,35 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->renderError(400,'must be an item type entry');
 		}
 		try {
-			$att = $type_entry->insert($r,$this->collection);
+			$item_type = $type_entry->insert($r,$this->collection);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
+			header("Location: ".APP_ROOT."/item_type/".$r->get('collection_ascii_id')."/".$item_type->ascii_id.'.atom');
 			echo $type->asAtomEntry();
+			exit;
+		} catch (Dase_Exception $e) {
+			$r->renderError(409,$e->getMessage());
+		}
+	}
+
+	private function _newAtomItemTypeRelation($r)
+	{
+		$raw_input = file_get_contents("php://input");
+		$client_md5 = $r->getHeader('Content-MD5');
+		//if Content-MD5 header isn't set, we just won't check
+		if ($client_md5 && md5($raw_input) != $client_md5) {
+			$r->renderError(412,'md5 does not match');
+		}
+		$entry = Dase_Atom_Entry::load($raw_input);
+		if ('item_type_relation' != $type_entry->entrytype) {
+			$r->renderError(400,'must be an item type relation entry');
+		}
+		try {
+			$itr = $entry->insert($r,$this->collection);
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
+			echo $entry->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
