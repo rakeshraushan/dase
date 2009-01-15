@@ -501,7 +501,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->renderError(412,'md5 does not match');
 		}
 		$entry = Dase_Atom_Entry::load($raw_input);
-		if ('item_type_relation' != $type_entry->entrytype) {
+		if ('item_type_relation' != $entry->entrytype) {
 			$r->renderError(400,'must be an item type relation entry');
 		}
 		try {
