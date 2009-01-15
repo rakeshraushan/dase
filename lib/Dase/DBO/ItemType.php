@@ -54,7 +54,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
 	{
 		$base_url = $this->getBaseUrl($collection->ascii_id);
-		$entry->setTitle('Item Type: '.$this->name);
+		$entry->setTitle($this->name);
 		$entry->setId($base_url);
 		$entry->setSummary($this->description);
 		$entry->addLink($base_url.'.atom','edit');
