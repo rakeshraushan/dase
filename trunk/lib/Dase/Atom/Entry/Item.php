@@ -211,6 +211,16 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function addMetadata($att_uri,$value_text)
+	{
+		$this->addCategory(
+			$att_uri,
+			'http://daseproject.org/category/metadata',
+			'',
+			$value_text,
+		);
+	}
+
 	function getMetadata($include_private_metadata=false) 
 	{
 		$metadata = array();
@@ -251,9 +261,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $metadata;
 	}
 
-	function replace($request) 
+	function replace($r) 
 	{
-		$item = Dase_DBO_Item::get($request->get('collection_ascii_id'),$request->get('serial_number'));
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
 		if ($item) {
 			$item->deleteValues();
 			$item->deleteAdminValues();
@@ -279,13 +289,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
-	function insert($request,$fetch_enclosure=false) 
+	function insert($r,$fetch_enclosure=false) 
 	{
-		$eid = $request->getUser()->eid;
-		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		$eid = $r->getUser()->eid;
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) { return; }
-		if ($request->has('serial_number')) {
-			$item = Dase_DBO_Item::create($c->ascii_id,$request->get('serial_number'),$eid);
+		if ($r->has('serial_number')) {
+			$item = Dase_DBO_Item::create($c->ascii_id,$r->get('serial_number'),$eid);
 		} else {
 			$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
 		}
@@ -318,7 +328,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$item_relation->parent_serial_number = $cat['term'];
 					$item_relation->child_serial_number = $item->serial_number;
 					$item_relation->created = date(DATE_ATOM);
-					$item_relation->created_by_eid = $request->getUser()->eid;
+					$item_relation->created_by_eid = $r->getUser()->eid;
 					$item_relation->item_type_relation_id = $p->specific_relation_id;
 					$item_relation->insert();
 				}
@@ -345,7 +355,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			if ($enc) {
 				$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
-					$request->renderError(401,'missing upload directory');
+					$r->renderError(401,'missing upload directory');
 				}
 				$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
 				$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
@@ -356,7 +366,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$media_file = $file->addToCollection($item,false);
 				} catch(Exception $e) {
 					Dase_Log::debug('error',$e->getMessage());
-					$request->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
+					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}
 			}
 		} 
@@ -371,11 +381,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	 *  3. deletes and replaces all metadata & private metadata (NOT admin metadata)
 	 *  4. delete and replace any item relations to a parent item
 	 */
-	function update($request) 
+	function update($r) 
 	{
-		$eid = $request->getUser()->eid;
+		$eid = $r->getUser()->eid;
 		$sernum = $this->getSerialNumber();
-		$c = Dase_DBO_Collection::get($request->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		$item = Dase_DBO_Item::get($c->ascii_id,$sernum);
 		$item->updated = date(DATE_ATOM);
@@ -456,7 +466,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 						$item_relation->parent_serial_number = $cat['term'];
 						$item_relation->child_serial_number = $sernum;
 						$item_relation->created = date(DATE_ATOM);
-						$item_relation->created_by_eid = $request->getUser()->eid;
+						$item_relation->created_by_eid = $r->getUser()->eid;
 						$item_relation->item_type_relation_id = $p->specific_relation_id;
 						$item_relation->insert();
 					}
