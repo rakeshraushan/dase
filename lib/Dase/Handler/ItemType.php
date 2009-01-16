@@ -130,7 +130,10 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$items = array();
 		foreach ($t->getItems(500) as $item) {
 			$item = clone $item;
-			$items[$item->getBaseUrl()] = $item->getTitle();
+			$items[$item->getBaseUrl()]  = array(
+				'title' => $item->getTitle(),
+				'serial_number' => $item->serial_number,
+			);
 		}
 		$r->renderResponse(Dase_Json::get($items));
 	}
