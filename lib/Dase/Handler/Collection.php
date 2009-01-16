@@ -245,6 +245,18 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($output);
 	}
 
+	public function getItemsMarkedToBeDeletedUris($r) 
+	{
+		$output = '';
+		$items = new Dase_DBO_Item;
+		$items->collection_id = $this->collection->id;
+		$items->status = 'delete';
+		foreach ($items->find() as $item) {
+			$output .= $item->getBaseUrl()."\n"; 
+		}
+		$r->renderResponse($output);
+	}
+
 	public function getItemsByMd5Txt($r) 
 	{
 		$file = new Dase_DBO_MediaFile;

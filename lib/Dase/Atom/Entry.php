@@ -163,7 +163,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	public function postToUrl($url,$user,$pwd)
+	public function postToUrl($url,$user,$pwd,$slug='')
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -171,7 +171,8 @@ class Dase_Atom_Entry extends Dase_Atom
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->asXml());
 		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pwd);
 		$str  = array(
-			"Content-Type: application/atom+xml;type=entry"
+			"Content-Type: application/atom+xml;type=entry",
+			"Slug: $slug"
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
