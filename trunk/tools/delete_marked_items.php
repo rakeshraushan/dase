@@ -20,7 +20,7 @@ if ('Y' == $resp || 'y' == $resp) {
 		$line = trim($line);
 		if ($line) {
 			$i++;
-			print "DELETE: "; 
+			print "\nDELETE: "; 
 			print deleteUrl($line,$user,$pass);
 			print " ".$line."\n";
 		}
