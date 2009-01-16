@@ -31,6 +31,12 @@ Dase.pageInitUser = function(eid) {
 	return;
 };
 
+Dase.sortByTitle = function(a,b) {
+	var x = a.title.toLowerCase();
+	var y = b.title.toLowerCase();
+	return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+}
+
 Dase.initSetParent = function(controls) {
 	var mform = Dase.$('ajaxFormHolder');
 	var links = controls.getElementsByTagName('a');
@@ -52,7 +58,7 @@ Dase.initSetParent = function(controls) {
 					//retrieve the items of the parent type
 					Dase.getJSON(parent_type_url,function(pt_json) {
 						var data = {};
-						data.items=pt_json.items;
+						data.items=pt_json.items.sort(Dase.sortByTitle);
 						data.count=pt_json.items.length;
 						data.url=pt_json.type.url;
 						data.parent_type_name=pt_json.type.name;
