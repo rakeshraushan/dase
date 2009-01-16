@@ -13,7 +13,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
 		//usually retrieved as atom:feed
-		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'item_type_items',
+		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'related_item_type_items',
 		'{collection_ascii_id}/{child_type_ascii_id}/children_of/{item_type_ascii_id}' => 'relation',
 	);
 
@@ -122,6 +122,18 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($cats->asXml());
 	}
 
+	public function getItemTypeItemsAtom($r)
+	{
+		$t = $this->type;
+		$feed = new Dase_Atom_Feed;
+		$feed->setId($t->getBaseUrl());
+		$feed->setTitle($t->name.' Items');
+		foreach ($t->getItems(500) as $item) {
+			$item->injectAtomEntryData($feed->getEntry('item'));
+		}
+		$r->renderResponse($feed->asXml());
+	}
+
 	public function getItemTypeItemsJson($r)
 	{
 		//he we are getting (child) item_type items
@@ -152,7 +164,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($items));
 	}
 
-	public function getItemTypeItemsAtom($r)
+	public function getRelatedItemTypeItemsAtom($r)
 	{
 		//he we are getting (child) item_type items
 		//which have are related to parent item_type item
