@@ -111,17 +111,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$this->getRelationChildrenAtom($r);
 	}
 
-	public function getItemTypeItemsCats($r)
-	{
-		$t = $this->type;
-		$cats = new Dase_Atom_Categories;
-		$cats->setScheme($t->getBaseUrl());
-		foreach ($t->getItems(500) as $item) {
-			$cats->addCategory($item->serial_number,'',$item->getTitle());
-		}
-		$r->renderResponse($cats->asXml());
-	}
-
 	public function getItemTypeItemsAtom($r)
 	{
 		$t = $this->type;
@@ -136,6 +125,17 @@ class Dase_Handler_ItemType extends Dase_Handler
 	}
 
 	public function getItemTypeItemsJson($r)
+	{
+		$t = $this->type;
+		$items = array();
+		foreach ($t->getItems(500) as $item) {
+			$item = clone $item;
+			$items[$item->getBaseUrl()] = $item->getTitle();
+		}
+		$r->renderResponse(Dase_Json::get($items));
+	}
+
+	public function getRelatedItemTypeItemsJson($r)
 	{
 		//he we are getting (child) item_type items
 		//which have are related to parent item_type item
