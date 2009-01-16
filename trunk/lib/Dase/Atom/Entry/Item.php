@@ -216,6 +216,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$this->addCategory($att_ascii_id,'http://daseproject.org/category/metadata','',$value_text);
 	}
 
+	function setItemType($type_ascii_id,$type_name='')
+	{
+		$this->addCategory($type_ascii_id,'http://daseproject.org/category/item_type',$type_name);
+	}
+
 	function getMetadata($include_private_metadata=false) 
 	{
 		$metadata = array();

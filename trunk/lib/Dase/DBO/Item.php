@@ -707,11 +707,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* dase categories */
 
-		$entry->addCategory('item','http://daseproject.org/category/entrytype');
-		$entry->addCategory($this->collection->ascii_id,
-			'http://daseproject.org/category/collection',$this->collection->collection_name);
+		$entry->setEntrytype('item');
+
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);
+		$entry->addCategory($this->collection->ascii_id,
+			'http://daseproject.org/category/collection',$this->collection->collection_name);
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/status');
 		} else {
