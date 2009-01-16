@@ -1,7 +1,7 @@
 <?php
 
 $user = 'pkeane';
-$pass = 'itsprop8';
+$pass = 'itspro8';
 $coll = 'itsprop';
 $base = '/mnt/home/pkeane/dase_backup_sets';
 $archive = $base.'/'.$coll;
@@ -55,7 +55,7 @@ function postFile($file_path,$url,$user,$pass,$slug='') {
 	// set URL and other appropriate options
 	curl_setopt($ch, CURLOPT_URL, $url);
 	//return headers
-	curl_setopt($ch, CURLOPT_HEADER,true);
+	//curl_setopt($ch, CURLOPT_HEADER,true);
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 	curl_setopt($ch, CURLOPT_POSTFIELDS,@$file_path);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION,true);
@@ -68,11 +68,8 @@ function postFile($file_path,$url,$user,$pass,$slug='') {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$response = curl_exec($ch);
 	//print $response."\n";
+	$info = curl_getinfo($ch);
 	curl_close($ch);
-	$status_code = array(); 
-	preg_match('/\d\d\d/', $response, $status_code); 
-	if (isset($status_code[0])) {
-		return $status_code[0];
-	}
+	return $info['http_code'];
 }
 
