@@ -63,7 +63,7 @@ hr {
 
 h1 {
 	font-weight: bold;
-	font-size: 1.8em;
+	font-size: 1.6em;
 }
 
 h2 {
@@ -149,7 +149,7 @@ div#container {
 	padding:0 12px;
 }
 
-.itspropBanner h1 {
+.itspropBanner h3 {
 	font-size: 1.1em;
 	font-weight: bold;
 	color: #fff;
@@ -157,7 +157,7 @@ div#container {
 	margin-left: 166px; 
 }
 
-.itspropBanner h2 {
+.itspropBanner h1 {
 	font-size: 1.6em;
 	font-weight: bold;
 	color: #fff;

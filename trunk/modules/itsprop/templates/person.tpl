@@ -1,24 +1,16 @@
 {extends file="layout.tpl"}
 
 {block name="content"}
-<h1>User Information</h1>
+<h1>User Information for {$person|select:'person_name'} ({$person|select:'person_eid'})</h1>
 <div class="main">
 	<form>
 		<p>
-		<label for="name">Eid</label>
-		<input type="text" name="eid" value="{$type->name}"/>
+		<label for="email">Email</label>
+		<input type="text" name="email" value="{$person|select:'person_email'}"/>
 		</p>
 		<p>
-		<label for="name">Name</label>
-		<input type="text" name="name" value="{$type->name}"/>
-		</p>
-		<p>
-		<label for="name">Email</label>
-		<input type="text" name="email" value="{$type->name}"/>
-		</p>
-		<p>
-		<label for="name">Phone</label>
-		<input type="text" name="phone" value="{$type->name}"/>
+		<label for="phone">Phone</label>
+		<input type="text" name="phone" value="{$person|select:'person_phone'}"/>
 		</p>
 		<p>
 		<input type="submit" value="update"/>

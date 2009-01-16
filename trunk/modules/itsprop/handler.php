@@ -23,7 +23,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$tpl->assign('person',Dase_Atom_Feed::retrieve(APP_ROOT. "/search.atom?itsprop.person_eid=$this->user->eid"));
+		$tpl->assign('person',
+			Dase_Atom_Entry::retrieve(APP_ROOT. "/item/$r->module/".$this->user->eid.".atom"));
 		$r->renderResponse($tpl->fetch('person.tpl'));
 	}
 
@@ -45,12 +46,16 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function getLogin($r)
 	{
 		$user = Uteid::login($r);
-		$ldap = Utlookup::getRecord($user->eid));
+		$ldap = Utlookup::getRecord($user->eid);
 		$person = new Dase_Atom_Entry_Item;
 		$person->setTitle($ldap['name']);
-		$person->addMetadata(APP_ROOT.'/attribute/itsprop/'.'eid$ldap = 
-		exit;
-
+		$person->addMetadata('person_name',$ldap['name']); 
+		$person->addMetadata('person_eid',$ldap['eid']); 
+		$person->addMetadata('person_email',$ldap['email']); 
+		$person->addMetadata('person_phone',$ldap['phone']); 
+		$person->addMetadata('person_lastname',$ldap['lastname']); 
+		$person->setUpdated(date(DATE_ATOM));
+		$person->postToUrl(APP_ROOT.'/collection/itsprop','pkeane','itsprop8',$user->eid);
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/home');
 	}
 

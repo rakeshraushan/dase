@@ -41,8 +41,8 @@
 						<a href="logout" class="logout">logout {$user->eid}</a>
 					</div>
 					{/if}
-					<h1>Liberal Arts Instructional Technology Services</h1>
-					<h2>Technology Grants</h2>
+					<h3>Liberal Arts Instructional Technology Services</h3>
+					<h1>Technology Grants</h1>
 				</div>
 			</div>
 
