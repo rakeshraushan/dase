@@ -430,18 +430,11 @@ class Dase_Atom_Entry extends Dase_Atom
 			'rights' => $this->getRights(),
 			'category' => $this->getCategories(),
 			'link' => $this->getLinks(),
-		);
-		if ($this->content_is_set) {
-			$atom_array['content'] = array(
+			'content' => array(
 				'type' => $this->getContentType(),
 				'text' => $this->getContent(),
-			);
-		}
-		foreach ($atom_array as $key => $val) {
-			if (!$val) {
-				unset($atom_array[$key]);
-			}
-		}
+			),
+		);
 		return Dase_Json::get($atom_array);
 	}
 }
