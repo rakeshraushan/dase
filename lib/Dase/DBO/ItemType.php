@@ -6,7 +6,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 {
 	public $attributes;
 	public $collection;
-	public $specific_relation_id;
 	public $parents = array();
 	public $children = array();
 

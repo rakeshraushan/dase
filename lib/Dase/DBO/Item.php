@@ -34,6 +34,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
+	public static function getByUrl($url)
+	{
+		$path = str_replace(APP_ROOT,'',$url);
+		if (strpos($path,'.') !== false) {
+			$parts = explode('.', $path);
+			$ext = array_pop($parts);
+			if (isset(Dase_Http_Request::$types[$ext])) {
+				$path = join('.',$parts);
+			} else {	
+				//path remains what it originally was
+			}
+		}
+		list($word,$coll,$sernum) = explode('/',trim($path,'/'));
+		return Dase_DBO_Item::get($coll,$sernum);
+	}
+
 	public function deleteSearchIndexes()
 	{
 		$prefix = Dase_Config::get('table_prefix');
@@ -581,15 +597,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_relations->child_serial_number = $this->serial_number;
 		foreach ($item_relations->find() as $item_relation) {
 			$parent_type = $item_relation->getParentType();
-			$parent_item_as_cat['scheme'] = $parent_type->getBaseUrl($c->asciii_id);
-			$parent_item_as_cat['term'] = $item_relation->parent_serial_number;
 			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
 				$item_relation->parent_serial_number);
-			$parent_item_as_cat['label'] = $parent_type->name.': '.$parent_item->getTitle();
-			$parent_item_as_cat['item_url'] = $parent_item->getBaseUrl();
-			//for GET->PUT syncing, esp to delete the relation
-			$parent_item_as_cat['relation_id'] = $item_relation->id;
-			$parent_items[] = $parent_item_as_cat;
+			$label = $parent_type->name.': '.$parent_item->getTitle();
+			$url = $parent_item->getBaseUrl();
+			$parent_items[$url] = array(
+				'label' => $label,
+				'relation_id' => $item_relation->id, //allows easier removal
+			);
 		}
 		return $parent_items;
 	}
@@ -599,7 +614,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$types = array();
 		foreach ($this->getItemType()->getParentRelations() as $rel) {
 			$parent_type = $rel->getParent();
-			$parent_type->specific_relation_id = $rel->id;
 			$types[] = $parent_type;
 		}
 		return $types;
@@ -732,11 +746,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 
 		//adds a category for AND a link to any parent item(s)
-		foreach ($this->getParentItems() as $parent_item_as_cat) {
-			$entry->addCategory($parent_item_as_cat['term'],
-				$parent_item_as_cat['scheme'],$parent_item_as_cat['label']);
-			$entry->addLink($parent_item_as_cat['item_url'],
-				'http://daseproject.org/relation/parent','','',$parent_item_as_cat['label']);
+		foreach ($this->getParentItems() as $url => $rel) {
+			$entry->addCategory($url,'parent',$rel['label']);
+			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$rel['label']);
 		}
 
 		/* creates a link to the parent types items (in json)

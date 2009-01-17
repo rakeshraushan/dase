@@ -17,6 +17,20 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		return $itr->findOne();
 	}
 
+	public static function getByItemSerialNumbers($collection_ascii_id,$parent_sernum,$child_sernum)
+	{
+		$p = Dase_DBO_Item::get($collection_ascii_id,$parent_sernum);
+		$c = Dase_DBO_Item::get($collection_ascii_id,$child_sernum);
+		if (!$c || !$p) { return false; }
+		$ptype = $p->getItemType();
+		$ctype = $c->getItemType();
+		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr->collection_ascii_id = $collection_ascii_id;
+		$itr->parent_type_ascii_id = $ptype->ascii_id;
+		$itr->child_type_ascii_id = $ctype->ascii_id;
+		return $itr->findOne();
+	}
+
 	public function getChild() 
 	{
 		$this->child = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->child_type_ascii_id);
