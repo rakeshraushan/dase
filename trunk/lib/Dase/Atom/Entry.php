@@ -439,7 +439,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 		foreach ($atom_array as $key => $val) {
 			if (!$val) {
-				unset $atom_array[$key];
+				unset($atom_array[$key]);
 			}
 		}
 		return Dase_Json::get($atom_array);
