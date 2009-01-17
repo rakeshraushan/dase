@@ -601,10 +601,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$item_relation->parent_serial_number);
 			$label = $parent_type->name.': '.$parent_item->getTitle();
 			$url = $parent_item->getBaseUrl();
-			$parent_items[$url] = array(
-				'label' => $label,
-				'relation_id' => $item_relation->id, //allows easier removal
-			);
+			$parent_items[$url] = $label;
 		}
 		return $parent_items;
 	}
@@ -746,9 +743,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 
 		//adds a category for AND a link to any parent item(s)
-		foreach ($this->getParentItems() as $url => $rel) {
-			$entry->addCategory($url,'parent',$rel['label']);
-			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$rel['label']);
+		foreach ($this->getParentItems() as $url => $label) {
+			$entry->addCategory($url,'http://daseproject.org/category/parent',$label);
+			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$label);
 		}
 
 		/* creates a link to the parent types items (in json)
@@ -897,9 +894,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}	
 
-	public function getBaseUrl() 
+	public function getBaseUrl($coll='') 
 	{
-		return APP_ROOT.'/item/'.$this->getCollection()->ascii_id.'/'.$this->serial_number;
+		if (!$coll) {
+			$coll = $this->getCollection()->ascii_id;
+		}
+		return APP_ROOT.'/item/'.$coll.'/'.$this->serial_number;
 	}
 
 	public function getEditMediaUrl()

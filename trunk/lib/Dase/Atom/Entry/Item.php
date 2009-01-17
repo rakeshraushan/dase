@@ -283,6 +283,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function insert($r,$fetch_enclosure=false) 
 	{
 		$eid = $r->getUser()->eid;
+		$sernum = $this->getSerialNumber();
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		if ($r->has('serial_number')) {
@@ -306,19 +307,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		foreach ($this->getCategoriesByScheme('parent') as $cat) {
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/parent') as $cat) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($cat['term']);
 			//make sure relationship is legit
 			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-				$coll,$parent->serial_number,$child_sernum
+				$coll,$parent->serial_number,$sernum
 			);
 			if ($parent && $itr) {
 				$item_relation = new Dase_DBO_ItemRelation;
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;
-				$item_relation->child_serial_number = $this->getSerialNumber();
+				$item_relation->child_serial_number = $sernum;
 				$item_relation->created = date(DATE_ATOM);
 				$item_relation->created_by_eid = $r->getUser()->eid;
 				$item_relation->item_type_relation_id = $itr->id;
@@ -403,10 +404,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			//nothin'
 		}
 
-		//cleanup invalid item_relations in DB
-		//super-expensive w/db calls ??
-		Dase_DBO_ItemRelation::cleanup($c->ascii_id,$sernum);
-
 		//3. metadata
 		$metadata = $this->getMetadata(true);
 		//only deletes collection (not admin) metadata
@@ -426,43 +423,27 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			label="Proposal: Cool Art Website"/>
 		 */
 
-		$original_db_relations = $item->getParentItems(); 
+		Dase_DBO_ItemRelation::removeParents($c->ascii_id,$sernum); 
 
-		$xml_relations = array();
-		foreach ($this->getCategoriesByScheme('parent') as $cat) {
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/parent') as $cat) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($cat['term']);
 			//make sure relationship is legit
 			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-				$coll,$parent->serial_number,$child_sernum
+				$coll,$parent->serial_number,$sernum
 			);
 			if ($parent && $itr) {
-				$xml_relations[$cat['term']] = $cat['label'];
 				$item_relation = new Dase_DBO_ItemRelation;
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;
-				$item_relation->child_serial_number = $this->getSerialNumber();
-				$item_relation->item_type_relation_id = $itr->id;
-				//could look for it in original_db_relations instead
+				$item_relation->child_serial_number = $sernum;
 				if (!$item_relation->findOne()) {
-					$item_relation->created = date(DATE_ATOM);
-					$item_relation->created_by_eid = $r->getUser()->eid;
+					$item_relation->item_type_relation_id = $itr->id;
 					$item_relation->insert();
 				}
 			} else {
 				return false;
-			}
-		}
-
-		//foreach rel in db, lookup in xml and find or delete
-		foreach ($original_db_relations as $url => $rel) {
-			if (!$xml_relations[$url])) {
-				$doomed = new Dase_DBO_ItemRelation;
-				$doomed->load($rel['relation_id']);
-				if ($doomed) {
-					$doomed->delete();
-				}
 			}
 		}
 		$item->buildSearchIndex();

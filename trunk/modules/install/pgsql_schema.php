@@ -159,8 +159,6 @@ CREATE TABLE {$table_prefix}item_relation (
     parent_serial_number character varying(200),
     child_serial_number character varying(200),
 	item_type_relation_id integer,
-    created character varying(50) DEFAULT 0,
-    created_by_eid character varying(50),
     collection_ascii_id character varying(200)
 );
 
