@@ -16,17 +16,17 @@
 	{/if}
 	{for c in atom.category}
 	{if c.value}
-	<category term="${c.term}" scheme="${c.scheme}" label="${c.label}">${c.value}</category>
+	<category term="${c.term}" scheme="${c.scheme}" label="${c.label|escape}">${c.value}</category>
 	{else}
 	<category term="${c.term}" scheme="${c.scheme}"
-	{if c.label} label="${c.label}" {/if}/>
+	{if c.label} label="${c.label|escape}" {/if}/>
 	{/if}
 	{/for}
 	{for l in atom.link}
 	<link rel="${l.rel}" href="${l.href}" 
 	{if l.type} type="${l.type}" {/if}
 	{if l.length} length="${l.length}" {/if}
-	{if l.title} title="${l.title}" {/if}/>
+	{if l.title} title="${l.title|escape}" {/if}/>
 	{/for}
 	</entry>
 	{/literal}
