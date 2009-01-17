@@ -46,7 +46,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				//path remains what it originally was
 			}
 		}
-		list($word,$coll,$sernum) = explode('/',trim($path,'/'));
+		$sections = explode('/',trim($path,'/'));
+		$sernum = array_pop($sections);
+		$coll = array_pop($sections);
 		return Dase_DBO_Item::get($coll,$sernum);
 	}
 

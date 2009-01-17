@@ -392,6 +392,8 @@ class Dase_Handler_Item extends Dase_Handler
 			if ($item) {
 				$r->renderOk('item has been updated');
 			}
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
 		}
 		$r->renderError(500);
 	}
