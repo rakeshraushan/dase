@@ -17,14 +17,13 @@
 <!-- set parent link form -->
 
 <textarea class="javascript_template" id="parent_link_jst">
-	<h1>attach to ${parent_type_name}</h1>
+	<h1>attach to ${name}</h1>
 	<ul id="currentLinks"></ul>
 	<form id="setParentForm" action="xxxxxxxxx">
-	<input type="hidden" name="url" value="${url}"/>
-	<select name="serial_number">
+	<select name="url">
 	<option>select one (of ${count})</option>
 	{for item in items}
-	<option value="${item.serial_number}">${item.title}</option>
+	<option value="${item.url}">${item.title}</option>
 	{/for}
 	</select>
 	<input type="submit" value="create link" id="createLink"/>

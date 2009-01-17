@@ -186,8 +186,6 @@ CREATE TABLE `{$table_prefix}item_relation` (
 `parent_serial_number` varchar(200) default NULL,
 `child_serial_number` varchar(200) default NULL,
 `item_type_relation_id` int(11) default NULL,
-`created` varchar(50) default NULL,
-`created_by_eid` varchar(50) default NULL,
 `collection_ascii_id` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

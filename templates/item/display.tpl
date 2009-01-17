@@ -154,18 +154,18 @@
 				{/if}
 
 				{if $item->entry->parentLinks|@count}
-				<div id="relatedLinks">
+				<div id="parentLinks">
 					<h3>parent links</h3>
 					<ul>
 						{foreach key=href item=link from=$item->entry->parentLinks}
-						<li><a href="{$href}">{$link.title}</a></li>
+						<li id="p_{$href}"><a href="{$href}">{$link.title}</a> <a class="hide" href="{$href}">[x]</a></li>
 						{/foreach}
 					</ul>
 				</div>
 				{/if}
 
 				{if $item->entry->childFeedLinks|@count}
-				<div id="relatedLinks">
+				<div id="childLinks">
 					<h3>child links</h3>
 					<ul>
 						{foreach key=href item=link from=$item->entry->childFeedLinks}

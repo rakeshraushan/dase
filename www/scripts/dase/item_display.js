@@ -26,6 +26,7 @@ Dase.pageInitUser = function(eid) {
 			Dase.initSetItemStatus();
 			Dase.initAddAnnotation();
 			Dase.initSetParent(controls);
+			Dase.initRemoveParents();
 		});
 	}
 	return;
@@ -38,6 +39,38 @@ Dase.sortByTitle = function(a,b) {
 	if (x > y) return 1
 	return 0
 
+}
+
+Dase.initRemoveParents = function() {
+	var edit_url = Dase.atompub.getEditLink();
+	var edit_json_url = Dase.atompub.getJsonEditLink();
+	var pars = Dase.$('parentLinks');
+	if (!pars) return;
+	var links = pars.getElementsByTagName('a');
+	for (var i=0;i<links.length;i++) {
+		if ('hide' == links[i].className) {
+			links[i].className = 'delete';
+			links[i].onclick = function() {
+				if (confirm('are you sure?')) {
+					var term = this.href;
+					this.innerHTML = 'deleting parent link...';
+					this.className = 'modify';
+					var scheme = 'http://daseporject.org/category/parent';
+					Dase.getJSON(edit_json_url,function(atom_json){
+						for (var j=0;j<atom_json.category.length;j++) {
+							if ((term == atom_json.category[j].term) && (scheme = atom_json.category[j].scheme)) {
+								atom_json.category[j].scheme = 'remove';
+								Dase.atompub.putJson(edit_url,atom_json,function(resp) {
+									Dase.addClass(Dase.$('p_'+term),'hide');
+								},Dase.user.eid,Dase.user.htpasswd);
+							}
+						}
+					},Dase.user.eid,Dase.user.htpasswd);
+				}
+				return false;
+			}
+		}
+	}
 }
 
 Dase.initSetParent = function(controls) {
@@ -63,40 +96,15 @@ Dase.initSetParent = function(controls) {
 						var data = {};
 						data.items=pt_json.items.sort(Dase.sortByTitle);
 						data.count=pt_json.items.length;
-						data.url=pt_json.type.url;
-						data.parent_type_name=pt_json.type.name;
+						data.name=pt_json.name;
 						var templateObj = TrimPath.parseDOMTemplate("parent_link_jst");
 						//display the form
 						mform.innerHTML = templateObj.process(data);
 						var parents = [];
 						var edit_url = Dase.atompub.getJsonEditLink();
 						Dase.getJSON(edit_url,function(atom_json){
-							var parent_scheme = pt_json.type.url;
-							for (var i=0;i<atom_json.category.length;i++) {
-								var cat = atom_json.category[i];
-								if (cat.scheme == parent_scheme) {
-									var li = Dase.createElem(Dase.$('currentLinks'),null,'li');
-									var label = Dase.createElem(li,cat.label,'span');
-									var space = Dase.createElem(li,'  ','span');
-									var el = Dase.createElem(li,'(remove)','a','delete');
-									el.num = i;
-									el.li = li;
-									el.onclick = function(){
-										Dase.$('updateMsg').innerHTML = 'removing...';
-										var doomed = this.li;
-										atom_json.category.splice(this.num,1);
-										Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-											Dase.addClass(doomed,'hide');
-											Dase.initSetParentForm(pForm,parent_type_url,atom_json);
-											Dase.$('updateMsg').innerHTML = '';
-										},Dase.user.eid,Dase.user.htpasswd);
-										return false;
-									}
-
-								}
-							}
 							var pForm = Dase.$('setParentForm');
-							Dase.initSetParentForm(pForm,parent_type_url,atom_json);
+							Dase.initSetParentForm(pForm,atom_json);
 						},Dase.user.eid,Dase.user.htpasswd);
 					});
 					return false;
@@ -106,7 +114,7 @@ Dase.initSetParent = function(controls) {
 	}
 }
 
-Dase.initSetParentForm = function(form,target_scheme,atom_json) {
+Dase.initSetParentForm = function(form,atom_json) {
 	Dase.$('cancelLink').onclick = function() {
 		Dase.addClass(Dase.$('ajaxFormHolder'),'hide');
 		Dase.removeClass(Dase.$('adminPageControls'),'hide');
@@ -119,8 +127,8 @@ Dase.initSetParentForm = function(form,target_scheme,atom_json) {
 	form.onsubmit = function() {
 		Dase.$('updateMsg').innerHTML = "creating parent link...";
 		var cat = {};
-		cat.scheme = form.url.value;
-		cat.term = form.serial_number.options[form.serial_number.selectedIndex].value;
+		cat.term = form.url.options[form.url.selectedIndex].value;
+		cat.scheme = 'http://daseproject.org/category/parent';
 		atom_json.category[atom_json.category.length] = cat;
 		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
 		   Dase.pageReload();

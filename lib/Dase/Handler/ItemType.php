@@ -88,15 +88,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$res = array();
 		$items = array();
 		foreach ($this->type->getItems() as $it_obj) {
-			$it['serial_number'] = $it_obj->serial_number;
+			$it['url'] = $it_obj->getBaseUrl();
 			$it['title'] = $it_obj->getTitle();
 			$items[] = $it;
 		}
+		$res['name'] = $this->type->name;
 		$res['items'] = $items;
-		$res['type']['name'] = $this->type->name;
-		$res['type']['ascii_id'] = $this->type->ascii_id;
-		$res['type']['url'] = $this->type->getBaseUrl();
-		$res['collection'] = $r->get('collection_ascii_id');
 		$r->renderResponse(Dase_Json::get($res));
 	}
 

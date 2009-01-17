@@ -336,7 +336,14 @@ table#item td.metadata div#itemContent {
 	background-color: #ffc;
 }
 
-table#item td.metadata div#relatedLinks {
+table#item td.metadata div#parentLinks {
+	margin: 10px 0;
+	width: 80%;
+	padding: 4px 10px;
+	background-color: #eed;
+}
+
+table#item td.metadata div#childLinks {
 	margin: 10px 0;
 	width: 80%;
 	padding: 4px 10px;
