@@ -428,10 +428,12 @@ class Dase_Atom_Entry extends Dase_Atom
 			'author_name' => $this->getAuthorName(),
 			'summary' => $this->getSummary(),
 			'rights' => $this->getRights(),
-			'content' => array(
-				'type' => $this->getContentType(),
-				'text' => $this->getContent(),
-			),
+			if ($this->content_is_set) {
+				'content' => array(
+					'type' => $this->getContentType(),
+					'text' => $this->getContent(),
+				),
+			}
 			'category' => $this->getCategories(),
 			'link' => $this->getLinks(),
 		);
