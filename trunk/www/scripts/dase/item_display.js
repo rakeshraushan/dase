@@ -34,7 +34,10 @@ Dase.pageInitUser = function(eid) {
 Dase.sortByTitle = function(a,b) {
 	var x = a.title.toLowerCase();
 	var y = b.title.toLowerCase();
-	return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	if (x < y) return -1
+	if (x > y) return 1
+	return 0
+
 }
 
 Dase.initSetParent = function(controls) {

@@ -306,23 +306,25 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		//item_relations
-		foreach ($item->getParentTypes() as $p) {
-			//guarantees validity
-			$scheme = $p->getBaseUrl();
-			//get all categories in entry that express valid relations
-			foreach ($this->getCategoriesByScheme($scheme) as $cat) {
-				//make sure parent is a legitimate item
-				if (Dase_DBO_Item::get($c->ascii_id,$cat['term'])) {
-					$item_relation = new Dase_DBO_ItemRelation;
-					$item_relation->collection_ascii_id = $c->ascii_id;
-					$item_relation->parent_serial_number = $cat['term'];
-					$item_relation->child_serial_number = $item->serial_number;
-					$item_relation->created = date(DATE_ATOM);
-					$item_relation->created_by_eid = $r->getUser()->eid;
-					$item_relation->item_type_relation_id = $p->specific_relation_id;
-					$item_relation->insert();
-				}
+		foreach ($this->getCategoriesByScheme('parent') as $cat) {
+			//make sure parent is a legitimate item
+			$coll = $this->getCollectionAsciiId();
+			$parent = Dase_DBO_Item::getByUrl($cat['term']);
+			//make sure relationship is legit
+			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
+				$coll,$parent->serial_number,$child_sernum
+			);
+			if ($parent && $itr) {
+				$item_relation = new Dase_DBO_ItemRelation;
+				$item_relation->collection_ascii_id = $coll;
+				$item_relation->parent_serial_number = $parent->serial_number;
+				$item_relation->child_serial_number = $this->getSerialNumber();
+				$item_relation->created = date(DATE_ATOM);
+				$item_relation->created_by_eid = $r->getUser()->eid;
+				$item_relation->item_type_relation_id = $itr->id;
+				$item_relation->insert();
+			} else {
+				return false;
 			}
 		}
 
@@ -407,7 +409,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//3. metadata
 		$metadata = $this->getMetadata(true);
-		//only deletes collection-specific (not admin) metadata
+		//only deletes collection (not admin) metadata
 		//then replaces it
 		$item->deleteValues();
 		foreach (array_keys($metadata) as $ascii_id) {
@@ -419,57 +421,43 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//4. replace parent item relations
 
 		/* sample parent item indicator
-			<category term="000524615" 
-			scheme="http://quickdraw.laits.utexas.edu/dase1/item_type/test/proposal" 
+			<category term="http://quickdraw.laits.utexas.edu/dase1/item/test/000524615" 
+			scheme="parent" 
 			label="Proposal: Cool Art Website"/>
 		 */
 
-		$db_relations = array();
-		foreach ($item->getParentItems() as $parent_item) {
-			//note there can ONLY be one term per scheme 
-			//(item can only have one parent of given type)
-			//NO WRONG!!!  An item can have multiple parents of the same parent type
-			$uniq = $parent_item['scheme'].'/'.$parent_item['term'];
-			$db_relations[$uniq]['scheme'] = $parent_item['scheme'];
-			$db_relations[$uniq]['term'] = $parent_item['term'];
-			$db_relations[$uniq]['relation_id'] = $parent_item['relation_id'];
-			unset($uniq);
-		}
+		$original_db_relations = $item->getParentItems(); 
 
-		//find or create
 		$xml_relations = array();
-		//guarantees validity
-		foreach ($item->getParentTypes() as $p) {
-			$scheme = $p->getBaseUrl();
-			//get all categories in entry that express valid relations
-			foreach ($this->getCategoriesByScheme($scheme) as $cat) {
-				$uniq = $scheme.'/'.$cat['term'];
-				$xml_relations[$uniq]['scheme'] = $scheme;
-				$xml_relations[$uniq]['term'] = $cat['term'];
-				//foreach valid rel in xml, lookup in db and find or create 
-				if (isset($db_relations[$uniq]) && $db_relations[$uniq]['term'] == $cat['term']) {
-					//do nothing since it is in db
-				} else {
-					//make sure parent is a legitimate item
-					if (Dase_DBO_Item::get($c->ascii_id,$cat['term'])) {
-						$item_relation = new Dase_DBO_ItemRelation;
-						$item_relation->collection_ascii_id = $c->ascii_id;
-						$item_relation->parent_serial_number = $cat['term'];
-						$item_relation->child_serial_number = $sernum;
-						$item_relation->created = date(DATE_ATOM);
-						$item_relation->created_by_eid = $r->getUser()->eid;
-						$item_relation->item_type_relation_id = $p->specific_relation_id;
-						$item_relation->insert();
-					}
-				}	
-				unset($uniq);
+		foreach ($this->getCategoriesByScheme('parent') as $cat) {
+			//make sure parent is a legitimate item
+			$coll = $this->getCollectionAsciiId();
+			$parent = Dase_DBO_Item::getByUrl($cat['term']);
+			//make sure relationship is legit
+			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
+				$coll,$parent->serial_number,$child_sernum
+			);
+			if ($parent && $itr) {
+				$xml_relations[$cat['term']] = $cat['label'];
+				$item_relation = new Dase_DBO_ItemRelation;
+				$item_relation->collection_ascii_id = $coll;
+				$item_relation->parent_serial_number = $parent->serial_number;
+				$item_relation->child_serial_number = $this->getSerialNumber();
+				$item_relation->item_type_relation_id = $itr->id;
+				//could look for it in original_db_relations instead
+				if (!$item_relation->findOne()) {
+					$item_relation->created = date(DATE_ATOM);
+					$item_relation->created_by_eid = $r->getUser()->eid;
+					$item_relation->insert();
+				}
+			} else {
+				return false;
 			}
 		}
-		//foreach rel in db, lookup in xml and find or delete``
-		//note: db_rels won't include newly inserted item_rels
-		//but we know those are valid, so no need to check them
-		foreach ($db_relations as $uniq => $rel) {
-			if (!isset($xml_relations[$uniq]) || $xml_relations[$uniq]['term'] != $rel['term']) {
+
+		//foreach rel in db, lookup in xml and find or delete
+		foreach ($original_db_relations as $url => $rel) {
+			if (!$xml_relations[$url])) {
 				$doomed = new Dase_DBO_ItemRelation;
 				$doomed->load($rel['relation_id']);
 				if ($doomed) {
