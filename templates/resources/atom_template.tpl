@@ -11,7 +11,9 @@
 	<rights>${atom.rights}</rights>
 	<updated>${atom.updated}</updated>
 	<category term="${atom.entrytype}" scheme="http://daseproject.org/category/entrytype"/>
+	{if atom.content.text}
 	<content type="${atom.content.type}">${atom.content.text}</content>
+	{/if}
 	{for c in atom.category}
 	{if c.value}
 	<category term="${c.term}" scheme="${c.scheme}" label="${c.label}">${c.value}</category>
