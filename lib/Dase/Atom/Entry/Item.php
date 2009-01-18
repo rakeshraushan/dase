@@ -295,9 +295,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		$links = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $ln) {
-			$el_item_type = $el->getAttributeNS(Dase_Atom::$ns['d'],'item_type');
-			if ($item_type == $el_item_type) {
-				$link['item_type'] = $el_item_type;
+			$ln_item_type = $ln->getAttributeNS(Dase_Atom::$ns['d'],'item_type');
+			if ($item_type == $ln_item_type) {
+				$link['item_type'] = $ln_item_type;
 				$link['rel'] = $ln->getAttribute('rel');
 				$link['href'] = $ln->getAttribute('href');
 				$link['title'] = $ln->getAttribute('title');
