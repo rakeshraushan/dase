@@ -26,12 +26,14 @@ class Dase_Cache_File extends Dase_Cache
 		//from PHP Cookbook 2nd. ed p. 718
 		$iter = new RecursiveDirectoryIterator(CACHE_DIR);
 		foreach (new RecursiveIteratorIterator($iter,RecursiveIteratorIterator::CHILD_FIRST) as $file) {
-			if ($file->isDir()) {
-				$i++;
-				rmdir($file->getPathname());
-			} else {
-				$i++;
-				unlink($file->getPathname());
+			if (false === strpos($file->getPathname(),'.svn')) {
+				if ($file->isDir()) {
+					$i++;
+					rmdir($file->getPathname());
+				} else {
+					$i++;
+					unlink($file->getPathname());
+				}
 			}
 		}
 		return $i;
