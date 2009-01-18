@@ -603,7 +603,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$item_relation->parent_serial_number);
 			$label = $parent_type->name.': '.$parent_item->getTitle();
 			$url = $parent_item->getBaseUrl();
-			$parent_items[$url] = $label;
+			$parent_items[$url] = array(
+				'label' => $label,
+				'item_type' => $parent_type->ascii_id,
+			);
 		}
 		return $parent_items;
 	}
@@ -711,7 +714,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* threading extension */
 
-		$replies = $entry->addLink(APP_ROOT.'/item/'.$this->collection->ascii_id.'/'.$this->serial_number.'/comments','replies' );
+		$replies = $entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments','replies' );
 		$thr_count = $this->getCommentsCount();
 		if ($thr_count) {
 			$replies->setAttributeNS($thr,'thr:count',$thr_count);
@@ -724,8 +727,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);
-		$entry->addCategory($this->collection->ascii_id,
-			'http://daseproject.org/category/collection',$this->collection->collection_name);
+		$entry->addCategory($c->ascii_id,
+			'http://daseproject.org/category/collection',$c->collection_name);
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/status');
 		} else {
@@ -745,9 +748,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 
 		//adds a category for AND a link to any parent item(s)
-		foreach ($this->getParentItems() as $url => $label) {
-			$entry->addCategory($url,'http://daseproject.org/category/parent',$label);
-			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$label);
+		foreach ($this->getParentItems() as $url => $set) {
+			$entry->addCategory($url,'http://daseproject.org/category/parent',$set['label']);
+			$plink = $entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label']);
+			$plink->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
+			//$entry->addInReplyTo($url,'application/atom+xml',$url,$set['type_url']);
 		}
 
 		/* creates a link to the parent types items (in json)
