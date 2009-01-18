@@ -88,7 +88,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$res = array();
 		$items = array();
 		foreach ($this->type->getItems() as $it_obj) {
-			$it['url'] = $it_obj->getBaseUrl();
+			$it['url'] = $it_obj->getBaseUrl($r->collection_ascii_id);
 			$it['title'] = $it_obj->getTitle();
 			$items[] = $it;
 		}

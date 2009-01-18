@@ -40,6 +40,7 @@ class Dase_Template {
 		$this->smarty->register_modifier('sortby', '_smarty_dase_atom_feed_sortby');
 		$this->smarty->register_modifier('select', '_smarty_dase_atom_entry_select');
 		$this->smarty->register_modifier('label', '_smarty_dase_atom_entry_label');
+		$this->smarty->register_modifier('linksByItemType', '_smarty_dase_atom_entry_links_by_item_type');
 		$this->smarty->register_modifier('media', '_smarty_dase_atom_entry_select_media');
 		$this->smarty->register_modifier('modifiers','_smarty_documenter_modifiers');
 		$this->smarty->register_modifier('params','_smarty_documenter_get_params');
@@ -124,6 +125,11 @@ function _smarty_dase_atom_feed_sortby(Dase_Atom_Feed $feed,$att)
 function _smarty_dase_atom_entry_label(Dase_Atom_Entry $entry,$att)
 {
 	return $entry->getLabel($att);
+}
+
+function _smarty_dase_atom_entry_links_by_item_type(Dase_Atom_Entry $entry,$item_type)
+{
+	return $entry->getLinksByItemType($item_type);
 }
 
 function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)

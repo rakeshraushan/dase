@@ -17,5 +17,6 @@ class Dase_Json
 		$js = new Services_JSON;
 		return $js->decode($json);
 	}
+
 }
 

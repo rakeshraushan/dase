@@ -418,6 +418,18 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getXpathValue("atom:author/atom:name",$this->root);
 	}
 
+	function addInReplyTo($ref,$type,$href,$source='')
+	{
+		$irt = $this->addElement('thr:in-reply-to',null,Dase_Atom::$ns['thr']);
+		$irt->setAttribute('ref',$ref);
+		$irt->setAttribute('type',$type);
+		$irt->setAttribute('href',$href);
+		if ($source) {
+			$irt->setAttribute('source',$source);
+		}
+		return $irt;	
+	}
+
 	function asJson() 
 	{
 		$atom_array = array(

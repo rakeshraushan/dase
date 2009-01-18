@@ -84,9 +84,20 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	public function getLabel($att) 
 	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['d'],'*') as $dd) {
-			if ($att == $dd->localName) {
-				return $dd->getAttributeNS(Dase_Atom::$ns['d'],'label');
+		//look in three places
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/metadata') as $cat) {
+			if ($att == $cat['term']) {
+				return $cat['label'];
+			}
+		}
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/private_metadata') as $cat) {
+			if ($att == $cat['term']) {
+				return $cat['label'];
+			}
+		}
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/admin_metadata') as $cat) {
+			if ($att == $cat['term']) {
+				return $cat['label'];
 			}
 		}
 	}
@@ -278,6 +289,29 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$this->edited_is_set = true;
 		}
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
+	}
+
+	function getLinksByItemType($item_type)
+	{
+		$links = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $ln) {
+			$el_item_type = $el->getAttributeNS(Dase_Atom::$ns['d'],'item_type');
+			if ($item_type == $el_item_type) {
+				$link['item_type'] = $el_item_type;
+				$link['rel'] = $ln->getAttribute('rel');
+				$link['href'] = $ln->getAttribute('href');
+				$link['title'] = $ln->getAttribute('title');
+				$link['type'] = $ln->getAttribute('type');
+				$link['length'] = $ln->getAttribute('length');
+				foreach ($link as $k => $v) {
+					if (!$link[$k] && '0' !== $link[$k]) {
+						unset ($link[$k]);
+					}
+				}
+				$links[] = $link;
+			}
+		}
+		return $links;
 	}
 
 	function insert($r,$fetch_enclosure=false) 
