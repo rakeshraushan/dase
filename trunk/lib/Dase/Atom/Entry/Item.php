@@ -86,7 +86,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		$links = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
-			if ($item_type == $el->getAttributeNS(Dase_Atom::$ns['d'],'item_type')) {
+			if ($item_type == $link->getAttributeNS(Dase_Atom::$ns['d'],'item_type')) {
 				$links[] = $link;
 			}
 		}
