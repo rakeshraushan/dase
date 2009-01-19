@@ -61,11 +61,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
-	function getParentLinks($item_type = null)
-	{
-		return $this->getLinksByRel('http://daseproject.org/relation/parent');
-	}
-
 	function getThumbnailBase64()
 	{
 		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
@@ -85,6 +80,46 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 			}
 		}
+	}
+
+	function getParentLinkNodesByItemType($item_type)
+	{
+		$links = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
+			if (
+				$item_type == $el->getAttributeNS(Dase_Atom::$ns['d'],'item_type'
+			) {
+				$links[] = $link;
+			}
+		}
+		return $links;
+	}
+
+	function getParentLinks() 
+	{
+		return $this->getLinksByRel('http://daseproject.org/relation/parent'); 
+	}
+
+	function getChildFeedLinks() 
+	{
+		$links = array();
+		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
+			if ('application/atom+xml' == $link['type']) {
+				$links[] = $link;
+			}
+		}
+		return $links;
+	}
+
+	function getChildJsonFeedLinks() 
+	{
+		$links = array();
+		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
+			if ('application/json' == $link['type']) {
+				$links[] = $link;
+			}
+		}
+		return $links;
 	}
 
 	public function getLabel($att) 
