@@ -285,33 +285,6 @@ class Dase_Atom
 		return $links;
 	}
 
-	function getParentLinks() 
-	{
-		return $this->getLinksByRel('http://daseproject.org/relation/parent'); 
-	}
-
-	function getChildFeedLinks() 
-	{
-		$links = array();
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
-			if ('application/atom+xml' == $link['type']) {
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
-	function getChildJsonFeedLinks() 
-	{
-		$links = array();
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
-			if ('application/json' == $link['type']) {
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
 	function setRights($text) 
 	{
 		if ($this->rights_is_set) {
