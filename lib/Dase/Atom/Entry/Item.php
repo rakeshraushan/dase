@@ -61,7 +61,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
-	function getParentLinks()
+	function getParentLinks($item_type = null)
 	{
 		return $this->getLinksByRel('http://daseproject.org/relation/parent');
 	}
