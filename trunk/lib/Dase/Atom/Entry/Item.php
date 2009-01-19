@@ -61,6 +61,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function getParentLinks()
+	{
+		return $this->getLinksByRel('http://daseproject.org/relation/parent');
+	}
+
 	function getThumbnailBase64()
 	{
 		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
@@ -318,7 +323,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/parent') as $ln) {
+		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($ln['href']);
@@ -436,7 +441,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		Dase_DBO_ItemRelation::removeParents($c->ascii_id,$sernum); 
 
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/parent') as $ln) {
+		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($ln['href']);
