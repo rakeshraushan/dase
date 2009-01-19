@@ -157,8 +157,8 @@
 				<div id="parentLinks">
 					<h3>parent links</h3>
 					<ul>
-						{foreach key=href item=link from=$item->entry->parentLinks}
-						<li id="p_{$href}"><a href="{$href}">{$link.title}</a> <a class="hide" href="{$href}">[x]</a></li>
+						{foreach item=link from=$item->entry->parentLinks}
+						<li id="p_{$link.href}"><a href="{$link.href}">{$link.title}</a> <a class="hide" href="{$link.href}">[x]</a></li>
 						{/foreach}
 					</ul>
 				</div>
@@ -168,8 +168,8 @@
 				<div id="childLinks">
 					<h3>child links</h3>
 					<ul>
-						{foreach key=href item=link from=$item->entry->childFeedLinks}
-						<li><a href="{$href}">{$link.title}</a> ({$link.count})</li>
+						{foreach item=link from=$item->entry->childFeedLinks}
+						<li><a href="{$link.href}">{$link.title}</a> ({$link.count})</li>
 						{/foreach}
 					</ul>
 				</div>
