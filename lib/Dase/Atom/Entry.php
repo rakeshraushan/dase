@@ -418,6 +418,15 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getXpathValue("atom:author/atom:name",$this->root);
 	}
 
+	function getEnclosure() 
+	{
+		//note: only gets one!!!
+		foreach ($this->getLinksByRel('enclosure') as $link) {
+			return $link;
+		}
+		return false;
+	}
+
 	function addInReplyTo($ref,$type,$href,$source='')
 	{
 		$irt = $this->addElement('thr:in-reply-to',null,Dase_Atom::$ns['thr']);

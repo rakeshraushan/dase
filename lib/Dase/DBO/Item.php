@@ -749,7 +749,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		//adds a category for AND a link to any parent item(s)
 		foreach ($this->getParentItems() as $url => $set) {
-			$entry->addCategory($url,'http://daseproject.org/category/parent',$set['label']);
+			//$pcat = $entry->addCategory($url,'http://daseproject.org/category/parent',$set['label']);
+			//not clean, but only way I could, from client, do 
+			//"replace existing link of type x with another link of type x"
+			//$pcat->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			$plink = $entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label']);
 			$plink->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			//$entry->addInReplyTo($url,'application/atom+xml',$url,$set['type_url']);

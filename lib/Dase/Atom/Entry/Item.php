@@ -291,29 +291,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
-	function getLinksByItemType($item_type)
-	{
-		$links = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $ln) {
-			$ln_item_type = $ln->getAttributeNS(Dase_Atom::$ns['d'],'item_type');
-			if ($item_type == $ln_item_type) {
-				$link['item_type'] = $ln_item_type;
-				$link['rel'] = $ln->getAttribute('rel');
-				$link['href'] = $ln->getAttribute('href');
-				$link['title'] = $ln->getAttribute('title');
-				$link['type'] = $ln->getAttribute('type');
-				$link['length'] = $ln->getAttribute('length');
-				foreach ($link as $k => $v) {
-					if (!$link[$k] && '0' !== $link[$k]) {
-						unset ($link[$k]);
-					}
-				}
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
 	function insert($r,$fetch_enclosure=false) 
 	{
 		$eid = $r->getUser()->eid;
@@ -341,10 +318,10 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/parent') as $cat) {
+		foreach ($this->getLinksByRel('http://daseproject.org/relation/parent') as $ln) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
-			$parent = Dase_DBO_Item::getByUrl($cat['term']);
+			$parent = Dase_DBO_Item::getByUrl($ln['href']);
 			//make sure relationship is legit
 			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
 				$coll,$parent->serial_number,$sernum
@@ -385,7 +362,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (!file_exists($upload_dir)) {
 					$r->renderError(401,'missing upload directory');
 				}
-				$ext = Dase_File::$types_map[$enc['mime_type']]['ext'];
+				$ext = Dase_File::$types_map[$enc['type']]['ext'];
 				$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 				file_put_contents($new_file,file_get_contents($enc['href']));
 
@@ -459,15 +436,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		Dase_DBO_ItemRelation::removeParents($c->ascii_id,$sernum); 
 
-		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/parent') as $cat) {
+		foreach ($this->getLinksByRel('http://daseproject.org/relation/parent') as $ln) {
 			//make sure parent is a legitimate item
 			$coll = $this->getCollectionAsciiId();
-			$parent = Dase_DBO_Item::getByUrl($cat['term']);
+			$parent = Dase_DBO_Item::getByUrl($ln['href']);
 			//make sure relationship is legit
-			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-				$coll,$parent->serial_number,$sernum
-			);
-			if ($parent && $itr) {
+			if ($parent) {
+				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
+					$coll,$parent->serial_number,$sernum
+				);
+			}
+			if ($itr) {
 				$item_relation = new Dase_DBO_ItemRelation;
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;

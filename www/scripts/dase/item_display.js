@@ -52,16 +52,16 @@ Dase.initRemoveParents = function() {
 			links[i].className = 'delete';
 			links[i].onclick = function() {
 				if (confirm('are you sure?')) {
-					var term = this.href;
+					var href = this.href;
 					this.innerHTML = 'deleting parent link...';
 					this.className = 'modify';
-					var scheme = 'http://daseporject.org/category/parent';
+					var rel = 'http://daseproject.org/relation/parent';
 					Dase.getJSON(edit_json_url,function(atom_json){
-						for (var j=0;j<atom_json.category.length;j++) {
-							if ((term == atom_json.category[j].term) && (scheme = atom_json.category[j].scheme)) {
-								atom_json.category[j].scheme = 'remove';
+						for (var j=0;j<atom_json.link.length;j++) {
+							if ((href == atom_json.link[j].href) && (rel == atom_json.link[j].rel)) {
+								atom_json.link[j].rel = 'remove';
 								Dase.atompub.putJson(edit_url,atom_json,function(resp) {
-									Dase.addClass(Dase.$('p_'+term),'hide');
+									Dase.addClass(Dase.$('p_'+href),'hide');
 								},Dase.user.eid,Dase.user.htpasswd);
 							}
 						}
@@ -126,10 +126,10 @@ Dase.initSetParentForm = function(form,atom_json) {
 	}; 
 	form.onsubmit = function() {
 		Dase.$('updateMsg').innerHTML = "creating parent link...";
-		var cat = {};
-		cat.term = form.url.options[form.url.selectedIndex].value;
-		cat.scheme = 'http://daseproject.org/category/parent';
-		atom_json.category[atom_json.category.length] = cat;
+		var link = {};
+		link.href = form.url.options[form.url.selectedIndex].value;
+		link.rel = 'http://daseproject.org/relation/parent';
+		atom_json.link[atom_json.link.length] = link;
 		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
 		   Dase.pageReload();
 		},Dase.user.eid,Dase.user.htpasswd);
