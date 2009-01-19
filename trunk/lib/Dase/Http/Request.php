@@ -40,6 +40,7 @@ class Dase_Http_Request
 		$this->format = $this->getFormat();
 		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
 		$this->path = $this->getPath();
+		$this->url = $_SERVER['REQUEST_URI'];
 		$this->response_mime_type = self::$types[$this->format];
 		$this->query_string = $this->getQueryString();
 		$this->content_type = $this->getContentType();
@@ -62,6 +63,7 @@ class Dase_Http_Request
 		$string .= "[method] => $this->method\n";
 		$string .= "[module] => $this->module\n";
 		$string .= "[path] => $this->path\n";
+		$string .= "[url] => $this->url\n";
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";

@@ -92,7 +92,8 @@ class Dase_Atom
 		return $cat;
 	}
 
-	function getCategories() {
+	function getCategories() 
+	{
 		$categories = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
 			$category = array();
@@ -109,7 +110,8 @@ class Dase_Atom
 		return $categories;
 	}
 
-	function getCategoriesByScheme($scheme) {
+	function getCategoriesByScheme($scheme) 
+	{
 		$categories = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
 			if ($scheme == $cat->getAttribute('scheme')) {
@@ -124,6 +126,32 @@ class Dase_Atom
 			}
 		}
 		return $categories;
+	}
+
+	/** returns the DOMNode! */
+	function getCategoryNode($scheme,$term) 
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			if (
+				$scheme == $cat->getAttribute('scheme') &&
+				$term == $cat->getAttribute('term')
+			) {
+				return $cat;
+			}
+		}
+	}
+
+	/** returns the DOMNode! */
+	function getLinkNode($rel,$href) 
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
+			if (
+				$rel == $link->getAttribute('rel') &&
+				$href == $link->getAttribute('href')
+			) {
+				return $link;
+			}
+		}
 	}
 
 	function addContributor($name_text,$uri_text = '',$email_text = '') 
