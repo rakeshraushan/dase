@@ -601,12 +601,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$parent_type = $item_relation->getParentType();
 			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
 				$item_relation->parent_serial_number);
-			$label = $parent_type->name.': '.$parent_item->getTitle();
-			$url = $parent_item->getBaseUrl();
-			$parent_items[$url] = array(
-				'label' => $label,
-				'item_type' => $parent_type->ascii_id,
-			);
+			if ($parent_item) {
+				$label = $parent_type->name.': '.$parent_item->getTitle();
+				$url = $parent_item->getBaseUrl();
+				$parent_items[$url] = array(
+					'label' => $label,
+					'item_type' => $parent_type->ascii_id,
+				);
+			}
 		}
 		return $parent_items;
 	}

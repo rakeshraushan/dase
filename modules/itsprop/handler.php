@@ -26,8 +26,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		//$depts_json = file_get_contents('http://dev.laits.utexas.edu/itsprop/new/item_type/itsprop/department/items.json');
+		//$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/items.json');
 		//$tpl->assign('depts', Dase_Json::toPhp($depts_json));
+		$tpl->assign('depts',Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
 		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
 		$r->renderResponse($tpl->fetch('person.tpl'));
 	}
@@ -35,10 +36,21 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function postToPerson($r)
 	{
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
-		list($dept) = $person->getParentLinkNodesByItemType('department');
-		$dept->removeAttribute('href');
-		$dept->setAttribute('href',$r->get('department'));
-		$person->putToUrl($person->getEditLink(),'pkeane','itsprop8');
+		$dept_array = $person->getParentLinkNodesByItemType('department');
+		if (count($dept_array)) {
+			$dept = $dept_array[0];
+			$dept->removeAttribute('href');
+			$dept->setAttribute('href',$r->get('department'));
+		} else {
+			$person->addLink($r->get('department'),'http://daseproject.org/relation/parent');
+		}
+		$metadata_array = array(
+			'person_eid' => $r->get('eid'),
+			'person_email' => $r->get('email'),
+			'person_phone' => $r->get('phone'),
+		);
+		$person->replaceMetadata($metadata_array);
+		$person->putToUrl($person->getEditLink(),'pkeane','okthen');
 		$r->renderRedirect(APP_ROOT.'/modules/itsprop/person/'.$r->get('eid'));
 	}
 
@@ -72,7 +84,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person->addMetadata('person_phone',$ldap['phone']); 
 		$person->addMetadata('person_lastname',$ldap['lastname']); 
 		$person->setUpdated(date(DATE_ATOM));
-		$person->postToUrl(APP_ROOT.'/collection/itsprop','pkeane','itsprop8',$user->eid);
+		$person->postToUrl(APP_ROOT.'/collection/itsprop','pkeane','okthen',$user->eid);
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/home');
 	}
 

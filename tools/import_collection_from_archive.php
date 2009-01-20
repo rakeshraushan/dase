@@ -1,11 +1,11 @@
 <?php
 
 $user = 'pkeane';
-$pass = 'itspro8';
+$pass = 'okthen';
 $coll = 'itsprop';
 $base = '/mnt/home/pkeane/dase_backup_sets';
 $archive = $base.'/'.$coll;
-$dase_url = 'http://dev.laits.utexas.edu/itsprop/new';
+$dase_url = 'http://quickdraw.laits.utexas.edu/dase1';
 
 $new_ascii = $coll;
 
@@ -43,11 +43,14 @@ foreach (new DirectoryIterator($archive.'/attributes') as $file) {
 //create items
 foreach (new DirectoryIterator($archive.'/items') as $file) {
 	if (!$file->isDot()) {
-		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii,$user,$pass);
+		$slug = str_replace('.atom','',$file->getFilename());
+		print postFile($file->getPathname(),$dase_url.'/collection/'.$new_ascii,$user,$pass,$slug);
 		print ' item: '.$file."  ";
 		print "\n";
 	}
 }
+
+//todo: now PUT all items to make sure relationships have been captured!!!
 
 
 function postFile($file_path,$url,$user,$pass,$slug='') {
