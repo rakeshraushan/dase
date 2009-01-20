@@ -31,6 +31,7 @@ while ($reader->read()) {
 		$reader->read();
 		$dept_name = $reader->value;
 		$entry->setTitle($dept_name);
+		$entry->addMetadata('title',$dept_name);
 		$entry->addMetadata('dept_name',$dept_name);
 
 	}

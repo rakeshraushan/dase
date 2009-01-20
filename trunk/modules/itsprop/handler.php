@@ -15,7 +15,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function setup($r)
 	{
 		if ('welcome' != $r->resource && 'login' != $r->resource) {
-			$this->user = $r->getUser('cookie');
+			$this->user = $r->getUser('cookie',false);
+			if (!$this->user) {
+				$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/welcome');
+			}
 		}
 	}
 
@@ -23,9 +26,20 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$tpl->assign('person',
-			Dase_Atom_Entry::retrieve(APP_ROOT. "/item/$r->module/".$this->user->eid.".atom"));
+		//$depts_json = file_get_contents('http://dev.laits.utexas.edu/itsprop/new/item_type/itsprop/department/items.json');
+		//$tpl->assign('depts', Dase_Json::toPhp($depts_json));
+		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
 		$r->renderResponse($tpl->fetch('person.tpl'));
+	}
+
+	public function postToPerson($r)
+	{
+		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
+		list($dept) = $person->getParentLinkNodesByItemType('department');
+		$dept->removeAttribute('href');
+		$dept->setAttribute('href',$r->get('department'));
+		$person->putToUrl($person->getEditLink(),'pkeane','itsprop8');
+		$r->renderRedirect(APP_ROOT.'/modules/itsprop/person/'.$r->get('eid'));
 	}
 
 	public function getHome($r) 
@@ -49,6 +63,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$ldap = Utlookup::getRecord($user->eid);
 		$person = new Dase_Atom_Entry_Item;
 		$person->setTitle($ldap['name']);
+		$person->setItemType('person');
+		//we set title so auto-titling works in DASe
+		$person->addMetadata('title',$ldap['name']); 
 		$person->addMetadata('person_name',$ldap['name']); 
 		$person->addMetadata('person_eid',$ldap['eid']); 
 		$person->addMetadata('person_email',$ldap['email']); 
