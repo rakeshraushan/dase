@@ -115,7 +115,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$feed->setId($t->getBaseUrl());
 		$feed->setTitle($t->name.' Items');
 		foreach ($t->getItems(500) as $item) {
-			$item = clone $item;
+			//$item = clone $item;
 			$item->injectAtomEntryData($feed->addEntry('item'));
 		}
 		$r->renderResponse($feed->asXml());
