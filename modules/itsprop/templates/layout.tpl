@@ -11,7 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css" />
 		<link rel="stylesheet" type="text/css" href="css/itsprop.css" />
 		<link rel="shortcut icon" href="images/itsbox.ico" />
-
+		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
@@ -19,6 +19,7 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script>
+		<script type="text/javascript" src="{$app_root}www/scripts/dase/atompub.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="scripts/itsprop.js"></script>
 		{block name="head"}{/block}
@@ -50,7 +51,7 @@
 
 				<ul id="menu">
 					<li class="home">
-					<a href="person/{$user->eid}/home" class="main">Home</a>
+					<a href="home" class="main">Home</a>
 					</li>
 					<li>
 					<a href="person/{$user->eid}" class="main">User Information</a>

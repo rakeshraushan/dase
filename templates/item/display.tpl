@@ -1,6 +1,6 @@
 {extends file="layout.tpl"}
 
-{block name="head-links}
+{block name="head-links"}
 {if $item->entry->editLink}
 <!-- atompub -->
 <link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}"/>
