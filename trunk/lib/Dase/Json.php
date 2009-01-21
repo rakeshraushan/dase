@@ -14,7 +14,7 @@ class Dase_Json
 
 	public static function toPhp($json)
 	{
-		$js = new Services_JSON;
+		$js = new Services_JSON(16); //16 means arrays, not objects returned
 		return $js->decode($json);
 	}
 

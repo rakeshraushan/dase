@@ -148,6 +148,28 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		Dase_Log::debug("built indexes for " . $this->serial_number);
 	}
 
+	public function getRawMetadata()
+	{
+		$c = $this->getCollection();
+		$prefix = Dase_Config::get('table_prefix');
+		$metadata = array();
+		$bound_params = array();
+		$sql = "
+			SELECT a.ascii_id, a.attribute_name,
+			v.value_text,a.collection_id, v.id, 
+			a.is_on_list_display, a.is_public
+			FROM {$prefix}attribute a, {$prefix}value v
+			WHERE v.item_id = ?
+			AND v.attribute_id = a.id
+			ORDER BY a.sort_order,v.value_text
+			";
+		$st = Dase_DBO::query($sql,array($this->id));
+		while ($row = $st->fetch()) {
+			$metadata[] = $row;
+		}
+		return $metadata;
+	}
+
 	public function getMetadata($att_ascii_id = '')
 	{
 		$c = $this->getCollection();
@@ -396,6 +418,27 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
+	function getChildrenSets()
+	{
+		$c = $this->getCollection();
+		$set = array();
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT count(ir.id), itr.title, itr.child_type_ascii_id
+			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
+			WHERE ir.collection_ascii_id = ?
+			AND ir.parent_serial_number = ?	
+			AND itr.id = ir.item_type_relation_id
+			GROUP BY itr.title,itr.child_type_ascii_id
+			";
+		$bound_params = array($c->ascii_id,$this->serial_number);
+		$st = Dase_DBO::query($sql,$bound_params);
+		while ($row = $st->fetch()) {
+			$set[] = $row;
+		}
+		return $set;
+	}
+
 	function updateMetadata($request,$value_id,$value_text)
 	{
 		$c = $this->getCollection();
@@ -590,6 +633,38 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $title;
 	}
 
+	function getDescription()
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT v.value_text 
+			FROM {$prefix}attribute a, {$prefix}value v
+			WHERE a.id = v.attribute_id
+			AND a.ascii_id = 'description'
+			AND v.item_id = ? 
+			";
+		$description = Dase_DBO::query($sql,array($this->id))->fetchColumn();
+		if (!$description) {
+			$description = $this->getTitle();
+		}
+		return $description;
+	}
+
+	function getRights()
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT v.value_text 
+			FROM {$prefix}attribute a, {$prefix}value v
+			WHERE a.id = v.attribute_id
+			AND a.ascii_id = 'rights'
+			AND v.item_id = ? 
+			";
+		$text = Dase_DBO::query($sql,array($this->id))->fetchColumn();
+		if (!$text) { $text = 'daseproject.org'; }
+		return $text;
+	}
+
 	public function getParentItems()
 	{
 		$parent_items = array();
@@ -623,39 +698,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $types;
 	}
 
-	function getDescription()
-	{
-		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			SELECT v.value_text 
-			FROM {$prefix}attribute a, {$prefix}value v
-			WHERE a.id = v.attribute_id
-			AND a.ascii_id = 'description'
-			AND v.item_id = ? 
-			";
-		$description = Dase_DBO::query($sql,array($this->id))->fetchColumn();
-		if (!$description) {
-			$description = $this->getTitle();
-		}
-		return $description;
-	}
-
-	function getRights()
-	{
-		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			SELECT v.value_text 
-			FROM {$prefix}attribute a, {$prefix}value v
-			WHERE a.id = v.attribute_id
-			AND a.ascii_id = 'rights'
-			AND v.item_id = ? 
-			";
-		$text = Dase_DBO::query($sql,array($this->id))->fetchColumn();
-		if (!$text) { $text = 'daseproject.org'; }
-		return $text;
-	}
-
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null)
 	{
 		if (!$this->id) { return false; }
 
@@ -666,14 +709,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* resources */
 
-		$c = $this->getCollection();
+		if ($c) {
+			$this->collection = $c;
+		} else {
+			//lookup
+			$c = $this->getCollection();
+		}	
+
 		$type = $this->getItemType();
 
 		/* standard atom stuff */
 
-		$entry->setId($this->getBaseUrl());
-		$entry->setTitle($this->getTitle());
-		$entry->setRights($this->getRights());
+		$entry->setId($this->getBaseUrl($c->ascii_id));
+
 		$entry->addAuthor($this->created_by_eid);
 		//todo: I think this can be simplified when DASe 1.0 is retired
 		if (is_numeric($this->updated)) {
@@ -696,22 +744,38 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//link to item metadata json, used for editing metadata
 		$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
 
-
 		/* edit, dase/edit (json), service, and attributes (json) links
 		 * for item.  If item has a type, that is the parent (atompub) collection
 		 * otherwise, the collection is the parent (atompub) collection
 		 */
 
 		if ('default' == $type->ascii_id) {
-			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','edit','application/atom+xml');
-			$entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.json','http://daseproject.org/relation/edit','application/json');
-			$entry->addLink($c->getBaseUrl().'/service','service','application/atomsvc+xml','',$c->collection_name.' Item Type Service Doc' );
-			$entry->addLink(APP_ROOT.'/collection/'.$c->ascii_id.'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$c->collection_name.' Attributes' );
+			$entry->addLink(
+				APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom',
+				'edit','application/atom+xml');
+			$entry->addLink(
+				APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.json',
+				'http://daseproject.org/relation/edit','application/json');
+			$entry->addLink(
+				APP_ROOT.'/collection/'.$c->ascii_id.'/service',
+				'service','application/atomsvc+xml','',$c->collection_name.' Item Type Service Doc' );
+			$entry->addLink(
+				APP_ROOT.'/collection/'.$c->ascii_id.'/attributes.json',
+				'http://daseproject.org/relation/attributes',
+				'application/json','',$c->collection_name.' Attributes' );
 		} else {
-			$entry->addLink($type->getBaseUrl().'/item/'.$this->serial_number.'.atom','edit','application/atom+xml');
-			$entry->addLink($type->getBaseUrl().'/item/'.$this->serial_number.'.json','http://daseproject.org/relation/edit','application/json');
-			$entry->addLink($type->getBaseUrl().'/service','service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );
-			$entry->addLink($type->getBaseUrl().'/attributes.json','http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom',
+				'edit','application/atom+xml');
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
+				'http://daseproject.org/relation/edit','application/json');
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/service',
+				'service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/attributes.json',
+				'http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
 		}
 
 		/* threading extension */
@@ -719,7 +783,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$replies = $entry->addLink(APP_ROOT.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments','replies' );
 		$thr_count = $this->getCommentsCount();
 		if ($thr_count) {
+			//lookup
 			$replies->setAttributeNS($thr,'thr:count',$thr_count);
+			//lookup
 			$replies->setAttributeNS($thr,'thr:updated',$this->getCommentsUpdated());
 		}
 
@@ -737,27 +803,48 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory('public','http://daseproject.org/category/status');
 		}
 
-		/* this simply creates a link to any children out there */
-		foreach ($type->getChildRelations() as $rel) {
-			$link = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.atom',
-				'http://daseproject.org/relation/childfeed','application/atom+xml','',$rel->title);
-			$link->setAttributeNS(Dase_Atom::$ns['thr'],
-				'thr:count',(string) $rel->getChildCount($this->serial_number));
-			$jsonlink = $entry->addLink($rel->getBaseUrl()."/".$this->serial_number.'.json',
-				'http://daseproject.org/relation/childfeed','application/json','',$rel->title);
-			$jsonlink->setAttributeNS(Dase_Atom::$ns['thr'],
-				'thr:count',(string) $rel->getChildCount($this->serial_number));
+		/* categories for metadata */
+
+		foreach ($this->getRawMetadata() as $row) {
+			if (0 == $row['collection_id']) {
+				$meta = $entry->addCategory(
+					$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
+					$row['attribute_name'],$row['value_text']);
+			} else {
+				if ($row['is_public']) {
+					$meta = $entry->addCategory(
+						$row['ascii_id'],'http://daseproject.org/category/metadata',
+						$row['attribute_name'],$row['value_text']);
+				} else {
+					$meta = $entry->addCategory(
+						$row['ascii_id'],'http://daseproject.org/category/private_metadata',
+						$row['attribute_name'],$row['value_text']);
+				}
+				if ('title' == $row['ascii_id']) {
+					$entry->setTitle($row['value_text']);
+				}
+				if ('rights' == $row['ascii_id']) {
+					$entry->setRights($row['value_text']);
+				}
+			}
+		}
+
+		//simply creates link that points to childern
+		foreach ($this->getChildrenSets() as $set) {
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+				'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
+				->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
+			$entry->addLink(
+				APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+				'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
+				->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 		}
 
 		//adds a category for AND a link to any parent item(s)
 		foreach ($this->getParentItems() as $url => $set) {
-			//$pcat = $entry->addCategory($url,'http://daseproject.org/category/parent',$set['label']);
-			//not clean, but only way I could, from client, do 
-			//"replace existing link of type x with another link of type x"
-			//$pcat->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
-			$plink = $entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label']);
-			$plink->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
-			//$entry->addInReplyTo($url,'application/atom+xml',$url,$set['type_url']);
+			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
+				->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 		}
 
 		/* creates a link to the parent types items (in json)
@@ -765,7 +852,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		 * suitable for creating a pull-down menu
 		 */
 		foreach ($this->getParentTypes() as $pt) {
-			$entry->addLink($pt->getBaseUrl().'.json',
+			$entry->addLink($pt->getBaseUrl($c->ascii_id).'.json',
 				'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
 		}
 
@@ -781,35 +868,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} 
 
 		/* put thumbnail in summary */
-
 		$thumb_url = $this->getMediaUrl('thumbnail');
 		if ($thumb_url) {
 			$entry->setThumbnail($thumb_url);	
-		}
-
-		/* categories for metadata */
-
-		foreach ($this->getMetadata() as $row) {
-
-			//todo: limit metadata on list display
-			if ($row['is_on_list_display']) {
-			} else {
-			}
-
-			if ($row['is_public']) {
-				$meta = $entry->addCategory(
-					$row['ascii_id'],'http://daseproject.org/category/metadata',
-					$row['attribute_name'],$row['value_text']);
-			} else {
-				$meta = $entry->addCategory(
-					$row['ascii_id'],'http://daseproject.org/category/private_metadata',
-					$row['attribute_name'],$row['value_text']);
-			}
-		}
-		foreach ($this->getAdminMetadata() as $row) {
-			$meta = $entry->addCategory(
-				$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
-				$row['attribute_name'],$row['value_text']);
 		}
 
 		/* enclosure */

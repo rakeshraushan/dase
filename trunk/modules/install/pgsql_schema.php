@@ -11,6 +11,15 @@ CREATE TABLE {$table_prefix}admin_search_table (
     updated character varying(50)
 );
 
+CREATE TABLE {$table_prefix}atom_cache (
+    id serial NOT NULL,
+    item_id integer,
+    item_type_ascii_id character varying(200),
+    relative_url character varying(200),
+    xml text,
+    updated character varying(50)
+);
+
 CREATE TABLE {$table_prefix}attribute (
     id serial NOT NULL,
     ascii_id character varying(200),
@@ -286,6 +295,12 @@ CREATE TABLE {$table_prefix}value_revision_history (
 );
 
 
+CREATE SEQUENCE {$table_prefix}atom_cache_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
 CREATE SEQUENCE {$table_prefix}attribute_category_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -467,6 +482,10 @@ CREATE SEQUENCE {$table_prefix}value_revision_history_seq
 EOF;
 
 
+$query .= "
+ALTER TABLE {$table_prefix}atom_cache 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}atom_cache_seq'::text);
+";
 $query .= "
 ALTER TABLE {$table_prefix}attribute_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_category_seq'::text);

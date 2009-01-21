@@ -10,6 +10,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'login' => 'login',
 		'logout' => 'logout',
 		'person/{eid}' => 'person',
+		'persons' => 'persons',
+		'departments' => 'departments',
 	);
 
 	public function setup($r)
@@ -26,11 +28,26 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		//$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/items.json');
-		//$tpl->assign('depts', Dase_Json::toPhp($depts_json));
-		$tpl->assign('depts',Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
+		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
 		$r->renderResponse($tpl->fetch('person.tpl'));
+	}
+
+	public function getPersons($r) 
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
+		$tpl->assign('persons', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/person/items.atom"));
+		$r->renderResponse($tpl->fetch('persons.tpl'));
+	}
+
+	public function getDepartments($r) 
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
+		$tpl->assign('depts', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
+		$r->renderResponse($tpl->fetch('departments.tpl'));
 	}
 
 	public function postToPerson($r)
