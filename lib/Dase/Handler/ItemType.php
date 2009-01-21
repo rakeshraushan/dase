@@ -9,6 +9,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}' => 'item',
 		//usually retrieved as app:categories
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
+		'{collection_ascii_id}/{item_type_ascii_id}/{att_ascii_id}/values' => 'values_list',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
@@ -23,6 +24,35 @@ class Dase_Handler_ItemType extends Dase_Handler
 		if (!$this->type) {
 			$r->renderError(404);
 		}
+	}
+
+	public function getValuesListJson($r)
+	{
+		$it_ascii = $r->get('item_type_ascii_id');
+		$att_ascii = $r->get('att_ascii_id');
+		$coll = $r->get('collection_ascii_id');
+		$prefix = Dase_Config::get('table_prefix');
+		$sql = "
+			SELECT v.value_text,i.serial_number
+			FROM {$prefix}value v,{$prefix}collection c,{$prefix}item i, {$prefix}attribute a, {$prefix}item_type it 
+			WHERE it.ascii_id = ?
+			AND c.ascii_id = ?
+			AND a.ascii_id = ?
+			AND v.attribute_id = a.id
+			AND it.collection_id = c.id
+			AND a.collection_id = c.id
+			AND v.item_id = i.id
+			AND i.collection_id = c.id
+			AND i.item_type_id = it.id
+			";
+		$data = array();
+		foreach (Dase_DBO::query($sql,array($it_ascii,$coll,$att_ascii)) as $row) {
+			$item_url = APP_ROOT.'/item/'.$coll.'/'.$row['serial_number'];
+			$data[$item_url] = $row['value_text'];
+		}
+		asort($data);
+		$r->renderResponse(Dase_Json::get($data));
+
 	}
 
 	public function getIndex($r) {
@@ -110,13 +140,15 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsAtom($r)
 	{
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
 		$feed->setId($t->getBaseUrl());
 		$feed->setTitle($t->name.' Items');
-		foreach ($t->getItems(500) as $item) {
-			//$item = clone $item;
-			$item->injectAtomEntryData($feed->addEntry('item'));
+		$items = new Dase_DBO_Item;
+		$items->item_type_id = $t->id;
+		foreach ($items->find() as $item) {
+			$item->injectAtomEntryData($feed->addEntry('item'),$c);
 		}
 		$r->renderResponse($feed->asXml());
 	}

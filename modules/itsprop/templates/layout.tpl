@@ -61,10 +61,10 @@
 					</li>
 					<!-- user proposals here -->
 					<li>
-					<a href="admin/{$user->eid}/users" class="main">Manage Users</a>
+					<a href="persons" class="main">Manage Users</a>
 					</li>
 					<li>
-					<a href="admin/{$user->eid}/departments" class="main">Manage Departments</a>
+					<a href="departments" class="main">Manage Departments</a>
 					</li>
 					<li>
 					<a href="admin/{$user->eid}/proposals" class="main">Proposals List</a>

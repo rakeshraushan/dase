@@ -1,5 +1,5 @@
 Dase.pageInit = function() {
-	Dase.initDept();
+	//Dase.initDept();
 }
 
 Dase.sortByTitle = function(a,b) {
@@ -17,7 +17,7 @@ Dase.initDept = function() {
 		data.depts = json.sort(Dase.sortByTitle);
 		var templateObj = TrimPath.parseDOMTemplate("select_jst");
 		//display the form
-		Dase.$('select_dept').innerHTML = templateObj.process(data);
+		//Dase.$('select_dept').innerHTML = templateObj.process(data);
 		//Dase.initPersonForm();
 	}
 	,null,null,'pkeane','itsprop8');
