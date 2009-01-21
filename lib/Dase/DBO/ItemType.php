@@ -33,13 +33,13 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $type;
 	}
 
-	public function getBaseUrl($collection_ascii_id='')
+	public function getRelativeUrl($collection_ascii_id='')
 	{
 		if (!$collection_ascii_id) {
 			$collection = $this->getCollection();
 			$collection_ascii_id = $collection->ascii_id;
 		}
-		return APP_ROOT.'/item_type/'.$collection_ascii_id.'/'.$this->ascii_id;
+		return 'item_type/'.$collection_ascii_id.'/'.$this->ascii_id;
 	}
 
 	public function asAtomEntry()

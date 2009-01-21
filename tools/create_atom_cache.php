@@ -16,7 +16,7 @@ foreach ($c->getItems() as $item) {
 		$atom->insert();
 	}
 	$entry = new Dase_Atom_Entry_Item;
-	$item->injectAtomEntryData($entry,$c);
+	$item->injectAtomEntryData($entry,$c,$app_root);
 	$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 	$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 	$atom->updated = date(DATE_ATOM);
