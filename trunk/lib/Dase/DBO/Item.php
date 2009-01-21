@@ -42,7 +42,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			$entry = new Dase_Atom_Entry_Item;
 		}
-		$this->injectAtomEntryData($entry,$c);
+		$entry = $this->injectAtomEntryData($entry,$c);
 
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $this->id;
