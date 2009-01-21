@@ -358,11 +358,15 @@ class Dase_Atom
 		$updated = $this->addElement('updated',$text);
 	}
 
-	function asXml() 
+	function asXml($node=null) 
 	{
 		//format output
 		$this->dom->formatOutput = true;
-		return $this->dom->saveXML();
+		if ($node) {
+			return $this->dom->saveXML($node);
+		} else {
+			return $this->dom->saveXML();
+		}
 	}
 
 	function getAsciiId()

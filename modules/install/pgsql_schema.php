@@ -11,15 +11,6 @@ CREATE TABLE {$table_prefix}admin_search_table (
     updated character varying(50)
 );
 
-CREATE TABLE {$table_prefix}atom_cache (
-    id serial NOT NULL,
-    item_id integer,
-    item_type_ascii_id character varying(200),
-    relative_url character varying(200),
-    xml text,
-    updated character varying(50)
-);
-
 CREATE TABLE {$table_prefix}attribute (
     id serial NOT NULL,
     ascii_id character varying(200),
@@ -163,6 +154,15 @@ CREATE TABLE {$table_prefix}item_category (
     category_id integer
 );
 
+CREATE TABLE {$table_prefix}item_as_atom (
+    id serial NOT NULL,
+    item_id integer,
+    item_type_ascii_id character varying(200),
+    relative_url character varying(200),
+    xml text,
+    updated character varying(50)
+);
+
 CREATE TABLE {$table_prefix}item_relation (
     id serial NOT NULL,
     parent_serial_number character varying(200),
@@ -294,13 +294,6 @@ CREATE TABLE {$table_prefix}value_revision_history (
     "timestamp" character varying(50)
 );
 
-
-CREATE SEQUENCE {$table_prefix}atom_cache_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}attribute_category_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -405,6 +398,12 @@ CREATE SEQUENCE {$table_prefix}item_seq
     NO MINVALUE
     CACHE 1;
 
+CREATE SEQUENCE {$table_prefix}item_as_atom_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
 CREATE SEQUENCE {$table_prefix}item_relation_seq
     START WITH 1
     INCREMENT BY 1
@@ -483,10 +482,6 @@ EOF;
 
 
 $query .= "
-ALTER TABLE {$table_prefix}atom_cache 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}atom_cache_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}attribute_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_category_seq'::text);
 ";
@@ -553,6 +548,10 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}defined_value_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}item 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}item_as_atom 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}item_as_atom_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}item_relation 

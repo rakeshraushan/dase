@@ -148,7 +148,9 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $t->id;
 		foreach ($items->find() as $item) {
-			$item->injectAtomEntryData($feed->addEntry('item'),$c);
+			if (!$feed->addEntryFromCache($item)) {
+				$item->injectAtomEntryData($feed->addEntry('item'),$c);
+			}
 		}
 		$r->renderResponse($feed->asXml());
 	}

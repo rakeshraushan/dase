@@ -13,16 +13,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `{$table_prefix}atom_cache` (
-`id` int(11) NOT NULL auto_increment,
-`item_id` int(11) default NULL,
-`item_type_ascii_id` varchar(200) default NULL,
-`relative_url` varchar(200) default NULL,
-`xml` text default NULL,
-`updated` varchar(50) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}attribute` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` tinyint(1) default NULL,
@@ -181,6 +171,16 @@ CREATE TABLE `{$table_prefix}item` (
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `{$table_prefix}item_as_atom` (
+`id` int(11) NOT NULL auto_increment,
+`item_id` int(11) default NULL,
+`item_type_ascii_id` varchar(200) default NULL,
+`relative_url` varchar(200) default NULL,
+`xml` text default NULL,
+`updated` varchar(50) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

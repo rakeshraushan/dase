@@ -213,6 +213,19 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $entry;
 	}
 
+	function addEntryFromCache(Dase_DBO_Item $item)
+	{
+		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
+		if ($atom) {
+			$entry = new Dase_Atom_Entry($this->dom);
+			$entry->loadCachedXml($atom->xml);
+			$this->_entries[] = $entry;
+			return $entry;
+		} else {
+			return false;
+		}
+	}
+
 	function setGenerator($text,$uri='',$version='')
 	{
 		if ($this->generator_is_set) {
