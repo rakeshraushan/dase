@@ -221,6 +221,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$dom->loadXml($atom->xml);
 			$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 			$root = $e->item(0);
+			$root = $this->dom->importNode($root,true);
 			$entry = new Dase_Atom_Entry_Item($this->dom,$root);
 			$this->_entries[] = $entry;
 			return $entry;
