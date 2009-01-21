@@ -222,7 +222,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
-			return $item->saveAtom();
+			return $item->saveAtom($this->dom);
 		}
 	}
 
