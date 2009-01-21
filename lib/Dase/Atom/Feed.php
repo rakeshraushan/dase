@@ -217,12 +217,17 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
 		if ($atom) {
-			$entry = Dase_Atom_Entry_Item::load($atom->xml);
-			$entry = $this->dom->importNode($entry,true);
+			$dom = new DOMDocument('1.0','utf-8');
+			$dom->loadXml($atom->xml);
+			$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
+			$root = $e->item(0);
+			$entry = new Dase_Atom_Entry_Item($this->dom,$root);
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
-			return $item->saveAtom($this->dom);
+			$entry = $item->saveAtom($this->dom);
+			$this->_entries[] = $entry;
+			return $entry;
 		}
 	}
 
