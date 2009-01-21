@@ -104,6 +104,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		$f = $this->dom->createDocumentFragment();
 		$f->appendXML($xml);
 		$this->root = $f;
+		return $this;
  	}
 
 	public static function load($xml,$force_type='') 

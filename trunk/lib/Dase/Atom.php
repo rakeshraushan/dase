@@ -288,11 +288,12 @@ class Dase_Atom
 	function setRights($text) 
 	{
 		if ($this->rights_is_set) {
-			throw new Dase_Atom_Exception('rights is already set');
+			//throw new Dase_Atom_Exception('rights is already set');
+			return false;
 		} else {
 			$this->rights_is_set = true;
+			return $this->addElement('rights',$text);
 		}
-		$rights = $this->addElement('rights',$text);
 	}
 
 	function getRights() 
@@ -303,11 +304,12 @@ class Dase_Atom
 	function setTitle($text) 
 	{
 		if ($this->title_is_set) {
-			throw new Dase_Atom_Exception('title is already set');
+			//throw new Dase_Atom_Exception('title is already set');
+			return false;
 		} else {
 			$this->title_is_set = true;
+			return $this->addElement('title',$text);
 		}
-		$title = $this->addElement('title',$text);
 	}
 
 	function getTitle() 

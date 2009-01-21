@@ -415,6 +415,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		} 
 		$item->expireCaches();
 		$item->buildSearchIndex();
+		$item->saveAtom();
 		return $item;
 	}
 
@@ -498,6 +499,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		$item->buildSearchIndex();
+		$item->saveAtom();
 		return $item;
 	}
 

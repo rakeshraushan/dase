@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_ItemAsAtom extends Dase_DBO
 {
 	function __construct($assoc = false) 
 	{
-		parent::__construct( 'item_as_atom',  array('item_id','item_type_ascii_id','relative_url','updated','xml'));
+		parent::__construct( 'item_as_atom',  array('app_root','item_id','item_type_ascii_id','relative_url','updated','xml'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

@@ -159,6 +159,7 @@ CREATE TABLE {$table_prefix}item_as_atom (
     item_id integer,
     item_type_ascii_id character varying(200),
     relative_url character varying(200),
+    app_root character varying(200),
     xml text,
     updated character varying(50)
 );

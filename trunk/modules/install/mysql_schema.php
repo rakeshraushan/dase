@@ -179,6 +179,7 @@ CREATE TABLE `{$table_prefix}item_as_atom` (
 `item_id` int(11) default NULL,
 `item_type_ascii_id` varchar(200) default NULL,
 `relative_url` varchar(200) default NULL,
+`app_root` varchar(200) default NULL,
 `xml` text default NULL,
 `updated` varchar(50) default NULL,
 PRIMARY KEY (`id`)

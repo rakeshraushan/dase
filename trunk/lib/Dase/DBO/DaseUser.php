@@ -395,7 +395,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		//that one uses arrays, this, objects (so we get the 'inject...' method)
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->eid.' sets');
-		$feed->setId(APP_ROOT.'user/'.$this->eid.'/sets');
+		$feed->setId(APP_ROOT.'/user/'.$this->eid.'/sets');
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
