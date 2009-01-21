@@ -171,7 +171,7 @@ class Dase_Search_Result
 			//$entry = $feed->addEntry();
 			//$item->injectAtomEntryData($entry);
 			//will check cache
-			$entry->addItemEntry($item);
+			$entry = $feed->addItemEntry($item);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
 			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
