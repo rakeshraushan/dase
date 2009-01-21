@@ -8,6 +8,7 @@ class Dase_DBO_ItemAsAtom extends Dase_DBO_Autogen_ItemAsAtom
 	{   
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $id;
+		$atom->app_root = APP_ROOT;
 		return $atom->findOne();
 	}
 }

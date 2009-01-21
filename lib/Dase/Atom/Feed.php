@@ -213,7 +213,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $entry;
 	}
 
-	function addEntryFromCache(Dase_DBO_Item $item)
+	function addItemEntry(Dase_DBO_Item $item,$c=null)
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
 		if ($atom) {
@@ -222,7 +222,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
-			return false;
+			return $item->saveAtom();
 		}
 	}
 

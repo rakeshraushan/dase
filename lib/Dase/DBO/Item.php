@@ -34,6 +34,26 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
+	public function saveAtom()
+	{
+		$c = $this->getCollection();
+		$entry = new Dase_Atom_Entry_Item;
+		$this->injectAtomEntryData($entry,$c);
+
+		$atom = new Dase_DBO_ItemAsAtom;
+		$atom->item_id = $this->id;
+		if (!$atom->findOne()) {
+			$atom->insert();
+		}
+		$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
+		$atom->relative_url = 'item/'.$c->ascii_id.'/'.$this->serial_number;
+		$atom->updated = date(DATE_ATOM);
+		$atom->app_root = APP_ROOT;
+		$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+		$atom->update();
+		return $entry;
+	}
+
 	public static function getByUrl($url)
 	{
 		$path = str_replace(APP_ROOT,'',$url);
@@ -820,7 +840,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$row['ascii_id'],'http://daseproject.org/category/private_metadata',
 						$row['attribute_name'],$row['value_text']);
 				}
-				if ('title' == $row['ascii_id']) {
+				if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
 					$entry->setTitle($row['value_text']);
 				}
 				if ('rights' == $row['ascii_id']) {
@@ -829,31 +849,38 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 
-		//simply creates link that points to childern
-		foreach ($this->getChildrenSets() as $set) {
-			$entry->addLink(
-				APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
-				'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
-				->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
-			$entry->addLink(
-				APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
-				'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
-				->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
-		}
+		/***************
+		 * hierarchy stuff
+		 * ************************/
 
-		//adds a category for AND a link to any parent item(s)
-		foreach ($this->getParentItems() as $url => $set) {
-			$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
-				->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
-		}
+		if ('default' != $type->name) {
 
-		/* creates a link to the parent types items (in json)
-		 * so you indicate linking is available AND
-		 * suitable for creating a pull-down menu
-		 */
-		foreach ($this->getParentTypes() as $pt) {
-			$entry->addLink($pt->getBaseUrl($c->ascii_id).'.json',
-				'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
+			//simply creates link that points to childern
+			foreach ($this->getChildrenSets() as $set) {
+				$entry->addLink(
+					APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
+					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
+				$entry->addLink(
+					APP_ROOT.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
+					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
+			}
+
+			//adds a category for AND a link to any parent item(s)
+			foreach ($this->getParentItems() as $url => $set) {
+				$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
+					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
+			}
+
+			/* creates a link to the parent types items (in json)
+			 * so you indicate linking is available AND
+			 * suitable for creating a pull-down menu
+			 */
+			foreach ($this->getParentTypes() as $pt) {
+				$entry->addLink($pt->getBaseUrl($c->ascii_id).'.json',
+					'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
+			}
 		}
 
 		/* content */
@@ -932,7 +959,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setFeedType('item');
 		//todo: this needs to be passed in?
 		$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
-		$this->injectAtomEntryData($feed->addEntry());
+		$feed->addItemEntry($this); //checks cache 
+		//$this->injectAtomEntryData($feed->addEntry());
 		//add comments
 		foreach ($this->getComments() as $comment) {
 			$entry = $feed->addEntry('comment');
@@ -943,8 +971,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function asAtomEntry()
 	{
-		$entry = new Dase_Atom_Entry;
-		$this->injectAtomEntryData($entry);
+		$atom = Dase_DBO_ItemAsAtom::getByItemId($this->id);
+		if ($atom) {
+			$entry = Dase_Atom_Entry_Item::load($atom->xml);
+		} else {
+			$entry = $this->saveAtom();
+		}
 		return $entry->asXml();
 	}
 

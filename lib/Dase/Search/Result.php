@@ -168,8 +168,10 @@ class Dase_Search_Result
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
-			$entry = $feed->addEntry();
-			$item->injectAtomEntryData($entry);
+			//$entry = $feed->addEntry();
+			//$item->injectAtomEntryData($entry);
+			//will check cache
+			$entry->addItemEntry($item);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
 			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
@@ -212,7 +214,9 @@ class Dase_Search_Result
 			$feed = new Dase_Atom_Feed();
 			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed);
-			$item->injectAtomEntryData($feed->addEntry());
+			//$item->injectAtomEntryData($feed->addEntry());
+			//uses cache
+			$feed->addItemEntry($item);
 			$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
 			$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");
