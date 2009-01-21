@@ -226,8 +226,19 @@ class Dase_Atom_Feed extends Dase_Atom
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
-			$entry = $item->saveAtom($this->dom);
-			$this->_entries[] = $entry;
+			$entry = $item->injectAtomEntryData($this->addEntry('item'));
+			$atom = new Dase_DBO_ItemAsAtom;
+			$atom->item_id = $item->id;
+			if (!$atom->findOne()) {
+				$atom->insert();
+			}
+			$c = $item->getCollection();
+			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
+			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
+			$atom->updated = date(DATE_ATOM);
+			$atom->app_root = APP_ROOT;
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->update();
 			return $entry;
 		}
 	}
