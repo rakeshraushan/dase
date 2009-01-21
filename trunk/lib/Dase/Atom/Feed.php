@@ -217,8 +217,8 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
 		if ($atom) {
-			$entry = new Dase_Atom_Entry_Item($this->dom);
-			$entry->loadCachedXml($atom->xml);
+			$entry = Dase_Atom_Entry_Item::load($atom->xml);
+			$entry = $this->dom->importNode($entry,true);
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
