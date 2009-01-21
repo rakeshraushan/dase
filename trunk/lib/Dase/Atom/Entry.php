@@ -99,14 +99,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	public function loadCachedXml($xml)
-	{
-		$f = $this->dom->createDocumentFragment();
-		$f->appendXML($xml);
-		$this->root = $f;
-		return $this;
- 	}
-
 	public static function load($xml,$force_type='') 
 	{
 		//reader object

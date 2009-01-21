@@ -34,16 +34,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
-	public function saveAtom($dom=null)
+	public function saveAtom()
 	{
 		$c = $this->getCollection();
-		if ($dom) {
-			$entry = new Dase_Atom_Entry_Item($dom);
-		} else {
-			$entry = new Dase_Atom_Entry_Item;
-		}
+		$entry = new Dase_Atom_Entry_Item;
 		$entry = $this->injectAtomEntryData($entry,$c);
-
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $this->id;
 		if (!$atom->findOne()) {
@@ -55,7 +50,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$atom->app_root = APP_ROOT;
 		$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 		$atom->update();
-		return $entry;
 	}
 
 	public static function getByUrl($url)
