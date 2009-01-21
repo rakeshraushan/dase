@@ -47,6 +47,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
 		$tpl->assign('depts', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
+		$tpl->assign('timer', Dase_Timer::getElapsed());
 		$r->renderResponse($tpl->fetch('departments.tpl'));
 	}
 

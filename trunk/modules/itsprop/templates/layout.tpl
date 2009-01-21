@@ -86,6 +86,7 @@
 				| <a href="mailto:www@mail.laits.utexas.edu">www@mail.laits.utexas.edu</a> 
 				| <a href="http://daseproject.org"><img height="11" id="daseLogo" width="71" alt="DASe powered icon" title="DASe powered!" src="images/dasepowered.png" /></a>
 				| <span id="date"></span>
+				| <span>{$timer} seconds</span>
 			</div>
 			<div id="debugData" class="pagedata"></div>
 			{include file='atom_template.tpl'}
