@@ -200,21 +200,6 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	/**
-	 *  Helper function for replacing $node (DOMNode)
-	 *  with an XML code (string)
-	 * 
-	 *  @var DOMNode $node
-	 *  @var string $xml
-	 *
-	 *  from http://us3.php.net/manual/en/domdocumentfragment.appendxml.php
-	 */
-	public function replaceNodeXML(&$node,$xml) {
-		$f = $this->dom->createDocumentFragment();
-		$f->appendXML($xml);
-		$node->parentNode->replaceChild($f,$node);
-	}
-
 	function addEntry($type = '')
 	{
 		if ($type && isset(Dase_Atom_Entry::$types_map[$type])) {
@@ -233,8 +218,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
 		if ($atom) {
 			$entry = new Dase_Atom_Entry_Item($this->dom);
-			$entry = $this->replaceNodeXML($entry,$atom->xml);
-			//$entry->loadCachedXml($atom->xml);
+			$entry->loadCachedXml($atom->xml);
 			$this->_entries[] = $entry;
 			return $entry;
 		} else {
