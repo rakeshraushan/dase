@@ -33,13 +33,12 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $type;
 	}
 
-	public function getRelativeUrl($collection_ascii_id='')
+	public function getRelativeUrl($coll='')
 	{
-		if (!$collection_ascii_id) {
-			$collection = $this->getCollection();
-			$collection_ascii_id = $collection->ascii_id;
+		if (!$coll) {
+			$coll = $this->getCollection()->ascii_id;
 		}
-		return 'item_type/'.$collection_ascii_id.'/'.$this->ascii_id;
+		return 'item_type/'.$coll.'/'.$this->ascii_id;
 	}
 
 	public function asAtomEntry()
@@ -52,7 +51,8 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
 	{
-		$base_url = $this->getBaseUrl($collection->ascii_id);
+		$app_root = Dase_Config::get('app_root');
+		$base_url = $app_root.'/'.$this->getRelativeUrl($collection->ascii_id);
 		$entry->setTitle($this->name);
 		$entry->setId($base_url);
 		$entry->setSummary($this->description);
@@ -122,8 +122,9 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	function getItemsAsFeed() 
 	{
+		$app_root = Dase_Config::get('app_root');
 		$c = $this->getCollection();
-		$base_url = $this->getBaseUrl();
+		$base_url = $app_root.'/'.$this->getRelativeUrl($c->ascii_id);
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->name);
 		$feed->addAuthor();
@@ -166,7 +167,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$cats = new Dase_Atom_Categories;
 		$cats->setScheme('http://daseproject.org/category/metadata');
 		foreach($this->getAttributes() as $att) {
-			$cats->addCategory($att->getBaseUrl(),'',$att->attribute_name);
+			$cats->addCategory($att->ascii_id,'',$att->attribute_name);
 		}
 		return $cats->asXml();
 	}
@@ -177,7 +178,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		foreach ($this->getAttributes() as $att) {
 			$a['ascii_id'] = $att->ascii_id;
 			$a['attribute_name'] = $att->attribute_name;
-			$a['href'] = $att->getBaseUrl();
+			$a['href'] = $att->getRelativeUrl();
 			$atts[] = $a;
 		}
 		return Dase_Json::get($atts);
@@ -243,7 +244,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
 		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($att->getBaseUrl(),'',$att->attribute_name);
+			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
 		}
 		return $svc->asXml();
 	}

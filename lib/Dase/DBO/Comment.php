@@ -26,11 +26,13 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 
 	function getBaseUrl()
 	{
-		return APP_ROOT.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/comments/'.$this->id;
+		$app_root = Dase_Config::get($app_root);
+		return $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/comments/'.$this->id;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry_Comment $entry)
 	{
+		$app_root = Dase_Config::get($app_root);
 		if (!$this->id) { return false; }
 		$item = $this->getItem();
 		$entry->setTitle($this->getTitle());
@@ -44,7 +46,8 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 		if (!$this->type) { $this->type = 'text/html'; }
 		$entry->setContent($this->text,$this->type);
 		//add in-reply-to link
-		$entry->addInReplyTo($item->getBaseUrl(),$this->type,$item->getBaseUrl());
+		$item_url = $app_root.'/'.$item->getRelativeUrl($this->p_collection_ascii_id);
+		$entry->addInReplyTo($item_url,$this->type,$item_url);
 		return $entry;
 	}
 

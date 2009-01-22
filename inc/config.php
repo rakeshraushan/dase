@@ -11,6 +11,8 @@ $conf['table_prefix'] = '';
 
 $conf['main_title'] = "My DASe Archive";
 
+$conf['app_root'] = APP_ROOT;
+
 //eid & admin password
 //$conf['superuser']['<username>'] = '<password>';
 

@@ -247,13 +247,15 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getItemType($r)
 	{
+		$coll = $this->collection->ascii_id;
+		$app_root = Dase_Config::get('app_root');
 		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('type',$type);
 		$tpl->assign('attributes',$this->collection->getAttributes('attribute_name'));
 		$tpl->assign('item_types',$this->collection->getItemTypes());
-		$tpl->assign('edit_url',$type->getBaseUrl().'.atom');
+		$tpl->assign('edit_url',$app_root.'/'.$type->getRelativeUrl($coll).'.atom');
 		$r->set('tab','item_types');
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
 	}

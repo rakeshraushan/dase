@@ -29,13 +29,6 @@ class Dase_Search_Result
 		foreach($item_ids as $item_id) {
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
-			/*
-			$json_item = array();
-			foreach ($item->getMedia() as $m) {
-				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
-			}
-			$json_tag['items'][] = $json_item;
-			 */
 			$json_tag['items'][] = $item->asArray();
 		}
 		return Dase_Json::get($json_tag);	
@@ -44,11 +37,12 @@ class Dase_Search_Result
 	public function getResultSetUris()
 	{
 		//inefficient, but ok for now
+		$app_root = Dase_Config::get('app_root');
 		$uris = array();
 		foreach($this->item_ids as $item_id) {
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
-			$uris[] = $item->getBaseUrl();
+			$uris[] = $app_root.'/'.$item->getRelativeUrl();
 		}
 		return $uris;	
 	}
@@ -99,6 +93,7 @@ class Dase_Search_Result
 
 	public function getResultSetAsAtomFeed($start,$max)
 	{
+		$app_root = Dase_Config::get('app_root');
 		$next = $start + $max;
 		if ($next > $this->count) {
 			unset($next);
@@ -113,7 +108,7 @@ class Dase_Search_Result
 		$feed = new Dase_Atom_Feed();
 		$feed->addAuthor();
 		$feed->setTitle('DASe Search Result');
-		$feed->addLink(APP_ROOT.'/'.$this->url.'&format=atom&start='.$start.'&max='.$max,'self');
+		$feed->addLink($app_root.'/'.$this->url.'&format=atom&start='.$start.'&max='.$max,'self');
 		//$feed->addLink($this->url,'alternate','text/html','',$search_title);
 		$feed->addLink($this->url,'alternate','text/html','','Search Result');
 		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=grid','related','text/html','','grid');
@@ -121,13 +116,13 @@ class Dase_Search_Result
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->setFeedType('search');
 		if (isset($next)) {
-			$feed->addLink(APP_ROOT.'/'.$this->url.'&start='.$next.'&max='.$max,'next');
+			$feed->addLink($app_root.'/'.$this->url.'&start='.$next.'&max='.$max,'next');
 		}
 		if (isset($previous)) {
-			$feed->addLink(APP_ROOT.'/'.$this->url.'&start='.$previous.'&max='.$max,'previous');
+			$feed->addLink($app_root.'/'.$this->url.'&start='.$previous.'&max='.$max,'previous');
 		}
 		Dase_Log::debug('url per search result '.$this->url);
-		$feed->setId(APP_ROOT.'/search/'.md5($this->url));
+		$feed->setId($app_root.'/search/'.md5($this->url));
 		$feed->setOpensearchTotalResults($this->count);
 		$feed->setOpensearchStartIndex($start);
 		$feed->setOpensearchItemsPerPage($max);
@@ -143,9 +138,9 @@ class Dase_Search_Result
 				$tally_elem->addAttribute('class',$coll);
 				$a = $tally_elem->addChild('a',htmlspecialchars($tal['name'] . ': ' . $tal['total']));
 				//adds collection filter (collection_ascii_id trumps 'c')
-				$a->addAttribute('href',APP_ROOT.'/'.$url_no_colls.'&collection_ascii_id='.$coll);
+				$a->addAttribute('href',$app_root.'/'.$url_no_colls.'&collection_ascii_id='.$coll);
 				$feed->addLink(
-					APP_ROOT.'/'.$url_no_colls.'&collection_ascii_id='.$coll,
+					$app_root.'/'.$url_no_colls.'&collection_ascii_id='.$coll,
 					'related',
 					'text/html',
 					'',$tal['name'].': '.$tal['total'].' items'
@@ -154,8 +149,8 @@ class Dase_Search_Result
 		}
 		//here is where we place a collection link *only* if there is one collection
 		if (1 == count($this->tallies)) {
-			$feed->addLink(APP_ROOT.'/collection/'.$coll,'http://daseproject.org/relation/collection','text/html',null,$this->tallies[$coll]['name']);
-			$feed->addLink(APP_ROOT.'/collection/'.$coll.'/attributes.json','http://daseproject.org/relation/collection/attributes','application/json');
+			$feed->addLink($app_root.'/collection/'.$coll,'http://daseproject.org/relation/collection','text/html',null,$this->tallies[$coll]['name']);
+			$feed->addLink($app_root.'/collection/'.$coll.'/attributes.json','http://daseproject.org/relation/collection/attributes','application/json');
 		}
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->url);
@@ -180,6 +175,7 @@ class Dase_Search_Result
 
 	public function getItemAsAtomFeed($start,$max,$num)
 	{
+		$app_root = Dase_Config::get('app_root');
 		if (!$this->count) {
 			$feed = new Dase_Atom_Feed();
 			$feed->addAuthor();
@@ -187,7 +183,7 @@ class Dase_Search_Result
 			$feed->setFeedType('searchitem');
 			$feed->addLink($this->url,'alternate','text/html','','Search Result');
 			$feed->setUpdated(date(DATE_ATOM));
-			$feed->setId(APP_ROOT.'/search/'.md5($this->url));
+			$feed->setId($app_root.'/search/'.md5($this->url));
 			$feed->setOpensearchTotalResults(0);
 			$feed->setOpensearchQuery($this->_getQueryAsString());
 			return $feed->asXml();
@@ -218,14 +214,14 @@ class Dase_Search_Result
 			//uses cache
 			$feed->addItemEntry($item);
 			$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
-			$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$num);
+			$feed->addLink($app_root.'/'.$this->url.'&num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");
-			$feed->addLink(APP_ROOT.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');
+			$feed->addLink($app_root.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');
 			if ($next) {
-				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$next,'next','application/xhtml+xml');
+				$feed->addLink($app_root.'/'.$this->url.'&num='.$next,'next','application/xhtml+xml');
 			}
 			if ($previous) {
-				$feed->addLink(APP_ROOT.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
+				$feed->addLink($app_root.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
 			}
 			$feed->setOpensearchQuery($this->_getQueryAsString());
 			$feed->setOpensearchTotalResults($this->count);
