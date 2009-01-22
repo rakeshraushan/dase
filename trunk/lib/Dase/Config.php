@@ -38,6 +38,7 @@ class Dase_Config {
 	public static function reload()
 	{
 		//allows module request to get module-defined config
+		$conf = array();
 		include(DASE_CONFIG);
 		self::$conf = $conf;
 	}

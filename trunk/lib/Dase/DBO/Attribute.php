@@ -92,18 +92,25 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $this->injectAtomEntryData($entry)->asXml();
 	}
 
-	public function getBaseUrl()
+	public function getRelativeUrl($coll='')
 	{
 		if (false !== strpos($this->ascii_id,'admin_')) {
-			return APP_ROOT.'/attribute/'.$this->ascii_id;
+			return 'attribute/'.$this->ascii_id;
 		}
-		$collection = $this->getCollection();
-		return APP_ROOT.'/attribute/'.$collection->ascii_id.'/'.$this->ascii_id;
+		if (!$coll) {
+			$coll = $this->getCollection()->ascii_id;
+		}
+		return 'attribute/'.$coll.'/'.$this->ascii_id;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null)
 	{
-		$base_url = $this->getBaseUrl();
+		if ($c) {
+			$this->collection = $c;
+		} else {
+			$c = $this->getCollection();
+		}	
+		$base_url = $this->getRelativeUrl($c->ascii_id);
 		$entry->setTitle($this->attribute_name);
 		$entry->setId($base_url);
 		$entry->addLink($base_url);

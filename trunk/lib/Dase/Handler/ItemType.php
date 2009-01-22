@@ -115,10 +115,11 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeJson($r)
 	{
+		$app_root = Dase_Config::get('app_root');
 		$res = array();
 		$items = array();
 		foreach ($this->type->getItems() as $it_obj) {
-			$it['url'] = $it_obj->getBaseUrl($r->collection_ascii_id);
+			$it['url'] = $app_root.'/'.$item->getRelativeUrl($r->get('collection_ascii_id')),
 			$it['title'] = $it_obj->getTitle();
 			$items[] = $it;
 		}
@@ -143,7 +144,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($t->getBaseUrl());
+		$feed->setId(APP_ROOT.'/'.$t->getRelativeUrl($c->ascii_id));
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $t->id;
@@ -155,12 +156,13 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsJson($r)
 	{
+		$app_root = Dase_Config::get('app_root');
 		$t = $this->type;
 		$items = array();
 		foreach ($t->getItems(500) as $item) {
 			$item = clone $item;
 			$item_array  = array(
-				'url' => $item->getBaseUrl(),
+				'url' => $app_root.'/'.$item->getRelativeUrl($r->get('collection_ascii_id')),
 				'title' => $item->getTitle(),
 				'serial_number' => $item->serial_number,
 			);

@@ -63,8 +63,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public function getBaseUrl()
 	{
+		$app_root = Dase_Config::get('app_root');
 		$u = $this->getUser();
-		return APP_ROOT.'/tag/'.$u->eid.'/'.$this->ascii_id;
+		return $app_root.'/tag/'.$u->eid.'/'.$this->ascii_id;
 	}
 
 	/** be careful w/ this -- we do not archive before deleting */

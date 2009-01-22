@@ -43,9 +43,9 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		return $this->parent;
 	}
 
-	public function getBaseUrl() 
+	public function getRelativeUrl() 
 	{
-		return APP_ROOT.'/item_type/'.
+		return 'item_type/'.
 			$this->collection_ascii_id.'/'.
 			$this->child_type_ascii_id.'/children_of/'.
 			$this->parent_type_ascii_id;
@@ -69,13 +69,15 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry)
 	{
-		$base_url = $this->getBaseUrl();
+		$app_root = Dase_Config::get('app_root');
+		$coll = $this->collection_ascii_id;
+		$base_url = $this->getRelativeUrl();
 		$entry->setTitle('Item Type Relation: '.$this->title);
 		$entry->setId($base_url);
 		$entry->setSummary($this->description);
 		$entry->addLink($base_url.'.atom','edit');
-		$entry->addLink($this->getChild()->getBaseUrl(),'http://daseproject.org/relation/child_type');
-		$entry->addLink($this->getParent()->getBaseUrl(),'http://daseproject.org/relation/parent_type');
+		$entry->addLink($app_root.'/'.$this->getChild()->getRelativeUrl($coll),'http://daseproject.org/relation/child_type');
+		$entry->addLink($app_root.'/'.$this->getParent()->getRelativeUrl($coll),'http://daseproject.org/relation/parent_type');
 		$entry->addCategory('item_type_relation','http://daseproject.org/category/entrytype','Item Type Relation');
 		$entry->setUpdated(date(DATE_ATOM));
 		$entry->addAuthor();

@@ -38,11 +38,6 @@ define('LOG_LEVEL',3);
 $protocol = (!isset($_SERVER['HTTPS'])) ? 'http://' : 'https://'; 
 
 define('APP_ROOT',trim($protocol.$_SERVER['HTTP_HOST'].'/'.trim(dirname($_SERVER['SCRIPT_NAME']),'/'),'/'));
-define('APP_HTTP_ROOT',str_replace('https:','http:',APP_ROOT));
-define('APP_HTTPS_ROOT',str_replace('http:','https:',APP_ROOT));
-
-//when dase is not a the server root
-define('APP_BASE',trim(dirname($_SERVER['SCRIPT_NAME']),'/'));
 
 function __autoload($class_name) {
 	$include_path_tokens = explode(':', get_include_path());

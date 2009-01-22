@@ -46,9 +46,11 @@ class Dase_Template {
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
 
 		$this->smarty->register_modifier('shift', 'array_shift');
-		$this->smarty->assign('app_root', APP_ROOT.'/');
+		$app_root = Dase_Config::get('app_root');
+		//todo: confusing! $app_root shouldn't have trailing /
+		$this->smarty->assign('app_root', $app_root.'/');
 		if ($request->module) {
-			$this->smarty->assign('module_root', APP_ROOT.'/modules/'.$request->module.'/');
+			$this->smarty->assign('module_root', $app_root.'/modules/'.$request->module.'/');
 			if (file_exists(DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
 				$this->smarty->assign('module_menu', DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl');
 			}

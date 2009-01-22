@@ -21,7 +21,8 @@ class Dase_Cookie {
 		//NOTE that the cookie name will be unique per dase instance 
 		//(note: HAD been doing it by date, but that's no good when browser & server
 		//dates disagree)
-		$prefix = str_replace('http://','',APP_ROOT);
+		$app_root = Dase_Config::get('app_root');
+		$prefix = str_replace('http://','',$app_root);
 		$prefix = str_replace('.','_',$prefix);
 		return str_replace('/','_',$prefix) . '_';
 	}
