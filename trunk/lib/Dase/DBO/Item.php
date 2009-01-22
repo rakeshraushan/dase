@@ -51,6 +51,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$atom->app_root = $app_root;
 		$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 		$atom->update();
+		return $entry;
 	}
 
 	public static function getByUrl($url)
@@ -721,12 +722,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $types;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null,$app_root='')
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null)
 	{
 		if (!$this->id) { return false; }
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
+
+		$app_root = Dase_Config::get('app_root');
 
 		/* namespaces */
 

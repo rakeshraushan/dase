@@ -94,6 +94,7 @@ class Dase_Template {
 
 	public function fetch($resource_name)
 	{
+		$this->smarty->assign('timer',Dase_Timer::getElapsed());
 		$ret = $this->smarty->fetch($resource_name);
 		while($resource = $this->_derived) {
 			$this->_derived = null;
