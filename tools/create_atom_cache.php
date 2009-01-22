@@ -3,7 +3,7 @@
 include 'config.php';
 
 $coll = 'vrc';
-$app_root = 'http://www.laits.utexas.edu/dasebeta';
+Dase_Config::set('app_root','http://www.laits.utexas.edu/dasebeta');
 
 Dase_Timer::start();
 $c = Dase_DBO_Collection::get($coll);
@@ -16,7 +16,7 @@ foreach ($c->getItems() as $item) {
 		$atom->insert();
 	}
 	$entry = new Dase_Atom_Entry_Item;
-	$item->injectAtomEntryData($entry,$c,$app_root);
+	$item->injectAtomEntryData($entry,$c);
 	$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 	$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 	$atom->updated = date(DATE_ATOM);

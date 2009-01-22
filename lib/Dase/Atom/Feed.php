@@ -218,7 +218,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
 		if (!$atom) {
 			$c = $item->getCollection();
-			$entry = new Dase_Atom_Entry_Item;
+			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$c);
 			$atom = new Dase_DBO_ItemAsAtom;
 			$atom->item_id = $item->id;
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
