@@ -216,31 +216,26 @@ class Dase_Atom_Feed extends Dase_Atom
 	function addItemEntry(Dase_DBO_Item $item,$c=null)
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
-		if ($atom) {
-			$dom = new DOMDocument('1.0','utf-8');
-			$dom->loadXml($atom->xml);
-			$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
-			$root = $e->item(0);
-			$root = $this->dom->importNode($root,true);
-			$entry = new Dase_Atom_Entry_Item($this->dom,$root);
-			$this->_entries[] = $entry;
-			return $entry;
-		} else {
-			$entry = $item->injectAtomEntryData($this->addEntry('item'));
+		if (!$atom) {
+			$c = $item->getCollection();
+			$entry = new Dase_Atom_Entry_Item;
 			$atom = new Dase_DBO_ItemAsAtom;
 			$atom->item_id = $item->id;
-			if (!$atom->findOne()) {
-				$atom->insert();
-			}
-			$c = $item->getCollection();
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
 			$atom->app_root = APP_ROOT;
 			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-			$atom->update();
-			return $entry;
+			$atom->insert();
 		}
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->loadXml($atom->xml);
+		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
+		$root = $e->item(0);
+		$root = $this->dom->importNode($root,true);
+		$entry = new Dase_Atom_Entry_Item($this->dom,$root);
+		$this->_entries[] = $entry;
+		return $entry;
 	}
 
 	function setGenerator($text,$uri='',$version='')
