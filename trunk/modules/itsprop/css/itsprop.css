@@ -704,8 +704,33 @@ form#personForm label,input[type=text] {
 	width: 33%;
 }
 
-.current {
+form#personForm label {
+	background-color: #fff;
+	padding: 0;
+	margin-bottom: 2px;
+	color: #669;
+}
+
+form#proposalForm {
+	width: 60%;
+}
+
+dl.current {
+	margin-top: 2em;
+	width: 50%;
+	background-color: #eee;
+	padding: 10px;
 	color: #666;
 	font-weight: bold;
 	font-size: .9em;
 }
+
+dl.current dt {
+	float: left;
+	color: #009;
+}
+
+dl.current dd {
+	margin-left: 80px;
+}
+

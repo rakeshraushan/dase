@@ -23,4 +23,9 @@ class Dase_DBO_ItemRelation extends Dase_DBO_Autogen_ItemRelation
 		return $parent_type;
 	}
 
+	public function saveParentAtom()
+	{
+		return Dase_DBO_Item::get($this->collection_ascii_id,$this->parent_serial_number)->saveAtom();
+	}
+
 }

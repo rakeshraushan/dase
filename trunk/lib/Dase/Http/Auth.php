@@ -37,6 +37,7 @@ class Dase_Http_Auth
 				$passwords[] = $su[$eid];
 			}
 
+			//todo: is this used anymore?????
 			if ($check_db) {
 				$u = Dase_DBO_DaseUser::get($eid);
 				$pass_md5 = md5($_SERVER['PHP_AUTH_PW']);

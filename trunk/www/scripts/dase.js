@@ -360,7 +360,8 @@ Dase.checkAdminStatus = function(eid) {
 	var current_coll_elem = Dase.$('collectionAsciiId');  
 	if (!current_coll_elem) return;
 	var current_coll = current_coll_elem.innerHTML;  
-	for (var i=0;i<Dase.user.collections.length;i++) {
+	//for (var i=0;i<Dase.user.collections.length;i++) {
+	for (var i in Dase.user.collections) {
 		var c = Dase.user.collections[i];
 		//display link to administer collection if user has privs
 		if (current_coll && (c.ascii_id == current_coll)) {  
@@ -410,7 +411,8 @@ Dase.placeUserCollections = function(eid) {
 	var hasSpecial = 0;
 	var coll_list = Dase.$('collectionList');
 	if (!coll_list) return;
-	for (var i=0;i<Dase.user.collections.length;i++) {
+	//for (var i=0;i<Dase.user.collections.length;i++) {
+	for (var i in Dase.user.collections) {
 		var c = Dase.user.collections[i];
 		if ("1" != c.is_public) {
 			hasSpecial++;

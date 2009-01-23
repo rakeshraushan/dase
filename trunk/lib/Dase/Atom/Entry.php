@@ -95,6 +95,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		if ('200' == $info['http_code']) {
 			return self::load($xml);
 		} else {
+			//throw exception??
 			return $info['http_code'];
 		}
 	}
@@ -175,11 +176,17 @@ class Dase_Atom_Entry extends Dase_Atom
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
 		$result = curl_exec($ch);
 		Dase_Log::debug($result);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
 		if ('201' == $info['http_code']) {
+			$loc = array(); 
+			preg_match('/Location: ([^\n]*)/im', $result, $loc); 
+			if (count($loc) > 1) {
+				return $loc[1];
+			}
 			return 'ok';
 		} else {
 			return $result;

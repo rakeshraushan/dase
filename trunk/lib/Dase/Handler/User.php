@@ -5,6 +5,8 @@ class Dase_Handler_User extends Dase_Handler
 	public $resource_map = array(
 		'{eid}' => 'user',
 		'{eid}/data' => 'data',
+		'{eid}/collections' => 'user_authorizations',
+		'{eid}/collection/{collection_ascii_id}' => 'user_authorizations',
 		'{eid}/service' => 'service',
 		'{eid}/settings' => 'settings',
 		'{eid}/settings/preferred' => 'preferred_collections',
@@ -34,6 +36,18 @@ class Dase_Handler_User extends Dase_Handler
 	public function getUserAtom($r) 
 	{
 		$r->renderResponse($this->user->asAtomEntry());
+	}
+
+	public function getUserAuthorizations($r) 
+	{
+		$r->response_mime_type = 'text/plain';
+		if ($r->has('collection_ascii_id')) {
+			$coll = $r->get('collection_ascii_id');
+			$data = $this->user->getCollections();
+			$r->renderResponse(Dase_Json::get($data[$coll]));
+		} else {
+			$r->renderResponse(Dase_Json::get($this->user->getCollections()));
+		}
 	}
 
 	public function getService($r)

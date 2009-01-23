@@ -57,9 +57,10 @@
 					<a href="person/{$user->eid}" class="main">User Information</a>
 					</li>
 					<li>
-					<a href="person/{$user->eid}/proposal/form" class="main">Create a Proposal</a>
+					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
 					</li>
 					<!-- user proposals here -->
+					{if $request->is_superuser}
 					<li>
 					<a href="persons" class="main">Manage Users</a>
 					</li>
@@ -69,6 +70,7 @@
 					<li>
 					<a href="admin/{$user->eid}/proposals" class="main">Proposals List</a>
 					</li>
+					{/if}
 				</ul>
 				<div class="loadingMsg" id="ajaxMsg"></div>
 			</div> 
