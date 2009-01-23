@@ -93,6 +93,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function buildSearchIndex()
 	{
+		//todo: should this be here??
+		$this->saveAtom();
+
 		$prefix = Dase_Config::get('table_prefix');
 		$db = Dase_DB::get();
 		//todo: make sure item->id is an integer
@@ -874,9 +877,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 			}
 
-			//adds a category for AND a link to any parent item(s)
+			//adds a link to any parent item(s)
 			foreach ($this->getParentItems() as $url => $set) {
-				$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
+				$entry->addLink($app_root.'/'.$url,'http://daseproject.org/relation/parent','','',$set['label'])
 					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			}
 

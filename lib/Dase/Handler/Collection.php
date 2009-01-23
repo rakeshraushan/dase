@@ -57,6 +57,14 @@ class Dase_Handler_Collection extends Dase_Handler
 		 */
 	}
 
+	public function getManagersJson($r)
+	{
+		foreach ($this->collection->getManagers() as $obj) {
+			$managers[$obj->dase_user_eid] = $obj->auth_level;
+		}
+		$r->renderResponse(Dase_Json::get($managers));
+	}
+
 	public function getArchiveUris($r)
 	{
 		$app_root = Dase_Config::get('app_root');

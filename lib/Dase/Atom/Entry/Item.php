@@ -244,6 +244,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	}
 
 	function replaceMetadata($metadata_array) {
+		//metadata array is same strucutre as getRawMetadata 
+		// $m[att_ascii_id] = array of values
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
 				$doomed[] = $el;
@@ -256,7 +258,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$this->root->removeChild($goner);
 		}
 		foreach ($metadata_array as $k => $v) {
-			$this->addCategory($k,'http://daseproject.org/category/metadata','',$v);
+			foreach ($v as $value_text) {
+				$this->addCategory($k,'http://daseproject.org/category/metadata','',$value_text);
+			}
 		}
 	}
 
@@ -285,6 +289,29 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
 					$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
 				}
+		}
+		return $metadata;
+	}
+
+	function getRawMetadata($att = '') 
+	{
+		$metadata = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
+				$att_ascii_id = $el->getAttribute('term');
+				$metadata[$att_ascii_id][] = $el->nodeValue;
+			}
+			if ('http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
+					$att_ascii_id = $el->getAttribute('term');
+					$metadata[$att_ascii_id][] = $el->nodeValue;
+				}
+		}
+		if ($att) {
+			if (isset($metadata[$att]) && count($metadata[$att])) {
+				return $metadata[$att][0];
+			} else {
+				return false;
+			}
 		}
 		return $metadata;
 	}
@@ -332,13 +359,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function insert($r,$fetch_enclosure=false) 
 	{
 		$eid = $r->getUser()->eid;
-		$sernum = $this->getSerialNumber();
+		$author = $this->getAuthorName();
+		if (!$author) {
+			$author = $eid;
+		}
+		$slug = $r->get('serial_number'); // set in handler from slug
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		if ($r->has('serial_number')) {
-			$item = Dase_DBO_Item::create($c->ascii_id,$r->get('serial_number'),$eid);
+			$item = Dase_DBO_Item::create($c->ascii_id,$slug,$author);
 		} else {
-			$item = Dase_DBO_Item::create($c->ascii_id,null,$eid);
+			$item = Dase_DBO_Item::create($c->ascii_id,null,$author);
 		}
 		foreach ($this->metadata as $att => $keyval) {
 			//creates atribute if it doesn't exist!
@@ -356,26 +387,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
+		$sernum = $item->serial_number;
+		$coll = $c->ascii_id;
 		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
-			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($ln['href']);
 			//make sure relationship is legit
-			$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-				$coll,$parent->serial_number,$sernum
-			);
-			if ($parent && $itr) {
+			if ($parent) {
+				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
+					$coll,$parent->serial_number,$sernum
+				);
+			}
+			if ($itr) {
 				$item_relation = new Dase_DBO_ItemRelation;
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;
 				$item_relation->child_serial_number = $sernum;
-				$item_relation->created = date(DATE_ATOM);
-				$item_relation->created_by_eid = $r->getUser()->eid;
 				$item_relation->item_type_relation_id = $itr->id;
 				$item_relation->insert();
-			} else {
-				return false;
-			}
+				$item_relation->saveParentAtom();
+			} 
 		}
 
 		$content = new Dase_DBO_Content;
@@ -387,7 +418,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$content->p_collection_ascii_id = $c->ascii_id;
 			$content->p_serial_number = $item->serial_number;
 			$content->updated = date(DATE_ATOM);
-			$content->updated_by_eid = $eid;
+			$content->updated_by_eid = $author;
 			$content->insert();
 		}
 		//$item->setValue('title',$this->getTitle());
@@ -415,7 +446,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		} 
 		$item->expireCaches();
 		$item->buildSearchIndex();
-		$item->saveAtom();
 		return $item;
 	}
 
@@ -475,9 +505,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		Dase_DBO_ItemRelation::removeParents($c->ascii_id,$sernum); 
 
+		$coll = $this->getCollectionAsciiId();
 		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
-			$coll = $this->getCollectionAsciiId();
 			$parent = Dase_DBO_Item::getByUrl($ln['href']);
 			//make sure relationship is legit
 			if ($parent) {
@@ -493,6 +523,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (!$item_relation->findOne()) {
 					$item_relation->item_type_relation_id = $itr->id;
 					$item_relation->insert();
+					//too expensive??  maybe simply expire atom cache??
+					$item_relation->saveParentAtom();
 				}
 			} else {
 				return false;
@@ -510,6 +542,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$method = 'get'.ucfirst($var);
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
+		} elseif ($this->getRawMetadata($var)) {
+			return $this->getRawMetadata($var);
 		} else {
 			return parent::__get($var);
 		}

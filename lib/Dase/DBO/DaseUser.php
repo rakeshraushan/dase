@@ -168,7 +168,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				} else {
 					$auth_level = '';
 				}
-				$user_colls[] =  array(
+				$user_colls[$c->ascii_id] =  array(
 					'id' => $c->id,
 					'collection_name' => $c->collection_name,
 					'ascii_id' => $c->ascii_id,
@@ -262,6 +262,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return false;
 	}
 
+	/** if user is manager of ANY collection */
 	public function isManager()
 	{
 		$cm = new Dase_DBO_CollectionManager; 
