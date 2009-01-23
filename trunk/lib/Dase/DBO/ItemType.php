@@ -102,50 +102,10 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $attributes;
 	}
 
-	function getItems($limit=0) {
-		$items = new Dase_DBO_Item;
-		$items->item_type_id = $this->id;
-		$items->orderBy('updated DESC');
-		if ($limit) {
-			$items->setLimit($limit);
-		}
-		//this causes a problem when I iterate 
-		//in caller -- must then clone (hmmm)
-		return $items->find();
-	}
-
 	function getItemsCount() {
 		$i = new Dase_DBO_Item;
 		$i->item_type_id = $this->id;
 		return $i->findCount();
-	}
-
-	function getItemsAsFeed() 
-	{
-		$app_root = Dase_Config::get('app_root');
-		$c = $this->getCollection();
-		$base_url = $app_root.'/'.$this->getRelativeUrl($c->ascii_id);
-		$feed = new Dase_Atom_Feed;
-		$feed->setTitle($this->name);
-		$feed->addAuthor();
-		if ($this->description) {
-			$feed->setSubtitle($this->description);
-		}
-		$feed->setId($base_url);
-		$feed->setUpdated(date(DATE_ATOM));
-		//figure out public/private tag thing (and whether token is needed)
-		$feed->addLink($base_url.'.atom','self');
-		$feed->addCategory($c->ascii_id,"http://daseproject.org/category/collection",$c->name);
-		$feed->addLink($base_url.'/items.cats','http://daseproject.org/relation/item_type/items','application/atomcat+xml','',$this->name.' Items');
-		$feed->addLink($base_url.'/attributes.cats','http://daseproject.org/relation/item_type/attributes','application/atomcat+xml','',$this->name.' Attributes');
-		$feed->addLink($base_url.'/attributes.atom','http://daseproject.org/relation/item_type/attributes','application/atom+xml','',$this->name.' Attributes');
-
-		foreach($this->getItems() as $item) {
-			$item = clone $item;
-			$entry = $feed->addEntry('item');
-			$item->injectAtomEntryData($entry);
-		}
-		return $feed->asXml();
 	}
 
 	function getAttributesFeed() 
@@ -160,16 +120,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$att->injectAtomEntryData($entry);
 		}
 		return $feed->asXml();
-	}
-
-	function getAttributesAsCategories() 
-	{
-		$cats = new Dase_Atom_Categories;
-		$cats->setScheme('http://daseproject.org/category/metadata');
-		foreach($this->getAttributes() as $att) {
-			$cats->addCategory($att->ascii_id,'',$att->attribute_name);
-		}
-		return $cats->asXml();
 	}
 
 	function getAttributesJson() 

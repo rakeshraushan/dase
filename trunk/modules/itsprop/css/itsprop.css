@@ -15,10 +15,6 @@ table,caption,tbody,tfoot,thead,tr,th,td {
 	vertical-align:baseline;
 }
 
-:focus {
-	outline:0;
-}
-
 html {
 	height:100%;
 	margin:0 0 1px;
@@ -31,10 +27,6 @@ body {
 	font-size:small;
 }
 
-ol,ul {
-/*	list-style:none;*/
-}
-
 table {
 	border-collapse:collapse;
 	border-spacing:0;
@@ -42,8 +34,8 @@ table {
 
 textarea {
 	padding: 5px;
-	width: 100%;
 	min-height: 10em;
+	width: 100%;
 }
  
 em {
@@ -54,13 +46,6 @@ strong {
 	font-weight: bold;
 }
 
-hr {
-	border:0;
-	color: #f00;
-	background-color: #999;
-	height: 1px;
-}
-
 h1 {
 	font-weight: bold;
 	font-size: 1.6em;
@@ -68,13 +53,6 @@ h1 {
 
 h2 {
 	font-size: 1.4em;
-}
-
-div.preview h2 {
-	font-size: 1.1em;
-	color: #3f406e;
-	font-weight: bold;
-	margin: 0px 0 0px 0;
 }
 
 a {
@@ -87,53 +65,21 @@ a:hover {
 	text-decoration: underline;
 }
 
-p {
-	margin: 10px 0;
-}
-
-label {
-	display: block;
-	margin-top: 12px;
-	color: #666;
-	background-color: #EDF2F2;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	padding: 3px 6px;
-	width: 90%;
-}
-
-label.info {
-	background-color: #fff;
-	padding: 2px;
-}
-
-label.sub {
-	margin-top: 2px;
-	font-size: .9em;
-}
-
-form.styled input, form.styled button {
-	margin-right: 5px;
-}
-
-form.styled input[type='text'] {
-}
-
-form.styled input[disabled='disabled'] {
-	color: #333;
-}
-
-form.styled input:hover, form.styled button:hover {
-	background-color: #EDF2F2;
-}
-
-form.styled button.delete:hover {
-	background-color: #e66;
-}
-
 div#container {
 	margin: 20px auto;
 	width: 95%;
+}
+
+div#content {
+	margin-top: 1em;
+	margin-left:170px;
+	width: 83%;
+	min-height: 12em;
+	padding: 0 20px;
+}
+
+div#content h1 {
+	margin-bottom: 12px;
 }
 
 #masthead {
@@ -151,20 +97,20 @@ div#container {
 	padding:0 12px;
 }
 
-.itspropBanner h3 {
-	font-size: 1.1em;
-	font-weight: bold;
-	color: #fff;
-	padding-top: 5px;
-	margin-left: 166px; 
-}
-
 .itspropBanner h1 {
 	font-size: 1.6em;
 	font-weight: bold;
 	color: #fff;
 	margin-top: 2px;
 	margin-left: 166px;
+}
+
+.itspropBanner h3 {
+	font-size: 1.1em;
+	font-weight: bold;
+	color: #fff;
+	padding-top: 5px;
+	margin-left: 166px; 
 }
 
 .itspropBanner div.controls {
@@ -174,27 +120,6 @@ div#container {
 .itspropBanner  a {
 	color: #fff;
 	font-weight: bold;
-}
-
-html #maincontent {
-	height:1%;
-}
-
-div#preview {
-	margin-left:30px;
-	width: 83%;
-}
-
-div#content {
-	margin-left:170px;
-	width: 83%;
-	min-height: 12em;
-}
-
-
-div.standard {
-	padding:15px;
-	margin-right: 20px;
 }
 
 .spacer {
@@ -334,13 +259,6 @@ p.login a {
 	color: #c20102;
 	font-size: 1.2em;
 }
-ul#validationMsg li {
-	color: red;
-}
-
-div.preview table.listing {
-	margin: 6px 0 24px 12px;
-}
 
 table.listing td,th {
 	font-size: .9em;
@@ -356,101 +274,11 @@ table.listing th {
 	font-weight: bold;
 }
 
-table.listing th label {
-	margin-top: 20px;
-	color: #666;
-	font-weight: normal;
-}
-
-table.listing td label {
-	margin-top: 6px;
-	color: #999;
-	font-weight: normal;
-}
-
 a.edit {
 	color: #a00;
 	margin: 0 5px;
 }
 
-div.workflow h2 {
-	margin-bottom: 10px;
-}
-
-div.proposal-top {
-	background-color: #e0e9e9;
-	padding: 0px 18px;
-	margin-top: 1em;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-div.proposal-top h1 {
-	font-size: 1.3em;
-	color: #33c;
-	margin: 0px;
-	padding: 2px 0px 0px 0px;
-}
-
-div.proposal-top h2 {
-	font-size: .9em;
-	font-weight: bold;
-	color: #336;
-	margin: 0px;
-	padding: 8px 0px 0px 0px;
-}
-
-div.proposal-preview-top {
-	clear: both;
-	background-color: #e0e9e9;
-	padding: 10px 20px 0 20px;
-	margin: 0px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-div.proposal-preview-top h1 {
-	font-size: 1.3em;
-	color: #33c;
-	margin: 0px;
-}
-
-div.proposal-preview-top h2 {
-	font-size: .9em;
-	font-weight: bold;
-	color: #336;
-	margin: 0px;
-}
-
-ul#workflow {
-	margin: 0;
-	margin-left: 40%;
-	padding: 0;
-	height: 17px;
-}
-
-ul#workflow li {
-	float: left;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-ul#workflow li a{
-	margin-left: 2px;
-	display: block;
-	padding: 2px 9px 8px 9px;
-	font-weight: bold;
-	font-size:.83em;
-	color: #666;
-}
-
-ul#workflow li a:hover {
-	background-color: #fff;
-	text-decoration: none;
-	color: #333;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
 
 div#msg {
 	font-weight: bold;
@@ -460,40 +288,12 @@ div#msg {
 	color: #c00;
 }
 
-h4.alert {
-	width: 50%;
+div#home {
+	width: 80%;
 }
 
-#error-data div.masthead {
-	background-color: #900;
-	padding: 12px;
-	font-size: 1.2em;
-	font-weight: bold;
-	color: #fff;
-}
-
-#error-data dt {
-	float: left;
-	font-weight: bold;
-	color: #900;
-}
-#error-data dd {
-	margin-left: 150px;
-}
-
-a.continue {
-	color: blue;
-	font-weight: bold;
-	margin-left: 50%;
-}
-
-form#proposalForm textarea {
-min-height: 8em;
-width: 90%;
-}
-
-form#proposalForm p {
-	width: 75%;
+div#home p {
+	margin: 12px 0;
 }
 
 ul.proposerInfo {
@@ -507,212 +307,51 @@ ul.proposerInfo li {
 	color: #333;
 }
 
-ul#proposals {
-	margin-top: 24px;
-	list-style: none;
-}
-ul#proposals a {
-	font-weight: bold;
-	color: #33a;
-}
-
-#proposalDelete {
-	margin: 60px 0px;
-}
-
-div.msg {
-	font-weight: bold;
-	color: #00c;
-	margin: 10px 20px 0 20px;
-}
-
-.msg {
-	color: #00c;
-}
-
-a.msg {
-	text-decoration: underline;
-}
-
-a.msg:hover {
-	color: #66f;
-}
-
-div.section {
-	padding: 0px 20px;
-	line-height: 1.4em;
-}
-
-label.hoverable:hover {
-	background-color: #e0e9e9;
-}
-
-div.preview p.text {
-	margin: 2px 0 22px 15px;
-	width: 80%;
-}
-
-div.preview div.report {
-	margin: 0px 0 22px 15px;
-	width: 80%;
+label {
+	display: block;
+	margin-top: 12px;
+	margin-bottom: 6px;
 }
 
 p.instruction {
-	font-size: .9em;
-	color: #666;
-	font-style: italic;
-	margin: 0px 0 10px 15px;
-	width: 70%;
+	padding: 3px 6px;
 }
 
-.highlight {
-	background-color: #ffc;
-}
-
-a.delete {
-	color: red;
-}
-
-div#classes_list, div#budget_list {
-	margin: 10px 0;
-}
-
-div#classes_list ul, div#budget_list ul {
-	margin: 2px 0;
-	padding: 0;
-	list-style: none;
-	color: #336;
-}
-
-div#budget_list p {
-	margin: 2px 15px;
-	width: 60%;
-}
-
-span.special {
+p.val {
 	font-weight: bold;
-	color: #4D4D8C;
-	font-style: italic;
+	color: #333;
+	padding: 0px 6px;
 }
 
-table.budget, table.courses {
-	width: 90%;
-}
-td.number {
-	text-align: right;
-}
 
-span.radio {
-	background-color: #fff;
-	display: inline;
-}
-
-span.highlighted {
-	color: #00f;
-	font-weight: bold;
-}
-
-span.boolean {
-	font-weight: bold;
-	color: #00c;
-}
-
-div.preview dl {
-	margin: 6px 0 24px 12px;
-}
-div.preview dt {
-	float: left;
-	color: #339;
-	font-weight: bold;
-}
-div.preview dd {
-	margin-left: 150px;
-}
-
-textarea#email_to {
-min-height: 3em;
-width: 50%;
-}
-
-textarea#email_text {
-height: 120em;
-width: 90%;
-
-}
-
-ul#workflow li a#submit_tab {
-  color: #9f0f0f; 
-}
-
-input#email_submit {
-	background-color: #a33;
-	color: #fff;
-	font-weight:bold:
-}
-input#proposal_submit {
-	background-color: #a33;
-	color: #fff;
-	font-weight:bold:
-}
-
-h3.submit-note {
-	margin: 10px 0 20px 0;
-	width: 50%;
-	color: #a33;
-}
-
-h3#email_history {
-	font-weight: bold;
-	color: #3f406e;
-	margin-top: 30px;
-}
-
-h1.submitted_alert {
-	font-size: 1.4em;
-	color: #c00;
-	margin: 5px 0 20px 0;
-}
-
-div#home ol {
-	margin-top: 25px;
-	margin-bottom: 34px;
-}
-
-div#home em {
-	font-weight: bold;
-	color: #b00;
-}
-
-div#home h3 {
-	color: #336;
-	font-weight: bold;
-	margin-bottom:3px;
-}
-div#home h4 {
-	color: #b00;
-	font-size: 1.1em;
-	font-weight: bold;
-}
-div#home strong {
-	color: #609;
-}
-div#home li strong {
-	color: #339; ! important
-}
-
-form#personForm label,input[type=text] {
-	width: 33%;
-}
-
-form#personForm label {
+form#shortForm label {
 	background-color: #fff;
 	padding: 0;
 	margin-bottom: 2px;
 	color: #669;
 }
 
+form#shortForm p {
+	margin: 8px 0;
+}
+
 form#proposalForm {
-	width: 60%;
+	width: 70%;
+}
+
+form#proposalForm label {
+	color: #666;
+	background-color: #EDF2F2;
+	padding: 3px 6px;
+}
+
+form#proposalForm textarea {
+	margin: 3px 6px;
+	width: 96%;
+}
+
+span.control {
+	float: right;
 }
 
 dl.current {
@@ -734,3 +373,6 @@ dl.current dd {
 	margin-left: 80px;
 }
 
+div#proposal_sta p {
+	padding: 6px;
+}
