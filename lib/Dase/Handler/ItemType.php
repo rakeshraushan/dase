@@ -9,6 +9,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}' => 'item',
 		//usually retrieved as app:categories
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
+		'{collection_ascii_id}/{item_type_ascii_id}/items/{created_by_eid}' => 'item_type_items',
 		'{collection_ascii_id}/{item_type_ascii_id}/{att_ascii_id}/values' => 'values_list',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
@@ -94,21 +95,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($this->type->getAttributesJson());
 	}
 
-	public function getItemTypexJson($r)
-	{
-		$app_root = Dase_Config::get('app_root');
-		$res = array();
-		$items = array();
-		foreach ($this->type->getItems() as $it_obj) {
-			$it['url'] = $app_root.'/'.$it_obj->getRelativeUrl($r->get('collection_ascii_id'));
-			$it['title'] = $it_obj->getTitle();
-			$items[] = $it;
-		}
-		$res['name'] = $this->type->name;
-		$res['items'] = $items;
-		$r->renderResponse(Dase_Json::get($res));
-	}
-
 	public function getService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
@@ -130,9 +116,10 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $t->id;
+		$items->orderBy('updated DESC');
 		//can filter by author
-		if ($r->has('author')) {
-			$items->created_by_eid = $r->get('author');
+		if ($r->has('created_by_eid')) {
+			$items->created_by_eid = $r->get('created_by_eid');
 		}
 		foreach ($items->find() as $item) {
 			$feed->addItemEntry($item,$c);
@@ -147,9 +134,10 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$coll = $r->get('collection_ascii_id');
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $this->type->id;
+		$items->orderBy('updated DESC');
 		//can filter by author
-		if ($r->has('author')) {
-			$items->created_by_eid = $r->get('author');
+		if ($r->has('created_by_eid')) {
+			$items->created_by_eid = $r->get('created_by_eid');
 		}
 		foreach ($items->find() as $item) {
 			$item_array  = array(
