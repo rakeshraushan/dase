@@ -12,7 +12,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/{att_ascii_id}/values' => 'values_list',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
-		'{collection_ascii_id}/{item_type_ascii_id}/categories' => 'categories',
 		//usually retrieved as atom:feed
 		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'related_item_type_items',
 		'{collection_ascii_id}/{child_type_ascii_id}/children_of/{item_type_ascii_id}' => 'relation',
@@ -28,6 +27,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getValuesListJson($r)
 	{
+		$app_root = Dase_Config::get('app_root');
 		$it_ascii = $r->get('item_type_ascii_id');
 		$att_ascii = $r->get('att_ascii_id');
 		$coll = $r->get('collection_ascii_id');
@@ -47,7 +47,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 			";
 		$data = array();
 		foreach (Dase_DBO::query($sql,array($it_ascii,$coll,$att_ascii)) as $row) {
-			$item_url = APP_ROOT.'/item/'.$coll.'/'.$row['serial_number'];
+			$item_url = $app_root.'/item/'.$coll.'/'.$row['serial_number'];
 			$data[$item_url] = $row['value_text'];
 		}
 		asort($data);
@@ -81,11 +81,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeAtom($r)
 	{
-		if ('feed' == $r->get('type')) {
-			$r->renderResponse($this->type->getItemsAsFeed());
-		} else {
-			$r->renderResponse($this->type->asAtomEntry());
-		}
+		$r->renderResponse($this->type->asAtomEntry());
 	}
 
 	public function getAttributesAtom($r)
@@ -93,27 +89,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($this->type->getAttributesFeed());
 	}
 
-	public function getAttributesCats($r)
-	{
-		$r->renderResponse($this->type->getAttributesAsCategories());
-	}
-
 	public function getAttributesJson($r)
 	{
 		$r->renderResponse($this->type->getAttributesJson());
 	}
 
-	public function getCategoriesCats($r)
-	{
-		$r->renderResponse($this->type->getAttributesAsCategories());
-	}
-
-	public function getCategoriesJson($r)
-	{
-		$r->renderResponse($this->type->getAttributesJson());
-	}
-
-	public function getItemTypeJson($r)
+	public function getItemTypexJson($r)
 	{
 		$app_root = Dase_Config::get('app_root');
 		$res = array();
@@ -141,13 +122,18 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsAtom($r)
 	{
+		$app_root = Dase_Config::get('app_root');
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId(APP_ROOT.'/'.$t->getRelativeUrl($c->ascii_id));
+		$feed->setId($app_root.'/'.$t->getRelativeUrl($c->ascii_id));
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $t->id;
+		//can filter by author
+		if ($r->has('author')) {
+			$items->created_by_eid = $r->get('author');
+		}
 		foreach ($items->find() as $item) {
 			$feed->addItemEntry($item,$c);
 		}
@@ -157,18 +143,24 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public function getItemTypeItemsJson($r)
 	{
 		$app_root = Dase_Config::get('app_root');
-		$t = $this->type;
-		$items = array();
-		foreach ($t->getItems(500) as $item) {
-			$item = clone $item;
+		$res = array();
+		$coll = $r->get('collection_ascii_id');
+		$items = new Dase_DBO_Item;
+		$items->item_type_id = $this->type->id;
+		//can filter by author
+		if ($r->has('author')) {
+			$items->created_by_eid = $r->get('author');
+		}
+		foreach ($items->find() as $item) {
 			$item_array  = array(
-				'url' => $app_root.'/'.$item->getRelativeUrl($r->get('collection_ascii_id')),
+				'url' => $app_root.'/'.$item->getRelativeUrl($coll),
+				//expensive??
 				'title' => $item->getTitle(),
 				'serial_number' => $item->serial_number,
 			);
-			$items[] = $item_array;
+			$res[] = $item_array;
 		}
-		$r->renderResponse(Dase_Json::get($items));
+		$r->renderResponse(Dase_Json::get($res));
 	}
 
 	public function getRelatedItemTypeItemsJson($r)
@@ -234,29 +226,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 			//todo: need to override updated and author here??
 		}
 		$r->renderResponse($feed->asXml());
-	}
-
-	/** used to modify the title */
-	public function postToRelation($r) 
-	{
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		if (!$c) {
-			$r->renderError(401);
-		}
-		$parent = $this->type;
-		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
-		if (!$parent || !$child) {
-			$r->renderError(401);
-		}
-		$rel = new Dase_DBO_ItemTypeRelation;
-		$rel->parent_type_id = $parent->id;
-		$rel->child_type_id = $child->id;
-		if (!$rel->findOne()) {
-			$r->renderError(404);
-		}
-		$rel->title = trim(file_get_contents("php://input"));
-		$rel->update();
-		$r->renderResponse('updated relation');
 	}
 
 	public function getRelationAtom($r) 

@@ -868,11 +868,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			//simply creates link that points to childern
 			foreach ($this->getChildrenSets() as $set) {
 				$entry->addLink(
-					$app_root.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
 					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 				$entry->addLink(
-					$app_root.'/item_type/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
 					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 			}

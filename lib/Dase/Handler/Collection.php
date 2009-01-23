@@ -586,14 +586,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($this->collection->getAttributesAtom()->asXml());
 	}
 
-	public function getAttributesCats($r) 
-	{
-		$r->renderResponse($this->collection->getAttributesAsCategories());
-	}
-
 	public function getAttributesJson($r) 
 	{
-		//$r->renderResponse($this->collection->getAttributesAsCategoriesJson());
 		$app_root = Dase_Config::get('app_root');
 		$filter = $r->has('filter') ? $r->get('filter') : '';
 		$r->checkCache();

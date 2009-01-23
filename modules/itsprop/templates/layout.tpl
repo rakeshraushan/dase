@@ -56,10 +56,11 @@
 					<li>
 					<a href="person/{$user->eid}" class="main">User Information</a>
 					</li>
-					<li>
+					<li id="userProposals">
 					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
+					<li><a href="ss" class="sub">one</a></li>
+					<li><a href="ss" class="sub">two</a></li>
 					</li>
-					<!-- user proposals here -->
 					{if $request->is_superuser}
 					<li>
 					<a href="persons" class="main">Manage Users</a>
@@ -76,9 +77,7 @@
 			</div> 
 
 			<div id="content">
-				<div id="itsprop" class="full">
-					{block name="content"}default content{/block}
-				</div>
+				{block name="content"}default content{/block}
 			</div>
 
 			<div class="spacer"></div>

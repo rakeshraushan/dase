@@ -180,6 +180,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal->setTitle($r->get('proposal_name'));
 		$proposal->setItemType('proposal');
 		$proposal->addMetadata('title',$r->get('proposal_name')); 
+		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
 		$proposal->addMetadata('proposal_name',$r->get('proposal_name')); 
 		$proposal->setUpdated(date(DATE_ATOM));
 		$proposal->addLink($r->get('department'),'http://daseproject.org/relation/parent');
