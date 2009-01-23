@@ -11,6 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css" />
 		<link rel="stylesheet" type="text/css" href="css/itsprop.css" />
 		<link rel="shortcut icon" href="images/itsbox.ico" />
+		<link rel="proposals" href="{$app_root}item_type/itsprop/proposal/items/{$user->eid}.json" />
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
@@ -58,8 +59,6 @@
 					</li>
 					<li id="userProposals">
 					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
-					<li><a href="ss" class="sub">one</a></li>
-					<li><a href="ss" class="sub">two</a></li>
 					</li>
 					{if $request->is_superuser}
 					<li>
@@ -91,6 +90,13 @@
 			</div>
 			<div id="debugData" class="pagedata"></div>
 			{include file='atom_template.tpl'}
+			<textarea class="javascript_template" id="user_proposals_jst">
+				{literal}
+				{for p in proposals}
+				<li><a class="sub" href="proposal/${p.serial_number}">${p.title}</a></li>
+				{/for}
+				{/literal}
+			</textarea>
 		</div>
 	</body>
 </html>

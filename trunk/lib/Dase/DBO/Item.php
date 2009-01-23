@@ -859,6 +859,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 
+		//this will only "take" if there is not already a title
+		$entry->setTitle($this->serial_number);
+
 		/***************
 		 * hierarchy stuff
 		 * ************************/

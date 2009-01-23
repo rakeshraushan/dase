@@ -58,8 +58,26 @@ Dase.initProposalUpdate = function() {
 	}
 };
 
+Dase.initPersonProposals = function() {
+	var links = document.getElementsByTagName('link');
+	for (var i=0;i<links.length;i++) {
+		if ('proposals' == links[i].rel) {
+			var url = links[i].href;
+		}
+	}
+	Dase.getJSON(url,function(resp) {
+		var target = Dase.$('userProposals');
+		var orig = target.innerHTML;
+		var data = { 'proposals':resp};
+		var templateObj = TrimPath.parseDOMTemplate("user_proposals_jst");
+		target.innerHTML = orig+templateObj.process(data);
+
+	},null,null,'pkeane','okthen');
+}
+
 
 Dase.addLoadEvent(function() {
 	Dase.initProposalSections();
+	Dase.initPersonProposals();
 });
 
