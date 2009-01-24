@@ -2,7 +2,7 @@
 
 The Grant Proposal Application Module (itsprop) is required to do operations on the underlying DASe collection that the logged in user is not authorized to do.  If the operations are done strictly within the handler (or other PHP code), we can simply embed the serviceuser and password in the code.  But when the browser needs to do such operations, we need a (relatively) secure way for the browser to access the serviceuser password.  The step are shown here.
 
-  * in the login method, set a secret in a cookie:
+  * in the login method, set a secret in a cookie, using serviceuser as key:
 
 {{{
     public function getLogin($r)
