@@ -9,3 +9,7 @@ $conf['serviceuser']['itsprop'] = 'ok'  //'ok' can be anything that evaluates to
 }}}
 
   * On the layout template, include a link w/ rel=service_pass and href that will point to a resource in the module which will return the service password and will require a valid logged-in user to do so
+
+{{{
+<link rel="service_pass" href="{$module_root}service_pass/itsprop" />
+}}}
