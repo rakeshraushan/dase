@@ -5,5 +5,7 @@ The Grant Proposal Application Module (itsprop) is required to do operations on 
   # Create a serviceuser by setting a config variable in the module's local config file ({module_root}/inc/config.php):
 
 {{{
-$conf['serviceuser']['itsprop'] = 'ok'
+$conf['serviceuser']['itsprop'] = 'ok'  //'ok' can be anything that evaluates to true
 }}}
+
+  # On the layout template, include a link w/ rel=service_pass and href that will point to a resource in the module which will return the service password and will require a valid logged-in user to do so
