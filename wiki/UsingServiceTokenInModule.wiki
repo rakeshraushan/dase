@@ -48,7 +48,7 @@ public function getServicePass($r)
 }
 }}}
 
-  * And some javascript to get the service password (note that this will ONLY work if the secret cookie is set:
+  * And some javascript to get the service password (note that this will ONLY work if the secret cookie is set):
 
 {{{
 Dase.getServicePassword = function() {
