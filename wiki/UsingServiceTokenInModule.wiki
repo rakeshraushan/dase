@@ -46,5 +46,14 @@ public function getServicePass($r)
         $r->renderError(401);
      }
 }
+}}}
 
+  * And some javascript to get the service password:
+{{{
+Dase.getServicePassword = function() {
+    var url = Dase.getLinkByRel('service_pass');
+    Dase.ajax(url,'get',function(resp) {
+        return resp;
+    });
+}
 }}}
