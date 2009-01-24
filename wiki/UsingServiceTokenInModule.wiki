@@ -2,6 +2,22 @@
 
 The Grant Proposal Application Module (itsprop) is required to do operations on the underlying DASe collection that the logged in user is not authorized to do.  If the operations are done strictly within the handler (or other PHP code), we can simply embed the serviceuser and password in the code.  But when the browser needs to do such operations, we need a (relatively) secure way for the browser to access the serviceuser password.  The step are shown here.
 
+  * in the login method, set a secret in a cookie:
+
+{{{
+    public function getLogin($r)
+    {
+        $user = Uteid::login($r);
+        $secret = Dase_Auth::getSecret('itsprop');
+        //this secret will be saved as a cookie on the client
+        //ONLY upon successful eid login.  Now the client can
+        //request the service password (the server will check for 
+        //this token before it returns the service password).
+        Dase_Cookie::set('module',$secret);
+        
+       ...
+}}}
+
   * Create a serviceuser by setting a config variable in the module's local config file ({module_root}/inc/config.php):
 
 {{{
