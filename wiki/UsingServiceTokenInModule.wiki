@@ -60,3 +60,5 @@ Dase.getServicePassword = function() {
     });
 }
 }}}
+
+  * thus we guarantee that only a valid user currently logged into THIS module will e able to access the service password
