@@ -324,14 +324,14 @@ p.val {
 }
 
 
-form#shortForm label {
+form.shortForm label {
 	background-color: #fff;
 	padding: 0;
 	margin-bottom: 2px;
 	color: #669;
 }
 
-form#shortForm p {
+form.shortForm p {
 	margin: 8px 0;
 }
 
@@ -375,4 +375,11 @@ dl.current dd {
 
 div#proposal_sta p {
 	padding: 6px;
+}
+
+#delete_proposal {
+	margin-top: 3em;
+}
+#delete_proposal input[type="submit"]:hover {
+	background-color: #f99;
 }

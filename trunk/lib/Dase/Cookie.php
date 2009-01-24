@@ -11,6 +11,7 @@ class Dase_Cookie {
 	static $cookiemap = array(
 		'max' => 'DASE_MAX_ITEMS',
 		'display' => 'DASE_DISPLAY_FORMAT',
+		'module' => 'DASE_MODULE',
 	);
 	static $display_cookiename = 'DASE_DISPLAY_FORMAT';
 	private $token;
@@ -38,6 +39,10 @@ class Dase_Cookie {
 	public static function set($type,$data) 
 	{
 		$pre = Dase_Cookie::getPrefix();
+		if ('module' == $type) {
+			$module = Dase_Config::get('module');
+			$pre = $pre.$module.'_';
+		}
 		if (isset(self::$cookiemap[$type])) {
 			$cookiename = $pre . self::$cookiemap[$type];
 			setcookie($cookiename,$data,0,'/');
@@ -47,6 +52,10 @@ class Dase_Cookie {
 	public static function get($type) 
 	{
 		$pre = Dase_Cookie::getPrefix();
+		if ('module' == $type) {
+			$module = Dase_Config::get('module');
+			$pre = $pre.$module.'_';
+		}
 		if (isset(self::$cookiemap[$type])) {
 			$cookiename = $pre . self::$cookiemap[$type];
 			if (isset($_COOKIE[$cookiename])) {

@@ -8,7 +8,7 @@
 {block name="content"}
 <h1>User Information for {$person->person_name} ({$person->person_eid})</h1>
 <div class="main">
-	<form id="shortForm" method="post" >
+	<form id="personForm" class="shortForm" method="post" >
 		<input type="hidden" name="eid" value="{$person->serial_number}"/>
 		<p>
 		<label for="name">Name</label>

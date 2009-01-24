@@ -585,10 +585,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteComments();
 		$this->deleteTagItems();
 		$this->deleteItemRelations();
+		$this->deleteItemAsAtom();
 		$this->delete();
 		$c->updateItemCount();
 	}
 
+	function deleteItemAsAtom()
+	{
+		$atom = Dase_DBO_ItemAsAtom::getByItemId($this->id);
+		if ($atom) {
+			$atom->delete();
+		}
+	}
 
 	function deleteItemRelations()
 	{

@@ -26,13 +26,13 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 
 	function getBaseUrl()
 	{
-		$app_root = Dase_Config::get($app_root);
+		$app_root = Dase_Config::get('app_root');
 		return $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/comments/'.$this->id;
 	}
 
 	function injectAtomEntryData(Dase_Atom_Entry_Comment $entry)
 	{
-		$app_root = Dase_Config::get($app_root);
+		$app_root = Dase_Config::get('app_root');
 		if (!$this->id) { return false; }
 		$item = $this->getItem();
 		$entry->setTitle($this->getTitle());

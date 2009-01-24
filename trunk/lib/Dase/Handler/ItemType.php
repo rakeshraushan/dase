@@ -75,6 +75,21 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson());
 	}
 
+	public function deleteItem($r)
+	{
+		$user = $r->getUser('service');
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		if (!$user->can('write',$item)) {
+			$r->renderError(401,'user cannot delete this item');
+		}
+		try {
+			$item->expunge();
+			$r->renderOk('item deleted');
+		} catch (Exception $e) {
+			$r->renderError(500);
+		}
+	}
+
 	public function getItemType($r)
 	{
 		$r->renderResponse($this->type->name);
