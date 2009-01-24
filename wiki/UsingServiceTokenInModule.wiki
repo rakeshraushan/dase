@@ -13,3 +13,24 @@ $conf['serviceuser']['itsprop'] = 'ok'  //'ok' can be anything that evaluates to
 {{{
 <link rel="service_pass" href="{$module_root}service_pass/itsprop" />
 }}}
+
+and here is the mapper & method:
+
+{{{        
+'service_pass/{serviceuser}' => 'service_pass',
+}}}
+{{{
+    public function getServicePass($r)
+    {   
+        $secret = Dase_Cookie::get('module');
+        $suser = $r->get('serviceuser');
+        //checks the secret that was saved in cookie upon login
+        if ($secret == Dase_Auth::getSecret($r->get('serviceuser'))) {
+            //note: serviceuser MUST be declared in MODULE_ROOT.'/inc/config.php'
+            $r->renderResponse(Dase_Auth::getServicePassword($suser));
+        } else {
+            $r->renderError(401);
+        }
+    }
+
+}}}
