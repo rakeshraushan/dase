@@ -42,53 +42,6 @@ Dase.util.trim = function(str) {
 	return str.slice(0, i + 1);
 }
 
-Dase.util.map = function(arr, f, f_a) {
-    var r = [];
-    arr.length || arr instanceof Array || arr instanceof HTMLCollection || (arr = [arr])
-    for(a in arr) arr[a] instanceof Function || r.push(f(arr[a]));
-    typeof f_a != 'function' || (r = f_a(r));
-    return r;
-}
-
-Dase.util.reduce = function(arr, prep, op) {
-    arr instanceof Array || (arr = []);
-    var r = null;
-    typeof prep == 'function' || (prep = function(x) { return x; });
-    typeof op == 'function' || (op = function(prev, x) { return prev + x; });
-    for(a in arr)  r = op(r, prep(arr[a]));
-    return r;
-}
-
-Dase.util.select = function(arr, f) {
-    typeof f == 'function' || (f = function(x) { return x; });
-    var r = [];
-    for(a in arr) (rn = f(arr[a])) && r.push(arr[a]);
-    return r;
-}
-
-Dase.util.filter = function() {
-    return select.apply(this, arguments);
-}
-
-Dase.util.ofilter = function(obj, f) {
-    typeof f == 'function' || (f = function(x,y) { return y; });
-    var r = [];
-    for(k in obj) (rn = f(k, obj[k])) && (r[k] = obj[k]);
-    return r;
-}
-
-Dase.util.keys = function(o) {
-    var ks = [];
-    for(k in o) { typeof o[k] == 'function' || (ks.push(k)); }
-    return ks;
-}
-
-Dase.util.values = function(o) {
-    var vs = [];
-    for(k in o) { typeof o[k] == 'function' || (vs.push(o[k])); }
-    return vs;
-}
-
 Dase.logoff = function() {
 	if (Dase.user.eid) {
 		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
@@ -148,15 +101,6 @@ Dase.getElementsByClass = function(parent,cname,tagname) {
 		}
 	}
 	return res;
-}
-
-//use to hide 'em
-Dase.addClassToChildren = function(elem,cname) {
-	if (!elem) return;
-	var children = elem.getElementsByTagName('*');
-	for (var i=0;i<children.length;i++) {
-		Dase.addClass(children[i],cname);
-	}
 }
 
 Dase.displayError = function(msg) {
@@ -245,6 +189,13 @@ Dase.pageReload = function(msg) {
 	} 
 	window.location.href = curr;
 }
+
+Dase.truncate = function(str,len) {
+	if (str.length <= len ) return str;
+	var small = str.slice(0,len);
+	small = small + '...';
+	return small.toString();
+};
 
 /* end utilities */
 
@@ -477,13 +428,6 @@ Dase.placePreferredCollections = function(eid) {
 			}
 		}
 	}
-};
-
-Dase.truncate = function(str,len) {
-	if (str.length <= len ) return str;
-	var small = str.slice(0,len);
-	small = small + '...';
-	return small.toString();
 };
 
 Dase.initMenu = function(id) { 
@@ -1010,11 +954,6 @@ Dase.scrollTo = function (obj) {
 		} while (obj = obj.offsetParent);
 		window.scroll(curleft,curtop);
 	}
-}
-
-//from http://aymanh.com/9-javascript-tips-you-may-not-know#BindingMethodsToObjects
-function bind(obj, method) {
-	return function() { return method.apply(obj, arguments); }
 }
 
 Dase.getFeedUrl = function() {

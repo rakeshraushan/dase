@@ -16,11 +16,12 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'proposal/{serial_number}' => 'proposal',
 		'persons' => 'persons',
 		'departments' => 'departments',
+		'service_token' => 'service_token',
 	);
 
 	public function setup($r)
 	{
-		if ('welcome' != $r->resource && 'login' != $r->resource && 'test' != $r->resource) {
+		if ('welcome' != $r->resource && 'login' != $r->resource) {
 			$this->user = $r->getUser('cookie',false);
 			if (!$this->user) {
 				$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/welcome');
@@ -31,18 +32,6 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				}
 			}
 		}
-	}
-
-	public function getTest($r)
-	{
-		$this->user = $r->getUser('cookie',false);
-		if ($this->_isSuperuser($this->user->eid)) {
-			$r->renderResponse($this->user->eid.' is a superuser');
-		} else {
-			$r->renderResponse($this->user->eid.' is not a superuser');
-		}
-		//$r->renderResponse(print_r(Dase_Config::get('serviceuser'),true));
-		//$r->renderResponse(print_r($user,true));
 	}
 
 	private function _isSuperuser($eid) 
@@ -170,6 +159,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
 		$tpl->assign('person',$person);
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
+		if (is_numeric($proposal)) {
+			$r->renderResponse($tpl->fetch('proposal404.tpl'));
+		}
 		$tpl->assign('proposal',$proposal);
 		$r->renderResponse($tpl->fetch('proposal.tpl'));
 	}
@@ -190,9 +182,23 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderRedirect(APP_ROOT.'/modules/itsprop/proposal/'.$sernum);
 	}
 
+	public function getServiceToken($r)
+	{
+		$secret = Dase_Cookie::get('module');
+		if ($secret == md5(Dase_Config::get('token').'itsprop')) {
+			//note: 'itsprop' MUST be declared in MODULE_ROOT.'/inc/config.php'
+			//as a service user
+			$r->renderResponse(md5(Dase_Config::get('service_token').'itsprop'));
+		} else {
+			$r->renderError(401);
+		}
+	}
+
 	public function getLogin($r)
 	{
 		$user = Uteid::login($r);
+		$secret = md5(Dase_Config::get('token').'itsprop');
+		Dase_Cookie::set('module',$secret);
 		$ldap = Utlookup::getRecord($user->eid);
 		$person = new Dase_Atom_Entry_Item;
 		$person->setTitle($ldap['name']);

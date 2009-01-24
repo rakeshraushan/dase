@@ -67,17 +67,60 @@ Dase.initPersonProposals = function() {
 	}
 	Dase.getJSON(url,function(resp) {
 		var target = Dase.$('userProposals');
-		var orig = target.innerHTML;
 		var data = { 'proposals':resp};
 		var templateObj = TrimPath.parseDOMTemplate("user_proposals_jst");
-		target.innerHTML = orig+templateObj.process(data);
+		target.innerHTML = templateObj.process(data);
+		Dase.removeClass(target,'hide');
 
 	},null,null,'pkeane','okthen');
+};
+
+Dase.initDeleteProposal = function() {
+	var form = Dase.$('delete_proposal');
+	if (!form) return;
+	form.onsubmit = function() {
+		if (confirm('are you sure?')) {
+			Dase.$('content').innerHTML = "deleting proposal";
+			Dase.ajax(this.action,'delete',function(resp) {
+				Dase.$('content').innerHTML = resp; 
+				Dase.initPersonProposals();
+			},null,'pkeane','okthen');
+		}
+		return false;
+	}
+};
+
+Dase.initProposalShortForm = function() {
+	var form = Dase.$('proposalShortForm');
+	if (!form) return;
+	form.onsubmit = function() {
+		//var url = this.options[this.selectedIndex].value+'.json';
+		if (!this.proposal_project_type.value) {
+			alert('please select a Project Type');
+			return false;
+		}
+		if (!this.proposal_name.value) {
+			alert('please enter a Proposal Title');
+			return false;
+		}
+	}
+};
+
+Dase.initAuth = function() {
+	var metas = document.getElementsByTagName('meta');
+	for (var i=0;i<metas.length;i++) {
+		if ('special' == metas[i].name) {
+			alert(metas[i].content);
+		}
+	}
 }
 
 
 Dase.addLoadEvent(function() {
+	Dase.initAuth();
+	Dase.initProposalShortForm();
 	Dase.initProposalSections();
 	Dase.initPersonProposals();
+	Dase.initDeleteProposal();
 });
 
