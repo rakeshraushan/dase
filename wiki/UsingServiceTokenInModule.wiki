@@ -54,7 +54,9 @@ public function getServicePass($r)
 Dase.getServicePassword = function() {
     var url = Dase.getLinkByRel('service_pass');
     Dase.ajax(url,'get',function(resp) {
-        return resp;
+        if (32 == resp.length) {
+            Dase.itsprop.service_pass = resp;
+        }
     });
 }
 }}}
