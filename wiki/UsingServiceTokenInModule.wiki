@@ -5,17 +5,13 @@ The Grant Proposal Application Module (itsprop) is required to do operations on 
   * in the login method, set a secret in a cookie, using serviceuser as key:
 
 {{{
-    public function getLogin($r)
-    {
-        $user = Uteid::login($r);
-        $secret = Dase_Auth::getSecret('itsprop');
-        //this secret will be saved as a cookie on the client
-        //ONLY upon successful eid login.  Now the client can
-        //request the service password (the server will check for 
-        //this token before it returns the service password).
-        Dase_Cookie::set('module',$secret);
-        
-       ...
+public function getLogin($r)
+  {
+    $user = Uteid::login($r);
+    $secret = Dase_Auth::getSecret('itsprop');
+    Dase_Cookie::set('module',$secret);
+    ...
+  }
 }}}
 
   * Create a serviceuser by setting a config variable in the module's local config file ({module_root}/inc/config.php):
@@ -36,17 +32,17 @@ and here is the mapper & method:
 'service_pass/{serviceuser}' => 'service_pass',
 }}}
 {{{
-    public function getServicePass($r)
-    {   
-        $secret = Dase_Cookie::get('module');
-        $suser = $r->get('serviceuser');
-        //checks the secret that was saved in cookie upon login
-        if ($secret == Dase_Auth::getSecret($r->get('serviceuser'))) {
-            //note: serviceuser MUST be declared in MODULE_ROOT.'/inc/config.php'
-            $r->renderResponse(Dase_Auth::getServicePassword($suser));
-        } else {
-            $r->renderError(401);
-        }
-    }
+public function getServicePass($r)
+{   
+    $secret = Dase_Cookie::get('module');
+    $suser = $r->get('serviceuser');
+    //checks the secret that was saved in cookie upon login
+    if ($secret == Dase_Auth::getSecret($r->get('serviceuser'))) {
+       //note: serviceuser MUST be declared in MODULE_ROOT.'/inc/config.php'
+       $r->renderResponse(Dase_Auth::getServicePassword($suser));
+     } else {
+        $r->renderError(401);
+     }
+}
 
 }}}
