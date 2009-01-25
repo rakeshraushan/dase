@@ -58,6 +58,8 @@ Dase.getServicePassword = function() {
     Dase.ajax(url,'get',function(resp) {
         if (32 == resp.length) {
             Dase.itsprop.service_pass = resp;
+            //any code that needs the service password must
+            //be initialized here
         }
     });
 }
