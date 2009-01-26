@@ -454,7 +454,7 @@ div#editMetadata form label.updated:after {
 }
 
 fieldset  {
-	margin-bottom 1em;
+	margin-bottom: 1em;
 }
 
 fieldset p {

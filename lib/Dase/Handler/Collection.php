@@ -269,7 +269,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($file->findOne()) {
 			$r->renderResponse($file->p_serial_number.' is a duplicate');
 		} else {
-			$r->renderError(404,'no item with checksum '.$r->get('md5'));
+			//$r->renderError(404,'no item with checksum '.$r->get('md5'));
+			$r->renderError(404);
 		}
 	}
 
@@ -421,7 +422,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory');
 		}
-		$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$eid);
+		$item = $this->collection->createNewItem(null,$this->user->eid);
 		$item->setValue('title',urldecode($filename));
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
@@ -454,9 +455,8 @@ class Dase_Handler_Collection extends Dase_Handler
 			$item_entry->setEntryType('item');
 			$r->renderError(400,'must be an item entry');
 		}
-		//slug or title will be serial number
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$r->set('serial_number',$_SERVER['HTTP_SLUG']);
+			$r->set('slug',$_SERVER['HTTP_SLUG']);
 		}
 		try {
 			$item = $item_entry->insert($r,$fetch_enclosure);
@@ -555,22 +555,25 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($json) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$item = $this->collection->createNewItem(null,$user->eid);
+		$slug = '';
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$title = $_SERVER['HTTP_SLUG'];
-		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
-			$title = $_SERVER['HTTP_TITLE'];
-		} else {
-			$title = $item->serial_number;
+			$slug = $_SERVER['HTTP_SLUG'];
+		} 
+		$sernum = Dase_Util::makeSerialNumber($slug);
+		try {
+			$item = $this->collection->createNewItem($sernum,$user->eid);
+			$title = $slug ? $slug : $item->serial_number;
+			$item->setValue('title',$title);
+			$item->setContent($json,$user->eid,'application/json');
+			$item->buildSearchIndex();
+			header("HTTP/1.1 201 Created");
+			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+			echo $item->asAtomEntry();
+			exit;
+		} catch (Dase_Exception $e) {
+			$r->renderError(409,$e->getMessage());
 		}
-		$item->setValue('title',$title);
-		$item->setContent($json,$user->eid,'application/json');
-		$item->buildSearchIndex();
-		header("HTTP/1.1 201 Created");
-		header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-		echo $item->asAtomEntry();
-		exit;
 	}
 
 	public function rebuildIndexes($r) 

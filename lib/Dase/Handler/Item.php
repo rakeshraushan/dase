@@ -316,10 +316,30 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('added metadata');
 	}
 
+	public function getMetadataValue($r)
+	{
+		//$user = $r->getUser();
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'cannot read metadata');
+		}
+		if (!$r->has('value_id')) {
+			$r->renderError(400,'missing identifier');
+		}
+		$value = new Dase_DBO_Value;
+		$value->load($r->get('value_id'));
+		if ($value) {
+			$r->renderResponse($value->value_text);
+		} else {
+			$r->renderError(404);
+		}
+	}
+
 	public function putMetadataValue($r)
 	{
 		$value_text = file_get_contents("php://input");
-		$user = $r->getUser();
+		//$user = $r->getUser();
+		$user = $r->getUser('http');
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot put metadata');
 		}
@@ -327,8 +347,25 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(400,'missing identifier');
 		}
 		$value_id = $r->get('value_id');
-		$this->item->updateMetadata($r,$value_id,strip_tags($value_text));
-		$r->renderResponse($value_id.'|'.$value_text);
+		$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
+		//$r->renderResponse($value_id.'|'.$value_text);
+		$r->renderResponse($value_text);
+	}
+
+	public function deleteMetadataValue($r)
+	{
+		//$user = $r->getUser();
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot delete metadata');
+		}
+		if (!$r->has('value_id')) {
+			$r->renderError(400,'missing identifier');
+		}
+		//try/catch??
+		$value_id = $r->get('value_id');
+		$this->item->removeMetadata($value_id,$user->eid);
+		$r->renderResponse('deleted');
 	}
 
 	public function putMetadata($r)
@@ -350,21 +387,6 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
-	}
-
-	public function deleteMetadataValue($r)
-	{
-		$user = $r->getUser();
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot delete metadata');
-		}
-		if (!$r->has('value_id')) {
-			$r->renderError(400,'missing identifier');
-		}
-		//try/catch??
-		$value_id = $r->get('value_id');
-		$this->item->removeMetadata($r,$value_id);
-		$r->renderResponse('deleted');
 	}
 
 	public function putItem($r)
@@ -469,15 +491,8 @@ class Dase_Handler_Item extends Dase_Handler
 		fclose($fp);
 
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$title = $_SERVER['HTTP_SLUG'];
-		} elseif ( isset( $_SERVER['HTTP_TITLE'] ) ) {
-			$title =  $_SERVER['HTTP_TITLE'];
-		} else {
-			$title = $item->serial_number;
+			$item->setValue('title',$_SERVER['HTTP_SLUG']);
 		}
-		$slug = Dase_Util::dirify($title);
-
-		$item->setValue('title',$title);
 
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
@@ -488,7 +503,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
-			$r->renderError(500,'cannot write file');
+			$r->renderError(500,'cannot write file '.$new_file);
 		}
 
 		@fwrite( $ifp, $bits );

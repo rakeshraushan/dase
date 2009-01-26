@@ -10,6 +10,7 @@ class Dase_Http_Auth
 	public static function getEid($check_db = false)
 	{
 		$request_headers = apache_request_headers();
+		$passwords = array();
 		Dase_Log::debug(print_r($request_headers,true));
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
@@ -28,7 +29,7 @@ class Dase_Http_Auth
 			$service_users = Dase_Config::get('serviceuser');
 			//if eid is among service users, get password w/ service_token as salt
 			if (isset($service_users[$eid])) {
-				$passwords[] = md5(Dase_Config::get('service_token').$eid);
+				$passwords[] = Dase_Auth::getServicePassword($eid);
 			}
 
 			//lets me use the superuser passwd for http work
@@ -37,7 +38,7 @@ class Dase_Http_Auth
 				$passwords[] = $su[$eid];
 			}
 
-			//todo: is this used anymore?????
+			//this is used for folks needing a quick service pwd to do uploads
 			if ($check_db) {
 				$u = Dase_DBO_DaseUser::get($eid);
 				$pass_md5 = md5($_SERVER['PHP_AUTH_PW']);

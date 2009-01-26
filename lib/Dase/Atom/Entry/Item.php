@@ -3,6 +3,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 {
 	protected $_collection;
 	protected $_collectionAsciiId;
+	protected $_metadata;
 
 	function __construct($dom = null,$root = null)
 	{
@@ -52,6 +53,21 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function getChildfeedLinkUrlByTypeJson($item_type)
+	{
+		$type = $this->getItemType();
+		$desc = $item_type.'/children_of/'.$type['term'];
+		foreach ($this->getChildJsonFeedLinks() as $link) {
+			if (strpos($link['href'],$desc)) {
+				return $link['href'];
+			}
+		}
+	}
+
+
+	function getChildfeedLinkUrlByTypeAtom($item_type)
+	{
+	}
 
 	function getThumbnailLink()
 	{
@@ -71,10 +87,10 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	public function select($att,$return_first = true) 
 	{
-		foreach ($this->metadata as $k => $v) {
+		foreach ($this->getMetadata() as $k => $v) {
 			if ($k == $att) {
 				if ($return_first) {
-					return $v['values'][0];
+					return $v['value'];
 				} else {
 					return $v['values']; //will be an array
 				}
@@ -276,21 +292,54 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$this->addCategory($type_ascii_id,'http://daseproject.org/category/item_type',$type_name);
 	}
 
-	function getMetadata($include_private_metadata=false) 
+	function getMetadata($att_ascii_id = '',$include_private_metadata=false) 
 	{
+		if (count($this->_metadata)) {
+			if ($att_ascii_id) {
+				if (isset($this->_metadata[$att_ascii_id])) {
+					return $this->_metadata[$att_ascii_id];
+				} else {
+					return false;
+				}
+			}
+			return $this->_metadata;
+		}
 		$metadata = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
+				$v = array();
 				$att_ascii_id = $el->getAttribute('term');
 				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
+				$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
+				$v['text'] = $el->nodeValue;
+				$metadata[$att_ascii_id]['values'][] = $v;
+				//easy access to first value
+				if (1 == count($metadata[$att_ascii_id]['values'])) {
+					$metadata[$att_ascii_id]['text'] = $v['text'];
+					$metadata[$att_ascii_id]['edit'] = $v['edit'];
+				}
 			}
 			if ($include_private_metadata &&
 				'http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
 					$att_ascii_id = $el->getAttribute('term');
 					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-					$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
+					$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
+					$v['text'] = $el->nodeValue;
+					$metadata[$att_ascii_id]['values'][] = $v;
+					//easy access to first value
+					if (1 == count($metadata[$att_ascii_id]['values'])) {
+						$metadata[$att_ascii_id]['text'] = $v['text'];
+						$metadata[$att_ascii_id]['edit'] = $v['edit'];
+					}
 				}
+		}
+		$this->_metadata = $metadata;
+		if ($att_ascii_id) {
+			if (isset($metadata[$att_ascii_id])) {
+				return $metadata[$att_ascii_id];
+			} else {
+				return false;
+			}
 		}
 		return $metadata;
 	}
@@ -360,25 +409,22 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function insert($r,$fetch_enclosure=false) 
 	{
-		$eid = $r->getUser()->eid;
+		$eid = $r->getUser('http')->eid;
 		$author = $this->getAuthorName();
+		//allows created_by_eid to be author, NOT necessarily user
 		if (!$author) {
 			$author = $eid;
 		}
-		$slug = $r->get('serial_number'); // set in handler from slug
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		if (!$c) { return; }
-		if ($r->has('serial_number')) {
-			$item = Dase_DBO_Item::create($c->ascii_id,$slug,$author);
-		} else {
-			$item = Dase_DBO_Item::create($c->ascii_id,null,$author);
-		}
-		foreach ($this->metadata as $att => $keyval) {
+		$sn = Dase_Util::makeSerialNumber($r->get('slug'));
+		$item = $c->createNewItem($sn,$author);
+		foreach ($this->getMetadata() as $att => $keyval) {
 			//creates atribute if it doesn't exist!
 			Dase_DBO_Attribute::findOrCreate($c->ascii_id,$att);
 			foreach ($keyval['values'] as $v) {
-				if (trim($v)) {
-					$item->setValue($att,$v);
+				if (trim($v['text'])) {
+					$item->setValue($att,$v['text']);
 				}
 			}
 		}
@@ -487,13 +533,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 
 		//3. metadata
-		$metadata = $this->getMetadata(true);
 		//only deletes collection (not admin) metadata
 		//then replaces it
 		$item->deleteValues();
-		foreach (array_keys($metadata) as $ascii_id) {
-			foreach ($metadata[$ascii_id]['values'] as $val) {
-				$item->setValue($ascii_id,$val);
+		foreach ($this->getMetadata(true) as $att => $keyval) {
+			foreach ($keyval['values'] as $v) {
+				if (trim($v['text'])) {
+					$item->setValue($att,$v['text']);
+				}
 			}
 		}
 
@@ -544,8 +591,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$method = 'get'.ucfirst($var);
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
-		} elseif ($this->getRawMetadata($var)) {
-			return $this->getRawMetadata($var);
+		} elseif ($this->getMetadata($var)) {
+			return $this->getMetadata($var);
 		} else {
 			return parent::__get($var);
 		}

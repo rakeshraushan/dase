@@ -114,6 +114,17 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/users.tpl'));
 	}
 
+	public function postToUsers($r)
+	{
+		$u = new Dase_DBO_DaseUser;
+		$u->eid = $r->get('eid');
+		if ($u->eid && !$u->findOne()) {
+			$u->name = $r->get('name');
+			$u->insert();
+		}
+		$r->renderRedirect('admin/users');
+	}
+
 	public function getUser($r)
 	{
 		$user = Dase_DBO_DaseUser::get($r->get('eid'));

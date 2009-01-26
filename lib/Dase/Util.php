@@ -9,6 +9,16 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
+	//todo: work on this:
+	public static function isUrl($str)
+	{
+		if ('http://' == substr($str,0,7) || 'https://' == substr($str,0,8)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/** from http://www.weberdev.com/get_example-3543.html */
 	public static function getUniqueName()
 	{
@@ -61,6 +71,16 @@ Class Dase_Util
 	{
 		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str)));
 		return preg_replace('/__*/','_',$str);
+	}
+
+	public static function makeSerialNumber($str)
+	{
+		if ($str) {
+			$str = preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str));
+			return preg_replace('/__*/','_',$str);
+		} else {
+			return null;
+		}
 	}
 
 	/** 
