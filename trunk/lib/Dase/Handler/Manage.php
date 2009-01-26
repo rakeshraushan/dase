@@ -480,7 +480,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			}
 			Dase_Log::info('uploading file '.$name.' type: '.$type);
 
-			$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
+			$item = $this->collection->createNewItem(null,$this->user->eid);
 			if ($r->has('title')) {
 				$item->setValue('title',$r->get('title'));
 			} else {
@@ -494,7 +494,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		} else {
 			//no file, if there is a title, assume it is a new item w/o media
 			if ($r->has('title')) {
-				$item = Dase_DBO_Item::create($this->collection->ascii_id,null,$this->user->eid);
+				$item = $this->collection->createNewItem(null,$this->user->eid);
 				$item->setValue('title',$r->get('title'));
 				$item->buildSearchIndex();
 			} else {

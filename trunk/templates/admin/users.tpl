@@ -14,6 +14,21 @@
 	<li><a href="admin/user/{$user->eid}"><strong>{$user->eid}</strong>: {$user->name}</a></li>
 	{/foreach}
 </ul>
+<h2>Add a user</h2>
+	<form action="admin/users" method="post">
+		<p>
+		<label for="eid">eid</label>
+		<input type="text" name="eid"/>
+		</p>
+		<p>
+		<label for="name">name</label>
+		<input type="text" name="name"/>
+		</p>
+		<p>
+		<input type="submit" value="add user"/>
+		</p>
+	</form>
+
 {/block} 
 
 

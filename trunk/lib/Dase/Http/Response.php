@@ -125,8 +125,9 @@ class Dase_Http_Response
 				$query_array[] = urlencode($key).'='.urlencode($val);
 			}
 		}
+		$app_root = Dase_Config::get('app_root');
 		if ('http' != substr($path,0,4)) {
-			$redirect_path = trim(APP_ROOT,'/') . "/" . trim($path,'/');
+			$redirect_path = trim($app_root,'/') . "/" . trim($path,'/');
 		} else {
 			$redirect_path = $path;
 		}

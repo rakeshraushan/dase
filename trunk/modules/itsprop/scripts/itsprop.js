@@ -1,7 +1,9 @@
+Dase.itsprop = {};
+
 Dase.insertDate = function() {
 	var m_names = new Array("Jan", "Feb", "Mar", 
-			"Apr", "May", "June", "July", "Aug", "Sept", 
-			"Oct", "Nov", "Dec");
+	"Apr", "May", "June", "July", "Aug", "Sept", 
+	"Oct", "Nov", "Dec");
 	var d = new Date();
 	var curr_date = d.getDate();
 	var curr_month = d.getMonth();
@@ -11,47 +13,44 @@ Dase.insertDate = function() {
 };
 
 
-Dase.initProposalSections = function() {
+Dase.initProposalForm = function() {
 	var form = Dase.$('proposalForm');
 	if (!form) return;
 	var labels = form.getElementsByTagName('label');
 	for (var i=0;i<labels.length;i++) {
 		labels[i].onclick = function() {
-			var sec = Dase.$(this.getAttribute('for'));
+			var sec = Dase.$('div_'+this.getAttribute('for'));
 			if (sec) {
 				Dase.toggle(sec);
 			}
 		}
 	}
-};
-
-
-Dase.initProposalUpdate = function() {
-	var pform = Dase.$('proposalForm');
-	if (!pform) return;
-	var form_action = pform.action;
 	var inputs = document.getElementsByTagName('input');
 	for (var i=0;i<inputs.length;i++) {
 		var inp = inputs[i];
-		if ('update' == inp.className) {
+		if ('update' == inp.value) {
 			inp.onclick = function() {
-				var id = this.id;
-				var section_id = id.substr(7)+'Sec';
-				var textarea = Dase.$(section_id).getElementsByTagName('textarea')[0];
-				Dase.tmpMsg(this.parentNode,'saving text...');
+				var clicked = this;
+				var url = this.getAttribute('action');
+				var textarea = Dase.$(this.className);
+				Dase.addClass(textarea,'pending');
+				Dase.addClass(clicked,'updating');
+				clicked.value = 'updating...';
 				var name = textarea.name;
 				var data = textarea.value;
-				var url = form_action+'/c/'+name;
-				Dase.ajax(url,'post',function(txt) {
-						var lines = txt.match(/\n/g);
-						if (lines) {
-						textarea.rows = lines.length;
-						} else {
+				Dase.ajax(url,'put',function(txt) {
+					Dase.removeClass(textarea,'pending');
+					Dase.removeClass(clicked,'updating');
+					clicked.value = 'update';
+					var words = txt.split(' ').length;
+					if (words) {
+						textarea.rows = words/11+2;
+					} else {
 						textarea.rows = 0;
-						}
-						//Dase.highlight(textarea,800);
-						textarea.value = txt;
-						},data);
+					}
+					Dase.highlight(textarea,800);
+					textarea.value = txt;
+				},data,'itsprop',Dase.itsprop.service_pass);
 				return false;
 			}
 		}
@@ -72,7 +71,7 @@ Dase.initPersonProposals = function() {
 		target.innerHTML = templateObj.process(data);
 		Dase.removeClass(target,'hide');
 
-	},null,null,'pkeane','okthen');
+	},null,null,'itsprop',Dase.itsprop.service_pass);
 };
 
 Dase.initDeleteProposal = function() {
@@ -84,7 +83,7 @@ Dase.initDeleteProposal = function() {
 			Dase.ajax(this.action,'delete',function(resp) {
 				Dase.$('content').innerHTML = resp; 
 				Dase.initPersonProposals();
-			},null,'pkeane','okthen');
+			},null,'itsprop',Dase.itsprop.service_pass);
 		}
 		return false;
 	}
@@ -106,21 +105,92 @@ Dase.initProposalShortForm = function() {
 	}
 };
 
-Dase.initAuth = function() {
-	var metas = document.getElementsByTagName('meta');
-	for (var i=0;i<metas.length;i++) {
-		if ('special' == metas[i].name) {
-			alert(metas[i].content);
+Dase.initProposalCourses = function() {
+	var url = Dase.getLinkByRel('courses');
+	if (!url) return;
+	Dase.getJSON(url,function(resp) {
+		var target = Dase.$('classesList');
+		var data = { 'classes':resp};
+		var templateObj = TrimPath.parseDOMTemplate("proposal_courses_jst");
+		target.innerHTML = templateObj.process(data);
+		Dase.removeClass(target,'hide');
+		var button = Dase.$('add_class');
+		button.value = 'add';
+		Dase.removeClass(button,'updating');
+		var cform = Dase.$('courseForm');
+		if (cform) { cform.reset(); }
+		var links = target.getElementsByTagName('a');
+		for (var i=0;i<links.length;i++) {
+			if ('delete' == links[i].className) {
+				links[i].onclick = function() {
+					if (confirm('are you sure?')) {
+						this.className = 'modify';
+						this.innerHTML = 'removing...';
+						Dase.ajax(this.href,'delete',function(resp) {
+							Dase.initProposalCourses();
+						},null,'itsprop',Dase.itsprop.service_pass);
+					}
+					return false;
+				}
+			}
 		}
+	},null,null,'itsprop',Dase.itsprop.service_pass);
+
+
+}
+
+Dase.initCourseForm = function() {
+	var cform = Dase.$('courseForm');
+	if (!cform) return;
+	cform.onsubmit = function() {
+		if (!this.course_title.value) {
+			alert('please enter a Course Title');
+			return false;
+		}
+		if (!this.course_number.value) {
+			alert('please enter a Course Number');
+			return false;
+		}
+		if (!this.course_enrollment.value) {
+			alert('please enter enrollment');
+			return false;
+		}
+		if (!this.course_frequency.value) {
+			alert('please select a frequency');
+			return false;
+		}
+		var button = Dase.$('add_class');
+		button.value = 'adding course info';
+		Dase.addClass(button,'updating');
+		var content_headers = {
+			'Content-Type':'application/x-www-form-urlencoded'
+		}
+		Dase.ajax(this.action,'post',function(resp) { 
+			Dase.initProposalCourses();
+		},Dase.form.serialize(this),null,null,content_headers); 
+		return false;
 	}
 }
 
+Dase.initModule = function() {
+	var url = Dase.getLinkByRel('service_pass');
+	Dase.ajax(url,'get',function(resp) {
+		if (32 == resp.length) {
+			Dase.itsprop.service_pass = resp;
+		}
+		Dase.initProposalShortForm();
+		Dase.initProposalForm();
+		Dase.initProposalCourses();
+		Dase.initPersonProposals();
+		Dase.initDeleteProposal();
+		Dase.initCourseForm();
+	},null,null,null,null,function(error) {
+		alert(error);
+	});
+};
+
 
 Dase.addLoadEvent(function() {
-	Dase.initAuth();
-	Dase.initProposalShortForm();
-	Dase.initProposalSections();
-	Dase.initPersonProposals();
-	Dase.initDeleteProposal();
+	Dase.initModule();
 });
 

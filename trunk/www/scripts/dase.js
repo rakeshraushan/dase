@@ -103,6 +103,29 @@ Dase.getElementsByClass = function(parent,cname,tagname) {
 	return res;
 }
 
+Dase.getLinkByRel = function(rel) {
+	//return FIRST hit
+	var links = document.getElementsByTagName('link');
+	for (var i=0;i<links.length;i++) {
+		if (rel == links[i].rel) {
+			return links[i].href;
+		}
+	}
+	return;
+};
+
+Dase.getMeta = function(name) {
+	alert(name);
+	//return FIRST hit
+	var metas = document.getElementsByTagName('meta');
+	for (var i=0;i<metas.length;i++) {
+		if (name == metas[i].name) {
+			return metas[i].content;
+		}
+	}
+	return;
+};
+
 Dase.displayError = function(msg) {
 	var jsalert = Dase.$('msg');
 	if (!jsalert) return false;

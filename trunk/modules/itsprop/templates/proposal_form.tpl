@@ -4,10 +4,10 @@
 <h1>New Grant Proposal Form</h1>
 <div class="main">
 	<form id="proposalShortForm" class="shortForm" method="post" >
-		<input type="hidden" name="eid" value="{$person->serial_number}"/>
+		<input type="hidden" name="eid" value="{$person->serial_number.text}"/>
 		<p>
 		<label for="name">Proposer Name</label>
-		<input type="text" name="name" value="{$person->person_name}" disabled="disabled"/>
+		<input type="text" name="name" value="{$person->person_name.text}" disabled="disabled"/>
 		</p>
 		<p>
 		<label for="email">Proposal Title</label>

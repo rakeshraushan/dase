@@ -34,7 +34,6 @@ table {
 
 textarea {
 	padding: 5px;
-	min-height: 10em;
 	width: 100%;
 }
  
@@ -53,6 +52,11 @@ h1 {
 
 h2 {
 	font-size: 1.4em;
+}
+
+h5 {
+	font-size: .9em;
+	font-weight: bold;
 }
 
 a {
@@ -324,6 +328,28 @@ p.val {
 }
 
 
+form#courseForm {
+	margin-left: 10px;
+}
+
+form#courseForm label {
+	background-color: #fff;
+	padding: 0;
+	font-size: .9em;
+	margin-bottom: 0px;
+	margin-top: 2px;
+	color: #333;
+}
+
+form#courseForm input[type=submit] {
+	margin: 6px 0px;
+}
+
+form#courseForm p {
+	margin: 1px 0px;
+}
+
+
 form.shortForm label {
 	background-color: #fff;
 	padding: 0;
@@ -335,19 +361,24 @@ form.shortForm p {
 	margin: 8px 0;
 }
 
-form#proposalForm {
+#proposalForm {
 	width: 70%;
 }
 
-form#proposalForm label {
+#proposalForm label {
 	color: #666;
 	background-color: #EDF2F2;
 	padding: 3px 6px;
 }
 
-form#proposalForm textarea {
+#proposalForm textarea {
 	margin: 3px 6px;
 	width: 96%;
+	min-height: 10em;
+}
+
+#proposalForm input[type=submit] {
+	margin: 1px 6px;
 }
 
 span.control {
@@ -381,5 +412,40 @@ div#proposal_sta p {
 	margin-top: 3em;
 }
 #delete_proposal input[type="submit"]:hover {
-	background-color: #f99;
+	background-color: #c00;
+	color: #fff;
 }
+
+textarea.pending {
+	color: #aaa;
+}
+
+textarea.highlight {
+	background-color: #ffc;
+}
+
+input.updating {
+	background-color: #fff;
+}
+
+ul#courses {
+	list-style: none;
+	margin: 0px;
+	padding: 10px;
+	background-color: #f2efec;
+	font-size: .8em;
+	color: #333;
+	margin-bottom: 2em;
+}
+
+textarea#budget_item_description {
+	width: 30em;
+	min-height: 2em; 
+	height: 2em;
+}
+
+#deleteControl {
+	float:right;
+	margin-right: 30%;
+}
+

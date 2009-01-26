@@ -14,9 +14,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'person/{eid}' => 'person',
 		'person/{eid}/proposal_form' => 'proposal_form',
 		'proposal/{serial_number}' => 'proposal',
+		'proposal/{serial_number}/courses' => 'proposal_courses',
 		'persons' => 'persons',
 		'departments' => 'departments',
-		'service_token' => 'service_token',
+		'service_pass/{serviceuser}' => 'service_pass',
 	);
 
 	public function setup($r)
@@ -30,6 +31,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				if ($is_super) {
 					$r->set('is_superuser',1);
 				}
+				$this->service_pass = Dase_Auth::getServicePassword('itsprop');
 			}
 		}
 	}
@@ -119,7 +121,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		}
 
 		$person->replaceMetadata($metadata_array);
-		$person->putToUrl($person->getEditLink(),'pkeane','okthen');
+		$person->putToUrl($person->getEditLink(),'itsprop',$this->service_pass);
 		$r->renderRedirect(APP_ROOT.'/modules/itsprop/person/'.$r->get('eid'));
 	}
 
@@ -162,6 +164,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		if (is_numeric($proposal)) {
 			$r->renderResponse($tpl->fetch('proposal404.tpl'));
 		}
+		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
+		$tpl->assign('budget_items',$proposal->getChildfeedLinkUrlByTypeJson('budget_item'));
 		$tpl->assign('proposal',$proposal);
 		$r->renderResponse($tpl->fetch('proposal.tpl'));
 	}
@@ -171,24 +175,59 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal = new Dase_Atom_Entry_Item;
 		$proposal->setTitle($r->get('proposal_name'));
 		$proposal->setItemType('proposal');
+		$proposal->addAuthor($this->user->eid);
 		$proposal->addMetadata('title',$r->get('proposal_name')); 
-		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
+		$proposal->addMetadata('proposal_budget_description','enter budget description here'); 
+		$proposal->addMetadata('proposal_collaborators','enter collaborators here'); 
+		$proposal->addMetadata('proposal_description','enter description here'); 
 		$proposal->addMetadata('proposal_name',$r->get('proposal_name')); 
+		$proposal->addMetadata('proposal_previous_funding','enter previous funding here'); 
+		$proposal->addMetadata('proposal_professional_assistance','enter professional assistance here'); 
+		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
+		$proposal->addMetadata('proposal_renovation_description','enter renovation description here'); 
+		$proposal->addMetadata('proposal_summary','enter summary here'); 
+
 		$proposal->setUpdated(date(DATE_ATOM));
 		$proposal->addLink($r->get('department'),'http://daseproject.org/relation/parent');
-		$result = $proposal->postToUrl(APP_ROOT.'/collection/itsprop','pkeane','okthen');
-		$parts = explode('/',trim($result));
-		$sernum = str_replace('.atom','',array_pop($parts));
-		$r->renderRedirect(APP_ROOT.'/modules/itsprop/proposal/'.$sernum);
+		$result = $proposal->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass);
+		if (Dase_Util::isUrl($result)) {
+			$parts = explode('/',trim($result));
+			$sernum = str_replace('.atom','',array_pop($parts));
+			$r->renderRedirect(APP_ROOT.'/modules/itsprop/proposal/'.$sernum);
+		} else {
+			$r->renderError(400,$result);
+		}
 	}
 
-	public function getServiceToken($r)
+	/** this will be called ajaxily */
+	public function postToProposalCourses($r)
+	{
+		$course = new Dase_Atom_Entry_Item;
+		$course->setTitle($r->get('course_title'));
+		$course->setItemType('course');
+		$course->addAuthor($this->user->eid);
+		$course->addMetadata('title',$r->get('course_title')); 
+		$course->addMetadata('course_title',$r->get('course_title')); 
+		$course->addMetadata('course_number',$r->get('course_number')); 
+		$course->addMetadata('course_frequency',$r->get('course_frequency')); 
+		$course->addMetadata('course_enrollment',$r->get('course_enrollment')); 
+		$course->setUpdated(date(DATE_ATOM));
+		$course->addLink($r->get('proposal'),'http://daseproject.org/relation/parent');
+		$result = $course->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass);
+		if (Dase_Util::isUrl($result)) {
+			$r->renderResponse($result);
+		} else {
+			$r->renderError(400,$result);
+		}
+	}
+
+	public function getServicePass($r)
 	{
 		$secret = Dase_Cookie::get('module');
-		if ($secret == md5(Dase_Config::get('token').'itsprop')) {
-			//note: 'itsprop' MUST be declared in MODULE_ROOT.'/inc/config.php'
-			//as a service user
-			$r->renderResponse(md5(Dase_Config::get('service_token').'itsprop'));
+		$suser = $r->get('serviceuser');
+		//checks the secret that was saved in cookie upon login
+		if ($secret == Dase_Auth::getSecret($r->get('serviceuser'))) {
+			$r->renderResponse(Dase_Auth::getServicePassword($suser));
 		} else {
 			$r->renderError(401);
 		}
@@ -197,7 +236,11 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function getLogin($r)
 	{
 		$user = Uteid::login($r);
-		$secret = md5(Dase_Config::get('token').'itsprop');
+		$secret = Dase_Auth::getSecret('itsprop');
+		//this secret will be saved as a cookie on the client
+		//ONLY upon successful eid login.  Now the client can
+		//request the service password (the server will check for 
+		//this token before it returns the service password).
 		Dase_Cookie::set('module',$secret);
 		$ldap = Utlookup::getRecord($user->eid);
 		$person = new Dase_Atom_Entry_Item;
@@ -211,13 +254,15 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person->addMetadata('person_phone',$ldap['phone']); 
 		$person->addMetadata('person_lastname',$ldap['lastname']); 
 		$person->setUpdated(date(DATE_ATOM));
-		$person->postToUrl(APP_ROOT.'/collection/itsprop','pkeane','okthen',$user->eid);
+		$person->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass,$user->eid);
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/home');
 	}
 
 	public function getLogout($r)
 	{
 		Uteid::logout($r);
+		Dase_Cookie::clear();
+		Dase_Cookie::clearByType('module');
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/welcome');
 	}
 

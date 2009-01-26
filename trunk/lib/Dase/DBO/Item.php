@@ -10,15 +10,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public $media = array();
 	public $values = array();
 
-	public static function create($collection_ascii_id,$serial_number=null,$eid=null)
-	{
-		if (!$eid) {
-			$eid = '_dase';
-		}
-		$c = Dase_DBO_Collection::get($collection_ascii_id);
-		return $c->createNewItem($serial_number,$eid);
-	}
-
 	public static function get($collection_ascii_id,$serial_number)
 	{
 		if (!$collection_ascii_id || !$serial_number) {
@@ -445,6 +436,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
+	function getChildTypesList()
+	{
+		$children = array();
+		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr->collection_ascii_id = $this->getCollection()->ascii_id;
+		$itr->parent_type_ascii_id = $this->getItemType()->ascii_id;
+		foreach ($itr->find() as $child) {
+			$children[$child->child_type_ascii_id] = $child->title;
+		}
+		return $children;
+	}
+
 	function getChildrenSets()
 	{
 		$c = $this->getCollection();
@@ -466,7 +469,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $set;
 	}
 
-	function updateMetadata($request,$value_id,$value_text)
+	function updateMetadata($value_id,$value_text,$eid)
 	{
 		$c = $this->getCollection();
 		$v = new Dase_DBO_Value;
@@ -476,7 +479,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->added_text = $value_text;
 		$rev->attribute_name = $att->attribute_name;
 		$rev->collection_ascii_id = $c->ascii_id;
-		$rev->dase_user_eid = $request->getUser()->eid;
+		$rev->dase_user_eid = $eid;
 		$rev->deleted_text = $v->value_text;
 		$rev->item_serial_number = $this->serial_number;
 		$rev->timestamp = date(DATE_ATOM);
@@ -486,7 +489,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->buildSearchIndex();
 	}
 
-	function removeMetadata($request,$value_id)
+	function removeMetadata($value_id,$eid)
 	{
 		$c = $this->getCollection();
 		$v = new Dase_DBO_Value;
@@ -496,7 +499,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->added_text = '';
 		$rev->attribute_name = $att->attribute_name;
 		$rev->collection_ascii_id = $c->ascii_id;
-		$rev->dase_user_eid = $request->getUser()->eid;
+		$rev->dase_user_eid = $eid;
 		$rev->deleted_text = $v->value_text;
 		$rev->item_serial_number = $this->serial_number;
 		$rev->timestamp = date(DATE_ATOM);
@@ -853,10 +856,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$meta = $entry->addCategory(
 						$row['ascii_id'],'http://daseproject.org/category/metadata',
 						$row['attribute_name'],$row['value_text']);
+					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				} else {
 					$meta = $entry->addCategory(
 						$row['ascii_id'],'http://daseproject.org/category/private_metadata',
 						$row['attribute_name'],$row['value_text']);
+					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				}
 				if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
 					$entry->setTitle($row['value_text']);
@@ -870,22 +875,43 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//this will only "take" if there is not already a title
 		$entry->setTitle($this->serial_number);
 
-		/***************
-		 * hierarchy stuff
+		/**************************
+		 *    hierarchy stuff
 		 * ************************/
 
 		if ('default' != $type->name) {
 
 			//simply creates link that points to childern
+			$has_children = 0;
 			foreach ($this->getChildrenSets() as $set) {
+				$has_children = 1;
+				//one for the Atom version
 				$entry->addLink(
 					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
 					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
+				//one for the JSON version
 				$entry->addLink(
-					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
 					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
+			}
+
+			//create links even if no children
+			if (!$has_children) {
+				foreach ($this->getChildTypesList() as $child => $title) {
+					//one for the Atom version
+					$entry->addLink(
+						$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+						'http://daseproject.org/relation/childfeed','application/atom+xml','',$title)
+						->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',0);
+					//one for the JSON version
+					$entry->addLink(
+						$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
+						'http://daseproject.org/relation/childfeed','application/json','',$title)
+						->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',0);
+				}
+
 			}
 
 			//adds a link to any parent item(s)
@@ -1057,11 +1083,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$j = array();
 		$app_root = Dase_Config::get('app_root');
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$item_array['serial_number'] = $this->serial_number;
 		$item_array['created'] = $this->created;
 		$item_array['updated'] = $this->updated;
-		$item_array['collection'] = $this->collection->ascii_id;
+		$item_array['collection'] = $c->ascii_id;
+		$item_array['edit'] = $app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom';
 		$item_array['metadata'] = array();
 		foreach ($this->getMetadata() as $row) {
 			//note: a simpler way would be to ALWAYS make value an array.
@@ -1083,13 +1110,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getMedia() as $m) {
 		$item_array['media'][$m->size] = 
 			$app_root.'/media/'.
-			$this->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+			$c->ascii_id.'/'.$m->size.'/'.$m->filename;
 		}
-		$c = $this->getContents();
-		if ($c) {
-			$content[$c->id]['updated'] = $c->updated;
-			$content[$c->id]['eid'] = $c->updated_by_eid;
-			$content[$c->id]['text'] = $c->text;
+		$con = $this->getContents();
+		if ($con) {
+			$content[$con->id]['updated'] = $con->updated;
+			$content[$con->id]['eid'] = $con->updated_by_eid;
+			$content[$con->id]['text'] = $con->text;
 			$item_array['content'][] = $content;
 		}
 

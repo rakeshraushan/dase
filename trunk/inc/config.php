@@ -50,8 +50,10 @@ if (file_exists( DASE_PATH . '/inc/local_config.php')) {
 	include DASE_PATH . '/inc/local_config.php';
 }
 
-if (defined('MODULE_PATH') && file_exists( MODULE_PATH . '/inc/config.php')) {
-	include(MODULE_PATH . '/inc/config.php');
+if (defined('MODULE_PATH')) {
+   	if (file_exists( MODULE_PATH . '/inc/config.php')) {
+		include(MODULE_PATH . '/inc/config.php');
+	}
 	$conf['module'] = array_pop(explode('/',MODULE_PATH));
 }      
 

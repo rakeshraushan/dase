@@ -79,7 +79,6 @@ class Uteid
 		setcookie('FC','',time()-86400,'/','.utexas.edu');
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
-		Dase_Cookie::clear();
 	}
 
 }

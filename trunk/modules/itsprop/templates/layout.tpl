@@ -5,7 +5,6 @@
 	<head>
 		<title>LAITS Technology Grants</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta content="123456" name="special" />
 
 		<base href="{$module_root}" />
 
@@ -13,7 +12,7 @@
 		<link rel="stylesheet" type="text/css" href="css/itsprop.css" />
 		<link rel="shortcut icon" href="images/itsbox.ico" />
 		<link rel="proposals" href="{$app_root}item_type/itsprop/proposal/items/{$user->eid}.json" />
-		<link rel="service_token" href="{$module_root}service_token" />
+		<link rel="service_pass" href="{$module_root}service_pass/itsprop" />
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
@@ -76,7 +75,7 @@
 					</li>
 					{/if}
 				</ul>
-				<div class="loadingMsg" id="ajaxMsg"></div>
+				<h5 class="hide" id="ajaxMsg">loading...</h5>
 			</div> 
 
 			<div id="content">

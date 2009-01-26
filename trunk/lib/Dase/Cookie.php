@@ -64,6 +64,19 @@ class Dase_Cookie {
 		}
 	}
 
+	public static function clearByType($type) 
+	{
+		$pre = Dase_Cookie::getPrefix();
+		if ('module' == $type) {
+			//allows each module their own module cookie
+			$module = Dase_Config::get('module');
+			$pre = $pre.$module.'_';
+		}
+		if (isset(self::$cookiemap[$type])) {
+			setcookie($pre . self::$cookiemap[$type],"",-86400,'/');
+		}
+	}
+
 	/** simply checks the cookie */
 	public static function getEid() 
 	{
