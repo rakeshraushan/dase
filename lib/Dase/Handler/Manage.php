@@ -337,6 +337,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$itr->collection_ascii_id = $coll;
 			$itr->title = $rel_type->name.' '.$type->name.'s';
 			$itr->insert();
+			$itr->updateAtomCache();
 		}	
 		if ('child' == $rel) {
 			$itr = new Dase_DBO_ItemTypeRelation;
@@ -345,6 +346,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$itr->collection_ascii_id = $coll;
 			$itr->title = $type->name.' '.$rel_type->name.'s';
 			$itr->insert();
+			$itr->updateAtomCache();
 		}	
 		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type_ascii);
 	}
@@ -412,7 +414,11 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function deleteItemTypeRelation($r)
 	{
 		$rel = new Dase_DBO_ItemTypeRelation;
+		//does NOT delete actual relationships
+		//which is good, since it'd be too easy
+		//to do accidentally
 		if ($rel->load($r->get('id'))) {
+			$rel->updateAtomCache();
 			$rel->delete();
 			$r->renderOk('done');
 		} else {

@@ -92,4 +92,18 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		$ir->parent_serial_number = $parent_serial_number;
 		return ($ir->findCount());
 	}
+
+	public function updateAtomCache()
+	{
+		//very expensive, may want to just delete atom cache for each
+		$ir = new Dase_DBO_ItemRelation;
+		$ir->item_type_relation_id = $this->id;
+		$i = 0;
+		foreach ($ir->find() as $item_rel) {
+			$i++;
+			$item_rel->saveParentAtom();
+			$item_rel->saveChildAtom();
+		}
+		Dase_Log::debug('updated atom caches for '.$i.' items');
+	}
 }
