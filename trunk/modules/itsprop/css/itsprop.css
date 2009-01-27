@@ -328,11 +328,11 @@ p.val {
 }
 
 
-form#courseForm {
+form#courseForm,form#budgetForm {
 	margin-left: 10px;
 }
 
-form#courseForm label {
+form#courseForm label,form#budgetForm label {
 	background-color: #fff;
 	padding: 0;
 	font-size: .9em;
@@ -341,11 +341,11 @@ form#courseForm label {
 	color: #333;
 }
 
-form#courseForm input[type=submit] {
+form#courseForm input[type=submit], form#budgetForm input[type=submit]{
 	margin: 6px 0px;
 }
 
-form#courseForm p {
+form#courseForm p,form#budgetForm p{
 	margin: 1px 0px;
 }
 
@@ -354,7 +354,7 @@ form.shortForm label {
 	background-color: #fff;
 	padding: 0;
 	margin-bottom: 2px;
-	color: #669;
+	color: #333;
 }
 
 form.shortForm p {
@@ -366,7 +366,7 @@ form.shortForm p {
 }
 
 #proposalForm label {
-	color: #666;
+	color: #333;
 	background-color: #EDF2F2;
 	padding: 3px 6px;
 }
@@ -408,10 +408,10 @@ div#proposal_sta p {
 	padding: 6px;
 }
 
-#delete_proposal {
+#deleteProposal {
 	margin-top: 3em;
 }
-#delete_proposal input[type="submit"]:hover {
+#deleteProposal input[type="submit"]:hover {
 	background-color: #c00;
 	color: #fff;
 }
@@ -442,10 +442,28 @@ textarea#budget_item_description {
 	width: 30em;
 	min-height: 2em; 
 	height: 2em;
+	margin: 3px 0;
 }
 
-#deleteControl {
+#budget_items_table {
+	margin: 5px 0 15px 0;
+}
+
+div.deleteControl {
 	float:right;
 	margin-right: 30%;
 }
 
+div.textchoice {
+	margin: 15px 0px 30px 0px;
+}
+
+div.textchoice p {
+	margin: 8px 10px;
+	font-size: .9em;
+}
+
+span.current {
+	color: blue;
+	font-weight: normal;
+}

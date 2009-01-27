@@ -372,20 +372,22 @@ class Dase_Handler_Manage extends Dase_Handler
 		$res['parents'] = array();
 		$res['children'] = array();
 		foreach ($type->getParentRelations() as $p) {
-			$res['parents'][$p->parent->ascii_id]['relation_id'] = $p->id;
-			$res['parents'][$p->parent->ascii_id]['title'] = $p->title;
-			$res['parents'][$p->parent->ascii_id]['collection_ascii_id'] = $p->collection_ascii_id;
-			$res['parents'][$p->parent->ascii_id]['id'] = $p->parent->id;
-			$res['parents'][$p->parent->ascii_id]['name'] = $p->parent->name;
-			$res['parents'][$p->parent->ascii_id]['ascii_id'] = $p->parent->ascii_id;
+			$parent = $p->getParentType();
+			$res['parents'][$parent->ascii_id]['relation_id'] = $p->id;
+			$res['parents'][$parent->ascii_id]['title'] = $p->title;
+			$res['parents'][$parent->ascii_id]['collection_ascii_id'] = $p->collection_ascii_id;
+			$res['parents'][$parent->ascii_id]['id'] = $parent->id;
+			$res['parents'][$parent->ascii_id]['name'] = $parent->name;
+			$res['parents'][$parent->ascii_id]['ascii_id'] = $parent->ascii_id;
 		}
 		foreach ($type->getChildRelations() as $c) {
-			$res['children'][$c->child->ascii_id]['relation_id'] = $c->id;
-			$res['children'][$c->child->ascii_id]['title'] = $c->title;
-			$res['children'][$c->child->ascii_id]['collection_ascii_id'] = $c->collection_ascii_id;
-			$res['children'][$c->child->ascii_id]['id'] = $c->child->id;
-			$res['children'][$c->child->ascii_id]['name'] = $c->child->name;
-			$res['children'][$c->child->ascii_id]['ascii_id'] = $c->child->ascii_id;
+			$child = $c->getChildType();
+			$res['children'][$child->ascii_id]['relation_id'] = $c->id;
+			$res['children'][$child->ascii_id]['title'] = $c->title;
+			$res['children'][$child->ascii_id]['collection_ascii_id'] = $c->collection_ascii_id;
+			$res['children'][$child->ascii_id]['id'] = $child->id;
+			$res['children'][$child->ascii_id]['name'] = $child->name;
+			$res['children'][$child->ascii_id]['ascii_id'] = $child->ascii_id;
 		}
 		ksort($res['parents']);
 		ksort($res['children']);

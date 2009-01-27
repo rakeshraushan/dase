@@ -442,31 +442,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$itr = new Dase_DBO_ItemTypeRelation;
 		$itr->collection_ascii_id = $this->getCollection()->ascii_id;
 		$itr->parent_type_ascii_id = $this->getItemType()->ascii_id;
-		foreach ($itr->find() as $child) {
-			$children[$child->child_type_ascii_id] = $child->title;
+		foreach ($itr->find() as $rel) {
+			$children[$rel->child_type_ascii_id] = array(
+				'title' => $rel->title,
+				'count' => $rel->getChildCount($this->serial_number),
+			);
 		}
 		return $children;
-	}
-
-	function getChildrenSets()
-	{
-		$c = $this->getCollection();
-		$set = array();
-		$prefix = Dase_Config::get('table_prefix');
-		$sql = "
-			SELECT count(ir.id), itr.title, itr.child_type_ascii_id
-			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
-			WHERE ir.collection_ascii_id = ?
-			AND ir.parent_serial_number = ?	
-			AND itr.id = ir.item_type_relation_id
-			GROUP BY itr.title,itr.child_type_ascii_id
-			";
-		$bound_params = array($c->ascii_id,$this->serial_number);
-		$st = Dase_DBO::query($sql,$bound_params);
-		while ($row = $st->fetch()) {
-			$set[] = $row;
-		}
-		return $set;
 	}
 
 	function updateMetadata($value_id,$value_text,$eid)
@@ -606,12 +588,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$irs = new Dase_DBO_ItemRelation;
 		$irs->parent_serial_number = $this->serial_number;
 		foreach ($irs->find() as $ir) {
+			$child = $ir->getChild();
 			$ir->delete();
+			$child->saveAtom();
 		}
 		$irs = new Dase_DBO_ItemRelation;
 		$irs->child_serial_number = $this->serial_number;
 		foreach ($irs->find() as $ir) {
+			//redo parent atom cache
+			$parent = $ir->getParent();
 			$ir->delete();
+			$parent->saveAtom();
 		}
 	}
 
@@ -730,7 +717,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$types = array();
 		foreach ($this->getItemType()->getParentRelations() as $rel) {
-			$parent_type = $rel->getParent();
+			$parent_type = $rel->getParentType();
 			$types[] = $parent_type;
 		}
 		return $types;
@@ -882,37 +869,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if ('default' != $type->name) {
 
 			//simply creates link that points to childern
-			$has_children = 0;
-			foreach ($this->getChildrenSets() as $set) {
-				$has_children = 1;
+
+			foreach ($this->getChildTypesList() as $child => $set) {
 				//one for the Atom version
 				$entry->addLink(
-					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
 					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 				//one for the JSON version
 				$entry->addLink(
-					$app_root.'/item_type/'.$c->ascii_id.'/'.$set['child_type_ascii_id'].'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
+					$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
 					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 			}
 
-			//create links even if no children
-			if (!$has_children) {
-				foreach ($this->getChildTypesList() as $child => $title) {
-					//one for the Atom version
-					$entry->addLink(
-						$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
-						'http://daseproject.org/relation/childfeed','application/atom+xml','',$title)
-						->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',0);
-					//one for the JSON version
-					$entry->addLink(
-						$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
-						'http://daseproject.org/relation/childfeed','application/json','',$title)
-						->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',0);
-				}
-
-			}
 
 			//adds a link to any parent item(s)
 			foreach ($this->getParentItems() as $url => $set) {

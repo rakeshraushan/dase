@@ -288,6 +288,17 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $att->find();
 	}
 
+	public function resortAttributesByName() 
+	{
+		$new_sort_order = 0;
+		foreach ($this->getAttributes('attribute_name') as $att) {
+			$new_sort_order++;
+			$att->sort_order = $new_sort_order;
+			$att->fixBools();
+			$att->update();
+		}
+	}
+
 	function getAttributesSortedArray($sort = 'sort_order')
 	{
 		$att_array[] = 'First';

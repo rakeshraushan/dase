@@ -43,10 +43,10 @@
 		</p>
 	</form>
 	<dl class="current">
-		<dt>eid</dt> <dd> {$person->person_eid|default:'--'}</dd>
-		<dt>name</dt> <dd> {$person->person_name|default:'--'}</dd>
-		<dt>email</dt> <dd> {$person->person_email|default:'--'}</dd>
-		<dt>phone</dt> <dd> {$person->person_phone|default:'--'}</dd>
+		<dt>eid</dt> <dd> {$person->person_eid.text|default:'--'}</dd>
+		<dt>name</dt> <dd> {$person->person_name.text|default:'--'}</dd>
+		<dt>email</dt> <dd> {$person->person_email.text|default:'--'}</dd>
+		<dt>phone</dt> <dd> {$person->person_phone.text|default:'--'}</dd>
 		<dt>dept</dt> <dd> {$dept_title|default:'--'}</dd>
 	</dl>
 </div>
