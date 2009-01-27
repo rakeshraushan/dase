@@ -14,7 +14,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'person/{eid}' => 'person',
 		'person/{eid}/proposal_form' => 'proposal_form',
 		'proposal/{serial_number}' => 'proposal',
+		'proposal/{serial_number}/preview' => 'proposal_preview',
 		'proposal/{serial_number}/courses' => 'proposal_courses',
+		'proposal/{serial_number}/budget_items' => 'proposal_budget_items',
 		'persons' => 'persons',
 		'departments' => 'departments',
 		'service_pass/{serviceuser}' => 'service_pass',
@@ -170,6 +172,24 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderResponse($tpl->fetch('proposal.tpl'));
 	}
 
+	public function getProposalPreview($r)
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
+		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
+		$tpl->assign('person',$person);
+		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
+		if (is_numeric($proposal)) {
+			$r->renderResponse($tpl->fetch('proposal404.tpl'));
+		}
+		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
+		$tpl->assign('budget_items',$proposal->getChildfeedLinkUrlByTypeJson('budget_item'));
+		$tpl->assign('proposal',$proposal);
+		$r->renderResponse($tpl->fetch('preview.tpl'));
+	}
+
 	public function postToProposalForm($r)
 	{
 		$proposal = new Dase_Atom_Entry_Item;
@@ -183,6 +203,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal->addMetadata('proposal_name',$r->get('proposal_name')); 
 		$proposal->addMetadata('proposal_previous_funding','enter previous funding here'); 
 		$proposal->addMetadata('proposal_professional_assistance','enter professional assistance here'); 
+		$proposal->addMetadata('proposal_faculty_workshop','no'); 
+		$proposal->addMetadata('proposal_sta','no'); 
 		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
 		$proposal->addMetadata('proposal_renovation_description','enter renovation description here'); 
 		$proposal->addMetadata('proposal_summary','enter summary here'); 
@@ -214,6 +236,27 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$course->setUpdated(date(DATE_ATOM));
 		$course->addLink($r->get('proposal'),'http://daseproject.org/relation/parent');
 		$result = $course->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass);
+		if (Dase_Util::isUrl($result)) {
+			$r->renderResponse($result);
+		} else {
+			$r->renderError(400,$result);
+		}
+	}
+
+	public function postToProposalBudgetItems($r)
+	{
+		$budget_item = new Dase_Atom_Entry_Item;
+		$budget_item->setTitle($r->get('budget_item_title'));
+		$budget_item->setItemType('budget_item');
+		$budget_item->addAuthor($this->user->eid);
+		$budget_item->addMetadata('title',$r->get('budget_item_description')); 
+		$budget_item->addMetadata('budget_item_description',$r->get('budget_item_description')); 
+		$budget_item->addMetadata('budget_item_price',$r->get('budget_item_price')); 
+		$budget_item->addMetadata('budget_item_quantity',$r->get('budget_item_quantity')); 
+		$budget_item->addMetadata('budget_item_type',$r->get('budget_item_type')); 
+		$budget_item->setUpdated(date(DATE_ATOM));
+		$budget_item->addLink($r->get('proposal'),'http://daseproject.org/relation/parent');
+		$result = $budget_item->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass);
 		if (Dase_Util::isUrl($result)) {
 			$r->renderResponse($result);
 		} else {

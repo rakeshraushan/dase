@@ -112,17 +112,24 @@
 		</p>
 
 		<p>
-		<label for="proposal_sta"><span class="control">[+/-]</span>Student technology assistant/summer faculty workshop:</label>
-		<div id="div_proposal_sta" class="hide">
+		<label for="proposal_sta"><span class="control">[+/-]</span>Student Technology Assistant:</label>
+		<div id="div_proposal_sta" class="hide textchoice">
 			<p>If submitting a proposal for development of course materials, would you be interested in...</p>
 
-			<p>Working with a student technology assistant (STA)?
-			<input type="radio" name="sta" value="no"> no
-			<input type="radio" name="sta" value="yes"> yes
+			<p>Working with a student technology assistant (STA)? [<span class="current" id="sta_status">{$proposal->proposal_sta.text}</span>]
+			<input type="radio" action="{$proposal->proposal_sta.edit}" id="sta_no" name="sta" {if 'no' == $proposal->proposal_sta.text}checked{/if} value="no"> no
+			<input type="radio"  action="{$proposal->proposal_sta.edit}" id="sta_yes" name="sta" {if 'yes' == $proposal->proposal_sta.text}checked{/if} value="yes"> yes
 			</p>
-			<p>Participating in a 2-week summer faculty workshop?
-			<input type="radio" name="workshop" value="no"> no
-			<input type="radio" name="workshop" value="yes"> yes
+		</div>
+		</p>
+
+		<label for="proposal_faculty_workshop"><span class="control">[+/-]</span>Summer Faculty Workshop:</label>
+		<div id="div_proposal_faculty_workshop" class="hide textchoice">
+			<p>If submitting a proposal for development of course materials, would you be interested in...</p>
+
+			<p>Participating in a 2-week summer faculty workshop? [<span class="current" id="workshop_status">{$proposal->proposal_faculty_workshop.text}</span>]
+			<input type="radio"  action="{$proposal->proposal_faculty_workshop.edit}" id="workshop_no" name="workshop" {if 'no' == $proposal->proposal_faculty_workshop.text}checked{/if} value="no"> no
+			<input type="radio"  action="{$proposal->proposal_faculty_workshop.edit}" id="workshop_yes" name="workshop" {if 'yes' == $proposal->proposal_faculty_workshop.text}checked{/if} value="yes"> yes
 			</p>
 			<p class="instruction">Special Note: If applying for the summer faculty workshop <strong>only</strong>, you may submit your proposal now. Your proposal is complete.</p>
 		</div>
@@ -168,8 +175,8 @@
 		<label for="budget"><span class="control">[+/-]</span>Itemized Budget:</label>
 
 		<div id="div_budget" class="hide">
-			<form action="proposal/{$proposal->serialNumber}/courses" method="post" id="courseForm">
-				<div id="budget" class="hide"></div>
+			<form action="proposal/{$proposal->serialNumber}/budget_items" method="post" id="budgetForm">
+				<div id="budgetItemsList" class="hide"></div>
 				<input type="hidden" name="proposal" value="{$app_root}item/itsprop/{$proposal->serialNumber}" />
 				<label>item type</label>
 				<select name="budget_item_type">
@@ -194,13 +201,14 @@
 				<p>
 				<input id="add_budget_item" value="add budget item" type="submit">
 				</p>
-			</div>
-			</p>
+			</form>
+		</div>
+		</p>
 
 
 		</div>
-		<div id="deleteControl">
-			<form action="{$proposal->editLink}" id="delete_proposal">
+		<div class="deleteControl">
+			<form action="{$proposal->editLink}" id="deleteProposal">
 				<input type="submit" value="delete this proposal"/>
 			</form>
 		</div>
@@ -217,6 +225,34 @@
 			{/for}
 			{/literal}
 		</ul>
+	</textarea>
+	<textarea class="javascript_template" id="proposal_budget_items_jst">
+		<table class="listing" id="budget_items_table">
+			<tr>
+				<th></th>
+				<th>type</th>
+				<th>description</th>
+				<th>quantity</th>
+				<th>price</th>
+				<th>total</th>
+			</tr>
+			{literal}
+			{for item in items}
+			<tr>
+				<td><a href="${item.edit}" class="delete">delete</a></td>
+				<td>${item.metadata.budget_item_type}</td>
+				<td>${item.metadata.budget_item_description}</td>
+				<td>${item.metadata.budget_item_quantity}</td>
+				<td>$${item.metadata.budget_item_price}</td>
+				<td>$${item.metadata.total}</td>
+			</tr>
+			{/for}
+			<tr>
+				<td colspan="5">grand total:</td>
+				<td>$${grand_total}</td>
+			</tr>
+			{/literal}
+		</table>
 	</textarea>
 	{/block}
 

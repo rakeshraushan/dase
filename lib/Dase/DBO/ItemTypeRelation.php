@@ -31,13 +31,13 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		return $itr->findOne();
 	}
 
-	public function getChild() 
+	public function getChildType() 
 	{
 		$this->child = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->child_type_ascii_id);
 		return $this->child;
 	}
 
-	public function getParent() 
+	public function getParentType() 
 	{
 		$this->parent = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->parent_type_ascii_id);
 		return $this->parent;

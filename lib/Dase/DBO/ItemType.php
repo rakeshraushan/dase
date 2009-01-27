@@ -140,7 +140,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$rel->child_type_ascii_id = $this->ascii_id;
 		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
 		foreach ($rel->find() as $r) {
-			$r->getParent();
 			$this->parents[] = clone $r;
 		}
 		return $this->parents;
@@ -152,7 +151,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$rel->parent_type_ascii_id = $this->ascii_id;
 		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
 		foreach ($rel->find() as $r) {
-			$r->getChild();
 			$this->children[] = clone $r;
 		}
 		return $this->children;

@@ -262,6 +262,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function replaceMetadata($metadata_array) {
 		//metadata array is same strucutre as getRawMetadata 
 		// $m[att_ascii_id] = array of values
+		$doomed = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
 				$doomed[] = $el;
@@ -274,8 +275,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$this->root->removeChild($goner);
 		}
 		foreach ($metadata_array as $k => $v) {
-			foreach ($v as $value_text) {
-				$this->addCategory($k,'http://daseproject.org/category/metadata','',$value_text);
+			foreach ($v as $value) {
+				$this->addCategory($k,'http://daseproject.org/category/metadata','',$value);
 			}
 		}
 	}
@@ -536,7 +537,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//only deletes collection (not admin) metadata
 		//then replaces it
 		$item->deleteValues();
-		foreach ($this->getMetadata(true) as $att => $keyval) {
+		foreach ($this->getMetadata(null,true) as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
 					$item->setValue($att,$v['text']);

@@ -19,7 +19,7 @@ class Dase_DBO_ItemRelation extends Dase_DBO_Autogen_ItemRelation
 	{
 		$itr = new Dase_DBO_ItemTypeRelation;
 		$itr->load($this->item_type_relation_id);
-		$parent_type = $itr->getParent();
+		$parent_type = $itr->getParentType();
 		return $parent_type;
 	}
 
@@ -28,4 +28,18 @@ class Dase_DBO_ItemRelation extends Dase_DBO_Autogen_ItemRelation
 		return Dase_DBO_Item::get($this->collection_ascii_id,$this->parent_serial_number)->saveAtom();
 	}
 
+	public function saveChildAtom()
+	{
+		return Dase_DBO_Item::get($this->collection_ascii_id,$this->child_serial_number)->saveAtom();
+	}
+
+	public function getParent()
+	{
+		return Dase_DBO_Item::get($this->collection_ascii_id,$this->parent_serial_number);
+	}
+
+	public function getChild()
+	{
+		return Dase_DBO_Item::get($this->collection_ascii_id,$this->child_serial_number);
+	}
 }
