@@ -315,13 +315,18 @@ class Dase_Handler_Item extends Dase_Handler
                     $item_relation->insert();
                     //too expensive??  maybe simply expire atom cache??
                     $item_relation->saveParentAtom();
-                }
+                    $item_relation->saveChildAtom();
+					$r->renderOk('relationship created');
+				} else {
+					$r->renderError(409,'relationship already exists');
+				}
             } else {
                 $r->renderError(400);
             }
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
+		$r->renderError(400,'something is awry');
 	}
 
 	/** this is used to UPDATE an item's type (comes from a form)*/
@@ -334,6 +339,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
 			$this->item->expireCaches();
+			$this->item->saveAtom();
 			if (!$type) {
 				$type = 'default/none';
 			}
