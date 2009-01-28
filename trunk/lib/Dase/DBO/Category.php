@@ -7,19 +7,16 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 	public static $excluded_schemes = array(
 		'attribute/html_input_type',
 		'collection',
-		'collection/item_count',
-		'collection/visibility',
 		'entrytype',
 		'error',
 		'feedtype',
 		'status', 
 		'item_type',
 		'position', 
-		'tag/background',
-		'tag/count',
-		'tag/count',
-		'tag/type',
-		'tag/visibility',
+		'background',
+		'item_count',
+		'tag_type',
+		'visibility',
 	);
 
 	public static function remove($entity_obj,$scheme,$term='')
