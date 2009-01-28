@@ -2,8 +2,9 @@
 
 include 'config.php';
 
-$coll = 'vrc';
-Dase_Config::set('app_root','http://www.laits.utexas.edu/dasebeta');
+$coll = 'itsprop';
+$app_root = 'http://dev.laits.utexas.edu/dasebeta';
+Dase_Config::set('app_root',$app_root);
 
 Dase_Timer::start();
 $c = Dase_DBO_Collection::get($coll);
