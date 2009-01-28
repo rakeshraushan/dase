@@ -29,12 +29,25 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$ascii_id = $this->getAsciiId();
 		$set = Dase_DBO_Tag::get($ascii_id,$user->eid);
 		if (!$set) { return; }
+
+		$cats = $this->getCategoriesByScheme('http://daseproject.org/category/visibility');
+		if (count($cats)) {
+			$vis = $cats[0]['term'];
+		}
+		$set->visibility = $vis;
+		if ('public' == $vis) {
+			$set->is_public = 1;
+		}
+		if ('private' == $vis) {
+			$set->is_public = 0;
+		}
+
 		$set->updated = date(DATE_ATOM);
 		$set->update();
 		//note that ONLY mutable categories will be affected
 		$set->deleteCategories();
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($set,$category['scheme'],$category['term'],$category['label']);
+			Dase_DBO_Category::add($set,$category['scheme'],$category['term']);
 		}
 		return $set;
 	}

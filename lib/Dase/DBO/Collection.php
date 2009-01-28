@@ -93,7 +93,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->updated);
-		$feed->addCategory($this->item_count,"http://daseproject.org/category/collection/item_count");
+		$feed->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		//todo: is this too expensive??
 		$comm = $this->getCommunity();
 		if ($comm) {
@@ -166,8 +166,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory($pub,"http://daseproject.org/category/collection/visibility");
-		$entry->addCategory($this->item_count,"http://daseproject.org/category/collection/item_count");
+		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+		$entry->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		return $entry->asXml();
 	}
 
@@ -229,8 +229,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			} else {
 				$pub = "private";
 			}
-			$entry->addCategory($coll->item_count,"http://daseproject.org/category/collection/item_count");
-			$entry->addCategory($pub,"http://daseproject.org/category/collection/visibility");
+			$entry->addCategory($coll->item_count,"http://daseproject.org/category/item_count");
+			$entry->addCategory($pub,"http://daseproject.org/category/visibility");
 		}
 		return $feed->asXML();
 	}

@@ -415,7 +415,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 					$count = 0;
 				}
 				$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
-				$entry->addCategory($count,"http://daseproject.org/category/tag/count");
+				$entry->addCategory($count,"http://daseproject.org/category/item_count");
 			}
 		}
 		return $feed->asXml();

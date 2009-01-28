@@ -30,7 +30,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 	function getItemCount()
 	{
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/collection/item_count' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/item_count' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
 			}
 		}

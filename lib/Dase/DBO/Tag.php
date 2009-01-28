@@ -302,14 +302,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
 		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
 
-		$feed->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
+		$feed->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
 			$pub = "public";
 		} else {
 			$pub = "private";
 		}
-		$feed->addCategory($pub,"http://daseproject.org/category/tag/visibility");
-		$feed->addCategory($this->background,"http://daseproject.org/category/tag/background");
+		$feed->addCategory($pub,"http://daseproject.org/category/visibility");
+		$feed->addCategory($this->background,"http://daseproject.org/category/background");
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		$setnum=0;
@@ -354,14 +354,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$entry->addCategory($cat->term,$cat->getScheme(),$cat->label);
 		}
 		$entry->addCategory("set","http://daseproject.org/category/entrytype");
-		$entry->addCategory($this->type,"http://daseproject.org/category/tag/type",$this->type);
+		$entry->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
 			$pub = "public";
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory($pub,"http://daseproject.org/category/tag/visibility");
-		$entry->addCategory($this->background,"http://daseproject.org/category/tag/background");
+		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+		$entry->addCategory($this->background,"http://daseproject.org/category/background");
 		return $entry;
 	}
 

@@ -254,6 +254,8 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function postToTag($r) 
 	{
+		//this should be reworked to get text/uri-list
+		//OR an atom entry that lists tag_items a la OAI-ORE
 		$tag = $this->tag;
 		$u = $r->getUser();
 		$u->expireDataCache();
@@ -338,7 +340,9 @@ class Dase_Handler_Tag extends Dase_Handler
 			}
 			$set = $set_entry->update($r);
 			if ($set) {
-				$r->renderOk();
+				$r->renderOk('set updated');
+			} else {
+				$r->renderError(500);
 			}
 		}
 		$r->renderError(500);

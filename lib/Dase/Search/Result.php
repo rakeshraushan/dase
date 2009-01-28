@@ -213,7 +213,7 @@ class Dase_Search_Result
 			//$item->injectAtomEntryData($feed->addEntry());
 			//uses cache
 			$feed->addItemEntry($item);
-			$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
+			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 			$feed->addLink($app_root.'/'.$this->url.'&num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");
 			$feed->addLink($app_root.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');

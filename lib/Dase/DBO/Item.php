@@ -980,7 +980,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->injectAtomFeedData($feed);
 		$feed->setFeedType('item');
 		//todo: this needs to be passed in?
-		$feed->addCategory('browse',"http://daseproject.org/category/tag/type",'browse');
+		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 		$feed->addItemEntry($this); //checks cache 
 		//$this->injectAtomEntryData($feed->addEntry());
 		//add comments
