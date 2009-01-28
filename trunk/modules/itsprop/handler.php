@@ -169,6 +169,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
 		$tpl->assign('budget_items',$proposal->getChildfeedLinkUrlByTypeJson('budget_item'));
 		$tpl->assign('proposal',$proposal);
+		$tpl->assign('previewLink',APP_ROOT.'/modules/itsprop/proposal/'.$r->get('serial_number').'/preview');
 		$r->renderResponse($tpl->fetch('proposal.tpl'));
 	}
 
@@ -184,9 +185,22 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		if (is_numeric($proposal)) {
 			$r->renderResponse($tpl->fetch('proposal404.tpl'));
 		}
-		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
-		$tpl->assign('budget_items',$proposal->getChildfeedLinkUrlByTypeJson('budget_item'));
+		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
+		$budget_items = Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('budget_item')));
+		$grand_total = 0;
+		$display_bud = array();
+		foreach ($budget_items as $bud) {
+			$p = $bud['metadata']['budget_item_price'];
+			$q = $bud['metadata']['budget_item_quantity'];
+			$bud['total'] = $p*$q;
+			$grand_total += $bud['total'];
+			$display_bud[] = $bud;
+
+		}
+		$tpl->assign('grand_total',$grand_total);
+		$tpl->assign('budget_items',$display_bud);
 		$tpl->assign('proposal',$proposal);
+		$tpl->assign('propLink',APP_ROOT.'/modules/itsprop/proposal/'.$r->get('serial_number'));
 		$r->renderResponse($tpl->fetch('preview.tpl'));
 	}
 

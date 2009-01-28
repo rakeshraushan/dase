@@ -61,6 +61,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sections = explode('/',trim($path,'/'));
 		$sernum = array_pop($sections);
 		$coll = array_pop($sections);
+		//will return false if no such item
 		return Dase_DBO_Item::get($coll,$sernum);
 	}
 
@@ -806,6 +807,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
 		}
 
+		/* parents link (can be posted to) */
+		$entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents','http://daseproject.org/relation/parents');
+
 		/* threading extension */
 
 		$replies = $entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments','replies' );
@@ -1042,6 +1046,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach(Dase_Config::get('media_types') as $type) {
 			$media_coll->addAccept($type);
 		}
+		$parents_coll = $workspace->addCollection($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents.atom',$c->collection_name.' Item '.$this->serial_number.' Parents'); 
+		$parents_coll->addAccept('text/uri-list');
 		$comments_coll = $workspace->addCollection($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
 		$comments_coll->addAccept('text/plain');
 		$comments_coll->addAccept('text/html');

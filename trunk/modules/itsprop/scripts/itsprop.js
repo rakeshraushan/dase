@@ -1,5 +1,16 @@
 Dase.itsprop = {};
 
+Dase.itsprop.updateMsg = function(displayBool) {
+	var upd = Dase.$('updateMsg');
+	if (!upd) return;
+	if (displayBool) {
+		Dase.removeClass(upd,'hide');
+		setTimeout('Dase.itsprop.updateMsg(false)',1000);
+	} else {
+		Dase.addClass(upd,'hide');
+	}
+}
+
 Dase.insertDate = function() {
 	var m_names = new Array("Jan", "Feb", "Mar", 
 	"Apr", "May", "June", "July", "Aug", "Sept", 
@@ -22,6 +33,12 @@ Dase.initProposalForm = function() {
 		labels[i].onclick = function() {
 			var sec = Dase.$('div_'+this.getAttribute('for'));
 			if (sec) {
+				var span = this.getElementsByTagName('span')[0];
+				if ('expand [+]' == span.innerHTML) {
+					span.innerHTML = 'collapse [-]';
+				} else {
+					span.innerHTML = 'expand [+]';
+				}
 				Dase.toggle(sec);
 			}
 		}
@@ -49,7 +66,9 @@ Dase.initProposalForm = function() {
 					} else {
 						textarea.rows = 0;
 					}
-					Dase.highlight(textarea,800);
+
+					Dase.itsprop.updateMsg(true);
+					Dase.highlight(textarea,1000);
 					textarea.value = txt;
 				},data,'itsprop',Dase.itsprop.service_pass);
 				return false;

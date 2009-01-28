@@ -14,6 +14,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//used for put and delete
 		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata_value',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
+		'{collection_ascii_id}/{serial_number}/parents' => 'parents',
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
@@ -282,6 +283,44 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		if ($this->item->setContent($content,$user->eid,$content_type)) {
 			$r->renderResponse('content updated');
+		}
+	}
+
+	/** allows us to simply POST the uri of a (legit) parent */
+	public function postToParents($r)
+	{
+		$sernum = $r->get('serial_number');
+		$coll = $r->get('collection_ascii_id');
+
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		$content_type = $r->getContentType();
+		if ('text/uri-list' == $content_type) {
+			$uri = trim(file_get_contents("php://input"));
+			$parent = Dase_DBO_Item::getByUrl($uri);
+			if ($parent) {
+				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
+					$coll,$parent->serial_number,$sernum
+				);
+			}
+            if ($itr) {
+                $item_relation = new Dase_DBO_ItemRelation;
+                $item_relation->collection_ascii_id = $coll;
+                $item_relation->parent_serial_number = $parent->serial_number;
+                $item_relation->child_serial_number = $sernum;
+                if (!$item_relation->findOne()) {
+                    $item_relation->item_type_relation_id = $itr->id;
+                    $item_relation->insert();
+                    //too expensive??  maybe simply expire atom cache??
+                    $item_relation->saveParentAtom();
+                }
+            } else {
+                $r->renderError(400);
+            }
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
 		}
 	}
 
