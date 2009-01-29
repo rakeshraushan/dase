@@ -67,6 +67,14 @@ Class Dase_Util
 		}
 	}
 
+	public static function truncate($string,$max)
+	{
+		if (strlen($string) <= $max) {
+			return $string;
+		}
+		return substr($string,0,$max);
+	}
+
 	public static function dirify($str)
 	{
 		$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str)));
@@ -76,8 +84,11 @@ Class Dase_Util
 	public static function makeSerialNumber($str)
 	{
 		if ($str) {
+			//get just the last segment if it includes directory path
+			$str = array_pop(explode('/',$str));
 			$str = preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str));
-			return preg_replace('/__*/','_',$str);
+			$str = trim(preg_replace('/__*/','_',$str),'_');
+			return Dase_Util::truncate($str,50);
 		} else {
 			return null;
 		}

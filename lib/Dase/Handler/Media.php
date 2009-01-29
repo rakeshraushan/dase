@@ -57,6 +57,22 @@ class Dase_Handler_Media extends Dase_Handler
 		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
+	public function getMediaFileMov($r)
+	{
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
+	/** for html files */
+	public function getMediaFile($r)
+	{
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
+	public function getMediaFileCss($r)
+	{
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
 	/** used for swap-out */
 	public function putMedia($r)
 	{
@@ -205,6 +221,7 @@ class Dase_Handler_Media extends Dase_Handler
 	private function _getFilePath($collection_ascii_id,$serial_number,$size,$format)
 	{
 		//look first in subdir
+		//get serial number w/o size extension
 		$subdir = Dase_Util::getSubdir($this->_fixSizeExt($serial_number,$size));
 		$path = Dase_Config::get('path_to_media').'/'.
 			$collection_ascii_id.'/'.

@@ -12,7 +12,7 @@
 <div class="main">
 	<div id="proposalForm"> 
 		<div class="controls">
-			<a href="{$previewLink}">preview proposal</a>
+			<a href="{$previewLink}">preview/submit</a>
 		</div>
 		<h1>Proposal: {$proposal->title}</h1>
 		<input type="hidden" name="eid" value="{$person->serial_number}"/>

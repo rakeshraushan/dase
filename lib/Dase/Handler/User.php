@@ -119,6 +119,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function getRecentItemsJson($r)
 	{
 		//todo: implement http authorization!
+		$app_root = Dase_Config::get('app_root');
 		$items = new Dase_DBO_Item;
 		$items->created_by_eid = $this->user->eid;
 		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
@@ -132,7 +133,7 @@ class Dase_Handler_User extends Dase_Handler
 		$recent = array();
 		foreach ($items->find() as $item) {
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
-			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail');
+			$recent['a'.$item->serial_number]['thumbnail_href'] = $app_root.'/'.$item->getMediaRelativeUrl('thumbnail');
 			$recent['a'.$item->serial_number]['item_record_href'] = 'item/'.$item->getCollection()->ascii_id.'/'.$item->serial_number;
 		}
 		$r->renderResponse(Dase_Json::get($recent));

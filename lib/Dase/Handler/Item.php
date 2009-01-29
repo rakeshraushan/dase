@@ -537,6 +537,8 @@ class Dase_Handler_Item extends Dase_Handler
 
 		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
 			$item->setValue('title',$_SERVER['HTTP_SLUG']);
+			$slug_name = $_SERVER['HTTP_SLUG'];
+
 		}
 
 		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
@@ -557,7 +559,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$content_type);
+			$file = Dase_File::newFile($new_file,$content_type,$slug_name);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original

@@ -345,6 +345,16 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $metadata;
 	}
 
+	function getValue($att_ascii_id)
+	{
+		$v = $this->getMetadata($att_ascii_id,true);
+		if (isset($v['text'])) {
+			return $v['text'];
+		} else {
+			return false;
+		}
+	}
+
 	function getRawMetadata($att = '') 
 	{
 		$metadata = array();
@@ -374,7 +384,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			if ('http://daseproject.org/category/admin_metadata' == $el->getAttribute('scheme')) {
 				$att_ascii_id = $el->getAttribute('term');
 				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
-				$metadata[$att_ascii_id]['values'][] = $el->nodeValue;
+				$metadata[$att_ascii_id]['values'][] = array('text' => $el->nodeValue);
 			}
 		}
 		return $metadata;

@@ -148,6 +148,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$res = array();
 		$coll = $r->get('collection_ascii_id');
 		$items = new Dase_DBO_Item;
+		$items->status = 'public';
 		$items->item_type_id = $this->type->id;
 		$items->orderBy('updated DESC');
 		//can filter by author

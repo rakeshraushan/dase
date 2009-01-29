@@ -3,22 +3,22 @@
 abstract class Dase_File
 {
 	public static $types_map = array(
-		'image/jpeg' => array('size' => 'jpeg', 'ext' => 'jpg','class'=>'Dase_File_Image'),
+		'application/msword' => array('size' => 'doc', 'ext' => 'doc','class'=>'Dase_File_Doc'),
+		'application/pdf' => array('size' => 'pdf', 'ext' => 'pdf','class'=>'Dase_File_Pdf'),
+		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
+		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
+		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'image/gif' => array('size' => 'gif', 'ext' => 'gif','class'=>'Dase_File_Image'),
+		'image/jpeg' => array('size' => 'jpeg', 'ext' => 'jpg','class'=>'Dase_File_Image'),
 		'image/png' => array('size' => 'png', 'ext' => 'png','class'=>'Dase_File_Image'),
 		'image/tiff' => array('size' => 'tiff', 'ext' => 'tif','class'=>'Dase_File_Image'),
 	//	'image/tiff' => array('size' => 'tiff', 'ext' => 'tiff','class'=>'Dase_File_Image'),
-		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
-		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'text/css' => array('size' => 'css', 'ext' => 'css','class'=>'Dase_File_Text'),
+		'text/html' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Text'),
+		'text/plain' => array('size' => 'text', 'ext' => 'txt','class'=>'Dase_File_Text'),
+		'text/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
 		'video/quicktime' => array('size' => 'quicktime', 'ext' => 'mov','class'=>'Dase_File_Video'),
-		'application/pdf' => array('size' => 'pdf', 'ext' => 'pdf','class'=>'Dase_File_Pdf'),
-		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Image'),
-		'text/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Image'),
-		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
-		'application/msword' => array('size' => 'doc', 'ext' => 'doc','class'=>'Dase_File_Doc'),
-		'text/css' => array('size' => 'css', 'ext' => 'css','class'=>'Dase_File_Image'),
-		'text/html' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Image'),
-		'text/plain' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Image')
 	);
 
 	protected $metadata = array();
@@ -58,9 +58,9 @@ abstract class Dase_File
 		}
 		if ($mime) {
 			if (!isset(self::$types_map[$mime])) {
-				$orig_name = $orig_name ? $orig_name : $file;
 				throw new Exception("DASe does not handle $mime mime type ($orig_name)");
 			}
+			$orig_name = $orig_name ? $orig_name : $file;
 			//creates proper subclass
 			$dasefile = new self::$types_map[$mime]['class']($file,$mime);
 			$dasefile->size = self::$types_map[$mime]['size'];
@@ -245,4 +245,47 @@ abstract class Dase_File
 			throw new Exception("could not move $this->filepath to $location");
 		}
 	}
+
+	function makeThumbnail($item)
+	{
+		$size = $this->size;
+		$collection = $item->getCollection();
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/'.$size.'.jpg';
+		if (!file_exists($target)) {
+			copy(DASE_PATH.'/www/images/thumb_icons/'.$size.'.jpg',$target);
+		}
+		$media_file = new Dase_DBO_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $size.'.jpg';
+		$media_file->width = 80;
+		$media_file->height = 80;
+		$media_file->mime_type = 'image/jpeg';
+		$media_file->size = 'thumbnail';
+		$media_file->p_collection_ascii_id = $collection->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
+		$media_file->insert();
+		Dase_Log::info("created $media_file->size $media_file->filename");
+	}
+
+	function makeViewitem($item)
+	{
+		$size = $this->size;
+		$collection = $item->getCollection();
+		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/'.$size.'.jpg';
+		if (!file_exists($target)) {
+			copy(DASE_PATH . '/www/images/thumb_icons/'.$size.'.jpg',$target);
+		}
+		$media_file = new Dase_DBO_MediaFile;
+		$media_file->item_id = $item->id;
+		$media_file->filename = $size.'.jpg';
+		$media_file->width = 80;
+		$media_file->height = 80;
+		$media_file->mime_type = 'image/jpeg';
+		$media_file->size = 'viewitem';
+		$media_file->p_collection_ascii_id = $collection->ascii_id;
+		$media_file->p_serial_number = $item->serial_number;
+		$media_file->insert();
+		Dase_Log::info("created $media_file->size $media_file->filename");
+	}
+
 }
