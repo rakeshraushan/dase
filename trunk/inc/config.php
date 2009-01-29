@@ -64,10 +64,11 @@ $conf['old_token'] = $conf['token'].date('Ymd',$yesterday);
 $conf['ppd_token'] = $conf['ppd_token'].date('Ymd',time());
 
 //mime types that collections accept
-$conf['media_types'][] = 'image/*';
-$conf['media_types'][] = 'audio/*';
-$conf['media_types'][] = 'video/*';
 $conf['media_types'][] = 'application/pdf';
+$conf['media_types'][] = 'audio/*';
+$conf['media_types'][] = 'image/*';
+$conf['media_types'][] = 'text/*';
+$conf['media_types'][] = 'video/*';
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache'] = 'file';

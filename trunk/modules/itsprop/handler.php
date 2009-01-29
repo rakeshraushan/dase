@@ -14,6 +14,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'person/{eid}' => 'person',
 		'person/{eid}/proposal_form' => 'proposal_form',
 		'proposal/{serial_number}' => 'proposal',
+		'proposal/{serial_number}/archiver' => 'proposal_archiver',
 		'proposal/{serial_number}/preview' => 'proposal_preview',
 		'proposal/{serial_number}/courses' => 'proposal_courses',
 		'proposal/{serial_number}/budget_items' => 'proposal_budget_items',
@@ -83,6 +84,17 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
 		$tpl->assign('depts', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
 		$r->renderResponse($tpl->fetch('departments.tpl'));
+	}
+
+	public function postToProposalArchiver($r)
+	{
+		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
+		$metadata_array = $proposal->getRawMetadata();
+		$metadata_array['proposal_submitted'] = array(date(DATE_ATOM));
+		$proposal->replaceMetadata($metadata_array);
+		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
+		$params['msg'] = "your proposal has been submitted";
+		$r->renderRedirect(APP_ROOT.'/modules/itsprop/home',$params);
 	}
 
 	public function postToPerson($r)
@@ -163,6 +175,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
 		$tpl->assign('person',$person);
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
+		if ($proposal->getValue('proposal_submitted')) {
+			$r->renderRedirect(APP_ROOT.'/modules/itsprop/proposal/'.$r->get('serial_number').'/preview');
+		}
+
 		if (is_numeric($proposal)) {
 			$r->renderResponse($tpl->fetch('proposal404.tpl'));
 		}

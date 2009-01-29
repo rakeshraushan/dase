@@ -484,7 +484,8 @@ class Dase_Handler_Manage extends Dase_Handler
 			$path = $_FILES[$input_name]['tmp_name'];
 			$type = $_FILES[$input_name]['type'];
 			if (!Dase_Media::isAcceptable($type)) {
-				$r->renderError(415,'unsupported media type');
+				$r->renderError(415,'unsupported media type: '.$type);
+				Dase_Log::debug($type.' is not a supported media type');
 			}
 			Dase_Log::info('uploading file '.$name.' type: '.$type);
 

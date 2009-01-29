@@ -33,6 +33,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry = $this->injectAtomEntryData($entry,$c);
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $this->id;
+		$atom->app_root = Dase_Config::get('app_root');
 		if (!$atom->findOne()) {
 			$atom->insert();
 		}
@@ -691,7 +692,34 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $text;
 	}
 
-	public function getParentItems()
+	public function getRelatedItems()
+	{
+		$related = array();
+		$c = $this->getCollection();
+		$item_relations = new Dase_DBO_ItemRelation;
+		$item_relations->collection_ascii_id = $c->ascii_id;
+		$item_relations->child_serial_number = $this->serial_number;
+		foreach ($item_relations->find() as $item_relation) {
+			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+				$item_relation->parent_serial_number);
+			if ($parent_item) {
+				$related[] = $parent_item;
+			}
+		}
+		$item_relations = new Dase_DBO_ItemRelation;
+		$item_relations->collection_ascii_id = $c->ascii_id;
+		$item_relations->parent_serial_number = $this->serial_number;
+		foreach ($item_relations->find() as $item_relation) {
+			$child_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+				$item_relation->child_serial_number);
+			if ($child_item) {
+				$related[] = $child_item;
+			}
+		}
+		return $related;
+	}
+
+	public function getParentItemsArray()
 	{
 		$parent_items = array();
 		$c = $this->getCollection();
@@ -829,6 +857,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			'http://daseproject.org/category/item_type',$this->item_type->name);
 		$entry->addCategory($c->ascii_id,
 			'http://daseproject.org/category/collection',$c->collection_name);
+		$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/status');
 		} else {
@@ -889,7 +918,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 
 			//adds a link to any parent item(s)
-			foreach ($this->getParentItems() as $url => $set) {
+			foreach ($this->getParentItemsArray() as $url => $set) {
 				$entry->addLink($app_root.'/'.$url,'http://daseproject.org/relation/parent','','',$set['label'])
 					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			}
@@ -982,11 +1011,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//todo: this needs to be passed in?
 		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 		$feed->addItemEntry($this); //checks cache 
-		//$this->injectAtomEntryData($feed->addEntry());
 		//add comments
 		foreach ($this->getComments() as $comment) {
 			$entry = $feed->addEntry('comment');
 			$comment->injectAtomEntryData($entry);
+		}
+		//todo: this may be TOO expensive
+		foreach ($this->getRelatedItems() as $related) {
+			$feed->addItemEntry($related);
 		}
 		return $feed->asXml();
 	}
@@ -1196,7 +1228,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content->p_serial_number = $this->serial_number;
 		$content->updated = date(DATE_ATOM);
 		$content->updated_by_eid = $eid;
-		return $content->insert();
+		$res = $content->insert();
+		$this->saveAtom();
+		return $res;
 	}
 
 	public function addComment($text,$eid)
@@ -1210,7 +1244,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$note->p_serial_number = $this->serial_number;
 		$note->updated = date(DATE_ATOM);
 		$note->updated_by_eid = $eid;
-		$note->insert();
+		$res = $note->insert();
+		$this->saveAtom();
+		return $res;
 	}
 
 	public function getTags()
