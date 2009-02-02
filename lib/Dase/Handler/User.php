@@ -4,6 +4,7 @@ class Dase_Handler_User extends Dase_Handler
 {
 	public $resource_map = array(
 		'{eid}' => 'user',
+		'{eid}/ping' => 'ping',
 		'{eid}/data' => 'data',
 		'{eid}/collections' => 'user_authorizations',
 		'{eid}/collection/{collection_ascii_id}' => 'user_authorizations',
@@ -22,15 +23,32 @@ class Dase_Handler_User extends Dase_Handler
 	);
 
 	protected function setup($r)
-	{
-		if ('atom' == $r->format) {
+	{ 
+		if ('atom' == $r->format || 'ping' == $r->resource ) {
 			$this->user = $r->getUser('http');
 		} else {
 			$this->user = $r->getUser();
 		}
-		if ($r->get('eid') != $this->user->eid ) {
+		if ($r->get('eid') != $this->user->eid  && 'ping' != $r->resource) {
 			$r->renderError(401,'One must be so careful these days.');
 		}
+	}
+
+	public function getPing($r) 
+	{
+		$pinged = Dase_DBO_DaseUser::get($r->get('eid'));
+		if ($pinged) {
+		$r->renderResponse($pinged->eid);
+		} else {
+			$r->renderError(404,'no such user');
+		}
+	}
+
+	public function getUser($r) 
+	{
+		$tpl = new Dase_Template($r);
+		$tpl->assign('default_content',$this->user->eid);
+		$r->renderResponse($tpl->fetch('default.tpl'));
 	}
 
 	public function getUserAtom($r) 

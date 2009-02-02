@@ -261,6 +261,40 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	function replaceContent($text='',$type='text')
+	{
+		$content = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'content')->item(0);
+		if ($content) {
+			$this->root->removeChild($content);
+		}
+		$this->content_is_set = true;
+		if ($text) {
+			if ('html' == $type) {
+				$content = $this->addElement('content',htmlentities($text,ENT_COMPAT,'UTF-8'));
+				$content->setAttribute('type','html');
+			} elseif ('xhtml' == $type) {
+				$content = $this->addElement('content');
+				$content->setAttribute('type','xhtml');
+				$div = $content->appendChild($this->dom->createElement('div'));
+				$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
+				$div->appendChild($this->dom->createTextNode($text));
+			} else {
+				$content = $this->addElement('content',$text);
+				$content->setAttribute('type',$type);
+			}
+		} else {
+			$content = $this->addElement('content');
+			$content->setAttribute('type','xhtml');
+			//results in namespace prefixes which messes up some aggregators
+			//return $this->addChildElement($content,'xhtml:div','',Dase_Atom::$ns['xhtml']);
+			$div = $content->appendChild($this->dom->createElement('div'));
+			$div->setAttribute('xmlns',Dase_Atom::$ns['h']);
+			return $div;
+			//note that best practice here is to use simplexml 
+			//to add content to the returned div
+		}
+	}
+
 	function setMediaContent($url,$mime) 
 	{
 		if ($this->content_is_set) {

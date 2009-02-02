@@ -15,12 +15,14 @@
 				{if $proposal->proposal_submitted.text}
 				<h3>Proposal was submitted {$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"} <span class="miniLink">(<a href="home">return</a>)</span></h3>
 				{else}
+				{if $person->person_eid.text == $user->eid}
 				<p><a href="{$propLink}">return to proposal form to continue editing</a></p>
 				<strong>OR</strong>
 				<form id="submitForm" method="post" action="{$propLink}/archiver">
 					<input type="submit" value="Submit Proposal Now">
 				</form>
 				<p>[Make sure your proposal is complete.  After you submit the proposal, it will become available to your department chair for review, and you will no longer be able to make changes.]</p>
+				{/if}
 				{/if}
 			</div>
 		</div>
@@ -30,12 +32,7 @@
 				<dt>Submitter:</dt>
 				<dd>{$person->person_name.text}</dd>
 				<dt>Department:</dt>
-				{foreach item=plink from=$person->parentLinks}
-				{if 'department' == $plink.item_type}
-				{assign var=dept_title value=$plink.title}
-				{/if}
-				{/foreach}	
-				<dd>{$dept_title}</dd>
+				<dd>{$proposal->department}</dd>
 				<dt>Project Type:</dt>
 				<dd>{$proposal->proposal_project_type.text}</dd> 
 			</dl>

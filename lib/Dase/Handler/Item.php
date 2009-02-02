@@ -5,7 +5,7 @@ class Dase_Handler_Item extends Dase_Handler
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
 		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
-		'{collection_ascii_id}/{serial_number}/microsummary' => 'microsummary',
+		'{collection_ascii_id}/{serial_number}/ping' => 'ping',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		//used for get and post
@@ -52,9 +52,9 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->getMediaCount());
 	}
 
-	public function getMicrosummaryTxt($r)
+	public function getPing($r)
 	{
-		$r->renderResponse($this->item->getTitle());
+		$r->renderOk('item exists');
 	}
 
 	public function getTags($r)

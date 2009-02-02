@@ -8,11 +8,13 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'/' => 'welcome',
 		'index' => 'home',
 		'home' => 'home',
+		'home_form' => 'home_form',
 		'welcome' => 'welcome',	
 		'login' => 'login',
 		'logout' => 'logout',
 		'person/{eid}' => 'person',
 		'person/{eid}/proposal_form' => 'proposal_form',
+		'proposals' => 'proposals',
 		'proposal/{serial_number}' => 'proposal',
 		'proposal/{serial_number}/archiver' => 'proposal_archiver',
 		'proposal/{serial_number}/preview' => 'proposal_preview',
@@ -20,6 +22,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'proposal/{serial_number}/budget_items' => 'proposal_budget_items',
 		'persons' => 'persons',
 		'departments' => 'departments',
+		'department/{dept_id}' => 'department',
 		'service_pass/{serviceuser}' => 'service_pass',
 	);
 
@@ -32,7 +35,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 			} else {
 				$is_super = $this->_isSuperuser($this->user->eid);
 				if ($is_super) {
+					$this->is_superuser = true;
 					$r->set('is_superuser',1);
+				} else {
+					$this->is_superuser = false;
 				}
 				$this->service_pass = Dase_Auth::getServicePassword('itsprop');
 			}
@@ -49,6 +55,68 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		}
 	}
 
+	public function getDepartment($r)
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		if ($r->get('eid') != $this->user->eid) {
+			if (!$r->is_superuser) {
+				$r->renderError(401);
+			}
+		}
+		$dept = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/dept-".$r->get('dept_id').".atom");
+		if (is_numeric($dept)) {
+			$r->renderError($dept);
+		}
+		$tpl->assign('dept',$dept);
+		$tpl->assign('cola_dept',Dept::getDept($r->get('dept_id')));
+		$r->renderResponse($tpl->fetch('dept.tpl'));
+	}
+
+	public function postToDepartment($r)
+	{
+		if (!$r->is_superuser) {
+			$r->renderError(401);
+		}
+		$dept = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/dept-".$r->get('id').".atom");
+		$metadata_array = $dept->getRawMetadata();
+
+		$request_array = array(
+			'dept_name' => $r->get('name'),
+			'title' => $r->get('name'),
+			'dept_id' => $r->get('id'),
+			'dept_chair' => $r->get('chair'),
+			'dept_chair_email' => $r->get('chair_email'),
+			'dept_chair_eid' => $r->get('chair_eid'),
+			'dept_display' => $r->get('display'),
+		);
+
+		if ('yes' == $r->get('display')) {
+			$dept->setStatus('public');
+		}
+
+		if ('no' == $r->get('display')) {
+			$dept->setStatus('archive');
+		}
+
+		//lookup chair by eid
+		if ($dept->getValue('dept_chair_eid') != $r->get('chair_eid')) {
+			$ldap = Utlookup::getRecord($r->get('chair_eid'));
+			if ($ldap) {
+				$request_array['dept_chair'] = $ldap['name'];
+				$request_array['dept_chair_email'] = $ldap['email'];
+			}
+		}
+
+		foreach ($request_array as $ascii => $val) {
+			$metadata_array[$ascii] = array($val);
+		}
+
+		$dept->replaceMetadata($metadata_array);
+		$dept->putToUrl($dept->getEditLink(),'itsprop',$this->service_pass);
+		$r->renderRedirect(APP_ROOT.'/modules/itsprop/department/'.$r->get('id'));
+	}
+
 	public function getPerson($r) 
 	{
 		$tpl = new Dase_Template($r,true);
@@ -58,7 +126,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				$r->renderError(401);
 			}
 		}
-		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
+		$depts = Dase_Json::toPhp($depts_json);
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('eid').".atom");
 		if (is_numeric($person)) {
@@ -77,13 +146,44 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderResponse($tpl->fetch('persons.tpl'));
 	}
 
+	public function postToPersons($r) 
+	{
+		$ldap = Utlookup::getRecord($r->get('eid'));
+		if ($ldap) {
+			$person = new Dase_Atom_Entry_Item;
+			$person->setTitle($ldap['name']);
+			$person->setItemType('person');
+			//we set title so auto-titling works in DASe
+			$person->addMetadata('title',$ldap['name']); 
+			$person->addMetadata('person_name',$ldap['name']); 
+			$person->addMetadata('person_eid',$ldap['eid']); 
+			$person->addMetadata('person_email',$ldap['email']); 
+			$person->addMetadata('person_phone',$ldap['phone']); 
+			$person->addMetadata('person_lastname',$ldap['lastname']); 
+			$person->setUpdated(date(DATE_ATOM));
+			$person->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass,$ldap['eid']);
+			$params['msg'] = 'added user '.$ldap['eid'];
+		} else {
+			$params['msg'] = 'did not find '.$r->get('eid').' in UT Directory';
+		}
+		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/persons',$params);
+	}
+
 	public function getDepartments($r) 
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
 		$tpl->assign('person', Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom"));
-		$tpl->assign('depts', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom"));
+		$tpl->assign('depts', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/department/items.atom?sort=dept_name"));
 		$r->renderResponse($tpl->fetch('departments.tpl'));
+	}
+
+	public function getProposals($r) 
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$tpl->assign('proposals', Dase_Atom_Feed::retrieve(APP_ROOT. "/item_type/itsprop/proposal/items.atom"));
+		$r->renderResponse($tpl->fetch('proposals.tpl'));
 	}
 
 	public function postToProposalArchiver($r)
@@ -143,8 +243,45 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$tpl->assign('home',Dase_Atom_Feed::retrieve(APP_ROOT. "/search.atom?itsprop~title=homepage"));
+		//$tpl->assign('home',Dase_Atom_Feed::retrieve(APP_ROOT. "/search.atom?itsprop~title=homepage"));
+		$home = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/page-home.atom");
+		$tpl->assign('home',$home);
 		$r->renderResponse($tpl->fetch('home.tpl'));
+	}
+
+	public function getHomeForm($r) 
+	{
+		if (!$this->is_superuser) {
+			$r->renderError(404);
+		}
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$home = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/tisprop/page-home.atom");
+		if (!$home) {
+			$page = new Dase_Atom_Entry_Item;
+			$page->setTitle('homepage');
+			$page->setItemType('page');
+			$page->addMetadata('title','homepage'); 
+			$page->addMetadata('page_uri','/home'); 
+			$page->setUpdated(date(DATE_ATOM));
+			$page->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass,'page-home');
+		}
+		$home = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/page-home.atom");
+		$tpl->assign('home',$home);
+		$r->renderResponse($tpl->fetch('home_form.tpl'));
+	}
+
+	public function postToHomeForm($r) 
+	{
+		if (!$this->is_superuser) {
+			$r->renderError(404);
+		}
+		if ('cancel' != $r->get('cancel')) {
+			$home = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/page-home.atom");
+			$home->replaceContent($r->get('home_text'));
+			$home->putToUrl($home->getEditLink(),'itsprop',$this->service_pass);
+		}
+		$r->renderRedirect(APP_ROOT.'/modules/itsprop/home');
 	}
 
 	public function getWelcome($r) 
@@ -159,7 +296,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
 		$tpl->assign('person',$person);
@@ -170,7 +307,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
 		$tpl->assign('person',$person);
@@ -195,12 +332,12 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('user',$this->user);
 		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
-		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$this->user->eid.".atom");
-		$tpl->assign('person',$person);
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
 		if (is_numeric($proposal)) {
 			$r->renderResponse($tpl->fetch('proposal404.tpl'));
 		}
+		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$tpl->assign('person',$person);
 		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
 		$budget_items = Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('budget_item')));
 		$grand_total = 0;
@@ -316,6 +453,25 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		//this token before it returns the service password).
 		Dase_Cookie::set('module',$secret);
 		$ldap = Utlookup::getRecord($user->eid);
+
+		$service_pass = Dase_Auth::getServicePassword('itsprop');
+
+		//don't need this 
+		/*
+		$url = Dase_Config::get('app_root').'/user/'.$user->eid.'/ping';
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
+		curl_setopt($ch, CURLOPT_USERPWD,"itsprop:$service_pass");
+		$res = curl_exec($ch);
+		$info = curl_getinfo($ch);
+		curl_close($ch);
+		$status_code = $info['http_code'];
+		 */
+
 		$person = new Dase_Atom_Entry_Item;
 		$person->setTitle($ldap['name']);
 		$person->setItemType('person');
@@ -327,7 +483,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person->addMetadata('person_phone',$ldap['phone']); 
 		$person->addMetadata('person_lastname',$ldap['lastname']); 
 		$person->setUpdated(date(DATE_ATOM));
-		$person->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$this->service_pass,$user->eid);
+		//will automatically fail if user exists (409, I think)
+		$person->postToUrl(APP_ROOT.'/collection/itsprop','itsprop',$service_pass,$user->eid);
 		$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/home');
 	}
 

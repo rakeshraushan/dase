@@ -7,9 +7,6 @@
 <link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}"/>
 <link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}"/>
 {/if}
-<!--
-<link rel="microsummary" href="{$app_root}item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/microsummary.txt"/>
--->
 {/block}
 
 {block name="head"}

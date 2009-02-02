@@ -42,6 +42,24 @@ class Dase_Handler_Users extends Dase_Handler
 				} catch (Dase_Exception $e) {
 					$r->renderError(409,$e->getMessage());
 				}
+			} elseif ('application/x-www-form-urlencoded' == $content_type) {
+				//in honor of http://www.tbray.org/ongoing/When/200x/2009/01/29/Name-Value-Pairs
+				$eid = $r->get('eid');
+				$name = $r->get('name');
+				$user = Dase_DBO_DaseUser::get($eid);
+				if (!$user) {
+					$user = new Dase_DBO_DaseUser();
+					$user->name = $name; 
+					$user->eid = strtolower($eid); 
+					$user->updated = date(DATE_ATOM);
+					$user->created = date(DATE_ATOM);
+					$user->insert();
+				}
+				header("HTTP/1.1 201 Created");
+				header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
+				header("Location: ".$user->getBaseUrl().'.atom?type=entry');
+				echo $user->asAtomEntry();
+				exit;
 			} else {
 				$r->renderError(415,'cannot accept '.$content_type);
 			}

@@ -21,6 +21,11 @@ class Dase_Handler_Service extends Dase_Handler
 		$meta_workspace = $svc->addWorkspace('DASe MetaCollections Workspace');
 		$meta_coll = $meta_workspace->addCollection(APP_ROOT.'/collections','DASe Collections');
 		$meta_coll->addAccept('application/atom+xml;type=entry');
+		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme->applies_to = 'collection';
+		foreach ($scheme->find() as $sch) {
+			$meta_cats = $meta_coll->addCategorySet($sch->fixed,Dase_Config::get('app_root').'/category/'.$sch->uri);
+		}
 		$meta_cats = $meta_coll->addCategorySet();
 		$meta_cats->addCategory('collection','http://daseproject.com/category/entrytype');
 		$users_coll = $meta_workspace->addCollection(APP_ROOT.'/users','DASe Users');

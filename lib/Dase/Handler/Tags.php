@@ -5,6 +5,7 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public $resource_map = array( 
 		'/' => 'tags',
+		'service' => 'service',
 	);
 
 	protected function setup($r)
@@ -25,5 +26,20 @@ class Dase_Handler_Tags extends Dase_Handler
 		}
 	}
 
+	public function getService($r)
+	{
+		$app_root = Dase_Config::get('app_root');
+		$svc = new Dase_Atom_Service;	
+		$meta_workspace = $svc->addWorkspace('DASe Sets Workspace');
+		$meta_coll = $meta_workspace->addCollection($app_root.'/tags','DASe Sets');
+		$meta_coll->addAccept('application/atom+xml;type=entry');
+		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme->applies_to = 'set';
+		foreach ($scheme->find() as $sch) {
+			$meta_cats = $meta_coll->addCategorySet($sch->fixed,'http://daseproject/category/'.$sch->uri);
+		}
+		$r->response_mime_type = 'application/atomsvc+xml';
+		$r->renderResponse($svc->asXml());
+	}
 }
 

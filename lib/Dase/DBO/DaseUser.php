@@ -8,11 +8,24 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public $ppd;
 	public $http_password;
 
+	/** this is case insensitive! */
 	public static function get($eid)
 	{
-		$user = new Dase_DBO_DaseUser;
-		$user->eid = $eid;
-		return $user->findOne();
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		$sql = "
+			SELECT * FROM {$prefix}dase_user 
+			WHERE lower(eid) = ?
+			";	
+		$sth = $db->prepare($sql);
+		$sth->execute(array(strtolower($eid)));
+		$row = $sth->fetch();
+		if ($row) {
+			$db_user = new Dase_DBO_DaseUser($row);
+			return $db_user;
+		} else {
+			return false;
+		}
 	}
 
 	public static function init($eid)

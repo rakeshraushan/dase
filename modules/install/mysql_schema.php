@@ -62,6 +62,7 @@ CREATE TABLE `{$table_prefix}category_scheme` (
 `fixed` tinyint(1) default NULL,
 `created_by_eid` varchar(50) default NULL,
 `created` varchar(50) default NULL,
+`applies_to` varchar(20) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
