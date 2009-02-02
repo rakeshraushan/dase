@@ -16,16 +16,28 @@
 		<input type="text" name="name" value=""/>
 		</p>
 		<p>
-		<label for="scheme">Scheme URI:<br/>{$app_root}category/</label>
+		<label for="scheme">Scheme URI:<br/>http://daseproject.org/category/</label>
 		<input type="text" name="uri" value=""/>
 		</p>
 		<p>
-		<label for="label">Fixed:</label>
+		<label for="fixed">Fixed:</label>
 		<p>
 		<input checked="checked" type="radio" name="fixed" value="0"> no 
 		</p>
 		<p>
 		<input type="radio" name="fixed" value="1"> yes
+		</p>
+		<p>
+		<label for="applies_to">Applies To:</label>
+		<select name="applies_to">
+			<option value="">select one:</option>
+			<option>attribute</option>
+			<option>collection</option>
+			<option>item</option>
+			<option>set</option>
+			<option>set_item</option>
+			<option>user</option>
+		</select>
 		</p>
 		</p>
 		<p>
@@ -42,6 +54,7 @@
 			<th>name</th>
 			<th>uri</th>
 			<th>fixed</th>
+			<th>applies to</th>
 			<th>description</th>
 			<th>created</th>
 			<th>created by</th>
@@ -52,10 +65,11 @@
 			<td>{$category_scheme->title}</td>
 			<td><a href="admin/category_scheme/form?uri={$category_scheme->scheme|escape:'url'}">{$category_scheme->scheme}</a></td>
 			<td>{$category_scheme->fixed}</td>
+			<td>{$category_scheme->appliesTo}</td>
 			<td>{$category_scheme->summary}</td>
 			<td>{$category_scheme->updated}</td>
 			<td>{$category_scheme->authorName}</td>
-			<td><a href="{$category_scheme->scheme|replace:$app_root:''}" class="delete">delete</a></td>
+			<td><a href="{$category_scheme->editLink}" class="delete">delete</a></td>
 		</tr>
 		{/foreach}
 	</table>

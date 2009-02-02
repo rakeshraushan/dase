@@ -2,8 +2,10 @@
 
 {block name="content"}
 <div id="home">
-	{if $msg}<h3 class="msg">{$msg}</h3>{/if}
-{$home->entry->content|markdown}
+{$home->content|markdown}
+{if $request->is_superuser}
+<a href="home_form">edit this page</a>
+{/if}
 </div>
 {/block}
 

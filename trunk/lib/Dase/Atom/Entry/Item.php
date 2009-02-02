@@ -109,6 +109,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $links;
 	}
 
+	function getParentLinkTitleByItemType($item_type)
+	{
+		//only gets FIRST one (often OK)
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
+			if ($item_type == $link->getAttributeNS(Dase_Atom::$ns['d'],'item_type')) {
+				return $link->getAttribute('title');
+			}
+		}
+		return false;
+	}
+
 	function getParentLinks() 
 	{
 		return $this->getLinksByRel('http://daseproject.org/relation/parent'); 
@@ -188,6 +199,15 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/status' == $el->getAttribute('scheme')) {
 				return $el->getAttribute('term');
+			}
+		}
+	}
+
+	function setStatus($status='public')
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/status' == $el->getAttribute('scheme')) {
+				$el->setAttribute('term',$status);
 			}
 		}
 	}
@@ -555,6 +575,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 
+		//3.5 content!
+		if ($this->getContent()) {
+			$item->setContent($this->getContent(),$eid,$this->getContentType());
+		}
+
 		//4. replace parent item relations
 
 		/* sample parent item indicator
@@ -604,6 +629,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			return $this->{$method}();
 		} elseif ($this->getMetadata($var)) {
 			return $this->getMetadata($var);
+		} elseif ($this->getParentLinkTitleByItemType($var)) {
+			return $this->getParentLinkTitleByItemType($var);
 		} else {
 			return parent::__get($var);
 		}

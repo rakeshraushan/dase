@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>
 			{block name="title"}DASe: Digital Archive Services{/block}
 		</title>
@@ -13,21 +13,21 @@
 		The Digital Archive Services project 
 		is a lightweight digital content repository
 		created by the College of Liberal Arts at 
-		The University of Texas at Austin."/>
+		The University of Texas at Austin.">
 
-		<base href="{$app_root}"/>
+		<base href="{$app_root}">
 
-		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/menu.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/yui.css">
+		<link rel="stylesheet" type="text/css" href="www/css/style.css">
+		<link rel="stylesheet" type="text/css" href="www/css/menu.css">
 		{block name="head-links"}{/block}
 		{if $local_css}
-		<link rel="stylesheet" type="text/css" href="{$local_css}"/>
+		<link rel="stylesheet" type="text/css" href="{$local_css}">
 		{/if}
-		<link rel="shortcut icon" href="www/images/favicon.ico"/>
+		<link rel="shortcut icon" href="www/images/favicon.ico">
 
 		<!-- atompub discovery -->
-		<link rel="service" type="application/atomsvc+xml" href="service"/>
+		<link rel="service" type="application/atomsvc+xml" href="service">
 		{block name="servicedoc"}{/block}
 
 		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
@@ -39,15 +39,15 @@
 
 
 		<!--[if lt IE 8]>
-		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
+		<link rel="stylesheet" type="text/css" href="css/ie.css">
 		<![endif]-->
 
 		{if $feed_url}
-		<link rel="alternate" type="application/atom+xml" href="{$feed_url}"/>
+		<link rel="alternate" type="application/atom+xml" href="{$feed_url}">
 		{/if}
 
 		{if $json_url}
-		<link rel="alternate" type="application/json" href="{$json_url}"/>
+		<link rel="alternate" type="application/json" href="{$json_url}">
 		{/if}
 
 	</head>
@@ -72,7 +72,7 @@
 
 		{if $page_logo.src}
 		<div id="pageLogo">
-			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"/></a>
+			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"></a>
 		</div>
 		{/if}
 
@@ -100,13 +100,12 @@
 			</ul>
 
 			<ul id="menuGrayed">
-				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
-				<li id="cart-menu"><a href="" class="main">My Cart</a></li>
-				<li id="sets-menu"><a href="" class="main">My Sets</a></li>
-				<li id="sets-menu"><a href="" class="main">My Preferences</a></li>
+				<li><a href="" class="main">Home/Search</a></li>
+				<li><a href="" class="main">My Cart</a></li>
+				<li><a href="" class="main">My Sets</a></li>
+				<li><a href="" class="main">My Preferences</a></li>
 			</ul>
 
-			<!-- javascript template for sets-->
 			<textarea class="javascript_template" id="sets_jst">
 				<li><a href='new' id='createNewSet' class='edit'>create new set</a></li>
 				{literal}
@@ -119,9 +118,7 @@
 				{/for}
 				{/literal}
 			</textarea>
-			<!-- end javascript template -->
 
-			<!-- javascript template for save-to pull down-->
 			<textarea class="javascript_template" id="saveto_jst">
 				<select id='saveToSelect' name='collection_ascii_id'>
 					<option value=''>save checked items to...</option>
@@ -133,9 +130,8 @@
 					{/for}
 					{/literal}
 				</select>
-				<input type='submit' value='add'/>
+				<input type='submit' value='add'>
 			</textarea>
-			<!-- end javascript template -->
 
 
 			<h5 id="ajaxMsg" class="hide">loading...</h5>
@@ -145,10 +141,10 @@
 		<div id="content">
 			<!-- accessibility -->
 			<a id="maincontent" name="maincontent"></a>
-			{block name="content"}default content{/block}
+			{block name="content"}default_content{/block}
 		</div>
 
-		<div class="spacer"/>
+		<div class="spacer"></div>
 
 			<div id="footer">
 				<a href="manage" class="hide" id="manageLink"></a> |
@@ -158,10 +154,12 @@
 				<a href="resources">Resources</a> | 
 				<a href="admin" class="hide" id="adminLink"></a> |
 				{php}echo Dase_Timer::getElapsed();{/php} seconds |
-				<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
+				<img src="www/images/dasepowered.png" alt="DASePowered icon">
 			</div><!--closes footer-->
 			<div id="debugData" class="pagedata"></div>
 			<div id="jsTemplates" class="pagedata"></div>
+
 			{include file='resources/atom_template.tpl'}
+
 		</body>
 	</html>

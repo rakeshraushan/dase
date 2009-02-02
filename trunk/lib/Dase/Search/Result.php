@@ -163,8 +163,6 @@ class Dase_Search_Result
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
-			//$entry = $feed->addEntry();
-			//$item->injectAtomEntryData($entry);
 			//will check cache
 			$entry = $feed->addItemEntry($item);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
@@ -210,7 +208,6 @@ class Dase_Search_Result
 			$feed = new Dase_Atom_Feed();
 			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed);
-			//$item->injectAtomEntryData($feed->addEntry());
 			//uses cache
 			$feed->addItemEntry($item);
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');

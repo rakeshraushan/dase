@@ -26,12 +26,7 @@
 		</p>
 		<p>
 		<label for="Department">Department</label>
-		{foreach item=plink from=$person->parentLinks}
-		{if 'department' == $plink.item_type}
-		{assign var=dept_title value=$plink.title}
-		{/if}
-		{/foreach}	
-		<p class="val">{$dept_title}</p>
+		<p class="val">{$proposal->department}</p>
 		</p>
 		<p>
 		<label for="project_type">Project Type</label>
@@ -120,10 +115,11 @@
 		<div id="div_proposal_sta" class="hide textchoice">
 			<p>If submitting a proposal for development of course materials, would you be interested in...</p>
 
-			<p>Working with a student technology assistant (STA)? [<span class="current" id="sta_status">{$proposal->proposal_sta.text}</span>]
+			<p>Working with a student technology assistant <a href="http://www.laits.utexas.edu/sta" target="_blank">(STA)</a>? [<span class="current" id="sta_status">{$proposal->proposal_sta.text}</span>]
 			<input type="radio" action="{$proposal->proposal_sta.edit}" id="sta_no" name="sta" {if 'no' == $proposal->proposal_sta.text}checked{/if} value="no"> no
 			<input type="radio"  action="{$proposal->proposal_sta.edit}" id="sta_yes" name="sta" {if 'yes' == $proposal->proposal_sta.text}checked{/if} value="yes"> yes
 			</p>
+			<p class="instruction">read <a href="http://www.laits.utexas.edu/sta" target="_blank">more info about the STA program</a></p>
 		</div>
 		</p>
 
@@ -198,7 +194,7 @@
 				</select>
 				<label>quantity</label>
 				<input size="6" name="budget_item_quantity" value="" type="text">
-				<label>price</label>
+				<label>price per unit</label>
 				<input size="6" name="budget_item_price" value="" type="text">
 				<label>description</label>
 				<textarea id="budget_item_description"  name="budget_item_description"></textarea>
@@ -237,7 +233,7 @@
 				<th>type</th>
 				<th>description</th>
 				<th>quantity</th>
-				<th>price</th>
+				<th>price per unit</th>
 				<th>total</th>
 			</tr>
 			{literal}

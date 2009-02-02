@@ -52,6 +52,7 @@ CREATE TABLE {$table_prefix}category_scheme (
     description character varying(2000),
     created character varying(50),
     created_by_eid character varying(50),
+    applies_to character varying(20),
     fixed integer
 );
 

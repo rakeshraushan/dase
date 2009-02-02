@@ -3,7 +3,7 @@
 class Dase_Handler_Test extends Dase_Handler
 {
 	public $resource_map = array(
-		'/' => 'demo',
+		'/' => 'validate',
 		'demo' => 'demo',
 		'cache' => 'cache',
 		'search' => 'search',
@@ -12,6 +12,12 @@ class Dase_Handler_Test extends Dase_Handler
 
 	protected function setup($r)
 	{
+	}
+
+	public function getValidate($r)
+	{
+		$t = new Dase_Template($r);
+		$r->renderResponse($t->fetch('layout.tpl'));
 	}
 
 	public function getDemo($r)

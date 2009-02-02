@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
 	<head>
 		<title>LAITS Technology Grants</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
 
-		<base href="{$module_root}" />
+		<base href="{$module_root}" >
 
-		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css" />
-		<link rel="stylesheet" type="text/css" href="css/itsprop.css" />
-		<link rel="shortcut icon" href="images/itsbox.ico" />
-		<link rel="proposals" href="{$app_root}item_type/itsprop/proposal/items/{$user->eid}.json" />
-		<link rel="service_pass" href="{$module_root}service_pass/itsprop" />
+		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css" >
+		<link rel="stylesheet" type="text/css" href="css/itsprop.css" >
+		<link rel="shortcut icon" href="images/itsbox.ico" >
+		<link rel="proposals" href="{$app_root}item_type/itsprop/proposal/items/{$user->eid}.json" >
+		<link rel="service_pass" href="{$module_root}service_pass/itsprop" >
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
@@ -61,8 +60,7 @@
 					<li>
 					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
 					</li>
-					<li class="hide" id="userProposals">
-					</li>
+					<li class="hide" id="userProposals"></li>
 					{if $request->is_superuser}
 					<li>
 					<a href="persons" class="main">Manage Users</a>
@@ -71,7 +69,7 @@
 					<a href="departments" class="main">Manage Departments</a>
 					</li>
 					<li>
-					<a href="admin/{$user->eid}/proposals" class="main">Proposals List</a>
+					<a href="proposals" class="main">Proposals List</a>
 					</li>
 					{/if}
 				</ul>
@@ -79,15 +77,16 @@
 			</div> 
 
 			<div id="content">
+				{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 				{block name="content"}default content{/block}
 			</div>
 
 			<div class="spacer"></div>
-			<hr />
+			<hr >
 			<div id="footer">
-				<img src="images/its.gif" title="LAITS" class="logo" alt="LAITS" height="33" width="79" /><a href="http://www.laits.utexas.edu/its/">Liberal Arts ITS</a>
+				<img src="images/its.gif" title="LAITS" class="logo" alt="LAITS" height="33" width="79" ><a href="http://www.laits.utexas.edu/its/">Liberal Arts ITS</a>
 				| <a href="mailto:www@mail.laits.utexas.edu">www@mail.laits.utexas.edu</a> 
-				| <a href="http://daseproject.org"><img height="11" id="daseLogo" width="71" alt="DASe powered icon" title="DASe powered!" src="images/dasepowered.png" /></a>
+				| <a href="http://daseproject.org"><img height="11" id="daseLogo" width="71" alt="DASe powered icon" title="DASe powered!" src="images/dasepowered.png" ></a>
 				| <span id="date"></span>
 				| <span>{$timer} seconds</span>
 			</div>

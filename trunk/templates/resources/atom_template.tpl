@@ -1,4 +1,3 @@
-<!-- javascript template -->
 <textarea class="javascript_template" id="atom_jst">
 	{literal}
 	<entry xmlns="http://www.w3.org/2005/Atom">
@@ -31,9 +30,7 @@
 	</entry>
 	{/literal}
 </textarea>
-<!-- end javascript template -->
 
-<!-- javascript template -->
 <textarea class="javascript_template" id="atom_display_jst">
 	{literal}
 	<h2>elements</h2>
@@ -105,4 +102,3 @@
 	</table>
 	{/literal}
 </textarea>
-<!-- end javascript template -->

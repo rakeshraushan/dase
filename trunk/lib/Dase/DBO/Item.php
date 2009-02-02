@@ -858,6 +858,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addCategory($c->ascii_id,
 			'http://daseproject.org/category/collection',$c->collection_name);
 		$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
+		$entry->addCategory($this->serial_number,'http://daseproject.org/category/serial_number');
+
 		if ($this->status) {
 			$entry->addCategory($this->status,'http://daseproject.org/category/status');
 		} else {

@@ -53,5 +53,6 @@ class Utlookup
 		if (count($person_array)) {
 			return $person_array[0];
 		}
+		return false;
 	}
 }

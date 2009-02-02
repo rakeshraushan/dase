@@ -18,6 +18,13 @@ class Dase_Atom_Entry_CategoryScheme extends Dase_Atom_Entry
 		return $this->getContentXmlNode()->getAttribute('fixed');
 	}
 
+	public function getAppliesTo()
+	{
+		foreach ($this->getCategoriesByScheme('http://daseproject.org/category/applies_to') as $cat) {
+			return $cat['term'];
+		}
+	}
+
 
 	function __get($var) {
 		//allows smarty to invoke function as if getter

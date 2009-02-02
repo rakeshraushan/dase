@@ -46,6 +46,9 @@ class Dase_Handler_ItemType extends Dase_Handler
 			AND i.collection_id = c.id
 			AND i.item_type_id = it.id
 			";
+		if ($r->get('public_only')) {
+			$sql .= " AND i.status = 'public' ";
+		}
 		$data = array();
 		foreach (Dase_DBO::query($sql,array($it_ascii,$coll,$att_ascii)) as $row) {
 			$item_url = $app_root.'/item/'.$coll.'/'.$row['serial_number'];
@@ -138,6 +141,9 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		foreach ($items->find() as $item) {
 			$feed->addItemEntry($item,$c);
+		}
+		if ($r->has('sort')) {
+			$feed->sortBy($r->get('sort'));
 		}
 		$r->renderResponse($feed->asXml());
 	}

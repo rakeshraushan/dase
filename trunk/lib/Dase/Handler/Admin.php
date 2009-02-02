@@ -240,6 +240,7 @@ class Dase_Handler_Admin extends Dase_Handler
 			$r->renderRedirect('admin/category_scheme/form',$params);
 		}
 		$category_scheme->description = $r->get('description');
+		$category_scheme->applies_to = $r->get('applies_to');
 		$category_scheme->created = date(DATE_ATOM);
 		$category_scheme->created_by_eid = $this->user->eid;
 		$category_scheme->insert();

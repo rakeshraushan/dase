@@ -6,7 +6,7 @@
 {/block}
 
 {block name="content"}
-<h1>User Information for {$person->person_name} ({$person->person_eid.text})</h1>
+<h1>User Information for {$person->person_name.text} ({$person->person_eid.text})</h1>
 <div class="main">
 	<form id="personForm" class="shortForm" method="post" >
 		<input type="hidden" name="eid" value="{$person->serial_number.text}"/>

@@ -384,7 +384,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$entries_deep = array();
 		$entries = array();
 		foreach ($this->getEntries() as $entry) {
-			$entries_deep[$entry->select($att)][] = $entry;
+			$entries_deep[$entry->getValue($att)][] = $entry;
 		}
 		ksort($entries_deep);
 		foreach ($entries_deep as $k => $set) {
