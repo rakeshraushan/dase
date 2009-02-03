@@ -26,6 +26,7 @@ note: maybe there should be BOTH /properties and /entities namespaces
 || /private_metadata || item || term is fully qualified att_ascii_id, value is value || no (use /metadata) || property+ ||
 || /admin_metadata || item || value || no || property ||
 || /applies_to || category_scheme || attribute,collection,item,set,set_item,user || no || property ||
+|| /base_url || * || app_root || no || property ||
 
 
 
