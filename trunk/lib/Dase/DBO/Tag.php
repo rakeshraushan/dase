@@ -392,7 +392,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
 		//todo: beware expense??
 		foreach (Dase_DBO_Category::getAll($this) as $cat) {
-			$entry->addCategory($cat->term,$cat->getScheme(),$cat->label);
+			$scheme = $cat->getScheme();
+			$entry->addCategory($cat->term,$scheme,$cat->label);
 		}
 		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory("set","http://daseproject.org/category/entrytype");
@@ -410,7 +411,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	public function deleteCategories()
 	{
 		foreach (Dase_DBO_Category::getAll($this) as $cat) {
-			Dase_DBO_Category::remove($this,$cat->scheme);
+			Dase_DBO_Category::remove($this,$cat->scheme_id);
 		}
 	}
 

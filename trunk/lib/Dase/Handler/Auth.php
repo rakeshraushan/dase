@@ -17,6 +17,7 @@ class Dase_Handler_Auth extends Dase_Handler
 		}
 	}
 
+	//allows a service user to get htpasswd of a user
 	public function getEidauth($r)
 	{
 		$user = Dase_DBO_DaseUser::get($r->get('eid'));

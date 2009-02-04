@@ -1,3 +1,6 @@
+//method params for ajax:
+//Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers,error_func) 
+
 var Dase;
 if (Dase && (typeof Dase != "object" || Dase.NAME)) {
 	throw new Error("Namespace 'Dase' already exists");

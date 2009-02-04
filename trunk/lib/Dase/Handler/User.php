@@ -90,7 +90,12 @@ class Dase_Handler_User extends Dase_Handler
 				if ($client_md5 && md5($raw_input) != $client_md5) {
 					$r->renderError(412,'md5 does not match');
 				}
-				$set_entry = Dase_Atom_Entry::load($raw_input);
+				try {
+					$set_entry = Dase_Atom_Entry::load($raw_input);
+				} catch(Exception $e) {
+					Dase_Log::debug('error',$e->getMessage());
+					$r->renderError(400,'bad xml');
+				}
 				if ('set' != $set_entry->entrytype) {
 					$r->renderError(400,'must be a set entry');
 				}

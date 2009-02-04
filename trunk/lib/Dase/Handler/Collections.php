@@ -42,7 +42,12 @@ class Dase_Handler_Collections extends Dase_Handler
 				//todo: fix this
 				//$r->renderError(412,'md5 does not match');
 			}
-			$coll_entry = Dase_Atom_Entry::load($raw_input);
+			try {
+				$coll_entry = Dase_Atom_Entry::load($raw_input);
+			} catch(Exception $e) {
+				Dase_Log::debug('error',$e->getMessage());
+				$r->renderError(400,'bad xml');
+			}
 			if ('collection' != $coll_entry->entrytype) {
 				$r->renderError(400,'must be a collection entry');
 			}
@@ -97,7 +102,6 @@ class Dase_Handler_Collections extends Dase_Handler
 			$r->renderRedirect('admin');
 		}
 		$tpl->assign('collections',$feed);
-		//$tpl->assign('collections',Dase_Atom_Feed::retrieve(APP_ROOT.'/atom'));
 		$r->renderResponse($tpl->fetch('collection/list.tpl'));
 	}
 }

@@ -16,6 +16,7 @@ class Dase_Handler_CategorySchemes extends Dase_Handler
 		$r->renderResponse(Dase_DBO_CategoryScheme::listAsFeed());
 	}
 
+	//called from admin handler
 	public function getCategorySchemesAtom($r) 
 	{
 		$r->renderResponse(Dase_DBO_CategoryScheme::listAsFeed('name'));

@@ -36,7 +36,8 @@ class Dase_Handler_Tags extends Dase_Handler
 		$scheme = new Dase_DBO_CategoryScheme;
 		$scheme->applies_to = 'set';
 		foreach ($scheme->find() as $sch) {
-			$meta_cats = $meta_coll->addCategorySet($sch->fixed,'http://daseproject/category/'.$sch->uri);
+			$meta_cats = $meta_coll->addCategorySet($sch->fixed,'http://daseproject.org/category/'.$sch->uri);
+			$meta_cats->addCategory('default');
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($svc->asXml());

@@ -19,16 +19,16 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		'visibility',
 	);
 
-	public static function remove($entity_obj,$scheme,$term='')
+	public static function remove($entity_obj,$scheme_id,$term='')
 	{
 		//note: lots of "convention" assumed here
 		//concerning table naming
-		//pass in an object, scheme and (optionally) term
+		//pass in an object, scheme_id and (optionally) term
 		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
-		$params[] = $scheme;
+		$params[] = $scheme_id;
 		$prefix = Dase_Config::get('table_prefix');
 		if ($term) {
 			$term_filter = "AND cat.term = ?";
@@ -38,11 +38,10 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		}
 		$sql = "
 			SELECT e2cat.id 
-			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
+			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
-			AND csh.id = cat.scheme_id
-			AND csh.uri = ?
+			AND cat.scheme_id = ?
 			$term_filter
 			";
 		foreach (Dase_DBO::query($sql,$params) as $row) {
@@ -75,7 +74,13 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 		$cat = new Dase_DBO_Category;
 		$scheme = str_replace('http://daseproject.org/category/','',$scheme);
-		$cat->scheme = $scheme ? $scheme : 'none';
+		$cs = new Dase_DBO_CategoryScheme;
+		$cs->uri = trim($scheme,'/');
+		if ($cs->findOne()) {
+			$cat->scheme_id = $cs->id;
+		} else {
+			$cat->scheme_id = 0;
+		}
 		$cat->term = $term;
 		if (!$cat->findOne() && 
 			$cat->term && 
@@ -136,7 +141,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		$params[] = $entity_obj->id;
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
-			SELECT cat.id, csh.uri as scheme, cat.term, cat.label 
+			SELECT cat.id, csh.id as scheme_id, cat.term, cat.label 
 			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
@@ -156,11 +161,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		}
 		$scheme = new Dase_DBO_CategoryScheme;
 		$scheme->load($this->scheme_id);
-		if ('http' == substr($scheme->uri,0,4)) {
-			return $scheme->uri;
-		} else {
-			return APP_ROOT.'/coolcat/'.$scheme->uri;
-		}
+		return 'http://daseproject.org/category/'.$scheme->uri;
 	}
 
 }

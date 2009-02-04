@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *
+ * for general AtomPub service document
+ *
+ */
+
 class Dase_Handler_Service extends Dase_Handler
 {
 	public $resource_map = array(
@@ -24,7 +30,9 @@ class Dase_Handler_Service extends Dase_Handler
 		$scheme = new Dase_DBO_CategoryScheme;
 		$scheme->applies_to = 'collection';
 		foreach ($scheme->find() as $sch) {
-			$meta_cats = $meta_coll->addCategorySet($sch->fixed,Dase_Config::get('app_root').'/category/'.$sch->uri);
+			$meta_cats = $meta_coll->addCategorySet(
+				$sch->fixed,Dase_Config::get('app_root').'/category/'.$sch->uri);
+			$meta_cats->addCategory('default');
 		}
 		$meta_cats = $meta_coll->addCategorySet();
 		$meta_cats->addCategory('collection','http://daseproject.com/category/entrytype');
