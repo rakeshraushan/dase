@@ -19,6 +19,17 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		'visibility',
 	);
 
+	public static function asList()
+	{
+		$atomcats = new Dase_Atom_Categories;
+		$cats = new Dase_DBO_Category;
+		foreach ($cats->find() as $c) {
+			$scheme = $c->getScheme();
+			$atomcats->addCategory($c->term,$scheme,$c->label);
+		}
+		return $atomcats->asXml();
+	}
+
 	public static function remove($entity_obj,$scheme_id,$term='')
 	{
 		//note: lots of "convention" assumed here
