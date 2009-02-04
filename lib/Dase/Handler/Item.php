@@ -413,27 +413,6 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse('deleted');
 	}
 
-	public function putMetadata($r)
-	{
-		$content_type = $r->getContentType();
-		if ('application/atomcat+xml' == $content_type) {
-			$user = $r->getUser('http');
-			if (!$user->can('write',$this->item)) {
-				$r->renderError(401,'cannot put metadata');
-			}
-			$cats = Dase_Atom_Categories::load(file_get_contents("php://input"));
-			$metadata_array = array();
-			foreach ($cats->getCategories() as $c) {
-				$term = array_pop(explode('/',$c['term']));
-				$metadata_array[$term] = $c['value'];
-			}
-			$this->item->replaceMetadata($metadata_array);
-			$r->renderOk('item metadata updated');
-		} else {
-			$r->renderError(415,'cannot accept '.$content_type);
-		}
-	}
-
 	public function putItem($r)
 	{
 		$user = $r->getUser('http');

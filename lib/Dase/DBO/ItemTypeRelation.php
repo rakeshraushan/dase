@@ -71,7 +71,7 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 	{
 		$app_root = Dase_Config::get('app_root');
 		$coll = $this->collection_ascii_id;
-		$base_url = $this->getRelativeUrl();
+		$base_url = $app_root.'/'.$this->getRelativeUrl();
 		$entry->setTitle('Item Type Relation: '.$this->title);
 		$entry->setId($base_url);
 		$entry->setSummary($this->description);

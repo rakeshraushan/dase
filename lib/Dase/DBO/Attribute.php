@@ -103,19 +103,22 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return 'attribute/'.$coll.'/'.$this->ascii_id;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null,$app_root='')
 	{
 		if ($c) {
 			$this->collection = $c;
 		} else {
 			$c = $this->getCollection();
 		}	
-		$base_url = $this->getRelativeUrl($c->ascii_id);
+		if (!$app_root) {
+			$app_root = Dase_Config::get('app_root');
+		}
+		$base_url = $app_root.'/'.$this->getRelativeUrl($c->ascii_id);
 		$entry->setTitle($this->attribute_name);
 		$entry->setId($base_url);
-		$entry->addLink($base_url);
-		$entry->addLink($base_url,'edit');
-		$entry->addCategory('attribute','http://daseproject.org/category/entrytype','Attribute');
+		$entry->addLink($base_url.'.atom');
+		$entry->addLink($base_url.'.atom','edit');
+		$entry->addCategory('attribute','http://daseproject.org/category/entrytype');
 		$entry->addCategory($this->html_input_type,'http://daseproject.org/category/html_input_type');
 		foreach ($this->getItemTypes() as $type) {
 			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/parent_item_type',$type->name);
@@ -123,6 +126,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
 			$entry->addLink($base_url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
 		}
+		//compat
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
 		} else {

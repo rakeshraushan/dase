@@ -53,13 +53,15 @@
 			</tr><tr>
 			<th>updated</th>
 			<td>${atom.updated}</td>
-			</tr><tr>
+			</tr>
+			<tr>
 			<th>content@type</th>
 			<td>${atom.content.type}</td>
 			</tr><tr>
 			<th>content</th>
 			<td>${atom.content.text}</td>
-			</tr><tr>
+			</tr>
+			<tr>
 			<th>entrytype</th>
 			<td>${atom.entrytype}</td>
 		</tr>

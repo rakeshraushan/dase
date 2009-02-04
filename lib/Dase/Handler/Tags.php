@@ -41,5 +41,19 @@ class Dase_Handler_Tags extends Dase_Handler
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($svc->asXml());
 	}
+
+	public function getTagsAtom($r)
+	{
+		$r->renderResponse(Dase_DBO_Tag::listAsFeed());
+
+	}
+
+	public function getTags($r)
+	{
+		$tpl = new Dase_Template($r);
+		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/tags.atom');
+		$tpl->assign('sets',$feed);
+		$r->renderResponse($tpl->fetch('tags/list.tpl'));
+	}
 }
 

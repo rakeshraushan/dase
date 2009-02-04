@@ -24,6 +24,31 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tags;
 	}
 
+	public static function listAsFeed()
+	{
+		//public ONLY
+		$app_root = Dase_Config::get('app_root');
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle('public sets');
+		$feed->setId($app_root.'/sets');
+		$feed->setFeedType('sets');
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+
+		$tags = new Dase_DBO_Tag;
+		$tags->is_public = true;
+		$tags->orderBy('updated DESC');
+		foreach ($tags->find() as $tag) {
+			$tag = clone $tag;
+			if ($tag->ascii_id) { //compat: make sure tag has ascii_id
+				$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
+				$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+			}
+		}
+		$feed->sortByTitle();
+		return $feed->asXml();
+	}
+
 	public static function create($tag_name,$user)
 	{
 		$tag = new Dase_DBO_Tag;
@@ -183,6 +208,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getUser()
 	{
+		//avoids another db lookup
+		if ($this->user) {
+			return $this->user;
+		}
 		$user = new Dase_DBO_DaseUser;
 		$this->user = $user->load($this->dase_user_id);
 		return $this->user;
@@ -329,30 +358,43 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $feed->asXml();
 	}
 
-	function asAtomEntry()
+	function asAtomEntry($serialize=true)
 	{
-		return $this->injectAtomEntryData(new Dase_Atom_Entry)->asXml();
+		if ($serialize) {
+			return $this->injectAtomEntryData(new Dase_Atom_Entry)->asXml();
+		} else {
+			return $this->injectAtomEntryData(new Dase_Atom_Entry);
+		}
 
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$user=null,$app_root='')
 	{
-		$this->user || $this->getUser(); 
+		if (!$user) {
+			$user = $this->getUser();
+		}
+
+		if (!$app_root) {
+			$app_root = Dase_Config::get('app_root');
+		}
+
 		$entry->setTitle($this->name);
 		if ($this->description) {
 			$entry->setSummary($this->description);
 		}
-		$entry->setId(APP_ROOT . '/user/'. $this->user->eid . '/tag/' . $this->ascii_id);
+		$entry->setId($app_root . '/user/'. $user->eid . '/tag/' . $this->ascii_id);
 		$updated = $this->updated ? $this->updated : '2005-01-01T00:00:01-06:00';
 		$entry->setUpdated($updated);
-		$entry->addAuthor($this->user->eid);
-		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
-		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/edit','edit' );
-		$entry->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id);
+		$entry->addAuthor($user->eid);
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','self');
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','edit' );
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
 		//todo: beware expense??
 		foreach (Dase_DBO_Category::getAll($this) as $cat) {
 			$entry->addCategory($cat->term,$cat->getScheme(),$cat->label);
 		}
+		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory("set","http://daseproject.org/category/entrytype");
 		$entry->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
