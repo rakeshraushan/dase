@@ -422,6 +422,9 @@ class Dase_Atom_Feed extends Dase_Atom
 		if (count($this->_entries)) {
 			return $this->_entries;
 		}
+		if (!$this->feedtype) {
+			$this->feedtype = $this->getFeedType();
+		}
 		$entries = array();
 		$class = self::$types_map[$this->feedtype]['entry'];
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
