@@ -417,8 +417,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$updated = $this->updated ? $this->updated : '2005-01-01T00:00:01-06:00';
 		$entry->setUpdated($updated);
 		$entry->addAuthor($user->eid);
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','self');
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','edit' );
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','self');
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','edit' );
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
 		//todo: beware expense??
