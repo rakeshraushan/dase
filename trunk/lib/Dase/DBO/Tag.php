@@ -24,9 +24,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tags;
 	}
 
-	public static function listAsFeed()
+	public static function listAsFeed($category='')
 	{
-		//public ONLY
+		//public ONLY!!!!!!
 		$app_root = Dase_Config::get('app_root');
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('public sets');
@@ -35,14 +35,45 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
 
-		$tags = new Dase_DBO_Tag;
-		$tags->is_public = true;
-		$tags->orderBy('updated DESC');
-		foreach ($tags->find() as $tag) {
-			$tag = clone $tag;
-			if ($tag->ascii_id) { //compat: make sure tag has ascii_id
-				$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
-				$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+		if ($category) {
+			$parts = explode('}',$category);
+			if (1 == count($parts)) {
+				$term = $parts[0];
+			} elseif (2 == count($parts)) {
+				$scheme = urldecode(trim($parts[0],'{'));
+				$scheme = str_replace('http://daseproject.org/category/','',$scheme);
+				$term = $parts[1];
+			} else {
+				return $feed->asXml();
+			}
+			$prefix = Dase_Config::get('table_prefix');
+			$sql = "
+				SELECT tc.tag_id 
+				FROM {$prefix}category_scheme cs,{$prefix}category c, {$prefix}tag_category tc 
+				WHERE cs.uri = ?
+				AND cs.id = c.scheme_id
+				AND c.term = ?	
+				AND tc.category_id = c.id
+				";
+			foreach (Dase_DBO::query($sql,array($scheme,$term)) as $row) {
+				$tag = new Dase_DBO_Tag;
+				$tag->load($row['tag_id']);
+				if ($tag->ascii_id) { //compat
+					$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
+					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+				}
+			}
+
+		} else {
+			$tags = new Dase_DBO_Tag;
+			$tags->is_public = true;
+			$tags->orderBy('updated DESC');
+			foreach ($tags->find() as $tag) {
+				$tag = clone $tag;
+				if ($tag->ascii_id) { //compat: make sure tag has ascii_id
+					$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
+					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+				}
 			}
 		}
 		$feed->sortByTitle();

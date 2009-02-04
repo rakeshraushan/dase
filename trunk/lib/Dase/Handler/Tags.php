@@ -6,6 +6,7 @@ class Dase_Handler_Tags extends Dase_Handler
 	public $resource_map = array( 
 		'/' => 'tags',
 		'service' => 'service',
+		'search' => 'search',
 	);
 
 	protected function setup($r)
@@ -45,7 +46,11 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public function getTagsAtom($r)
 	{
-		$r->renderResponse(Dase_DBO_Tag::listAsFeed());
+		if ($r->has('category')) {
+			$r->renderResponse(Dase_DBO_Tag::listAsFeed($r->get('category')));
+		} else {
+			$r->renderResponse(Dase_DBO_Tag::listAsFeed());
+		}
 
 	}
 
@@ -55,6 +60,13 @@ class Dase_Handler_Tags extends Dase_Handler
 		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/tags.atom');
 		$tpl->assign('sets',$feed);
 		$r->renderResponse($tpl->fetch('tags/list.tpl'));
+	}
+
+	public function getSearchAtom($r) 
+	{
+		$term = $r->get('category');
+		$uri = $r->get('scheme');
+		//need to write sql here
 	}
 }
 
