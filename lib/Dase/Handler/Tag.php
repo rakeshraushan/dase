@@ -74,12 +74,10 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagAtom($r)
 	{
-		/*
 		$u = $r->getUser('http');
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
-		 */
 		if ('entry' == $r->get('type')) {
 			$r->renderResponse($this->tag->asAtomEntry());
 		} else {
