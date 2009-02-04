@@ -3,6 +3,7 @@
 class Dase_Handler_Category extends Dase_Handler
 {
 	public $resource_map = array(
+		'list' => 'categories',
 		'{uri}' => 'scheme',
 		'{uri1}/{uri2}' => 'scheme',
 		'{uri1}/{uri2}/{uri3}' => 'scheme',
@@ -27,6 +28,13 @@ class Dase_Handler_Category extends Dase_Handler
 			}	
 		}
 		return join('/',$uri_parts);
+	}
+
+	public function getCategories($r)
+	{
+		$r->response_mime_type = 'application/xml';
+		$r->renderResponse(Dase_DBO_Category::asList());
+
 	}
 
 	public function getScheme($r) 
