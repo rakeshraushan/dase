@@ -396,6 +396,22 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $this;
 	}
 
+	public function sortByTitle() 
+	{
+		$entries = $this->getEntries();
+		usort($entries,array('Dase_Atom_Feed','_sortByAtomTitle'));
+		$this->_entries = $entries;
+		return $this;
+	}
+
+	public static function _sortByAtomTitle($a,$b)
+	{
+		$at = $a->getTitle();
+		$bt = $b->getTitle();
+		return strnatcasecmp($at,$bt); 
+
+	}
+
 	public function getCount()
 	{
 		return count($this->getEntries());

@@ -27,23 +27,32 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function saveAtom()
 	{
-		$app_root = Dase_Config::get('app_root');
-		$c = $this->getCollection();
-		$entry = new Dase_Atom_Entry_Item;
-		$entry = $this->injectAtomEntryData($entry,$c);
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $this->id;
 		$atom->app_root = Dase_Config::get('app_root');
 		if (!$atom->findOne()) {
 			$atom->insert();
 		}
-		$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
-		$atom->relative_url = 'item/'.$c->ascii_id.'/'.$this->serial_number;
-		$atom->updated = date(DATE_ATOM);
-		$atom->app_root = $app_root;
-		$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-		$atom->update();
-		return $entry;
+
+		$this_app_root_entry = null;
+		//regenerate for EACH app root
+		$atom = new Dase_DBO_ItemAsAtom;
+		$atom->item_id = $this->id;
+		foreach ($atom->find() as $found) {
+			$c = $this->getCollection();
+			$entry = new Dase_Atom_Entry_Item;
+			$entry = $this->injectAtomEntryData($entry,$c,$found->app_root);
+			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
+			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$this->serial_number;
+			$atom->updated = date(DATE_ATOM);
+			$atom->app_root = $found->app_root;
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->update();
+			if (Dase_Config::get('app_root') == $found->app_root) {
+				$this_app_root_entry = $entry;
+			}
+		}
+		return $this_app_root_entry;
 	}
 
 	public static function getByUrl($url)
@@ -533,16 +542,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	//used with putMetadata method in item handler
-	//(which accepts application/atomcat+xml)
-	public function replaceMetadata($metadata_array)
-	{
-		$this->deleteValues();
-		foreach ($metadata_array as $att_ascii => $value_text) {
-			$this->setValue($att_ascii,$value_text);
-		}
-	}
-
 	function deleteAdminValues()
 	{
 		$a = new Dase_DBO_Attribute;
@@ -752,11 +751,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $types;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null,$app_root='')
 	{
 		if (!$this->id) { return false; }
 
-		$app_root = Dase_Config::get('app_root');
+		if (!$app_root) {
+			$app_root = Dase_Config::get('app_root');
+		}
 
 		/* namespaces */
 
@@ -852,6 +853,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* dase categories */
 
 		$entry->setEntrytype('item');
+
+		//allows us to replace all if/when necessary :(
+		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);

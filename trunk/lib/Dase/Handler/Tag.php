@@ -6,8 +6,8 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', //for json
 		'{eid}/{tag_ascii_id}/background' => 'background',
-		'{eid}/{tag_ascii_id}/edit' => 'edit',
 		'{eid}/{tag_ascii_id}/templates' => 'bulk_edit_templates',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
@@ -85,6 +85,16 @@ class Dase_Handler_Tag extends Dase_Handler
 		} else {
 			$r->renderResponse($this->tag->asAtom());
 		}
+	}
+
+	public function getTagEntryJson($r)
+	{
+		$r->renderResponse($this->tag->asAtomEntry(false)->asJson());
+	}
+
+	public function getTagEntryAtom($r)
+	{
+		$r->renderResponse($this->tag->asAtomEntry());
 	}
 
 	public function getTagJson($r)
@@ -310,15 +320,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->renderResponse("removed $num items from $tag->name");
 	}
 
-	public function getEdit($r)
-	{
-		$r->response_mime_type = 'application/atom+xml';
-		$entry = new Dase_Atom_Entry_Set;
-		$this->tag->injectAtomEntryData($entry);
-		$r->renderResponse($entry->asXml());
-	}
-
-	public function putEdit($r)
+	public function putTag($r)
 	{
 		$user = $r->getUser('http');
 		if (!$user->can('write',$this->tag)) {

@@ -197,6 +197,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attribute/'.$att->ascii_id,$params);
 	}
 
+	//todo: this belongs in Attribute Handler
 	public function putAttributeDefinedValues($r)
 	{
 		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));

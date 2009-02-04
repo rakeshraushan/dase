@@ -448,6 +448,12 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getLink('edit');
 	}
 
+	function getAlternateLink()
+	{
+		//returns first on found
+		return $this->getLink('alternate');
+	}
+
 	function getJsonEditLink()
 	{
 		return $this->getLink('http://daseproject.org/relation/edit');
