@@ -28,18 +28,15 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 		return $feed->asXml();
 	}
 
-	public function asAtomEntry()
+	public function getCategories()
 	{
-		$e = new Dase_Atom_Entry; 
-		$e->setId(APP_ROOT.'/category/'.$this->uri);
-		$e->setUpdated($this->created);
-		$e->addLink(APP_ROOT.'/category/'.$this->uri,'edit' );
-		$e->addAuthor($this->created_by_eid);
-		$e->setTitle($this->name);
-		$e->addCategory($sch->applies_to,'http://daseproject.org/category/applies_to');
-		$e->setSummary($this->description);
-		$e->setContentXml($this->asXml(),'application/atomcat+xml');
-		return $e->asXml();
+		$res = array();
+		$cats = new Dase_DBO_Category;
+		$cats->scheme_id = $this->id;
+		foreach ($cats->find() as $cat) {
+			$res[] = clone $cat;
+		}
+		return $res;
 	}
 
 	public function asXml()
@@ -55,16 +52,6 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 		return $scheme->asXml();
 	}
 
-	public function getCategories()
-	{
-		$res = array();
-		$cats = new Dase_DBO_Category;
-		$cats->scheme_id = $this->id;
-		foreach ($cats->find() as $cat) {
-			$res[] = clone $cat;
-		}
-		return $res;
-	}
 
 	static function getLastCreated()
 	{

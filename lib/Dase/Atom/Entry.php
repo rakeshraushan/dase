@@ -109,8 +109,10 @@ class Dase_Atom_Entry extends Dase_Atom
 		} else {
 			$dom->loadXml($xml);
 		}
-		$entry = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
-		$root = $entry->item(0);
+		$root = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'*')->item(0);
+		if ('entry' != $root->nodeName) {
+			throw new Dase_Atom_Exception('wrong document type');
+		}
 		$entrytype = '';
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {

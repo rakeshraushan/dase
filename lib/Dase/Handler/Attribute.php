@@ -71,13 +71,5 @@ class Dase_Handler_Attribute extends Dase_Handler
 		}
 		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val));
 	}
-
-	public function getDefinedValues($r) 
-	{
-		$r->response_mime_type = 'applications/atomcat+xml';
-		$attr = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
-		$r->renderResponse($attr->definedAsAtomcat());
-	}
-
 }
 

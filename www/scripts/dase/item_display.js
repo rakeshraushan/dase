@@ -283,7 +283,7 @@ Dase.initEditMetadata = function() {
 								Dase.addClass(myform,'hide');
 								Dase.ajax(this.action,'delete',function(resp) { 
 									//	alert(resp);
-								});
+								},null,Dase.user.eid,Dase.user.htpasswd);
 								return false;
 							}
 							} else {
@@ -305,11 +305,10 @@ Dase.initEditMetadata = function() {
 					}
 					//Dase.loadingMsg(true);
 					//handle delete case
-					this.className = 'updated';
+					var value_id = this.className;
+					Dase.addClass(this,'updated');
 					Dase.ajax(this.action,'put',function(resp) { 
-						var parts = resp.split('|');
-						var value_id = parts[0];
-						var value_text = parts[1];
+						var value_text = resp;
 						Dase.$('val_'+value_id).value = value_text;
 						Dase.$('val_'+value_id).size = value_text.length;
 						Dase.$('val_'+value_id).onfocus = function() {
@@ -324,7 +323,7 @@ Dase.initEditMetadata = function() {
 						}
 						Dase.$('label_'+value_id).className = 'updated';
 						Dase.highlight(Dase.$('form_'+value_id),500,'updated');
-					},value_text); 
+					},value_text,Dase.user.eid,Dase.user.htpasswd); 
 					return false;
 				}
 			}
@@ -349,23 +348,6 @@ Dase.initAddMetadata = function()
 		}
 		if (Dase.toggle(mform)) {
 			mform.innerHTML = '<h1 class="loading">Loading...</h1>';
-			/*
-			Dase.atompub.getAtom(this.href, function(atom) {
-				var cats = atom.getElementsByTagName('category');
-				var atts = new Array();
-				for (var i=0;i<cats.length;i++) {
-					var att = {};
-					att.href = cats[i].getAttribute('term');
-					att.attribute_name = cats[i].getAttribute('label');
-					atts[atts.length] = att;
-				}
-				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
-			    var data = { 'atts': atts };
-				mform.innerHTML = templateObj.process(data);
-				var getForm = Dase.$('getInputForm');
-				Dase.initGetInputForm(getForm);
-			});
-			*/
 			Dase.getJSON(this.href, function(json){
 			    var data = { 'atts': json };
 				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
@@ -513,9 +495,9 @@ Dase.buildEditMetadataForm = function(json) {
 	var html_form = '';
 	for (var i=0;i<json.length;i++) {
 		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
-		html_form += '<form method="post" id="form_'+json[i].value_id+'" action="'+json[i].url+'">';
+		html_form += '<form method="post" id="form_'+json[i].value_id+'" class="'+json[i].value_id+'" action="'+json[i].url+'">';
 		html_form += '<label id="label_'+json[i].value_id+'" for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
-		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
+		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" "value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
 		html_form += "</form>";
 		}
 	}

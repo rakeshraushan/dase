@@ -450,7 +450,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$item_entry = Dase_Atom_Entry::load($raw_input,'item');
+		try {
+			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$r->renderError(400,'bad xml');
+		}
 		if ('item' != $item_entry->entrytype) {
 			$item_entry->setEntryType('item');
 			$r->renderError(400,'must be an item entry');
@@ -478,7 +483,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$att_entry = Dase_Atom_Entry::load($raw_input);
+		try {
+			$att_entry = Dase_Atom_Entry::load($raw_input);
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$r->renderError(400,'bad xml');
+		}
 		if ('attribute' != $att_entry->entrytype) {
 			$att_entry->setEntryType('attribute');
 			$r->renderError(400,'must be an attribute entry');
@@ -503,7 +513,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$type_entry = Dase_Atom_Entry::load($raw_input);
+		try {
+			$type_entry = Dase_Atom_Entry::load($raw_input);
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$r->renderError(400,'bad xml');
+		}
 		if ('item_type' != $type_entry->entrytype) {
 			$r->renderError(400,'must be an item type entry');
 		}
@@ -527,7 +542,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($raw_input) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$entry = Dase_Atom_Entry::load($raw_input);
+		try {
+			$entry = Dase_Atom_Entry::load($raw_input);
+		} catch(Exception $e) {
+			Dase_Log::debug('error',$e->getMessage());
+			$r->renderError(400,'bad xml');
+		}
 		if ('item_type_relation' != $entry->entrytype) {
 			$r->renderError(400,'must be an item type relation entry');
 		}
