@@ -99,9 +99,9 @@ class Dase_Atom
 			$category = array();
 			$category['term'] = $cat->getAttribute('term');
 			$category['scheme'] = $cat->getAttribute('scheme');
-			if ($cat->getAttribute('label')) {
-				$category['label'] = $cat->getAttribute('label');
-			}
+			//if ($cat->getAttribute('label')) {
+			$category['label'] = $cat->getAttribute('label');
+			//}
 			if ($cat->nodeValue || '0' === $cat->nodeValue) {
 				$category['value'] = $cat->nodeValue;
 			}

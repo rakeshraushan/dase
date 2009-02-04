@@ -82,15 +82,13 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 			$cat->scheme_id = 0;
 		}
 		$cat->term = $term;
-		if (!$cat->findOne() && 
-			$cat->term && 
-			!in_array($scheme,Dase_DBO_Category::$excluded_schemes)) {
-				if ($label) {
-					$cat->label = $label;
-				} else {
-					$cat->label = Dase_DBO_Category::getLabel($scheme,$term);
-				}
-				$cat->insert();
+		if (!$cat->findOne() && $cat->term && !in_array($scheme,Dase_DBO_Category::$excluded_schemes)) {
+			if ($label) {
+				$cat->label = $label;
+			} else {
+				$cat->label = Dase_DBO_Category::getLabel($scheme,$term);
+			}
+			$cat->insert();
 		}
 		if ($cat->id) {
 			$e2cat_class = "Dase_DBO_".$eclass."Category";

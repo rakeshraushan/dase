@@ -47,7 +47,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		//note that ONLY mutable categories will be affected
 		$set->deleteCategories();
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($set,$category['scheme'],$category['term']);
+			Dase_DBO_Category::add($set,$category['scheme'],$category['term'],$category['label']);
 		}
 		return $set;
 	}
