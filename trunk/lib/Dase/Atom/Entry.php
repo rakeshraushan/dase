@@ -450,6 +450,11 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getLink('edit');
 	}
 
+	function getEditContentLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/edit-content');
+	}
+
 	function getAlternateLink()
 	{
 		//returns first on found

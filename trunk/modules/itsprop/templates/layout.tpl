@@ -72,6 +72,11 @@
 					<a href="proposals" class="main">Proposals List</a>
 					</li>
 					{/if}
+					{foreach item=dept from=$request->chair_feed->entries}
+					<li>
+					<a href="department/{$dept->dept_id.text}/proposals" class="main">{$dept->dept_name.text} Proposals</a>
+					</li>
+					{/foreach}
 				</ul>
 				<h5 class="hide" id="ajaxMsg">loading...</h5>
 			</div> 

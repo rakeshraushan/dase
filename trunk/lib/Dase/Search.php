@@ -58,12 +58,13 @@ class Dase_Search
 			$cache->setData(serialize($this->search_result));
 			$db_cache = new Dase_DBO_SearchCache;
 			$db_cache->query = $cache_url;
+			//will be the same as the cache filename:
 			$db_cache->search_md5 = md5($cache_url);
 			//get user but do not force login
 			$user = $this->request->getUser('cookie',false);
 			if ($user) {
 				$db_cache->dase_user_id = $user->id;
-			}
+			} 
 			$db_cache->timestamp = date(DATE_ATOM);
 			$db_cache->insert();
 			return $this->search_result;
