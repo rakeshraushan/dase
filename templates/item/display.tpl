@@ -52,7 +52,7 @@
 	<table id="item">
 		<tr>
 			<td class="image">
-				<img src="{$item->viewitemLink}"/>
+				<img src="{$item->entry->viewitemLink}"/>
 				<table>
 					{foreach item=m from=$item->media}
 					{if $m.label != 'thumbnail' && $m.label != 'viewitem'}
@@ -92,7 +92,7 @@
 						<a href="{$item->entry->attributesLink}" 
 							id="addMetadataLink">add metadata</a>
 						|
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/content" 
+						<a href="{$item->entry->editContentLink}" 
 							id="addContentLink">edit content</a>
 						|
 						<a href="collection/{$item->collectionAsciiId}/item_types" 

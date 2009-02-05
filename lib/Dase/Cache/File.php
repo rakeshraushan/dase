@@ -20,6 +20,15 @@ class Dase_Cache_File extends Dase_Cache
 		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
 	}
 
+	public static function expungeByHash($md5_hash)
+	{
+		if ($md5_hash) {
+			$filename = CACHE_DIR . $md5_hash;
+			Dase_Log::debug('expired ' . $filename);
+			@unlink($filename);
+		}
+	}
+
 	public static function expunge() 
 	{
 		$i = 0;
@@ -72,7 +81,7 @@ class Dase_Cache_File extends Dase_Cache
 			file_put_contents($this->tempfilename,$data);
 			rename($this->tempfilename,$this->cache_dir.$this->filename);
 		}
-		return $data;
+		return $this->filename;
 	}
 }
 

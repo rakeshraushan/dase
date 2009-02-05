@@ -12,6 +12,7 @@ class Dase_Http_Auth
 		$request_headers = apache_request_headers();
 		$passwords = array();
 		Dase_Log::debug(print_r($request_headers,true));
+
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
 			$eid = $_SERVER['PHP_AUTH_USER'];
 			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);

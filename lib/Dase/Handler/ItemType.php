@@ -7,6 +7,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'/' => 'index',
 		'{collection_ascii_id}/{item_type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}' => 'item',
+		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}/content' => 'content',
 		//usually retrieved as app:categories
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
 		'{collection_ascii_id}/{item_type_ascii_id}/items/{created_by_eid}' => 'item_type_items',
@@ -277,5 +278,75 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//if something goes wrong and control returns here
 		$r->renderError(500,'error in put item (item type)');
 	}
+
+	/** this is used to UPDATE an item's content */
+	public function postToContent($r)
+	{
+		$user = $r->getUser();
+		$this->_updateContent($r,$user);
+	}
+
+	/** this is used to UPDATE an item's content */
+	public function putContent($r)
+	{
+		//does this need to be service?? maybe 'http' is ok
+		$user = $r->getUser('service');
+		$this->_updateContent($r,$user);
+	}
+
+	private function _updateContent($r,$user)
+	{
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		if (!$user->can('write',$item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' == $content_type) {
+			$content_type = 'text';
+			$content = $r->get('content');
+		} else {
+		//todo: filter this!
+			$content = file_get_contents("php://input");
+		}
+		if ($item->setContent($content,$user->eid,$content_type)) {
+			$r->renderResponse('content updated');
+		}
+	}
+
+	/** this is for ajax retrieval of content versions */
+	public function getContentJson($r)
+	{
+		$user = $r->getUser();
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		if (!$user->can('read',$item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$r->renderResponse($item->getContentJson());
+	}
+
+	/** this is for simply getting the content 
+	 * note that type MUST be a mime_type
+	 * */
+	public function getContent($r)
+	{
+		$user = $r->getUser();
+		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		if (!$user->can('read',$item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$cont = $item->getContents();	
+		if ('xhtml' == $cont->type) {
+			$mime_type = 'application/xhtml+xml';
+		} elseif ('html' == $cont->type) {
+			$mime_type = 'text/html';
+		} elseif ('text' == $cont->type) {
+			$mime_type = 'text/plain';
+		} else {
+			$mime_type = $cont->type;
+		}
+		$r->response_mime_type = $mime_type;
+		$r->renderResponse($cont->text);
+	}
+
 }
 

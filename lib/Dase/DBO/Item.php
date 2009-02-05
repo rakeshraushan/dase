@@ -730,7 +730,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
 				$item_relation->parent_serial_number);
 			if ($parent_item) {
-				$label = $parent_type->name.': '.$parent_item->getTitle();
+				//$label = $parent_type->name.': '.$parent_item->getTitle();
+				$label = $parent_item->getTitle();
 				$url = $parent_item->getRelativeUrl($c->ascii_id);
 				$parent_items[$url] = array(
 					'label' => $label,
@@ -812,6 +813,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom',
 				'edit','application/atom+xml');
 			$entry->addLink(
+				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/content',
+				'http://daseproject.org/relation/edit-content');
+			$entry->addLink(
 				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');
 			$entry->addLink(
@@ -828,6 +832,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addLink(
 				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');
+			$entry->addLink(
+				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/content',
+				'http://daseproject.org/relation/edit-content');
 			$entry->addLink(
 				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/service',
 				'service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );

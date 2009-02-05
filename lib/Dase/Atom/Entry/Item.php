@@ -50,6 +50,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$elem =  $x->query("media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
 		if ($elem) {
 			return $elem->getAttribute('url');
+		} else {
+			return 'www/images/laits_colors.jpg';
 		}
 	}
 
@@ -67,6 +69,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getChildfeedLinkUrlByTypeAtom($item_type)
 	{
+		$type = $this->getItemType();
+		$desc = $item_type.'/children_of/'.$type['term'];
+		foreach ($this->getChildFeedLinks() as $link) {
+			if (strpos($link['href'],$desc)) {
+				return $link['href'];
+			}
+		}
 	}
 
 	function getThumbnailLink()
@@ -74,6 +83,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
 		if ($elem) {
 			return $elem->getAttribute('url');
+		} else {
+			return 'www/images/laits_colors.jpg';
 		}
 	}
 
@@ -612,7 +623,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$item_relation->saveParentAtom();
 				}
 			} else {
-				return false;
+				//nothin'	
 			}
 		}
 		$item->buildSearchIndex();

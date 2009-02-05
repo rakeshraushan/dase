@@ -270,6 +270,18 @@ class Dase_Handler_Item extends Dase_Handler
 	public function postToContent($r)
 	{
 		$user = $r->getUser();
+		$this->_updateContent($r,$user);
+	}
+
+	/** this is used to UPDATE an item's content */
+	public function putContent($r)
+	{
+		$user = $r->getUser('http');
+		$this->_updateContent($r,$user);
+	}
+
+	private function _updateContent($r,$user)
+	{
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot write to this item');
 		}

@@ -55,11 +55,11 @@ strong {
 
 h1 {
 	font-weight: bold;
-	font-size: 1.6em;
+	font-size: 1.4em;
 }
 
 h2 {
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 
 h5 {
@@ -525,3 +525,18 @@ input.long {
 	width: 50%;
 }
 
+div.prop_rating {
+	background: #E0E9E9;
+	margin: 10px 0;
+	padding: 6px;
+	width: 80%;
+}
+
+form#vision textarea {
+	min-height: 10em;
+	width: 80%;
+}
+
+textarea.comment {
+	width: 70%;
+}
