@@ -315,18 +315,6 @@ Dase.initBudgetForm = function() {
 	}
 }
 
-Dase.initVisionStatement = function() {
-	var form = Dase.$('vision');
-	if (!form) return;
-	form.onsubmit = function() {
-		var cont = this.vision.value;
-		Dase.ajax(this.action,'put',function(resp) { 
-			alert(resp);
-		},cont,'itsprop',Dase.itsprop.service_pass);
-		return false;
-	}
-}
-
 Dase.initModule = function() {
 	var url = Dase.getLinkByRel('service_pass');
 	if (!url) return;
@@ -343,10 +331,9 @@ Dase.initModule = function() {
 		Dase.initBudgetForm();
 		Dase.initPersonProposals();
 		Dase.initDeleteProposal();
-		Dase.initVisionStatement();
 	},null,null,null,null,function(error) {
 		//alert(error);
-		window.location.href = Dase.base_href+'logoff';
+		window.location.href = Dase.base_href+'modules/itsprop/logout';
 	});
 };
 

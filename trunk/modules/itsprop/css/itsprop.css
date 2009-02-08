@@ -78,8 +78,8 @@ a:hover {
 }
 
 div#container {
-	margin: 20px auto;
-	width: 95%;
+	margin: 8px auto;
+	width: 97%;
 }
 
 div#content {
@@ -465,6 +465,11 @@ input.updating {
 	color: blue;
 }
 
+span.updating {
+	font-size: .8em;
+	color: blue;
+}
+
 ul#courses {
 	list-style: none;
 	margin: 0px;
@@ -525,18 +530,175 @@ input.long {
 	width: 50%;
 }
 
-div.prop_rating {
-	background: #E0E9E9;
-	margin: 10px 0;
-	padding: 6px;
-	width: 80%;
-}
-
-form#vision textarea {
+form#vision_form textarea {
 	min-height: 10em;
 	width: 80%;
 }
 
 textarea.comment {
 	width: 70%;
+}
+
+h2#loadingProps {
+	margin-top: 10px;
+	padding: 6px;
+	border: 0px solid #ccc;
+	font-size: 12px;
+	font-weight: bold;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	width: 30%;
+}
+
+h2#rankingProps {
+	margin-top: 4px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	font-size: 10px;
+	font-weight: bold;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	width: 30%;
+}
+span.miniLink {
+	font-size: 10px;
+}
+div.tiny {
+	font-size: .7em;
+	color: #666;
+	margin-bottom: 2px;
+}
+
+table.highlight input[type=text] {
+	background-color: #ccc; 
+	color: #666;
+}
+
+table#sorter {
+	width: 80%;
+	margin-top: 10px;
+}
+
+table#sorter td {
+	border-bottom: 5px solid #fff;
+	text-align: left;
+	vertical-align: top;
+	padding: 3px 5px;
+}
+
+table#sorter td  a {
+	font-size: .9em;
+}
+
+table#sorter tr.instruction {
+	background-color: #ffd;
+	margin: 0;
+}
+
+table#sorter tr.instruction td {
+	border: 1px solid #fff;
+}
+
+table#sorter tr.instruction td {
+	font-style: italic;
+}
+
+table#sorter tr.shade {
+	background-color: #ddf;
+}
+
+table#sorter tr.fade {
+	background-color: #eee;
+}
+
+table#sorter tr.fade td.title {
+	color: #999;
+}
+
+table#sorter td.sort {
+	width: 40px;
+	padding-top: 10px;
+}
+
+table#sorter td.topper {
+	width: 40px;
+}
+
+table#sorter td.title {
+	width: 80%;
+}
+
+table#sorter td.updateButton {
+	background-color: #fff;
+	text-align: left;
+	vertical-align: middle; 
+	padding: 0;
+	height: 26px;
+	border-bottom: 0;
+}
+
+table#sorter tr {
+	background-color: #ddd;
+}
+
+table#sorter td div.tiny {
+	font-size: .7em;
+	color: #666;
+	margin-bottom: 2px;
+}
+
+.javascript_template {
+	display: none;
+}
+
+span.title {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+
+#ajaxMsg {
+	background-color: #fdf5b4;
+	background-color: #fff1a8;
+	width: 10%;
+	text-align: center;
+	padding: 5px;
+
+	-moz-border-radius: 3px;
+	color: #000;
+	position: fixed;
+	top: 2px;
+	left: 40%;
+	filter:alpha(opacity=96);
+	-moz-opacity:0.96;
+	opacity: 0.96;
+	}
+
+
+
+/********** STANDARD CLASSES ********************/
+
+.spacer { clear:both; }
+.hide { display:none; }
+.pagedata { display:none; }
+a.delete { color:#c00; }
+.alert { color:#c00; }
+.msg { color:#c00; }
+a.edit { color: #00c; }
+.current { color: #00c; font-weight: bold;}
+a.current { color: #00c; font-weight: bold;}
+.modify {color: #00c;}
+a.modify {color: #00c;}
+
+div#vision_statement {
+	margin: 12px 0;
+	padding: 10px;
+	background-color: #eee;
+	width: 80%;
+}
+
+.instruction {
+	font-style: italic;
+	margin-bottom: 0px;
+	font-size: .9em;
 }

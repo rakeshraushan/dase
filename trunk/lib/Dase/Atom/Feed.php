@@ -338,9 +338,25 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		$entries = array();
 		foreach ($this->getEntries() as $entry) {
-			foreach ($entry->getMetadata() as $att_ascii => $keyval) {
+			foreach ($entry->getRawMetadata() as $att_ascii => $values) {
 				if ($att == $att_ascii) {
-					if (in_array($val,$keyval['values'])) {
+					if (in_array($val,$values)) {
+						$entries[] = $entry;
+					}
+				}
+			} 
+		}
+		$this->_entries = $entries;
+		return $this;
+	}
+
+	public function filterOnExists($att) 
+	{
+		$entries = array();
+		foreach ($this->getEntries() as $entry) {
+			foreach ($entry->getRawMetadata() as $att_ascii => $values) {
+				if ($att == $att_ascii) {
+					if (count($values)) {
 						$entries[] = $entry;
 					}
 				}

@@ -343,12 +343,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				$att_ascii_id = $el->getAttribute('term');
 				$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
 				$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
+				$v['id'] = array_pop(explode('/',$v['edit'])); //provides the last segment, i.e. value id
 				$v['text'] = $el->nodeValue;
 				$metadata[$att_ascii_id]['values'][] = $v;
 				//easy access to first value
 				if (1 == count($metadata[$att_ascii_id]['values'])) {
 					$metadata[$att_ascii_id]['text'] = $v['text'];
 					$metadata[$att_ascii_id]['edit'] = $v['edit'];
+					$metadata[$att_ascii_id]['id'] = $v['id'];
 				}
 			}
 			if ($include_private_metadata &&
@@ -356,12 +358,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$att_ascii_id = $el->getAttribute('term');
 					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttribute('label');
 					$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
+					$v['id'] = array_pop(explode('/',$v['edit'])); //provides the last segment, i.e. value id
 					$v['text'] = $el->nodeValue;
 					$metadata[$att_ascii_id]['values'][] = $v;
 					//easy access to first value
 					if (1 == count($metadata[$att_ascii_id]['values'])) {
 						$metadata[$att_ascii_id]['text'] = $v['text'];
 						$metadata[$att_ascii_id]['edit'] = $v['edit'];
+						$metadata[$att_ascii_id]['id'] = $v['id'];
 					}
 				}
 		}

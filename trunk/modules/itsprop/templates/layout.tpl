@@ -7,7 +7,9 @@
 
 		<base href="{$module_root}" >
 
+		<!--
 		<link rel="stylesheet" type="text/css" href="{$app_root}www/css/style.css" >
+		-->
 		<link rel="stylesheet" type="text/css" href="css/itsprop.css" >
 		<link rel="shortcut icon" href="images/itsbox.ico" >
 		<link rel="proposals" href="{$app_root}item_type/itsprop/proposal/items/{$user->eid}.json" >
@@ -15,6 +17,7 @@
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
+		<script type="text/javascript" src="{$app_root}www/scripts/jquery.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
@@ -74,7 +77,7 @@
 					{/if}
 					{foreach item=dept from=$request->chair_feed->entries}
 					<li>
-					<a href="department/{$dept->dept_id.text}/proposals" class="main">{$dept->dept_name.text} Proposals</a>
+					<a href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
 					</li>
 					{/foreach}
 				</ul>
