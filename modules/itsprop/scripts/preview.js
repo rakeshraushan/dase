@@ -1,34 +1,55 @@
-Dase = {};
+Dase.itsprop = {};
 
-/* from DOM Scripting p. 103 */
-Dase.addLoadEvent = function(func) {
-	var oldonload = window.onload;
-	if (typeof window.onload != 'function') {
-		window.onload = func;
-	} else {
-		window.onload = function() {
-			if (oldonload) {
-				oldonload();
-			}
-			func();
-		};
-	}
+Dase.htmlEntities = function (str) {
+	return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 };
 
-Dase.$ = function(id) {
-	return document.getElementById(id);
-};
-
-
-Dase.addLoadEvent(function() {
-	Dase.initForm();
-});
-
-Dase.initForm = function() {
+Dase.itsprop.initForm = function() {
 	var form =  Dase.$('submitForm');
+	if (!form) return;
 	form.onsubmit = function() {
 		if (!confirm('Are you sure you are ready to submit proposal?')) {
 			return false;
 		}
+		//email the proposal
+		var html = Dase.htmlEntities(Dase.$('container').innerHTML);
+		var act = this.getAttribute('action');
+		var url = act.replace('archiver','email');
+		Dase.ajax(url,'post',function(txt) {
+		},html,'itsprop',Dase.itsprop.service_pass);
 	}
 }
+
+Dase.itsprop.initUnsubmit = function() {
+	var button = Dase.$('unsubmitFormButton');
+	button.onclick = function() {
+		var url = this.getAttribute('action');
+		Dase.ajax(url,'post',function(txt) {
+			Dase.pageReload('unsubmitted');
+		},null,'itsprop',Dase.itsprop.service_pass);
+		return false;
+	}
+};
+
+Dase.addLoadEvent(function() {
+	Dase.itsprop.initForm();
+	Dase.itsprop.initUnsubmit();
+});
+
+
+/*
+$(document).ready(function(){
+	String.prototype.htmlEntities = function () {
+		return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+	};
+	$('#submitFormButton').click(function(){
+		if (!confirm('Are you sure you are ready to submit proposal?')) {
+			return false;
+		}
+		var html = $('#container').html();
+		html = html.htmlEntities();
+		var href = $('div.inner p a').attr('href');
+		$.post(href+'/email',{container:html},function(data){alert(data);});
+	});
+});
+*/

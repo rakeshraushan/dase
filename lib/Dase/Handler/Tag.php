@@ -50,28 +50,6 @@ class Dase_Handler_Tag extends Dase_Handler
 		$r->renderResponse($t->fetch('item_set/jstemplates.tpl'));
 	}
 
-	public function postToSorter($r)
-	{
-		$new_order = file_get_contents("php://input");
-		if ($new_order < 0) {
-			$new_order = 0;
-		}
-		$tag_item = new Dase_DBO_TagItem;
-		$tag_item->load($r->get('tag_item_id'));
-		$old_order = $tag_item->sort_order;
-		$tag_item->sort_order = $new_order;
-		$tag_item->updated = date(DATE_ATOM);
-		$tag_item->update();
-		if ($old_order > $new_order) {
-			$dir = 'DESC';
-		} else {
-			$dir = 'ASC';
-		}
-		$this->tag->resortTagItems($dir);
-		echo "done";
-		exit;
-	}
-
 	public function getTagAtom($r)
 	{
 		$u = $r->getUser('http');

@@ -479,7 +479,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->insert();
 		$v->value_text = $value_text;
 		$v->update();
-		$this->buildSearchIndex();
+		//$this->buildSearchIndex();
+		$this->saveAtom();
 	}
 
 	function removeMetadata($value_id,$eid)

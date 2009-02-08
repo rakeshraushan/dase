@@ -39,4 +39,22 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 		}
 		return $this->attribute;
 	}
+
+	public static function updateAndFlush($value_id,$value_text)
+	{
+		$v = new Dase_DBO_Value;
+		$v->load($value_id);
+		$v->value_text = $value_text;
+		$v->update();
+		$prefix = Dase_Config::get('table_prefix');
+
+		$sql = "
+			DELETE 
+			FROM {$prefix}item_as_atom
+			WHERE item_id = ?
+			";
+		$sth = $db->prepare($sql);
+		$sth->execute(array($v->item_id));
+	}
 }
+

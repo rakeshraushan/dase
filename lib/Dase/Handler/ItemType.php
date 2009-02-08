@@ -81,6 +81,8 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function deleteItem($r)
 	{
+		//what about dependent children items?  (like budget item)!
+		//probably need another relationship type -- dependent
 		$user = $r->getUser('service');
 		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('write',$item)) {
@@ -209,6 +211,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//he we are getting (child) item_type items
 		//which have are related to parent item_type item
 		//specified
+		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$prefix = Dase_Config::get('table_prefix');
 		$sql = "
 			SELECT ir.child_serial_number
@@ -232,8 +235,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
 		while ($sernum = $st->fetchColumn()) {
 			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
-			$entry = $feed->addEntry();
-			$item->injectAtomEntryData($entry);
+			$feed->addItemEntry($item,$c);
 			//todo: need to override updated and author here??
 		}
 		$r->renderResponse($feed->asXml());

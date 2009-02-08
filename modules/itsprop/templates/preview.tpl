@@ -7,6 +7,9 @@
 		<meta http-equiv="Content-Style-Type" content="text/css"> 
 
 		<link rel="stylesheet" type="text/css" href="css/preview.css">
+		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
+		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>
+		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
 		<script type="text/javascript" src="scripts/preview.js"></script>
 	</head>
 	<body>
@@ -14,12 +17,19 @@
 			<div class="inner">
 				{if $proposal->proposal_submitted.text}
 				<h3>Proposal was submitted {$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"} <span class="miniLink">(<a href="home">return</a>)</span></h3>
+				{if $request->is_superuser}
+				<div class="controls">
+					<form>
+						<input id="unsubmitFormButton" action="{$propLink}/unarchiver" type="submit" value="UnSubmit Proposal">
+					</form>
+				</div>
+				{/if}
 				{else}
-				{if $person->person_eid.text == $user->eid}
+				{if $person->person_eid.text == $user->eid || $request->is_superuser}
 				<p><a href="{$propLink}">return to proposal form to continue editing</a></p>
 				<strong>OR</strong>
 				<form id="submitForm" method="post" action="{$propLink}/archiver">
-					<input type="submit" value="Submit Proposal Now">
+					<input id="submitFormButton" type="submit" value="Submit Proposal Now">
 				</form>
 				<p>[Make sure your proposal is complete.  After you submit the proposal, it will become available to your department chair for review, and you will no longer be able to make changes.]</p>
 				{/if}

@@ -3,6 +3,7 @@
 class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public $app_root = APP_ROOT;
+	public $is_chair = false;
 	public $resource_map = array(
 		'test' => 'test',
 		'/' => 'welcome',
@@ -16,26 +17,34 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'person/{eid}/proposal_form' => 'proposal_form',
 		'proposals' => 'proposals',
 		'proposal/{serial_number}' => 'proposal',
+		'proposal/{serial_number}/unarchiver' => 'proposal_unarchiver',
 		'proposal/{serial_number}/archiver' => 'proposal_archiver',
+		'proposal/{serial_number}/email' => 'email',
 		'proposal/{serial_number}/preview' => 'proposal_preview',
 		'proposal/{serial_number}/courses' => 'proposal_courses',
 		'proposal/{serial_number}/budget_items' => 'proposal_budget_items',
+		'proposal/{serial_number}/{up_or_down}' => 'move_proposal',
 		'persons' => 'persons',
 		'departments' => 'departments',
 		'department/{dept_id}' => 'department',
 		'department/{dept_id}/proposals' => 'department_proposals',
+		'department/{dept_id}/vision' => 'vision',
 		'service_pass/{serviceuser}' => 'service_pass',
 	);
 
 	public function setup($r)
 	{
-		if ('welcome' != $r->resource && 'login' != $r->resource) {
+		if ('welcome' != $r->resource && 'login' != $r->resource && 'department_proposals' != $r->resource) {
 			$this->user = $r->getUser('cookie',false);
 			if (!$this->user) {
 				$r->renderRedirect(APP_ROOT.'/modules/'.$r->module.'/welcome');
 			} else {
 				$eid=$this->user->eid;
-				$r->set('chair_feed',Dase_Atom_Feed::retrieve(APP_ROOT. "/search.atom?itsprop.dept_chair_eid=$eid"));
+				$chair_feed = Dase_Atom_Feed::retrieve(APP_ROOT. "/search.atom?itsprop.dept_chair_eid=$eid");
+				if (count($chair_feed->entries)) {
+					$r->set('chair_feed',$chair_feed);
+					$this->is_chair = true;
+				}
 
 				$is_super = $this->_isSuperuser($this->user->eid);
 				if ($is_super) {
@@ -77,17 +86,86 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderResponse($tpl->fetch('dept.tpl'));
 	}
 
-	public function getDepartmentProposals($r)
+	public function getVision($r)
 	{
+		if (!$this->is_chair) {
+			$r->renderError(401,'must be department chair');
+		}
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
 		$dept = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/dept-".$r->get('dept_id').".atom");
 		if (is_numeric($dept)) {
 			$r->renderError($dept);
 		}
-		$tpl->assign('props_link', $dept->getChildfeedLinkUrlByTypeJson('proposal'));
+		$tpl->assign('props_link',APP_ROOT.'/modules/itsprop/department/'.$r->get('dept_id').'/proposals');
 		$tpl->assign('dept',$dept);
+		$r->renderResponse($tpl->fetch('vision.tpl'));
+	}
+
+	public function postToVision($r)
+	{
+		//from DASe
+		if (!$this->is_chair) {
+			$r->renderError(401,'must be department chair');
+		}
+		$u = $r->getUser();
+		if (!$u->can('write',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to write this resource');
+		}
+		$sort_array = $r->get('set_sort_item',true);
+		$this->tag->sort($sort_array);
+		$http_pw = $u->getHttpPassword();
+		$t = new Dase_Template($r);
+		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
+	}
+
+	public function getDepartmentProposals($r)
+	{
+
+		$this->user = $r->getUser('cookie',false);
+		if (!$this->user) {
+			$r->renderResponse('please logout and login again');
+		}
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$dept = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/dept-".$r->get('dept_id').".atom");
+		if (is_numeric($dept)) {
+			$r->renderError($dept);
+		}
+		$props = Dase_Atom_Feed::retrieve($dept->getChildfeedLinkUrlByTypeAtom('proposal'));
+		$props = $props->filterOnExists('proposal_submitted');
+		$props->sortBy('proposal_chair_rank');
+		$id_set = '';
+		foreach ($props->entries as $p) {
+			$id_set .= $p->proposal_chair_rank['id'];
+		}
+		$sort_token = md5($id_set);
+		$tpl->assign('props',$props);
+		$tpl->assign('sort_token',$sort_token);
 		$r->renderResponse($tpl->fetch('dept_props.tpl'));
+	}
+
+	public function postToEmail($r)
+	{
+		$container = trim(file_get_contents("php://input"));
+		$sernum = $r->get('serial_number');
+		$proposal = Dase_Atom_Entry_Item::retrieve(APP_ROOT.'/item/itsprop/'.$sernum.'.atom');
+		$parent = $proposal->getParentLinks();
+		$title = $proposal->title;
+		$department = Dase_Atom_Entry_Item::retrieve($parent[0]['href'].'.atom');
+		$email = $department->dept_chair_email['text'];
+		$container = str_replace('&lt;','<',$container);
+		$container = str_replace('&gt;','>',$container);
+		$h2t = new html2text($container);
+		$text = $h2t->get_text();
+		$header = "From: LAITS Grant Proposal_Application \r\n";
+		//use $email when its for real
+		Dase_Log::debug('sending email to '.$email);
+		mail('pkeane@mail.utexas.edu','Proposal: '.$title,$text,$header);
+		mail('mikehegedus@mail.utexas.edu','Proposal: '.$title,$text,$header);
+		$r->renderOk('sent');
 	}
 
 	public function postToDepartment($r)
@@ -225,10 +303,21 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
 		$metadata_array = $proposal->getRawMetadata();
 		$metadata_array['proposal_submitted'] = array(date(DATE_ATOM));
+		$metadata_array['proposal_chair_rank'] = array('99');
 		$proposal->replaceMetadata($metadata_array);
 		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
 		$params['msg'] = "your proposal has been submitted";
 		$r->renderRedirect(APP_ROOT.'/modules/itsprop/home',$params);
+	}
+
+	public function postToProposalUnarchiver($r)
+	{
+		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
+		$metadata_array = $proposal->getRawMetadata();
+		$metadata_array['proposal_submitted'] = array(' ');
+		$proposal->replaceMetadata($metadata_array);
+		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
+		$r->renderOk('success');
 	}
 
 	public function postToPerson($r)
@@ -343,7 +432,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
-		if ($proposal->getValue('proposal_submitted')) {
+		if (is_numeric($proposal)) {
+			$r->renderResponse($tpl->fetch('proposal404.tpl'));
+		}
+		if ($proposal->proposal_submitted['text']) {
 			$r->renderRedirect(APP_ROOT.'/modules/itsprop/proposal/'.$r->get('serial_number').'/preview');
 		}
 
@@ -351,9 +443,6 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$proposal->getAuthorName().".atom");
 		$tpl->assign('person',$person);
 
-		if (is_numeric($proposal)) {
-			$r->renderResponse($tpl->fetch('proposal404.tpl'));
-		}
 		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
 		$tpl->assign('budget_items',$proposal->getChildfeedLinkUrlByTypeJson('budget_item'));
 		$tpl->assign('proposal',$proposal);
@@ -407,6 +496,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal->addMetadata('proposal_professional_assistance','enter professional assistance here'); 
 		$proposal->addMetadata('proposal_faculty_workshop','no'); 
 		$proposal->addMetadata('proposal_sta','no'); 
+		$proposal->addMetadata('proposal_chair_rank','99'); 
+		$proposal->addMetadata('proposal_chair_comments','chair comments'); 
 		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
 		$proposal->addMetadata('proposal_renovation_description','enter renovation description here'); 
 		$proposal->addMetadata('proposal_summary','enter summary here'); 

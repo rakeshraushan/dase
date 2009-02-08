@@ -395,7 +395,6 @@ class Dase_Handler_Item extends Dase_Handler
 	public function putMetadataValue($r)
 	{
 		$value_text = file_get_contents("php://input");
-		//$user = $r->getUser();
 		$user = $r->getUser('http');
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot put metadata');
@@ -405,7 +404,6 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$value_id = $r->get('value_id');
 		$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
-		//$r->renderResponse($value_id.'|'.$value_text);
 		$r->renderResponse($value_text);
 	}
 
