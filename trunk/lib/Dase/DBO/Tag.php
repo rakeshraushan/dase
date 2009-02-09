@@ -250,8 +250,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getLink() 
 	{
+		$app_root = Dase_Config('app_root');
 		$this->user || $this->getUser(); 
-		return APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
+		return $app_root . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
 	}
 
 	function addItem($item_unique,$updateCount=false)
@@ -299,8 +300,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
-	function asJson()
+	function asJson($app_root='')
 	{
+
+		if (!$app_root) {
+			$app_root = Dase_Config('app_root');
+		}
+
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$json_tag;
 		$eid = $this->getUser()->eid;
@@ -323,8 +329,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				continue;
 			}
 			$json_item = array();
-			//$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
-			$json_item['url'] = APP_ROOT.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
+			//$json_item['url'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
+			$json_item['url'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
 			$json_item['sort_order'] = $tag_item->sort_order;
 			//make sure p_ values are always populated!
 			$json_item['item_unique'] = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
@@ -335,7 +341,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$json_item['collection_name'] = $collection_lookup[$item->collection_id]['collection_name'];
 
 			foreach ($item->getMedia() as $m) {
-				$json_item['media'][$m->size] = APP_ROOT.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+				$json_item['media'][$m->size] = $app_root.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 			}
 			$json_tag['items'][] = $json_item;
 		}
@@ -344,23 +350,26 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		//return $js->json_format($json_tag);	
 	}
 
-	function asAtom()
+	function asAtom($app_root='')
 	{
+		if (!$app_root) {
+			$app_root = Dase_Config('app_root');
+		}
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->name);
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		$feed->setId(APP_ROOT . '/tag/'. $this->user->eid . '/' . $this->ascii_id);
+		$feed->setId($app_root . '/tag/'. $this->user->eid . '/' . $this->ascii_id);
 		$feed->setUpdated($this->updated);
 		$feed->addAuthor($this->user->eid);
 		$feed->setFeedType('tag');
-		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
-		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
-		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
-		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
-		$feed->addLink(APP_ROOT.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
@@ -380,7 +389,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$item->injectAtomEntryData($entry);
 				$setnum++;
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
-				$entry->addLink(APP_ROOT . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+				$entry->addLink($app_root . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 				if ($tag_item->annotation) {
 					$entry->setSummary($tag_item->annotation);
 				}

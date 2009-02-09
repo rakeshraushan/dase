@@ -7,6 +7,7 @@
 		<meta http-equiv="Content-Style-Type" content="text/css"> 
 
 		<link rel="stylesheet" type="text/css" href="css/preview.css">
+		<link rel="stylesheet" type="text/css" href="css/print.css" media="print">
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
@@ -30,8 +31,10 @@
 				<strong>OR</strong>
 				<form id="submitForm" method="post" action="{$propLink}/archiver">
 					<input id="submitFormButton" type="submit" value="Submit Proposal Now">
+					<input name="chair_name" value="{$chair_name}" type="hidden">
+					<input name="chair_email" value="{$chair_email}" type="hidden">
 				</form>
-				<p>[Make sure your proposal is complete.  After you submit the proposal, it will become available to your department chair for review, and you will no longer be able to make changes.]</p>
+				<p>[Make sure your proposal is complete.  After you submit the proposal, it will become available to your department chair, {$chair_name} ({$chair_email}), for review, and you will no longer be able to make changes.]</p>
 				{/if}
 				{/if}
 			</div>
@@ -39,11 +42,11 @@
 		<div id="container">
 			<h1>Proposal: {$proposal->title}</h1>
 			<dl>
-				<dt>Submitter:</dt>
+				<dt><h3>Submitter:</h3></dt>
 				<dd>{$person->person_name.text}</dd>
-				<dt>Department:</dt>
+				<dt><h3>Department:</h3></dt>
 				<dd>{$proposal->department}</dd>
-				<dt>Project Type:</dt>
+				<dt><h3>Project Type:</h3></dt>
 				<dd>{$proposal->proposal_project_type.text}</dd> 
 			</dl>
 			<h2>Collaborators</h2>
@@ -75,28 +78,30 @@
 			<h2>Renovation Description</h2>
 			{$proposal->proposal_renovation_description.text|markdown}
 			<h2>Itemized Budget</h2>
-			<table>
-				<tr>
-					<th>type</th>
-					<th>description</th>
-					<th>quantity</th>
-					<th>price</th>
-					<th>total</th>
-				</tr>
-				{foreach item=item from=$budget_items}
-				<tr>
-					<td>{$item.metadata.budget_item_type}</td>
-					<td>{$item.metadata.budget_item_description}</td>
-					<td>{$item.metadata.budget_item_quantity}</td>
-					<td>${$item.metadata.budget_item_price}</td>
-					<td>${$item.total}</td>
-				</tr>
-				{/foreach}
-				<tr>
-					<td colspan="4">grand total:</td>
-					<td>${$grand_total}</td>
-				</tr>
-			</table>
+			<div class="tdiv">
+				<table>
+					<tr>
+						<th>type</th>
+						<th>description</th>
+						<th>quantity</th>
+						<th>price</th>
+						<th>total</th>
+					</tr>
+					{foreach item=item from=$budget_items}
+					<tr>
+						<td>{$item.metadata.budget_item_type}</td>
+						<td>{$item.metadata.budget_item_description}</td>
+						<td>{$item.metadata.budget_item_quantity}</td>
+						<td>${$item.metadata.budget_item_price}</td>
+						<td>${$item.total}</td>
+					</tr>
+					{/foreach}
+					<tr>
+						<td colspan="4">grand total:</td>
+						<td>${$grand_total}</td>
+					</tr>
+				</table>
+			</div>
 			<h2>Budget Description</h2>
 			{$proposal->proposal_budget_description.text|markdown}
 		</div>

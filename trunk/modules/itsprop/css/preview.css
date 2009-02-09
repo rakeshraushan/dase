@@ -8,7 +8,7 @@ body {
 	font-size: 84%;
 	background: white fixed no-repeat left top;
 	color: black;
-	font-family: sans-serif;
+	font-family: serif;
 	line-height: 1.2em;
 }
 
@@ -69,8 +69,7 @@ h1 {
 }
 h2 {
 	border-top: 2px groove;
-	font-size: 140%;
-	margin-top: 2.5em;
+	font-size: 120%;
 	padding-top: 0.6em;
 }
 h3 {
@@ -108,20 +107,29 @@ code, tt {
 ul.toc {
 	list-style-type: none
 }
-
 table {
 	border-collapse: collapse;
+	margin-left:auto;
+	margin-right:auto;
 }
-
+tbody{
+}
 td,th {
 	border: 1px solid #aaa;
 	padding: 8px;
 	text-align: center;
+	max-width:500px;
 }
 th {
 	color: #669;
 	font-weight: bold;
 }
 span.miniLink {
-	font-size: 12px;
+	font-size: 10px;
+}
+/* Stuart css */
+#print_link{
+float:right;
+text-decoration:none;
+color:red;
 }

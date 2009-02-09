@@ -30,7 +30,7 @@
 	</tr>
 	<tr class="instruction">
 		<td colspan="3">
-			Enter positions and <strong>update sort order</strong> OR move single item to the top with up arrow.
+			Enter positions and <strong>update sort order</strong> OR move single item to the top with 'top' arrow.
 		</td>
 	</tr>
 	{foreach key=i item=proposal from=$props->entries}
@@ -50,7 +50,7 @@
 				{$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"}
 			</span>
 			<p><a href="ss" class="toggle" id="toggle_prop{$i+1}">add/edit comment</a></p>
-			<form method="post" class="hide" id="prop{$i+1}" >
+			<form method="post" action="{$proposal->proposal_chair_comments.edit|default:'nohandler'}" class="hide" id="prop{$i+1}" >
 				<textarea class="comment" name="comment">{$proposal->proposal_chair_comments.text}</textarea>
 				<p>
 				<input type="submit" value="update">

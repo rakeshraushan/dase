@@ -102,6 +102,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderResponse($tpl->fetch('vision.tpl'));
 	}
 
+	/*
 	public function postToVision($r)
 	{
 		//from DASe
@@ -120,6 +121,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
+	 */
 
 	public function getDepartmentProposals($r)
 	{
@@ -152,19 +154,31 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$container = trim(file_get_contents("php://input"));
 		$sernum = $r->get('serial_number');
 		$proposal = Dase_Atom_Entry_Item::retrieve(APP_ROOT.'/item/itsprop/'.$sernum.'.atom');
+		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		//fragile?? (dept must be first parent)
+		//$dept_array = $person->getParentLinkNodesByItemType('department');
 		$parent = $proposal->getParentLinks();
-		$title = $proposal->title;
+		$title = 'Liberal Arts ITS Grant Proposal: '.$proposal->title;
 		$department = Dase_Atom_Entry_Item::retrieve($parent[0]['href'].'.atom');
 		$email = $department->dept_chair_email['text'];
+		$chair_name = $department->dept_chair['text'];
 		$container = str_replace('&lt;','<',$container);
 		$container = str_replace('&gt;','>',$container);
 		$h2t = new html2text($container);
 		$text = $h2t->get_text();
+		$text = 
+			"Dear Chair-\n\nPlease find below the 09-10 IT Grant Proposal Submitted by ".$person->person_name['text'].". Please visit the LAITS Proposal Site (http://www.laits.utexas.edu/itsprop) to rank proposals and add your vision statement accordingly.\n\n".$text;
+	
 		$header = "From: LAITS Grant Proposal_Application \r\n";
 		//use $email when its for real
 		Dase_Log::debug('sending email to '.$email);
-		mail('pkeane@mail.utexas.edu','Proposal: '.$title,$text,$header);
-		mail('mikehegedus@mail.utexas.edu','Proposal: '.$title,$text,$header);
+		mail($email,$title,$text,$header);
+		mail('pkeane@mail.utexas.edu','[DEBUG] '.$title,$text,$header);
+		$submitter_email = $person->person_email['text'];
+		$text = 
+			"[The following message was sent to your department chair]\n\n".$text;
+		mail($submitter_email,$title,$text,$header);
+		//mail('mikehegedus@mail.utexas.edu','Proposal: '.$title,$text,$header);
 		$r->renderOk('sent');
 	}
 
@@ -303,7 +317,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
 		$metadata_array = $proposal->getRawMetadata();
 		$metadata_array['proposal_submitted'] = array(date(DATE_ATOM));
-		$metadata_array['proposal_chair_rank'] = array('99');
+		$metadata_array['proposal_chair_rank'] = array('&nbsp;');
 		$proposal->replaceMetadata($metadata_array);
 		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
 		$params['msg'] = "your proposal has been submitted";
@@ -454,12 +468,20 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
-		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
+		//$depts_json = file_get_contents(APP_ROOT.'/item_type/itsprop/department/dept_name/values.json');
+		//$tpl->assign('depts', Dase_Json::toPhp($depts_json));
 		$proposal = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$r->get('serial_number').".atom");
 		if (is_numeric($proposal)) {
 			$r->renderResponse($tpl->fetch('proposal404.tpl'));
 		}
+
+		$dept_array = $proposal->getParentLinks();
+		$department = Dase_Atom_Entry_Item::retrieve($dept_array[0]['href'].'.atom');
+		$chair_email = $department->dept_chair_email['text'];
+		$chair_name = $department->dept_chair['text'];
+		$tpl->assign('chair_email',$chair_email);
+		$tpl->assign('chair_name',$chair_name);
+
 		$person = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/".$proposal->getAuthorName().".atom");
 		$tpl->assign('person',$person);
 		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
@@ -497,7 +519,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal->addMetadata('proposal_faculty_workshop','no'); 
 		$proposal->addMetadata('proposal_sta','no'); 
 		$proposal->addMetadata('proposal_chair_rank','99'); 
-		$proposal->addMetadata('proposal_chair_comments','chair comments'); 
+		$proposal->addMetadata('proposal_chair_comments','&nbsp;'); 
 		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
 		$proposal->addMetadata('proposal_renovation_description','enter renovation description here'); 
 		$proposal->addMetadata('proposal_summary','enter summary here'); 
