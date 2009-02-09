@@ -63,7 +63,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$this->collection->description = trim($r->get('description'));
 		$this->collection->visibility = $r->get('visibility');
 		$this->collection->update();
-		$this->collection->setCommunity($r->get('community'));
+		//$this->collection->setCommunity($r->get('community'));
 		$params['msg'] = "settings updated";
 		$this->user->expireDataCache();
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/settings',$params);

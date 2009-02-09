@@ -7,8 +7,11 @@ Dase.htmlEntities = function (str) {
 Dase.itsprop.initForm = function() {
 	var form =  Dase.$('submitForm');
 	if (!form) return;
+	var chair_name = form.chair_name.value;
+	var chair_email = form.chair_email.value;
+	if (!form) return;
 	form.onsubmit = function() {
-		if (!confirm('Are you sure you are ready to submit proposal?')) {
+		if (!confirm('Are you sure you are ready to submit proposal?\n(a copy will be sent to '+chair_name+' <'+chair_email+'>)')) {
 			return false;
 		}
 		//email the proposal
@@ -22,6 +25,7 @@ Dase.itsprop.initForm = function() {
 
 Dase.itsprop.initUnsubmit = function() {
 	var button = Dase.$('unsubmitFormButton');
+	if (!button) return;
 	button.onclick = function() {
 		var url = this.getAttribute('action');
 		Dase.ajax(url,'post',function(txt) {

@@ -9,6 +9,7 @@ Dase.initDeptProps = function(highlight_array) {
 		Dase.initVisionToggle();
 		Dase.initSort();
 		Dase.initToggle();
+		Dase.initChairComment();
 		if (highlight_array) {
 			for (var i=0;i<highlight_array.length;i++) {
 				var sorted = highlight_array[i];
@@ -18,13 +19,31 @@ Dase.initDeptProps = function(highlight_array) {
 	},null,'itsprop',Dase.itsprop.service_pass);
 };
 
+
+Dase.initChairComment = function() {
+	var table = Dase.$('sorter');
+	var forms = table.getElementsByTagName('form');
+	for (var i=0;i<forms.length;i++) {
+		forms[i].onsubmit = function() {
+			cont = this.comment.value;
+			Dase.ajax(this.action,'put',function(resp) { 
+				Dase.initDeptProps();
+			},cont,'itsprop',Dase.itsprop.service_pass,null,function(err) {
+				alert('an error occurred');
+				Dase.initDeptProps();
+			});
+			return false;
+		};
+	}
+};
+
 Dase.initVisionToggle = function() {
 	Dase.$('toggle_vision').onclick = function() {
 		Dase.toggle(Dase.$('vision_form'));
 		Dase.toggle(Dase.$('vision_statement'));
 		return false;
 	}
-}
+};
 
 Dase.initVisionStatement = function() {
 	var form = Dase.$('vision_form');

@@ -25,6 +25,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
+	public function flushAtom()
+	{
+		$prefix = Dase_Config::get('table_prefix');
+		$db = Dase_DB::get();
+		//todo: make sure item->id is an integer
+		$sql = "
+			DELETE
+			FROM {$prefix}item_as_atom 
+			WHERE item_id = $this->id
+			";
+		$db->query($sql);
+	}
+
 	public function saveAtom()
 	{
 		$atom = new Dase_DBO_ItemAsAtom;
@@ -479,7 +492,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->insert();
 		$v->value_text = $value_text;
 		$v->update();
+		//todo: queue up to do in another process
 		//$this->buildSearchIndex();
+
+		//experiment:
+		//$this->flushAtom();
+
 		$this->saveAtom();
 	}
 
