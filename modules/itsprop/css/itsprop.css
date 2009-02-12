@@ -702,3 +702,17 @@ div#vision_statement {
 	margin-bottom: 0px;
 	font-size: .9em;
 }
+
+div.vision_instruction {
+	width: 80%;
+	margin: 10px 0;
+}
+
+div.vision_instruction  p {
+	margin: 10px 0;
+}
+
+#vision_page h2 {
+	font-weight: bold;
+	margin: 1em 0;
+}
