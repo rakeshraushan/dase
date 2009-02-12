@@ -52,9 +52,9 @@
 			<h2>Collaborators</h2>
 			{$proposal->proposal_collaborators.text}
 			<h2>Summary</h2>
-			{$proposal->proposal_summary.text|markdown}
+			{$proposal->proposal_summary.text|nl2br}
 			<h2>Description</h2>
-			{$proposal->proposal_description.text|markdown}
+			{$proposal->proposal_description.text|nl2br}
 			<h2>Students and Classes Served</h2>
 			<p>
 			<ul>
@@ -68,15 +68,17 @@
 			</ul>
 			</p>
 			<h2>Previous Funding</h2>
-			{$proposal->proposal_previous_funding.text|markdown}
+			{$proposal->proposal_previous_funding.text|nl2br}
 			<h2>Student Technology Assistant Requested?</h2>
 			<p>{$proposal->proposal_sta.text}</p>
 			<h2>Summer Faculty Workshop Requested?</h2>
 			<p>{$proposal->proposal_faculty_workshop.text}</p>
 			<h2>Professional Assistance</h2>
-			{$proposal->proposal_professional_assistance.text|markdown}
+			{$proposal->proposal_professional_assistance.text|nl2br}
 			<h2>Renovation Description</h2>
-			{$proposal->proposal_renovation_description.text|markdown}
+			{$proposal->proposal_renovation_description.text|nl2br}
+			<h2>Budget Description</h2>
+			{$proposal->proposal_budget_description.text|nl2br}
 			<h2>Itemized Budget</h2>
 			<div class="tdiv">
 				<table>
@@ -102,8 +104,6 @@
 					</tr>
 				</table>
 			</div>
-			<h2>Budget Description</h2>
-			{$proposal->proposal_budget_description.text|markdown}
 		</div>
 	</body>
 </html>
