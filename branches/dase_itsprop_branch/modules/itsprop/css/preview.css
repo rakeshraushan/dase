@@ -1,0 +1,135 @@
+p,div {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	margin: 0;
+	font-size: 84%;
+	background: white fixed no-repeat left top;
+	color: black;
+	font-family: serif;
+	line-height: 1.2em;
+}
+
+div#container {
+	margin: 20px auto;
+	width: 90%;
+}
+
+div#submission {
+	margin: 0px auto;
+	width: 90%;
+	background-color: #eee;
+}
+
+div#submission .inner {
+	padding: 5px 20px 5px 20px;
+}
+
+div#submission p {
+	font-weight: normal;
+	margin: 10px 0;
+}
+
+div#submission strong {
+	margin: 10px 0;
+}
+
+div#submission form {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+a {
+	background-color: transparent;
+}
+a:link {
+	color: #00c;
+}
+a:visited {
+	color: #609
+}
+a:active {
+	color: #c00
+}
+a:link img, a:visited img {
+	border: none;
+}
+h1, h2, h4, h5, h6 {
+	background: white;
+	color: #005a9c;
+	font-weight: bold;
+	text-align: left;
+}
+h1 {
+	clear: both;
+	font-size: 160%;
+	margin-top: 1em
+}
+h2 {
+	border-top: 2px groove;
+	font-size: 120%;
+	padding-top: 0.6em;
+}
+h3 {
+	font-size: 120%;
+	margin: 12px 0px;
+}
+h4 {
+	font-size: 100%;
+	margin: 2em 0 0.5em;
+}
+.hide {
+	display: none
+}
+pre {
+	background-color: #ffec8b;
+	color: black;
+	font-family: monospace;
+	line-height: 1.5em;
+	padding: 1.5em 2em;
+}
+pre strong {
+	color: #a00;
+	font-weight: bold;
+}
+dt {
+	font-weight: bold;
+	margin: 1em 0 0 0;
+}
+dd {
+	margin: 0 0 0 3em;
+}
+code, tt {
+	font-family: monospace
+}
+ul.toc {
+	list-style-type: none
+}
+table {
+	border-collapse: collapse;
+	margin-left:auto;
+	margin-right:auto;
+}
+tbody{
+}
+td,th {
+	border: 1px solid #aaa;
+	padding: 8px;
+	text-align: center;
+	max-width:500px;
+}
+th {
+	color: #669;
+	font-weight: bold;
+}
+span.miniLink {
+	font-size: 10px;
+}
+/* Stuart css */
+#print_link{
+float:right;
+text-decoration:none;
+color:red;
+}

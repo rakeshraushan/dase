@@ -1,0 +1,20 @@
+<?php
+
+$conf['db']['type'] = 'mysql'; //mysql || pgsql || sqlite
+$conf['db']['host'] = '';
+$conf['db']['name'] = '';
+$conf['db']['user'] = '';
+$conf['db']['pass'] = '';
+$conf['db']['path'] = ''; //sqlite only
+
+$conf['main_title'] = "My DASe";
+
+$conf['superuser']['<eid>'] = '<password>';
+
+//must be writeable by apache
+$conf['path_to_media'] = '';
+
+$conf['token'] = '<random string here>';
+$conf['ppd_token'] = '<random string here>';
+$conf['default_handler'] = 'collections';
+
