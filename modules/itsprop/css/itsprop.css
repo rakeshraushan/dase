@@ -662,9 +662,10 @@ span.title {
 	background-color:#DDDDDD;
 	width:80%;
 	list-style:none;
-}
-#sortable{
 	cursor:pointer;
+}
+#sortable li:hover{
+	background-color:#FFFFCC;
 }
 #sortable li span{
 	position:relative;
@@ -675,11 +676,9 @@ span.title {
 	font-weight:bold;
 	color: #666;
 	padding-left:10px;
+	padding-top:5px;
+	padding-bottom:5px;
 }
-
-
-
-
 
 #ajaxMsg {
 	background-color: #fdf5b4;

@@ -12,7 +12,13 @@
 <div id="vision_page" class="main">
 	<h1>Proposals for {$dept->dept_name.text}</h1>
 	<h4>Chairperson: {$dept->dept_chair.text}</h4>
-
+	<br>
+<p><strong>NOTE:</strong> Vision Statements are due by noon on April 1, 2009. There
+  will be no submission for your vision statement and rankings.
+  Instead, your work will be saved automatically as you complete
+  it, and we will use the latest version posted for our review
+  process. Please print out a copy of your proposal using the
+  “preview/print” button at the top of the screen.</p>
 	<h2>Vision Statement</h2>
 	<div class="vision_instruction">
 		<p>
@@ -27,15 +33,14 @@
 
 		<h4>The Vision Statement must include:</h4>
 
-		<p>
-		A short statement of the department's instructional
-		technology plan with an explanation of how it addresses
-		pedagogical goals
-		<strong>AND</strong>
-		
-		A brief explanation of how each proposed project fits
-		(or does not fit) departmental goals and plans.
-		</p>
+  <p>1) A short statement of the department's instructional
+  technology plan with an explanation of how it addresses
+  pedagogical goals.</p>
+  <p> 2) A brief explanation of how each proposed
+  project fits (or does not fit) departmental goals and plans.</p>
+ <p> 3) A written statement addressing the priority ordering of all
+  proposals from the department.</p>
+
 	</div>
 		
 	{if !$dept->content}
