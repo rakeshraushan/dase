@@ -663,6 +663,9 @@ span.title {
 	width:80%;
 	list-style:none;
 }
+#sortable{
+	cursor:pointer;
+}
 #sortable li span{
 	position:relative;
 		top:4px;
