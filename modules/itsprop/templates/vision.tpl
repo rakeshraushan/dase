@@ -28,19 +28,26 @@
 		<h4>The Vision Statement must include:</h4>
 
 		<p>
-		1) A short statement of the department's instructional
+		A short statement of the department's instructional
 		technology plan with an explanation of how it addresses
-		pedagogical goals.
-		</p>
-
-		<p><strong>-AND-</strong></p>
-
-		<p>
-		2) A brief explanation of how each proposed project fits
+		pedagogical goals
+		<strong>AND</strong>
+		
+		A brief explanation of how each proposed project fits
 		(or does not fit) departmental goals and plans.
 		</p>
 	</div>
+		
+	{if !$dept->content}
+	<form method="post" action="{$dept->editContentLink}" class="show" id="vision_form">
+		{assign var=rows value=$dept->content|count_words}
+		<textarea rows="{$rows/11}" id="vision_text" name="vision">{$dept->content}</textarea>
+		<p>
+		<input type="submit" value="update">
+		</p>
+	</form>
 
+	{else}
 	<div id="vision_statement">{$dept->content|nl2br}</div>
 	<form method="post" action="{$dept->editContentLink}" class="hide" id="vision_form">
 		{assign var=rows value=$dept->content|count_words}
@@ -49,6 +56,7 @@
 		<input type="submit" value="update">
 		</p>
 	</form>
+	{/if}
 	<p><a href="ss" id="toggle_vision">add/edit vision statement</a></p>
 
 	<h2>Proposals</h2>

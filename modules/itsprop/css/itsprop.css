@@ -655,6 +655,27 @@ span.title {
 	font-weight: bold;
 	font-size: 1.1em;
 }
+/*Stuart's css changes */
+#sortable li{
+	margin-bottom:3px;
+	height:25px;
+	background-color:#DDDDDD;
+	width:80%;
+	list-style:none;
+}
+#sortable li span{
+	position:relative;
+		top:4px;
+		left:5px;
+}
+#menu li p{
+	font-weight:bold;
+	color: #666;
+	padding-left:10px;
+}
+
+
+
 
 
 #ajaxMsg {
