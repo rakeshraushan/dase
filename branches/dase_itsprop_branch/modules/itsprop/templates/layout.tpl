@@ -17,7 +17,6 @@
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
-		<script type="text/javascript" src="{$app_root}www/scripts/jquery.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
@@ -26,6 +25,8 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/atompub.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="scripts/itsprop.js"></script>
+		<script type="text/javascript" src="scripts/jquery-1.2.6.js"></script>
+		<script type="text/javascript" src="scripts/jquery-ui-personalized-1.5.3.js"></script>
 		{block name="head"}{/block}
 
 		<style type="text/css"></style>
@@ -74,10 +75,11 @@
 					<li>
 					<a href="proposals" class="main">Proposals List</a>
 					</li>
+					<li><p>Your Departments:</p></li>
 					{/if}
 					{foreach item=dept from=$request->chair_feed->entries}
 					<li>
-					<a href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
+					<a style="background-color:#FFFFCC" href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
 					</li>
 					{/foreach}
 				</ul>
