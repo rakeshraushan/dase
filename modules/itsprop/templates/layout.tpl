@@ -95,7 +95,7 @@
 			<hr >
 			<div id="footer">
 				<img src="images/its.gif" title="LAITS" class="logo" alt="LAITS" height="33" width="79" ><a href="http://www.laits.utexas.edu/its/">Liberal Arts ITS</a>
-				| <a href="mailto:www@mail.laits.utexas.edu">www@mail.laits.utexas.edu</a> 
+				| <a href="mailto:proposalhelp@mail.laits.utexas.edu">proposalhelp@mail.laits.utexas.edu</a> 
 				| <a href="http://daseproject.org"><img height="11" id="daseLogo" width="71" alt="DASe powered icon" title="DASe powered!" src="images/dasepowered.png" ></a>
 				| <span id="date"></span>
 				| <span>{$timer} seconds</span>
