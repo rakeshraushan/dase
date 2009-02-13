@@ -75,11 +75,11 @@
 					<li>
 					<a href="proposals" class="main">Proposals List</a>
 					</li>
-					<li><p>Your Departments:</p></li>
+					<li id="department_lists"><p>Your Departments:</p></li>
 					{/if}
 					{foreach item=dept from=$request->chair_feed->entries}
 					<li>
-					<a style="background-color:#FFFFCC" href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
+					<a href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
 					</li>
 					{/foreach}
 				</ul>

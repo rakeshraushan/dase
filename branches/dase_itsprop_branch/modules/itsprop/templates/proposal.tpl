@@ -200,7 +200,6 @@
 					<option>Wages: graduate</option>
 					<option>Wages: undergraduate</option>
 					<option>Wages: workstudy</option>
-					<option>Salary: FY 2009-2010</option>
 					<option>Salary: Summer 2010</option>
 				</select>
 				<label>quantity</label>

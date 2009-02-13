@@ -4,7 +4,7 @@ Options FollowSymLinks
 FileETag none
 
 RewriteEngine On
-RewriteBase  /dase  
+RewriteBase  /dev_stuart/dase_branch
 
 php_flag magic_quotes_gpc off
 
