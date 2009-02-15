@@ -17,6 +17,17 @@
 		<h1>Proposal: {$proposal->title}</h1>
 		<input type="hidden" name="eid" value="{$person->serial_number}"/>
 		<p>
+		Please fill out each of the sections below completely. If
+		a section does not apply to you, simply enter
+		N/A. <strong>Important:</strong> You must click the
+		“update” button at the end of each section to save
+		any inputted information. The text box will flash a
+		yellow color to confirm it has saved the text. When
+		you are finished entering your proposal, please click
+		“preview/submit” at the top right-hand corner of
+		the page to check your work, print a copy and submit.
+		</p>
+		<p>
 		<label for="proposal_title">Proposal Title</label>
 		<p class="val">{$proposal->proposal_name.text}</p>
 		</p>

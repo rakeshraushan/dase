@@ -60,7 +60,7 @@ class Dase_DB {
 	{
 		//beware sql injection
 		$db = self::get();
-		Dase_Log::debug("[DB exec] ".$sql);
+		Dase_Log::get()->debug("[DB exec] ".$sql);
 		return $db->query($sql);
 	}
 

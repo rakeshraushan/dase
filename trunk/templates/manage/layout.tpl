@@ -159,10 +159,7 @@
 			<a href="copyright">Copyright/Usage Statement</a> | 
 			<a href="resources">Resources</a> | 
 			<a href="admin" class="hide" id="adminLink"></a> |
-			<!--
-			{$timer} seconds |
-			-->
-			{php}echo Dase_Timer::getElapsed();{/php} seconds |
+			{$request->elapsed} seconds |
 			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
 		</div><!--closes footer-->
 		<div id="collectionAsciiId" class="pagedata">{$collection->ascii_id}</div>

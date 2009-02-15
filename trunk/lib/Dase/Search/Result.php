@@ -42,7 +42,7 @@ class Dase_Search_Result
 		foreach($this->item_ids as $item_id) {
 			$item = new Dase_DBO_Item();
 			$item->load($item_id);
-			$uris[] = $app_root.'/'.$item->getRelativeUrl();
+			$uris[] = $app_root.'/'.$item->getUrl();
 		}
 		return $uris;	
 	}
@@ -121,7 +121,7 @@ class Dase_Search_Result
 		if (isset($previous)) {
 			$feed->addLink($app_root.'/'.$this->url.'&start='.$previous.'&max='.$max,'previous');
 		}
-		Dase_Log::debug('url per search result '.$this->url);
+		Dase_Log::get()->debug('url per search result '.$this->url);
 		$feed->setId($app_root.'/search/'.md5($this->url));
 		$feed->setOpensearchTotalResults($this->count);
 		$feed->setOpensearchStartIndex($start);

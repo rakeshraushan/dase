@@ -1,11 +1,15 @@
 <?php
 
+/** this class is always subclassed by a request-specific handler */
+
 class Dase_Handler {
 
 	protected $request;
 
-	public function dispatch($request)
+	public function dispatch($r)
 	{
+		$log = Dase_Log::get();
+
 		//if it is a module subclass, append the module resource map
 		if (isset($this->module_resource_map)) {
 			$this->resource_map = array_merge($this->resource_map,$this->module_resource_map);
@@ -13,7 +17,7 @@ class Dase_Handler {
 
 		foreach ($this->resource_map as $uri_template => $resource) {
 			//first, translate resource map uri template to a regex
-			$uri_template = trim($request->handler.'/'.$uri_template,'/');
+			$uri_template = trim($r->handler.'/'.$uri_template,'/');
 			$uri_regex = $uri_template;
 
 			//skip regex template stuff if uri_template is a plain string
@@ -25,41 +29,40 @@ class Dase_Handler {
 				}
 			}
 
-			//Dase_Log::debug(" (regex) $uri_regex | (path) $request->path [resource: $resource]");
 			//second, see if uri_regex matches the request uri (a.k.a. path)
-			if (preg_match("!^$uri_regex\$!",$request->path,$uri_matches)) {
-				Dase_Log::debug("matched resource $resource");
+			if (preg_match("!^$uri_regex\$!",$r->path,$uri_matches)) {
+				$log->debug("matched resource $resource");
 				//create parameters based on uri template and request matches
 				if (isset($template_matches[1]) && isset($uri_matches[1])) { 
 					array_shift($uri_matches);
 					$params = array_combine($template_matches[1],$uri_matches);
-					$request->setParams($params);
+					$r->setParams($params);
 				}
-				$method = $this->determineMethod($resource,$request);
-				Dase_Log::debug("try method $method");
+				$method = $this->determineMethod($resource,$r);
+				$log->debug("try method $method");
 				if (method_exists($this,$method)) {
-					$request->resource = $resource;
-					$this->setup($request);
-					$this->{$method}($request);
+					$r->resource = $resource;
+					$this->setup($r);
+					$this->{$method}($r);
 				} else {
-					$request->renderError(404,'no handler method');
+					$r->renderError(404,'no handler method');
 				}
 			}
 		}
-		$request->renderError(404,'no such resource');
+		$r->renderError(404,'no such resource');
 	}
 
-	protected function determineMethod($resource,$request)
+	protected function determineMethod($resource,$r)
 	{
-		if ('post' == $request->method) {
+		if ('post' == $r->method) {
 			$method = 'postTo';
 		} else {
-			$method = $request->method;
+			$method = $r->method;
 		}
-		if (('html'==$request->format) || ('get' != $request->method)) {
+		if (('html'==$r->format) || ('get' != $r->method)) {
 			$format = '';
 		} else {
-			$format = ucfirst($request->format);
+			$format = ucfirst($r->format);
 		}
 		//camel case
 		$resource = Dase_Util::camelize($resource);
@@ -68,7 +71,7 @@ class Dase_Handler {
 		return $handler_method;
 	}
 
-	protected function setup($request)
+	protected function setup($r)
 	{
 		return;
 	}

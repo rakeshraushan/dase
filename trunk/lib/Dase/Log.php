@@ -1,50 +1,85 @@
 <?php
 
+class Dase_Log_Exception extends Exception {}
+
 class Dase_Log 
 {
-	private static $logfile = DASE_LOG;
-	private static $log_level = LOG_LEVEL;
+	private $filehandle;
+	private $logfile;
+	private $log_level;
+	private static $instance;
 
-	/** allows destructor to work properly */
-	public static function start()
+	const OFF 		= 1;	// Nothing at all.
+	const INFO 		= 2;	// Production 
+	const DEBUG 	= 3;	// Most Verbose
+
+	final private function __construct() {}
+
+	public function start($logfile,$log_level)
 	{
+		$this->log_level = $log_level;
+		$this->logfile = $log_level;
+		if (is_writable($logfile)) {
+			if (!$filehandle = fopen($logfile, 'a')) {
+				throw new Dase_Log_Exception('cannot open logfile '.$logfile);
+			}
+		} else {
+			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
+		}
+		$this->filehandle = $filehandle;
 	}
 
-	private static function write($msg,$backtrace)
+	public function stop()
+	{
+		if ($this->filehandle) {
+			fclose($this->filehandle);
+		}
+	}
+
+	public static function get()
+	{
+		if (is_null(self::$instance)) {
+			self::$instance = new Dase_Log;
+		}
+		return self::$instance;
+	}
+
+	private function _write($msg,$backtrace)
 	{
 		$date = date(DATE_W3C);
 		$msg = $date.'|pid:'.getmypid().':'.$msg."\n";
-		if(file_exists(self::$logfile)) {
-			@file_put_contents(self::$logfile,$msg,FILE_APPEND);
-		}
 		if ($backtrace) {
 			//include backtrace w/ errors
 			ob_start();
 			debug_print_backtrace();
-			$trace = ob_get_contents();
+			$msg .= "\n".ob_get_contents();
 			ob_end_clean();
-			@file_put_contents(self::$logfile,$trace,FILE_APPEND);
+		}
+		if (fwrite($this->filehandle, $msg) === FALSE) {
+			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
 		}
 	}
 
-	public static function debug($msg,$backtrace = false)
+	public function debug($msg,$backtrace = false)
 	{
 		//notices helpful for debugging (including all sql)
-		if (self::$log_level >= 2) {
-			self::write($msg,$backtrace);
+		if ($this->log_level >= 2) {
+			$this->_write($msg,$backtrace);
 		}
 	}
 
-	public static function info($msg,$backtrace = false)
+	public function info($msg,$backtrace = false)
 	{
 		//normal notices, ok for production
-		if (self::$log_level >= 1) {
-			self::write($msg,$backtrace);
+		if ($this->log_level >= 1) {
+			$this->_write($msg,$backtrace);
 		}
 	}
 
-	public static function truncate()
+	public function truncate()
 	{
-		return file_put_contents(self::$logfile,"---- dase log ----\n\n");
+		$this->stop();
+		$this->start();
+		return $this->_write("---- dase log ----\n\n");
 	}
 }

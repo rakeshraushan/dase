@@ -109,7 +109,7 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	public static function retrieve($url,$user='',$pwd='') 
 	{
-		Dase_Log::debug('retrieving feed: '.$url);
+		//Dase_Log::get()->debug('retrieving feed: '.$url);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -138,7 +138,6 @@ class Dase_Atom_Feed extends Dase_Atom
 			exit;
 		}
 		$dom = new DOMDocument('1.0','utf-8');
-		//Dase_Log::debug($xml);
 		if (!$xml) {
 			print "an error has occurred";
 			exit;

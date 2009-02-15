@@ -11,19 +11,8 @@ class Dase_Handler_Collections extends Dase_Handler
 		"pk/{id}/{ddd}" => 'test',
 	);
 
-	protected function setup($r)
+	protected function setup()
 	{
-	}
-
-	public function getTest($r) {
-		$user = $r->getUser();
-		if ($user->isSuperuser()) {
-			$r->checkCache();
-			print "hi $user->name";
-			exit;
-		} else {
-			Dase::error(401);
-		}
 	}
 
 	public function postToCollections($r) 
@@ -45,7 +34,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			try {
 				$coll_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				Dase_Log::debug('error',$e->getMessage());
+				Dase_Log::get()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('collection' != $coll_entry->entrytype) {
@@ -92,15 +81,14 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getCollections($r) 
 	{
-		$r->getUser();
-		$tpl = new Dase_Template($r);
-		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/collections.atom');
 		//if no collections, redirect to archive admin screen
 		//will force login screen for non-superusers if no collections
 		$c = new Dase_DBO_Collection;
 		if (!$c->findCount() && $r->getUser()->isSuperuser()) {
 			$r->renderRedirect('admin');
 		}
+		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/collections.atom');
+		$tpl = new Dase_Template($r);
 		$tpl->assign('collections',$feed);
 		$r->renderResponse($tpl->fetch('collection/list.tpl'));
 	}

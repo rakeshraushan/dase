@@ -67,16 +67,6 @@
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
 				</a>
 				</li>
-				<li class="cache-tab">
-				<a href="test/cache">
-					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Cache Test</sup>
-				</a>
-				</li>
-				<li class="search-tab">
-				<a href="test/search">
-					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Search Test</sup>
-				</a>
-				</li>
 				<li class="demo-tab">
 				<a href="test/demo">
 					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
@@ -87,16 +77,6 @@
 				<li>
 				<a href="collections">
 					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to DASe</sup>
-				</a>
-				</li>
-				<li class="cache-tab">
-				<a href="test/cache">
-					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Cache Test</sup>
-				</a>
-				</li>
-				<li class="search-tab">
-				<a href="test/search">
-					<img alt="icon" src="www/images/tango-icons/utilities-system-monitor.png"/><sup>Search Test</sup>
 				</a>
 				</li>
 				<li class="demo-tab">

@@ -1,30 +1,27 @@
 <?php
 
-//adapted from http://talks.php.net/show/hpp/56
-
 class Dase_Cache_File extends Dase_Cache 
 {
-	private $cache_dir = CACHE_DIR;
+	private $cache_dir;
 	private $filename;
+	private $pid; //process id
+	private $server_ip;
 	private $tempfilename;
-	private $ttl = 10; //10 seconds
+	private $ttl;
 
-	function __construct($filename)
+	function __construct($cache_dir,$ttl,$server_ip)
 	{
-		if (!$filename) {
-			throw new Exception('missing cache file name');
-		}
-
-		Dase_Log::debug('cache construct '.$filename);
-		$this->filename = md5($filename);
-		$this->tempfilename = $this->cache_dir . $this->filename . '.' . getmypid() . $_SERVER['SERVER_ADDR'];
+		$this->cache_dir = $cache_dir;
+		$this->ttl = $ttl;
+		$this->server_ip = $server_ip;
+		$this->pid = getmypid();
 	}
 
-	public static function expungeByHash($md5_hash)
+	public function expungeByHash($md5_hash)
 	{
 		if ($md5_hash) {
-			$filename = CACHE_DIR . $md5_hash;
-			Dase_Log::debug('expired ' . $filename);
+			$filename = $this->cache_dir . $md5_hash;
+			Dase_Log::get()->debug('expired ' . $filename);
 			@unlink($filename);
 		}
 	}
@@ -33,7 +30,7 @@ class Dase_Cache_File extends Dase_Cache
 	{
 		$i = 0;
 		//from PHP Cookbook 2nd. ed p. 718
-		$iter = new RecursiveDirectoryIterator(CACHE_DIR);
+		$iter = new RecursiveDirectoryIterator($this->cache_dir);
 		foreach (new RecursiveIteratorIterator($iter,RecursiveIteratorIterator::CHILD_FIRST) as $file) {
 			if (false === strpos($file->getPathname(),'.svn')) {
 				if ($file->isDir()) {
@@ -48,18 +45,23 @@ class Dase_Cache_File extends Dase_Cache
 		return $i;
 	}
 
-	function expire()
+	function setCacheDir($cache_dir)
 	{
-		$filename = $this->cache_dir . $this->filename;
-		Dase_Log::debug('expired ' . $filename);
+		$this->cache_dir = $cache_dir;
+	}
+
+	function expire($filename)
+	{
+		$filename = $this->cache_dir . $filename;
+		Dase_Log::get()->debug('expired ' . $filename);
 		@unlink($filename);
 	}
 
-	function getData($ttl=0)
+	function getData($filename,$ttl=0)
 	{
-		$filename = $this->cache_dir . $this->filename;
+		$filename = $this->cache_dir . $filename;
 		if (!file_exists($filename)) {
-			Dase_Log::debug('cache cannot find '.$filename);
+			Dase_Log::get()->debug('cache cannot find '.$filename);
 			return false;
 		}
 
@@ -67,19 +69,20 @@ class Dase_Cache_File extends Dase_Cache
 		$stat = stat($filename);
 		if(time() > $stat[9] + $time_to_live) {
 			@unlink($filename);
-			Dase_Log::debug('cache is stale '.$filename);
+			Dase_Log::get()->debug('cache is stale '.$filename);
 			return false;
 		}
-		Dase_Log::debug('cache HIT!!! '.$filename);
+		Dase_Log::get()->debug('cache HIT!!! '.$filename);
 		return file_get_contents($filename);
 	}
 
-	function setData($data)
+	function setData($filename,$data)
 	{ 
+		$tempfilename = $this->cache_dir.$filename.$this->pid.$this->server_ip;
 		//avoids race condition
 		if ($data) {
-			file_put_contents($this->tempfilename,$data);
-			rename($this->tempfilename,$this->cache_dir.$this->filename);
+			file_put_contents($tempfilename,$data);
+			rename($tempfilename,$this->cache_dir.$filename);
 		}
 		return $this->filename;
 	}

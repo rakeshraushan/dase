@@ -93,7 +93,7 @@ class Dase_Handler_User extends Dase_Handler
 				try {
 					$set_entry = Dase_Atom_Entry::load($raw_input);
 				} catch(Exception $e) {
-					Dase_Log::debug('error',$e->getMessage());
+					Dase_Log::get()->debug('error',$e->getMessage());
 					$r->renderError(400,'bad xml');
 				}
 				if ('set' != $set_entry->entrytype) {
@@ -156,7 +156,7 @@ class Dase_Handler_User extends Dase_Handler
 		$recent = array();
 		foreach ($items->find() as $item) {
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
-			$recent['a'.$item->serial_number]['thumbnail_href'] = $app_root.'/'.$item->getMediaRelativeUrl('thumbnail');
+			$recent['a'.$item->serial_number]['thumbnail_href'] = $app_root.'/'.$item->getMediaUrl('thumbnail');
 			$recent['a'.$item->serial_number]['item_record_href'] = 'item/'.$item->getCollection()->ascii_id.'/'.$item->serial_number;
 		}
 		$r->renderResponse(Dase_Json::get($recent));

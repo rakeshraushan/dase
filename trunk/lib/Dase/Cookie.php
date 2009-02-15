@@ -6,89 +6,94 @@ class Dase_Cookie {
 	//encrypted eid cookie AND provides minimal
 	//generic functionality
 
-	static $user_cookiename = 'DASE_USER';
-	static $auth_cookiename = 'DASE_AUTH';
-	static $cookiemap = array(
+	protected $user_cookiename = 'DASE_USER';
+	protected $auth_cookiename = 'DASE_AUTH';
+	protected $cookiemap = array(
 		'max' => 'DASE_MAX_ITEMS',
 		'display' => 'DASE_DISPLAY_FORMAT',
 		'module' => 'DASE_MODULE',
 	);
-	static $display_cookiename = 'DASE_DISPLAY_FORMAT';
-	private $token;
+	protected $display_cookiename = 'DASE_DISPLAY_FORMAT';
+	protected $token;
+
+	public function __construct($config)
+	{
+		$this->config = $config;
+	}
 
 
-	private static function getPrefix() 
+	private function getPrefix() 
 	{
 		//NOTE that the cookie name will be unique per dase instance 
 		//(note: HAD been doing it by date, but that's no good when browser & server
 		//dates disagree)
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $this->config->get('app_root');
 		$prefix = str_replace('http://','',$app_root);
 		$prefix = str_replace('.','_',$prefix);
 		return str_replace('/','_',$prefix) . '_';
 	}
 
-	public static function setEid($eid) 
+	public function setEid($eid) 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		$key = md5(Dase_Config::get('token').$eid);
-		setcookie($pre . self::$user_cookiename,$eid,0,'/');
-		setcookie($pre . self::$auth_cookiename,$key,0,'/');
+		$key = md5($this->config->get('token').$eid);
+		setcookie($pre . $this->user_cookiename,$eid,0,'/');
+		setcookie($pre . $this->auth_cookiename,$key,0,'/');
 	}
 
-	public static function set($type,$data) 
+	public function set($type,$data) 
 	{
 		$pre = Dase_Cookie::getPrefix();
 		if ('module' == $type) {
-			$module = Dase_Config::get('module');
+			$module = $this->config->get('module');
 			$pre = $pre.$module.'_';
 		}
-		if (isset(self::$cookiemap[$type])) {
-			$cookiename = $pre . self::$cookiemap[$type];
+		if (isset($this->cookiemap[$type])) {
+			$cookiename = $pre . $this->cookiemap[$type];
 			setcookie($cookiename,$data,0,'/');
 		}
 	}
 
-	public static function get($type) 
+	public function get($type) 
 	{
 		$pre = Dase_Cookie::getPrefix();
 		if ('module' == $type) {
-			$module = Dase_Config::get('module');
+			$module = $this->config->get('module');
 			$pre = $pre.$module.'_';
 		}
-		if (isset(self::$cookiemap[$type])) {
-			$cookiename = $pre . self::$cookiemap[$type];
+		if (isset($this->cookiemap[$type])) {
+			$cookiename = $pre . $this->cookiemap[$type];
 			if (isset($_COOKIE[$cookiename])) {
 				return $_COOKIE[$cookiename];
 			}
 		}
 	}
 
-	public static function clearByType($type) 
+	public function clearByType($type) 
 	{
 		$pre = Dase_Cookie::getPrefix();
 		if ('module' == $type) {
 			//allows each module their own module cookie
-			$module = Dase_Config::get('module');
+			$module = $this->config->get('module');
 			$pre = $pre.$module.'_';
 		}
-		if (isset(self::$cookiemap[$type])) {
-			setcookie($pre . self::$cookiemap[$type],"",-86400,'/');
+		if (isset($this->cookiemap[$type])) {
+			setcookie($pre . $this->cookiemap[$type],"",-86400,'/');
 		}
 	}
 
 	/** simply checks the cookie */
-	public static function getEid() 
+	public function getEid() 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		$token = Dase_Config::get('token');
+		$token = $this->config->get('token');
 		$key = '';
 		$eid = '';
-		if (isset($_COOKIE[$pre . self::$user_cookiename])) {
-			$eid = $_COOKIE[$pre . self::$user_cookiename];
+		if (isset($_COOKIE[$pre . $this->user_cookiename])) {
+			$eid = $_COOKIE[$pre . $this->user_cookiename];
 		}
-		if (isset($_COOKIE[$pre . self::$auth_cookiename])) {
-			$key = $_COOKIE[$pre . self::$auth_cookiename];
+		if (isset($_COOKIE[$pre . $this->auth_cookiename])) {
+			$key = $_COOKIE[$pre . $this->auth_cookiename];
 		}
 		if ($key && $eid && $key == md5($token.$eid)) {
 			return $eid;
@@ -96,11 +101,11 @@ class Dase_Cookie {
 		return false;
 	}
 
-	public static function clear() 
+	public function clear() 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		setcookie($pre . self::$user_cookiename,"",-86400,'/');
-		setcookie($pre . self::$auth_cookiename,"",-86400,'/');
+		setcookie($pre . $this->user_cookiename,"",-86400,'/');
+		setcookie($pre . $this->auth_cookiename,"",-86400,'/');
 	}
 }
 

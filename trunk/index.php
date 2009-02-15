@@ -18,39 +18,35 @@
  * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-ini_set('include_path','lib');
 
-define('DASE_PATH', dirname(__FILE__));
+ini_set('include_path','lib');
 
 //PHP ERROR REPORTING -- turn off for production
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
-//scripts using Dase library can set this
-define('DASE_CONFIG', DASE_PATH . '/inc/config.php');
-
-//need to be writable by apache!!:
-define('CACHE_DIR', DASE_PATH . '/cache/');
-define('DASE_LOG', DASE_PATH . '/log/dase.log');
-
-define('LOG_LEVEL',3);
-
-$protocol = (!isset($_SERVER['HTTPS'])) ? 'http://' : 'https://'; 
-
-define('APP_ROOT',trim($protocol.$_SERVER['HTTP_HOST'].'/'.trim(dirname($_SERVER['SCRIPT_NAME']),'/'),'/'));
 
 function __autoload($class_name) {
-	$include_path_tokens = explode(':', get_include_path());
-	foreach($include_path_tokens as $prefix){
-		$class_file = DASE_PATH.'/'.$prefix . '/' . preg_replace('/_/','/',$class_name) . '.php';
-		if(file_exists($class_file)){
-			require_once $class_file;
-			return;
-		}
-	}  
-	Dase_Log::debug("could not autoload $class_file");
+	include_once __autoloadFilename($class_name);
 }
 
-Dase_Timer::start();
-Dase_Log::start();
-Dase::run();
+function __autoloadFilename($class_name) {
+	return str_replace('_','/',$class_name) . '.php';
+}
+
+$logfile = dirname(__FILE__).'/log/dase.log';
+Dase_Log::get()->start($logfile,Dase_Log::DEBUG);
+
+$config = new Dase_Config($base_path);
+
+//load main config
+$config->load(dirname(__FILE__).'/inc/config.php');
+
+//load local config
+$config->load(dirname(__FILE__).'/inc/local_config.php');
+
+$r = new Dase_Http_Request($config);
+$r->set('cookie',new Dase_Cookie($config));
+
+$app = new Dase($r);
+$app->run();

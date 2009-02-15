@@ -78,7 +78,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public static function add($entity_obj,$scheme,$term,$label='')
 	{
-		//Dase_Log::debug('+++++++++++++++++++++++++'.$scheme.$term.$label);
+		//Dase_Log::get()->debug('+++++++++++++++++++++++++'.$scheme.$term.$label);
 		$etable = $entity_obj->getTable(false);
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);

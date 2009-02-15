@@ -38,12 +38,12 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			Dase_Log::info('created collection '.$c->collection_name);
+			Dase_Log::get()->info('created collection '.$c->collection_name);
 			if (mkdir("$media_dir")) {
 				chmod("$media_dir",0775);
-				foreach (Dase_Config::get('sizes') as $size => $access_level) {
+				foreach (Dase_Acl::$sizes as $size => $access_level) {
 					mkdir("$media_dir/$size");
-					Dase_Log::info('created directory '.$media_dir.'/'.$size);
+					Dase_Log::get()->info('created directory '.$media_dir.'/'.$size);
 					chmod("$media_dir/$size",0775);
 				}
 				symlink($media_dir,$media_dir.'_collection');
@@ -70,9 +70,9 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$cm->created = date(DATE_ATOM);
 			$cm->created_by_eid = $user->eid;
 			if ($cm->insert()) {
-				Dase_Log::info('created admin user '.$ascii_id.'::'.$user->eid);
+				Dase_Log::get()->info('created admin user '.$ascii_id.'::'.$user->eid);
 			} else {
-				Dase_Log::info('could not create admin user');
+				Dase_Log::get()->info('could not create admin user');
 			}
 			$user->expireDataCache();
 			return $ascii_id;

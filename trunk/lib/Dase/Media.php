@@ -1,6 +1,14 @@
 <?php
 Class Dase_Media 
 {
+	public static $media_types = array(
+		'application/pdf',
+		'audio/*',
+		'image/*',
+		'text/*',
+		'video/*',
+	);
+
 	function __construct() {}
 
 	/** 
@@ -25,7 +33,7 @@ Class Dase_Media
 
 	public static function getAcceptedTypes()
 	{
-		return Dase_Config::get('media_types');
+		return self::$media_types;
 	}
 
 	/** returns type on success, false on failure */

@@ -15,24 +15,28 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function setup($request)
 	{
-		if (!is_writeable(CACHE_DIR)) {
-			$html = "<html><body>";
-			$html .= "<h3>".CACHE_DIR." directory must be writeable by the web server</h3>";
-			$html .= "</body></html>";
-			echo $html;
-			exit;
-		}
-		if (!is_writeable(DASE_LOG)) {
-			$html = "<html><body>";
-			$html .= "<h3>".DASE_LOG." file must be writeable by the web server for logging</h3>";
-			$html .= "</body></html>";
-			echo $html;
-			exit;
-		}
-		if (!file_exists(DASE_PATH.'/inc/local_config.php')) {
-			//local_config.php is not setup
+		$cache_dir = Dase_Config::get('cache_dir');
+		$logfile = Dase_Config::get('logfile');
+
+		if (!file_exists($cache_dir) || !file_exists($logfile)) {
+			//report error here!
 			$this->db_set = 0;
 			return;
+		}
+
+		if (!is_writeable($cache_dir)) {
+			$html = "<html><body>";
+			$html .= "<h3>".$cache_dir." directory must be writeable by the web server</h3>";
+			$html .= "</body></html>";
+			echo $html;
+			exit;
+		}
+		if (!is_writeable($logfile)) {
+			$html = "<html><body>";
+			$html .= "<h3>".$logfile." file must be writeable by the web server for logging</h3>";
+			$html .= "</body></html>";
+			echo $html;
+			exit;
 		}
 		try {
 			//try to connect

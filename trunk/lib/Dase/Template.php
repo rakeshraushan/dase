@@ -22,14 +22,17 @@ class Dase_Template {
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
-		require_once DASE_PATH . '/lib/smarty/libs/Smarty.class.php';
+		$app = $request->cfg('app');
+		$log = $request->log;
+		require_once 'smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
-		$this->smarty->compile_dir = CACHE_DIR;
+		$this->smarty->request = $request;
+		$this->smarty->compile_dir = $app['base_path'].'/'.$app['cache_dir']; 
 		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
 		if ($use_module_template_dir) {
-			$this->smarty->template_dir = DASE_PATH . '/modules/'.$request->module.'/templates';
+			$this->smarty->template_dir = $app['base_path'].'/modules/'.$request->module.'/templates';
 		} else {
-			$this->smarty->template_dir = DASE_PATH . '/templates';
+			$this->smarty->template_dir = $app['base_path'].'/templates';
 		}
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
@@ -46,20 +49,21 @@ class Dase_Template {
 		$this->smarty->assign_by_ref('_swisdk_smarty_instance', $this);
 
 		$this->smarty->register_modifier('shift', 'array_shift');
-		$app_root = Dase_Config::get('app_root');
 		//todo: confusing! $app_root shouldn't have trailing /
-		$this->smarty->assign('app_root', $app_root.'/');
+		$this->smarty->assign('app_root', $request->app_root.'/');
 		if ($request->module) {
-			$this->smarty->assign('module_root', $app_root.'/modules/'.$request->module.'/');
+			$this->smarty->assign('module_root', $request->module_root.'/');
 			if (file_exists(DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
-				$this->smarty->assign('module_menu', DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl');
+				$this->smarty->assign('module_menu', $app['base_path'].'/modules/'.$request->module.'/templates/menu.tpl');
 			}
 		}
 		$this->smarty->assign('msg', $request->get('msg'));
 		$this->smarty->assign('request', $request);
-		$this->smarty->assign('page_logo', Dase_Config::get('page_logo'));
-		$this->smarty->assign('main_title', Dase_Config::get('main_title'));
-		$this->smarty->assign('local_css', Dase_Config::get('path_to_local_css'));
+		/* todo: FIX!
+		$this->smarty->assign('page_logo', $c->get('page_logo'));
+		$this->smarty->assign('main_title', $c->get('main_title'));
+		$this->smarty->assign('local_css', $c->get('path_to_local_css'));
+		 */
 		error_reporting($er);
 	}
 
@@ -94,7 +98,6 @@ class Dase_Template {
 
 	public function fetch($resource_name)
 	{
-		$this->smarty->assign('timer',Dase_Timer::getElapsed());
 		$ret = $this->smarty->fetch($resource_name);
 		while($resource = $this->_derived) {
 			$this->_derived = null;
@@ -105,8 +108,9 @@ class Dase_Template {
 
 	function __destruct() 
 	{
-		Dase_Log::debug('finished templating '.Dase_Timer::getElapsed());
+		Dase_Log::get()->debug('finished templating '.$this->smarty->request->getElapsed());
 	}
+
 	// template inheritance
 	public $_blocks = array();
 	public $_derived = null;

@@ -19,6 +19,12 @@ Class Dase_Util
 		}
 	}
 
+	public static function getTime()
+	{
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
+	}
+
 	/** from http://www.weberdev.com/get_example-3543.html */
 	public static function getUniqueName()
 	{
@@ -92,26 +98,6 @@ Class Dase_Util
 		} else {
 			return null;
 		}
-	}
-
-	/** 
-	 * from php port of Mimeparse
-	 * Python code (http://code.google.com/p/mimeparse/)
-	 * @author Joe Gregario, Andrew "Venom" K.
-	 */
-	public static function parse_mime_type($mime_type)
-	{
-		$parts = split(";", $mime_type);
-		$params = array();
-		foreach ($parts as $i=>$param) {
-			if (strpos($param, '=') !== false) {
-				list ($k, $v) = explode('=', trim($param));
-				$params[$k] = $v;
-			}
-		}
-		list ($type, $subtype) = explode('/', $parts[0]);
-		if (!$subtype) throw new Exception("malformed mime type");
-		return array(trim($type), trim($subtype), $params);
 	}
 
 	public static function sortByTagName($b,$a)
@@ -214,43 +200,6 @@ Class Dase_Util
 		}
 		return ($a_so < $b_so) ? -1 : 1;
 	}
-	public static function diffObjects($obj_array_a,$obj_array_b,$member_name)
-	{
-		if (is_array($obj_array_a)) {
-			foreach ($obj_array_a as $object_a) {
-				$object_a_member_array[] = $object_a->$member_name;
-			}
-		} else {
-			$object_a_member_array = array();
-		}
-		if (is_array($obj_array_b)) {
-			foreach ($obj_array_b as $object_b) {
-				$object_b_member_array[] = $object_b->$member_name;
-			}
-		} else {
-			$object_b_member_array = array();
-		}
-		foreach ($object_a_member_array as $member_a) {
-			if (!in_array($member_a,$object_b_member_array)) {
-				$in_a_not_b[] = $member_a;
-				$set['in_a_not_b']['string'] = join(', ',$in_a_not_b);
-				$set['in_a_not_b']['array'] = $in_a_not_b;
-			}
-		}
-		foreach ($object_b_member_array as $member_b) {
-			if (!in_array($member_b,$object_a_member_array)) {
-				$in_b_not_a[] = $member_b;
-				$set['in_b_not_a']['string'] = join(', ',$in_b_not_a);
-				$set['in_b_not_a']['array'] = $in_b_not_a;
-			}
-		}
-		return $set;
-	}
-	public static function stopApp($time_start)
-	{
-		$time_stop = microtime_float();
-		$timer = round($time_stop - $time_start, 4);
-		echo $timer; exit;
-	}
 }
+
 

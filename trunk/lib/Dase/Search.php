@@ -38,7 +38,7 @@ class Dase_Search
 		$url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$url);
 		$url = preg_replace('/(\?|&|&amp;)original_search=[^&]+/i','',$url);
 		$this->url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
-		Dase_Log::debug('url per search '.$this->url);
+		Dase_Log::get()->debug('url per search '.$this->url);
 		$cache_url = preg_replace('!^search(/item)?!','search',$this->url);
 		$cache = Dase_Cache::get($cache_url);
 		$data = $cache->getData(60*30);

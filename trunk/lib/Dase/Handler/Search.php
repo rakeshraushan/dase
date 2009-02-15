@@ -42,7 +42,7 @@ class Dase_Handler_Search extends Dase_Handler
 		if (!$r->getUser('http')) {
 			$r->renderError(401,'cannot delete recent searches');
 		}
-		$count = Dase_DBO_SearchCache::deleteRecent();
+		$count = Dase_DBO_SearchCache::deleteRecent($r);
 		$r->renderResponse($count." cached searches deleted");
 	}
 
