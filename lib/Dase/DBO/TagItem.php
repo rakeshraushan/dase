@@ -43,8 +43,12 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		return $this;
 	}
 
-	function asAtom()
+	function asAtom($app_root='')
 	{
+		if (!$app_root) {
+			$app_root = Dase_Config::get('app_root');
+		}
+
 		$item = $this->getItem();
 		$tag = $this->getTag();
 		$feed = new Dase_Atom_Feed;
@@ -57,7 +61,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		}
 		$feed->setUpdated($updated);
 		$feed->setTitle($item->getTitle());
-		$feed->setId(APP_ROOT.'/tag/item/'.$tag->id.'/'.$this->id);
+		$feed->setId($app_root.'/tag/item/'.$tag->id.'/'.$this->id);
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 
@@ -87,9 +91,9 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 		//$feed->addLink($tag->getLink().'/'.$prev_id,"previous");
 		//$feed->addLink($tag->getLink().'/'.$next_id,"next");
-		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$this->id.'.atom',"self");
-		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$prev_id,"previous");
-		$feed->addLink(APP_ROOT.'/tag/item/'.$tag->id.'/'.$next_id,"next");
+		$feed->addLink($app_root.'/tag/item/'.$tag->id.'/'.$this->id.'.atom',"self");
+		$feed->addLink($app_root.'/tag/item/'.$tag->id.'/'.$prev_id,"previous");
+		$feed->addLink($app_root.'/tag/item/'.$tag->id.'/'.$next_id,"next");
 		$feed->setFeedType('tagitem');
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$position.' of '.count($tag_item_id_array));
@@ -97,7 +101,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$entry->setSummary($this->annotation);
 		//todo: atompub edit link.  for now (3/31/08) user must 'tag' an item
 		//in order for it to be editable
-		$edit_link = (str_replace(APP_ROOT,APP_ROOT.'/edit',$entry->getId()));
+		$edit_link = (str_replace($app_root,$app_root.'/edit',$entry->getId()));
 		$entry->addLink($edit_link,'edit');
 		return $feed->asXml();
 	}

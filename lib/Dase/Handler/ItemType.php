@@ -133,7 +133,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($app_root.'/'.$t->getRelativeUrl($c->ascii_id));
+		$feed->setId($app_root.'/'.$t->getUrl($c->ascii_id));
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item;
 		$items->item_type_id = $t->id;
@@ -166,7 +166,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		foreach ($items->find() as $item) {
 			$item_array  = array(
-				'url' => $app_root.'/'.$item->getRelativeUrl($coll),
+				'url' => $app_root.'/'.$item->getUrl($coll),
 				//expensive??
 				'title' => $item->getTitle(),
 				'serial_number' => $item->serial_number,

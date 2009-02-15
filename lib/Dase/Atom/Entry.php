@@ -74,7 +74,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	public static function retrieve($url,$user='',$pwd='') 
 	{
-		Dase_Log::debug('retrieving atom entry: '.$url);
+		Dase_Log::get()->debug('retrieving atom entry: '.$url);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -155,7 +155,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $str);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
-		Dase_Log::debug($result);
+		Dase_Log::get()->debug($result);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
 		if ('200' == $info['http_code']) {
@@ -180,7 +180,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 		$result = curl_exec($ch);
-		Dase_Log::debug($result);
+		Dase_Log::get()->debug($result);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
 		if ('201' == $info['http_code']) {

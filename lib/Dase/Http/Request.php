@@ -34,28 +34,63 @@ class Dase_Http_Request
 	public $query_string;
 	public $response_mime_type;
 	public $resource;
+	public $protocol;
+	public $app_root;
 
-	function __construct()
+	public function __construct($config)
 	{
-		$this->method = strtolower($_SERVER['REQUEST_METHOD']);
+		$this->config = $config;
+		$this->_server = $_SERVER;
+		$this->_files = $_FILES;
+		$this->init();
+
 		$this->format = $this->getFormat();
 		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
 		$this->path = $this->getPath();
+		$this->protocol = !isset($this->_server['HTTPS']) ? 'http://' : 'https://'; 
+		$this->app_root =
+			trim($this->protocol.$this->_server['HTTP_HOST'].'/'.
+			trim(dirname($this->_server['SCRIPT_NAME']),'/'),'/');
+		if ($this->module) { //this->module is set in getHandler method
+			$this->module_root = $this->app_root.'/modules/'.$this->module;
+		}
 		$this->response_mime_type = self::$types[$this->format];
 		$this->query_string = $this->getQueryString();
 		$this->content_type = $this->getContentType();
+		$this->start_time = Dase_Util::getTime();
+	}
 
-		if (!$this->handler) {
-			$this->renderRedirect(Dase_Config::get('default_handler'));
+	public function init()
+	{
+		if (isset($_SERVER['REQUEST_METHOD'])) {
+			//wrap superglobals
+			$this->_get = $_GET;
+			$this->_post = $_POST;
+			$this->_cookie = $_COOKIE;
+			$this->method = strtolower($_SERVER['REQUEST_METHOD']);
+		} else {
+			//command line
+			foreach ($_SERVER['argv'] as $arg) {
+				if (strpos($arg,'=')) {
+					list($key,$val) = explode('=',$arg);
+					$this->members[$key] = $val;
+				}
+			}
 		}
 	}
 
-	function __toString()
+	public function cfg($key)
 	{
-		return $this->getLogData();
+		return $this->config->get($key);
 	}
 
-	function getLogData()
+	public function getElapsed()
+	{
+		$now = Dase_Util::getTime();
+		return round($now - $this->start_time,4);
+	}
+
+	public function getLogData()
 	{
 		$string = "\nREQUEST:\n";
 		$string .= "[format] => $this->format\n";
@@ -63,16 +98,18 @@ class Dase_Http_Request
 		$string .= "[method] => $this->method\n";
 		$string .= "[module] => $this->module\n";
 		$string .= "[path] => $this->path\n";
+		$string .= "[protocol] => $this->protocol\n";
+		$string .= "[app_root] => $this->app_root\n";
 		$string .= "[url] => $this->url\n";
 		$string .= "[response_mime_type] => $this->response_mime_type\n";
 		$string .= "[query_string] => $this->query_string\n";
 		$string .= "[content_type] => $this->content_type\n";
 		$string .= "[pid] => ".getmypid()."\n";
-		if (isset($_SERVER['HTTP_USER_AGENT'])) {
-			$string .= "[http_user_agent] => ".$_SERVER['HTTP_USER_AGENT']."\n";
+		if (isset($this->_server['HTTP_USER_AGENT'])) {
+			$string .= "[http_user_agent] => ".$this->_server['HTTP_USER_AGENT']."\n";
 		}
-		if (isset($_SERVER['REMOTE_ADDR'])) {
-			$string .= "[remote_addr] => ".$_SERVER['REMOTE_ADDR']."\n";
+		if (isset($this->_server['REMOTE_ADDR'])) {
+			$string .= "[remote_addr] => ".$this->_server['REMOTE_ADDR']."\n";
 		}
 		$string .= "[resource] => $this->resource\n";
 		if ($this->error_message) {
@@ -81,7 +118,7 @@ class Dase_Http_Request
 		return $string;
 	}
 
-	function __get($var) 
+	public function __get($var) 
 	{
 		if ( array_key_exists( $var, $this->members ) ) {
 			return $this->members[ $var ];
@@ -100,20 +137,24 @@ class Dase_Http_Request
 			//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
 			$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$query_string);
 		}
-		Dase_Log::debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
+		Dase_Log::get()->debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
 	public function checkCache($ttl=null)
 	{
-		$cache = Dase_Cache::get($this->getCacheId());
-		$content = $cache->getData($ttl);
+		$type = $this->cfg('cache');
+		$dir = $this->cfg('bash_path').'/'.$this->cfg('cache_dir');
+		$serv = $this->cfg('server');
+		$ip = $serv['SERVER_ADDR'];
+		$cache = new Dase_Cache($type,$dir,$ip);
+		$content = $cache->getData($this->getCacheId(),$ttl);
 		if ($content) {
 			$this->renderResponse($content,false);
 		}
 	}
 
-	function getHandler()
+	public function getHandler()
 	{
 		$parts = explode('/',trim($this->getPath(),'/'));
 		$first = array_shift($parts);
@@ -130,25 +171,25 @@ class Dase_Http_Request
 		} else {
 			//here's the entire plugin architecture
 			//simply reimplement any handler as a module
-			$plugins = Dase_Config::get('handler');
+			$plugins = $this->cfg('handler');
 			if (isset($plugins[$first])) {
 				if(!file_exists(DASE_PATH.'/modules/'.$plugins[$first])) {
 					$this->renderError(404,'no such module');
 				}
-				Dase_Log::info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$plugins[$first]);
+				Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$plugins[$first]);
 				$this->module = $plugins[$first];
 			}
 			return $first;
 		}
 	}
 
-	function getHeaders() 
+	public function getHeaders() 
 	{
 		//note: will ONLY work w/ apache (OK by me!)
 		return apache_request_headers();
 	}
 
-	function getHeader($name)
+	public function getHeader($name)
 	{
 		$headers = $this->getHeaders();
 		if (isset($headers[$name])) {
@@ -158,13 +199,13 @@ class Dase_Http_Request
 		}
 	}
 
-	function getContentType() 
+	public function getContentType() 
 	{
-		if (isset($_SERVER['CONTENT_TYPE'])) {
-			$header = $_SERVER['CONTENT_TYPE'];
+		if (isset($this->_server['CONTENT_TYPE'])) {
+			$header = $this->_server['CONTENT_TYPE'];
 		}
-		if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
-			$header = $_SERVER['HTTP_CONTENT_TYPE'];
+		if (isset($this->_server['HTTP_CONTENT_TYPE'])) {
+			$header = $this->_server['HTTP_CONTENT_TYPE'];
 		}
 		if (isset($header)) {
 			list($type,$subtype,$params) = Dase_Media::parseMimeType($header);
@@ -176,7 +217,7 @@ class Dase_Http_Request
 		}
 	}
 
-	function getFormat($types = null)
+	public function getFormat($types = null)
 	{
 		//first check extension
 		$pathinfo = pathinfo($this->getPath(false));
@@ -201,6 +242,7 @@ class Dase_Http_Request
 
 	public function get($key,$as_array = false)
 	{
+		$post = $this->cfg('post');
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
 			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
@@ -221,12 +263,12 @@ class Dase_Http_Request
 			}
 		} else {
 			if ('post' == $this->method) {
-				if (isset($_POST[$key])) {
-					if (is_array($_POST[$key])) {
+				if (isset($post[$key])) {
+					if (is_array($post[$key])) {
 						//need to implement the value[] for this to work
-						return $this->_filterArray($_POST[$key]);
+						return $this->_filterArray($post[$key]);
 					} else {
-						return array(strip_tags($_POST[$key]));
+						return array(strip_tags($post[$key]));
 					}
 				}
 			} else {
@@ -285,7 +327,7 @@ class Dase_Http_Request
 		$url_params = array();
 		$url_params[$key] = array();
 		//NOTE: urldecode is NOT UTF-8 compatible
-		$pairs = explode('&',html_entity_decode(urldecode($_SERVER['QUERY_STRING'])));
+		$pairs = explode('&',html_entity_decode(urldecode($this->_server['QUERY_STRING'])));
 		if (count($pairs) && $pairs[0]) {
 			foreach ($pairs as $pair) {
 				if (false !== strpos($pair,'=')) {	
@@ -317,7 +359,7 @@ class Dase_Http_Request
 	public function getQueryString() 
 	{
 		if (!$this->query_string) {
-			$this->query_string = $_SERVER['QUERY_STRING'];
+			$this->query_string = $this->_server['QUERY_STRING'];
 		}
 		return $this->query_string;
 	}
@@ -344,12 +386,11 @@ class Dase_Http_Request
 	public function getPath($strip_extension=true)
 	{
 		//returns full path w/o domain & w/o query string
-		$path = $_SERVER['REQUEST_URI'];
+		$path = $this->_server['REQUEST_URI'];
 		if (strpos($path,'..')) { //thwart the wily hacker
-			//note: php does this already (??)
-			Dase::error(401);
+			throw new Dase_Http_Exception('no go');	
 		}
-		$base = trim(dirname($_SERVER['SCRIPT_NAME']),'/');
+		$base = trim(dirname($this->_server['SCRIPT_NAME']),'/');
 		$path= preg_replace("!$base!",'',$path,1);
 		$path= trim($path, '/');
 		/* Remove the query_string from the URL */
@@ -367,7 +408,6 @@ class Dase_Http_Request
 				}
 			}
 		}
-		//print $path; exit;
 		return $path;
 	}
 
@@ -392,10 +432,12 @@ class Dase_Http_Request
 			$eid = Dase_Cookie::getEid();
 			break;
 		case 'http':
-			$eid = Dase_Http_Auth::getEid();
+			$auth = new Dase_Http_Auth($this->cfg('auth'),$this->cfg('server'));
+			$eid = $auth->getEid();
 			break;
 		case 'service':
-			$eid = Dase_Http_Auth::getEid(true);
+			$auth = new Dase_Http_Auth($this->cfg('auth'),$this->cfg('server'));
+			$eid = $auth->getEid(true);
 			break;
 		case 'none':
 			//allows nothing to happen
@@ -423,7 +465,7 @@ class Dase_Http_Request
 	private function getDbUser($eid) {
 		$db = Dase_DB::get();
 		$user= new Dase_DBO_DaseUser;
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->cfg('table_prefix');
 		$sql = "
 			SELECT * 
 			FROM {$prefix}dase_user 
@@ -452,11 +494,13 @@ class Dase_Http_Request
 
 	private function _filterGet($key)
 	{
+		$get = $this->cfg('get');
 		if (Dase_Util::getVersion() >= 520) {
+			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
 		} else {
-			if (isset($_GET[$key])) {
-				return trim(strip_tags($_GET[$key]));
+			if (isset($get[$key])) {
+				return trim(strip_tags($get[$key]));
 			}
 		}
 		return false;
@@ -464,11 +508,13 @@ class Dase_Http_Request
 
 	private function _filterPost($key)
 	{
+		$post = $this->cfg('post');
 		if (Dase_Util::getVersion() >= 520) {
+			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
 		} else {
-			if (isset($_POST[$key])) {
-				return strip_tags($_POST[$key]);
+			if (isset($post[$key])) {
+				return strip_tags($post[$key]);
 			}
 		}
 		return false;
@@ -493,7 +539,7 @@ class Dase_Http_Request
 
 	public function serveFile($path,$mime_type,$download=false)
 	{
-		//Dase_Log::debug('serving '.$path.' as '.$mime_type);
+		//Dase_Log::get()->debug('serving '.$path.' as '.$mime_type);
 		$response = new Dase_Http_Response($this);
 		$response->serveFile($path,$mime_type,$download);
 		exit;

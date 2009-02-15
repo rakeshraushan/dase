@@ -11,7 +11,7 @@ class Dase_File_Image extends Dase_File
 		parent::__construct($file,$mime);
 	}
 
-	function addToCollection($item,$check_for_dups)
+	function addToCollection($item,$check_for_dups,$path_to_media)
 	{
 		//check for multi-layered tiff
 		if ('image/tiff' == $this->mime_type ){
@@ -20,7 +20,7 @@ class Dase_File_Image extends Dase_File
 				throw new Exception("Error: ".$title." appears to be a multi-layered tiff");
 			}
 		}
-		$media_file = parent::addToCollection($item,$check_for_dups);
+		$media_file = parent::addToCollection($item,$check_for_dups,$path_to_media);
 		$rotate = 0;
 		if (isset($this->metadata['exif_orientation'])) {
 			if (6 == $this->metadata['exif_orientation']) {
@@ -30,9 +30,9 @@ class Dase_File_Image extends Dase_File
 				$rotate = 270;
 			}
 		}
-		$this->makeThumbnail($item,$rotate);
-		$this->makeViewitem($item,$rotate);
-		$this->makeSizes($item,$rotate);
+		$this->makeThumbnail($item,$path_to_media,$rotate);
+		$this->makeViewitem($item,$path_to_media,$rotate);
+		$this->makeSizes($item,$path_to_media,$rotate);
 		return $media_file;
 	}
 
@@ -152,18 +152,18 @@ class Dase_File_Image extends Dase_File
 		}
 	}
 
-	function makeThumbnail($item,$rotate)
+	function makeThumbnail($item,$path_to_media,$rotate)
 	{
 		$collection = $item->getCollection();
 		$subdir = Dase_Util::getSubdir($item->serial_number);
-		$thumbnail = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$subdir.'/'.$item->serial_number.'_100.jpg';  
-		$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/thumbnail/'.$subdir;  
+		$thumbnail = $path_to_media.'/'.$collection->ascii_id.'/thumbnail/'.$subdir.'/'.$item->serial_number.'_100.jpg';  
+		$subdir_path = $path_to_media.'/'.$collection->ascii_id.'/thumbnail/'.$subdir;  
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
 		if (!file_exists($thumbnail)) {
-			Dase_Log::info("failed to write $thumbnail");
+			Dase_Log::get()->info("failed to write $thumbnail");
 		}
 		$file_info = getimagesize($thumbnail);
 
@@ -182,21 +182,21 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::info("created $media_file->size $media_file->filename");
+		Dase_Log::get()->info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item,$rotate)
+	function makeViewitem($item,$path_to_media,$rotate)
 	{
 		$collection = $item->getCollection();
 		$subdir = Dase_Util::getSubdir($item->serial_number);
-		$viewitem = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$subdir.'/'.$item->serial_number.'_400.jpg';  
-		$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/viewitem/'.$subdir;  
+		$viewitem = $path_to_media.'/'.$collection->ascii_id.'/viewitem/'.$subdir.'/'.$item->serial_number.'_400.jpg';  
+		$subdir_path = $path_to_media.'/'.$collection->ascii_id.'/viewitem/'.$subdir;  
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
 		$results = exec("$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
 		if (!file_exists($viewitem)) {
-			Dase_Log::info("failed to write $viewitem");
+			Dase_Log::get()->info("failed to write $viewitem");
 		}
 		$file_info = getimagesize($viewitem);
 
@@ -215,10 +215,10 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::info("created $media_file->size $media_file->filename");
+		Dase_Log::get()->info("created $media_file->size $media_file->filename");
 	}
 
-	function makeSizes($item,$rotate)
+	function makeSizes($item,$path_to_media,$rotate)
 	{
 		$collection = $item->getCollection();
 		$image_properties = array(
@@ -247,16 +247,16 @@ class Dase_File_Image extends Dase_File
 		$last_height = '';
 		$subdir = Dase_Util::getSubdir($item->serial_number);
 		foreach ($image_properties as $size => $size_info) {
-			$newimage = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$subdir.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
-			$subdir_path = Dase_Config::get('path_to_media').'/'.$collection->ascii_id.'/'.$size.'/'.$subdir;  
+			$newimage = $path_to_media.'/'.$collection->ascii_id.'/'.$size.'/'.$subdir.'/'.$item->serial_number.$size_info['size_tag'].'.jpg';  
+			$subdir_path = $path_to_media.'/'.$collection->ascii_id.'/'.$size.'/'.$subdir;  
 			if (!file_exists($subdir_path)) {
 				mkdir($subdir_path);
 			}
 			$command = "$this->convert \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage";
 			$results = exec($command);
 			if (!file_exists($newimage)) {
-				Dase_Log::debug("failed to write $size image");
-				Dase_Log::debug("UNSUCCESSFUL: $command");
+				Dase_Log::get()->debug("failed to write $size image");
+				Dase_Log::get()->debug("UNSUCCESSFUL: $command");
 			}
 			$file_info = getimagesize($newimage);
 
@@ -283,7 +283,7 @@ class Dase_File_Image extends Dase_File
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
-			Dase_Log::info("created $media_file->size $media_file->filename");
+			Dase_Log::get()->info("created $media_file->size $media_file->filename");
 		}
 		return;
 	}

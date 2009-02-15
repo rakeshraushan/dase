@@ -80,7 +80,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function deleteLog($r)
 	{
-		if (Dase_Log::truncate()) {
+		if (Dase_Log::get()->truncate()) {
 			$r->renderResponse('log has been truncated');
 		} else {
 			$r->renderError(500);

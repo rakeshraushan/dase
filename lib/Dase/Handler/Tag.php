@@ -315,7 +315,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			try {
 				$set_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				Dase_Log::debug('error',$e->getMessage());
+				Dase_Log::get()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('set' != $set_entry->entrytype) {

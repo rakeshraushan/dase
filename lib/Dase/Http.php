@@ -18,7 +18,7 @@ Class Dase_Http
 		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
-		Dase_Log::debug('Dase_Http::put '.$result);
+		Dase_Log::get()->debug('Dase_Http::put '.$result);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
 		if ('200' == $info['http_code']) {

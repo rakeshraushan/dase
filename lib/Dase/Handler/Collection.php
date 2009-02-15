@@ -35,6 +35,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$this->path_to_media = $r->config->get('path_to_media');
 		if (!$this->collection) {
 			$r->renderError(404);
 		}
@@ -77,15 +78,15 @@ class Dase_Handler_Collection extends Dase_Handler
 		}	
 		$output .= "#item_types\n";
 		foreach ($this->collection->getItemTypes() as $it) {
-			$output .= $app_root.'/'.$it->getRelativeUrl($coll).".atom\n";
+			$output .= $app_root.'/'.$it->getUrl($coll).".atom\n";
 		}	
 		$output .= "#item_type_relations\n";
 		foreach ($this->collection->getItemTypeRelations() as $itr) {
-			$output .= $app_root.'/'.$itr->getRelativeUrl().".atom\n";
+			$output .= $app_root.'/'.$itr->getUrl().".atom\n";
 		}	
 		$output .= "#items\n";
 		foreach ($this->collection->getItems() as $item) {
-			$output .= $app_root.'/'.$item->getRelativeUrl($coll).".atom\n";
+			$output .= $app_root.'/'.$item->getUrl($coll).".atom\n";
 		}	
 		$r->renderResponse($output);
 
@@ -141,7 +142,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$app_root = Dase_Config::get('app_root');
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
-			$output .= $app_root.'/'.$item->getRelativeUrl($this->collection->ascii_id); 
+			$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
 			$output .= "\n";
 		}
 		$r->renderResponse($output);
@@ -193,9 +194,9 @@ class Dase_Handler_Collection extends Dase_Handler
 				}
 				if ($r->get('showmedialink')) {
 					//returns list of media links, not item links!!
-					$output .= $app_root.'/'.$item->getEditMediaRelativeUrl($this->collection->ascii_id); 
+					$output .= $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
 				} else {
-					$output .= $app_root.'/'.$item->getRelativeUrl($this->collection->ascii_id); 
+					$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
 				}
 				$output .= "\n";
 			}
@@ -221,8 +222,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		foreach ($this->collection->getItems() as $item) {
 			if (!$item->getMediaCount()) {
 				$i++;
-				$edit = $app_root.'/'.$item->getRelativeUrl($this->collection->ascii_id); 
-				$edit_media = $app_root.'/'.$item->getEditMediaRelativeUrl($this->collection->ascii_id); 
+				$edit = $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
+				$edit_media = $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
 				$items[$edit]['edit'] = $edit;
 				$items[$edit]['edit-media'] = $edit_media;
 				foreach ($item->getMetadata() as $row) {
@@ -256,7 +257,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$items->collection_id = $this->collection->id;
 		$items->status = 'delete';
 		foreach ($items->find() as $item) {
-			$output .= $app_root.'/'.$item->getRelativeUrl($this->collection->ascii_id)."\n"; 
+			$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id)."\n"; 
 		}
 		$r->renderResponse($output);
 	}
@@ -418,7 +419,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$url = file_get_contents("php://input");
 		$filename = array_pop(explode('/',$url));
 		$ext = array_pop(explode('.',$url));
-		$upload_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/uploaded_files';
+		$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory');
 		}
@@ -428,10 +429,10 @@ class Dase_Handler_Collection extends Dase_Handler
 		file_put_contents($new_file,file_get_contents($url));
 		try {
 			$file = Dase_File::newFile($new_file);
-			$media_file = $file->addToCollection($item,true); //check for dups
+			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			$item->expunge();
 			$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
 		}
@@ -453,7 +454,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item' != $item_entry->entrytype) {
@@ -486,7 +487,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$att_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('attribute' != $att_entry->entrytype) {
@@ -516,7 +517,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$type_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type' != $type_entry->entrytype) {
@@ -545,7 +546,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type_relation' != $entry->entrytype) {
@@ -636,7 +637,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
 					'sort_order' => $att->sort_order,
-					'href' => $app_root.'/'.$att->getRelativeUrl($c->ascii_id),
+					'href' => $app_root.'/'.$att->getUrl($c->ascii_id),
 					'collection' => $r->get('collection_ascii_id')
 				);
 		}

@@ -2,14 +2,38 @@
 
 class Dase_Acl
 {
-	public $auth_map = array(
-		'superuser' => 3,
-		'admin' => 3,
-		'manager' => 3,
-		'metadata' => 3,
-		'write' => 3,
-		'none' => 2,
-		'read' => 2,
+	//access key: 
+	//0: anyone, anywhere,anytime
+	//1: must be a valid 'user'
+	//2: must have collection-specific privileges
+
+	public static $sizes = array(
+		'aiff' => 2,
+		'archive' => 1,
+		'css' => 1,
+		'deleted' => 1,
+		'doc' => 1,
+		'full' => 1,
+		'gif' => 1,
+		'html' => 1,
+		'jpeg' => 1,
+		'large' => 1,
+		'medium' => 1,
+		'mp3' => 2,
+		'pdf' => 1,
+		'png' => 1,
+		'quicktime' => 2,
+		'quicktime_stream' => 2,
+		'raw' => 2,
+		'small' => 1,
+		'text' => 1,
+		'thumbnail' => 0,
+		'tiff' => 2,
+		'uploaded_files' => 2,
+		'viewitem' => 1,
+		'wav' => 2,
+		'xml' => 1,
+		'xsl' => 1,
 	);
 
 	public static function generate()
@@ -31,7 +55,7 @@ class Dase_Acl
 		}
 	}
 
-	public static function generateCollectionData()
+	public static function getCollectionData()
 	{
 		$cdata = array();
 		$cache = Dase_Cache::get('collection_data');
@@ -64,8 +88,7 @@ class Dase_Acl
 	public static function check($coll,$size,$eid=null)
 	{
 		$cdata = Dase_Acl::getCollectionData();
-		$sizes = Dase_Config::get('sizes');
-		$gate = $sizes[$size];
+		$gate = self::$sizes[$size];
 		if (!$gate) {
 			return $cdata[$coll]['path_to_media_files'];
 		}

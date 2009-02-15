@@ -37,7 +37,7 @@ class Dase_Handler_Login extends Dase_Handler
 		//all valid users need to be superusers
 		$username = strtolower($r->get('username'));
 		$pass = $r->get('password');
-		$superusers = Dase_Config::get('superuser');
+		$superusers = $r->config->get('superuser');
 		if (isset($superusers[$username]) && $superusers[$username] == $pass) {
 			Dase_Cookie::setEid($username);
 			Dase_DBO_DaseUser::init($username);

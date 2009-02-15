@@ -2,61 +2,64 @@
 
 class Dase_Http_Auth
 {
-	/** an entity, such as tag or collection will have ONE password
-	 * for a given eid.  This simply "authenticates" the user.
-	 * authorization happens after the eid is verified.  After that,
-	 * authorization level will be determined based on other criteria
-	 */
-	public static function getEid($check_db = false)
+	public function __construct($auth,$server)
+	{
+		$this->token = $auth['token'];
+		$this->serviceuser = $auth['serviceuser'];
+		$this->service_token = $auth['service_token'];
+		$this->superuser = $auth['superuser'];
+		if (isset($server['PHP_AUTH_USER'])) {
+			$this->htuser = $server['PHP_AUTH_USER'];
+		} else {
+			$this->htuser = '';
+		}
+		if (isset($server['PHP_AUTH_PW'])) {
+			$this->htpass = $server['PHP_AUTH_PW'];
+		} else {
+			$this->htpass = '';
+		}
+	}
+
+	public function getEid($check_db = false)
 	{
 		$request_headers = apache_request_headers();
 		$passwords = array();
-		Dase_Log::debug(print_r($request_headers,true));
+		Dase_Log::get()->debug(print_r($request_headers,true));
 
-		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-			$eid = $_SERVER['PHP_AUTH_USER'];
-			$passwords[] = substr(md5(Dase_Config::get('token').$eid.'httpbasic'),0,12);
-
-			//xmlhttp requests are still fresh for one day after pwd changes
-			//Dase_Log::debug(print_r($request_headers,true));
-			if (isset($request_headers['X-Requested-With']) &&
-				"XMLHttpRequest" == $request_headers['X-Requested-With']) 
-			{
-				$passwords[] = substr(md5(Dase_Config::get('old_token').$eid.'httpbasic'),0,12);
-			}
-
+		if ($this->htuser && $this->htpass) {
+			$eid = $this->htuser;
+			$passwords[] = substr(md5($this->token.$eid.'httpbasic'),0,12);
 
 			//for service users:
-			$service_users = Dase_Config::get('serviceuser');
+			$service_users = $auth['serviceuser'];
 			//if eid is among service users, get password w/ service_token as salt
 			if (isset($service_users[$eid])) {
-				$passwords[] = Dase_Auth::getServicePassword($eid);
+				$passwords[] = md5($this->service_token.$eid);
 			}
 
 			//lets me use the superuser passwd for http work
-			$su = Dase_Config::get('superuser');
-			if (isset($su[$eid])) {
-				$passwords[] = $su[$eid];
+			if (isset($this->superuser[$eid])) {
+				$passwords[] = $this->superuser[$eid];
 			}
 
 			//this is used for folks needing a quick service pwd to do uploads
 			if ($check_db) {
 				$u = Dase_DBO_DaseUser::get($eid);
-				$pass_md5 = md5($_SERVER['PHP_AUTH_PW']);
+				$pass_md5 = md5($this->htpass);
 				if ($pass_md5 == $u->service_key_md5) {
-					Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
+					Dase_Log::get()->debug('accepted user '.$eid.' using password '.$this->htpass);
 					return $eid;
 				}
 			}
 
-			if (in_array($_SERVER['PHP_AUTH_PW'],$passwords)) {
-				Dase_Log::debug('accepted user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
+			if (in_array($this->htpass,$passwords)) {
+				//Dase_Log::get()->debug('accepted user '.$eid.' using password '.$this->htpass);
 				return $eid;
 			} else {
-				Dase_Log::debug('rejected user '.$eid.' using password '.$_SERVER['PHP_AUTH_PW']);
+				//Dase_Log::get()->debug('rejected user '.$eid.' using password '.$this->htpass);
 			}
 		} else {
-			Dase_Log::debug('PHP_AUTH_USER and/or PHP_AUTH_PW not set');
+			//Dase_Log::get()->debug('PHP_AUTH_USER and/or PHP_AUTH_PW not set');
 		}
 		header('WWW-Authenticate: Basic realm="DASe"');
 		header('HTTP/1.1 401 Unauthorized');

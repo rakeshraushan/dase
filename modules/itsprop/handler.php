@@ -3,6 +3,7 @@
 class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public $app_root = APP_ROOT;
+	private $service_pass = 'bcd21028d4501572a0bc1ee3332692a2';
 	public $is_chair = false;
 	public $resource_map = array(
 		'test' => 'test',
@@ -53,7 +54,6 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				} else {
 					$this->is_superuser = false;
 				}
-				$this->service_pass = Dase_Auth::getServicePassword('itsprop');
 			}
 		}
 	}
@@ -171,7 +171,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	
 		$header = "From: LAITS Grant Proposal_Application \r\n";
 		//use $email when its for real
-		Dase_Log::debug('sending email to '.$email);
+		Dase_Log::get()->debug('sending email to '.$email);
 		mail($email,$title,$text,$header);
 		mail('pkeane@mail.utexas.edu','[DEBUG] '.$title,$text,$header);
 		$submitter_email = $person->person_email['text'];

@@ -2,21 +2,6 @@
 
 class Dase_Http_Response
 {
-	//from redberry:
-
-	const OK = '200 OK';
-	const CREATED = '201 Created';
-	const ACCEPTED = '202 Accepted';
-	const MOVED = '301 Moved Permanently';
-	const LOCATED = '302 Located';
-	const BADREQUEST = '400 Bad Request';
-	const UNAUTHORIZED = '401 Unauthorized';
-	const FORBIDDEN = '403 Forbidden';
-	const NOTFOUND = '404 Not Found';
-	const METHODNOTALLOWED = '405 Method Not Allowed';
-	const INTERNALSERVERERROR = '500 Internal Server Error';
-	const NOTIMPLEMENTED = '501 Not Implemented';
-
 	private static $codes = array(
 		"100" => "Continue ",
 		"101" => "Switching Protocols ",
@@ -66,19 +51,25 @@ class Dase_Http_Response
 	public function __construct($request)
 	{
 		$this->request =  $request;
+		$this->mime_type = $request->response_mime_type;
 	}
 
 	public function render($content,$set_cache=true,$status_code=null)
 	{
 		if ($set_cache) {
-			$cache = Dase_Cache::get($this->request->getCacheId());
-			$cache->setData($content);
+			$type = $this->request->config->get('cache');
+			$dir = $this->request->config->get('bash_path').'/'.$this->request->config->get('cache_dir');
+			$server = $this->request->config->get('server');
+			$ip = $server['SERVER_ADDR'];
+			$cache_id = $this->request->getCacheId();
+			$cache = new Dase_Cache($type,$dir,$ip);
+			$cache->setData($cache_id,$content);
 		}
 		if ($status_code) {
 			$message = $status_code.' '.self::$codes[$status_code]; 
 			header("HTTP/1.1 $message");
 		}
-		header("Content-Type: ".$this->request->response_mime_type."; charset=utf-8");
+		header("Content-Type: ".$this->mime_type."; charset=utf-8");
 		echo $content;
 		exit;
 	}
@@ -125,7 +116,7 @@ class Dase_Http_Response
 				$query_array[] = urlencode($key).'='.urlencode($val);
 			}
 		}
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $this->request->app_root;
 		if ('http' != substr($path,0,4)) {
 			$redirect_path = trim($app_root,'/') . "/" . trim($path,'/');
 		} else {
@@ -139,7 +130,7 @@ class Dase_Http_Response
 				$redirect_path .= '?'.join("&",$query_array);
 			}
 		}
-		Dase_Log::info('redirecting to '.$redirect_path);
+		Dase_Log::get()->info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
 	}
@@ -169,7 +160,7 @@ class Dase_Http_Response
 			$error_text .= "DASe Error Report\n\n";
 			$error_text .= "[http_error_code] => $code\n";
 		}
-		Dase_Log::debug($error_text);
+		Dase_Log::get()->debug($error_text);
 		if ($msg) {
 			print $msg;
 		} else {
@@ -202,7 +193,7 @@ class Dase_Http_Response
 	{
 		//see http://bugs.php.net/bug.php?id=34206
 		// if strange 'failed to open stream' messages appear
-		Dase_Log::debug('finished request '.Dase_Timer::getElapsed());
+		Dase_Log::get()->debug('finished request '.$this->request->getElapsed());
 	}
 }
 

@@ -92,39 +92,36 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $this->injectAtomEntryData($entry)->asXml();
 	}
 
-	public function getRelativeUrl($coll='')
+	public function getUrl($coll='')
 	{
 		if (false !== strpos($this->ascii_id,'admin_')) {
-			return 'attribute/'.$this->ascii_id;
+			return '{APP_ROOT}/attribute/'.$this->ascii_id;
 		}
 		if (!$coll) {
 			$coll = $this->getCollection()->ascii_id;
 		}
-		return 'attribute/'.$coll.'/'.$this->ascii_id;
+		return '{APP_ROOT}/attribute/'.$coll.'/'.$this->ascii_id;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null,$app_root='')
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null)
 	{
 		if ($c) {
 			$this->collection = $c;
 		} else {
 			$c = $this->getCollection();
 		}	
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
-		$base_url = $app_root.'/'.$this->getRelativeUrl($c->ascii_id);
+		$url = $this->getUrl($c->ascii_id);
 		$entry->setTitle($this->attribute_name);
-		$entry->setId($base_url);
-		$entry->addLink($base_url.'.atom');
-		$entry->addLink($base_url.'.atom','edit');
+		$entry->setId($url);
+		$entry->addLink($url.'.atom');
+		$entry->addLink($url.'.atom','edit');
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype');
 		$entry->addCategory($this->html_input_type,'http://daseproject.org/category/html_input_type');
 		foreach ($this->getItemTypes() as $type) {
 			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/parent_item_type',$type->name);
 		}
 		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
-			$entry->addLink($base_url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
+			$entry->addLink($url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
 		}
 		//compat
 		if (is_numeric($this->updated)) {
@@ -337,18 +334,18 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$values_array = $this->getDisplayValues(null,2000,$filter_key,$filter_value);
 		}
 		$feed = new Dase_Atom_Feed;
-		$feed->setId(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
+		$feed->setId('{APP_ROOT}/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
 		$feed->setFeedType('attribute_values');
 		$feed->setTitle('values for '.$collection_ascii_id.'.'.$this->ascii_id);
 		//since we do not have a class for an attribute_value feed, stick ascii_id in subtitle
 		$feed->setSubtitle($this->ascii_id);
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
-		$feed->addLink(APP_ROOT.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
+		$feed->addLink('{APP_ROOT}/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
 		foreach ($values_array as $v) {
 			$entry = $feed->addEntry();
-			$entry->setId(APP_ROOT.'/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
-			$entry->addLink(APP_ROOT.'/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
+			$entry->setId('{APP_ROOT}/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
+			$entry->addLink('{APP_ROOT}/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
 			$entry->setUpdated(date(DATE_ATOM));
 			$entry->setTitle($v['v']);
 		}
@@ -375,7 +372,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$new_sort_order = 0;
 		$coll = $this->getCollection(); 
 		foreach ($coll->getAttributes() as $att) {
-			//Dase_Log::debug('----------------'.$target);
+			//Dase_Log::get()->debug('----------------'.$target);
 			$new_sort_order++;
 			if ($new_sort_order == $target) {
 				$this->sort_order = $new_sort_order;
@@ -405,7 +402,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	{
 		$c = $this->getCollection(); 
 		$cats = new Dase_Atom_Categories();
-		$cats->setScheme(APP_ROOT.'/attribute/'.$c->ascii_id.'/'.$this->ascii_id.'/defined');
+		$cats->setScheme('{APP_ROOT}/attribute/'.$c->ascii_id.'/'.$this->ascii_id.'/defined');
 		foreach ($this->getDefinedValues() as $d) {
 			$cats->addCategory($d);
 		}

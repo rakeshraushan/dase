@@ -521,7 +521,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($fetch_enclosure) {
 			$enc = $this->getEnclosure(); 
 			if ($enc) {
-				$upload_dir = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+				$upload_dir = $r->config->get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
 					$r->renderError(401,'missing upload directory');
 				}
@@ -533,12 +533,15 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$file = Dase_File::newFile($new_file,$enc['mime_type']);
 					$media_file = $file->addToCollection($item,false);
 				} catch(Exception $e) {
-					Dase_Log::debug('error',$e->getMessage());
+					Dase_Log::get()->debug('error',$e->getMessage());
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}
 			}
 		} 
-		$item->expireCaches();
+		//messy
+		$item->expireCaches(
+			$r->config->get('cache'),$r->config->get('base_dir').'/'.$r->config->get('cache_dir')
+		);
 		$item->buildSearchIndex();
 		return $item;
 	}

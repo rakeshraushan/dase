@@ -27,6 +27,7 @@ class Dase_Handler_Item extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$this->path_to_media = $r->config->get('path_to_media');
 		if (!$this->item) {
 			$r->renderError(404);
 		}
@@ -350,7 +351,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
-			$this->item->expireCaches();
+			$this->item->expireCaches($r->config['cache'],$r->config['base_dir'].'/'.$r->config['cache_dir']);
 			$this->item->saveAtom();
 			if (!$type) {
 				$type = 'default/none';
@@ -442,7 +443,7 @@ class Dase_Handler_Item extends Dase_Handler
 			try {
 				$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			} catch(Exception $e) {
-				Dase_Log::debug('error',$e->getMessage());
+				Dase_Log::get()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('item' != $item_entry->entrytype) {
@@ -482,7 +483,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$url = file_get_contents("php://input");
 			$filename = array_pop(explode('/',$url));
 			$ext = array_pop(explode('.',$url));
-			$upload_dir = Dase_Config::get('path_to_media').'/'.$this->collection->ascii_id.'/uploaded_files';
+			$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
 			if (!file_exists($upload_dir)) {
 				$r->renderError(401,'missing upload directory');
 			}
@@ -494,10 +495,10 @@ class Dase_Handler_Item extends Dase_Handler
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
 				$item->deleteMedia();
-				$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
+				$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 				unlink($new_file);
 			} catch(Exception $e) {
-				Dase_Log::debug('error',$e->getMessage());
+				Dase_Log::get()->debug('error',$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
 			$item->buildSearchIndex();
@@ -535,7 +536,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		}
 
-		$upload_dir = Dase_Config::get('path_to_media').'/'.$coll->ascii_id.'/uploaded_files';
+		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
@@ -557,14 +558,14 @@ class Dase_Handler_Item extends Dase_Handler
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
-			$media_file = $file->addToCollection($item,false);  //set 2nd param to true to test for dups
+			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
-			Dase_Log::debug('error',$e->getMessage());
+			Dase_Log::get()->debug('error',$e->getMessage());
 			//delete uploaded file
 			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
-		$item->expireCaches();
+		$item->expireCaches($r->config['cache'],$r->config['base_dir'].'/'.$r->config['cache_dir']);
 		$item->buildSearchIndex();
 		//delete uploaded file
 		unlink($new_file);

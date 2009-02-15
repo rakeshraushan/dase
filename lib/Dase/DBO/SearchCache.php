@@ -18,14 +18,15 @@ class Dase_DBO_SearchCache extends Dase_DBO_Autogen_SearchCache
 	}
 
 	/** check db to get file cache ids to expire */
-	public static function deleteRecent()
+	public static function deleteRecent($r)
 	{
 		$one_hour_ago = date(DATE_ATOM,time()-(60*60));
 		$search_caches = new Dase_DBO_SearchCache;
 		$search_caches->addWhere('timestamp',$one_hour_ago,'>');
 		$count = 0;
+		$cache = new Dase_Cache($r->config->get('cache'),$r->config->get('base_path').'/'.$r->config->get('cache_dir'));
 		foreach ($search_caches->find() as $sc) {
-			Dase_Cache_File::expungeByHash($sc->search_md5);
+			$cache->expungeByHash($sc->search_md5);
 			$sc->delete();
 			$count++;
 		}

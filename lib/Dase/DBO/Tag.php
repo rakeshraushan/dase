@@ -250,7 +250,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getLink() 
 	{
-		$app_root = Dase_Config('app_root');
+		$app_root = Dase_Config::get('app_root');
 		$this->user || $this->getUser(); 
 		return $app_root . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
 	}
@@ -304,7 +304,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	{
 
 		if (!$app_root) {
-			$app_root = Dase_Config('app_root');
+			$app_root = Dase_Config::get('app_root');
 		}
 
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
@@ -325,7 +325,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		foreach($this->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
 			if (!$item) {
-				Dase_Log::debug('tag_item missing item: '.$tag_item->id);
+				Dase_Log::get()->debug('tag_item missing item: '.$tag_item->id);
 				continue;
 			}
 			$json_item = array();
@@ -353,7 +353,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	function asAtom($app_root='')
 	{
 		if (!$app_root) {
-			$app_root = Dase_Config('app_root');
+			$app_root = Dase_Config::get('app_root');
 		}
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;

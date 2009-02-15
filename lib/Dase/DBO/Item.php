@@ -42,46 +42,34 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$atom = new Dase_DBO_ItemAsAtom;
 		$atom->item_id = $this->id;
-		$atom->app_root = Dase_Config::get('app_root');
-		if (!$atom->findOne()) {
-			$atom->insert();
-		}
-
-		$this_app_root_entry = null;
-		//regenerate for EACH app root
-		$atom = new Dase_DBO_ItemAsAtom;
-		$atom->item_id = $this->id;
-		foreach ($atom->find() as $found) {
+		if ($atom->findOne()) {
 			$c = $this->getCollection();
 			$entry = new Dase_Atom_Entry_Item;
-			$entry = $this->injectAtomEntryData($entry,$c,$found->app_root);
+			$entry = $this->injectAtomEntryData($entry,$c);
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->app_root = $found->app_root;
 			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->update();
-			if (Dase_Config::get('app_root') == $found->app_root) {
-				$this_app_root_entry = $entry;
-			}
+		} else {
+			$c = $this->getCollection();
+			$entry = new Dase_Atom_Entry_Item;
+			$entry = $this->injectAtomEntryData($entry,$c);
+			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
+			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$this->serial_number;
+			$atom->updated = date(DATE_ATOM);
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->update();
+			$atom->insert();
 		}
-		return $this_app_root_entry;
+		return $entry;
 	}
 
 	public static function getByUrl($url)
 	{
-		$app_root = Dase_Config::get('app_root');
-		$path = str_replace($app_root,'',$url);
-		if (strpos($path,'.') !== false) {
-			$parts = explode('.', $path);
-			$ext = array_pop($parts);
-			if (isset(Dase_Http_Request::$types[$ext])) {
-				$path = join('.',$parts);
-			} else {	
-				//path remains what it originally was
-			}
-		}
-		$sections = explode('/',trim($path,'/'));
+		//ignores everything but last two sections
+		$url = str_replace('.atom','',$url);
+		$sections = explode('/',trim($url,'/'));
 		$sernum = array_pop($sections);
 		$coll = array_pop($sections);
 		//will return false if no such item
@@ -184,7 +172,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
 		$this->update();
-		Dase_Log::debug("built indexes for " . $this->serial_number);
+		Dase_Log::get()->debug("built indexes for " . $this->serial_number);
 	}
 
 	public function getRawMetadata()
@@ -211,7 +199,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getMetadata($att_ascii_id = '')
 	{
-		$app_root = Dase_Config::get('app_root');
 		$c = $this->getCollection();
 		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
@@ -237,7 +224,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			";
 		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
-			$row['href'] = $app_root.'/attribute/'.$c->ascii_id.'/'.$row['ascii_id'];
+			$row['href'] = '{APP_ROOT}/attribute/'.$c->ascii_id.'/'.$row['ascii_id'];
 			$metadata[] = $row;
 		}
 		return $metadata;
@@ -257,7 +244,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getAdminMetadata($att_ascii_id = '')
 	{
-		$app_root = Dase_Config::get('app_root');
 		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
 		$bound_params = array();
@@ -282,7 +268,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			";
 		$st = Dase_DBO::query($sql,$bound_params);
 		while ($row = $st->fetch()) {
-			$row['href'] = $app_root.'/attribute/'.$row['ascii_id'];
+			$row['href'] = '{APP_ROOT}/attribute/'.$row['ascii_id'];
 			$metadata[] = $row;
 		}
 	
@@ -293,7 +279,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getMetadataJson()
 	{
 		$c = $this->getCollection();
-		$app_root = Dase_Config::get('app_root');
 		$prefix = Dase_Config::get('table_prefix');
 		$metadata = array();
 		$bound_params = array();
@@ -311,7 +296,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		while ($row = $st->fetch()) {
 			$set = array();
 			$set['value_id'] = $row['value_id'];
-			$set['url'] = $app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['value_id'];
+			$set['url'] = '{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['value_id'];
 			$set['collection_id'] = $row['collection_id'];
 			$set['att_ascii_id'] = $row['ascii_id'];
 			$set['attribute_name'] = $row['attribute_name'];
@@ -390,7 +375,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getMedia($order_by='file_size')
 	{
-		Dase_Log::debug("getting media for " . $this->id);
+		Dase_Log::get()->debug("getting media for " . $this->id);
 		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
 		$m->p_collection_ascii_id = $c->ascii_id;
@@ -412,7 +397,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $m->findOne();
 	}
 
-	public function getMediaRelativeUrl($size)
+	public function getMediaUrl($size)
 	{  //size really means type here
 		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
@@ -420,7 +405,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->p_serial_number = $this->serial_number;
 		$m->size = $size;
 		if ($m->findOne()) {
-			$url = "media/{$c->ascii_id}/$size/$m->filename";
+			$url = "{APP_ROOT}/media/{$c->ascii_id}/$size/$m->filename";
 			return $url;
 		} else {
 			return false;
@@ -542,7 +527,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return($v->insert());
 		} else {
 			//simply returns false if no such attribute
-			Dase_Log::debug('[WARNING] no such attribute '.$att_ascii_id);
+			Dase_Log::get()->debug('[WARNING] no such attribute '.$att_ascii_id);
 			return false;
 		}
 	}
@@ -751,7 +736,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			if ($parent_item) {
 				//$label = $parent_type->name.': '.$parent_item->getTitle();
 				$label = $parent_item->getTitle();
-				$url = $parent_item->getRelativeUrl($c->ascii_id);
+				$url = $parent_item->getUrl($c->ascii_id);
 				$parent_items[$url] = array(
 					'label' => $label,
 					'item_type' => $parent_type->ascii_id,
@@ -771,13 +756,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $types;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null,$app_root='')
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$c = null)
 	{
 		if (!$this->id) { return false; }
-
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
 
 		/* namespaces */
 
@@ -793,7 +774,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$c = $this->getCollection();
 		}	
 
-		$base_url = $app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number;
+		$base_url = '{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number;
 		$type = $this->getItemType();
 
 		/* standard atom stuff */
@@ -817,10 +798,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setEdited($entry->getUpdated());
 
 		//alternate link
-		$entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number,'alternate');
+		$entry->addLink('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number,'alternate');
 
 		//link to item metadata json, used for editing metadata
-		$entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
+		$entry->addLink('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
 
 		/* edit, dase/edit (json), service, and attributes (json) links
 		 * for item.  If item has a type, that is the parent (atompub) collection
@@ -829,45 +810,45 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		if ('default' == $type->ascii_id) {
 			$entry->addLink(
-				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom',
+				'{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom',
 				'edit','application/atom+xml');
 			$entry->addLink(
-				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/content',
+				'{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/content',
 				'http://daseproject.org/relation/edit-content');
 			$entry->addLink(
-				$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.json',
+				'{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');
 			$entry->addLink(
-				$app_root.'/collection/'.$c->ascii_id.'/service',
+				'{APP_ROOT}/collection/'.$c->ascii_id.'/service',
 				'service','application/atomsvc+xml','',$c->collection_name.' Item Type Service Doc' );
 			$entry->addLink(
-				$app_root.'/collection/'.$c->ascii_id.'/attributes.json',
+				'{APP_ROOT}/collection/'.$c->ascii_id.'/attributes.json',
 				'http://daseproject.org/relation/attributes',
 				'application/json','',$c->collection_name.' Attributes' );
 		} else {
 			$entry->addLink(
-				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom',
+				'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom',
 				'edit','application/atom+xml');
 			$entry->addLink(
-				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
+				'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');
 			$entry->addLink(
-				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/content',
+				'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/content',
 				'http://daseproject.org/relation/edit-content');
 			$entry->addLink(
-				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/service',
+				'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/service',
 				'service','application/atomsvc+xml','',$type->name.' Item Type Service Doc' );
 			$entry->addLink(
-				$app_root.'/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/attributes.json',
+				'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$type->ascii_id.'/attributes.json',
 				'http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
 		}
 
 		/* parents link (can be posted to) */
-		$entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents','http://daseproject.org/relation/parents');
+		$entry->addLink('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents','http://daseproject.org/relation/parents');
 
 		/* threading extension */
 
-		$replies = $entry->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments','replies' );
+		$replies = $entry->addLink('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments','replies' );
 		$thr_count = $this->getCommentsCount();
 		if ($thr_count) {
 			//lookup
@@ -881,7 +862,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->setEntrytype('item');
 
 		//allows us to replace all if/when necessary :(
-		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
+		$entry->addCategory({APP_ROOT},"http://daseproject.org/category/base_url");
 
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);
@@ -908,12 +889,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$meta = $entry->addCategory(
 						$row['ascii_id'],'http://daseproject.org/category/metadata',
 						$row['attribute_name'],$row['value_text']);
-					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					$meta->setAttributeNS($d,'d:edit-id','{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				} else {
 					$meta = $entry->addCategory(
 						$row['ascii_id'],'http://daseproject.org/category/private_metadata',
 						$row['attribute_name'],$row['value_text']);
-					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					$meta->setAttributeNS($d,'d:edit-id','{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				}
 				if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
 					$entry->setTitle($row['value_text']);
@@ -938,12 +919,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			foreach ($this->getChildTypesList() as $child => $set) {
 				//one for the Atom version
 				$entry->addLink(
-					$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
+					'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
 					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 				//one for the JSON version
 				$entry->addLink(
-					$app_root.'/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
+					'{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
 					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
 					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
 			}
@@ -951,7 +932,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 			//adds a link to any parent item(s)
 			foreach ($this->getParentItemsArray() as $url => $set) {
-				$entry->addLink($app_root.'/'.$url,'http://daseproject.org/relation/parent','','',$set['label'])
+				$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
 					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			}
 
@@ -960,7 +941,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			 * suitable for creating a pull-down menu
 			 */
 			foreach ($this->getParentTypes() as $pt) {
-				$entry->addLink($app_root.'/'.$pt->getRelativeUrl($c->ascii_id).'.json',
+				$entry->addLink($pt->getUrl($c->ascii_id).'.json',
 					'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
 			}
 		}
@@ -979,19 +960,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* put thumbnail in summary */
 		$thumb_url = $this->getMediaRelativeUrl('thumbnail');
 		if ($thumb_url) {
-			$entry->setThumbnail($app_root.'/'.$thumb_url);	
+			$entry->setThumbnail('{APP_ROOT}/'.$thumb_url);	
 		}
 
 		/* enclosure */
 
 		$enc = $this->getEnclosure();
 		if ($enc) {
-			$entry->addLink($app_root.'/'.$this->getMediaRelativeUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
+			$entry->addLink('{APP_ROOT}/'.$this->getMediaRelativeUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
 
 		/* edit-media link */
 
-		$entry->addLink($app_root.'/'.$this->getEditMediaRelativeUrl($c->ascii_id),'edit-media');
+		$entry->addLink('{APP_ROOT}/'.$this->getEditMediaRelativeUrl($c->ascii_id),'edit-media');
 
 		/* media rss ext */
 
@@ -1020,7 +1001,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function injectAtomFeedData(Dase_Atom_Feed $feed)
 	{
 		if (!$this->id) { return false; }
-		$app_root = Dase_Config::get('app_root');
 		$c = $this->getCollection();
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
@@ -1030,7 +1010,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
 		$feed->setId('tag:'.Dase_Util::getUniqueName());
-		$feed->addLink($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','self' );
+		$feed->addLink('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom','self' );
 		$feed->addAuthor();
 		return $feed;
 	}
@@ -1085,34 +1065,33 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}	
 
-	public function getRelativeUrl($coll='') 
+	public function getUrl($coll='') 
 	{
 		if (!$coll) {
 			$coll = $this->getCollection()->ascii_id;
 		}
-		return 'item/'.$coll.'/'.$this->serial_number;
+		return '{APP_ROOT}/item/'.$coll.'/'.$this->serial_number;
 	}
 
-	public function getEditMediaRelativeUrl($coll='')
+	public function getEditMediaUrl($coll='')
 	{
 		if (!$coll) {
 			$coll = $this->getCollection()->ascii_id;
 		}
-		return 'media/'.$coll.'/'.$this->serial_number;
+		return '{APP_ROOT}/media/'.$coll.'/'.$this->serial_number;
 	}
 
 	public function getAtomPubServiceDoc() {
-		$app_root = Dase_Config::get('app_root');
 		$c = $this->getCollection();
 		$app = new Dase_Atom_Service;
 		$workspace = $app->addWorkspace($c->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/media.atom',$c->collection_name.' Item '.$this->serial_number.' Media'); 
-		foreach(Dase_Config::get('media_types') as $type) {
+		$media_coll = $workspace->addCollection('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/media.atom',$c->collection_name.' Item '.$this->serial_number.' Media'); 
+		foreach(Dase_Media::getAcceptedTypes() as $type) {
 			$media_coll->addAccept($type);
 		}
-		$parents_coll = $workspace->addCollection($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents.atom',$c->collection_name.' Item '.$this->serial_number.' Parents'); 
+		$parents_coll = $workspace->addCollection('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/parents.atom',$c->collection_name.' Item '.$this->serial_number.' Parents'); 
 		$parents_coll->addAccept('text/uri-list');
-		$comments_coll = $workspace->addCollection($app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
+		$comments_coll = $workspace->addCollection('{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
 		$comments_coll->addAccept('text/plain');
 		$comments_coll->addAccept('text/html');
 		$comments_coll->addAccept('application/xhtml+xml');
@@ -1122,13 +1101,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function asArray()
 	{
 		$j = array();
-		$app_root = Dase_Config::get('app_root');
 		$c = $this->getCollection();
 		$item_array['serial_number'] = $this->serial_number;
 		$item_array['created'] = $this->created;
 		$item_array['updated'] = $this->updated;
 		$item_array['collection'] = $c->ascii_id;
-		$item_array['edit'] = $app_root.'/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom';
+		$item_array['edit'] = '{APP_ROOT}/item/'.$c->ascii_id.'/'.$this->serial_number.'.atom';
 		$item_array['metadata'] = array();
 		foreach ($this->getMetadata() as $row) {
 			//note: a simpler way would be to ALWAYS make value an array.
@@ -1149,7 +1127,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_array['media'] = array();
 		foreach ($this->getMedia() as $m) {
 		$item_array['media'][$m->size] = 
-			$app_root.'/media/'.
+			'{APP_ROOT}/media/'.
 			$c->ascii_id.'/'.$m->size.'/'.$m->filename;
 		}
 		$con = $this->getContents();
@@ -1348,12 +1326,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	}
 
 	/** expires any cache that might hold stale metadata */
-	public function expireCaches()
+	public function expireCaches($type,$cache_path)
 	{
 		// attributes json (includes tallies)
 		$c = $this->getCollection();
 		$cache_id = "get|collection/".$c->ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
-		Dase_Cache::get($cache_id)->expire();
+		$cache = new Dase_Cache($type,$cache_path);
+		$cache->expire($cache_id);
 	
 	}
 }

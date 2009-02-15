@@ -29,6 +29,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$this->path_to_media = $r->config->get('path_to_media');
 		if (!$this->collection) {
 			$r->renderError(404);
 		}
@@ -256,7 +257,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('type',$type);
 		$tpl->assign('attributes',$this->collection->getAttributes('attribute_name'));
 		$tpl->assign('item_types',$this->collection->getItemTypes());
-		$tpl->assign('edit_url',$app_root.'/'.$type->getRelativeUrl($coll).'.atom');
+		$tpl->assign('edit_url',$app_root.'/'.$type->getUrl($coll).'.atom');
 		$r->set('tab','item_types');
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
 	}
@@ -486,9 +487,9 @@ class Dase_Handler_Manage extends Dase_Handler
 			$type = $_FILES[$input_name]['type'];
 			if (!Dase_Media::isAcceptable($type)) {
 				$r->renderError(415,'unsupported media type: '.$type);
-				Dase_Log::debug($type.' is not a supported media type');
+				Dase_Log::get()->debug($type.' is not a supported media type');
 			}
-			Dase_Log::info('uploading file '.$name.' type: '.$type);
+			Dase_Log::get()->info('uploading file '.$name.' type: '.$type);
 
 			$item = $this->collection->createNewItem(null,$this->user->eid);
 			if ($r->has('title')) {
@@ -499,7 +500,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 			$file = Dase_File::newFile($path,$type,$name);
 			//this'll create thumbnail, viewitem, and any derivatives
-			$media_file = $file->addToCollection($item,false);
+			$media_file = $file->addToCollection($item,false,$this->path_to_media);
 			$item->buildSearchIndex();
 		} else {
 			//no file, if there is a title, assume it is a new item w/o media

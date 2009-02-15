@@ -29,6 +29,7 @@ abstract class Dase_File
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
 	protected $orig_name;
+	protected $path_to_media
 
 	protected function __construct($file,$mime='')
 	{  //can ONLY be called by subclass
@@ -109,7 +110,7 @@ abstract class Dase_File
 		return $this->orig_name;
 	}
 
-	public function addToCollection($item,$check_for_dups)
+	public function addToCollection($item,$check_for_dups,$path_to_media)
 	{
 		$c = $item->getCollection();
 		//check for multi-layered tiff
@@ -150,12 +151,12 @@ abstract class Dase_File
 		}
 
 		$subdir =  Dase_Util::getSubdir($item->serial_number);
-		$subdir_path = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir;  
+		$subdir_path = $path_to_media.'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir;  
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
 
-		$target = Dase_Config::get('path_to_media').'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir.'/'.$item->serial_number.'.'.$this->ext;
+		$target = $path_to_media.'/'.$c->ascii_id.'/'.$this->size.'/'.$subdir.'/'.$item->serial_number.'.'.$this->ext;
 		if (file_exists($target)) {
 			//make a timestamped backup
 			copy($target,$target.'.bak.'.time());
@@ -250,7 +251,7 @@ abstract class Dase_File
 	{
 		$size = $this->size;
 		$collection = $item->getCollection();
-		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/thumbnail/'.$size.'.jpg';
+		$target = $path_to_media.'/'.$collection->ascii_id . '/thumbnail/'.$size.'.jpg';
 		if (!file_exists($target)) {
 			copy(DASE_PATH.'/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
@@ -264,14 +265,14 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::info("created $media_file->size $media_file->filename");
+		Dase_Log::get()->info("created $media_file->size $media_file->filename");
 	}
 
 	function makeViewitem($item)
 	{
 		$size = $this->size;
 		$collection = $item->getCollection();
-		$target = Dase_Config::get('path_to_media').'/'.$collection->ascii_id . '/viewitem/'.$size.'.jpg';
+		$target = $path_to_media.'/'.$collection->ascii_id . '/viewitem/'.$size.'.jpg';
 		if (!file_exists($target)) {
 			copy(DASE_PATH . '/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
@@ -285,7 +286,7 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::info("created $media_file->size $media_file->filename");
+		Dase_Log::get()->info("created $media_file->size $media_file->filename");
 	}
 
 }

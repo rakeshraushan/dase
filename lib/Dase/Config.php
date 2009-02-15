@@ -2,44 +2,39 @@
 
 class Dase_Config {
 
-	private static $conf;
+	private $conf = array();
 
-	private static function _init()
+	public function __construct($base_path)
 	{
-		if (is_null(self::$conf)) {
-			$conf = array();
-			include(DASE_CONFIG);
-			self::$conf = $conf;
-		}
+		$this->conf['app']['base_path'] = $base_path;
+
 	}
 
-	public static function get($key)
+	public function get($key)
 	{
-		self::_init();
-		if (isset(self::$conf[$key])) {
-			return self::$conf[$key];
+		if (isset($this->conf[$key])) {
+			return $this->conf[$key];
 		} else {
 			return false;
 		}
 	}
 
-	public static function getAll()
+	public function getAll()
 	{
-		self::_init();
-		return self::$conf;
+		return $this->$conf;
 	}
 
-	public static function set($key,$value)
+	public function set($key,$value)
 	{
-		self::_init();
-		self::$conf[$key] = $value;
+		$this->conf[$key] = $value;
 	}
 
-	public static function reload()
+	public function load($conf_file)
 	{
-		//allows module request to get module-defined config
-		$conf = array();
-		include(DASE_CONFIG);
-		self::$conf = $conf;
+		if (file_exists($conf_file)) {
+			$conf = $this->conf;
+			include($conf_file);
+			$this->conf = $conf;
+		}
 	}
 }
