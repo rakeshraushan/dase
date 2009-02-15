@@ -14,21 +14,23 @@ class Dase_Cookie {
 		'module' => 'DASE_MODULE',
 	);
 	protected $display_cookiename = 'DASE_DISPLAY_FORMAT';
+	protected $app_root;
+	protected $module;
 	protected $token;
 
-	public function __construct($config)
+	public function __construct($app_root,$module='',$token)
 	{
-		$this->config = $config;
+		$this->app_root = $app_root;
+		$this->module = $module;
+		$this->token = $token;
 	}
-
 
 	private function getPrefix() 
 	{
 		//NOTE that the cookie name will be unique per dase instance 
 		//(note: HAD been doing it by date, but that's no good when browser & server
 		//dates disagree)
-		$app_root = $this->config->get('app_root');
-		$prefix = str_replace('http://','',$app_root);
+		$prefix = str_replace('http://','',$this->app_root);
 		$prefix = str_replace('.','_',$prefix);
 		return str_replace('/','_',$prefix) . '_';
 	}
@@ -36,7 +38,7 @@ class Dase_Cookie {
 	public function setEid($eid) 
 	{
 		$pre = Dase_Cookie::getPrefix();
-		$key = md5($this->config->get('token').$eid);
+		$key = md5($this->token.$eid);
 		setcookie($pre . $this->user_cookiename,$eid,0,'/');
 		setcookie($pre . $this->auth_cookiename,$key,0,'/');
 	}
@@ -56,10 +58,9 @@ class Dase_Cookie {
 
 	public function get($type) 
 	{
-		$pre = Dase_Cookie::getPrefix();
+		$pre = $this->getPrefix();
 		if ('module' == $type) {
-			$module = $this->config->get('module');
-			$pre = $pre.$module.'_';
+			$pre = $pre.$this->module.'_';
 		}
 		if (isset($this->cookiemap[$type])) {
 			$cookiename = $pre . $this->cookiemap[$type];
@@ -71,11 +72,10 @@ class Dase_Cookie {
 
 	public function clearByType($type) 
 	{
-		$pre = Dase_Cookie::getPrefix();
+		$pre = $this->getPrefix();
 		if ('module' == $type) {
 			//allows each module their own module cookie
-			$module = $this->config->get('module');
-			$pre = $pre.$module.'_';
+			$pre = $pre.$this->module.'_';
 		}
 		if (isset($this->cookiemap[$type])) {
 			setcookie($pre . $this->cookiemap[$type],"",-86400,'/');
@@ -85,8 +85,7 @@ class Dase_Cookie {
 	/** simply checks the cookie */
 	public function getEid() 
 	{
-		$pre = Dase_Cookie::getPrefix();
-		$token = $this->config->get('token');
+		$pre = $this->getPrefix();
 		$key = '';
 		$eid = '';
 		if (isset($_COOKIE[$pre . $this->user_cookiename])) {
@@ -95,7 +94,7 @@ class Dase_Cookie {
 		if (isset($_COOKIE[$pre . $this->auth_cookiename])) {
 			$key = $_COOKIE[$pre . $this->auth_cookiename];
 		}
-		if ($key && $eid && $key == md5($token.$eid)) {
+		if ($key && $eid && $key == md5($this->token.$eid)) {
 			return $eid;
 		}
 		return false;
@@ -103,7 +102,7 @@ class Dase_Cookie {
 
 	public function clear() 
 	{
-		$pre = Dase_Cookie::getPrefix();
+		$pre = $this->getPrefix();
 		setcookie($pre . $this->user_cookiename,"",-86400,'/');
 		setcookie($pre . $this->auth_cookiename,"",-86400,'/');
 	}

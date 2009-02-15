@@ -4,12 +4,8 @@ require_once 'Dase/DBO/Autogen/CategoryScheme.php';
 
 class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme 
 {
-	public static function listAsFeed($order_by='created DESC',$app_root='')
+	public static function listAsFeed($order_by='created DESC')
 	{
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
-
 		$schemes = new Dase_DBO_CategoryScheme;
 		$schemes->orderBy($order_by);
 		$feed = new Dase_Atom_Feed;
@@ -20,8 +16,8 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 		$feed->setFeedType('category_scheme_list');
 		foreach ($schemes->find() as $sch) {
 			$e = $feed->addEntry('category_scheme');
-			$e->setId($app_root.'/category/'.$sch->uri);
-			$e->addLink($app_root.'/category/'.$sch->uri,'edit' );
+			$e->setId('{APP_ROOT}/category/'.$sch->uri);
+			$e->addLink('{APP_ROOT}/category/'.$sch->uri,'edit' );
 			$e->setUpdated($sch->created);
 			$e->addAuthor($sch->created_by_eid);
 			$e->setTitle($sch->name);

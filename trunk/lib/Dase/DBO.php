@@ -13,13 +13,15 @@ class Dase_DBO implements IteratorAggregate
 	public $bind = array();
 	private $table;
 	private $fields = array(); 
+	protected $db;
 	protected $limit;
 	protected $order_by;
 	protected $qualifiers = array();
 
-	function __construct( $table, $fields )
+	function __construct($db, $table, $fields )
 	{
-		$this->table = Dase_Config::get('table_prefix').$table;
+		$this->db = $db;
+		$this->table = $db['table_prefix'].$table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
 		}

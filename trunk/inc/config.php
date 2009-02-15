@@ -6,8 +6,8 @@ $conf['db']['host'] = 'localhost';
 $conf['db']['name'] = 'dase';
 $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
+$conf['db']['table_prefix'] = '';
 
-$conf['app']['table_prefix'] = '';
 $conf['app']['main_title'] = "My DASe Archive";
 
 //must be apache writeable
