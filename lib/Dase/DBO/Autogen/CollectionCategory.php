@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_CollectionCategory extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'collection_category',  array('category_id','collection_id'));
+		parent::__construct($db,'collection_category', array('category_id','collection_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

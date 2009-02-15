@@ -3,6 +3,7 @@
 class Dase_Http_Request
 {
 	private $members = array();
+	private $object_store = array();
 	private $params;
 	private $url_params = array();
 	private $user;
@@ -144,7 +145,7 @@ class Dase_Http_Request
 	public function checkCache($ttl=null)
 	{
 		$type = $this->cfg('cache');
-		$dir = $this->cfg('bash_path').'/'.$this->cfg('cache_dir');
+		$dir = $this->cfg('base_path').'/'.$this->cfg('cache_dir');
 		$serv = $this->cfg('server');
 		$ip = $serv['SERVER_ADDR'];
 		$cache = new Dase_Cache($type,$dir,$ip);
@@ -289,6 +290,20 @@ class Dase_Http_Request
 	public function set($key,$val)
 	{
 		$this->members[$key] = $val;
+	}
+
+	public function store($key,$object)
+	{
+		$this->object_store[$key] = $object;
+	}
+
+	public function retrieve($key)
+	{
+		if (isset($this->object_store[$key])) {
+			return $this->object_store[$key];
+		} else {
+			return false;
+		}
 	}
 
 	/** allows multiple values for a key */

@@ -37,16 +37,22 @@ function __autoloadFilename($class_name) {
 $logfile = dirname(__FILE__).'/log/dase.log';
 Dase_Log::get()->start($logfile,Dase_Log::DEBUG);
 
-$config = new Dase_Config($base_path);
+$config = new Dase_Config();
+$config->setBasePath(dirname(__FILE__));
 
 //load main config
-$config->load(dirname(__FILE__).'/inc/config.php');
+$config->load(dirname('inc/config.php');
 
 //load local config
-$config->load(dirname(__FILE__).'/inc/local_config.php');
+$config->load(dirname('inc/local_config.php');
 
 $r = new Dase_Http_Request($config);
-$r->set('cookie',new Dase_Cookie($config));
+$cookie = new Dase_Cookie($r->app_root,$r->module,$config->
+$db = new Dase_DB($config->get('db');
+$user = new Dase_DBO_DaseUser($db);
+
+$r->store('cookie',new Dase_Cookie($config));
+$r->store('db',new Dase_DB($config->get('db')));
 
 $app = new Dase($r);
 $app->run();

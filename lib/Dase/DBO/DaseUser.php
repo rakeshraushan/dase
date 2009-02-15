@@ -42,10 +42,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
-	public function getBaseUrl()
+	public function getUrl()
 	{
-		$app_root = Dase_Config::get('app_root');
-		return $app_root.'/user/'.$this->eid;
+		return '{APP_ROOT}/user/'.$this->eid;
 	}
 
 	public static function findByNameSubstr($str)
@@ -108,19 +107,18 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public static function listAsAtom($limit=100)
 	{
-		$app_root = Dase_Config::get('app_root');
 		$users = new Dase_DBO_DaseUser;
 		if ($limit) {
 			$users->setLimit($limit);
 		}
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('DASe Users');
-		$feed->setId($app_root.'/users');
+		$feed->setId('{APP_ROOT}/users');
 		$feed->setFeedType('user_list');
 		//todo:fix this to *not* simply be a time stamp
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
-		$feed->addLink($app_root.'/users.atom','self');
+		$feed->addLink('{APP_ROOT}/users.atom','self');
 		$users->orderBy('updated DESC');
 		foreach ($users->find() as $user) {
 			$entry = $feed->addEntry();
@@ -407,12 +405,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function getTagsAsAtom()
 	{
-		$app_root = Dase_Config::get('app_root');
 		//todo: look at Dase_DBO_Tag::getByUser and maybe merge them
 		//that one uses arrays, this, objects (so we get the 'inject...' method)
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->eid.' sets');
-		$feed->setId($app_root.'/user/'.$this->eid.'/sets');
+		$feed->setId('{APP_ROOT}/user/'.$this->eid.'/sets');
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();

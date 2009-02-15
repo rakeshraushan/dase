@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_InputTemplate extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'input_template',  array('attribute_id','collection_manager_id'));
+		parent::__construct($db,'input_template', array('attribute_id','collection_manager_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

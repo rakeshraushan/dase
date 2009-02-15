@@ -27,10 +27,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	public static function listAsFeed($category='')
 	{
 		//public ONLY!!!!!!
-		$app_root = Dase_Config::get('app_root');
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('public sets');
-		$feed->setId($app_root.'/sets');
+		$feed->setId('{APP_ROOT}/sets');
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
@@ -117,11 +116,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
-	public function getBaseUrl()
+	public function getUrl()
 	{
-		$app_root = Dase_Config::get('app_root');
 		$u = $this->getUser();
-		return $app_root.'/tag/'.$u->eid.'/'.$this->ascii_id;
+		return '{APP_ROOT}/tag/'.$u->eid.'/'.$this->ascii_id;
 	}
 
 	/** be careful w/ this -- we do not archive before deleting */
@@ -250,9 +248,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getLink() 
 	{
-		$app_root = Dase_Config::get('app_root');
-		$this->user || $this->getUser(); 
-		return $app_root . '/tag/' . $this->user->eid . '/' . $this->ascii_id;
+		return '{APP_ROOT}/tag/' . $this->getUser->eid . '/' . $this->ascii_id;
 	}
 
 	function addItem($item_unique,$updateCount=false)
@@ -300,12 +296,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 	}
 
-	function asJson($app_root='')
+	function asJson()
 	{
-
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
 
 		$collection_lookup = Dase_DBO_Collection::getLookupArray();
 		$json_tag;
@@ -329,8 +321,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				continue;
 			}
 			$json_item = array();
-			//$json_item['url'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/item/'.$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number; 
-			$json_item['url'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
+			$json_item['url'] = '{APP_ROOT}/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
 			$json_item['sort_order'] = $tag_item->sort_order;
 			//make sure p_ values are always populated!
 			$json_item['item_unique'] = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
@@ -341,7 +332,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$json_item['collection_name'] = $collection_lookup[$item->collection_id]['collection_name'];
 
 			foreach ($item->getMedia() as $m) {
-				$json_item['media'][$m->size] = $app_root.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+				$json_item['media'][$m->size] = '{APP_ROOT}/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
 			}
 			$json_tag['items'][] = $json_item;
 		}
@@ -350,26 +341,23 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		//return $js->json_format($json_tag);	
 	}
 
-	function asAtom($app_root='')
+	function asAtom()
 	{
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
-		}
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->name);
 		if ($this->description) {
 			$feed->setSubtitle($this->description);
 		}
-		$feed->setId($app_root . '/tag/'. $this->user->eid . '/' . $this->ascii_id);
+		$feed->setId('{APP_ROOT}/tag/'. $this->user->eid . '/' . $this->ascii_id);
 		$feed->setUpdated($this->updated);
 		$feed->addAuthor($this->user->eid);
 		$feed->setFeedType('tag');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
+		$feed->addLink('{APP_ROOT}/tag/'.$this->user->eid.'/'.$this->ascii_id.'.atom','self');
+		$feed->addLink('{APP_ROOT}/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
+		$feed->addLink('{APP_ROOT}/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
+		$feed->addLink('{APP_ROOT}/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
+		$feed->addLink('{APP_ROOT}/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
@@ -389,7 +377,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$item->injectAtomEntryData($entry);
 				$setnum++;
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
-				$entry->addLink($app_root . '/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+				$entry->addLink('{APP_ROOT}/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 				if ($tag_item->annotation) {
 					$entry->setSummary($tag_item->annotation);
 				}
@@ -408,34 +396,30 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$user=null,$app_root='')
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$user=null)
 	{
 		if (!$user) {
 			$user = $this->getUser();
-		}
-
-		if (!$app_root) {
-			$app_root = Dase_Config::get('app_root');
 		}
 
 		$entry->setTitle($this->name);
 		if ($this->description) {
 			$entry->setSummary($this->description);
 		}
-		$entry->setId($app_root . '/user/'. $user->eid . '/tag/' . $this->ascii_id);
+		$entry->setId('{APP_ROOT}/user/'. $user->eid . '/tag/' . $this->ascii_id);
 		$updated = $this->updated ? $this->updated : '2005-01-01T00:00:01-06:00';
 		$entry->setUpdated($updated);
 		$entry->addAuthor($user->eid);
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','self');
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','edit' );
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
-		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
+		$entry->addLink('{APP_ROOT}/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','self');
+		$entry->addLink('{APP_ROOT}/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','edit' );
+		$entry->addLink('{APP_ROOT}/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
+		$entry->addLink('{APP_ROOT}/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
 		//todo: beware expense??
 		foreach (Dase_DBO_Category::getAll($this) as $cat) {
 			$scheme = $cat->getScheme();
 			$entry->addCategory($cat->term,$scheme,$cat->label);
 		}
-		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
+		$entry->addCategory('{APP_ROOT}',"http://daseproject.org/category/base_url");
 		$entry->addCategory("set","http://daseproject.org/category/entrytype");
 		$entry->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {

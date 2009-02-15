@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_AttributeCategory extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'attribute_category',  array('attribute_id','category_id'));
+		parent::__construct($db,'attribute_category', array('attribute_id','category_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

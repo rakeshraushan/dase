@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_TagItemCategory extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'tag_item_category',  array('category_id','tag_item_id'));
+		parent::__construct($db,'tag_item_category', array('category_id','tag_item_id'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

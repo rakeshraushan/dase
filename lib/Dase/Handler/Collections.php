@@ -83,7 +83,7 @@ class Dase_Handler_Collections extends Dase_Handler
 	{
 		//if no collections, redirect to archive admin screen
 		//will force login screen for non-superusers if no collections
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($r->retrieve('db'));
 		if (!$c->findCount() && $r->getUser()->isSuperuser()) {
 			$r->renderRedirect('admin');
 		}

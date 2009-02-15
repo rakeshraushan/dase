@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_CollectionManager extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'collection_manager',  array('auth_level','collection_ascii_id','created','created_by_eid','dase_user_eid','expiration'));
+		parent::__construct($db,'collection_manager', array('auth_level','collection_ascii_id','created','created_by_eid','dase_user_eid','expiration'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

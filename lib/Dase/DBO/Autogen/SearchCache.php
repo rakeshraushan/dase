@@ -11,9 +11,9 @@ require_once 'Dase/DBO.php';
 
 class Dase_DBO_Autogen_SearchCache extends Dase_DBO 
 {
-	function __construct($assoc = false) 
+	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct( 'search_cache',  array('attribute_id','cb_id','collection_id_string','dase_user_id','exact_search','is_stale','item_id_string','query','refine','search_md5','sort_by','timestamp'));
+		parent::__construct($db,'search_cache', array('attribute_id','cb_id','collection_id_string','dase_user_id','exact_search','is_stale','item_id_string','query','refine','search_md5','sort_by','timestamp'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

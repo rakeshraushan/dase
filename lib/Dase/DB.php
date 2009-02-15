@@ -2,142 +2,97 @@
 
 class Dase_DB {
 
-	// Internal variable to hold the connection
-	private static $db;
-	private static $name;
-	private static $type;
-	// No cloning or instantiating allowed
-	final private function __construct()
-	{ }
-	final private function __clone()
-	{ }
+	private $type;
+	private $path;
+	private $host;
+	private $name;
+	private $user;
+	private $pass;
+	public $table_prefix;
+	public $dbh;
 
-	public static function get($dbname = null)
+	public function __construct($config)
+	{ 
+		$this->type = $config['type'];
+		$this->path = $config['path'];
+		$this->host = $config['host'];
+		$this->name = $config['name'];
+		$this->user = $config['user'];
+		$this->pass = $config['pass'];
+		$this->table_prefix = $config['table_prefix'];
+	}
+
+	public function getDbh()
 	{
-		// Connect if not already connected
-		if (is_null(self::$db)) {
-			$conf = Dase_Config::get('db'); 
-			self::$type = $conf['type'];
-			if ($dbname) {
-				self::$name = $dbname;
-			} else {
-				self::$name = $conf['name'];
-			}
-			$host = $conf['host'];
-			$user = $conf['user'];
-			$pass = $conf['pass'];
-			$driverOpts = array();
-			if ('sqlite' == self::$type) {
-				$dsn = "sqlite:".$conf['path'];
-			} else {
-				$dsn = self::$type . ":host=$host;dbname=" . self::$name;
-			}
-			try {
-				self::$db = new PDO($dsn, $user, $pass, $driverOpts);
-				if ('mysql' == self::$type) {
-					self::$db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
-					//http://netevil.org/blog/2006/apr/using-pdo-mysql
-					self::$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-				}
-			} catch (PDOException $e) {
-				throw new  PDOException('connect failed: ' . $e->getMessage());
-			}
+		if ($this->dbh) {
+			return $this->dbh;
 		}
-		// Return the connection
-		return self::$db;
+		$driverOpts = array();
+		if ('sqlite' == $this->type) {
+			$dsn = "sqlite:".$this->path;
+		} else {
+			$dsn = $this->type . ":host=".$this->host.";dbname=".$this->name;
+		}
+		try {
+			$this->dbh = new PDO($dsn, $this->user, $this->pass, $driverOpts);
+			if ('mysql' == $this->type) {
+				$this->dbh->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
+				//http://netevil.org/blog/2006/apr/using-pdo-mysql
+				$this->dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+			}
+		} catch (PDOException $e) {
+			throw new  PDOException('connect failed: ' . $e->getMessage());
+		}
+		return $this->dbh;
 	}
-
-	public static function getNew($dbname = null)
-	{
-		self::$db = null;
-		return Dase_DB::get($dbname);
-	}
-
-
 
 	/** simply wraps logging */
-	public static function query($sql)
+	public function query($sql)
 	{
+		$dbh = $this->getDbh();
 		//beware sql injection
-		$db = self::get();
 		Dase_Log::get()->debug("[DB exec] ".$sql);
-		return $db->query($sql);
+		return $dbh->query($sql);
 	}
 
-	public static function logger($sth,$params=array(),$bool,$msg='DB query') {
-	}
-
-	public static function getDbName()
+	public function getDbName()
 	{
-		self::get();
-		return self::$name;
+		return $this->name;
 	}
 
-	public static function setDbName($dbname)
+	public function setDbName($name)
 	{
-		self::get($dbname);
+		$this->name = $name;
+		return $this->name;
 	}
 
-	public static function getDbType()
+	public function getDbType()
 	{
-		self::get();
-		return self::$type;
+		return $this->type;
 	}
 
-	public static function getCaseInsensitiveLikeOp()
+	public function getCaseInsensitiveLikeOp()
 	{
-		$type = Dase_DB::getDbType();
-		if ('pgsql' == $type) {
+		if ('pgsql' == $this->type) {
 			return 'ILIKE';
 		} else {
 			return 'LIKE';
 		}
 	}
 
-	public static function listIndexes()
+	public function listTables()
 	{
-		$db = self::get();
-		if ('mysql' == self::$type) {
-			return "under construction";	
-		}
-		if ('pgsql' == self::$type) {
-			$sql =<<< EOF
-				SELECT c.relname as "name", 
-				CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' END as "type",
-				c2.relname as "table"
-				FROM pg_catalog.pg_class c
-				JOIN pg_catalog.pg_index i ON i.indexrelid = c.oid
-				JOIN pg_catalog.pg_class c2 ON i.indrelid = c2.oid
-				LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
-				LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-				WHERE c.relkind IN ('i','')
-				AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
-				AND pg_catalog.pg_table_is_visible(c.oid)
-				ORDER BY 1,2;
-EOF;
-		}
-		if ('sqlite' == self::$type) {
-			return "under construction";	
-		}
-		$sth = $db->prepare($sql);
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$sth->execute();
-		return ($sth->fetchAll());
-	}	
-
-	public static function listTables()
-	{
-		//try-catch-trhow since we use this during install
+		//try-catch-throw since we use this during install
 		try {
-			$db = self::get();
+			$dbh = $this->getDbh();
 		} catch (PDOException $e) {
 			throw new PDOException($e->getMessage());
 		}
-		if ('mysql' == self::$type) {
+		if ('mysql' == $this->type) {
 			$sql = "SHOW TABLES";
 		}
 		//from Zend Db Adapter
-		if ('pgsql' == self::$type) {
+		if ('pgsql' == $this->type) {
 			$sql = "SELECT c.relname AS table_name "
 				. "FROM pg_class c, pg_user u "
 				. "WHERE c.relowner = u.usesysid AND c.relkind = 'r' "
@@ -151,16 +106,16 @@ EOF;
 				. "AND NOT EXISTS (SELECT 1 FROM pg_user WHERE usesysid = c.relowner) "
 				. "AND c.relname !~ '^pg_'";
 		}
-		if ('sqlite' == self::$type) {
+		if ('sqlite' == $this->type) {
 			$sql = "
 				SELECT name FROM sqlite_master
 				WHERE type='table'
 				ORDER BY name
 				";
 		}
-		$sth = $db->prepare($sql);
+		$sth = $dbh->prepare($sql);
 		if (!$sth) {
-			$errs = $db->errorInfo();
+			$errs = $dbh->errorInfo();
 			if (isset($errs[2])) {
 				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
 			}
@@ -169,22 +124,22 @@ EOF;
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
 
-	public static function listColumns($table)
+	public function listColumns($table)
 	{
-		$db = self::get();
-		if ('mysql' == self::$type) {
+		$dbh = $this->getDbh();
+		if ('mysql' == $this->type) {
 			$sql = "SHOW FIELDS FROM $table";
 		}
-		if ('pgsql' == self::$type) {
+		if ('pgsql' == $this->type) {
 			$sql = "SELECT attname FROM pg_class, pg_attribute WHERE 
 				pg_class.relname = '$table' AND pg_class.oid = pg_attribute.attrelid AND 
 				pg_attribute.attnum > 0  
 				AND attname NOT LIKE '....%'
 				ORDER BY attname";
 		}
-		if ('sqlite' == self::$type) {
+		if ('sqlite' == $this->type) {
 			$sql = "PRAGMA table_info($table)";
-			$sth = $db->prepare($sql);
+			$sth = $this->dbh->prepare($sql);
 			$sth->execute();
 			while ($row = $sth->fetch()) {
 				$names[] = $row['name'];
@@ -192,9 +147,9 @@ EOF;
 			}
 			return $names;
 		}
-		$sth = $db->prepare($sql);
+		$sth = $dbh->prepare($sql);
 		if (!$sth) {
-			$errs = $db->errorInfo();
+			$errs = $dbh->errorInfo();
 			if (isset($errs[2])) {
 				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
 			}
@@ -203,12 +158,12 @@ EOF;
 		return ($sth->fetchAll(PDO::FETCH_COLUMN));
 	}	
 
-	public static function getMetadata($table)
+	public function getMetadata($table)
 	{
-		$db = self::get();
-		if ('sqlite' == self::$type) {
+		$dbh = $this->getDbh();
+		if ('sqlite' == $this->type) {
 			$sql = "PRAGMA table_info($table)";
-			$sth = $db->prepare($sql);
+			$sth = $dbh->prepare($sql);
 			$sth->execute();
 			while ($row = $sth->fetch()) {
 				$col = array();
@@ -229,12 +184,12 @@ EOF;
 		$sql = "SELECT column_name, data_type, character_maximum_length, is_nullable,column_default
 			FROM information_schema.columns 
 			WHERE table_name = '$table'";
-		$sth = $db->prepare($sql);
+		$sth = $dbh->prepare($sql);
 		$sth->execute();
 		return ($sth->fetchAll(PDO::FETCH_ASSOC));
 	}	
 
-	public static function getSchemaXml()
+	public function getSchemaXml()
 	{
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -242,10 +197,10 @@ EOF;
 		$writer->startDocument('1.0','UTF-8','yes');
 		$writer->startElement('database');
 		$writer->writeAttribute('name',Dase_DB::getDbName());
-		foreach (Dase_DB::listTables() as $table) {
+		foreach ($this->listTables() as $table) {
 			$writer->startElement('table');
 			$writer->writeAttribute('name',$table);
-			foreach (Dase_DB::getMetadata($table) as $col) {
+			foreach ($this->getMetadata($table) as $col) {
 				$writer->startElement('column');
 				$writer->writeAttribute('name',$col['column_name']);
 				$writer->writeAttribute('type',$col['data_type']);
