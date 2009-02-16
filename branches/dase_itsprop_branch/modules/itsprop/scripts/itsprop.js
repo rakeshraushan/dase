@@ -46,6 +46,19 @@ Dase.initProposalForm = function() {
 	var inputs = document.getElementsByTagName('input');
 	for (var i=0;i<inputs.length;i++) {
 		var inp = inputs[i];
+		var cname = inp.className;
+		var tarea = Dase.$(cname);
+		if (tarea) {
+			tarea.onchange = function() {
+				var unsaved = Dase.$('unsaved');
+				Dase.removeClass(unsaved,'hide');
+				plink = Dase.$('previewLink');
+				plink.onclick = function() {
+					alert('you have unsaved changes');
+					return false;
+				}
+			}
+		}
 		if ('update' == inp.value) {
 			inp.onclick = function() {
 				var clicked = this;
@@ -57,6 +70,12 @@ Dase.initProposalForm = function() {
 				var name = textarea.name;
 				var data = textarea.value;
 				Dase.ajax(url,'put',function(txt) {
+					var unsaved = Dase.$('unsaved');
+					Dase.addClass(unsaved,'hide');
+					plink = Dase.$('previewLink');
+					plink.onclick = function() {
+						return true;
+					}
 					Dase.removeClass(textarea,'pending');
 					Dase.removeClass(clicked,'updating');
 					clicked.value = 'update';
@@ -66,10 +85,21 @@ Dase.initProposalForm = function() {
 					} else {
 						textarea.rows = 0;
 					}
-
 					Dase.itsprop.updateMsg(true);
 					Dase.highlight(textarea,1000);
 					textarea.value = txt;
+
+					/*
+					var.words;
+					var a = txt.replace(/\s/g,' ');
+					parts = a.split(' ');
+					for (var i=0;i<parts.length;i++) {
+						if (parts[i].length > 1) {
+							words++;
+						}
+					}
+					*/
+
 				},data,'itsprop',Dase.itsprop.service_pass);
 				return false;
 			}
