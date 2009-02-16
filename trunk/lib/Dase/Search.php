@@ -241,7 +241,7 @@ class Dase_Search
 
 	private function _createSql()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		$like = Dase_DB::getCaseInsensitiveLikeOp();
 		$search = $this->search_array;
 		$search_table_params = array();

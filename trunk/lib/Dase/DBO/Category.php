@@ -40,7 +40,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
 		$params[] = $scheme_id;
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		if ($term) {
 			$term_filter = "AND cat.term = ?";
 			$params[] = $term;
@@ -65,7 +65,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public static function getLabel($scheme,$term)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT cat.label 
 			FROM {$prefix}category cat, {$prefix}category_scheme csh
@@ -125,7 +125,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
 		$params[] = $scheme;
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT cat.id, csh.uri as scheme, cat.term, cat.label 
 			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
@@ -148,7 +148,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT cat.id, csh.id as scheme_id, cat.term, cat.label 
 			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh

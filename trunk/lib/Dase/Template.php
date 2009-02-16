@@ -17,22 +17,23 @@
 class Dase_Template {
 
 	protected $smarty;
+	protected $request;
 
 	public function __construct($request,$use_module_template_dir=false)
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
-		$app = $request->cfg('app');
-		$log = $request->log;
+
+		$this->request = $request;
 		require_once 'smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
 		$this->smarty->request = $request;
-		$this->smarty->compile_dir = $app['base_path'].'/'.$app['cache_dir']; 
+		$this->smarty->compile_dir = $request->templates_c; 
 		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
 		if ($use_module_template_dir) {
-			$this->smarty->template_dir = $app['base_path'].'/modules/'.$request->module.'/templates';
+			$this->smarty->template_dir = $request->base_path.'/modules/'.$request->module.'/templates';
 		} else {
-			$this->smarty->template_dir = $app['base_path'].'/templates';
+			$this->smarty->template_dir = $request->base_path.'/templates';
 		}
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
@@ -54,7 +55,7 @@ class Dase_Template {
 		if ($request->module) {
 			$this->smarty->assign('module_root', $request->module_root.'/');
 			if (file_exists(DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
-				$this->smarty->assign('module_menu', $app['base_path'].'/modules/'.$request->module.'/templates/menu.tpl');
+				$this->smarty->assign('module_menu', $request->base_path.'/modules/'.$request->module.'/templates/menu.tpl');
 			}
 		}
 		$this->smarty->assign('msg', $request->get('msg'));

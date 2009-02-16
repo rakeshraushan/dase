@@ -9,12 +9,7 @@ class Dase_Config {
 		$this->conf['app'] = array();
 		$this->conf['auth'] = array();
 		$this->conf['db'] = array();
-		$this->conf['handler'] = array();
-	}
-
-	public function setBasePath($base_path)
-	{
-		$this->conf['app']['base_path'] = $base_path;
+		$this->conf['request_handler'] = array();
 	}
 
 	public function get($key)
@@ -23,6 +18,50 @@ class Dase_Config {
 			return $this->conf[$key];
 		} else {
 			return false;
+		}
+	}
+
+	public function getAppSettings($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['app'][$setting])) {
+				return $this->conf['app'][$setting];
+			}
+		} else {
+			return $this->conf['app'];
+		}
+	}
+
+	public function getAuth($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['auth'][$setting])) {
+				return $this->conf['auth'][$setting];
+			}
+		} else {
+			return $this->conf['auth'];
+		}
+	}
+
+	public function getDb($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['db'][$setting])) {
+				return $this->conf['db'][$setting];
+			}
+		} else {
+			return $this->conf['db'];
+		}
+	}
+
+	public function getCustomHandlers($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['request_handler'][$setting])) {
+				return $this->conf['request_handler'][$setting];
+			}
+		} else {
+			return $this->conf['request_handler'];
 		}
 	}
 
@@ -42,11 +81,6 @@ class Dase_Config {
 			$conf = $this->conf;
 			include($conf_file);
 			$this->conf = $conf;
-		} elseif (isset($this->conf['app']['base_path']) && 
-			file_exists($this->conf['app']['base_path'].'/'.$conf_file)) {
-				$conf = $this->conf;
-				include($this->conf['app']['base_path'].'/'.$conf_file);
-				$this->conf = $conf;
-			}
+		}
 	}
 }

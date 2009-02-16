@@ -136,7 +136,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getDisplayValues($coll = null,$limit=2000,$filter_key='',$filter_value='')
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$admin_sql = '';
 		$filter_sql = '';
 		if (!$this->id) {

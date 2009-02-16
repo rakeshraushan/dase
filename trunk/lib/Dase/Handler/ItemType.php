@@ -33,7 +33,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$it_ascii = $r->get('item_type_ascii_id');
 		$att_ascii = $r->get('att_ascii_id');
 		$coll = $r->get('collection_ascii_id');
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		$sql = "
 			SELECT v.value_text,i.serial_number
 			FROM {$prefix}value v,{$prefix}collection c,{$prefix}item i, {$prefix}attribute a, {$prefix}item_type it 
@@ -182,7 +182,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//which have are related to parent item_type item
 		//specified
 		$items = array();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		$sql = "
 			SELECT ir.child_serial_number
 			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
@@ -212,7 +212,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//which have are related to parent item_type item
 		//specified
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		$sql = "
 			SELECT ir.child_serial_number
 			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr

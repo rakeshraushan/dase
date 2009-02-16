@@ -4,19 +4,20 @@ class Dase
 {
 	public $request;
 
-	public function __construct($request)
+	public function __construct($request,$config)
 	{
 		$this->request = $request;
+		$this->config = $config;
 	}
 
 	public function run()
 	{
-		$c = $this->request->config;
+		$c = $this->config;
 		$r = $this->request;
 		$log = Dase_Log::get();
 
 		if (!$r->handler) {
-			$r->renderRedirect($c->get('default_handler'));
+			$r->renderRedirect($c->getAppSettings('default_handler'));
 		}
 
 		$log->debug("\n-----------------\n".$r->getLogData()."-----------------\n");

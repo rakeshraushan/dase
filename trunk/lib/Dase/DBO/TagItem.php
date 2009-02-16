@@ -25,7 +25,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 	function persist()
    	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT c.ascii_id as collection_ascii_id,i.serial_number

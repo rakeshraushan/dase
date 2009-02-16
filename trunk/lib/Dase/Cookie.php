@@ -45,7 +45,7 @@ class Dase_Cookie {
 
 	public function set($type,$data) 
 	{
-		$pre = Dase_Cookie::getPrefix();
+		$pre = $this->getPrefix();
 		if ('module' == $type) {
 			$module = $this->config->get('module');
 			$pre = $pre.$module.'_';
