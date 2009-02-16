@@ -9,7 +9,7 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl;
 
-	function __construct($cache_dir,$ttl,$server_ip)
+	function __construct($cache_dir,$server_ip='localhost',$ttl=10)
 	{
 		$this->cache_dir = $cache_dir;
 		$this->ttl = $ttl;
@@ -57,6 +57,7 @@ class Dase_Cache_File extends Dase_Cache
 		@unlink($filename);
 	}
 
+	/** any data fetch can override the default ttl */
 	function getData($filename,$ttl=0)
 	{
 		$filename = $this->cache_dir . $filename;

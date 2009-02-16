@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2008 The University of Texas at Austin
  *
@@ -18,13 +19,11 @@
  * along with DASe.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-
 ini_set('include_path','lib');
 
 //PHP ERROR REPORTING -- turn off for production
 ini_set('display_errors',1);
 error_reporting(E_ALL);
-
 
 function __autoload($class_name) {
 	include_once __autoloadFilename($class_name);
@@ -38,21 +37,31 @@ $logfile = dirname(__FILE__).'/log/dase.log';
 Dase_Log::get()->start($logfile,Dase_Log::DEBUG);
 
 $config = new Dase_Config();
-$config->setBasePath(dirname(__FILE__));
 
 //load main config
-$config->load(dirname('inc/config.php');
+$config->load(dirname(__FILE__).'/inc/config.php');
 
 //load local config
-$config->load(dirname('inc/local_config.php');
+$config->load(dirname(__FILE__).'/inc/local_config.php');
 
-$r = new Dase_Http_Request($config);
-$cookie = new Dase_Cookie($r->app_root,$r->module,$config->
-$db = new Dase_DB($config->get('db');
-$user = new Dase_DBO_DaseUser($db);
+$dase_http_auth = new Dase_Http_Auth($config->getAuth());
 
-$r->store('cookie',new Dase_Cookie($config));
-$r->store('db',new Dase_DB($config->get('db')));
+$r = new Dase_Http_Request(dirname(__FILE__),$config,$dase_http_auth);
 
-$app = new Dase($r);
+$cookie = new Dase_Cookie($r->app_root,$r->module,$config->getAuth('token'));
+$cache = new Dase_Cache(
+	$config->getAppSettings('cache_type'),
+	$config->getAppSettings('cache_dir'),
+	$r->getServerIp()
+);
+$db = new Dase_DB($config->get('db'));
+$dbuser = new Dase_DBO_DaseUser($db);
+$dbuser->setAuth($config->getAuth());
+
+$r->store('cookie',$cookie);
+$r->store('cache',$cache);
+$r->store('db',$db);
+$r->store('dbuser',$dbuser);
+
+$app = new Dase($r,$config);
 $app->run();

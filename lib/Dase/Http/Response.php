@@ -57,13 +57,8 @@ class Dase_Http_Response
 	public function render($content,$set_cache=true,$status_code=null)
 	{
 		if ($set_cache) {
-			$type = $this->request->config->get('cache');
-			$dir = $this->request->config->get('bash_path').'/'.$this->request->config->get('cache_dir');
-			$server = $this->request->config->get('server');
-			$ip = $server['SERVER_ADDR'];
 			$cache_id = $this->request->getCacheId();
-			$cache = new Dase_Cache($type,$dir,$ip);
-			$cache->setData($cache_id,$content);
+			$this->request->retrieve('cache')->setData($cache_id,$content);
 		}
 		if ($status_code) {
 			$message = $status_code.' '.self::$codes[$status_code]; 

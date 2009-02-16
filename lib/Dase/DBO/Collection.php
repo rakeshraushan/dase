@@ -4,12 +4,12 @@ require_once 'Dase/DBO/Autogen/Collection.php';
 
 class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 {
-	public static function get($ascii_id)
+	public static function get($db,$ascii_id)
 	{
 		if (!$ascii_id) {
 			throw new Exception('missing collection ascii id');
 		}
-		$collection = new Dase_DBO_Collection;
+		$collection = new Dase_DBO_Collection($db);
 		$collection->ascii_id = $ascii_id;
 		if ($collection->findOne()) {
 			return $collection;
@@ -92,7 +92,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->updated);
-		$feed->addCategory({APP_ROOT},"http://daseproject.org/category/base_url");
+		$feed->addCategory('{APP_ROOT}',"http://daseproject.org/category/base_url");
 		$feed->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		//todo: is this too expensive??
 		$comm = $this->getCommunity();
@@ -199,9 +199,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($result);
 	}
 
-	static function listAsAtom($public_only = false)
+	static function listAsAtom($app_root,$db,$public_only = false)
 	{
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($db);
 		$c->orderBy('collection_name');
 		if ($public_only) {
 			$c->is_public = 1;
@@ -233,12 +233,12 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$entry->addCategory($coll->item_count,"http://daseproject.org/category/item_count");
 			$entry->addCategory($pub,"http://daseproject.org/category/visibility");
 		}
-		return $feed->asXML();
+		return $feed->asXML($app_root);
 	}
 
 	static function getLastCreated()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT created
 			FROM {$prefix}collection
@@ -271,7 +271,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	 */
 	function getManagers()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
 			FROM {$prefix}collection_manager m,{$prefix}dase_user u 
@@ -311,7 +311,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function changeAttributeSort($att_ascii_id,$new_so)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$att_ascii_id_array = array();
 		$sql = "
 			SELECT ascii_id 
@@ -372,7 +372,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItemIdRange($start,$count)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT id 
 			FROM {$prefix}item
@@ -417,7 +417,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function buildSearchIndex()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		//todo: make sure this->id is an integer
 		$db->query("DELETE FROM {$prefix}search_table WHERE collection_id = $this->id");
@@ -477,7 +477,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function getSearchIndexArray()
 	{
 		$search_index_array = array();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		foreach ($this->getItems() as $item) {
 			$composite_value_text = '';
 			$sql = "

@@ -37,13 +37,22 @@ class Dase_Http_Request
 	public $resource;
 	public $protocol;
 	public $app_root;
+	public $base_path;
+	public $templates_c;
+	private $_server;
+	private $_get;
+	private $_post;
+	private $_cookie;
 
-	public function __construct($config)
+	public function __construct($base_path,$config,$dase_http_auth)
 	{
-		$this->config = $config;
+		$this->base_path = $base_path;
+		$this->templates_c = $base_path.'/'.$config->getAppSettings('cache_dir');
+		$this->custom_handlers = $config->getCustomHandlers();
 		$this->_server = $_SERVER;
 		$this->_files = $_FILES;
-		$this->init();
+		$this->dase_http_auth = $dase_http_auth;
+		$this->init(); //wraps request superglobals and sets htuser & htpass on auth obj
 
 		$this->format = $this->getFormat();
 		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
@@ -69,6 +78,8 @@ class Dase_Http_Request
 			$this->_post = $_POST;
 			$this->_cookie = $_COOKIE;
 			$this->method = strtolower($_SERVER['REQUEST_METHOD']);
+			$htuser = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
+			$htpass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
 		} else {
 			//command line
 			foreach ($_SERVER['argv'] as $arg) {
@@ -77,12 +88,15 @@ class Dase_Http_Request
 					$this->members[$key] = $val;
 				}
 			}
+			$htuser = $this->get('htuser');
+			$htpass = $this->get('htpass');
 		}
+		$this->dase_http_auth->setUser($htuser,$htpass);
 	}
 
-	public function cfg($key)
+	public function getServerVars() 
 	{
-		return $this->config->get($key);
+		return $this->_server;
 	}
 
 	public function getElapsed()
@@ -142,13 +156,14 @@ class Dase_Http_Request
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
+	public function getServerIp()
+	{
+		return $this->_server['SERVER_ADDR'];
+	}
+
 	public function checkCache($ttl=null)
 	{
-		$type = $this->cfg('cache');
-		$dir = $this->cfg('base_path').'/'.$this->cfg('cache_dir');
-		$serv = $this->cfg('server');
-		$ip = $serv['SERVER_ADDR'];
-		$cache = new Dase_Cache($type,$dir,$ip);
+		$cache = $this->retrieve('cache');
 		$content = $cache->getData($this->getCacheId(),$ttl);
 		if ($content) {
 			$this->renderResponse($content,false);
@@ -172,13 +187,12 @@ class Dase_Http_Request
 		} else {
 			//here's the entire plugin architecture
 			//simply reimplement any handler as a module
-			$plugins = $this->cfg('handler');
-			if (isset($plugins[$first])) {
-				if(!file_exists(DASE_PATH.'/modules/'.$plugins[$first])) {
+			if (isset($this->custom_handlers[$first])) {
+				if(!file_exists($this->base_path.'/modules/'.$this->custom_handlers[$first])) {
 					$this->renderError(404,'no such module');
 				}
-				Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$plugins[$first]);
-				$this->module = $plugins[$first];
+				Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$this->custom_handdlers[$first]);
+				$this->module = $this->custom_handlers[$first];
 			}
 			return $first;
 		}
@@ -243,7 +257,7 @@ class Dase_Http_Request
 
 	public function get($key,$as_array = false)
 	{
-		$post = $this->cfg('post');
+		$post = $this->_post;
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
 			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
@@ -444,28 +458,27 @@ class Dase_Http_Request
 
 		switch ($auth) {
 		case 'cookie':
-			$eid = Dase_Cookie::getEid();
+			$eid = $this->retrieve('cookie')->getEid();
 			break;
 		case 'http':
-			$auth = new Dase_Http_Auth($this->cfg('auth'),$this->cfg('server'));
-			$eid = $auth->getEid();
+			$eid = $this->dase_http_auth->getEid();
 			break;
 		case 'service':
-			$auth = new Dase_Http_Auth($this->cfg('auth'),$this->cfg('server'));
-			$eid = $auth->getEid(true);
+			$eid = $this->dase_http_auth->getEid(true);
 			break;
 		case 'none':
 			//allows nothing to happen
 			return;
 		default:
-			$eid = Dase_Cookie::getEid();
+			$eid = $this->retrieve('cookie')->getEid();
 		}
 
 		//eids are always lowercase
 		$eid = strtolower($eid);
 
 		if ($eid) {
-			return $this->getDbUser($eid);
+			$this->user = $this->retrieve('dbuser')->retrieveByEid($eid);
+			return $this->user;
 		} else {
 			if (!$force_login) { return; }
 			if ('html' == $this->format) {
@@ -474,24 +487,6 @@ class Dase_Http_Request
 			} else {
 				$this->renderError(401,'unauthorized');
 			}
-		}
-	}
-
-	private function getDbUser($eid) {
-		$db = Dase_DB::get();
-		$user= new Dase_DBO_DaseUser;
-		$prefix = $this->cfg('table_prefix');
-		$sql = "
-			SELECT * 
-			FROM {$prefix}dase_user 
-			WHERE lower(eid) = ?
-			";	
-		$sth = $db->prepare($sql);
-		if ($sth->execute(array($eid))) {
-			$this->user = new Dase_DBO_DaseUser($sth->fetch());
-			return $this->user;
-		} else {
-			return false;
 		}
 	}
 
@@ -509,7 +504,7 @@ class Dase_Http_Request
 
 	private function _filterGet($key)
 	{
-		$get = $this->cfg('get');
+		$get = $this->_get;
 		if (Dase_Util::getVersion() >= 520) {
 			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
@@ -523,7 +518,7 @@ class Dase_Http_Request
 
 	private function _filterPost($key)
 	{
-		$post = $this->cfg('post');
+		$post = $this->_post;
 		if (Dase_Util::getVersion() >= 520) {
 			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));

@@ -55,7 +55,7 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 
 	static function getLastCreated()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT created
 			FROM {$prefix}category_scheme

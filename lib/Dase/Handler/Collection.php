@@ -673,7 +673,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributeTalliesJson($r) 
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		//todo: work on cacheing here
 		//$r->checkCache(1500);
 		$c = $this->collection;
@@ -702,7 +702,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAdminAttributeTalliesJson($r) 
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $r->retrieve('db')->table_prefix;
 		$c = $this->collection;
 		$sql = "
 			SELECT id, ascii_id

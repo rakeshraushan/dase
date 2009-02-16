@@ -8,14 +8,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function getByUser($user)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $user->db->table_prefix;
 		$sql = "
 			SELECT * 
 			FROM {$prefix}tag 
 			WHERE dase_user_id = ?
 			";
 		$tags = array();
-		foreach (Dase_DBO::query($sql,array($user->id))->fetchAll() as $row) { 
+		foreach (Dase_DBO::query($user->db,$sql,array($user->id))->fetchAll() as $row) { 
 			$row['count'] = $row['item_count'];
 			if ($row['ascii_id']) { //compat: skip tags w/o ascii_id
 				$tags[] = $row;
@@ -45,7 +45,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			} else {
 				return $feed->asXml();
 			}
-			$prefix = Dase_Config::get('table_prefix');
+			$prefix = $this->db->table_prefix;
 			$sql = "
 				SELECT tc.tag_id 
 				FROM {$prefix}category_scheme cs,{$prefix}category c, {$prefix}tag_category tc 
@@ -164,7 +164,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	function getTagItemIds()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT id 
@@ -441,7 +441,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public function isBulkEditable($user)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT p_collection_ascii_id 
@@ -463,7 +463,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public function isSingleCollection()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT p_collection_ascii_id 

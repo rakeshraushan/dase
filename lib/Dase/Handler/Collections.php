@@ -76,18 +76,19 @@ class Dase_Handler_Collections extends Dase_Handler
 		} else {
 			$public_only = true;
 		}
-		$r->renderResponse(Dase_DBO_Collection::listAsAtom($public_only));
+		$r->renderResponse(Dase_DBO_Collection::listAsAtom($r->app_root,$r->retrieve('db'),$public_only));
 	}
 
 	public function getCollections($r) 
 	{
+		$r->getUser();
 		//if no collections, redirect to archive admin screen
 		//will force login screen for non-superusers if no collections
 		$c = new Dase_DBO_Collection($r->retrieve('db'));
 		if (!$c->findCount() && $r->getUser()->isSuperuser()) {
 			$r->renderRedirect('admin');
 		}
-		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/collections.atom');
+		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/collections.atom');
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collections',$feed);
 		$r->renderResponse($tpl->fetch('collection/list.tpl'));

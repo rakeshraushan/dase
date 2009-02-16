@@ -152,6 +152,14 @@ class Dase_Atom_Feed extends Dase_Atom
 		return self::_init($dom);
 	}
 
+	/*
+	public function setAppRoot($app_root) {
+		$xml = $this->asXml();
+		$xml = str_replace('{APP_ROOT}',$app_root,$xml);
+		return Dase_Atom_Feed::load($xml);
+	}
+	 */
+
 	private static function _init($dom)
 	{
 		//reader object

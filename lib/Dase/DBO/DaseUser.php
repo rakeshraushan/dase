@@ -4,42 +4,47 @@ require_once 'Dase/DBO/Autogen/DaseUser.php';
 
 class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser 
 {
-	public $is_superuser=0;
-	public $ppd;
+	private $superusers = array();
 	public $http_password;
+	public $is_superuser;
+	public $ppd_token;
+	public $token;
+
+	public function init($eid) 
+	{
+		$this->retrieveByEid($eid);
+		$this->getHttpPassword();
+		return $this;
+	}
 
 	/** this is case insensitive! */
-	public static function get($eid)
+	public function retrieveByEid($eid)
 	{
-		$prefix = Dase_Config::get('table_prefix');
-		$db = Dase_DB::get();
+		$prefix = $this->db->table_prefix;
+		$dbh = $this->db->getDbh(); 
 		$sql = "
 			SELECT * FROM {$prefix}dase_user 
 			WHERE lower(eid) = ?
 			";	
-		$sth = $db->prepare($sql);
+		$sth = $dbh->prepare($sql);
 		$sth->execute(array(strtolower($eid)));
 		$row = $sth->fetch();
 		if ($row) {
-			$db_user = new Dase_DBO_DaseUser($row);
-			return $db_user;
+			foreach ($row as $key => $val) {
+				$this->$key = $val;
+			}
+			return $this;
 		} else {
 			return false;
 		}
 	}
 
-	public static function init($eid)
+	public function setAuth($auth_config)
 	{
-		$user = new Dase_DBO_DaseUser;
-		$user->eid = $eid;
-		if (!$user->findOne()) {
-			//todo: this should trigger (in calling function) a redirect to settings/register page
-			return false;
-		} else {
-			$user->initDisplayPreferences();
-			$user->initCart();
-			return true;
-		}
+		//should be called app token?
+		$this->token = $auth_config['token'];
+		$this->ppd_token = $auth_config['ppd_token'];
+		$this->superusers = $auth_config['superuser'];
 	}
 
 	public function getUrl()
@@ -70,7 +75,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	/** create cart if none exists, also returns cart count */
 	public function initCart()
 	{
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $this->id;
 		$tag->type = 'cart';
 		if (!$tag->findOne()) {
@@ -88,7 +93,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getHttpPassword()
 	{
-		$this->http_password = substr(md5(Dase_Config::get('token').$this->eid.'httpbasic'),0,12);
+		if (!$this->http_password) {
+			$this->http_password = substr(md5($this->token.$this->eid.'httpbasic'),0,12);
+		}
 		return $this->http_password;
 	}
 
@@ -160,14 +167,14 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getCollections()
 	{
-		$cm = new Dase_DBO_CollectionManager;
+		$cm = new Dase_DBO_CollectionManager($this->db);
 		$cm->dase_user_eid = $this->eid;
 		$special_colls = array();
 		$user_colls = array();
 		foreach ($cm->find() as $managed) {
 			$special_colls[$managed->collection_ascii_id] = $managed->auth_level;
 		}
-		$coll = new Dase_DBO_Collection;
+		$coll = new Dase_DBO_Collection($this->db);
 		$coll->orderBy('collection_name');
 		foreach($coll->find() as $c) {
 			if (!$c->item_count) {
@@ -201,7 +208,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
-		$user_data[$this->eid]['ppd'] = md5($this->eid . Dase_Config::get('ppd_token'));
+		$user_data[$this->eid]['ppd'] = md5($this->eid.$this->ppd_token);
 		if ($this->isSuperuser()) {
 			$user_data[$this->eid]['is_superuser'] = 1;
 		}
@@ -232,7 +239,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function getCartArray()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$item_array = array();
 		$db = Dase_DB::get();
 		$sql = "
@@ -267,7 +274,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public function isSuperuser()
 	{
-		if (in_array($this->eid,array_keys(Dase_Config::get('superuser')))) {
+		if (in_array($this->eid,array_keys($this->superusers))) {
+			$this->is_superuser = true;
 			return true;
 		}
 		return false;
@@ -385,7 +393,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function getTagCountLookup()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$tag_count = array();
 		$db = Dase_DB::get();
 		$sql = "

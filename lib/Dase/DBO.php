@@ -8,20 +8,20 @@ class Dase_DBO_Exception extends Exception {}
 
 class Dase_DBO implements IteratorAggregate
 {
-	public $id = 0;
-	public $sql;
-	public $bind = array();
-	private $table;
 	private $fields = array(); 
-	protected $db;
+	private $table;
 	protected $limit;
 	protected $order_by;
 	protected $qualifiers = array();
+	public $bind = array();
+	public $db;
+	public $id = 0;
+	public $sql;
 
 	function __construct($db, $table, $fields )
 	{
 		$this->db = $db;
-		$this->table = $db['table_prefix'].$table;
+		$this->table = $db->table_prefix.$table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
 		}
@@ -61,7 +61,7 @@ class Dase_DBO implements IteratorAggregate
 
 	private function _dbGet() {
 		try {
-			return Dase_DB::get();
+			return $this->db->getDbh();
 		} catch (PDOException $e) {
 			throw new PDOException($e->getMessage());
 		}
@@ -314,12 +314,12 @@ class Dase_DBO implements IteratorAggregate
 		return $sth->fetchColumn();
 	}
 
-	public static function query($sql,$params=array(),$return_object=false)
+	public static function query($db,$sql,$params=array(),$return_object=false)
 	{
-		$db = self::_dbGet();
-		$sth = $db->prepare($sql);
+		$dbh = $db->getDbh();
+		$sth = $dbh->prepare($sql);
 		if (!$sth) {
-			$errs = $db->errorInfo();
+			$errs = $dbh->errorInfo();
 			if (isset($errs[2])) {
 				throw new Dase_DBO_Exception('could not create handle: '.$errs[2]);
 			}

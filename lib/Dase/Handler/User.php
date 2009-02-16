@@ -142,10 +142,11 @@ class Dase_Handler_User extends Dase_Handler
 	public function getRecentItemsJson($r)
 	{
 		//todo: implement http authorization!
-		$app_root = Dase_Config::get('app_root');
-		$items = new Dase_DBO_Item;
+		$db = $r->retrieve('db');
+		$coll = $r->get('collection_ascii_id');
+		$items = new Dase_DBO_Item($db);
 		$items->created_by_eid = $this->user->eid;
-		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
+		$items->collection_id = Dase_DBO_Collection::get($db,$coll)->id;
 		$items->orderBy('created DESC');
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
@@ -156,8 +157,8 @@ class Dase_Handler_User extends Dase_Handler
 		$recent = array();
 		foreach ($items->find() as $item) {
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
-			$recent['a'.$item->serial_number]['thumbnail_href'] = $app_root.'/'.$item->getMediaUrl('thumbnail');
-			$recent['a'.$item->serial_number]['item_record_href'] = 'item/'.$item->getCollection()->ascii_id.'/'.$item->serial_number;
+			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail',$app_root);
+			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($coll,$app_root);
 		}
 		$r->renderResponse(Dase_Json::get($recent));
 	}
@@ -170,10 +171,12 @@ class Dase_Handler_User extends Dase_Handler
 		//operations that change user date are required to expire this cache
 		//NOTE: request_url is '/user/{eid}/data'
 		//need to have SOME data returned if there is no user
-		$cache = Dase_Cache::get($r->get('eid') . '_data');
-		$data = $cache->getData(3000);
+		$cache = clone($r->retrieve('cache'));
+		$cache_id = $r->get('eid') . '_data';
+		$data = $cache->getData($cache_id,3000);
 		if (!$data) {
-			$data = $r->getUser()->getDataJson();
+			$u = $r->getUser();
+			$data = $u->getDataJson();
 			$cache->setData($data);
 		}
 		$r->renderResponse($data);

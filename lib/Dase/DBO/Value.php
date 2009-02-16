@@ -8,7 +8,7 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 
 	public static function getCount($collection_ascii_id='')
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
@@ -46,7 +46,7 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 		$v->load($value_id);
 		$v->value_text = $value_text;
 		$v->update();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 
 		$sql = "
 			DELETE 

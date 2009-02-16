@@ -20,11 +20,11 @@ $conf['app']['cache_dir'] = 'cache';
 //$conf['auth']['serviceuser']['prop'] = 'ok';
 
 //define module handlers (can override existing handler)
-//$conf['handler']['<handler>'] = '<module_name>';
-//$conf['handler']['login'] = 'openid';
-$conf['handler']['db'] = 'dbadmin';
-$conf['handler']['install'] = 'install';
-$conf['handler']['grants'] = 'itsprop';
+//$conf['request_handler']['<handler>'] = '<module_name>';
+//$conf['request_handler']['login'] = 'openid';
+$conf['request_handler']['db'] = 'dbadmin';
+$conf['request_handler']['install'] = 'install';
+$conf['request_handler']['grants'] = 'itsprop';
 
 //used to create only-known-by-server security hash
 $conf['auth']['token'] = '++foxinsocks++'.date('Ymd',time());
@@ -46,6 +46,6 @@ $conf['app']['default_handler'] = 'install';
 $conf['app']['keep_tiffs'] = true;
 
 //cache can be file or memcached (only 'file' is implemented) 
-$conf['app']['cache'] = 'file';
+$conf['app']['cache_type'] = 'file';
 
 

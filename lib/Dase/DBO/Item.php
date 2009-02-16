@@ -27,7 +27,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function flushAtom()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		//todo: make sure item->id is an integer
 		$sql = "
@@ -78,7 +78,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function deleteSearchIndexes()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			DELETE
@@ -99,7 +99,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//todo: should this be here??
 		$this->saveAtom();
 
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		//todo: make sure item->id is an integer
 		$sql = "
@@ -178,7 +178,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getRawMetadata()
 	{
 		$c = $this->getCollection();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
@@ -200,7 +200,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getMetadata($att_ascii_id = '')
 	{
 		$c = $this->getCollection();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
@@ -244,7 +244,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getAdminMetadata($att_ascii_id = '')
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
@@ -279,7 +279,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getMetadataJson()
 	{
 		$c = $this->getCollection();
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
@@ -324,7 +324,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getValue($att_ascii_id)
 	{
 		//only returns first found
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -397,7 +397,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $m->findOne();
 	}
 
-	public function getMediaUrl($size)
+	public function getMediaUrl($size,$app_root='')
 	{  //size really means type here
 		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile;
@@ -405,7 +405,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$m->p_serial_number = $this->serial_number;
 		$m->size = $size;
 		if ($m->findOne()) {
-			$url = "{APP_ROOT}/media/{$c->ascii_id}/$size/$m->filename";
+			if ($app_root) {
+				$url = "$app_root/media/{$c->ascii_id}/$size/$m->filename";
+			} else {
+				$url = "{APP_ROOT}/media/{$c->ascii_id}/$size/$m->filename";
+			}
 			return $url;
 		} else {
 			return false;
@@ -414,7 +418,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getMediaCount()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$this->collection || $this->getCollection();
 		$db = Dase_DB::get();
 		$sql = "
@@ -648,7 +652,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getTitle()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -665,7 +669,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getDescription()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -682,7 +686,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getRights()
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -1065,12 +1069,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}	
 
-	public function getUrl($coll='') 
+	public function getUrl($coll='',$app_root='') 
 	{
 		if (!$coll) {
 			$coll = $this->getCollection()->ascii_id;
 		}
-		return '{APP_ROOT}/item/'.$coll.'/'.$this->serial_number;
+		if ($app_root) {
+			return '{APP_ROOT}/item/'.$coll.'/'.$this->serial_number;
+		} else {
+			return $app_root.'/item/'.$coll.'/'.$this->serial_number;
+		}
 	}
 
 	public function getEditMediaUrl($coll='')
@@ -1276,7 +1284,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public static function sortIdArrayByUpdated($item_ids)
 	{
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT updated 
@@ -1302,7 +1310,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if (!$test_att->findOne()) {
 			return $item_ids;
 		}
-		$prefix = Dase_Config::get('table_prefix');
+		$prefix = $this->db->table_prefix;
 		$db = Dase_DB::get();
 		$sql = "
 			SELECT v.value_text
