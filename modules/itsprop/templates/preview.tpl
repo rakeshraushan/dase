@@ -17,7 +17,8 @@
 		<div id="submission" {if 'yes' == $submitted}class="hide"{/if}>
 			<div class="inner">
 				{if $proposal->proposal_submitted.text}
-				<h3>Proposal was submitted {$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"} <span class="miniLink">(<a href="home">return</a>)</span></h3>
+				<h3>Proposal was submitted {$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"}
+					<!-- <span class="miniLink">(<a href="home">return</a>)</span>--></h3>
 				{if $request->is_superuser}
 				<div class="controls">
 					<form>
@@ -27,14 +28,16 @@
 				{/if}
 				{else}
 				{if $person->person_eid.text == $user->eid || $request->is_superuser}
+				<!--
 				<p><a href="{$propLink}">return to proposal form to continue editing</a></p>
 				<strong>OR</strong>
+				-->
 				<form id="submitForm" method="post" action="{$propLink}/archiver">
 					<input id="submitFormButton" type="submit" value="Submit Proposal Now">
 					<input name="chair_name" value="{$chair_name}" type="hidden">
 					<input name="chair_email" value="{$chair_email}" type="hidden">
 				</form>
-				<p>[Make sure your proposal is complete.  After you submit the proposal, it will become available to your department chair, {$chair_name} ({$chair_email}), for review, and you will no longer be able to make changes.]</p>
+				<p>[Please make sure your proposal is complete and looks as it should. If not, return to proposal form and make sure that you have clicked ‘UPDATE’ for each section. After you submit the proposal, it will become available to your department chair, {$chair_name} ({$chair_email}), for review, and you will no longer be able to make changes.]</p>
 				{/if}
 				{/if}
 			</div>

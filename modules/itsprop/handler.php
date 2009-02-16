@@ -29,6 +29,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'department/{dept_id}' => 'department',
 		'department/{dept_id}/proposals' => 'department_proposals',
 		'department/{dept_id}/vision' => 'vision',
+		'department/{dept_id}/vision/preview' => 'vision_preview',
 		'service_pass/{serviceuser}' => 'service_pass',
 	);
 
@@ -100,6 +101,25 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('props_link',APP_ROOT.'/modules/itsprop/department/'.$r->get('dept_id').'/proposals');
 		$tpl->assign('dept',$dept);
 		$r->renderResponse($tpl->fetch('vision.tpl'));
+	}
+
+	public function getVisionPreview($r)
+	{
+		if (!$this->is_chair) {
+			$r->renderError(401,'must be department chair');
+		}
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$dept = Dase_Atom_Entry::retrieve(APP_ROOT. "/item/itsprop/dept-".$r->get('dept_id').".atom");
+		if (is_numeric($dept)) {
+			$r->renderError($dept);
+		}
+		$props = Dase_Atom_Feed::retrieve($dept->getChildfeedLinkUrlByTypeAtom('proposal'));
+		$props = $props->filterOnExists('proposal_submitted');
+		$props->sortBy('proposal_chair_rank');
+		$tpl->assign('props',$props);
+		$tpl->assign('dept',$dept);
+		$r->renderResponse($tpl->fetch('vision_preview.tpl'));
 	}
 
 	/*
