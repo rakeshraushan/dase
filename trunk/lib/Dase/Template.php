@@ -28,8 +28,7 @@ class Dase_Template {
 		require_once 'smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
 		$this->smarty->request = $request;
-		$cache_dir = $request->retrieve('config')->getAppSettings('cache_dir');
-		$this->smarty->compile_dir = $request->base_path.'/'.$cache_dir; 
+		$this->smarty->compile_dir = $request->retrieve('config')->getCacheDir(); 
 		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
 		if ($use_module_template_dir) {
 			$this->smarty->template_dir = $request->base_path.'/modules/'.$request->module.'/templates';
@@ -55,7 +54,7 @@ class Dase_Template {
 		$this->smarty->assign('app_root', $request->app_root.'/');
 		if ($request->module) {
 			$this->smarty->assign('module_root', $request->module_root.'/');
-			if (file_exists(DASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
+			if (file_exists($request->base_path.'/modules/'.$request->module.'/templates/menu.tpl')) {
 				$this->smarty->assign('module_menu', $request->base_path.'/modules/'.$request->module.'/templates/menu.tpl');
 			}
 		}
@@ -110,7 +109,7 @@ class Dase_Template {
 
 	function __destruct() 
 	{
-		Dase_Log::get()->debug('finished templating '.$this->smarty->request->getElapsed());
+		$this->request->logger()->debug('finished templating '.$this->smarty->request->getElapsed());
 	}
 
 	// template inheritance

@@ -8,13 +8,14 @@ class Dase
 	{
 		$this->request = $request;
 		$this->config = $request->retrieve('config');
+		$this->log = $request->retrieve('log');
 	}
 
 	public function run()
 	{
 		$c = $this->config;
 		$r = $this->request;
-		$log = Dase_Log::get();
+		$log = $this->log;
 
 		if (!$r->handler) {
 			$r->renderRedirect($c->getAppSettings('default_handler'));

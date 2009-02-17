@@ -8,7 +8,7 @@ class Dase_Handler {
 
 	public function dispatch($r)
 	{
-		$log = Dase_Log::get();
+		$log = $r->logger();
 
 		//if it is a module subclass, append the module resource map
 		if (isset($this->module_resource_map)) {

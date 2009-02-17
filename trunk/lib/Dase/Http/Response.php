@@ -125,7 +125,7 @@ class Dase_Http_Response
 				$redirect_path .= '?'.join("&",$query_array);
 			}
 		}
-		Dase_Log::get()->info('redirecting to '.$redirect_path);
+		$this->request->logger()->info('redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
 	}
@@ -155,7 +155,7 @@ class Dase_Http_Response
 			$error_text .= "DASe Error Report\n\n";
 			$error_text .= "[http_error_code] => $code\n";
 		}
-		Dase_Log::get()->debug($error_text);
+		$this->request->logger()->debug($error_text);
 		if ($msg) {
 			print $msg;
 		} else {
@@ -188,7 +188,7 @@ class Dase_Http_Response
 	{
 		//see http://bugs.php.net/bug.php?id=34206
 		// if strange 'failed to open stream' messages appear
-		Dase_Log::get()->debug('finished request '.$this->request->getElapsed());
+		$this->request->logger()->debug('finished request '.$this->request->getElapsed());
 	}
 }
 

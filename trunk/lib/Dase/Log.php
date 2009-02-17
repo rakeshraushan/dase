@@ -7,47 +7,35 @@ class Dase_Log
 	private $filehandle;
 	private $logfile;
 	private $log_level;
-	private static $instance;
 
 	const OFF 		= 1;	// Nothing at all.
 	const INFO 		= 2;	// Production 
 	const DEBUG 	= 3;	// Most Verbose
 
-	final private function __construct() {}
-
-	public function start($logfile,$log_level)
+	public function __construct($logfile,$log_level)
 	{
-		if (!file_exists($logfile)) {
-			throw new Dase_Log_Exception('logfile does not exist: '.$logfile);
-		}
-		if (!is_writable($logfile)) {
-			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
-		}
-		if (!$filehandle = fopen($logfile, 'a')) {
-			throw new Dase_Log_Exception('cannot open logfile '.$logfile);
-		}
 		$this->logfile = $logfile;
 		$this->log_level = $log_level;
-		$this->filehandle = $filehandle;
 	}
 
-	public function stop()
+	public function __destruct()
 	{
 		if ($this->filehandle) {
 			fclose($this->filehandle);
 		}
 	}
 
-	public static function get()
+	private function _init()
 	{
-		if (is_null(self::$instance)) {
-			self::$instance = new Dase_Log;
+		if (!$filehandle = fopen($this->logfile, 'a')) {
+			throw new Dase_Log_Exception('cannot open logfile '.$this->logfile);
 		}
-		return self::$instance;
+		$this->filehandle = $filehandle;
 	}
 
 	private function _write($msg,$backtrace=false)
 	{
+		$this->_init();
 		$date = date(DATE_W3C);
 		$msg = $date.' | pid: '.getmypid().' : '.$msg."\n";
 		if ($backtrace) {
@@ -80,8 +68,7 @@ class Dase_Log
 
 	public function truncate()
 	{
-		$this->stop();
-		$this->start($this->logfile,$this->log_level);
+		@unlink($this->logfile);
 		return $this->_write("---- dase log ----\n\n");
 	}
 
