@@ -3,10 +3,11 @@
 class Dase_Cache_Exception extends Exception {
 }
 
-
 class Dase_Cache
 {
-	public function __construct($type,$cache_dir,$server_ip='localhost',$ttl=10)
+	private function __construct() {}
+
+	public function get($type,$cache_dir,$server_ip='localhost',$ttl=10)
 	{
 		$class_name = 'Dase_Cache_'.ucfirst($type);
 		if (class_exists($class_name)) {
@@ -19,7 +20,7 @@ class Dase_Cache
 	//must be overridden:
 	public function expire() {}
 	public function getData() {}
-	public static function expunge() {}
+	public function expunge() {}
 	public function setData($data) {}
 }
 

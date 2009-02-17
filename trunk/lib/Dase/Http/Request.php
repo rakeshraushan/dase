@@ -38,17 +38,14 @@ class Dase_Http_Request
 	public $protocol;
 	public $app_root;
 	public $base_path;
-	public $templates_c;
 	private $_server;
 	private $_get;
 	private $_post;
 	private $_cookie;
 
-	public function __construct($base_path,$config,$dase_http_auth)
+	public function __construct($base_path,$dase_http_auth)
 	{
 		$this->base_path = $base_path;
-		$this->templates_c = $base_path.'/'.$config->getAppSettings('cache_dir');
-		$this->custom_handlers = $config->getCustomHandlers();
 		$this->_server = $_SERVER;
 		$this->_files = $_FILES;
 		$this->dase_http_auth = $dase_http_auth;
@@ -92,6 +89,22 @@ class Dase_Http_Request
 			$htpass = $this->get('htpass');
 		}
 		$this->dase_http_auth->setUser($htuser,$htpass);
+	}
+
+	public function initPlugin($custom_handlers)
+	{
+		if ($this->module) { 
+			return; 
+		}
+		$h = $this->handler;
+		//simply reimplement any handler as a module
+		if (isset($custom_handlers[$h])) {
+			if(!file_exists($this->base_path.'/modules/'.$custom_handlers[$h])) {
+				$this->renderError(404,'no such module');
+			}
+			Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$h.' module:'.$custom_handlers[$h]);
+			$this->module = $this->custom_handlers[$h];
+		}
 	}
 
 	public function getServerVars() 
@@ -185,15 +198,6 @@ class Dase_Http_Request
 			//so dispatch matching works
 			return 'modules/'.$this->module;
 		} else {
-			//here's the entire plugin architecture
-			//simply reimplement any handler as a module
-			if (isset($this->custom_handlers[$first])) {
-				if(!file_exists($this->base_path.'/modules/'.$this->custom_handlers[$first])) {
-					$this->renderError(404,'no such module');
-				}
-				Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$first.' module:'.$this->custom_handdlers[$first]);
-				$this->module = $this->custom_handlers[$first];
-			}
 			return $first;
 		}
 	}

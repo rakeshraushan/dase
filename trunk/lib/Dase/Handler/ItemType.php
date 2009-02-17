@@ -29,7 +29,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getValuesListJson($r)
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$it_ascii = $r->get('item_type_ascii_id');
 		$att_ascii = $r->get('att_ascii_id');
 		$coll = $r->get('collection_ascii_id');
@@ -129,7 +129,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsAtom($r)
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
@@ -153,7 +153,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsJson($r)
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$res = array();
 		$coll = $r->get('collection_ascii_id');
 		$items = new Dase_DBO_Item;

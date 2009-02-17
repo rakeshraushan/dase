@@ -17,15 +17,17 @@ class Dase_Log
 
 	public function start($logfile,$log_level)
 	{
-		$this->log_level = $log_level;
-		$this->logfile = $log_level;
-		if (is_writable($logfile)) {
-			if (!$filehandle = fopen($logfile, 'a')) {
-				throw new Dase_Log_Exception('cannot open logfile '.$logfile);
-			}
-		} else {
+		if (!file_exists($logfile)) {
+			throw new Dase_Log_Exception('logfile does not exist: '.$logfile);
+		}
+		if (!is_writable($logfile)) {
 			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
 		}
+		if (!$filehandle = fopen($logfile, 'a')) {
+			throw new Dase_Log_Exception('cannot open logfile '.$logfile);
+		}
+		$this->logfile = $logfile;
+		$this->log_level = $log_level;
 		$this->filehandle = $filehandle;
 	}
 
@@ -44,10 +46,10 @@ class Dase_Log
 		return self::$instance;
 	}
 
-	private function _write($msg,$backtrace)
+	private function _write($msg,$backtrace=false)
 	{
 		$date = date(DATE_W3C);
-		$msg = $date.'|pid:'.getmypid().':'.$msg."\n";
+		$msg = $date.' | pid: '.getmypid().' : '.$msg."\n";
 		if ($backtrace) {
 			//include backtrace w/ errors
 			ob_start();
@@ -79,7 +81,12 @@ class Dase_Log
 	public function truncate()
 	{
 		$this->stop();
-		$this->start();
+		$this->start($this->logfile,$this->log_level);
 		return $this->_write("---- dase log ----\n\n");
+	}
+
+	public function getAsArray()
+	{
+		return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	}
 }

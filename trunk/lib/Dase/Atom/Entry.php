@@ -142,14 +142,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
-	/*
-	public function setAppRoot($app_root) {
-		$xml = $this->asXml();
-		$xml = str_replace('{APP_ROOT}',$app_root,$xml);
-		return Dase_Atom_Entry::load($xml);
-	}
-	 */
-
 	public function putToUrl($url,$user,$pwd)
 	{
 		$ch = curl_init();

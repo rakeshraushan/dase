@@ -4,10 +4,10 @@ class Dase
 {
 	public $request;
 
-	public function __construct($request,$config)
+	public function __construct($request)
 	{
 		$this->request = $request;
-		$this->config = $config;
+		$this->config = $request->retrieve('config');
 	}
 
 	public function run()

@@ -29,7 +29,7 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public function getService($r)
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$svc = new Dase_Atom_Service;	
 		$meta_workspace = $svc->addWorkspace('DASe Sets Workspace');
 		$meta_coll = $meta_workspace->addCollection($app_root.'/tags','DASe Sets');
