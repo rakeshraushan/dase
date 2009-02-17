@@ -15,9 +15,9 @@ class Dase_Atom_Service extends Dase_Atom
 		return $workspace;
 	}
 
-	function asXml()
+	function asXml($app_root='')
 	{
-		return parent::asXml();
+		return parent::asXml($app_root);
 	}
 
 }

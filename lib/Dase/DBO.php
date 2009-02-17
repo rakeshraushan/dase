@@ -32,7 +32,7 @@ class Dase_DBO implements IteratorAggregate
 		if ($include_prefix) {
 		return $this->table;
 		} else {
-			$prefix = Dase_Config::get('table_prefix');
+			$prefix = $this->db->table_prefix;
 			return substr_replace($this->table,'',0,strlen($prefix));
 		}
 	}
@@ -364,6 +364,7 @@ class Dase_DBO implements IteratorAggregate
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
+				Dase_Log::get()->debug("updating error: ".$errs[2]);
 				//throw new Dase_DBO_Exception('could not update '. $errs[2]);
 			}
 		}

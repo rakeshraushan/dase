@@ -31,7 +31,7 @@ class Dase_Handler_Service extends Dase_Handler
 		$scheme->applies_to = 'collection';
 		foreach ($scheme->find() as $sch) {
 			$meta_cats = $meta_coll->addCategorySet(
-				$sch->fixed,Dase_Config::get('app_root').'/category/'.$sch->uri);
+				$sch->fixed,$r->app_root.'/category/'.$sch->uri);
 			$meta_cats->addCategory('default');
 		}
 		$meta_cats = $meta_coll->addCategorySet();

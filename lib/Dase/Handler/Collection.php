@@ -34,8 +34,9 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		$this->path_to_media = $r->config->get('path_to_media');
+		$db = $r->retrieve('db');
+		$this->collection = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
+		$this->path_to_media = $r->retrieve('config')->getAppSettings('path_to_media');
 		if (!$this->collection) {
 			$r->renderError(404);
 		}
@@ -68,7 +69,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getArchiveUris($r)
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$coll = $this->collection->ascii_id;
 		$output = "#collection\n";
 		$output .= $app_root.'/collection/'.$coll."/entry.atom\n";
@@ -139,7 +140,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsUris($r) 
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
 			$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
@@ -178,7 +179,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsThatLackMediaUris($r) 
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$output = '';
 		$i = 0;
 		$limit = '';
@@ -212,7 +213,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsThatLackMediaJson($r) 
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$items = array();
 		$i = 0;
 		$limit = '';
@@ -251,7 +252,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsMarkedToBeDeletedUris($r) 
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$output = '';
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->collection->id;
@@ -297,7 +298,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		} else {
 			$limit = 5;
 		}
-		$r->renderResponse($this->collection->asAtom($limit));
+		$r->renderResponse($this->collection->asAtom($r->app_root,$limit));
 	}
 
 	public function deleteCollection($r)
@@ -612,7 +613,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributesJson($r) 
 	{
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$filter = $r->has('filter') ? $r->get('filter') : '';
 		$r->checkCache();
 		$c = $this->collection;

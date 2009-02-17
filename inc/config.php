@@ -11,8 +11,9 @@ $conf['db']['table_prefix'] = '';
 $conf['app']['main_title'] = "My DASe Archive";
 
 //must be apache writeable
-$conf['app']['path_to_media'] = 'media';
-$conf['app']['cache_dir'] = 'cache';
+$conf['app']['media_base_dir'] = 'files';
+$conf['app']['cache_base_dir'] = 'files';
+$conf['app']['log_base_dir'] = 'files';
 
 //eid & admin password
 //$conf['auth']['superuser']['<username>'] = '<password>';

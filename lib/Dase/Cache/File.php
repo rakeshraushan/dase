@@ -11,10 +11,23 @@ class Dase_Cache_File extends Dase_Cache
 
 	function __construct($cache_dir,$server_ip='localhost',$ttl=10)
 	{
-		$this->cache_dir = $cache_dir;
+		$this->cache_dir = $cache_dir.'/files'; //always append subdir as expunge precaution
 		$this->ttl = $ttl;
 		$this->server_ip = $server_ip;
 		$this->pid = getmypid();
+		$this->_initDir();
+	}
+
+	private function _initDir()
+	{
+		if ('/files' == $this->cache_dir) {
+			throw new Dase_Cache_Exception("no cache directory specified");
+		}
+		if (!file_exists($this->cache_dir)) {
+			if (!mkdir($this->cache_dir,0770,true)) {
+				throw new Dase_Cache_Exception("cannot create directory: ".$this->cache_dir);
+			}
+		}
 	}
 
 	public function expungeByHash($md5_hash)
@@ -26,7 +39,7 @@ class Dase_Cache_File extends Dase_Cache
 		}
 	}
 
-	public static function expunge() 
+	public function expunge() 
 	{
 		$i = 0;
 		//from PHP Cookbook 2nd. ed p. 718
@@ -45,12 +58,18 @@ class Dase_Cache_File extends Dase_Cache
 		return $i;
 	}
 
-	function setCacheDir($cache_dir)
+	public function setCacheDir($cache_dir)
 	{
-		$this->cache_dir = $cache_dir;
+		$this->cache_dir = $cache_dir.'/files';
+		$this->_initDir();
 	}
 
-	function expire($filename)
+	public function getCacheDir()
+	{
+		return $this->cache_dir;
+	}
+
+	public function expire($filename)
 	{
 		$filename = $this->cache_dir . $filename;
 		Dase_Log::get()->debug('expired ' . $filename);
@@ -58,7 +77,7 @@ class Dase_Cache_File extends Dase_Cache
 	}
 
 	/** any data fetch can override the default ttl */
-	function getData($filename,$ttl=0)
+	public function getData($filename,$ttl=0)
 	{
 		$filename = $this->cache_dir . $filename;
 		if (!file_exists($filename)) {
@@ -77,7 +96,7 @@ class Dase_Cache_File extends Dase_Cache
 		return file_get_contents($filename);
 	}
 
-	function setData($filename,$data)
+	public function setData($filename,$data)
 	{ 
 		$tempfilename = $this->cache_dir.$filename.$this->pid.$this->server_ip;
 		//avoids race condition

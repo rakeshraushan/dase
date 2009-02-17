@@ -250,7 +250,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getItemType($r)
 	{
 		$coll = $this->collection->ascii_id;
-		$app_root = Dase_Config::get('app_root');
+		$app_root = $r->app_root;
 		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);

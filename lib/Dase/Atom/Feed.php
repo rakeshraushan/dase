@@ -152,14 +152,6 @@ class Dase_Atom_Feed extends Dase_Atom
 		return self::_init($dom);
 	}
 
-	/*
-	public function setAppRoot($app_root) {
-		$xml = $this->asXml();
-		$xml = str_replace('{APP_ROOT}',$app_root,$xml);
-		return Dase_Atom_Feed::load($xml);
-	}
-	 */
-
 	private static function _init($dom)
 	{
 		//reader object
@@ -222,7 +214,7 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	function addItemEntry(Dase_DBO_Item $item,$c=null)
 	{
-		$atom = Dase_DBO_ItemAsAtom::getByItemId($item->id);
+		$atom = Dase_DBO_ItemAsAtom::getByItem($item);
 		if (!$atom) {
 			$c = $item->getCollection();
 			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$c);
@@ -231,7 +223,6 @@ class Dase_Atom_Feed extends Dase_Atom
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->app_root = Dase_Config::get('app_root');
 			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->insert();
 		}
@@ -335,10 +326,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function asXml()
+	function asXml($app_root='')
 	{
 		$this->attachEntries();
-		return parent::asXml();
+		return parent::asXml($app_root);
 	}
 
 	public function filter($att,$val) 

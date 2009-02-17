@@ -33,7 +33,7 @@ class Dase_Handler_Category extends Dase_Handler
 	public function getCategories($r)
 	{
 		$r->response_mime_type = 'application/xml';
-		$r->renderResponse(Dase_DBO_Category::asList());
+		$r->renderResponse(Dase_DBO_Category::asList($r->retrieve('db')));
 
 	}
 
