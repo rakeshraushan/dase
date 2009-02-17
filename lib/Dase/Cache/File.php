@@ -11,7 +11,7 @@ class Dase_Cache_File extends Dase_Cache
 
 	function __construct($cache_dir,$server_ip='localhost',$ttl=10)
 	{
-		$this->cache_dir = $cache_dir.'/files'; //always append subdir as expunge precaution
+		$this->cache_dir = $cache_dir;
 		$this->ttl = $ttl;
 		$this->server_ip = $server_ip;
 		$this->pid = getmypid();
@@ -20,7 +20,7 @@ class Dase_Cache_File extends Dase_Cache
 
 	private function _initDir()
 	{
-		if ('/files' == $this->cache_dir) {
+		if (!$this->cache_dir) {
 			throw new Dase_Cache_Exception("no cache directory specified");
 		}
 		if (!file_exists($this->cache_dir)) {
@@ -33,7 +33,7 @@ class Dase_Cache_File extends Dase_Cache
 	public function expungeByHash($md5_hash)
 	{
 		if ($md5_hash) {
-			$filename = $this->cache_dir . $md5_hash;
+			$filename = $this->cache_dir.'/'. md5_hash;
 			Dase_Log::get()->debug('expired ' . $filename);
 			@unlink($filename);
 		}
@@ -41,6 +41,9 @@ class Dase_Cache_File extends Dase_Cache
 
 	public function expunge() 
 	{
+		if ('cache' != array_pop(explode('/',$this->cache_dir))) {
+			throw new Dase_Cache_Exception("can only expunge contents of directory called 'cache'");
+		}
 		$i = 0;
 		//from PHP Cookbook 2nd. ed p. 718
 		$iter = new RecursiveDirectoryIterator($this->cache_dir);
@@ -60,7 +63,7 @@ class Dase_Cache_File extends Dase_Cache
 
 	public function setCacheDir($cache_dir)
 	{
-		$this->cache_dir = $cache_dir.'/files';
+		$this->cache_dir = $cache_dir;
 		$this->_initDir();
 	}
 
@@ -98,11 +101,11 @@ class Dase_Cache_File extends Dase_Cache
 
 	public function setData($filename,$data)
 	{ 
-		$tempfilename = $this->cache_dir.$filename.$this->pid.$this->server_ip;
+		$tempfilename = $this->cache_dir.'/'.md5($filename.$this->pid.$this->server_ip);
 		//avoids race condition
 		if ($data) {
 			file_put_contents($tempfilename,$data);
-			rename($tempfilename,$this->cache_dir.$filename);
+			rename($tempfilename,$this->cache_dir.'/'.$filename);
 		}
 		return $this->filename;
 	}

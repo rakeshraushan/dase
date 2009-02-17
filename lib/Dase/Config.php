@@ -1,11 +1,14 @@
 <?php
 
+class Dase_Config_Exception extends Exception {}
+
 class Dase_Config {
 
 	private $conf = array();
 
-	public function __construct()
+	public function __construct($base_dir)
 	{
+		$this->base_dir = $base_dir;
 		$this->conf['app'] = array();
 		$this->conf['auth'] = array();
 		$this->conf['db'] = array();
@@ -19,6 +22,58 @@ class Dase_Config {
 		} else {
 			return false;
 		}
+	}
+
+	public function getCacheType()
+	{
+		if (isset($this->conf['app']['cache_type'])) {
+			return $this->conf['app']['cache_type'];
+		}
+	}
+
+	public function getCacheDir()
+	{
+		$cache_base_dir = $this->getAppSettings('cache_base_dir');
+		if (!$cache_base_dir) {
+			throw new Dase_Cache_Exception('no cache_base_dir defined');
+		}
+		if ('/' == substr($cache_base_dir,0,1)) {
+			return $cache_base_dir;
+		}
+		if (!$this->base_dir) {
+			throw new Dase_Cache_Exception('no base_dir defined');
+		}
+		return $this->base_dir.'/'.$cache_base_dir.'/cache';
+	}
+
+	public function getLogDir()
+	{
+		$log_base_dir = $this->getAppSettings('log_base_dir');
+		if (!$log_base_dir) {
+			throw new Dase_Cache_Exception('no log_base_dir defined');
+		}
+		if ('/' == substr($log_base_dir,0,1)) {
+			return $log_base_dir;
+		}
+		if (!$this->base_dir) {
+			throw new Dase_Cache_Exception('no base_dir defined');
+		}
+		return $this->base_dir.'/'.$log_base_dir.'/log';
+	}
+
+	public function getMediaDir()
+	{
+		$media_base_dir = $this->getAppSettings('media_base_dir');
+		if (!$media_base_dir) {
+			throw new Dase_Cache_Exception('no media_base_dir defined');
+		}
+		if ('/' == substr($media_base_dir,0,1)) {
+			return $media_base_dir;
+		}
+		if (!$this->base_dir) {
+			throw new Dase_Cache_Exception('no base_dir defined');
+		}
+		return $this->base_dir.'/'.$media_base_dir.'/media';
 	}
 
 	public function getAppSettings($setting='') 
@@ -77,6 +132,12 @@ class Dase_Config {
 
 	public function load($conf_file)
 	{
+		if ('/' != substr($conf_file,0,1)) {
+			if (!$this->base_dir) {
+				throw new Dase_Cache_Exception('no base_dir defined');
+			}
+			$conf_file = $this->base_dir.'/'.$conf_file;
+		}
 		if (file_exists($conf_file)) {
 			$conf = $this->conf;
 			include($conf_file);

@@ -46,7 +46,6 @@ class Dase_Http_Request
 	public function __construct($base_path,$dase_http_auth)
 	{
 		$this->base_path = $base_path;
-		$this->_server = $_SERVER;
 		$this->_files = $_FILES;
 		$this->dase_http_auth = $dase_http_auth;
 		$this->init(); //wraps request superglobals and sets htuser & htpass on auth obj
@@ -70,6 +69,7 @@ class Dase_Http_Request
 	public function init()
 	{
 		if (isset($_SERVER['REQUEST_METHOD'])) {
+			$this->_server = $_SERVER;
 			//wrap superglobals
 			$this->_get = $_GET;
 			$this->_post = $_POST;
@@ -78,6 +78,11 @@ class Dase_Http_Request
 			$htuser = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
 			$htpass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
 		} else {
+			$this->_server['REQUEST_URI'] = '';
+			$this->_server['HTTP_HOST'] = 'localhost';
+			$this->_server['SERVER_ADDR'] = '127.0.0.1';
+			$this->_server['QUERY_STRING'] = '';
+			$this->_server['SCRIPT_NAME'] = '';
 			//command line
 			foreach ($_SERVER['argv'] as $arg) {
 				if (strpos($arg,'=')) {
@@ -102,9 +107,16 @@ class Dase_Http_Request
 			if(!file_exists($this->base_path.'/modules/'.$custom_handlers[$h])) {
 				$this->renderError(404,'no such module');
 			}
-			Dase_Log::get()->info('**PLUGIN ACTIVATED**: handler:'.$h.' module:'.$custom_handlers[$h]);
+			$this->logger()->info('**PLUGIN ACTIVATED**: handler:'.$h.' module:'.$custom_handlers[$h]);
 			$this->module = $this->custom_handlers[$h];
 		}
+	}
+
+	public function getRemoteAddr()
+	{
+		if (isset($this->_server['REMOTE_ADDR'])) {
+			return $this->_server['REMOTE_ADDR'];
+		}	
 	}
 
 	public function getServerVars() 
@@ -146,6 +158,15 @@ class Dase_Http_Request
 		return $string;
 	}
 
+	public function logger() {
+		$log = $this->retrieve('log');
+		if ($log) {
+			return $log;
+		} else {
+			throw new Dase_Http_Exception('no logger registered with request');
+		}
+	}
+
 	public function __get($var) 
 	{
 		if ( array_key_exists( $var, $this->members ) ) {
@@ -165,7 +186,7 @@ class Dase_Http_Request
 			//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
 			$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$query_string);
 		}
-		Dase_Log::get()->debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
+		$this->logger()->debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
@@ -553,7 +574,7 @@ class Dase_Http_Request
 
 	public function serveFile($path,$mime_type,$download=false)
 	{
-		//Dase_Log::get()->debug('serving '.$path.' as '.$mime_type);
+		//$this->logger()->debug('serving '.$path.' as '.$mime_type);
 		$response = new Dase_Http_Response($this);
 		$response->serveFile($path,$mime_type,$download);
 		exit;
