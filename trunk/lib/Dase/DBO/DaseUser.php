@@ -52,11 +52,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return '{APP_ROOT}/user/'.$this->eid;
 	}
 
-	public static function findByNameSubstr($str)
+	public static function findByNameSubstr($db,$str)
 	{
 		$set = array();
-		$users = new Dase_DBO_DaseUser;
-		$like = Dase_DB::getCaseInsensitiveLikeOp();
+		$users = new Dase_DBO_DaseUser($db);
+		$like = $db->getCaseInsensitiveLikeOp();
 		$users->addWhere('name','%'.$str.'%',$like);
 		$users->orderBy('name');
 		foreach ($users->find() as $u) {
@@ -99,9 +99,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $this->http_password;
 	}
 
-	public static function listAsJson($limit=0)
+	public static function listAsJson($db,$limit=0)
 	{
-		$u = new Dase_DBO_DaseUser;
+		$u = new Dase_DBO_DaseUser($db);
 		if ($limit) {
 			$u->setLimit($limit);
 		}

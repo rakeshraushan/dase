@@ -9,22 +9,22 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	public $parents = array();
 	public $children = array();
 
-	public static function get($collection_ascii_id,$ascii_id)
+	public static function get($db,$collection_ascii_id,$ascii_id)
 	{
 		if ($collection_ascii_id && $ascii_id) {
-			$item_type = new Dase_DBO_ItemType;
+			$item_type = new Dase_DBO_ItemType($db);
 			$item_type->ascii_id = $ascii_id;
-			$item_type->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+			$item_type->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
 			return($item_type->findOne());
 		} else {
 			throw new Exception('missing a method parameter value');
 		}
 	}
 
-	public static function findOrCreate($collection_ascii_id,$ascii_id) 
+	public static function findOrCreate($db,$collection_ascii_id,$ascii_id) 
 	{
-		$type = new Dase_DBO_ItemType;
-		$type->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+		$type = new Dase_DBO_ItemType($db);
+		$type->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
 		$type->ascii_id = $ascii_id;
 		if (!$type->findOne()) {
 			$type->name = ucwords(str_replace('_',' ',$ascii_id));

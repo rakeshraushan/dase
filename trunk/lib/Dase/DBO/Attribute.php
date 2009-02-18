@@ -20,15 +20,15 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		'text_with_menu' => array('label'=>'Text w/ Dynamic Menu'),
 	);
 
-	public static function get($collection_ascii_id,$ascii_id)
+	public static function get($db,$collection_ascii_id,$ascii_id)
 	{
 		if ($collection_ascii_id && $ascii_id) {
-			$a = new Dase_DBO_Attribute;
+			$a = new Dase_DBO_Attribute($db);
 			$a->ascii_id = $ascii_id;
 			if ('admin_' == substr($ascii_id,0,6)) {
 				$a->collection_id = 0;
 			} else {
-				$a->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+				$a->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
 			}
 			return($a->findOne());
 		} else {
@@ -36,10 +36,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public static function getAdmin($ascii_id)
+	public static function getAdmin($db,$ascii_id)
 	{
 		if ($ascii_id) {
-			$a = new Dase_DBO_Attribute;
+			$a = new Dase_DBO_Attribute($db);
 			$a->ascii_id = $ascii_id;
 			$a->collection_id = 0;
 			return($a->findOne());
@@ -48,10 +48,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 	}
 
-	public static function findOrCreate($collection_ascii_id,$attribute_ascii_id) 
+	public static function findOrCreate($db,$collection_ascii_id,$attribute_ascii_id) 
 	{
-		$att = new Dase_DBO_Attribute;
-		$att->collection_id = Dase_DBO_Collection::get($collection_ascii_id)->id;
+		$att = new Dase_DBO_Attribute($db);
+		$att->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
 		$att->ascii_id = $attribute_ascii_id;
 		if (!$att->findOne()) {
 			$att->attribute_name = ucwords(str_replace('_',' ',strtolower($attribute_ascii_id)));
@@ -67,9 +67,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $att;
 	}
 
-	public static function findOrCreateAdmin($attribute_ascii_id) 
+	public static function findOrCreateAdmin($db,$attribute_ascii_id) 
 	{
-		$att = new Dase_DBO_Attribute;
+		$att = new Dase_DBO_Attribute($db);
 		$att->collection_id = 0;
 		$att->ascii_id = $attribute_ascii_id;
 		if (!$att->findOne()) {
@@ -137,12 +137,12 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	function getDisplayValues($coll = null,$limit=2000,$filter_key='',$filter_value='')
 	{
 		$prefix = $this->db->table_prefix;
+		$dbh = $this->db->getDbh();
 		$admin_sql = '';
 		$filter_sql = '';
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
-		$db = Dase_DB::get();
 		//presence of collection_id says it is an admin att
 		//todo: make sure $coll is a-z or '_'
 		if ($coll) {
@@ -164,7 +164,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			ORDER BY value_text
 			$limit_sql;
 			";
-		$st = $db->prepare($sql);
+		$st = $dbh->prepare($sql);
 		$st->execute(array($this->id));
 		$display_values_array = array();
 		while ($row = $st->fetch()) {
@@ -372,7 +372,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$new_sort_order = 0;
 		$coll = $this->getCollection(); 
 		foreach ($coll->getAttributes() as $att) {
-			//Dase_Log::get()->debug('----------------'.$target);
+			//$this->log->debug('----------------'.$target);
 			$new_sort_order++;
 			if ($new_sort_order == $target) {
 				$this->sort_order = $new_sort_order;

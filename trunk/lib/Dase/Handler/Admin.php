@@ -25,6 +25,8 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function setup($r)
 	{
+		$db = $r->retrieve('db');
+		$this->db = $db;
 		//all routes here require superuser privileges
 		$this->user = $r->getUser();
 		if ( 'modules' != $r->resource && !$this->user->isSuperuser()) {
@@ -34,18 +36,14 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function deleteCache($r)
 	{
-		if ('delete_cache' == $r->get('msg')) {
-			$num = Dase_Cache_File::expunge();
-			$r->renderResponse('cache deleted '.$num.' files removed');
-		} else {
-			$r->renderResponse('cache not deleted');
-		}
+		$num = $r->retrieve('cache')->expunge();
+		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 
 	public function getModules($r)
 	{
 		$tpl = new Dase_Template($r);
-		$dir = new DirectoryIterator(DASE_PATH.'/modules');
+		$dir = new DirectoryIterator($r->base_path.'/modules');
 		$mods = array();
 		foreach ($dir as $file) {
 			if ( $file->isDir() && false === strpos($file->getFilename(),'.')) {
@@ -66,25 +64,9 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/modules.tpl'));
 	}
 
-	public function getLog($r)
-	{
-		
-		$max = $r->get('max') ? $r->get('max') : 100;
-		$tpl = new Dase_Template($r);
-		$lines = file(DASE_PATH.'/log/dase.log');
-		$count = count($lines);
-		if ($count < $max) {
-			$log = join('',$lines);
-		} else {
-			$log = join('',array_slice($lines,-$max));
-		}
-		$tpl->assign('log',$log);
-		$r->renderResponse($tpl->fetch('admin/log.tpl'));
-	}
-
 	public function deleteLog($r)
 	{
-		if (Dase_Log::get()->truncate()) {
+		if ($r->logger()->truncate()) {
 			$r->renderResponse('log has been truncated');
 		} else {
 			$r->renderError(500);
@@ -105,7 +87,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getUsersJson($r)
 	{
-		$r->renderResponse(Dase_DBO_DaseUser::listAsJson());
+		$r->renderResponse(Dase_DBO_DaseUser::listAsJson($this->db));
 	}
 
 	public function getUsers($r)
@@ -113,14 +95,14 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl = new Dase_Template($r);
 		$q = $r->get('q');
 		if ($q) {
-			$tpl->assign('users',Dase_DBO_DaseUser::findByNameSubstr($q));
+			$tpl->assign('users',Dase_DBO_DaseUser::findByNameSubstr($this->db,$q));
 		}
 		$r->renderResponse($tpl->fetch('admin/users.tpl'));
 	}
 
 	public function postToUsers($r)
 	{
-		$u = new Dase_DBO_DaseUser;
+		$u = new Dase_DBO_DaseUser($this->db);
 		$u->eid = $r->get('eid');
 		if ($u->eid && !$u->findOne()) {
 			$u->name = $r->get('name');
@@ -131,7 +113,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getUser($r)
 	{
-		$user = Dase_DBO_DaseUser::get($r->get('eid'));
+		$user = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('user',$user);
 		$tpl->assign('tags',$user->getTags(true));
@@ -141,7 +123,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function getManagerEmail($r) 
 	{
-		$cms = new Dase_DBO_CollectionManager;
+		$cms = new Dase_DBO_CollectionManager($this->db);
 		foreach ($cms->find() as $cm) {
 			if ('none' != $cm->auth_level) {
 				$person = Utlookup::getRecord($cm->dase_user_eid);
@@ -224,14 +206,14 @@ class Dase_Handler_Admin extends Dase_Handler
 			exit;
 		}
 		$tpl = new Dase_Template($r);
-		$tpl->assign('category_schemes',Dase_Atom_Feed::retrieve(APP_ROOT.'/category_schemes.atom'));
+		$tpl->assign('category_schemes',Dase_Atom_Feed::retrieve($r->app_root.'/category_schemes.atom'));
 		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
 	}
 
 	public function postToCategorySchemes($r)
 	{
 		//need a similar method in CategorySchemes that's more AtomPub-ish
-		$category_scheme = new Dase_DBO_CategoryScheme;
+		$category_scheme = new Dase_DBO_CategoryScheme($this->db);
 		$category_scheme->name = $r->get('name');
 		$category_scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
 		$category_scheme->uri = trim($r->get('uri'),'/');
@@ -268,7 +250,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$atts = array();
 		$tpl = new Dase_Template($r);
-		$aa = new Dase_DBO_Attribute;
+		$aa = new Dase_DBO_Attribute($this->db);
 		$aa->collection_id = 0;
 		$aa->orderBy('attribute_name');
 		foreach ($aa->find() as $a) {

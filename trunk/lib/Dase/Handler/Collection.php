@@ -35,6 +35,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	protected function setup($r)
 	{
 		$db = $r->retrieve('db');
+		$this->db = $db;
 		$this->collection = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		$this->path_to_media = $r->retrieve('config')->getAppSettings('path_to_media');
 		if (!$this->collection) {
@@ -241,7 +242,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getItemsMarkedToBeDeletedTxt($r) 
 	{
 		$output = '';
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->collection->id;
 		$items->status = 'delete';
 		foreach ($items->find() as $item) {
@@ -254,7 +255,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$app_root = $r->app_root;
 		$output = '';
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->collection->id;
 		$items->status = 'delete';
 		foreach ($items->find() as $item) {
@@ -265,7 +266,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsByMd5Txt($r) 
 	{
-		$file = new Dase_DBO_MediaFile;
+		$file = new Dase_DBO_MediaFile($this->db);
 		$file->md5 = $r->get('md5');
 		$file->p_collection_ascii_id = $this->collection->ascii_id;
 		if ($file->findOne()) {
@@ -318,7 +319,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getCollection($r) 
 	{
 		$tpl = new Dase_Template($r);
-		$tpl->assign('collection',Dase_Atom_Feed::retrieve(APP_ROOT.'/collection/'.$r->get('collection_ascii_id').'.atom'));
+		$tpl->assign('collection',Dase_Atom_Feed::retrieve($r->app_root.'/collection/'.$r->get('collection_ascii_id').'.atom'));
 		$r->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
@@ -433,13 +434,13 @@ class Dase_Handler_Collection extends Dase_Handler
 			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$item->expunge();
 			$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
 		}
 		header("HTTP/1.1 201 Created");
 		header("Content-Type: text/plain");
-		header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number);
+		header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number);
 		echo $filename;
 		exit;
 	}
@@ -455,7 +456,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item' != $item_entry->entrytype) {
@@ -466,10 +467,10 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->set('slug',$_SERVER['HTTP_SLUG']);
 		}
 		try {
-			$item = $item_entry->insert($r,$fetch_enclosure);
+			$item = $item_entry->insert($this->db,$r,$fetch_enclosure);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
 			echo $item->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
@@ -488,7 +489,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$att_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('attribute' != $att_entry->entrytype) {
@@ -496,10 +497,10 @@ class Dase_Handler_Collection extends Dase_Handler
 			$r->renderError(400,'must be an attribute entry');
 		}
 		try {
-			$att = $att_entry->insert($r,$this->collection);
+			$att = $att_entry->insert($this->db,$r,$this->collection);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
+			header("Location: ".$r->app_root."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
 			echo $att->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
@@ -518,17 +519,17 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$type_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type' != $type_entry->entrytype) {
 			$r->renderError(400,'must be an item type entry');
 		}
 		try {
-			$item_type = $type_entry->insert($r,$this->collection);
+			$item_type = $type_entry->insert($this->db,$r,$this->collection);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/item_type/".$r->get('collection_ascii_id')."/".$item_type->ascii_id.'.atom');
+			header("Location: ".$r->app_root."/item_type/".$r->get('collection_ascii_id')."/".$item_type->ascii_id.'.atom');
 			echo $type->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
@@ -547,17 +548,17 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type_relation' != $entry->entrytype) {
 			$r->renderError(400,'must be an item type relation entry');
 		}
 		try {
-			$itr = $entry->insert($r,$this->collection);
+			$itr = $entry->insert($this->db,$r,$this->collection);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
+			header("Location: ".$r->app_root."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
 			echo $itr->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
@@ -590,7 +591,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$item->buildSearchIndex();
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
+			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
 			echo $item->asAtomEntry();
 			exit;
 		} catch (Dase_Exception $e) {
@@ -617,7 +618,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$filter = $r->has('filter') ? $r->get('filter') : '';
 		$r->checkCache();
 		$c = $this->collection;
-		$attributes = new Dase_DBO_Attribute;
+		$attributes = new Dase_DBO_Attribute($this->db);
 		$attributes->collection_id = $c->id;
 		if ('public' == $filter) {
 			$attributes->is_public = true;
@@ -649,7 +650,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$r->checkCache();
 		$c = $this->collection;
-		$attributes = new Dase_DBO_Attribute;
+		$attributes = new Dase_DBO_Attribute($this->db);
 		$attributes->collection_id = 0;
 		if ($r->has('sort')) {
 			$so = $r->get('sort');
@@ -684,13 +685,13 @@ class Dase_Handler_Collection extends Dase_Handler
 			WHERE a.collection_id = ?
 			AND a.is_public = true;
 		";
-		$st = Dase_DBO::query($sql,array($c->id));
+		$st = Dase_DBO::query($this->db,$sql,array($c->id));
 		$sql = "
 			SELECT count(DISTINCT value_text) 
 			FROM {$prefix}value 
 			WHERE attribute_id = ?";
-		$db = Dase_DB::get();
-		$sth = $db->prepare($sql);
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
 		$tallies = array();
 		while ($row = $st->fetch()) {
 			$sth->execute(array($row['id']));
@@ -732,7 +733,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	}
 
 	public function itemsByTypeAsAtom($r) {
-		$item_type = new Dase_DBO_ItemType;
+		$item_type = new Dase_DBO_ItemType($this->db);
 		$item_type->ascii_id = $r->get('item_type_ascii_id');
 		$item_type->findOne();
 		$r->renderResponse($item_type->getItemsAsFeed());

@@ -14,6 +14,7 @@ class Dase_Handler_Category extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	private function _getUri($r)
@@ -33,14 +34,14 @@ class Dase_Handler_Category extends Dase_Handler
 	public function getCategories($r)
 	{
 		$r->response_mime_type = 'application/xml';
-		$r->renderResponse(Dase_DBO_Category::asList($r->retrieve('db')));
+		$r->renderResponse(Dase_DBO_Category::asList($this->db));
 
 	}
 
 	public function getScheme($r) 
 	{
 		$r->response_mime_type = 'application/atom+xml';
-		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme = new Dase_DBO_CategoryScheme($this->db);
 		$scheme->uri = $this->_getUri($r);
 		if (!$scheme->uri || !$scheme->findOne()) {
 			$r->renderError(401);
@@ -55,7 +56,7 @@ class Dase_Handler_Category extends Dase_Handler
 		if (!$this->user->isSuperuser()) {
 			$r->renderError(401);
 		}
-		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme = new Dase_DBO_CategoryScheme($this->db);
 		$scheme->uri = $this->_getUri($r);
 		if (!$scheme->uri || !$scheme->findOne()) {
 			$r->renderError(404);
@@ -63,7 +64,7 @@ class Dase_Handler_Category extends Dase_Handler
 		if (count($scheme->getCategories())) {
 			$r->renderError('403','scheme has associated categories');
 		}
-		$name = APP_ROOT.'/scheme/'.$scheme->uri;
+		$name = $r->app_root.'/scheme/'.$scheme->uri;
 		$scheme->delete();
 		$r->renderOk("scheme \"$name\" successfully deleted");
 	}

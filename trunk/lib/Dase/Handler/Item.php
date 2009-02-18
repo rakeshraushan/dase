@@ -26,8 +26,9 @@ class Dase_Handler_Item extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
-		$this->path_to_media = $r->config->get('path_to_media');
+		$this->db = $r->retrieve('db');
+		$this->item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
+		$this->path_to_media = $r->retrieve('config')->getMediaDir();
 		if (!$this->item) {
 			$r->renderError(404);
 		}
@@ -148,7 +149,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
 		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
-			APP_ROOT.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom?type=feed',
+			$r->app_root.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom?type=feed',
 			$user->eid,$user->getHttpPassword()
 		);
 
@@ -315,11 +316,11 @@ class Dase_Handler_Item extends Dase_Handler
 			$parent = Dase_DBO_Item::getByUrl($uri);
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-					$coll,$parent->serial_number,$sernum
+					$this->db,$coll,$parent->serial_number,$sernum
 				);
 			}
             if ($itr) {
-                $item_relation = new Dase_DBO_ItemRelation;
+                $item_relation = new Dase_DBO_ItemRelation($this->db);
                 $item_relation->collection_ascii_id = $coll;
                 $item_relation->parent_serial_number = $parent->serial_number;
                 $item_relation->child_serial_number = $sernum;
@@ -443,7 +444,7 @@ class Dase_Handler_Item extends Dase_Handler
 			try {
 				$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			} catch(Exception $e) {
-				Dase_Log::get()->debug('error',$e->getMessage());
+				$r->logger()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('item' != $item_entry->entrytype) {
@@ -498,7 +499,7 @@ class Dase_Handler_Item extends Dase_Handler
 				$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 				unlink($new_file);
 			} catch(Exception $e) {
-				Dase_Log::get()->debug('error',$e->getMessage());
+				$r->logger()->debug('error',$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
 			$item->buildSearchIndex();
@@ -560,7 +561,7 @@ class Dase_Handler_Item extends Dase_Handler
 			//then return the Dase_DBO_MediaFile for the original
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			//delete uploaded file
 			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
@@ -570,7 +571,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//delete uploaded file
 		unlink($new_file);
 		//the returned atom entry links to derivs!
-		$mle_url = APP_ROOT .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
+		$mle_url = $r->app_root .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
 		$r->response_mime_type = 'application/atom+xml';
 		$r->renderResponse($media_file->asAtom());

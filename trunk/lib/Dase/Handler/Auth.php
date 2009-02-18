@@ -8,7 +8,8 @@ class Dase_Handler_Auth extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$service_users = Dase_Config::get('serviceuser');
+		$this->db = $r->retrieve('db');
+		$service_users = $r->retrieve('config')->getAuth('serviceuser');
 		if (isset($service_users[$r->get('serviceuser')])) {
 			//just authorize them
 			$service_user = $r->getUser('http');
@@ -20,7 +21,7 @@ class Dase_Handler_Auth extends Dase_Handler
 	//allows a service user to get htpasswd of a user
 	public function getEidauth($r)
 	{
-		$user = Dase_DBO_DaseUser::get($r->get('eid'));
+		$user = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		if ($user) {
 			$r->renderResponse($user->getHttpPassword());
 		} else {

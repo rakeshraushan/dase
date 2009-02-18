@@ -174,7 +174,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->insert();
 		$this->updated = date(DATE_ATOM);
 		$this->update();
-		Dase_Log::get()->debug("built indexes for " . $this->serial_number);
+		$this->log->debug("built indexes for " . $this->serial_number);
 	}
 
 	public function getRawMetadata()
@@ -385,7 +385,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getMedia($order_by='file_size')
 	{
 		$db = $this->db;
-		Dase_Log::get()->debug("getting media for " . $this->id);
+		$this->log->debug("getting media for " . $this->id);
 		$c = $this->getCollection();
 		$m = new Dase_DBO_MediaFile($db);
 		$m->p_collection_ascii_id = $c->ascii_id;
@@ -544,7 +544,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return($v->insert());
 		} else {
 			//simply returns false if no such attribute
-			Dase_Log::get()->debug('[WARNING] no such attribute '.$att_ascii_id);
+			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
 			return false;
 		}
 	}

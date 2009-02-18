@@ -190,11 +190,6 @@ class Dase_Http_Request
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
-	public function getServerIp()
-	{
-		return $this->_server['SERVER_ADDR'];
-	}
-
 	public function checkCache($ttl=null)
 	{
 		$cache = $this->retrieve('cache');
@@ -486,10 +481,10 @@ class Dase_Http_Request
 			$eid = $this->retrieve('cookie')->getEid();
 			break;
 		case 'http':
-			$eid = $this->dase_http_auth->getEid();
+			$eid = $this->dase_http_auth->getEid($this->logger());
 			break;
 		case 'service':
-			$eid = $this->dase_http_auth->getEid(true);
+			$eid = $this->dase_http_auth->getEid($this->logger(),true);
 			break;
 		case 'none':
 			//allows nothing to happen

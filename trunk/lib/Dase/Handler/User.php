@@ -24,6 +24,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	protected function setup($r)
 	{ 
+		$this->db = $r->retrieve('db');
 		if ('atom' == $r->format || 'ping' == $r->resource ) {
 			$this->user = $r->getUser('http');
 		} else {
@@ -93,14 +94,14 @@ class Dase_Handler_User extends Dase_Handler
 				try {
 					$set_entry = Dase_Atom_Entry::load($raw_input);
 				} catch(Exception $e) {
-					Dase_Log::get()->debug('error',$e->getMessage());
+					$r->logger()->debug('error',$e->getMessage());
 					$r->renderError(400,'bad xml');
 				}
 				if ('set' != $set_entry->entrytype) {
 					$r->renderError(400,'must be a set entry');
 				}
 				try {
-					$set = $set_entry->insert($r);
+					$set = $set_entry->insert($db,$r);
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 					header("Location: ".$set->getBaseUrl().'.atom?type=entry');
@@ -129,7 +130,7 @@ class Dase_Handler_User extends Dase_Handler
 		$items->setLimit($limit);
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('Recent Uploads by '.$this->user->eid);
-		$feed->setId(APP_ROOT.'user/'.$this->user->eid.'/'.$r->get('collection_ascii_id').'/recent');
+		$feed->setId($r->app_root.'user/'.$this->user->eid.'/'.$r->get('collection_ascii_id').'/recent');
 		$feed->setFeedType('items');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
@@ -177,7 +178,7 @@ class Dase_Handler_User extends Dase_Handler
 		if (!$data) {
 			$u = $r->getUser();
 			$data = $u->getDataJson();
-			$cache->setData($data);
+			$cache->setData($cache_id,$data);
 		}
 		$r->renderResponse($data);
 	}
@@ -191,16 +192,16 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$u->expireDataCache();
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
-			$tag_item = new Dase_DBO_TagItem;
-			$item_uniq = str_replace(APP_ROOT.'/','',$r->get('item_unique'));
+			$tag_item = new Dase_DBO_TagItem($this->db);
+			$item_uniq = str_replace($r->app_root.'/','',$r->get('item_unique'));
 			list($coll,$sernum) = explode('/',$item_uniq);
 
 			//todo: compat 
-			$item = Dase_DBO_Item::get($coll,$sernum);
+			$item = Dase_DBO_Item::get($this->db,$coll,$sernum);
 			$tag_item->item_id = $item->id;
 
 			$tag_item->p_collection_ascii_id = $coll;
@@ -226,7 +227,7 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$u->expireDataCache();
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
@@ -245,9 +246,9 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$u->expireDataCache();
-		$tag_item = new Dase_DBO_TagItem;
+		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		$tag->load($tag_item->tag_id);
 		//todo: make this tag->eid == $u->eid
 		if ($tag->dase_user_id == $u->id) {
@@ -267,15 +268,15 @@ class Dase_Handler_User extends Dase_Handler
 	public function getCart($r)
 	{
 		$u = $this->user;
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
 			$http_pw = $u->getHttpPassword();
 			$t = new Dase_Template($r);
-			$json_url = APP_ROOT.'/tag/'.$tag->id.'.json';
+			$json_url = $r->app_root.'/tag/'.$tag->id.'.json';
 			$t->assign('json_url',$json_url);
-			$t->assign('items',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
+			$t->assign('items',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
 			$t->assign('is_admin',1);
 			$r->renderResponse($t->fetch('item_set/tag.tpl'));
 		} else {

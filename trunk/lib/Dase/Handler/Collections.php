@@ -13,6 +13,7 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	protected function setup()
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	public function postToCollections($r) 
@@ -34,7 +35,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			try {
 				$coll_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				Dase_Log::get()->debug('error',$e->getMessage());
+				$r->logger()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('collection' != $coll_entry->entrytype) {
@@ -46,7 +47,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			$ascii_id = $coll_entry->create($r);
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".APP_ROOT."/collection/".$ascii_id.'.atom');
+			header("Location: ".$r->app_root."/collection/".$ascii_id.'.atom');
 			echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry();
 			exit;
 		} else {

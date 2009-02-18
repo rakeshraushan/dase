@@ -216,14 +216,16 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItem($item);
 		if (!$atom) {
-			$c = $item->getCollection();
+			if (!$c) {
+				$c = $item->getCollection();
+			}
 			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$c);
-			$atom = new Dase_DBO_ItemAsAtom;
+			$atom = new Dase_DBO_ItemAsAtom($item->db);
 			$atom->item_id = $item->id;
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml('{APP_ROOT}',$entry->root); //so we don't get xml declaration
 			$atom->insert();
 		}
 		$dom = new DOMDocument('1.0','utf-8');

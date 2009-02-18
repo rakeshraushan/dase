@@ -11,6 +11,7 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}	
 
 	public function postToTags($r)
@@ -18,7 +19,7 @@ class Dase_Handler_Tags extends Dase_Handler
 		$tag_name = $r->get('tag_name');
 		//todo: make this work w/ cookie OR http auth??
 		$user = $r->getUser();
-		$tag = Dase_DBO_Tag::create($tag_name,$user);
+		$tag = Dase_DBO_Tag::create($this->db,$tag_name,$user);
 		if ($tag) {
 			//todo: should send a 201 w/ location header
 			$r->renderResponse('Created "'.$tag_name.'"');
@@ -57,7 +58,7 @@ class Dase_Handler_Tags extends Dase_Handler
 	public function getTags($r)
 	{
 		$tpl = new Dase_Template($r);
-		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/tags.atom');
+		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/tags.atom');
 		$tpl->assign('sets',$feed);
 		$r->renderResponse($tpl->fetch('tags/list.tpl'));
 	}
