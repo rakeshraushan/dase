@@ -15,12 +15,14 @@ class Dase_DBO implements IteratorAggregate
 	protected $qualifiers = array();
 	public $bind = array();
 	public $db;
+	public $log;
 	public $id = 0;
 	public $sql;
 
 	function __construct($db, $table, $fields )
 	{
 		$this->db = $db;
+		$this->log = $db->log;
 		$this->table = $db->table_prefix.$table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
@@ -132,7 +134,7 @@ class Dase_DBO implements IteratorAggregate
 				throw new Dase_DBO_Exception($errs[2]);
 			}
 		}
-		Dase_Log::get()->debug($sql . ' /// '.$id);
+		$this->log->debug($sql . ' /// '.$id);
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
 		if ($sth->fetch()) {
@@ -144,7 +146,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function insert($seq = '')
 	{ //postgres needs id specified
-		if ('pgsql' == Dase_DB::getDbType()) {
+		if ('pgsql' == $this->db->getDbType()) {
 			if (!$seq) {
 				//beware!!! fix this after no longer using DB_DataObject
 				//$seq = $this->table . '_id_seq';
@@ -152,12 +154,12 @@ class Dase_DBO implements IteratorAggregate
 			}
 			//$id = "nextval('$seq'::text)";
 			$id = "nextval(('public.$seq'::text)::regclass)"; 	
-		} elseif ('sqlite' == Dase_DB::getDbType()) {
+		} elseif ('sqlite' == $this->db->getDbType()) {
 			$id = 'null';
 		} else {
 			$id = 0;
 		}
-		$db = $this->_dbGet();
+		$dbh = $this->db->getDbh();
 		$fields = array('id');
 		$inserts = array($id);
 		foreach( array_keys( $this->fields ) as $field )
@@ -171,16 +173,16 @@ class Dase_DBO implements IteratorAggregate
 		//$this->table string is NOT tainted
 		$sql = "INSERT INTO ".$this->table. 
 			" ( $field_set ) VALUES ( $insert )";
-		$sth = $db->prepare( $sql );
+		$sth = $dbh->prepare( $sql );
 		if (! $sth) {
 			$error = $db->errorInfo();
 			throw new Exception("problem on insert: " . $error[2]);
 			exit;
 		}
 		if ($sth->execute($bind)) {
-			$last_id = $db->lastInsertId($seq);
+			$last_id = $dbh->lastInsertId($seq);
 			$this->id = $last_id;
-			Dase_Log::get()->debug($sql." /// last insert id = $last_id");
+			$this->log->debug($sql." /// last insert id = $last_id");
 			return $last_id;
 		} else { 
 			$error = $sth->errorInfo();
@@ -208,7 +210,7 @@ class Dase_DBO implements IteratorAggregate
 	{
 		//finds matches based on set fields (omitting 'id')
 		//returns an iterator
-		$db = $this->_dbGet();
+		$dbh = $this->db->getDbh();
 		$sets = array();
 		$bind = array();
 		$limit = '';
@@ -228,7 +230,7 @@ class Dase_DBO implements IteratorAggregate
 				if ('null' == $qual['value']) {
 					$v = $qual['value'];
 				} else {
-					$v = $db->quote($qual['value']);
+					$v = $dbh->quote($qual['value']);
 				}
 				$sets[] = "$f $op $v";
 			}
@@ -245,7 +247,7 @@ class Dase_DBO implements IteratorAggregate
 		if (isset($this->limit)) {
 			$sql .= " LIMIT $this->limit";
 		}
-		$sth = $db->prepare( $sql );
+		$sth = $dbh->prepare( $sql );
 		if (!$sth) {
 			throw new PDOException('cannot create statement handle');
 		}
@@ -255,7 +257,7 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
-		Dase_Log::get()->debug('[DBO find] '.$log_sql);
+		$this->log->debug('[DBO find] '.$log_sql);
 
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
@@ -270,7 +272,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function findCount()
 	{
-		$db = $this->_dbGet();
+		$dbh = $this->db->getDbh();
 		$sets = array();
 		$bind = array();
 		foreach( array_keys( $this->fields ) as $field ) {
@@ -289,7 +291,7 @@ class Dase_DBO implements IteratorAggregate
 				if ('null' == $qual['value']) {
 					$v = $qual['value'];
 				} else {
-					$v = $db->quote($qual['value']);
+					$v = $dbh->quote($qual['value']);
 				}
 				$sets[] = "$f $op $v";
 			}
@@ -300,7 +302,7 @@ class Dase_DBO implements IteratorAggregate
 		} else {
 			$sql = "SELECT count(*) FROM ".$this->table;
 		}
-		$sth = $db->prepare( $sql );
+		$sth = $dbh->prepare( $sql );
 		if (!$sth) {
 			throw new PDOException('cannot create statement handle');
 		}
@@ -308,9 +310,9 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
-		Dase_Log::get()->debug('[DBO findCount] '.$log_sql);
+		$this->log->debug('[DBO findCount] '.$log_sql);
 		$sth->execute($bind);
-		//Dase_Log::get()->debug('DB ERROR: '.print_r($sth->errorInfo(),true));
+		//$this->log->debug('DB ERROR: '.print_r($sth->errorInfo(),true));
 		return $sth->fetchColumn();
 	}
 
@@ -334,9 +336,9 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($params as $bp) {
 			$sql = preg_replace('/\?/',"'$bp'",$sql,1);
 		}
-		Dase_Log::get()->debug("----------------------------");
-		Dase_Log::get()->debug("[DBO query]".$sql);
-		Dase_Log::get()->debug("----------------------------");
+		$db->log->debug("----------------------------");
+		$db->log->debug("[DBO query]".$sql);
+		$db->log->debug("----------------------------");
 
 		if (!$sth->execute($params)) {
 			$errs = $sth->errorInfo();
@@ -349,7 +351,7 @@ class Dase_DBO implements IteratorAggregate
 
 	function update()
 	{
-		$db = $this->_dbGet();
+		$dbh = $this->db->getDbh();
 		foreach( $this->fields as $key => $val) {
 			if ('timestamp' != $key || !is_null($val)) { //prevents null timestamp as update
 				$fields[]= $key." = ?";
@@ -359,12 +361,12 @@ class Dase_DBO implements IteratorAggregate
 		$set = join( ",", $fields );
 		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
 		$values[] = $this->id;
-		$sth = $db->prepare( $sql );
-		Dase_Log::get()->debug($sql . ' /// ' . join(',',$values));
+		$sth = $dbh->prepare( $sql );
+		$this->log->debug($sql . ' /// ' . join(',',$values));
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
-				Dase_Log::get()->debug("updating error: ".$errs[2]);
+				$this->log->debug("updating error: ".$errs[2]);
 				//throw new Dase_DBO_Exception('could not update '. $errs[2]);
 			}
 		}
@@ -372,11 +374,11 @@ class Dase_DBO implements IteratorAggregate
 
 	function delete()
 	{
-		$db = $this->_dbGet();
-		$sth = $db->prepare(
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
-		Dase_Log::get()->debug("deleting id $this->id from $this->table table");
+		$this->log->debug("deleting id $this->id from $this->table table");
 		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
 	}

@@ -14,6 +14,7 @@ class Dase_Handler_Service extends Dase_Handler
 
 	public function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	public function getServiceTxt($r)
@@ -25,9 +26,9 @@ class Dase_Handler_Service extends Dase_Handler
 	{
 		$svc = new Dase_Atom_Service;	
 		$meta_workspace = $svc->addWorkspace('DASe MetaCollections Workspace');
-		$meta_coll = $meta_workspace->addCollection(APP_ROOT.'/collections','DASe Collections');
+		$meta_coll = $meta_workspace->addCollection($r->app_root.'/collections','DASe Collections');
 		$meta_coll->addAccept('application/atom+xml;type=entry');
-		$scheme = new Dase_DBO_CategoryScheme;
+		$scheme = new Dase_DBO_CategoryScheme($this->db);
 		$scheme->applies_to = 'collection';
 		foreach ($scheme->find() as $sch) {
 			$meta_cats = $meta_coll->addCategorySet(
@@ -36,7 +37,7 @@ class Dase_Handler_Service extends Dase_Handler
 		}
 		$meta_cats = $meta_coll->addCategorySet();
 		$meta_cats->addCategory('collection','http://daseproject.com/category/entrytype');
-		$users_coll = $meta_workspace->addCollection(APP_ROOT.'/users','DASe Users');
+		$users_coll = $meta_workspace->addCollection($r->app_root.'/users','DASe Users');
 		$users_coll->addAccept('application/atom+xml;type=entry');
 		$users_cats = $users_coll->addCategorySet();
 		$users_cats->addCategory('user','http://daseproject.com/category/entrytype');

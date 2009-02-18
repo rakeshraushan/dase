@@ -4,14 +4,14 @@ require_once 'Dase/DBO/Autogen/CategoryScheme.php';
 
 class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme 
 {
-	public static function listAsFeed($order_by='created DESC')
+	public static function listAsFeed($db,$order_by='created DESC')
 	{
-		$schemes = new Dase_DBO_CategoryScheme;
+		$schemes = new Dase_DBO_CategoryScheme($db);
 		$schemes->orderBy($order_by);
 		$feed = new Dase_Atom_Feed;
 		$feed->setId();
 		$feed->setTitle('List of Available Category Schemes');
-		$feed->setUpdated(Dase_DBO_CategoryScheme::getLastCreated());
+		$feed->setUpdated(Dase_DBO_CategoryScheme::getLastCreated($db));
 		$feed->addAuthor();
 		$feed->setFeedType('category_scheme_list');
 		foreach ($schemes->find() as $sch) {
@@ -31,7 +31,7 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 	public function getCategories()
 	{
 		$res = array();
-		$cats = new Dase_DBO_Category;
+		$cats = new Dase_DBO_Category($this->db);
 		$cats->scheme_id = $this->id;
 		foreach ($cats->find() as $cat) {
 			$res[] = clone $cat;
@@ -53,7 +53,7 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 	}
 
 
-	static function getLastCreated()
+	static function getLastCreated($db)
 	{
 		$prefix = $this->db->table_prefix;
 		$sql = "
@@ -62,7 +62,7 @@ class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme
 			ORDER BY created DESC
 			";
 		//returns first non-null created
-		foreach (Dase_DBO::query($sql) as $row) {
+		foreach (Dase_DBO::query($db,$sql) as $row) {
 			if ($row['created']) {
 				return $row['created'];
 			}

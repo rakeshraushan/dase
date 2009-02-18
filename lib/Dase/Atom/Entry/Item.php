@@ -533,7 +533,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$file = Dase_File::newFile($new_file,$enc['mime_type']);
 					$media_file = $file->addToCollection($item,false);
 				} catch(Exception $e) {
-					Dase_Log::get()->debug('error',$e->getMessage());
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}
 			}

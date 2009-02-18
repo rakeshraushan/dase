@@ -10,6 +10,7 @@ class Dase_Handler_Users extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 		$this->user = $r->getUser('http');
 		if (!$this->user->isManager()) {
 			$r->renderError(401);
@@ -31,14 +32,14 @@ class Dase_Handler_Users extends Dase_Handler
 				try {
 					$entry = Dase_Atom_Entry::load($raw_input);
 				} catch(Exception $e) {
-					Dase_Log::get()->debug('error',$e->getMessage());
+					$r->logger()->debug('error',$e->getMessage());
 					$r->renderError(400,'bad xml');
 				}
 				if ('user' != $entry->entrytype) {
 					$r->renderError(400,'must be a user entry');
 				}
 				try {
-					$user = $entry->insert($r);
+					$user = $entry->insert($this->db,$r);
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 					header("Location: ".$user->getBaseUrl().'.atom?type=entry');
@@ -51,7 +52,7 @@ class Dase_Handler_Users extends Dase_Handler
 				//in honor of http://www.tbray.org/ongoing/When/200x/2009/01/29/Name-Value-Pairs
 				$eid = $r->get('eid');
 				$name = $r->get('name');
-				$user = Dase_DBO_DaseUser::get($eid);
+				$user = Dase_DBO_DaseUser::get($this->db,$eid);
 				if (!$user) {
 					$user = new Dase_DBO_DaseUser();
 					$user->name = $name; 

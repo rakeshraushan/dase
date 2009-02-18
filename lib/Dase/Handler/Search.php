@@ -13,6 +13,7 @@ class Dase_Handler_Search extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 		//setting $r allows app cache-ability
 		//but...breaks intermediate caching (work on that)
 		if (Dase_Cookie::get('max')) {
@@ -42,19 +43,19 @@ class Dase_Handler_Search extends Dase_Handler
 		if (!$r->getUser('http')) {
 			$r->renderError(401,'cannot delete recent searches');
 		}
-		$count = Dase_DBO_SearchCache::deleteRecent($r);
+		$count = Dase_DBO_SearchCache::deleteRecent($this->db,$r);
 		$r->renderResponse($count." cached searches deleted");
 	}
 
 	public function postToDeleteRecent($r)
 	{
-		$this->deleteRecent($r);
+		$this->deleteRecent($this->db,$r);
 	}
 
 	public function getSearchCacheAtom($r)
 	{
 		$r->checkCache();
-		$search_cache = new Dase_DBO_SearchCache;
+		$search_cache = new Dase_DBO_SearchCache($this->db);
 		$search_cache->search_md5 = $r->get('md5_hash');
 		if ($search_cache->findOne()) {
 			$cache = Dase_Cache::get($search_cache->query);
@@ -109,7 +110,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
-		$feed = Dase_Atom_Feed::retrieve(APP_ROOT.'/'.$r->url.'&format=atom');
+		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/'.$r->url.'&format=atom');
 		if (!$feed->getOpensearchTotal()) {
 			$r->renderError(404,'no such item');
 		}
@@ -122,9 +123,9 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
 		//default slidehow max of 100
-		$json_url = APP_ROOT.'/'.$r->url.'&format=json&max=100';
+		$json_url = $r->app_root.'/'.$r->url.'&format=json&max=100';
 		$tpl->assign('json_url',$json_url);
-		$feed_url = APP_ROOT.'/'.$r->url.'&format=atom';
+		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
 		//single hit goes directly to item
@@ -132,7 +133,7 @@ class Dase_Handler_Search extends Dase_Handler
 		if (1 == $count) {
 			$tpl->assign('item',$feed);
 			$url = str_replace('search?','search/item?',$r->url);
-			$r->renderRedirect(APP_ROOT.'/'.$url);
+			$r->renderRedirect($r->app_root.'/'.$url);
 		}
 		$end = $this->start+$this->max-1;
 		if ($end > $count) {

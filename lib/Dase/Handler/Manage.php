@@ -28,8 +28,9 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
-		$this->path_to_media = $r->config->get('path_to_media');
+		$this->db = $r->retrieve('db');
+		$this->collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
+		$this->path_to_media = $r->retrieve('config')->getMediaDir();
 		if (!$this->collection) {
 			$r->renderError(404);
 		}
@@ -173,7 +174,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 		$att_ascii_id = Dase_Util::dirify($r->get('attribute_name'));
 		//note if att_ascii_id MATCHES, we do not create a new att, we grab match
-		$att = Dase_DBO_Attribute::findOrCreate($this->collection->ascii_id,$att_ascii_id);
+		$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->collection->ascii_id,$att_ascii_id);
 		$att->attribute_name = $r->get('attribute_name');
 		$att->usage_notes = $r->get('usage_notes');
 		if ($r->has('is_on_list_display')) {
@@ -201,8 +202,8 @@ class Dase_Handler_Manage extends Dase_Handler
 	//todo: this belongs in Attribute Handler
 	public function putAttributeDefinedValues($r)
 	{
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
-		$def_values = new Dase_DBO_DefinedValue;
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
+		$def_values = new Dase_DBO_DefinedValue($this->db);
 		$def_values->attribute_id = $att->id;
 		foreach ($def_values->find() as $df) {
 			$df->delete();
@@ -310,8 +311,8 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToItemTypeAttributes($r)
 	{
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
 		$ita = new Dase_DBO_AttributeItemType;
 		$ita->attribute_id = $att->id;
 		$ita->item_type_id = $type->id;
@@ -327,13 +328,13 @@ class Dase_Handler_Manage extends Dase_Handler
 		$rel_type_ascii = $r->get('rel_type_ascii_id');
 		$rel = $r->get('rel');
 		$coll = $this->collection->ascii_id;
-		$type = Dase_DBO_ItemType::get($coll,$type_ascii);
-	   	$rel_type = Dase_DBO_ItemType::get($coll,$rel_type_ascii);
+		$type = Dase_DBO_ItemType::get($this->db,$coll,$type_ascii);
+	   	$rel_type = Dase_DBO_ItemType::get($this->db,$coll,$rel_type_ascii);
 		if (!$type || !$rel_type) {
 			$r->renderError(409);
 		}
 		if ('parent' == $rel) {
-			$itr = new Dase_DBO_ItemTypeRelation;
+			$itr = new Dase_DBO_ItemTypeRelation($this->db);
 			$itr->parent_type_ascii_id = $rel_type_ascii;
 			$itr->child_type_ascii_id = $type_ascii;
 			$itr->collection_ascii_id = $coll;
@@ -342,7 +343,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$itr->updateAtomCache();
 		}	
 		if ('child' == $rel) {
-			$itr = new Dase_DBO_ItemTypeRelation;
+			$itr = new Dase_DBO_ItemTypeRelation($this->db);
 			$itr->parent_type_ascii_id = $type_ascii;
 			$itr->child_type_ascii_id = $rel_type_ascii;
 			$itr->collection_ascii_id = $coll;
@@ -450,7 +451,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$params['msg'] = 'User '.$r->get('dase_user_eid').' does not yet exist';
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/managers',$params);
 		}
-		$mgr = new Dase_DBO_CollectionManager;
+		$mgr = new Dase_DBO_CollectionManager($this->db);
 		$mgr->dase_user_eid = $r->get('dase_user_eid');
 		$mgr->auth_level = $r->get('auth_level');
 		$mgr->collection_ascii_id = $this->collection->ascii_id;
@@ -487,9 +488,9 @@ class Dase_Handler_Manage extends Dase_Handler
 			$type = $_FILES[$input_name]['type'];
 			if (!Dase_Media::isAcceptable($type)) {
 				$r->renderError(415,'unsupported media type: '.$type);
-				Dase_Log::get()->debug($type.' is not a supported media type');
+				$r->logger()->debug($type.' is not a supported media type');
 			}
-			Dase_Log::get()->info('uploading file '.$name.' type: '.$type);
+			$r->logger()->info('uploading file '.$name.' type: '.$type);
 
 			$item = $this->collection->createNewItem(null,$this->user->eid);
 			if ($r->has('title')) {

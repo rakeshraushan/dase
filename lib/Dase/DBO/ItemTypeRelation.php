@@ -7,9 +7,9 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 	public $child;
 	public $parent;
 
-	public static function get($collection_ascii_id,$ascii_id)
+	public static function get($db,$collection_ascii_id,$ascii_id)
 	{
-		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr = new Dase_DBO_ItemTypeRelation($db);
 		$itr->collection_ascii_id = $collection_ascii_id;
 		list($child_ascii,$parent_ascii) = explode('_children_of_',str_replace('.atom','',$ascii_id));
 		$itr->child_type_ascii_id = $child_ascii;
@@ -17,14 +17,14 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		return $itr->findOne();
 	}
 
-	public static function getByItemSerialNumbers($collection_ascii_id,$parent_sernum,$child_sernum)
+	public static function getByItemSerialNumbers($db,$collection_ascii_id,$parent_sernum,$child_sernum)
 	{
-		$p = Dase_DBO_Item::get($collection_ascii_id,$parent_sernum);
-		$c = Dase_DBO_Item::get($collection_ascii_id,$child_sernum);
+		$p = Dase_DBO_Item::get($db,$collection_ascii_id,$parent_sernum);
+		$c = Dase_DBO_Item::get($db,$collection_ascii_id,$child_sernum);
 		if (!$c || !$p) { return false; }
 		$ptype = $p->getItemType();
 		$ctype = $c->getItemType();
-		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr = new Dase_DBO_ItemTypeRelation($db);
 		$itr->collection_ascii_id = $collection_ascii_id;
 		$itr->parent_type_ascii_id = $ptype->ascii_id;
 		$itr->child_type_ascii_id = $ctype->ascii_id;
@@ -33,13 +33,13 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 
 	public function getChildType() 
 	{
-		$this->child = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->child_type_ascii_id);
+		$this->child = Dase_DBO_ItemType::get($this->db,$this->collection_ascii_id,$this->child_type_ascii_id);
 		return $this->child;
 	}
 
 	public function getParentType() 
 	{
-		$this->parent = Dase_DBO_ItemType::get($this->collection_ascii_id,$this->parent_type_ascii_id);
+		$this->parent = Dase_DBO_ItemType::get($this->db,$this->collection_ascii_id,$this->parent_type_ascii_id);
 		return $this->parent;
 	}
 
@@ -53,7 +53,7 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 
 	public function expunge()
 	{
-		$item_relations = new Dase_DBO_ItemRelation;
+		$item_relations = new Dase_DBO_ItemRelation($this->db);
 		$item_relations->item_type_relation_id = $this->id;
 		foreach ($item_relations as $doomed) {
 			$doomed->delete();
@@ -86,7 +86,7 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 
 	public function getChildCount($parent_serial_number)
 	{
-		$ir = new Dase_DBO_ItemRelation;
+		$ir = new Dase_DBO_ItemRelation($this->db);
 		$ir->item_type_relation_id = $this->id;
 		$ir->parent_serial_number = $parent_serial_number;
 		return ($ir->findCount());
@@ -95,7 +95,7 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 	public function updateAtomCache()
 	{
 		//very expensive, may want to just delete atom cache for each
-		$ir = new Dase_DBO_ItemRelation;
+		$ir = new Dase_DBO_ItemRelation($this->db);
 		$ir->item_type_relation_id = $this->id;
 		$i = 0;
 		foreach ($ir->find() as $item_rel) {

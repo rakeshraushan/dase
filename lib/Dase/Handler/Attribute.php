@@ -13,14 +13,16 @@ class Dase_Handler_Attribute extends Dase_Handler
 
 	public function setup($r)
 	{
+		$db = $r->retrieve('db');
+		$this->db = $db;
 		if ($r->has('collection_ascii_id')) {
-			$this->collection = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+			$this->collection = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		}
 		if ($r->has('att_ascii_id') && $r->has('collection_ascii_id')) {
-			$this->attribute = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+			$this->attribute = Dase_DBO_Attribute::get($db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
 		} 
 		if ($r->has('att_ascii_id') && !$r->has('collection_ascii_id')) {
-			$this->attribute = Dase_DBO_Attribute::getAdmin('admin_'.$r->get('att_ascii_id'));
+			$this->attribute = Dase_DBO_Attribute::getAdmin($db,'admin_'.$r->get('att_ascii_id'));
 		} 
 		if (!$this->attribute) {
 			$r->renderError('404');
@@ -46,7 +48,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 	/** implicit 1000 limit */
 	public function getAttributeValuesJson($r) 
 	{
-		$attr = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		$attr = Dase_DBO_Attribute::get($this->db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
 		if (0 == $attr->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
 			$values_array = $attr->getDisplayValues($this->collection->ascii_id);
@@ -62,7 +64,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 
 	public function getAttributeValuesAtom($r) 
 	{
-		$attr = Dase_DBO_Attribute::get($r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+		$attr = Dase_DBO_Attribute::get($this->db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
 		$key = '';
 		$val = '';
 		if ($r->has('filter_key') && $r->has('filter_value')) {

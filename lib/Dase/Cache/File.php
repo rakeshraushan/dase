@@ -9,12 +9,10 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl;
 
-	function __construct($cache_dir,$server_ip='localhost',$ttl=10)
+	function __construct($cache_dir,$ttl=10)
 	{
 		$this->cache_dir = $cache_dir;
 		$this->ttl = $ttl;
-		$this->server_ip = $server_ip;
-		$this->pid = getmypid();
 		$this->_initDir();
 	}
 
@@ -30,17 +28,19 @@ class Dase_Cache_File extends Dase_Cache
 		}
 	}
 
+	/** used to expunge search cache for which
+	 * we only have an md5
+	 */
 	public function expungeByHash($md5_hash)
 	{
 		if ($md5_hash) {
-			$filename = $this->cache_dir.'/'. md5_hash;
-			Dase_Log::get()->debug('expired ' . $filename);
-			@unlink($filename);
+			@unlink($this->cache_dir.'/'. $md5_hash);
 		}
 	}
 
 	public function expunge() 
 	{
+		///make sure it is always a cache dir contents we are expunging
 		if ('cache' != array_pop(explode('/',$this->cache_dir))) {
 			throw new Dase_Cache_Exception("can only expunge contents of directory called 'cache'");
 		}
@@ -72,42 +72,51 @@ class Dase_Cache_File extends Dase_Cache
 		return $this->cache_dir;
 	}
 
+	private function getFilePath($filename,$create_subdir=false) 
+	{
+		$md5_hash = md5($filename);
+		$subdir = substr($md5_hash,0,2);
+		if ($create_subdir && !file_exists($this->cache_dir.'/'.$subdir)) {
+			mkdir($this->cache_dir.'/'.$subdir);
+		}
+		return $this->cache_dir.'/'.$subdir.'/'.$md5_hash;
+	}
+
 	public function expire($filename)
 	{
-		$filename = $this->cache_dir . $filename;
-		Dase_Log::get()->debug('expired ' . $filename);
-		@unlink($filename);
+		@unlink($this->getFilePath($filename));
 	}
 
 	/** any data fetch can override the default ttl */
-	public function getData($filename,$ttl=0)
+	public function getData($filename,$ttl=0,$log=null)
 	{
-		$filename = $this->cache_dir . $filename;
-		if (!file_exists($filename)) {
-			Dase_Log::get()->debug('cache cannot find '.$filename);
+		$filepath = $this->getFilePath($filename);
+		if (!file_exists($filepath)) {
 			return false;
 		}
 
 		$time_to_live = $ttl ? $ttl : $this->ttl;
-		$stat = stat($filename);
+		$stat = stat($filepath);
 		if(time() > $stat[9] + $time_to_live) {
-			@unlink($filename);
-			Dase_Log::get()->debug('cache is stale '.$filename);
+			@unlink($filepath);
 			return false;
 		}
-		Dase_Log::get()->debug('cache HIT!!! '.$filename);
-		return file_get_contents($filename);
+		if ($log) {
+			$log->debug('cache HIT!!! '.$filepath);
+		}
+		return file_get_contents($filepath);
 	}
 
 	public function setData($filename,$data)
 	{ 
-		$tempfilename = $this->cache_dir.'/'.md5($filename.$this->pid.$this->server_ip);
+		$filepath = $this->getFilePath($filename,true);
+		$temp = $filepath.'-temp';
 		//avoids race condition
 		if ($data) {
-			file_put_contents($tempfilename,$data);
-			rename($tempfilename,$this->cache_dir.'/'.$filename);
+			file_put_contents($temp,$data);
+			rename($temp,$filepath);
 		}
-		return $this->filename;
+		return $filepath;
 	}
 }
 

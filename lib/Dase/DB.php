@@ -9,9 +9,10 @@ class Dase_DB {
 	private $user;
 	private $pass;
 	public $table_prefix;
+	public $log;
 	public $dbh;
 
-	public function __construct($config)
+	public function __construct($config,$log)
 	{ 
 		$this->type = $config['type'];
 		$this->path = $config['path'];
@@ -20,6 +21,7 @@ class Dase_DB {
 		$this->user = $config['user'];
 		$this->pass = $config['pass'];
 		$this->table_prefix = $config['table_prefix'];
+		$this->log = $log;
 	}
 
 	public function getDbh()

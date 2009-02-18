@@ -21,7 +21,8 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->type = Dase_DBO_ItemType::get($r->get('collection_ascii_id'),$r->get('item_type_ascii_id'));
+		$this->db = $r->retrieve('db');
+		$this->type = Dase_DBO_ItemType::get($this->db,$r->get('collection_ascii_id'),$r->get('item_type_ascii_id'));
 		if (!$this->type) {
 			$r->renderError(404);
 		}
@@ -230,7 +231,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		);
 		$st = Dase_DBO::query($sql,$bound);
 		$feed = new Dase_Atom_Feed;
-		$feed->setId(APP_ROOT.$r->getUrl());
+		$feed->setId($r->app_root.$r->getUrl());
 		$feed->updated = date(DATE_ATOM);
 		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
 		while ($sernum = $st->fetchColumn()) {

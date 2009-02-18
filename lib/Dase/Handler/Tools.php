@@ -10,6 +10,7 @@ class Dase_Handler_Tools extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	public function getDemo($r)
@@ -28,7 +29,7 @@ class Dase_Handler_Tools extends Dase_Handler
 	/** this handler method should be the target of a web hook */
 	public function postToCacheDeleter($r)
 	{
-		$num = Dase_Cache_File::expunge();
+		$num = $r->retrieve('cache')->expunge();
 		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 }

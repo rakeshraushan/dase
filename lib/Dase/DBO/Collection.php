@@ -41,7 +41,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$items = new Dase_DBO_Item;
 		$items->collection_id = $this->id;
 		foreach ($items->find() as $item) {
-			Dase_Log::get()->info("item $this->ascii_id:$item->serial_number deleted");
+			$this->log->info("item $this->ascii_id:$item->serial_number deleted");
 			if ($messages) {
 				print "item $this->ascii_id:$item->serial_number deleted\n";
 			}
@@ -73,7 +73,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$cm->delete();
 		}
 		$this->delete();
-		Dase_Log::get()->info("$this->ascii_id deleted");
+		$this->log->info("$this->ascii_id deleted");
 		if ($messages) {
 			print "$this->ascii_id collection deleted\n";
 		}

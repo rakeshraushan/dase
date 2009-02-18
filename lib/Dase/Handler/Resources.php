@@ -11,6 +11,7 @@ class Dase_Handler_Resources extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	public function getIndex($r) 

@@ -28,8 +28,9 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 		//Locates requested tag.  Method still needs to authorize.
-		$tag = new Dase_DBO_Tag;
+		$tag = new Dase_DBO_Tag($this->db);
 		if ($r->has('tag_ascii_id') && $r->has('eid')) {
 			$tag->ascii_id = $r->get('tag_ascii_id');
 			$tag->eid = $r->get('eid');
@@ -108,7 +109,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$t = new Dase_Template($r);
 		if ($this->tag->isSingleCollection()) {
 			$t->assign('is_single_collection',1);
-			$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+			$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 			$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		}
 		//$r->response_mime_type = "application/octet-stream";
@@ -124,9 +125,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
-		$json_url = APP_ROOT.'/tag/'.$this->tag->id.'.json';
+		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
 		$t->assign('json_url',$json_url);
-		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('feed_url',$feed_url);
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		if ($u->can('admin',$this->tag) && 'hide' != $u->cb) {
@@ -150,7 +151,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($r);
-		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
@@ -165,7 +166,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$this->tag->sort($sort_array);
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($r);
-		$feed_url = APP_ROOT.'/tag/'.$this->tag->id.'.atom';
+		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
@@ -187,8 +188,8 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag_item_id = $r->get('tag_item_id');
 		$http_pw = $u->getHttpPassword();
 		$t = new Dase_Template($r);
-		//$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
-		$t->assign('item',Dase_Atom_Feed::retrieve(APP_ROOT.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
+		//$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
+		$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item/display.tpl'));
 	}
 
@@ -315,7 +316,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			try {
 				$set_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				Dase_Log::get()->debug('error',$e->getMessage());
+				$r->logger()->debug('error',$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('set' != $set_entry->entrytype) {

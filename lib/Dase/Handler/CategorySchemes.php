@@ -8,6 +8,7 @@ class Dase_Handler_CategorySchemes extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
 	public function getCategorySchemes($r) 

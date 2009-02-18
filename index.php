@@ -48,13 +48,7 @@ $r->initPlugin($c->getCustomHandlers());
 
 $cookie = new Dase_Cookie($r->app_root,$r->module,$c->getAuth('token'));
 
-$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir(),$r->getServerIp());
-
-$db = new Dase_DB($c->get('db'));
-
-//will be used by Dase_Http_Request 
-$dbuser = new Dase_DBO_DaseUser($db);
-$dbuser->setAuth($c->getAuth());
+$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir());
 
 //just an experiment
 if ($r->getRemoteAddr()) {
@@ -62,6 +56,11 @@ if ($r->getRemoteAddr()) {
 } else {
 	$log = new Dase_Log($c->getLogDir().'/dase.log',Dase_Log::DEBUG);
 }
+
+$db = new Dase_DB($c->get('db'),$log);
+
+$dbuser = new Dase_DBO_DaseUser($db);
+$dbuser->setAuth($c->getAuth());
 
 $r->store('config',$c);
 $r->store('cookie',$cookie);

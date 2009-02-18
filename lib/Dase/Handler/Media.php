@@ -10,6 +10,7 @@ class Dase_Handler_Media extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 		//todo: finish
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
@@ -77,7 +78,7 @@ class Dase_Handler_Media extends Dase_Handler
 	/** used for swap-out */
 	public function putMedia($r)
 	{
-		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		$item = Dase_DBO_Item::get($this->db,$this->collection_ascii_id,$this->serial_number);
 		if (!$item) {
 			$r->renderError(404,'no such item');
 		}
@@ -127,7 +128,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 			unlink($new_file);
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
@@ -137,7 +138,7 @@ class Dase_Handler_Media extends Dase_Handler
 	/** GET on edit-media url */
 	public function getMedia($r)
 	{
-		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		$item = Dase_DBO_Item::get($this->db,$this->collection_ascii_id,$this->serial_number);
 		if (!$item) {
 			$r->renderError(404,'no such item');
 		}
@@ -153,7 +154,7 @@ class Dase_Handler_Media extends Dase_Handler
 	/** AtomPub Media Link Entry */
 	public function getMediaAtom($r)
 	{
-		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		$item = Dase_DBO_Item::get($this->db,$this->collection_ascii_id,$this->serial_number);
 		if (!$item) {
 			$r->renderError(404,'no such item');
 		}
@@ -167,7 +168,7 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function deleteMedia($r)
 	{
-		$item = Dase_DBO_Item::get($this->collection_ascii_id,$this->serial_number);
+		$item = Dase_DBO_Item::get($this->db,$this->collection_ascii_id,$this->serial_number);
 		if (!$item) {
 			$r->renderError(404,'no such item');
 		}
@@ -178,7 +179,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$item->deleteAdminValues();
 			$item->deleteMedia();
 		} catch(Exception $e) {
-			Dase_Log::get()->debug('error',$e->getMessage());
+			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(500,'could not delete media ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
@@ -242,7 +243,7 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function getCollectionAtom($r) 
 	{
-		$c = Dase_DBO_Collection::get($this->collection_ascii_id);
+		$c = Dase_DBO_Collection::get($this->db,$this->collection_ascii_id);
 		if ($r->has('limit')) {
 		   $limit = $r->get('limit');
 		} else {
@@ -253,7 +254,7 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function postToCollection($r)
 	{
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		if (!$this->user->can('write',$c)) {
 			$r->renderError(401,'cannot post media to this collection');
 		}
