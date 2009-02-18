@@ -57,7 +57,7 @@
 		</div>
 
 		<div id="manageHeader">
-			DASe Test Suite 
+			DASe Tools 
 		</div>
 
 		<div id="sidebar">
@@ -68,7 +68,7 @@
 				</a>
 				</li>
 				<li class="demo-tab">
-				<a href="test/demo">
+				<a href="tools/demo">
 					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
 				</a>
 				</li>
@@ -80,7 +80,7 @@
 				</a>
 				</li>
 				<li class="demo-tab">
-				<a href="test/demo">
+				<a href="tools/demo">
 					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
 				</a>
 				</li>
@@ -89,7 +89,8 @@
 		</div> <!-- closes sidebar -->
 
 		<div id="content">
-			<div id="test" class="full">
+			<div id="tools" class="full">
+
 				{block name="content"}default content{/block}
 			</div>
 		</div>

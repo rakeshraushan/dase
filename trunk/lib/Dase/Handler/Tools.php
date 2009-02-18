@@ -1,10 +1,11 @@
 <?php
 
-class Dase_Handler_Test extends Dase_Handler
+class Dase_Handler_Tools extends Dase_Handler
 {
 	public $resource_map = array(
 		'/' => 'demo',
 		'demo' => 'demo',
+		'cd' => 'cache_deleter',
 	);
 
 	protected function setup($r)
@@ -21,6 +22,13 @@ class Dase_Handler_Test extends Dase_Handler
 			$t->assign('entry',$entry);
 			$t->assign('atom_doc',$entry->asXml());
 		}	
-		$r->renderResponse($t->fetch('test/demo.tpl'));
+		$r->renderResponse($t->fetch('tools/demo.tpl'));
+	}
+
+	/** this handler method should be the target of a web hook */
+	public function postToCacheDeleter($r)
+	{
+		$num = Dase_Cache_File::expunge();
+		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 }

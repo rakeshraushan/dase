@@ -1,20 +1,10 @@
-{extends file="test/layout.tpl"}
+{extends file="tools/layout.tpl"}
 
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/demo.js"></script>
 {/block}
 
-{block name="title"}DASe Tests{/block} 
-
-{block name="tests"}
-<h2>Available Tests</h2>
-<ul>
-	{foreach item=t from=$tests}
-	<li><a href="{$app_root}test/{$t}">{$t}</a></li>
-	{/foreach}
-</ul>
-{/block}
-
+{block name="title"}DASe Tools{/block} 
 
 {block name="content"}
 <div id="demo">
