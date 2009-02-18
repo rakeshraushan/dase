@@ -34,8 +34,12 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function deleteCache($r)
 	{
-		$num = Dase_Cache_File::expunge();
-		$r->renderResponse('cache deleted '.$num.' files removed');
+		if ('delete_cache' == $r->get('msg')) {
+			$num = Dase_Cache_File::expunge();
+			$r->renderResponse('cache deleted '.$num.' files removed');
+		} else {
+			$r->renderResponse('cache not deleted');
+		}
 	}
 
 	public function getModules($r)
