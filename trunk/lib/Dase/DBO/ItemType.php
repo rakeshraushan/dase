@@ -44,7 +44,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	public function asAtomEntry()
 	{
 		$c = $this->getCollection();
-		$entry = new Dase_Atom_Entry_ItemType;
+		$entry = new Dase_Atom_Entry_ItemType($this->db);
 		$entry = $this->injectAtomEntryData($entry,$c);
 		return $entry->asXml();
 	}
@@ -69,30 +69,30 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $entry;
 	}
 
-	function getCollection() {
+	public function getCollection() {
 
 		if ($this->collection) {
 			return $this->collection;
 		}
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($this->db);
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
 	}
 
-	function getAtts() {
+	public function getAtts() {
 		//for lazy load from smarty (since there is an 'attributes' member
 		return $this->getAttributes();
 	}
 
-	function getAttributes()
+	public function getAttributes()
 	{
 		//todo: fix this!!
 		$attributes = array();
-		$att_it = new Dase_DBO_AttributeItemType;
+		$att_it = new Dase_DBO_AttributeItemType($this->db);
 		$att_it->item_type_id = $this->id;
 		foreach($att_it->find() as $ait) {
-			$att = new Dase_DBO_Attribute;
+			$att = new Dase_DBO_Attribute($this->db);
 			$att->load($ait->attribute_id);
 			$attributes[] = $att;
 		}
@@ -100,13 +100,13 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $attributes;
 	}
 
-	function getItemsCount() {
-		$i = new Dase_DBO_Item;
+	public function getItemsCount() {
+		$i = new Dase_DBO_Item($this->db);
 		$i->item_type_id = $this->id;
 		return $i->findCount();
 	}
 
-	function getAttributesFeed() 
+	public function getAttributesFeed() 
 	{
 		$c = $this->getCollection();
 		$feed = new Dase_Atom_Feed;
@@ -120,7 +120,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $feed->asXml();
 	}
 
-	function getAttributesJson() 
+	public function getAttributesJson() 
 	{
 		$atts = array();
 		foreach ($this->getAttributes() as $att) {
@@ -132,9 +132,9 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return Dase_Json::get($atts);
 	}
 
-	function getParentRelations()
+	public function getParentRelations()
 	{
-		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel = new Dase_DBO_ItemTypeRelation($this->db);
 		$rel->child_type_ascii_id = $this->ascii_id;
 		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
 		foreach ($rel->find() as $r) {
@@ -143,9 +143,9 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $this->parents;
 	}
 
-	function getChildRelations()
+	public function getChildRelations()
 	{
-		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel = new Dase_DBO_ItemTypeRelation($this->db);
 		$rel->parent_type_ascii_id = $this->ascii_id;
 		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
 		foreach ($rel->find() as $r) {
@@ -154,24 +154,24 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $this->children;
 	}
 
-	function expunge()
+	public function expunge()
 	{
 		if (!$this->id || !$this->ascii_id) {
 			throw new Exception('cannot delete unspecified type');
 		}
-		$ait = new Dase_DBO_AttributeItemType;
+		$ait = new Dase_DBO_AttributeItemType($this->db);
 		$ait->item_type_id = $this->id;
 		foreach ($ait->find() as $doomed) {
 			Dase_Log::get()->info('deleted attribute_item_type '.$doomed->id);
 			$doomed->delete();
 		}
-		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr = new Dase_DBO_ItemTypeRelation($this->db);
 		$itr->parent_type_ascii_id = $this->id;
 		foreach ($itr->find() as $doomed_rel) {
 			Dase_Log::get()->info('deleted item_type_relation '.$doomed->id);
 			$doomed_rel->expunge();
 		}
-		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr = new Dase_DBO_ItemTypeRelation($this->db);
 		$itr->child_type_ascii_id = $this->id;
 		foreach ($itr->find() as $doomed_rel) {
 			Dase_Log::get()->info('deleted item_type_relation '.$doomed->id);

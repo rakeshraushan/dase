@@ -182,13 +182,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		//todo: this could use some optimization
 		$values = array();
 		if (in_array($this->html_input_type,array('radio','checkbox','select'))) {
-			$dv = new Dase_DBO_DefinedValue();
+			$dv = new Dase_DBO_DefinedValue($this->db);
 			$dv->attribute_id = $this->id;
 			foreach ($dv->find() as $defval) {
 				$values[] = $defval->value_text;
 			}
 		} elseif ('text_with_menu' == $this->html_input_type) {
-			$v = new Dase_DBO_Value;
+			$v = new Dase_DBO_Value($this->db);
 			$v->attribute_id = $this->id;
 			foreach ($v->find() as $value) {
 				$values[] = $value->value_text;
@@ -202,10 +202,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $values;
 	}
 
-	public static function listAdminAttIds()
+	public static function listAdminAttIds($db)
 	{
 		$ids = array();
-		$a = new Dase_DBO_Attribute;
+		$a = new Dase_DBO_Attribute($db);
 		$a->collection_id = 0;
 		foreach ($a->find() as $att) {
 			$ids[] = $att->id;
@@ -219,7 +219,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if ($this->collection) {
 			return $this->collection;
 		}
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($this->db);
 		$c->load($this->collection_id);
 		$this->collection = $c;
 		return $c;
@@ -227,7 +227,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getDefinedValues() {
 		$defined = array();
-		$dvs = new Dase_DBO_DefinedValue;
+		$dvs = new Dase_DBO_DefinedValue($this->db);
 		$dvs->attribute_id = $this->id;
 		foreach ($dvs->find() as $dv) {
 			$defined[] = $dv->value_text;
@@ -236,7 +236,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	}
 
 	function addDefinedValue($text) {
-		$dv = new Dase_DBO_DefinedValue;
+		$dv = new Dase_DBO_DefinedValue($this->db);
 		$dv->attribute_id = $this->id;
 		$dv->value_text = $text;
 		$dv->insert();
@@ -244,7 +244,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getCurrentValues() {
 		$current = array();
-		$vals = new Dase_DBO_Value;
+		$vals = new Dase_DBO_Value($this->db);
 		$vals->attribute_id = $this->id;
 		foreach ($vals->find() as $val) {
 			$current[] = $val->value_text;
@@ -255,10 +255,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	function getItemTypes()
 	{
 		$item_types = array();
-		$att_it = new Dase_DBO_AttributeItemType;
+		$att_it = new Dase_DBO_AttributeItemType($this->db);
 		$att_it->attribute_id = $this->id;
 		foreach($att_it->find() as $ait) {
-			$it = new Dase_DBO_ItemType;
+			$it = new Dase_DBO_ItemType($this->db);
 			$it->load($ait->item_type_id);
 			$item_types[] = $it;
 		}
@@ -271,7 +271,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$c = $this->getCollection();
 		$type = Dase_DBO_ItemType::get($c->ascii_id,$item_type_ascii);
 		if ($type) {
-			$ita = new Dase_DBO_AttributeItemType;
+			$ita = new Dase_DBO_AttributeItemType($this->db);
 			$ita->attribute_id = $this->id;
 			$ita->item_type_id = $type->id;
 			if (!$ita->findOne()) {
@@ -281,13 +281,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	}
 
 	function expunge() {
-		$dv = new Dase_DBO_DefinedValue;
+		$dv = new Dase_DBO_DefinedValue($this->db);
 		$dv->attribute_id = $this->id;
 		foreach ($dv->find() as $doomed) {
 			$doomed->delete();
 		}
 
-		$ait = new Dase_DBO_AttributeItemType;
+		$ait = new Dase_DBO_AttributeItemType($this->db);
 		$ait->attribute_id = $this->id;
 		foreach ($ait->find() as $doomed) {
 			$doomed->delete();
@@ -302,7 +302,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if ($this->mapped_admin_att_id) {
 			$mapped_id = $this->mapped_admin_att_id;
 		}
-		$aa = new Dase_DBO_Attribute;
+		$aa = new Dase_DBO_Attribute($this->db);
 		if ($aa->load($mapped_id)) {
 			return $aa->ascii_id;
 		} else {

@@ -28,9 +28,9 @@ class Dase_Atom_Entry_ItemTypeRelation extends Dase_Atom_Entry
 		return $this->getLink('http://daseproject.org/relation/parent_type');
 	}
 
-	function insert($r,$collection) 
+	function insert($db,$r,$collection) 
 	{
-		$itr = new Dase_DBO_ItemTypeRelation;
+		$itr = new Dase_DBO_ItemTypeRelation($db);
 		$itr->collection_ascii_id = $collection->ascii_id;
 		$itr->child_type_ascii_id = array_pop(explode('/',$this->getChildType()));
 		$itr->parent_type_ascii_id = array_pop(explode('/',$this->getParentType()));

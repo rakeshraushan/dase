@@ -12,7 +12,8 @@ class Dase_Log
 	const INFO 		= 2;	// Production 
 	const DEBUG 	= 3;	// Most Verbose
 
-	public function __construct($logfile,$log_level)
+	/** supply defaults so it is easy to create a fake log */
+	public function __construct($logfile='',$log_level=2)
 	{
 		$this->logfile = $logfile;
 		$this->log_level = $log_level;
@@ -27,8 +28,8 @@ class Dase_Log
 
 	private function _init()
 	{
-		if (!$filehandle = fopen($this->logfile, 'a')) {
-			throw new Dase_Log_Exception('cannot open logfile '.$this->logfile);
+		if (!$this->logfile || !$filehandle = fopen($this->logfile, 'a')) {
+			return false;
 		}
 		$this->filehandle = $filehandle;
 	}
@@ -48,12 +49,13 @@ class Dase_Log
 		if (fwrite($this->filehandle, $msg) === FALSE) {
 			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
 		}
+		return true;
 	}
 
 	public function debug($msg,$backtrace = false)
 	{
 		//notices helpful for debugging (including all sql)
-		if ($this->log_level >= 2) {
+		if ($this->log_level > 2) {
 			$this->_write($msg,$backtrace);
 		}
 	}
@@ -61,7 +63,7 @@ class Dase_Log
 	public function info($msg,$backtrace = false)
 	{
 		//normal notices, ok for production
-		if ($this->log_level >= 1) {
+		if ($this->log_level > 1) {
 			$this->_write($msg,$backtrace);
 		}
 	}
@@ -74,6 +76,8 @@ class Dase_Log
 
 	public function getAsArray()
 	{
-		return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if ($this->logfile) {
+			return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		}
 	}
 }

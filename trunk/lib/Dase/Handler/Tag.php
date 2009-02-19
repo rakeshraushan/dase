@@ -58,20 +58,20 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
 		if ('entry' == $r->get('type')) {
-			$r->renderResponse($this->tag->asAtomEntry());
+			$r->renderResponse($this->tag->asAtomEntry($r->app_root));
 		} else {
-			$r->renderResponse($this->tag->asAtom());
+			$r->renderResponse($this->tag->asAtom($r->app_root));
 		}
 	}
 
 	public function getTagEntryJson($r)
 	{
-		$r->renderResponse($this->tag->asAtomEntry(false)->asJson());
+		$r->renderResponse($this->tag->asAtomEntry($r->app_root,false)->asJson());
 	}
 
 	public function getTagEntryAtom($r)
 	{
-		$r->renderResponse($this->tag->asAtomEntry());
+		$r->renderResponse($this->tag->asAtomEntry($r->app_root));
 	}
 
 	public function getTagJson($r)
@@ -173,7 +173,7 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagItemAtom($r)
 	{
-		$tag_item = new Dase_DBO_TagItem;
+		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		if ($tag_item->tag_id != $this->tag->id) {
 			$r->renderAtomError(404);

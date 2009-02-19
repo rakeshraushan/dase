@@ -24,6 +24,16 @@ class Dase_Config {
 		}
 	}
 
+	public function getSuperusers()
+	{
+		return $this->getAuth('superuser');
+	}
+
+	public function getServiceusers()
+	{
+		return $this->getAuth('serviceuser');
+	}
+
 	public function getCacheType()
 	{
 		if (isset($this->conf['app']['cache_type'])) {
@@ -50,13 +60,13 @@ class Dase_Config {
 	{
 		$log_base_dir = $this->getAppSettings('log_base_dir');
 		if (!$log_base_dir) {
-			throw new Dase_Cache_Exception('no log_base_dir defined');
+			throw new Dase_Log_Exception('no log_base_dir defined');
 		}
 		if ('/' == substr($log_base_dir,0,1)) {
 			return $log_base_dir;
 		}
 		if (!$this->base_dir) {
-			throw new Dase_Cache_Exception('no base_dir defined');
+			throw new Dase_Log_Exception('no base_dir defined');
 		}
 		return $this->base_dir.'/'.$log_base_dir.'/log';
 	}
@@ -65,13 +75,13 @@ class Dase_Config {
 	{
 		$media_base_dir = $this->getAppSettings('media_base_dir');
 		if (!$media_base_dir) {
-			throw new Dase_Cache_Exception('no media_base_dir defined');
+			throw new Dase_Media_Exception('no media_base_dir defined');
 		}
 		if ('/' == substr($media_base_dir,0,1)) {
 			return $media_base_dir;
 		}
 		if (!$this->base_dir) {
-			throw new Dase_Cache_Exception('no base_dir defined');
+			throw new Dase_Media_Exception('no base_dir defined');
 		}
 		return $this->base_dir.'/'.$media_base_dir.'/media';
 	}
@@ -122,7 +132,7 @@ class Dase_Config {
 
 	public function getAll()
 	{
-		return $this->$conf;
+		return $this->conf;
 	}
 
 	public function set($key,$value)

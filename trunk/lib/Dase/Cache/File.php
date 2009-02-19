@@ -78,6 +78,7 @@ class Dase_Cache_File extends Dase_Cache
 		$subdir = substr($md5_hash,0,2);
 		if ($create_subdir && !file_exists($this->cache_dir.'/'.$subdir)) {
 			mkdir($this->cache_dir.'/'.$subdir);
+			chmod($this->cache_dir.'/'.$subdir,0770);
 		}
 		return $this->cache_dir.'/'.$subdir.'/'.$md5_hash;
 	}
@@ -115,6 +116,7 @@ class Dase_Cache_File extends Dase_Cache
 		if ($data) {
 			file_put_contents($temp,$data);
 			rename($temp,$filepath);
+			chmod($filepath,0770);
 		}
 		return $filepath;
 	}

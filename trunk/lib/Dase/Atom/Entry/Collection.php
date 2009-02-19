@@ -7,7 +7,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		parent::__construct($dom,$root);
 	}
 
-	function create($r)
+	function create($db,$r)
 	{
 		$atom_author = $this->getAuthorName();
 		$user = $r->getUser('http');
@@ -15,7 +15,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		if (!$collection_name) {
 			$r->renderError(400,'no title');
 		}
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($db);
 		$c->collection_name = $collection_name;
 		if ($r->has('ascii_id')) {
 			$ascii_id = $r->get('ascii_id'); //set in handler based on Slug
@@ -25,7 +25,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		if (!$ascii_id) {
 			$ascii_id = $c->createAscii();
 		}
-		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
+		if (Dase_DBO_Collection::get($db,$ascii_id) || $c->findOne()) {
 			$r->renderError(409,'collection already exists');
 		}
 		$c->ascii_id = $ascii_id;
@@ -38,18 +38,18 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			Dase_Log::get()->info('created collection '.$c->collection_name);
+			$r->logger()->info('created collection '.$c->collection_name);
 			if (mkdir("$media_dir")) {
 				chmod("$media_dir",0775);
 				foreach (Dase_Acl::$sizes as $size => $access_level) {
 					mkdir("$media_dir/$size");
-					Dase_Log::get()->info('created directory '.$media_dir.'/'.$size);
+					$r->logger()->info('created directory '.$media_dir.'/'.$size);
 					chmod("$media_dir/$size",0775);
 				}
 				symlink($media_dir,$media_dir.'_collection');
 			}
 			foreach (array('title','description','keyword','rights') as $att) {
-				$a = new Dase_DBO_Attribute;
+				$a = new Dase_DBO_Attribute($db);
 				$a->ascii_id = $att;
 				$a->attribute_name = ucfirst($att);
 				$a->collection_id = $c->id;
@@ -63,16 +63,16 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 				$a->updated = date(DATE_ATOM);
 				$a->insert();
 			}
-			$cm = new Dase_DBO_CollectionManager;
+			$cm = new Dase_DBO_CollectionManager($db);
 			$cm->collection_ascii_id = $ascii_id;
 			$cm->dase_user_eid = $user->eid;
 			$cm->auth_level = 'superuser';
 			$cm->created = date(DATE_ATOM);
 			$cm->created_by_eid = $user->eid;
 			if ($cm->insert()) {
-				Dase_Log::get()->info('created admin user '.$ascii_id.'::'.$user->eid);
+				$r->logger()->info('created admin user '.$ascii_id.'::'.$user->eid);
 			} else {
-				Dase_Log::get()->info('could not create admin user');
+				$r->logger()->info('could not create admin user');
 			}
 			$user->expireDataCache();
 			return $ascii_id;

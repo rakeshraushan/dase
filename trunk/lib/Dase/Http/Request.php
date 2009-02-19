@@ -2,16 +2,11 @@
 
 class Dase_Http_Request
 {
-	private $members = array();
-	private $object_store = array();
-	private $params;
-	private $url_params = array();
-	private $user;
-
 	public static $types = array(
 		'atom' =>'application/atom+xml',
 		'cats' =>'application/atomcat+xml',
 		'css' =>'text/css',
+		'csv' =>'text/csv',
 		'default' =>'text/html',
 		'gif' =>'image/gif',
 		'html' =>'text/html',
@@ -25,75 +20,59 @@ class Dase_Http_Request
 		'uri' =>'text/uri-list',
 		'xhtml' =>'application/xhtml+xml',
 	);
-	public $content_type;
-	public $error_message;
-	public $format;
-	public $handler;
-	public $method;
-	public $module;
-	public $path;
-	public $query_string;
-	public $response_mime_type;
-	public $resource;
-	public $protocol;
-	public $app_root;
-	public $base_path;
-	private $_server;
-	private $_get;
-	private $_post;
-	private $_cookie;
 
-	public function __construct($base_path,$dase_http_auth)
+	private $env = array();
+	private $members = array();
+	private $object_store = array();
+	private $params;
+	private $url_params = array();
+	private $user;
+
+	public function __construct($env)
 	{
-		$this->base_path = $base_path;
-		$this->_files = $_FILES;
-		$this->dase_http_auth = $dase_http_auth;
-		$this->init(); //wraps request superglobals and sets htuser & htpass on auth obj
-
-		$this->format = $this->getFormat();
-		$this->handler = $this->getHandler(); //**ALSO sets $this->module if this is a module request** 
-		$this->path = $this->getPath();
-		$this->protocol = !isset($this->_server['HTTPS']) ? 'http://' : 'https://'; 
-		$this->app_root =
-			trim($this->protocol.$this->_server['HTTP_HOST'].'/'.
-			trim(dirname($this->_server['SCRIPT_NAME']),'/'),'/');
-		if ($this->module) { //this->module is set in getHandler method
-			$this->module_root = $this->app_root.'/modules/'.$this->module;
+		$env['protocol'] = isset($_SERVER['HTTPS']) ? 'https' : 'http'; 
+		$env['method'] = strtolower($_SERVER['REQUEST_METHOD']);
+		$env['_get'] = $_GET;
+		$env['_post'] = $_POST;
+		$env['_cookie'] = $_COOKIE;
+		$env['_files'] = $_FILES;
+		$env['htuser'] = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
+		$env['htpass'] = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
+		$env['request_uri'] = $_SERVER['REQUEST_URI'] = '';
+		$env['http_host'] =	$_SERVER['HTTP_HOST'];
+		$env['server_addr'] = $_SERVER['SERVER_ADDR'];
+		$env['query_string'] =	$_SERVER['QUERY_STRING'];
+		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
+		$env['remote_addr'] = $_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : '';
+		$env['http_user_agent'] = $_SERVER['HTTP_USER_AGENT'] ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$env['app_root'] = $env['protocol'].'://'.$env['http_host'].dirname($env['script_name']);
+		$env['format'] = $this->getFormat($env);
+		$env['module'] = $this->getModule($env); 
+		$env['handler'] = $this->getHandler($env); 
+		$env['path'] = $this->getPath($env);
+		if ($env['module']) {
+			$env['module_root'] = $env['app_root'].'/modules/'.$env['module'];
+		} else {
+			$env['module_root'] = '';
 		}
-		$this->response_mime_type = self::$types[$this->format];
-		$this->query_string = $this->getQueryString();
-		$this->content_type = $this->getContentType();
-		$this->start_time = Dase_Util::getTime();
+		$env['response_mime_type'] = self::$types[$env['format']];
+		$env['content_type'] = $this->getContentType();
+		$env['start_time'] = Dase_Util::getTime();
+
+		$this->env = $env;
+	}
+	
+	public function __get( $key )
+	{
+		if ( array_key_exists($key,$this->env)) {
+			return $this->env[$key];
+		}
 	}
 
-	public function init()
-	{
-		if (isset($_SERVER['REQUEST_METHOD'])) {
-			$this->_server = $_SERVER;
-			//wrap superglobals
-			$this->_get = $_GET;
-			$this->_post = $_POST;
-			$this->_cookie = $_COOKIE;
-			$this->method = strtolower($_SERVER['REQUEST_METHOD']);
-			$htuser = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
-			$htpass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
-		} else {
-			$this->_server['REQUEST_URI'] = '';
-			$this->_server['HTTP_HOST'] = 'localhost';
-			$this->_server['SERVER_ADDR'] = '127.0.0.1';
-			$this->_server['QUERY_STRING'] = '';
-			$this->_server['SCRIPT_NAME'] = '';
-			//command line
-			foreach ($_SERVER['argv'] as $arg) {
-				if (strpos($arg,'=')) {
-					list($key,$val) = explode('=',$arg);
-					$this->members[$key] = $val;
-				}
-			}
-			$htuser = $this->get('htuser');
-			$htpass = $this->get('htpass');
-		}
-		$this->dase_http_auth->setUser($htuser,$htpass);
+	public function getAll() {
+		$all[] = $env;
+		$all[]= $members;
+		return $all;
 	}
 
 	public function initPlugin($custom_handlers)
@@ -112,18 +91,6 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getRemoteAddr()
-	{
-		if (isset($this->_server['REMOTE_ADDR'])) {
-			return $this->_server['REMOTE_ADDR'];
-		}	
-	}
-
-	public function getServerVars() 
-	{
-		return $this->_server;
-	}
-
 	public function getElapsed()
 	{
 		$now = Dase_Util::getTime();
@@ -132,60 +99,27 @@ class Dase_Http_Request
 
 	public function getLogData()
 	{
-		$string = "\nREQUEST:\n";
-		$string .= "[format] => $this->format\n";
-		$string .= "[handler] => $this->handler\n";
-		$string .= "[method] => $this->method\n";
-		$string .= "[module] => $this->module\n";
-		$string .= "[path] => $this->path\n";
-		$string .= "[protocol] => $this->protocol\n";
-		$string .= "[app_root] => $this->app_root\n";
-		$string .= "[url] => $this->url\n";
-		$string .= "[response_mime_type] => $this->response_mime_type\n";
-		$string .= "[query_string] => $this->query_string\n";
-		$string .= "[content_type] => $this->content_type\n";
-		$string .= "[pid] => ".getmypid()."\n";
-		if (isset($this->_server['HTTP_USER_AGENT'])) {
-			$string .= "[http_user_agent] => ".$this->_server['HTTP_USER_AGENT']."\n";
-		}
-		if (isset($this->_server['REMOTE_ADDR'])) {
-			$string .= "[remote_addr] => ".$this->_server['REMOTE_ADDR']."\n";
-		}
-		$string .= "[resource] => $this->resource\n";
-		if ($this->error_message) {
-			$string .= "[error message] => $this->error_message\n";
-		}
-		return $string;
+		return print_r($this->env,true));
 	}
 
-	public function logger() {
-		$log = $this->retrieve('log');
-		if ($log) {
-			return $log;
+	public function setCookieValue($cookie_type,$value)
+	{
+		$this->retrieve('cookie')->set($cookie_type,$value);
+	}
+
+	public function logger() 
+	{
+		if ($this->retrieve('log')) {
+			return $this->retrieve('log');
 		} else {
 			throw new Dase_Http_Exception('no logger registered with request');
 		}
 	}
 
-	public function __get($var) 
-	{
-		if ( array_key_exists( $var, $this->members ) ) {
-			return $this->members[ $var ];
-		}
-		$classname = get_class($this);
-		$method = 'get'.ucfirst($var);
-		if (method_exists($classname,$method)) {
-			return $this->{$method}();
-		} 
-	}
-
 	public function getCacheId()
 	{
-		$query_string = $this->getQueryString();
-		if ($query_string) {
-			//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
-			$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$query_string);
-		}
+		//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
+		$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$this->query_string);
 		$this->logger()->debug('cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
@@ -199,20 +133,30 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getHandler()
+	public function getModule($env)
 	{
-		$parts = explode('/',trim($this->getPath(),'/'));
+		$parts = explode('/',trim($this->getPath($env),'/'));
 		$first = array_shift($parts);
 		if ('modules' == $first) {
 			if(!isset($parts[0])) {
 				$this->renderError(404,'no module specified');
 			}
-			if(!file_exists(DASE_PATH.'/modules/'.$parts[0])) {
+			if(!file_exists($env['base_path'].'/modules/'.$parts[0])) {
 				$this->renderError(404,'no such module');
 			}
-			$this->module = $parts[0];
+			return $parts[0];
+		} else {
+			return '';
+		}
+	}
+
+	public function getHandler($env)
+	{
+		$parts = explode('/',trim($this->getPath($env),'/'));
+		$first = array_shift($parts);
+		if ('modules' == $first && isset($parts[0])) {
 			//so dispatch matching works
-			return 'modules/'.$this->module;
+			return 'modules/'.$parts[0];
 		} else {
 			return $first;
 		}
@@ -236,11 +180,11 @@ class Dase_Http_Request
 
 	public function getContentType() 
 	{
-		if (isset($this->_server['CONTENT_TYPE'])) {
-			$header = $this->_server['CONTENT_TYPE'];
+		if (isset($_SERVER['CONTENT_TYPE'])) {
+			$header = $_SERVER['CONTENT_TYPE'];
 		}
-		if (isset($this->_server['HTTP_CONTENT_TYPE'])) {
-			$header = $this->_server['HTTP_CONTENT_TYPE'];
+		if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+			$header = $_SERVER['HTTP_CONTENT_TYPE'];
 		}
 		if (isset($header)) {
 			list($type,$subtype,$params) = Dase_Media::parseMimeType($header);
@@ -252,10 +196,10 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getFormat($types = null)
+	public function getFormat($env)
 	{
 		//first check extension
-		$pathinfo = pathinfo($this->getPath(false));
+		$pathinfo = pathinfo($this->getPath($env,false));
 		if (isset($pathinfo['extension']) && $pathinfo['extension']) {
 			$ext = $pathinfo['extension'];
 			if (isset(self::$types[$ext])) {
@@ -273,6 +217,34 @@ class Dase_Http_Request
 			return 'html';
 		}
 		return 'default';
+	}
+
+	public function getPath($env,$strip_extension=true)
+	{
+		//returns full path w/o domain & w/o query string
+		$path = $env['request_uri'];
+		if (strpos($path,'..')) { //thwart the wily hacker
+			throw new Dase_Http_Exception('no go');	
+		}
+		$base = trim(dirname($env['script_name']),'/');
+		$path= preg_replace("!$base!",'',$path,1);
+		$path= trim($path, '/');
+		/* Remove the query_string from the URL */
+		if ( strpos($path, '?') !== FALSE ) {
+			list($path,$query_string )= explode('?', $path);
+		}
+		if ($strip_extension) {
+			if (strpos($path,'.') !== false) {
+				$parts = explode('.', $path);
+				$ext = array_pop($parts);
+				if (isset(Dase_Http_Request::$types[$ext])) {
+					$path = join('.',$parts);
+				} else {	
+					//path remains what it originally was
+				}
+			}
+		}
+		return $path;
 	}
 
 	public function get($key,$as_array = false)
@@ -399,23 +371,14 @@ class Dase_Http_Request
 		return $url_params[$key];
 	}
 
-	public function getUrl() 
+	public function getUrl($env) 
 	{
-		$this->path = $this->path ? $this->path : $this->getPath();
-		return trim($this->path . '?' . $this->getQueryString(),'?');
-	}
-
-	public function getQueryString() 
-	{
-		if (!$this->query_string) {
-			$this->query_string = $this->_server['QUERY_STRING'];
-		}
-		return $this->query_string;
+		$this->path = $this->path ? $this->path : $this->getPath($env);
+		return trim($this->path . '?' . $this->query_string,'?');
 	}
 
 	public function addQueryString($pairs_string)
 	{
-		$this->query_string = $this->getQueryString();
 		if ($this->query_string) {
 			$this->query_string .= "&".$pairs_string;
 		} else {
@@ -425,39 +388,10 @@ class Dase_Http_Request
 
 	public function setQueryStringParam($key,$val)
 	{
-		$this->query_string = $this->getQueryString();
 		$this->query_string = preg_replace("!$key=[^&]*!","$key=$val",$this->query_string,1,$count);
 		if (!$count) {
 			$this->addQueryString("$key=$val");
 		}
-	}
-
-	public function getPath($strip_extension=true)
-	{
-		//returns full path w/o domain & w/o query string
-		$path = $this->_server['REQUEST_URI'];
-		if (strpos($path,'..')) { //thwart the wily hacker
-			throw new Dase_Http_Exception('no go');	
-		}
-		$base = trim(dirname($this->_server['SCRIPT_NAME']),'/');
-		$path= preg_replace("!$base!",'',$path,1);
-		$path= trim($path, '/');
-		/* Remove the query_string from the URL */
-		if ( strpos($path, '?') !== FALSE ) {
-			list($path,$query_string )= explode('?', $path);
-		}
-		if ($strip_extension) {
-			if (strpos($path,'.') !== false) {
-				$parts = explode('.', $path);
-				$ext = array_pop($parts);
-				if (isset(Dase_Http_Request::$types[$ext])) {
-					$path = join('.',$parts);
-				} else {	
-					//path remains what it originally was
-				}
-			}
-		}
-		return $path;
 	}
 
 	public function setUser($user)
@@ -481,10 +415,10 @@ class Dase_Http_Request
 			$eid = $this->retrieve('cookie')->getEid();
 			break;
 		case 'http':
-			$eid = $this->dase_http_auth->getEid($this->logger());
+			$eid = $this->getEid();
 			break;
 		case 'service':
-			$eid = $this->dase_http_auth->getEid($this->logger(),true);
+			$eid = $this->getEid(true);
 			break;
 		case 'none':
 			//allows nothing to happen
@@ -508,6 +442,61 @@ class Dase_Http_Request
 				$this->renderError(401,'unauthorized');
 			}
 		}
+	}
+
+	public function getEid($check_db=false)
+	{
+		$request_headers = apache_request_headers();
+		$passwords = array();
+		$log->debug(print_r($request_headers,true));
+
+		if ($this->htuser && $this->htpass) {
+			$eid = $this->htuser;
+			$passwords[] = substr(md5($this->token.$eid.'httpbasic'),0,12);
+
+			//for service users:
+			$service_users = $this->retrieve('config')->getServiceusers();
+			//if eid is among service users, get password w/ service_token as salt
+			if (isset($service_users[$eid])) {
+				$passwords[] = md5($this->service_token.$eid);
+			}
+
+			$superusers = $this->retrieve('config')->getSuperusers();
+			//lets me use the superuser passwd for http work
+			if (isset($superusers[$eid])) {
+				$passwords[] = $superusers[$eid];
+			}
+
+			//this is used for folks needing a quick service pwd to do uploads
+			if ($check_db) {
+				$u = new Dase_DBO_DaseUser($this->retrieve('db'));
+				if ($u->retrieveByEid($eid)) {
+					$pass_md5 = md5($this->htpass);
+					if ($pass_md5 == $u->service_key_md5) {
+						$this->logger()->debug('accepted user '.$eid.' using password '.$this->htpass);
+						return $eid;
+					}
+				}
+			}
+
+			if (in_array($this->htpass,$passwords)) {
+				$this->logger()->debug('accepted user '.$eid.' using password '.$this->htpass);
+				return $eid;
+			} else {
+				$this->logger()->debug('rejected user '.$eid.' using password '.$this->htpass);
+			}
+		} else {
+			$this->logger()->debug('PHP_AUTH_USER and/or PHP_AUTH_PW not set');
+		}
+		header('WWW-Authenticate: Basic realm="DASe"');
+		header('HTTP/1.1 401 Unauthorized');
+		echo "sorry, authorized users only";
+		exit;
+	}
+
+	public function setCookie($key,$val)
+	{
+		$r->retrieve('cookie')->set($key,$val);
 	}
 
 	private function _filterArray($ar)

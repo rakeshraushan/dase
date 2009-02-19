@@ -33,7 +33,7 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 	public function getAttribute()
 	{
 		if (!$this->attribute) {
-			$att = new Dase_DBO_Attribute;
+			$att = new Dase_DBO_Attribute($this->db);
 			$att->load($this->attribute_id);
 			$this->attribute = $att;
 		}
@@ -42,7 +42,7 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 
 	public static function updateAndFlush($value_id,$value_text)
 	{
-		$v = new Dase_DBO_Value;
+		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
 		$v->value_text = $value_text;
 		$v->update();

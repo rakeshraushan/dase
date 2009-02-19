@@ -8,7 +8,7 @@ class Dase_Search_Result
 	public $url;
 	public $echo_array = array();
 
-	public function __construct($item_ids,$tallies,$url,$search_array)
+	public function __construct($db,$item_ids,$tallies,$url,$search_array)
 	{
 		$this->item_ids = $item_ids;
 		$this->tallies = $tallies;
@@ -17,7 +17,7 @@ class Dase_Search_Result
 		$this->count = count($item_ids);
 	}
 
-	public function getResultSetAsJsonFeed($max = 500)
+	public function getResultSetAsJsonFeed($app_root,$db,$max = 500)
 	{
 		//todo: this needs lots of work!
 		$json_tag;
@@ -27,24 +27,34 @@ class Dase_Search_Result
 		$json_tag['is_public'] = 1;
 		$item_ids = array_slice($this->item_ids,0,$max);
 		foreach($item_ids as $item_id) {
-			$item = new Dase_DBO_Item();
+			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
 			$json_tag['items'][] = $item->asArray();
 		}
 		return Dase_Json::get($json_tag);	
 	}
 
-	public function getResultSetUris()
+	public function getResultSetUris($app_root,$db)
 	{
 		//inefficient, but ok for now
-		$app_root = Dase_Config::get('app_root');
 		$uris = array();
 		foreach($this->item_ids as $item_id) {
-			$item = new Dase_DBO_Item();
+			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
-			$uris[] = $app_root.'/'.$item->getUrl();
+			$uris[] = $item->getUrl(null,$app_root);
 		}
 		return $uris;	
+	}
+
+	public function getResultSetCsv($db)
+	{
+		$set = array();
+		foreach($this->item_ids as $item_id) {
+			$item = new Dase_DBO_Item($db);
+			$item->load($item_id);
+			$set[] = $item->getUnique();
+		}
+		return $set;
 	}
 
 	private function _getQueryAsString()
@@ -91,9 +101,8 @@ class Dase_Search_Result
 		return trim($q);
 	}
 
-	public function getResultSetAsAtomFeed($start,$max)
+	public function getResultSetAsAtomFeed($app_root,$db,$start,$max)
 	{
-		$app_root = Dase_Config::get('app_root');
 		$next = $start + $max;
 		if ($next > $this->count) {
 			unset($next);
@@ -121,7 +130,6 @@ class Dase_Search_Result
 		if (isset($previous)) {
 			$feed->addLink($app_root.'/'.$this->url.'&start='.$previous.'&max='.$max,'previous');
 		}
-		Dase_Log::get()->debug('url per search result '.$this->url);
 		$feed->setId($app_root.'/search/'.md5($this->url));
 		$feed->setOpensearchTotalResults($this->count);
 		$feed->setOpensearchStartIndex($start);
@@ -159,7 +167,7 @@ class Dase_Search_Result
 		foreach($item_ids as $item_id) {
 			$num++;
 			$setnum = $num + $start - 1;
-			$item = new Dase_DBO_Item();
+			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
@@ -171,9 +179,8 @@ class Dase_Search_Result
 		return $feed->asXml();
 	}
 
-	public function getItemAsAtomFeed($start,$max,$num)
+	public function getItemAsAtomFeed($app_root,$db,$start,$max,$num)
 	{
-		$app_root = Dase_Config::get('app_root');
 		if (!$this->count) {
 			$feed = new Dase_Atom_Feed();
 			$feed->addAuthor();
@@ -203,7 +210,7 @@ class Dase_Search_Result
 		} else {
 			return;
 		}
-		$item = new Dase_DBO_Item;
+		$item = new Dase_DBO_Item($db);
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
 			$feed->setFeedType('searchitem');

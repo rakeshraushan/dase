@@ -1,22 +1,38 @@
 <?php
+ini_set('include_path','.:'.dirname(__FILE__).'/../lib');
 
 require_once('simpletest/autorun.php');
 require_once('Dase/DB.php');
+require_once('Dase/DBO/Collection.php');
+require_once('Dase/Log.php');
 
-define('DASE_PATH', dirname(__FILE__).'/..');
-define('DASE_LOG', DASE_PATH . '/log/dase.log');
 
+class TestOfDatabase extends UnitTestCase {
 
-class TestOfLogging extends UnitTestCase {
-
-	function testLogFileExists() {
-		Dase_Log::get()->start();
-		$this->assertTrue(file_exists(Dase_Log::get()->getFilename()));
+	function testDatabaseCanConnect() {
+		$db_settings = array(
+			'type' => 'pgsql',
+			'host' => 'postgres.laits.utexas.edu',
+			'name' => 'dase_dev',
+			'user' => 'dase_dev',
+			'pass' => 'dase_dev_user88',
+			'table_prefix' => '',
+		);
+		$db = new Dase_DB($db_settings,new Dase_Log);
+		$this->assertTrue($dbh = $db->getDbh());
 	}
-
-	function testLogFileWriteable() {
-		Dase_Log::get()->start();
-		$this->assertTrue(is_writeable(Dase_Log::get()->getFilename()));
+	function testDatabaseSelect() {
+		$db_settings = array(
+			'type' => 'pgsql',
+			'host' => 'postgres.laits.utexas.edu',
+			'name' => 'dase_dev',
+			'user' => 'dase_dev',
+			'pass' => 'dase_dev_user88',
+			'table_prefix' => '',
+		);
+		$db = new Dase_DB($db_settings,new Dase_Log);
+		$c = Dase_DBO_Collection::get($db,'test');
+		$this->assertTrue('Test Collection' == $c->collection_name);
 	}
 }
 
