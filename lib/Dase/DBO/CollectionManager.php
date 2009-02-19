@@ -8,7 +8,7 @@ class Dase_DBO_CollectionManager extends Dase_DBO_Autogen_CollectionManager
 
 	public function getUser()
 	{
-		$user = new Dase_DBO_DaseUser;
+		$user = new Dase_DBO_DaseUser($this->db);
 		$user->eid = $this->dase_user_eid;
 		return	$user->findOne();
 	}

@@ -66,12 +66,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $set;
 	}
 
-	public function initDisplayPreferences()
-	{
-		Dase_Cookie::set('max',$this->max_items);
-		Dase_Cookie::set('display',$this->display);
-	}
-
 	/** create cart if none exists, also returns cart count */
 	public function initCart()
 	{
@@ -114,7 +108,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public static function listAsAtom($limit=100)
 	{
-		$users = new Dase_DBO_DaseUser;
+		$users = new Dase_DBO_DaseUser($this->db);
 		if ($limit) {
 			$users->setLimit($limit);
 		}
@@ -241,7 +235,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	{
 		$prefix = $this->db->table_prefix;
 		$item_array = array();
-		$db = Dase_DB::get();
+		$dbh = $this->db->getDbh();
 		$sql = "
 			SELECT ti.id,t.id,ti.p_collection_ascii_id,ti.p_serial_number
 			FROM {$prefix}tag t, {$prefix}tag_item ti
@@ -249,7 +243,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			AND t.type = 'cart' 
 			AND t.dase_user_id = ?
 			";
-		$sth = $db->prepare($sql);	
+		$sth = $dbh->prepare($sql);	
 		$sth->execute(array($this->id));
 		while (list($tag_item_id,$tag_id,$coll,$sernum) = $sth->fetch()) {
 			$item_array[] = array(
@@ -284,7 +278,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	/** if user is manager of ANY collection */
 	public function isManager()
 	{
-		$cm = new Dase_DBO_CollectionManager; 
+		$cm = new Dase_DBO_CollectionManager($this->db); 
 		$cm->dase_user_eid = $this->eid;
 		$cm->addWhere('auth_level','none','!=');
 		return $cm->findOne();
@@ -327,7 +321,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			return true;
 			}
 		}
-		$cm = new Dase_DBO_CollectionManager; 
+		$cm = new Dase_DBO_CollectionManager($this->db); 
 		$cm->collection_ascii_id = $collection->ascii_id;
 		//todo: need to account for case here!
 		//needs to be case-insensitive
@@ -421,7 +415,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
-		$tags = new Dase_DBO_Tag;
+		$tags = new Dase_DBO_Tag($this->db);
 		$tags->dase_user_id = $this->id;
 		$tags->orderBy('updated DESC');
 		$tag_count_lookup = $this->getTagCountLookup();

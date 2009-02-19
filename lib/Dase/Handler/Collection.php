@@ -259,7 +259,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$items->collection_id = $this->collection->id;
 		$items->status = 'delete';
 		foreach ($items->find() as $item) {
-			$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id)."\n"; 
+			$output .= $item->getUrl($this->collection->ascii_id,$app_root)."\n"; 
 		}
 		$r->renderResponse($output);
 	}

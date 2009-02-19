@@ -39,7 +39,7 @@ class Dase_DBO implements IteratorAggregate
 		}
 	}
 
-	function __get( $key )
+	public function __get( $key )
 	{
 		if ( array_key_exists( $key, $this->fields ) ) {
 			return $this->fields[ $key ];
@@ -52,7 +52,7 @@ class Dase_DBO implements IteratorAggregate
 		}	
 	}
 
-	function __set( $key, $value )
+	public function __set( $key, $value )
 	{
 		if ( array_key_exists( $key, $this->fields ) ) {
 			$this->fields[ $key ] = $value;
@@ -369,6 +369,8 @@ class Dase_DBO implements IteratorAggregate
 				$this->log->debug("updating error: ".$errs[2]);
 				//throw new Dase_DBO_Exception('could not update '. $errs[2]);
 			}
+		} else {
+			return true;
 		}
 	}
 

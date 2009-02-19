@@ -1,12 +1,5 @@
 <?php
-ini_set('include_path','../lib');
-include '../lib/Dase/Config.php';
-include '../lib/Dase/DB.php';
-
-$c = new Dase_Config;
-$c->load('../inc/config.php');
-$c->load('../inc/local_config.php');
-$db = new Dase_DB($c->get('db'));
+include 'config.php';
 
 $class_dir = '../lib/Dase';
 if (!file_exists($class_dir)) {

@@ -3,6 +3,8 @@
 class Dase 
 {
 	public $request;
+	private $config;
+	private $log;
 
 	public function __construct($request)
 	{
@@ -26,7 +28,7 @@ class Dase
 		if ($r->module) {
 
 			//modules, by convention, have one handler in a file named
-			$handler_file = $c->get('base_path').'/modules/'.$r->module.'/handler.php';
+			$handler_file = $r->base_path.'/modules/'.$r->module.'/handler.php';
 			if (file_exists($handler_file)) {
 				include "$handler_file";
 				$c->set('module',$r->module);

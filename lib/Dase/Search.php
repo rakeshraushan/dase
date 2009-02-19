@@ -24,7 +24,9 @@ class Dase_Search
 			}
 			$request->addQueryString($orig);
 		}
+		$this->cache = $request->retrieve('cache');
 		$this->request = $request;
+		$this->db = $request->retrieve('db');
 	}
 
 	public function getResult()
@@ -38,10 +40,8 @@ class Dase_Search
 		$url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$url);
 		$url = preg_replace('/(\?|&|&amp;)original_search=[^&]+/i','',$url);
 		$this->url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
-		Dase_Log::get()->debug('url per search '.$this->url);
 		$cache_url = preg_replace('!^search(/item)?!','search',$this->url);
-		$cache = Dase_Cache::get($cache_url);
-		$data = $cache->getData(60*30);
+		$data = $this->cache->getData($cache_url,60*30);
 		if ($data) { //30 minutes
 			$this->search_result = unserialize($data);
 			$this->search_result->url = $this->url;  //so we do not take the cached url
@@ -55,8 +55,8 @@ class Dase_Search
 			$this->_createSql();
 
 			$this->search_result = $this->_executeSearch();
-			$cache->setData(serialize($this->search_result));
-			$db_cache = new Dase_DBO_SearchCache;
+			$this->cache->setData($cache_url,serialize($this->search_result));
+			$db_cache = new Dase_DBO_SearchCache($this->db);
 			$db_cache->query = $cache_url;
 			//will be the same as the cache filename:
 			$db_cache->search_md5 = md5($cache_url);
@@ -241,8 +241,8 @@ class Dase_Search
 
 	private function _createSql()
 	{
-		$prefix = $r->retrieve('db')->table_prefix;
-		$like = Dase_DB::getCaseInsensitiveLikeOp();
+		$prefix = $this->db->table_prefix;
+		$like = $this->db->getCaseInsensitiveLikeOp();
 		$search = $this->search_array;
 		$search_table_params = array();
 		$value_table_params = array();
@@ -383,8 +383,8 @@ class Dase_Search
 
 	private function _executeSearch()
 	{
-		$collection_lookup = Dase_DBO_Collection::getLookupArray();
-		$st = Dase_DBO::query($this->sql,$this->bound_params);
+		$collection_lookup = Dase_DBO_Collection::getLookupArray($this->db);
+		$st = Dase_DBO::query($this->db,$this->sql,$this->bound_params);
 		$tallies = array();
 		$item_ids = array();
 		$items = array();
@@ -403,13 +403,13 @@ class Dase_Search
 		//note: sorting all happens here!!! (kind of aspect-ily)
 		if ($this->request->has('sort')) {
 			$sort = $this->request->get('sort');
-			$item_ids = Dase_DBO_Item::sortIdArray($sort,$item_ids);
+			$item_ids = Dase_DBO_Item::sortIdArray($this->db,$sort,$item_ids);
 		} else {
 			if (1 == count($tallies)) { //we only sort single collection results
-				$item_ids = Dase_DBO_Item::sortIdArrayByUpdated($item_ids);
+				$item_ids = Dase_DBO_Item::sortIdArrayByUpdated($this->db,$item_ids);
 			}
 		}
-		return new Dase_Search_Result($item_ids,$tallies,$this->url,$this->search_array);
+		return new Dase_Search_Result($this->db,$item_ids,$tallies,$this->url,$this->search_array);
 	}
 }
 

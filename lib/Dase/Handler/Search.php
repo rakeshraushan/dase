@@ -14,21 +14,22 @@ class Dase_Handler_Search extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->db = $r->retrieve('db');
+		$cookie = $r->retrieve('cookie');
 		//setting $r allows app cache-ability
 		//but...breaks intermediate caching (work on that)
-		if (Dase_Cookie::get('max')) {
-			$r->set('max',Dase_Cookie::get('max'));
-			$r->setQueryStringParam('max',Dase_Cookie::get('max'));
+		if ($cookie->get('max')) {
+			$r->set('max',$cookie->get('max'));
+			$r->setQueryStringParam('max',$cookie->get('max'));
 		}
 
-		if (Dase_Cookie::get('display')) {
-			$r->set('display',Dase_Cookie::get('display'));
+		if ($cookie->get('display')) {
+			$r->set('display',$cookie->get('display'));
 		}
 
 		if ($r->has('max')) {
 			$this->max = $r->get('max');
 		} else {
-			$this->max = Dase_Config::get('max_items');
+			$this->max = $r->retrieve('config')->getAppSettings('max_items');
 		}
 		if ($r->has('start')) {
 			$this->start = $r->get('start');
@@ -62,7 +63,7 @@ class Dase_Handler_Search extends Dase_Handler
 			$data = $cache->getData(60*30);
 			if ($data) { //30 minutes
 				$search_result = unserialize($data);
-				$atom_feed = $search_result->getResultSetAsAtomFeed($this->start,$this->max);
+				$atom_feed = $search_result->getResultSetAsAtomFeed($r->app_root,$this->db,$this->start,$this->max);
 				$r->renderResponse($atom_feed);
 			}
 		}
@@ -77,7 +78,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Search($r);
-		$atom_feed = $search->getResult()->getResultSetAsAtomFeed($this->start,$this->max);
+		$atom_feed = $search->getResult()->getResultSetAsAtomFeed($r->app_root,$this->db,$this->start,$this->max);
 		$r->renderResponse($atom_feed);
 	}
 
@@ -85,7 +86,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Search($r);
-		$json_feed = $search->getResult()->getResultSetAsJsonFeed($this->max);
+		$json_feed = $search->getResult()->getResultSetAsJsonFeed($r->app_root,$this->db,$this->max);
 		$r->renderResponse($json_feed);
 	}
 
@@ -93,8 +94,16 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Search($r);
-		$sernums = $search->getResult()->getResultSetUris();
+		$sernums = $search->getResult()->getResultSetUris($r->app_root,$this->db);
 		$r->renderResponse(join("\n",$sernums));
+	}
+
+	public function getSearchCsv($r)
+	{
+		$r->checkCache();
+		$search = new Dase_Search($r);
+		$sernums = $search->getResult()->getResultSetCsv($this->db);
+		$r->renderResponse(join(",",$sernums));
 	}
 
 	public function getSearchItemAtom($r)
@@ -102,7 +111,7 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$search = new Dase_Search($r);
 		$search_result = $search->getResult();
-		$atom_feed = $search_result->getItemAsAtomFeed($this->start,$this->max,$r->get('num'));
+		$atom_feed = $search_result->getItemAsAtomFeed($r->app_root,$this->db,$this->start,$this->max,$r->get('num'));
 		$r->renderResponse($atom_feed);
 	}
 

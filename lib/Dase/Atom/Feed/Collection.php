@@ -36,18 +36,18 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		}
 	}
 
-	function ingest($request,$fetch_enclosures=false) 
+	function ingest($db,$r,$fetch_enclosures=false) 
 	{
-		$user = $request->getUser();
+		$user = $r->getUser();
 		$coll_ascii_id = $this->getAsciiId();
 		$count = $this->getItemCount();
 		$collection_name = $this->getTitle();
 		$ascii_id = $this->getAsciiId();
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($db);
 		$c->collection_name = $collection_name;
-		if (Dase_DBO_Collection::get($ascii_id) || $c->findOne()) {
-			//$request->renderError(409,'collection already exists');
-			Dase_Log::get()->info('collection exists '.$c->collection_name);
+		if (Dase_DBO_Collection::get($db,$ascii_id) || $c->findOne()) {
+			//$r->renderError(409,'collection already exists');
+			$r->logger()->info('collection exists '.$c->collection_name);
 			return;
 		}
 		$c->ascii_id = $ascii_id;
@@ -55,17 +55,17 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			Dase_Log::get()->info('created collection '.$c->collection_name);
+			$r->logger()->info('created collection '.$c->collection_name);
 			$media_dir =  Dase_Config::get('path_to_media').'/'.$ascii_id;
 			if (file_exists($media_dir)) {
-				//$request->renderError(409,'collection media archive exists');
-				Dase_Log::get()->info('collection media archive exists');
+				//$r->renderError(409,'collection media archive exists');
+				$r->logger()->info('collection media archive exists');
 			} else {
 				if (mkdir("$media_dir")) {
 					chmod("$media_dir",0775);
 					foreach (Dase_Acl::$sizes as $size => $access_level) {
 						mkdir("$media_dir/$size");
-						Dase_Log::get()->info('created directory '.$media_dir.'/'.$size);
+						$r->logger()->info('created directory '.$media_dir.'/'.$size);
 						chmod("$media_dir/$size",0775);
 					}
 					//todo: compat only!
@@ -74,8 +74,8 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			}
 			foreach ($this->getEntries() as $entry) {
 				if ('item' == $entry->getEntryType()) {
-					$request->set('collection_ascii_id',$c->ascii_id);
-					$entry->insert($request,$fetch_enclosures);
+					$r->set('collection_ascii_id',$c->ascii_id);
+					$entry->insert($db,$r,$fetch_enclosures);
 				}
 			}
 		}

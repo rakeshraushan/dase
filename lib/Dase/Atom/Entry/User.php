@@ -23,11 +23,11 @@ class Dase_Atom_Entry_User extends Dase_Atom_Entry
 		return $this->getAsciiId();
 	}
 
-	public function insert($r)
+	public function insert($db,$r)
 	{
-		$db_user = Dase_DBO_DaseUser::get($this->getEid());
+		$db_user = Dase_DBO_DaseUser::get($db,$this->getEid());
 		if (!$db_user) {
-			$db_user = new Dase_DBO_DaseUser();
+			$db_user = new Dase_DBO_DaseUser($db);
 			$db_user->name = $this->getTitle(); 
 			$db_user->eid = strtolower($this->getEid()); 
 			$db_user->insert();

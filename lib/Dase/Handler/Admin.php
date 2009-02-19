@@ -10,6 +10,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'docs' => 'docs',
+		'item_fixer' => 'item_fixer',
 		'tools' => 'tools',
 		'eid/{eid}' => 'ut_person',
 		'log' => 'log',
@@ -38,6 +39,24 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$num = $r->retrieve('cache')->expunge();
 		$r->renderResponse('cache deleted '.$num.' files removed');
+	}
+
+	/** web hook */
+	public function postToItemFixer($r) 
+	{
+		$collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
+		if ($collection) {
+			$i = 0;
+			foreach ($collection->getItems() as $item) {
+				if (!$item->p_collection_ascii_id) {
+					$item->p_collection_ascii_id = $collection->ascii_id;
+					if ($item->update()) {
+						$i++;
+					}
+				}
+			}
+		}
+		$r->renderResponse("updated $i items in $collection->collection_name");
 	}
 
 	public function getModules($r)
@@ -243,6 +262,9 @@ class Dase_Handler_Admin extends Dase_Handler
 	public function getTools($r)
 	{
 		$tpl = new Dase_Template($r);
+		$colls = new Dase_DBO_Collection($this->db);
+		$colls->orderBy('collection_name');
+		$tpl->assign('collections',$colls->find());
 		$r->renderResponse($tpl->fetch('admin/tools.tpl'));
 	}
 

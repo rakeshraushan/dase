@@ -425,24 +425,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $metadata;
 	}
 
-	function replace($r) 
-	{
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
-		if ($item) {
-			$item->deleteValues();
-			$item->deleteAdminValues();
-			foreach ($this->metadata as $att => $keyval) {
-				foreach ($keyval['values'] as $v) {
-					$item->setValue($att,$v);
-				}
-			}
-			$item->buildSearchIndex();
-			return $item;
-		} else {
-			Dase::error(404);
-		}
-	}
-
 	function setEdited($dateTime)
 	{
 		if ($this->edited_is_set) {
@@ -453,7 +435,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$edited = $this->addElement('app:edited',$dateTime,Dase_Atom::$ns['app']);
 	}
 
-	function insert($r,$fetch_enclosure=false) 
+	function insert($db,$r,$fetch_enclosure=false) 
 	{
 		$eid = $r->getUser('http')->eid;
 		$author = $this->getAuthorName();
@@ -461,13 +443,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if (!$author) {
 			$author = $eid;
 		}
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		$sn = Dase_Util::makeSerialNumber($r->get('slug'));
 		$item = $c->createNewItem($sn,$author);
 		foreach ($this->getMetadata() as $att => $keyval) {
 			//creates atribute if it doesn't exist!
-			Dase_DBO_Attribute::findOrCreate($c->ascii_id,$att);
+			Dase_DBO_Attribute::findOrCreate($db,$c->ascii_id,$att);
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
 					$item->setValue($att,$v['text']);
@@ -485,7 +467,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$coll = $c->ascii_id;
 		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
-			$parent = Dase_DBO_Item::getByUrl($ln['href']);
+			$parent = Dase_DBO_Item::getByUrl($db,$ln['href']);
 			//make sure relationship is legit
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
@@ -493,7 +475,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				);
 			}
 			if ($itr) {
-				$item_relation = new Dase_DBO_ItemRelation;
+				$item_relation = new Dase_DBO_ItemRelation($db);
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;
 				$item_relation->child_serial_number = $sernum;
@@ -503,7 +485,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			} 
 		}
 
-		$content = new Dase_DBO_Content;
+		$content = new Dase_DBO_Content($db);
 		$atom_content = $this->getContent();
 		if ($atom_content) {
 			$content->text = $atom_content;
@@ -551,13 +533,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	 *  3. deletes and replaces all metadata & private metadata (NOT admin metadata)
 	 *  4. delete and replace any item relations to a parent item
 	 */
-	function update($r) 
+	function update($db,$r) 
 	{
 		$eid = $r->getUser()->eid;
 		$sernum = $this->getSerialNumber();
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		if (!$c) { return; }
-		$item = Dase_DBO_Item::get($c->ascii_id,$sernum);
+		$item = Dase_DBO_Item::get($db,$c->ascii_id,$sernum);
 		$item->updated = date(DATE_ATOM);
 
 		//1. status
@@ -605,7 +587,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			label="Proposal: Cool Art Website"/>
 		 */
 
-		Dase_DBO_ItemRelation::removeParents($c->ascii_id,$sernum); 
+		Dase_DBO_ItemRelation::removeParents($db,$c->ascii_id,$sernum); 
 
 		$coll = $this->getCollectionAsciiId();
 		foreach ($this->getParentLinks() as $ln) {
@@ -614,11 +596,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			//make sure relationship is legit
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-					$coll,$parent->serial_number,$sernum
+					$db,$coll,$parent->serial_number,$sernum
 				);
 			}
 			if ($itr) {
-				$item_relation = new Dase_DBO_ItemRelation;
+				$item_relation = new Dase_DBO_ItemRelation($db);
 				$item_relation->collection_ascii_id = $coll;
 				$item_relation->parent_serial_number = $parent->serial_number;
 				$item_relation->child_serial_number = $sernum;

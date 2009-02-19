@@ -11,7 +11,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		"pk/{id}/{ddd}" => 'test',
 	);
 
-	protected function setup()
+	protected function setup($r)
 	{
 		$this->db = $r->retrieve('db');
 	}

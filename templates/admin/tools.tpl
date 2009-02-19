@@ -31,8 +31,17 @@
 		<li>
 		<h3><a href="admin/log" class="delete" id="truncate_log">truncate log</a></h3>
 		</li>
-
 	</ul>
+	<ul>
+		<form method="post" action="admin/item_fixer">
+			<select name="collection_ascii_id">
+				<option value="">select one:</option>
+				{foreach item=c from=$collections}
+				<option value="{$c->ascii_id}">{$c->collection_name}</option>
+				{/foreach}
+			</select>
+			<input type="submit" value="fix items">
+		</form>
 {/block} 
 
 

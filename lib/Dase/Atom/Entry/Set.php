@@ -18,7 +18,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 	}
 
 	/** used by Dase_Handler_Tag::putEdit() */
-	function update($r) 
+	function update($db,$r) 
 	{
 		$user = $r->getUser();
 		$atom_author = $this->getAuthorName();
@@ -27,7 +27,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 			$request->renderError(401,'users do not match');
 		}
 		$ascii_id = $this->getAsciiId();
-		$set = Dase_DBO_Tag::get($ascii_id,$user->eid);
+		$set = Dase_DBO_Tag::get($db,$ascii_id,$user->eid);
 		if (!$set) { return; }
 
 		$cats = $this->getCategoriesByScheme('http://daseproject.org/category/visibility');
@@ -47,12 +47,12 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		//note that ONLY mutable categories will be affected
 		$set->deleteCategories();
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($set,$category['scheme'],$category['term'],$category['label']);
+			Dase_DBO_Category::add($db,$set,$category['scheme'],$category['term'],$category['label']);
 		}
 		return $set;
 	}
 
-	public function insert($r)
+	public function insert($db,$r)
 	{
 		$user = $r->getUser();
 		$atom_author = $this->getAuthorName();
@@ -60,7 +60,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		if (!$atom_author || $atom_author != $user->eid) {
 			$request->renderError(401,'users do not match');
 		}
-		$set = new Dase_DBO_Tag;
+		$set = new Dase_DBO_Tag($db);
 		$set->ascii_id = $this->getAsciiId();
 		$set->eid = $user->eid;
 		if ($set->findOne()) { 
@@ -75,7 +75,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$set->insert();
 		/*
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($set,$category['scheme'],$category['term'],$category['label']);
+			Dase_DBO_Category::add($db,$set,$category['scheme'],$category['term'],$category['label']);
 		}
 		 */
 		return $set;

@@ -43,7 +43,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot delete this item');
 		}
 		try {
-			$this->item->expunge();
+			$this->item->expunge($this->path_to_media,$r->app_root);
 			$r->renderOk('item deleted');
 		} catch (Exception $e) {
 			$r->renderError(500);
@@ -451,7 +451,7 @@ class Dase_Handler_Item extends Dase_Handler
 				//$item_entry->setEntryType('item');
 				$r->renderError(400,'must be an item entry');
 			}
-			$item = $item_entry->update($r);
+			$item = $item_entry->update($this->db,$r);
 			if ($item) {
 				$r->renderOk('item has been updated');
 			}
@@ -531,10 +531,10 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		fclose($fp);
 
-		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
+		$slug_name = '';
+		if ( isset( $r->_server['HTTP_SLUG'] ) ) {
 			$item->setValue('title',$_SERVER['HTTP_SLUG']);
-			$slug_name = $_SERVER['HTTP_SLUG'];
-
+			$slug_name = $r->_server['HTTP_SLUG'];
 		}
 
 		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';

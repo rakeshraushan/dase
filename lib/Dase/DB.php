@@ -15,11 +15,13 @@ class Dase_DB {
 	public function __construct($config,$log)
 	{ 
 		$this->type = $config['type'];
-		$this->path = $config['path'];
 		$this->host = $config['host'];
 		$this->name = $config['name'];
 		$this->user = $config['user'];
 		$this->pass = $config['pass'];
+		if (isset($config['path'])) {
+			$this->path = $config['path'];
+		}
 		$this->table_prefix = $config['table_prefix'];
 		$this->log = $log;
 	}
@@ -52,8 +54,6 @@ class Dase_DB {
 	public function query($sql)
 	{
 		$dbh = $this->getDbh();
-		//beware sql injection
-		Dase_Log::get()->debug("[DB exec] ".$sql);
 		return $dbh->query($sql);
 	}
 

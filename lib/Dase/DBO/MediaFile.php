@@ -8,14 +8,14 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 	function getItem()
 	{
-		$item = new Dase_DBO_Item;
+		$item = new Dase_DBO_Item($this->db);
 		$item->load($this->item_id);
 		return $item;
 	}
 
 	function getCollection()
 	{
-		$coll = new Dase_DBO_Collection;
+		$coll = new Dase_DBO_Collection($this->db);
 		$coll->load($this->getItem()->collection_id);
 		return $coll;
 	}
@@ -81,7 +81,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 	public static function getUniqueBaseIdent($title,$collection_ascii_id)
 	{
 		$check_ident = Dase_Util::dirify($title);
-		$mf = new Dase_DBO_MediaFile;
+		$mf = new Dase_DBO_MediaFile($this->db);
 		$mf->p_serial_number = $check_ident;
 		$mf->p_collection_ascii_id = $collection_ascii_id;
 		if (!$mf->findOne()) {
@@ -101,7 +101,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 	function getDerivatives()
 	{
-		$m = new Dase_DBO_MediaFile;
+		$m = new Dase_DBO_MediaFile($this->db);
 		$m->p_collection_ascii_id = $this->p_collection_ascii_id;
 		$m->p_serial_number = $this->p_serial_number;
 		$m->orderBy('width');

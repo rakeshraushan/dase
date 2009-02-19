@@ -45,6 +45,10 @@ class Dase_Cookie {
 
 	public function set($type,$data) 
 	{
+		if ('eid' == $type ) {
+			$this->setEid($data);
+			return;
+		}
 		$pre = $this->getPrefix();
 		if ('module' == $type) {
 			$module = $this->config->get('module');

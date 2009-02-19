@@ -6,13 +6,13 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 		parent::__construct($dom,$root);
 	}
 
-	function insert($r,$collection) 
+	function insert($db,$r,$collection) 
 	{
-		$att = new Dase_DBO_Attribute;
+		$att = new Dase_DBO_Attribute($db);
 		$att->attribute_name = $this->getTitle();
 		//think about using getAscii or Slug also
 		$att->ascii_id = Dase_Util::dirify($att->attribute_name);
-		if (!Dase_DBO_Attribute::get($collection->ascii_id,$att->ascii_id)) {
+		if (!Dase_DBO_Attribute::get($db,$collection->ascii_id,$att->ascii_id)) {
 			$att->collection_id = $collection->id;
 			$att->updated = date(DATE_ATOM);
 			$att->sort_order = 9999;

@@ -38,15 +38,14 @@ class Dase_Handler_Login extends Dase_Handler
 		//all valid users need to be superusers
 		$username = strtolower($r->get('username'));
 		$pass = $r->get('password');
-		$superusers = $r->dase_http_auth->getSuperusers();
+		$superusers = $r->retrieve('config')->getSuperusers();
 		if (isset($superusers[$username]) && $superusers[$username] == $pass) {
-			$r->retrieve('cookie')->setEid($username);
-			$dbuser = $r->retrieve('dbuser');
-			$dbuser->retrieveByEid($username);
-			$r->retrieve('cookie')->set('max',$dbuser->max_items);
-			$r->retrieve('cookie')->set('display',$dbuser->display);
-			$r->retrieve('dbuser')->initCart();
-			//do this so cookie is passed along
+			$user = new Dase_DBO_DaseUser($this->db);
+			$user->retrieveByEid($username);
+			$user->initCart();
+			$r->setCookie('eid',$username);
+			$r->setCookie('max',$user->max_items);
+			$r->setCookie('display',$user->display);
 			$r->renderRedirect(urldecode($r->get('target')));
 		} else {
 			//I could probably just display here instead of redirect

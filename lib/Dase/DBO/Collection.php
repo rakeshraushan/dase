@@ -38,7 +38,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function expunge($messages = false)
 	{
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->id;
 		foreach ($items->find() as $item) {
 			$this->log->info("item $this->ascii_id:$item->serial_number deleted");
@@ -47,27 +47,27 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			}
 			$item->expunge();
 		}
-		$item_types = new Dase_DBO_ItemType;
+		$item_types = new Dase_DBO_ItemType($this->db);
 		$item_types->collection_id = $this->id;
 		foreach ($item_types->find() as $type) {
 			$type->expunge();
 		}
-		$coll_cats = new Dase_DBO_CollectionCategory;
+		$coll_cats = new Dase_DBO_CollectionCategory($this->db);
 		$coll_cats->collection_id = $this->id;
 		foreach ($coll_cats->find() as $cc) {
 			$cc->delete();
 		}
-		$atts = new Dase_DBO_Attribute;
+		$atts = new Dase_DBO_Attribute($this->db);
 		$atts->collection_id = $this->id;
 		foreach ($atts->find() as $a) {
 			$a->delete();
 		}	
-		$itrs = new Dase_DBO_ItemTypeRelation;
+		$itrs = new Dase_DBO_ItemTypeRelation($this->db);
 		$itrs->collection_ascii_id = $this->ascii_id;
 		foreach ($itrs->find() as $itr) {
 			$itr->delete();
 		}
-		$cms = new Dase_DBO_CollectionManager;
+		$cms = new Dase_DBO_CollectionManager($this->db);
 		$cms->collection_ascii_id = $this->ascii_id;
 		foreach ($cms->find() as $cm) {
 			$cm->delete();
@@ -182,7 +182,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	static function dataAsJson()
 	{
 		$result = array();
-		$colls = new Dase_DBO_Collection;
+		$colls = new Dase_DBO_Collection($this->db);
 		foreach ($colls->find() as $c) {
 			$result[$c->ascii_id]['visibility'] = $c->visibility;
 			$result[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
@@ -190,9 +190,22 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($result);
 	}
 
-	static function listAsJson($public_only = false)
+	static function listAsArray($db,$public_only = false)
 	{
-		$colls = new Dase_DBO_Collection;
+		$colls = new Dase_DBO_Collection($db);
+		$colls->orderBy('collection_name');
+		if ($public_only) {
+			$colls->is_public = 1;
+		} 
+		foreach ($colls->find() as $c) {
+			$result[] = clone($c);
+		}
+		return $result;
+	}
+
+	static function listAsJson($db,$public_only = false)
+	{
+		$colls = new Dase_DBO_Collection($db);
 		$colls->orderBy('collection_name');
 		if ($public_only) {
 			$colls->is_public = 1;
@@ -259,10 +272,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	static function getLookupArray()
+	static function getLookupArray($db)
 	{
 		$hash = array();
-		$c = new Dase_DBO_Collection;
+		$c = new Dase_DBO_Collection($db);
 		foreach ($c->find() as $coll) {
 			$iter = $coll->getIterator();
 			foreach ($iter as $field => $value) {
@@ -290,7 +303,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getAttributes($sort = 'sort_order')
 	{
-		$att = new Dase_DBO_Attribute;
+		$att = new Dase_DBO_Attribute($this->db);
 		$att->collection_id = $this->id;
 		$att->orderBy($sort);
 		return $att->find();
@@ -348,7 +361,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getAdminAttributes()
 	{
-		$att = new Dase_DBO_Attribute;
+		$att = new Dase_DBO_Attribute($this->db);
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
 		return $att->find();
@@ -356,7 +369,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function updateItemCount()
 	{
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->id;
 		$this->item_count = $items->findCount();
 		$this->updated = date(DATE_ATOM);
@@ -369,7 +382,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	function getItems($limit='')
 	{
-		$item = new Dase_DBO_Item;
+		$item = new Dase_DBO_Item($this->db);
 		$item->collection_id = $this->id;
 		if ($limit && is_numeric($limit)) {
 			$item->setLimit($limit);
@@ -389,7 +402,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$i = 0;
 		$total = 0;
 		$item_id_array = array();
-		foreach (Dase_DBO::query($sql,array($this->id)) as $row) {
+		foreach (Dase_DBO::query($this->db,$sql,array($this->id)) as $row) {
 			$i++;
 			if ($i >= $start && $count >= $total) {
 				$total++;
@@ -402,7 +415,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function getItemTypes()
 	{
 		$res = array();
-		$types = new Dase_DBO_ItemType;
+		$types = new Dase_DBO_ItemType($this->db);
 		$types->collection_id = $this->id;
 		$types->orderBy('name');
 		foreach ($types->find() as $t) {
@@ -414,7 +427,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function getItemTypeRelations()
 	{
 		$res = array();
-		$rels = new Dase_DBO_ItemTypeRelation;
+		$rels = new Dase_DBO_ItemTypeRelation($this->db);
 		$rels->collection_ascii_id = $this->ascii_id;
 		foreach ($rels->find() as $r) {
 			$res[] = clone $r;
@@ -425,11 +438,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	public function buildSearchIndex()
 	{
 		$prefix = $this->db->table_prefix;
-		$db = Dase_DB::get();
+		$dbh = $db->getDbh();
 		//todo: make sure this->id is an integer
 		$db->query("DELETE FROM {$prefix}search_table WHERE collection_id = $this->id");
 		$db->query("DELETE FROM {$prefix}admin_search_table WHERE collection_id = $this->id");
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->id;
 		foreach ($items->find() as $item) {
 			//search table
@@ -442,7 +455,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				AND v.value_text != ''
 				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where a.in_basic_search = true)
 				";
-			$st = $db->prepare($sql);
+			$st = $dbh->prepare($sql);
 			$st->execute(array($item->id));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
@@ -450,7 +463,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			foreach ($item->getContents() as $c) {
 				$composite_value_text .= $c->text . " ";
 			}
-			$search_table = new Dase_DBO_SearchTable;
+			$search_table = new Dase_DBO_SearchTable($this->db);
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
@@ -465,12 +478,12 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				FROM {$prefix}value
 				WHERE item_id = ?
 				";
-			$st = $db->prepare($sql);
+			$st = $dbh->prepare($sql);
 			$st->execute(array($item->id));
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
-			$search_table = new Dase_DBO_AdminSearchTable;
+			$search_table = new Dase_DBO_AdminSearchTable($this->db);
 			$search_table->value_text = $composite_value_text;
 			$search_table->item_id = $item->id;
 			$search_table->collection_id = $this->id;
@@ -494,7 +507,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				AND v.value_text != ''
 				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where collection_id != 0)
 				";
-			foreach (Dase_DBO::query($sql) as $row) {
+			foreach (Dase_DBO::query($this->db,$sql) as $row) {
 				$composite_value_text .= " ".$row['value_text'];
 			}
 			$search_index_array[$item->serial_number] = $composite_value_text;
@@ -506,14 +519,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$feed = $this->getBaseAtomFeed();
 		$feed->setFeedType('items');
-		$att = Dase_DBO_Attribute::get($this->ascii_id,$attribute_ascii_id);
-		$vals = new Dase_DBO_Value;
+		$att = Dase_DBO_Attribute::get($this->db,$this->ascii_id,$attribute_ascii_id);
+		$vals = new Dase_DBO_Value($this->db);
 		$vals->attribute_id = $att->id;
 		foreach ($vals->find() as $val) {
-			$item = new Dase_DBO_Item;
+			$item = new Dase_DBO_Item($this->db);
 			$item->load($val->item_id);
 			//use cached ???
-			$entry = $item->injectAtomEntryData($feed->addEntry());
+			$entry = $item->injectAtomEntryData($feed->addEntry(),$this);
 			$entry->setSummary($item->getValue($attribute_ascii_id));
 		}
 		return $feed->asXML();
@@ -524,7 +537,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if (!$eid) {
 			$eid = '_dase';
 		}
-		$item = new Dase_DBO_Item;
+		$item = new Dase_DBO_Item($this->db);
 		$item->collection_id = $this->id;
 		if ($serial_number) {
 			$item->serial_number = $serial_number;
@@ -537,6 +550,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->created = date(DATE_ATOM);
 			$item->updated = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
+			$item->p_collection_ascii_id = $this->ascii_id;
 			$item->insert();
 			$this->updateItemCount();
 			return $item;
@@ -545,6 +559,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->item_type_id = 0;
 			$item->created = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
+			$item->p_collection_ascii_id = $this->ascii_id;
 			$item->insert();
 			$item->serial_number = sprintf("%09d",$item->id);
 			$item->updated = date(DATE_ATOM);
@@ -614,7 +629,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function setCommunity($community_term,$community_label='')
 	{
-		Dase_DBO_Category::set($this,'community',$community_term,$community_label);
+		Dase_DBO_Category::set($this->db,$this,'community',$community_term,$community_label);
 	}
 
 	public function getCommunity()

@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 
+define('APP_ROOT','http://quickdraw.laits.utexas.edu/dase1');
+
+//sets $db, $log, and $config
 include 'config.php';
 
 print "enter collection ascii id: ";
