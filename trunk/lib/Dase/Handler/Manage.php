@@ -5,7 +5,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	public $collection;
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'uploader',
-		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/remote_acl' => 'remote_acl',
 		'{collection_ascii_id}/attribute_form' => 'attribute_form',
 		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
@@ -208,7 +207,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		foreach ($def_values->find() as $df) {
 			$df->delete();
 		}
-		$defined_values = trim(file_get_contents("php://input"));
+		$defined_values = trim($r->getBody());
 		$pattern = "/[\n;]/";
 		$munged_string = preg_replace($pattern,'%',$defined_values);
 		$response = array();
@@ -499,7 +498,7 @@ class Dase_Handler_Manage extends Dase_Handler
 				$item->setValue('title',$name);
 			}
 
-			$file = Dase_File::newFile($path,$type,$name);
+			$file = Dase_File::newFile($path,$type,$name,$r->base_path);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);
 			$item->buildSearchIndex();
@@ -514,13 +513,6 @@ class Dase_Handler_Manage extends Dase_Handler
 			}
 		}
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
-	}
-
-	public function getArchive($r) 
-	{
-		$archive = CACHE_DIR.$this->collection->ascii_id.'_'.time();
-		file_put_contents($archive,$this->collection->asAtomArchive());
-		$r->serveFile($archive,'text/plain',true);
 	}
 
 	public function postToIndexer($r) 

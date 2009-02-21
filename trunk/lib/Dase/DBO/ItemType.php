@@ -33,31 +33,28 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $type;
 	}
 
-	public function getUrl($coll='')
+	public function getUrl($collection_ascii_id,$app_root)
 	{
-		if (!$coll) {
-			$coll = $this->getCollection()->ascii_id;
-		}
-		return '{APP_ROOT}/item_type/'.$coll.'/'.$this->ascii_id;
+		return $app_root.'/item_type/'.$collection_ascii_id.'/'.$this->ascii_id;
 	}
 
-	public function asAtomEntry()
+	public function asAtomEntry($collection_ascii_id,$app_root)
 	{
 		$c = $this->getCollection();
 		$entry = new Dase_Atom_Entry_ItemType($this->db);
-		$entry = $this->injectAtomEntryData($entry,$c);
+		$entry = $this->injectAtomEntryData($entry,$collection_ascii_id,$app_root);
 		return $entry->asXml();
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection_ascii_id,$app_root)
 	{
 		$entry->setTitle($this->name);
 		$entry->setId($base_url);
 		$entry->setSummary($this->description);
-		$entry->addLink($this->getUrl().'.atom','edit');
-		$entry->addLink($this->getUrl().'/items.cats','http://daseproject.org/relation/item_type/items','application/atomcat+xml','',$this->name.' Items');
-		$entry->addLink($this->getUrl().'/attributes.cats','http://daseproject.org/relation/item_type/attributes','application/atomcat+xml','',$this->name.' Attributes');
-		$entry->addLink($this->getUrl().'/attributes.atom','http://daseproject.org/relation/item_type/attributes','application/atom+xml','',$this->name.' Attributes');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'.atom','edit');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/items.cats','http://daseproject.org/relation/item_type/items','application/atomcat+xml','',$this->name.' Items');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/attributes.cats','http://daseproject.org/relation/item_type/attributes','application/atomcat+xml','',$this->name.' Attributes');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/attributes.atom','http://daseproject.org/relation/item_type/attributes','application/atom+xml','',$this->name.' Attributes');
 		$entry->addCategory('item_type','http://daseproject.org/category/entrytype','Item Type');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
@@ -106,27 +103,26 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		return $i->findCount();
 	}
 
-	public function getAttributesFeed() 
+	public function getAttributesFeed($collection_ascii_id,$app_root) 
 	{
-		$c = $this->getCollection();
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->name.' Attributes');
-		$feed->setId('{APP_ROOT}/item_type/'. $c->ascii_id . '/' . $this->ascii_id.'/attributes');
+		$feed->setId($app_root.'/item_type/'. $collection_ascii_id . '/' . $this->ascii_id.'/attributes');
 		$feed->setUpdated(date(DATE_ATOM));
 		foreach($this->getAttributes() as $att) {
 			$entry = $feed->addEntry('attribute');
-			$att->injectAtomEntryData($entry);
+			$att->injectAtomEntryData($entry,$collection_ascii_id,$app_root);
 		}
 		return $feed->asXml();
 	}
 
-	public function getAttributesJson() 
+	public function getAttributesJson($collection_ascii_id,$app_root) 
 	{
 		$atts = array();
 		foreach ($this->getAttributes() as $att) {
 			$a['ascii_id'] = $att->ascii_id;
 			$a['attribute_name'] = $att->attribute_name;
-			$a['href'] = $att->getUrl();
+			$a['href'] = $att->getUrl($collection_ascii_id,$app_root);
 			$atts[] = $a;
 		}
 		return Dase_Json::get($atts);
@@ -180,12 +176,12 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$this->delete();
 	}
 	
-	public function getAtompubServiceDoc() 
+	public function getAtompubServiceDoc($app_root) 
 	{
 		$c = $this->getCollection();
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace($this->name.' Item Type Workspace');
-		$coll = $ws->addCollection('{APP_ROOT}/item_type/'.$c->ascii_id.'/'.$this->ascii_id.'.atom',$this->name.' Items');
+		$coll = $ws->addCollection($app_root.'/item_type/'.$c->ascii_id.'/'.$this->ascii_id.'.atom',$this->name.' Items');
 		$coll->addAccept('application/atom+xml;type=entry');
 		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');

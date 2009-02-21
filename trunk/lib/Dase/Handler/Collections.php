@@ -26,7 +26,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
 		) {
-			$raw_input = file_get_contents("php://input");
+			$raw_input = $r->getBody();
 			$client_md5 = $r->getHeader('Content-MD5');
 			if ($client_md5 && md5($raw_input) != $client_md5) {
 				//todo: fix this
@@ -48,7 +48,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$ascii_id.'.atom');
-			echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry();
+			echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry($r->app_root);
 			exit;
 		} else {
 			$r->renderError(415,'cannoot accept '.$content_type);

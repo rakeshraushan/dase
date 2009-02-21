@@ -13,9 +13,9 @@ class Dase_Log
 	const DEBUG 	= 3;	// Most Verbose
 
 	/** supply defaults so it is easy to create a fake log */
-	public function __construct($logfile='',$log_level=2)
+	public function __construct($log_dir,$logfile='dase.log',$log_level)
 	{
-		$this->logfile = $logfile;
+		$this->logfile = $log_dir.'/'.$logfile;
 		$this->log_level = $log_level;
 	}
 
@@ -47,7 +47,7 @@ class Dase_Log
 			ob_end_clean();
 		}
 		if (fwrite($this->filehandle, $msg) === FALSE) {
-			throw new Dase_Log_Exception('cannot write to logfile '.$logfile);
+			throw new Dase_Log_Exception('cannot write to logfile '.$this->logfile);
 		}
 		return true;
 	}
@@ -55,7 +55,7 @@ class Dase_Log
 	public function debug($msg,$backtrace = false)
 	{
 		//notices helpful for debugging (including all sql)
-		if ($this->log_level > 2) {
+		if ($this->log_level >= Dase_Log::DEBUG) {
 			$this->_write($msg,$backtrace);
 		}
 	}
@@ -63,7 +63,7 @@ class Dase_Log
 	public function info($msg,$backtrace = false)
 	{
 		//normal notices, ok for production
-		if ($this->log_level > 1) {
+		if ($this->log_level >= Dase_Log::INFO) {
 			$this->_write($msg,$backtrace);
 		}
 	}

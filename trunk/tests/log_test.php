@@ -11,7 +11,7 @@ class TestOfLogging extends UnitTestCase {
 	function testLogCreatesNewFileOnFirstMessage() {
 		$logfile = dirname(__FILE__).'/temp/dase.log';
 		@unlink($logfile);
-		$log = new Dase_Log($logfile,Dase_Log::DEBUG);
+		$log = new Dase_Log(dirname(__FILE__).'/temp/','dase.log',Dase_Log::DEBUG);
 		$this->assertFalse(file_exists($logfile));
 		$log->info('should write this to file');
 		$this->assertTrue(file_exists($logfile));
@@ -20,7 +20,7 @@ class TestOfLogging extends UnitTestCase {
 	function testLogWritesToLogFile() {
 		$logfile = dirname(__FILE__).'/temp/dase.log';
 		@unlink($logfile);
-		$log = new Dase_Log($logfile,Dase_Log::DEBUG);
+		$log = new Dase_Log(dirname(__FILE__).'/temp/','dase.log',Dase_Log::DEBUG);
 		$log->info('first');
 		$log->truncate();
 		$log->info('test');

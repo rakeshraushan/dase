@@ -110,12 +110,12 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getEntryAtom($r)
 	{
-		$r->renderResponse($this->collection->asAtomEntry());
+		$r->renderResponse($this->collection->asAtomEntry($r->app_root));
 	}
 
 	public function getItemTypesAtom($r)
 	{
-		$r->renderResponse($this->collection->getItemTypesAtom()->asXml());
+		$r->renderResponse($this->collection->getItemTypesAtom($r->app_root)->asXml());
 	}
 
 	public function getSerialNumbersTxt($r)
@@ -279,7 +279,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsByAttAtom($r)
 	{
-		$r->renderResponse($this->collection->getItemsByAttAsAtom($r->get('att_ascii_id')));
+		$r->renderResponse($this->collection->getItemsByAttAsAtom($r->get('att_ascii_id'),$r->app_root));
 	}
 
 	public function getPing($r)
@@ -326,8 +326,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getItemTypeRelationAtom($r) 
 	{
 		$itr = Dase_DBO_ItemTypeRelation::get($r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
-		print_r($itr);exit;
-		$r->renderResponse($itr->asAtomEntry());
+		$r->renderResponse($itr->asAtomEntry($r->app_root));
 	}
 
 	public function postToAttributes($r) 
@@ -418,7 +417,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	private function _newUriMediaResource($r)
 	{
 		$eid = $r->getUser('http')->eid;
-		$url = file_get_contents("php://input");
+		$url = $r->getBody();
 		$filename = array_pop(explode('/',$url));
 		$ext = array_pop(explode('.',$url));
 		$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
@@ -430,7 +429,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
 		try {
-			$file = Dase_File::newFile($new_file);
+			$file = Dase_File::newFile($new_file,null,null,$r->base_path);
 			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
@@ -447,7 +446,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newAtomItem($r,$fetch_enclosure=false)
 	{
-		$raw_input = file_get_contents("php://input");
+		$raw_input = $r->getBody();
 		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -471,7 +470,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-			echo $item->asAtomEntry();
+			echo $item->asAtomEntry($app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -480,7 +479,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newAtomAttribute($r)
 	{
-		$raw_input = file_get_contents("php://input");
+		$raw_input = $r->getBody();
 		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -501,7 +500,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/attribute/".$r->get('collection_ascii_id')."/".$att->ascii_id.'.atom');
-			echo $att->asAtomEntry();
+			echo $att->asAtomEntry($this->collection->ascii_id,$r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -510,7 +509,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newAtomItemType($r)
 	{
-		$raw_input = file_get_contents("php://input");
+		$raw_input = $r->getBody();
 		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -530,7 +529,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item_type/".$r->get('collection_ascii_id')."/".$item_type->ascii_id.'.atom');
-			echo $type->asAtomEntry();
+			echo $type->asAtomEntry($this->collection->ascii_id,$r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -539,7 +538,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	private function _newAtomItemTypeRelation($r)
 	{
-		$raw_input = file_get_contents("php://input");
+		$raw_input = $r->getBody();
 		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -559,7 +558,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
-			echo $itr->asAtomEntry();
+			echo $itr->asAtomEntry($app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -572,7 +571,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$user->can('write',$this->collection)) {
 			$r->renderError(401,'no go unauthorized');
 		}
-		$json = file_get_contents("php://input");
+		$json = $r->getBody();
 		$client_md5 = $r->getHeader('Content-MD5');
 		//if Content-MD5 header isn't set, we just won't check
 		if ($client_md5 && md5($json) != $client_md5) {
@@ -592,7 +591,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-			echo $item->asAtomEntry();
+			echo $item->asAtomEntry($app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -609,7 +608,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributesAtom($r) 
 	{
-		$r->renderResponse($this->collection->getAttributesAtom()->asXml());
+		$r->renderResponse($this->collection->getAttributesAtom($r->app_root)->asXml());
 	}
 
 	public function getAttributesJson($r) 
@@ -639,7 +638,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
 					'sort_order' => $att->sort_order,
-					'href' => $app_root.'/'.$att->getUrl($c->ascii_id),
+					'href' => $app_root.'/'.$att->getUrl($c->ascii_id,$r->app_root),
 					'collection' => $r->get('collection_ascii_id')
 				);
 		}
@@ -736,7 +735,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$item_type = new Dase_DBO_ItemType($this->db);
 		$item_type->ascii_id = $r->get('item_type_ascii_id');
 		$item_type->findOne();
-		$r->renderResponse($item_type->getItemsAsFeed());
+		$r->renderResponse($item_type->getItemsAsFeed($r->app_root));
 	}
 
 	public function buildIndex($r) 
@@ -760,13 +759,13 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->collection->getAtompubServiceDoc());
+		$r->renderResponse($this->collection->getAtompubServiceDoc($r->app_root));
 	}
 
 	public function getItemTypesService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->collection->getItemTypesAtompubServiceDoc());
+		$r->renderResponse($this->collection->getItemTypesAtompubServiceDoc($r->app_root));
 	}
 }
 

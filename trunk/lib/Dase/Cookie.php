@@ -37,7 +37,7 @@ class Dase_Cookie {
 
 	public function setEid($eid) 
 	{
-		$pre = Dase_Cookie::getPrefix();
+		$pre = $this->getPrefix();
 		$key = md5($this->token.$eid);
 		setcookie($pre . $this->user_cookiename,$eid,0,'/');
 		setcookie($pre . $this->auth_cookiename,$key,0,'/');
@@ -60,16 +60,19 @@ class Dase_Cookie {
 		}
 	}
 
-	public function get($type) 
+	public function get($type,$request_cookies) 
 	{
+		if ('eid' == $type ) {
+			return $this->getEid($request_cookies);
+		}
 		$pre = $this->getPrefix();
 		if ('module' == $type) {
 			$pre = $pre.$this->module.'_';
 		}
 		if (isset($this->cookiemap[$type])) {
 			$cookiename = $pre . $this->cookiemap[$type];
-			if (isset($_COOKIE[$cookiename])) {
-				return $_COOKIE[$cookiename];
+			if (isset($request_cookies[$cookiename])) {
+				return $request_cookies[$cookiename];
 			}
 		}
 	}
@@ -87,16 +90,16 @@ class Dase_Cookie {
 	}
 
 	/** simply checks the cookie */
-	public function getEid() 
+	public function getEid($request_cookies) 
 	{
 		$pre = $this->getPrefix();
 		$key = '';
 		$eid = '';
-		if (isset($_COOKIE[$pre . $this->user_cookiename])) {
-			$eid = $_COOKIE[$pre . $this->user_cookiename];
+		if (isset($request_cookies[$pre . $this->user_cookiename])) {
+			$eid = $request_cookies[$pre . $this->user_cookiename];
 		}
-		if (isset($_COOKIE[$pre . $this->auth_cookiename])) {
-			$key = $_COOKIE[$pre . $this->auth_cookiename];
+		if (isset($request_cookies[$pre . $this->auth_cookiename])) {
+			$key = $request_cookies[$pre . $this->auth_cookiename];
 		}
 		if ($key && $eid && $key == md5($this->token.$eid)) {
 			return $eid;

@@ -173,7 +173,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		// indicating that a bytecode cache is removing comments
 
 		$tpl = new Dase_Template($r);
-		$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DASE_PATH.'/lib'));
+		$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($r->base_path.'/lib'));
 		foreach ($dir as $file) {
 			$matches = array();
 			if ( 

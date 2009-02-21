@@ -66,7 +66,7 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	public function getTagEntryJson($r)
 	{
-		$r->renderResponse($this->tag->asAtomEntry($r->app_root,false)->asJson());
+		$r->renderResponse($this->tag->asAtomEntry($r->app_root,false)->asJson($r->app_root));
 	}
 
 	public function getTagEntryAtom($r)
@@ -80,7 +80,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401);
 		}
-		$r->renderResponse($this->tag->asJson());
+		$r->renderResponse($this->tag->asJson($r->app_root));
 	}
 
 	public function getTagTemplate($r)
@@ -178,7 +178,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($tag_item->tag_id != $this->tag->id) {
 			$r->renderAtomError(404);
 		} 
-		$r->renderResponse($tag_item->asAtom());
+		$r->renderResponse($tag_item->asAtom($r->app_root));
 	}
 
 	public function getTagItem($r)
@@ -231,7 +231,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
-		$tag_item = new Dase_DBO_TagItem;
+		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		$tag_item->annotation = $r->get('annotation');
 		$tag_item->updated = date(DATE_ATOM);
@@ -307,7 +307,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
 		) {
-			$raw_input = file_get_contents("php://input");
+			$raw_input = $r->getBody();
 			$client_md5 = $r->getHeader('Content-MD5');
 			//if Content-MD5 header isn't set, we just won't check
 			if ($client_md5 && md5($raw_input) != $client_md5) {

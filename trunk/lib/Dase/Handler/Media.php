@@ -15,7 +15,7 @@ class Dase_Handler_Media extends Dase_Handler
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
-		$this->path_to_media = $r->config->get('path_to_media');
+		$this->path_to_media = $r->retrieve('config')->getMediaDir();
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
 		} 
@@ -95,13 +95,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$r->renderError(415,'not an accepted media type');
 		}
 
-		$fp = fopen("php://input", "rb");
-		$bits = NULL;
-		while(!feof($fp)) {
-			$bits .= fread($fp, 4096);
-		}
-		fclose($fp);
-
+		$bits = $r->getBody();
 		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory '.$upload_dir);
@@ -120,7 +114,7 @@ class Dase_Handler_Media extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$content_type);
+			$file = Dase_File::newFile($new_file,$content_type,null,$r->base_path);
 			//since we are swapping in:
 			$item->deleteAdminValues();
 			//note: this deletes ALL media!!!
@@ -160,7 +154,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		$m = $item->getEnclosure();
 		if ($m) {
-			$r->renderResponse($m->asAtom());
+			$r->renderResponse($m->asAtom($app_root));
 		} else {
 			$r->renderError(404);
 		}
@@ -249,7 +243,7 @@ class Dase_Handler_Media extends Dase_Handler
 		} else {
 			$limit = 20;
 		}
-		$r->renderResponse($c->asAtom($limit));
+		$r->renderResponse($c->asAtom($app_root,$limit));
 	}
 
 	public function postToCollection($r)

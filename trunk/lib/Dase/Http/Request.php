@@ -28,8 +28,9 @@ class Dase_Http_Request
 	private $url_params = array();
 	private $user;
 
-	public function __construct($env)
+	public function __construct($base_path)
 	{
+		$env['base_path'] = $base_path;
 		$env['protocol'] = isset($_SERVER['HTTPS']) ? 'https' : 'http'; 
 		$env['method'] = strtolower($_SERVER['REQUEST_METHOD']);
 		$env['_get'] = $_GET;
@@ -38,18 +39,20 @@ class Dase_Http_Request
 		$env['_files'] = $_FILES;
 		$env['htuser'] = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
 		$env['htpass'] = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
-		$env['request_uri'] = $_SERVER['REQUEST_URI'] = '';
+		$env['request_uri'] = $_SERVER['REQUEST_URI'];
 		$env['http_host'] =	$_SERVER['HTTP_HOST'];
 		$env['server_addr'] = $_SERVER['SERVER_ADDR'];
 		$env['query_string'] =	$_SERVER['QUERY_STRING'];
 		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
-		$env['remote_addr'] = $_SERVER['REMOTE_ADDR'] ? $_SERVER['REMOTE_ADDR'] : '';
-		$env['http_user_agent'] = $_SERVER['HTTP_USER_AGENT'] ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$env['remote_addr'] = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+		$env['http_user_agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$env['app_root'] = $env['protocol'].'://'.$env['http_host'].dirname($env['script_name']);
-		$env['format'] = $this->getFormat($env);
-		$env['module'] = $this->getModule($env); 
-		$env['handler'] = $this->getHandler($env); 
-		$env['path'] = $this->getPath($env);
+		//env is assign to this twice since it needs to be use in other methods
+		$this->env = $env;
+		$env['format'] = $this->getFormat();
+		$env['module'] = $this->getModule(); 
+		$env['handler'] = $this->getHandler(); 
+		$env['path'] = $this->getPath();
 		if ($env['module']) {
 			$env['module_root'] = $env['app_root'].'/modules/'.$env['module'];
 		} else {
@@ -58,21 +61,30 @@ class Dase_Http_Request
 		$env['response_mime_type'] = self::$types[$env['format']];
 		$env['content_type'] = $this->getContentType();
 		$env['start_time'] = Dase_Util::getTime();
-
 		$this->env = $env;
 	}
 	
-	public function __get( $key )
+	public function __get( $var )
 	{
-		if ( array_key_exists($key,$this->env)) {
-			return $this->env[$key];
+		//first env
+		if ( array_key_exists($var,$this->env)) {
+			return $this->env[$var];
+		}
+		//second params
+		if ( array_key_exists( $var, $this->members ) ) {
+			return $this->members[ $var ];
+		}
+		//third getter
+		$classname = get_class($this);
+		$method = 'get'.ucfirst($var);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}();
 		}
 	}
 
-	public function getAll() {
-		$all[] = $env;
-		$all[]= $members;
-		return $all;
+	public function getBody()
+	{
+		return file_get_contents("php://input");
 	}
 
 	public function initPlugin($custom_handlers)
@@ -99,12 +111,17 @@ class Dase_Http_Request
 
 	public function getLogData()
 	{
-		return print_r($this->env,true));
+		return print_r($this->env,true);
 	}
 
-	public function setCookieValue($cookie_type,$value)
+	public function setCookie($cookie_type,$value)
 	{
 		$this->retrieve('cookie')->set($cookie_type,$value);
+	}
+
+	public function getCookie($cookie_type)
+	{
+		return $this->retrieve('cookie')->get($cookie_type,$this->env['_cookie']);
 	}
 
 	public function logger() 
@@ -133,15 +150,15 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getModule($env)
+	public function getModule()
 	{
-		$parts = explode('/',trim($this->getPath($env),'/'));
+		$parts = explode('/',trim($this->getPath($this->env),'/'));
 		$first = array_shift($parts);
 		if ('modules' == $first) {
 			if(!isset($parts[0])) {
 				$this->renderError(404,'no module specified');
 			}
-			if(!file_exists($env['base_path'].'/modules/'.$parts[0])) {
+			if(!file_exists($this->env['base_path'].'/modules/'.$parts[0])) {
 				$this->renderError(404,'no such module');
 			}
 			return $parts[0];
@@ -150,9 +167,9 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getHandler($env)
+	public function getHandler()
 	{
-		$parts = explode('/',trim($this->getPath($env),'/'));
+		$parts = explode('/',trim($this->getPath(),'/'));
 		$first = array_shift($parts);
 		if ('modules' == $first && isset($parts[0])) {
 			//so dispatch matching works
@@ -196,10 +213,10 @@ class Dase_Http_Request
 		}
 	}
 
-	public function getFormat($env)
+	public function getFormat()
 	{
 		//first check extension
-		$pathinfo = pathinfo($this->getPath($env,false));
+		$pathinfo = pathinfo($this->getPath(false));
 		if (isset($pathinfo['extension']) && $pathinfo['extension']) {
 			$ext = $pathinfo['extension'];
 			if (isset(self::$types[$ext])) {
@@ -213,20 +230,20 @@ class Dase_Http_Request
 			}
 		}	
 		//default is html for get requests
-		if ('get' == $this->method) {
+		if ('get' == $this->env['method']) {
 			return 'html';
 		}
 		return 'default';
 	}
 
-	public function getPath($env,$strip_extension=true)
+	public function getPath($strip_extension=true)
 	{
 		//returns full path w/o domain & w/o query string
-		$path = $env['request_uri'];
+		$path = $this->env['request_uri'];
 		if (strpos($path,'..')) { //thwart the wily hacker
 			throw new Dase_Http_Exception('no go');	
 		}
-		$base = trim(dirname($env['script_name']),'/');
+		$base = trim(dirname($this->env['script_name']),'/');
 		$path= preg_replace("!$base!",'',$path,1);
 		$path= trim($path, '/');
 		/* Remove the query_string from the URL */
@@ -282,6 +299,11 @@ class Dase_Http_Request
 				return $this->_getUrlParamsArray($key);
 			}
 		}
+	}
+
+	public function getAll($key)
+	{
+		return $this->get($key,true);
 	}
 
 	public function has($key)
@@ -348,7 +370,7 @@ class Dase_Http_Request
 		$url_params = array();
 		$url_params[$key] = array();
 		//NOTE: urldecode is NOT UTF-8 compatible
-		$pairs = explode('&',html_entity_decode(urldecode($this->_server['QUERY_STRING'])));
+		$pairs = explode('&',html_entity_decode(urldecode($this->query_string)));
 		if (count($pairs) && $pairs[0]) {
 			foreach ($pairs as $pair) {
 				if (false !== strpos($pair,'=')) {	
@@ -371,9 +393,9 @@ class Dase_Http_Request
 		return $url_params[$key];
 	}
 
-	public function getUrl($env) 
+	public function getUrl() 
 	{
-		$this->path = $this->path ? $this->path : $this->getPath($env);
+		$this->path = $this->path ? $this->path : $this->getPath();
 		return trim($this->path . '?' . $this->query_string,'?');
 	}
 
@@ -412,7 +434,7 @@ class Dase_Http_Request
 
 		switch ($auth) {
 		case 'cookie':
-			$eid = $this->retrieve('cookie')->getEid();
+			$eid = $this->retrieve('cookie')->getEid($this->_cookie);
 			break;
 		case 'http':
 			$eid = $this->getEid();
@@ -424,14 +446,15 @@ class Dase_Http_Request
 			//allows nothing to happen
 			return;
 		default:
-			$eid = $this->retrieve('cookie')->getEid();
+			$eid = $this->retrieve('cookie')->getEid($this->_cookie);
 		}
 
 		//eids are always lowercase
 		$eid = strtolower($eid);
 
 		if ($eid) {
-			$this->user = $this->retrieve('dbuser')->retrieveByEid($eid);
+			$user = new Dase_DBO_DaseUser($this->retrieve('db'));
+			$this->user = $user->retrieveByEid($eid);
 			return $this->user;
 		} else {
 			if (!$force_login) { return; }
@@ -448,7 +471,6 @@ class Dase_Http_Request
 	{
 		$request_headers = apache_request_headers();
 		$passwords = array();
-		$log->debug(print_r($request_headers,true));
 
 		if ($this->htuser && $this->htpass) {
 			$eid = $this->htuser;
@@ -492,11 +514,6 @@ class Dase_Http_Request
 		header('HTTP/1.1 401 Unauthorized');
 		echo "sorry, authorized users only";
 		exit;
-	}
-
-	public function setCookie($key,$val)
-	{
-		$r->retrieve('cookie')->set($key,$val);
 	}
 
 	private function _filterArray($ar)
@@ -560,7 +577,7 @@ class Dase_Http_Request
 	{
 		//$this->logger()->debug('serving '.$path.' as '.$mime_type);
 		$response = new Dase_Http_Response($this);
-		$response->serveFile($path,$mime_type,$download);
+		$response->serveFile($path,$mime_type,$download,$this->base_path);
 		exit;
 	}
 

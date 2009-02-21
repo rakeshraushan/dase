@@ -29,7 +29,7 @@ abstract class Dase_File
 	protected $filename;  //this is the basename minus the extension!!
 	protected $mime_type;
 	protected $orig_name;
-	protected $path_to_media
+	protected $path_to_media;
 
 	protected function __construct($file,$mime='')
 	{  //can ONLY be called by subclass
@@ -52,7 +52,7 @@ abstract class Dase_File
 		}
 	}
 
-	static function newFile($file,$mime='',$orig_name='')
+	static function newFile($file,$mime='',$orig_name='',$base_path)
 	{
 		if (!$mime) {
 			$mime = Dase_File::getMimeType($file);
@@ -67,6 +67,7 @@ abstract class Dase_File
 			$dasefile->size = self::$types_map[$mime]['size'];
 			$dasefile->ext = self::$types_map[$mime]['ext'];
 			$dasefile->mime_type = $mime;
+			$dasefile->base_path = $base_path;
 			$dasefile->orig_name = $orig_name;
 			return $dasefile;
 		} else {
@@ -253,7 +254,7 @@ abstract class Dase_File
 		$collection = $item->getCollection();
 		$target = $path_to_media.'/'.$collection->ascii_id . '/thumbnail/'.$size.'.jpg';
 		if (!file_exists($target)) {
-			copy(DASE_PATH.'/www/images/thumb_icons/'.$size.'.jpg',$target);
+			copy($this->base_path.'/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;
@@ -274,7 +275,7 @@ abstract class Dase_File
 		$collection = $item->getCollection();
 		$target = $path_to_media.'/'.$collection->ascii_id . '/viewitem/'.$size.'.jpg';
 		if (!file_exists($target)) {
-			copy(DASE_PATH . '/www/images/thumb_icons/'.$size.'.jpg',$target);
+			copy($this->base_path.'/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
 		$media_file = new Dase_DBO_MediaFile;
 		$media_file->item_id = $item->id;

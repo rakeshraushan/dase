@@ -54,7 +54,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getUserAtom($r) 
 	{
-		$r->renderResponse($this->user->asAtomEntry());
+		$r->renderResponse($this->user->asAtomEntry($r->app_root));
 	}
 
 	public function getUserAuthorizations($r) 
@@ -72,12 +72,12 @@ class Dase_Handler_User extends Dase_Handler
 	public function getService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->user->getAtompubServiceDoc());
+		$r->renderResponse($this->user->getAtompubServiceDoc($r->app_root));
 	}
 
 	public function getSetsAtom($r)
 	{
-		$r->renderResponse($this->user->getTagsAsAtom());
+		$r->renderResponse($this->user->getTagsAsAtom($r->app_root));
 	}
 
 	public function postToSets($r)
@@ -85,7 +85,7 @@ class Dase_Handler_User extends Dase_Handler
 		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type ) {
-				$raw_input = file_get_contents("php://input");
+				$raw_input = $r->getBody();
 				$client_md5 = $r->getHeader('Content-MD5');
 				//if Content-MD5 header isn't set, we just won't check
 				if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -105,7 +105,7 @@ class Dase_Handler_User extends Dase_Handler
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 					header("Location: ".$set->getBaseUrl().'.atom?type=entry');
-					echo $set->asAtomEntry();
+					echo $set->asAtomEntry($r->app_root);
 					exit;
 				} catch (Dase_Exception $e) {
 					$r->renderError(409,$e->getMessage());
@@ -135,7 +135,7 @@ class Dase_Handler_User extends Dase_Handler
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
 		foreach ($items->find() as $item) {
-			$item->injectAtomEntryData($feed->addEntry('item'));
+			$item->injectAtomEntryData($feed->addEntry('item'),$r->app_root);
 		}
 		$r->renderResponse($feed->asXml());
 	}
@@ -298,7 +298,7 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		//filter this!!!
-		$preferred_colls = file_get_contents("php://input");
+		$preferred_colls = $r->getBody();
 		$u->current_collections = $preferred_colls;
 		//see if this messes up access exception setting (bool)
 		//try/catch??
@@ -335,8 +335,8 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function postToDisplay($r)
 	{
-		Dase_Cookie::set('max',$r->get('max'));
-		Dase_Cookie::set('display',$r->get('display'));
+		$r->setCookie('max',$r->get('max'));
+		$r->setCookie('display',$r->get('display'));
 
 		$u = $this->user;
 		$u->max_items = $r->get('max');
