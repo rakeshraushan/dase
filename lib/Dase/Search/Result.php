@@ -29,7 +29,7 @@ class Dase_Search_Result
 		foreach($item_ids as $item_id) {
 			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
-			$json_tag['items'][] = $item->asArray();
+			$json_tag['items'][] = $item->asArray($app_root);
 		}
 		return Dase_Json::get($json_tag);	
 	}
@@ -41,7 +41,7 @@ class Dase_Search_Result
 		foreach($this->item_ids as $item_id) {
 			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
-			$uris[] = $item->getUrl(null,$app_root);
+			$uris[] = $item->getUrl($app_root);
 		}
 		return $uris;	
 	}
@@ -214,7 +214,7 @@ class Dase_Search_Result
 		if ($item->load($item_id)) {
 			$feed = new Dase_Atom_Feed();
 			$feed->setFeedType('searchitem');
-			$item->injectAtomFeedData($feed);
+			$item->injectAtomFeedData($feed,$app_root);
 			//uses cache
 			$feed->addItemEntry($item);
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');

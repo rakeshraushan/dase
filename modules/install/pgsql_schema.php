@@ -140,6 +140,7 @@ CREATE TABLE {$table_prefix}item (
     created character varying(50) DEFAULT 0,
     updated character varying(50) DEFAULT 0,
     status character varying(50),
+    p_collection_ascii_id character varying(200),
     created_by_eid character varying(50)
 );
 

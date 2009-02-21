@@ -86,31 +86,23 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $att;
 	}
 
-	function asAtomEntry()
+	function asAtomEntry($collection_ascii_id,$app_root)
 	{
 		$entry = new Dase_Atom_Entry;
-		return $this->injectAtomEntryData($entry)->asXml();
+		return $this->injectAtomEntryData($entry,$collection_ascii_id,$app_root)->asXml();
 	}
 
-	public function getUrl($coll='')
+	public function getUrl($collection_ascii_id,$app_root)
 	{
 		if (false !== strpos($this->ascii_id,'admin_')) {
-			return '{APP_ROOT}/attribute/'.$this->ascii_id;
+			return $app_root.'/attribute/'.$this->ascii_id;
 		}
-		if (!$coll) {
-			$coll = $this->getCollection()->ascii_id;
-		}
-		return '{APP_ROOT}/attribute/'.$coll.'/'.$this->ascii_id;
+		return $app_root.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$c=null)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection_ascii_id,$app_root)
 	{
-		if ($c) {
-			$this->collection = $c;
-		} else {
-			$c = $this->getCollection();
-		}	
-		$url = $this->getUrl($c->ascii_id);
+		$url = $this->getUrl($collection_ascii_id,$app_root);
 		$entry->setTitle($this->attribute_name);
 		$entry->setId($url);
 		$entry->addLink($url.'.atom');
@@ -325,7 +317,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return Dase_Json::get($this->asArray());
 	}
 
-	public function valuesAsAtom($collection_ascii_id,$filter_key ='',$filter_value='')
+	public function valuesAsAtom($collection_ascii_id,$filter_key ='',$filter_value='',$app_root)
 	{
 		if (0 == $this->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
@@ -334,18 +326,18 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$values_array = $this->getDisplayValues(null,2000,$filter_key,$filter_value);
 		}
 		$feed = new Dase_Atom_Feed;
-		$feed->setId('{APP_ROOT}/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
+		$feed->setId($app_root.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
 		$feed->setFeedType('attribute_values');
 		$feed->setTitle('values for '.$collection_ascii_id.'.'.$this->ascii_id);
 		//since we do not have a class for an attribute_value feed, stick ascii_id in subtitle
 		$feed->setSubtitle($this->ascii_id);
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
-		$feed->addLink('{APP_ROOT}/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
+		$feed->addLink($app_root.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
 		foreach ($values_array as $v) {
 			$entry = $feed->addEntry();
-			$entry->setId('{APP_ROOT}/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
-			$entry->addLink('{APP_ROOT}/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
+			$entry->setId($app_root.'/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
+			$entry->addLink($app_root.'/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
 			$entry->setUpdated(date(DATE_ATOM));
 			$entry->setTitle($v['v']);
 		}
@@ -397,18 +389,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$this->update();
 		}
 	}
-
-	public function definedAsAtomcat()
-	{
-		$c = $this->getCollection(); 
-		$cats = new Dase_Atom_Categories();
-		$cats->setScheme('{APP_ROOT}/attribute/'.$c->ascii_id.'/'.$this->ascii_id.'/defined');
-		foreach ($this->getDefinedValues() as $d) {
-			$cats->addCategory($d);
-		}
-		return $cats->asXml();
-	}
-
 }
 
 

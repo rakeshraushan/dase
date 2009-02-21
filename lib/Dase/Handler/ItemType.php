@@ -69,7 +69,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	{
 		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
 		if ($item) {
-			$r->renderResponse($item->asAtomEntry());
+			$r->renderResponse($item->asAtomEntry($r->app_root));
 		} else {
 			$r->renderError(404);
 		}
@@ -77,7 +77,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemJson($r)
 	{
-		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson());
+		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson($r->app_root));
 	}
 
 	public function deleteItem($r)
@@ -104,23 +104,23 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeAtom($r)
 	{
-		$r->renderResponse($this->type->asAtomEntry());
+		$r->renderResponse($this->type->asAtomEntry($r->get('collection_ascii_id'),$r->app_root));
 	}
 
 	public function getAttributesAtom($r)
 	{
-		$r->renderResponse($this->type->getAttributesFeed());
+		$r->renderResponse($this->type->getAttributesFeed($r->get('collection_ascii_id'),$r->app_root));
 	}
 
 	public function getAttributesJson($r)
 	{
-		$r->renderResponse($this->type->getAttributesJson());
+		$r->renderResponse($this->type->getAttributesJson($r->get('collection_ascii_id'),$r->app_root));
 	}
 
 	public function getService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->type->getAtompubServiceDoc());
+		$r->renderResponse($this->type->getAtompubServiceDoc($r->app_root));
 	}
 
 	public function getRelationChildren($r)
@@ -260,7 +260,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		if (!$rel->findOne()) {
 			$r->renderError(404);
 		}
-		$r->renderResponse($rel->asAtomEntry());
+		$r->renderResponse($rel->asAtomEntry($r->app_root));
 	}
 
 	public function postToRelations($r)
@@ -309,7 +309,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$content = $r->get('content');
 		} else {
 		//todo: filter this!
-			$content = file_get_contents("php://input");
+			$content = $r->getBody();
 		}
 		if ($item->setContent($content,$user->eid,$content_type)) {
 			$r->renderResponse('content updated');

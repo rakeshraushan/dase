@@ -6,18 +6,35 @@ class Dase
 	private $config;
 	private $log;
 
-	public function __construct($request)
+	public static function createApp($base_path)
 	{
-		$this->request = $request;
-		$this->config = $request->retrieve('config');
-		$this->log = $request->retrieve('log');
+		$c = new Dase_Config($base_path);
+		$c->load('inc/config.php');
+		$c->load('inc/local_config.php');
+		$r = new Dase_Http_Request($base_path);
+		$r->initPlugin($c->getCustomHandlers());
+		$log = new Dase_Log($c->getLogDir(),'dase.log',Dase_Log::DEBUG);
+		$cookie = new Dase_Cookie($r->app_root,$r->module,$c->getAuth('token'));
+		$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir());
+		$db = new Dase_DB($c->get('db'),$log);
+		$r->store('config',$c);
+		$r->store('cookie',$cookie);
+		$r->store('cache',$cache);
+		$r->store('db',$db);
+		$r->store('log',$log);
+
+		$app = new Dase;
+		$app->config = $c;
+		$app->request = $r;
+		$app->log = $log;
+		return $app;
 	}
 
 	public function run()
 	{
 		$c = $this->config;
-		$r = $this->request;
 		$log = $this->log;
+		$r = $this->request;
 
 		if (!$r->handler) {
 			$r->renderRedirect($c->getAppSettings('default_handler'));
@@ -26,7 +43,6 @@ class Dase
 		$log->debug("\n-----------------\n".$r->getLogData()."-----------------\n");
 		$classname = '';
 		if ($r->module) {
-
 			//modules, by convention, have one handler in a file named
 			$handler_file = $r->base_path.'/modules/'.$r->module.'/handler.php';
 			if (file_exists($handler_file)) {

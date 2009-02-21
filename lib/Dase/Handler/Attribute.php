@@ -71,7 +71,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 			$key = $r->get('filter_key');
 			$val = $r->get('filter_value');
 		}
-		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val));
+		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val,$r->app_root));
 	}
 }
 

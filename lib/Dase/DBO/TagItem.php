@@ -43,16 +43,11 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		return $this;
 	}
 
-	function asAtom($app_root='')
+	function asAtom($app_root)
 	{
 		$item = $this->getItem();
 		$tag = $this->getTag();
 		$feed = new Dase_Atom_Feed;
-		if (!$app_root) {
-			$app_root = '{APP_ROOT}';
-		}
-
-		$c = $item->getCollection();
 		if (is_numeric($item->updated)) {
 			$updated = date(DATE_ATOM,$item->updated);
 		} else {
@@ -66,7 +61,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 		//$feed->addCategory($tag->type,"http://daseproject.org/category/tag_type",$tag->type);
 		$feed->addCategory('set',"http://daseproject.org/category/tag_type");
-		$feed->addLink($tag->getLink(),"http://daseproject.org/relation/feed-link");
+		$feed->addLink($tag->getUrl($app_root),"http://daseproject.org/relation/feed-link");
 		$tag_item_id_array = $tag->getTagItemIds();
 		$position = array_search($this->id,$tag_item_id_array) + 1;
 		$feed->addCategory($position,"http://daseproject.org/category/position");
@@ -96,7 +91,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$feed->setFeedType('tagitem');
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$position.' of '.count($tag_item_id_array));
-		$entry = $item->injectAtomEntryData($feed->addEntry());
+		$entry = $item->injectAtomEntryData($feed->addEntry(),$app_root);
 		$entry->setSummary($this->annotation);
 		return $feed->asXml();
 	}

@@ -13,10 +13,10 @@ class Dase_DBO_CollectionManager extends Dase_DBO_Autogen_CollectionManager
 		return	$user->findOne();
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
 	{
 		$entry->setTitle('Collection Manager '.$this->dase_user_eid);
-		$entry->setId('{APP_ROOT}/collection/'.$this->collection_ascii_id.'/manager/'.$this->dase_user_eid);
+		$entry->setId($app_root.'/collection/'.$this->collection_ascii_id.'/manager/'.$this->dase_user_eid);
 		$entry->addCategory('collection_manager','http://daseproject.org/category/entrytype');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);

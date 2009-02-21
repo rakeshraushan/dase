@@ -46,7 +46,8 @@ class Dase_Handler_Category extends Dase_Handler
 		if (!$scheme->uri || !$scheme->findOne()) {
 			$r->renderError(401);
 		}
-		$r->renderResponse($scheme->asAtomEntry());
+		//todo:  asAtomEntry does not exist....
+		$r->renderResponse($scheme->asAtomEntry($r->app_root));
 	}
 
 	public function deleteScheme($r)

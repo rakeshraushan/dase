@@ -69,11 +69,11 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function serveFile($path,$mime_type,$download=false)
+	public function serveFile($path,$mime_type,$download=false,$base_path)
 	{
 		if (!file_exists($path)) {
 			header('Content-Type: image/jpeg');
-			readfile(DASE_PATH.'/www/images/unavail.jpg');
+			readfile($base_path.'/www/images/unavail.jpg');
 			exit;
 		}
 		$filename = basename($path);

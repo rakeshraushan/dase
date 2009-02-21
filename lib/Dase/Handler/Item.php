@@ -69,7 +69,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$r->renderResponse($this->item->mediaAsAtomFeed());
+		$r->renderResponse($this->item->mediaAsAtomFeed($r->app_root));
 	}
 
 	public function getItemAtom($r)
@@ -81,9 +81,9 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		 */
 		if ('feed' == $r->get('type')) {
-			$r->renderResponse($this->item->asAtom());
+			$r->renderResponse($this->item->asAtom($r->app_root));
 		} else {
-			$r->renderResponse($this->item->asAtomEntry());
+			$r->renderResponse($this->item->asAtomEntry($r->app_root));
 		}
 	}
 
@@ -94,7 +94,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->item->getAtomPubServiceDoc());
+		$r->renderResponse($this->item->getAtomPubServiceDoc($r->app_root));
 	}
 
 	/** this is for ajax retrieval of content versions */
@@ -137,7 +137,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		//$r->renderResponse($this->item->asJson());
-		$r->renderResponse($this->item->asAtomJson());
+		$r->renderResponse($this->item->asAtomJson($r->app_root));
 	}
 
 	public function getItem($r)
@@ -237,7 +237,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot write for put');
 		}
-		$status = trim(file_get_contents("php://input"));
+		$status = trim($r->getBody());
 
 		if (in_array($status,array('public','draft','delete','archive'))) {
 			$this->item->status = $status;
@@ -255,13 +255,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot read this item');
 		}
 		//auth: anyone can post to an item they can read
-		$fp = fopen("php://input", "rb");
-		$bits = NULL;
-		while(!feof($fp)) {
-			$bits .= fread($fp, 4096);
-		}
-		fclose($fp);
-		$bits = trim($bits);
+		$bits = $r->getBody();
 		$this->item->addComment($bits,$user->eid);
 		//comments should NOT be globally searchable
 		//$this->item->buildSearchIndex();
@@ -293,7 +287,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$content = $r->get('content');
 		} else {
 		//todo: filter this!
-			$content = file_get_contents("php://input");
+			$content = $r->getBody();
 		}
 		if ($this->item->setContent($content,$user->eid,$content_type)) {
 			$r->renderResponse('content updated');
@@ -312,7 +306,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$content_type = $r->getContentType();
 		if ('text/uri-list' == $content_type) {
-			$uri = trim(file_get_contents("php://input"));
+			$uri = trim($r->getBody());
 			$parent = Dase_DBO_Item::getByUrl($uri);
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
@@ -396,7 +390,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function putMetadataValue($r)
 	{
-		$value_text = file_get_contents("php://input");
+		$value_text = $r->getBody();
 		$user = $r->getUser('http');
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot put metadata');
@@ -435,7 +429,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
 		) {
-			$raw_input = file_get_contents("php://input");
+			$raw_input = $r->getBody();
 			$client_md5 = $r->getHeader('Content-MD5');
 			//if Content-MD5 header isn't set, we just won't check
 			if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -481,7 +475,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$content_type = $r->getContentType();
 		if ('text/uri-list' == $content_type ) {
 			$eid = $r->getUser('http')->eid;
-			$url = file_get_contents("php://input");
+			$url = $r->getBody();
 			$filename = array_pop(explode('/',$url));
 			$ext = array_pop(explode('.',$url));
 			$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
@@ -491,7 +485,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 			file_put_contents($new_file,file_get_contents($url));
 			try {
-				$file = Dase_File::newFile($new_file,$content_type);
+				$file = Dase_File::newFile($new_file,$content_type,null,$r->base_path);
 				//since we are swapping in:
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
@@ -524,12 +518,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$content_type) {
 			$r->renderError(415,'not an accepted media type');
 		}
-		$fp = fopen("php://input", "rb");
-		$bits = NULL;
-		while(!feof($fp)) {
-			$bits .= fread($fp, 4096);
-		}
-		fclose($fp);
+		$bits = $r->getBody();
 
 		$slug_name = '';
 		if ( isset( $r->_server['HTTP_SLUG'] ) ) {
@@ -555,7 +544,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$content_type,$slug_name);
+			$file = Dase_File::newFile($new_file,$content_type,$slug_name,$r->base_path);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
@@ -574,7 +563,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$mle_url = $r->app_root .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
 		$r->response_mime_type = 'application/atom+xml';
-		$r->renderResponse($media_file->asAtom());
+		$r->renderResponse($media_file->asAtom($r->app_root));
 	}
 
 	public function getServiceTxt($r)
@@ -593,7 +582,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot read this item service document');
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->item->getAtompubServiceDoc());
+		$r->renderResponse($this->item->getAtompubServiceDoc($r->app_root));
 	}
 }
 

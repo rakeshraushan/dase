@@ -23,7 +23,7 @@ class Dase_Handler_Users extends Dase_Handler
 		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type ) {
-				$raw_input = file_get_contents("php://input");
+				$raw_input = $r->getBody();
 				$client_md5 = $r->getHeader('Content-MD5');
 				//if Content-MD5 header isn't set, we just won't check
 				if ($client_md5 && md5($raw_input) != $client_md5) {
@@ -43,7 +43,7 @@ class Dase_Handler_Users extends Dase_Handler
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 					header("Location: ".$user->getBaseUrl().'.atom?type=entry');
-					echo $user->asAtomEntry();
+					echo $user->asAtomEntry($r->app_root);
 					exit;
 				} catch (Dase_Exception $e) {
 					$r->renderError(409,$e->getMessage());
@@ -64,7 +64,7 @@ class Dase_Handler_Users extends Dase_Handler
 				header("HTTP/1.1 201 Created");
 				header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 				header("Location: ".$user->getBaseUrl().'.atom?type=entry');
-				echo $user->asAtomEntry();
+				echo $user->asAtomEntry($r->app_root);
 				exit;
 			} else {
 				$r->renderError(415,'cannot accept '.$content_type);
@@ -73,7 +73,7 @@ class Dase_Handler_Users extends Dase_Handler
 
 	public function getUsersAtom($r) 
 	{
-		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom());
+		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom($app_root));
 	}
 }
 

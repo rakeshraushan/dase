@@ -61,9 +61,8 @@ class Dase_Handler_Login extends Dase_Handler
 	 */
 	public function deleteLogin($r)
 	{
-		Dase_Cookie::clear();
+		$r->retrieve('cookie')->clear();
 		$r->renderRedirect('login/form');
 	}
-
 }
 

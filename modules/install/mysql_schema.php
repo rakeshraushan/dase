@@ -171,6 +171,7 @@ CREATE TABLE `{$table_prefix}item` (
 `status` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `created` varchar(50) default NULL,
+`p_collection_ascii_id` varchar(100) default NULL,
 `serial_number` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

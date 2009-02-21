@@ -47,9 +47,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$this->superusers = $auth_config['superuser'];
 	}
 
-	public function getUrl()
+	public function getUrl($app_root)
 	{
-		return '{APP_ROOT}/user/'.$this->eid;
+		return $app_root.'/user/'.$this->eid;
 	}
 
 	public static function findByNameSubstr($db,$str)
@@ -106,44 +106,45 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_array);
 	}
 
-	public static function listAsAtom($limit=100)
+	public static function listAsAtom($app_root,$limit=100)
 	{
+		
 		$users = new Dase_DBO_DaseUser($this->db);
 		if ($limit) {
 			$users->setLimit($limit);
 		}
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle('DASe Users');
-		$feed->setId('{APP_ROOT}/users');
+		$feed->setId($app_root.'/users');
 		$feed->setFeedType('user_list');
 		//todo:fix this to *not* simply be a time stamp
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
-		$feed->addLink('{APP_ROOT}/users.atom','self');
+		$feed->addLink($app_root.'/users.atom','self');
 		$users->orderBy('updated DESC');
 		foreach ($users->find() as $user) {
 			$entry = $feed->addEntry();
 			$entry->setTitle($user->name);
-			$entry->setId($user->getBaseUrl());
+			$entry->setId($user->getUrl($app_root));
 			$entry->setUpdated($user->updated);
 			$entry->setEntryType('user');
 			$entry->setContent($user->eid);
-			$entry->addLink($user->getBaseUrl().'.atom','self');
+			$entry->addLink($user->getUrl($app_root).'.atom','self');
 		}
-		return $feed->asXML();
+		return $feed->asXML($app_root);
 	}
 
-	public function asAtomEntry()
+	public function asAtomEntry($app_root)
 	{
 		$entry = new Dase_Atom_Entry_User;
 		$entry->setTitle($this->name);
-		$entry->setId($this->getBaseUrl());
+		$entry->setId($this->getUrl($app_root));
 		$entry->addAuthor();
 		$entry->setUpdated($this->updated);
 		$entry->setEntryType('user');
 		$entry->setContent($this->eid);
-		$entry->addLink($this->getBaseUrl().'.atom','self');
-		return $entry->asXML();
+		$entry->addLink($this->getUrl($app_root).'.atom','self');
+		return $entry->asXML($app_root);
 	}
 
 	public function getTags($update_count = false)
@@ -405,13 +406,13 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $tag_count;
 	}
 
-	function getTagsAsAtom()
+	function getTagsAsAtom($app_root)
 	{
 		//todo: look at Dase_DBO_Tag::getByUser and maybe merge them
 		//that one uses arrays, this, objects (so we get the 'inject...' method)
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->eid.' sets');
-		$feed->setId('{APP_ROOT}/user/'.$this->eid.'/sets');
+		$feed->setId($app_root.'/user/'.$this->eid.'/sets');
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
@@ -426,21 +427,21 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				} else {
 					$count = 0;
 				}
-				$entry = $tag->injectAtomEntryData($feed->addEntry('set'));
+				$entry = $tag->injectAtomEntryData($feed->addEntry('set'),$app_root);
 				$entry->addCategory($count,"http://daseproject.org/category/item_count");
 			}
 		}
-		return $feed->asXml();
+		return $feed->asXml($app_root);
 	}
 
-	public function getAtompubServiceDoc() 
+	public function getAtompubServiceDoc($app_root) 
 	{
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace('User '.$this->eid.' Workspace');
-		$coll = $ws->addCollection($this->getBaseUrl().'/sets.atom','User '.$this->eid.' Sets');
+		$coll = $ws->addCollection($this->getUrl($app_root).'/sets.atom','User '.$this->eid.' Sets');
 		$coll->addAccept('application/atom+xml;type=entry');
 		$coll->addCategorySet()->addCategory('set','http://daseproject.org/category/entrytype');
-		return $svc->asXml();
+		return $svc->asXml($app_root);
 	}
 
 }

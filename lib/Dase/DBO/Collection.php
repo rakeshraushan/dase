@@ -18,12 +18,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	public function getUrl($app_root='') {
-		if ($app_root) {
-			return $app_root.'/collection/' . $this->ascii_id;
-		} else {
-			return '{APP_ROOT}/collection/' . $this->ascii_id;
-		}
+	public function getUrl($app_root) {
+		return $app_root.'/collection/' . $this->ascii_id;
 	}
 
 	public function createAscii() {
@@ -88,7 +84,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $sernums;
 	}
 
-	function getBaseAtomFeed() 
+	function getBaseAtomFeed($app_root) 
 	{
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name);
@@ -96,30 +92,30 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$feed->setSubtitle($this->description);
 		}
 		$feed->setUpdated($this->updated);
-		$feed->addCategory('{APP_ROOT}',"http://daseproject.org/category/base_url");
+		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$feed->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		//todo: is this too expensive??
 		$comm = $this->getCommunity();
 		if ($comm) {
 			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
 		}
-		$feed->setId($this->getUrl());
+		$feed->setId($this->getUrl($app_root));
 		$feed->addAuthor();
-		$feed->addLink($this->getUrl(),'alternate');
-		$feed->addLink($this->getUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
+		$feed->addLink($this->getUrl($app_root),'alternate');
+		$feed->addLink($this->getUrl($app_root).'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
 		return $feed;
 	}
 
-	function getAttributesAtom() {
-		$feed = $this->getBaseAtomFeed();
+	function getAttributesAtom($app_root) {
+		$feed = $this->getBaseAtomFeed($app_root);
 		$feed->setFeedType('attributes');
 		foreach ($this->getAttributes() as $att) {
-			$att->injectAtomEntryData($feed->addEntry(),$this);
+			$att->injectAtomEntryData($feed->addEntry(),$app_root);
 		}
 		return $feed;
 	}
 
-	function getItemTypesAtom() {
+	function getItemTypesAtom($app_root) {
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name.' Item Types');
 		$feed->setUpdated($this->updated);
@@ -127,24 +123,21 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($comm) {
 			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
 		}
-		$feed->setId($this->getUrl());
+		$feed->setId($this->getUrl($app_root));
 		$feed->addAuthor();
-		$feed->addCategory('{APP_ROOT}',"http://daseproject.org/category/base_url");
-		$feed->addLink($this->getUrl(),'alternate');
-		$feed->addLink($this->getUrl().'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
+		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
+		$feed->addLink($this->getUrl($app_root),'alternate');
+		$feed->addLink($this->getUrl($app_root).'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
 		$feed->setFeedType('item_types');
 		foreach ($this->getItemTypes() as $it) {
-			$it->injectAtomEntryData($feed->addEntry(),$this);
+			$it->injectAtomEntryData($feed->addEntry(),$app_root);
 		}
 		return $feed;
 	}
 
-	function asAtom($app_root='',$limit = 5)
+	function asAtom($app_root,$limit = 5)
 	{
-		if (!$app_root) {
-			$app_root = '{APP_ROOT}';
-		}
-		$feed = $this->getBaseAtomFeed();
+		$feed = $this->getBaseAtomFeed($app_root);
 		$feed->setFeedType('collection');
 		$feed->addLink($app_root.'/collection/'.$this->ascii_id.'.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
@@ -160,20 +153,20 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml($app_root);
 	}
 
-	function asAtomEntry()
+	function asAtomEntry($app_root)
 	{
 		$entry = new Dase_Atom_Entry();
-		$entry->setId('{APP_ROOT}/collection/'.$this->ascii_id);
+		$entry->setId($app_root.'/collection/'.$this->ascii_id);
 		$entry->setTitle($this->collection_name);
 		$entry->setEntryType('collection');
-		$entry->addLink('{APP_ROOT}/collection/'.$this->ascii_id.'.atom','self');
-		$entry->addLink('{APP_ROOT}/collection/'.$this->ascii_id);
+		$entry->addLink($app_root.'/collection/'.$this->ascii_id.'.atom','self');
+		$entry->addLink($app_root.'/collection/'.$this->ascii_id);
 		if ($this->is_public) {
 			$pub = "public";
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory('{APP_ROOT}',"http://daseproject.org/category/base_url");
+		$entry->addCategory($app_root.'',"http://daseproject.org/category/base_url");
 		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
 		$entry->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		return $entry->asXml();
@@ -515,9 +508,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $search_index_array;
 	}
 
-	public function getItemsByAttAsAtom($attribute_ascii_id)
+	public function getItemsByAttAsAtom($attribute_ascii_id,$app_root)
 	{
-		$feed = $this->getBaseAtomFeed();
+		$feed = $this->getBaseAtomFeed($app_root);
 		$feed->setFeedType('items');
 		$att = Dase_DBO_Attribute::get($this->db,$this->ascii_id,$attribute_ascii_id);
 		$vals = new Dase_DBO_Value($this->db);
@@ -526,10 +519,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item = new Dase_DBO_Item($this->db);
 			$item->load($val->item_id);
 			//use cached ???
-			$entry = $item->injectAtomEntryData($feed->addEntry(),$this);
+			$entry = $item->injectAtomEntryData($feed->addEntry(),$app_root);
 			$entry->setSummary($item->getValue($attribute_ascii_id));
 		}
-		return $feed->asXML();
+		return $feed->asXML($app_root);
 	}
 
 	function createNewItem($serial_number=null,$eid=null)
@@ -569,31 +562,31 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	public function getAtompubServiceDoc() 
+	public function getAtompubServiceDoc($app_root) 
 	{
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace($this->collection_name.' Workspace');
-		$coll = $ws->addCollection('{APP_ROOT}/collection/'.$this->ascii_id.'.atom',$this->collection_name.' Items');
+		$coll = $ws->addCollection($app_root.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' Items');
 		$coll->addAccept('application/atom+xml;type=entry');
 		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
 		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
 		foreach ($this->getAttributes() as $att) {
 			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
 		}
-		$ws->addCollection('{APP_ROOT}/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
+		$ws->addCollection($app_root.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
 			->addAccept('application/json');
-		$media_repos = '{APP_ROOT}/media/'.$this->ascii_id.'.atom';
+		$media_repos = $app_root.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Media::getAcceptedTypes() as $type) {
 			//$media_coll->addAccept($type,true);
 			$media_coll->addAccept($type);
 		}
-		$item_types_repos = '{APP_ROOT}/collection/'.$this->ascii_id.'/item_types.atom';
+		$item_types_repos = $app_root.'/collection/'.$this->ascii_id.'/item_types.atom';
 		$ws->addCollection($item_types_repos,$this->collection_name.' Item Types')
 			->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()
 			->addCategory('item_type','http://daseproject.org/category/entrytype');
-		$attributes_repos = '{APP_ROOT}/collection/'.$this->ascii_id.'/attributes.atom';
+		$attributes_repos = $app_root.'/collection/'.$this->ascii_id.'/attributes.atom';
 		$atts_repos = $ws->addCollection($attributes_repos,$this->collection_name.' Attributes');
 		$atts_repos->addAccept('application/atom+xml;type=entry')->addCategorySet()
 			->addCategory('attribute','http://daseproject.org/category/entrytype','',true);
@@ -605,11 +598,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $svc->asXml();
 	}
 
-	public function getItemTypesAtompubServiceDoc() 
+	public function getItemTypesAtompubServiceDoc($app_root) 
 	{
 		$svc = new Dase_Atom_Service;	
 		$ws = $svc->addWorkspace($this->collection_name.' Item Types Workspace');
-		$item_types_repos = '{APP_ROOT}/collection/'.$this->ascii_id.'/item_types.atom';
+		$item_types_repos = $app_root.'/collection/'.$this->ascii_id.'/item_types.atom';
 		$coll = $ws->addCollection($item_types_repos,$this->collection_name.' Item Types');
 		$coll->addAccept('application/atom+xml;type=entry')
 			->addCategorySet()

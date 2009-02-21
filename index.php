@@ -20,79 +20,15 @@
  */ 
 
 ini_set('include_path','lib');
-
 //PHP ERROR REPORTING -- turn off for production
 ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
 error_reporting(E_ALL);
 
 function __autoload($class_name) {
-	@include __autoloadFilename($class_name);
+	$class_name = str_replace('_','/',$class_name).'.php';
+	@include ($class_name);
 }
 
-function __autoloadFilename($class_name) {
-	return str_replace('_','/',$class_name) . '.php';
-}
-
-/**************************
- *
- *  environment
- *
- *************************/
-
-$env['base_path'] = dirname(__FILE__);
-
-/**************************
- *
- *  configuration object
- *
- *************************/
-
-$c = new Dase_Config($env['base_path']);
-
-//load main config
-$c->load('inc/config.php');
-
-//load local config
-$c->load('inc/local_config.php');
-
-/**************************
- *
- *  request object
- *
- *************************/
-
-$r = new Dase_Http_Request($env);
-$r->initPlugin($c->getCustomHandlers());
-
-$cookie = new Dase_Cookie($r->app_root,$r->module,$c->getAuth('token'));
-
-$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir());
-
-/************************
- *
- *  logging
- *
- **********************/
-
-//just an experiment
-if ($r->remote_addr) {
-	$log = new Dase_Log($c->getLogDir().'/'.$r->remote_addr,Dase_Log::DEBUG);
-} else {
-	$log = new Dase_Log($c->getLogDir().'/dase.log',Dase_Log::DEBUG);
-}
-
-$db = new Dase_DB($c->get('db'),$log);
-
-//request is going to be our object store (hmmm...)
-$r->store('config',$c);
-$r->store('cookie',$cookie);
-$r->store('cache',$cache);
-$r->store('db',$db);
-$r->store('log',$log);
-
-$app = new Dase($r);
-
-//ab -n 300 -c 10 {app_root}
-//print "ok"; exit;
-
+$app = Dase::createApp(dirname(__FILE__));
 $app->run();

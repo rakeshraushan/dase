@@ -24,27 +24,27 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 		return $first_line;
 	}
 
-	function getUrl()
+	function getUrl($app_root)
 	{
-		return '{APP_ROOT}/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/comments/'.$this->id;
+		return $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/comments/'.$this->id;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry_Comment $entry)
+	function injectAtomEntryData(Dase_Atom_Entry_Comment $entry,$app_root)
 	{
 		if (!$this->id) { return false; }
 		$item = $this->getItem();
 		$entry->setTitle($this->getTitle());
 		$entry->addAuthor($this->updated_by_eid);
 		//for AtomPub -- is this correct??
-		$entry->addLink($this->getUrl());
-		$entry->addLink($this->getUrl().'.atom','self','application/atom+xml');
-		$entry->addLink($this->getUrl().'.atom','edit','application/atom+xml');
+		$entry->addLink($this->getUrl($app_root));
+		$entry->addLink($this->getUrl($app_root).'.atom','self','application/atom+xml');
+		$entry->addLink($this->getUrl($app_root).'.atom','edit','application/atom+xml');
 		$entry->setUpdated($this->updated);
-		$entry->setId($this->getUrl());
+		$entry->setId($this->getUrl($app_root));
 		if (!$this->type) { $this->type = 'text/html'; }
 		$entry->setContent($this->text,$this->type);
 		//add in-reply-to link
-		$item_url = $item->getUrl($this->p_collection_ascii_id);
+		$item_url = $item->getUrl($app_root);
 		$entry->addInReplyTo($item_url,$this->type,$item_url);
 		return $entry;
 	}

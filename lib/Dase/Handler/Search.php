@@ -14,15 +14,14 @@ class Dase_Handler_Search extends Dase_Handler
 	protected function setup($r)
 	{
 		$this->db = $r->retrieve('db');
-		$cookie = $r->retrieve('cookie');
 		//setting $r allows app cache-ability
 		//but...breaks intermediate caching (work on that)
-		if ($cookie->get('max')) {
-			$r->set('max',$cookie->get('max'));
+		if ($r->getCookie('max')) {
+			$r->set('max',$r->getCookie('max'));
 			$r->setQueryStringParam('max',$cookie->get('max'));
 		}
 
-		if ($cookie->get('display')) {
+		if ($r->getCookie('display')) {
 			$r->set('display',$cookie->get('display'));
 		}
 

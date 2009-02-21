@@ -70,8 +70,8 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		}
 	}
 
-	function getLink() {
-		return "{APP_ROOT}/media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
+	function getLink($app_root) {
+		return "$app_root/media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
 	}
 
 	function getRelativeLink() {
@@ -92,11 +92,11 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		}
 	}
 
-	function asAtom() 
+	function asAtom($app_root) 
 	{
 		$entry = new Dase_Atom_Entry;
 		//may need to add edit links here
-		return $this->injectAtomEntryData($entry);
+		return $this->injectAtomEntryData($entry,$app_root);
 	}
 
 	function getDerivatives()
@@ -109,7 +109,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return $m->find();
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
 	{
 		$d = "http://daseproject.org/ns/1.0";
 		//this function assumes p_collection_ascii_id & p_serial_number are set
@@ -122,10 +122,10 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 		//for AtomPub
 		$entry->setEdited($this->updated);
-		$edit_url = '{APP_ROOT}/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
+		$edit_url = $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
 		$entry->addLink($edit_url,'edit');
 		$ext = Dase_File::$types_map[$this->mime_type]['ext'];
-		$edit_media_url = '{APP_ROOT}/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
+		$edit_media_url = $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
 		$entry->addLink($edit_media_url,'edit-media');
 		$entry->setMediaContent($this->getLink(),$this->mime_type);
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
@@ -134,14 +134,14 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 			if ($med->size == 'thumbnail') {
 				//$media_thumbnail = $entry->addElement('media:thumbnail',null,Dase_Atom::$ns['media']);
 				$media_thumbnail = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'thumbnail'));
-				$media_thumbnail->setAttribute('url',$med->getLink());
+				$media_thumbnail->setAttribute('url',$med->getLink($app_root));
 				$media_thumbnail->setAttribute('width',$med->width);
 				$media_thumbnail->setAttribute('height',$med->height);
 			}
 		   	if ($med->size == 'viewitem') {
 				//$media_viewitem = $entry->addElement('media:content',null,Dase_Atom::$ns['media']);
 				$media_viewitem = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
-				$media_viewitem->setAttribute('url',$med->getLink());
+				$media_viewitem->setAttribute('url',$med->getLink($app_root));
 				$media_viewitem->setAttribute('width',$med->width);
 				$media_viewitem->setAttribute('height',$med->height);
 				$media_viewitem->setAttribute('fileSize',$med->file_size);
@@ -151,7 +151,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 			}
 			if ($med->size != 'thumbnail' && $med->size != 'viewitem') {
 				$media_content = $media_group->appendChild($entry->dom->createElementNS(Dase_Atom::$ns['media'],'content'));
-				$media_content->setAttribute('url',$med->getLink());
+				$media_content->setAttribute('url',$med->getLink($app_root));
 				$media_content->setAttribute('width',$med->width);
 				$media_content->setAttribute('height',$med->height);
 				$media_content->setAttribute('fileSize',$med->file_size);

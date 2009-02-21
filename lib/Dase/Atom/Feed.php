@@ -211,20 +211,21 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $entry;
 	}
 
-	function addItemEntry(Dase_DBO_Item $item,$c=null)
+	function addItemEntry(Dase_DBO_Item $item)
 	{
+		//ItemAsAtom cache always uses {APP_ROOT}
 		$atom = Dase_DBO_ItemAsAtom::getByItem($item);
 		if (!$atom) {
 			if (!$c) {
 				$c = $item->getCollection();
 			}
-			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$c);
+			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$app_root);
 			$atom = new Dase_DBO_ItemAsAtom($item->db);
 			$atom->item_id = $item->id;
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml('{APP_ROOT}',$entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml(null,$entry->root); //so we don't get xml declaration
 			$atom->insert();
 		}
 		$dom = new DOMDocument('1.0','utf-8');
