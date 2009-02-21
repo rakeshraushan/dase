@@ -144,12 +144,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$items->created_by_eid = $r->get('created_by_eid');
 		}
 		foreach ($items->find() as $item) {
-			$feed->addItemEntry($item,$c);
+			$feed->addItemEntry($item,$r->app_root);
 		}
 		if ($r->has('sort')) {
 			$feed->sortBy($r->get('sort'));
 		}
-		$r->renderResponse($feed->asXml());
+		$r->renderResponse($feed->asXml($app_root));
 	}
 
 	public function getItemTypeItemsJson($r)
@@ -236,7 +236,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
 		while ($sernum = $st->fetchColumn()) {
 			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
-			$feed->addItemEntry($item,$c);
+			$feed->addItemEntry($item,$app_root);
 			//todo: need to override updated and author here??
 		}
 		$r->renderResponse($feed->asXml());

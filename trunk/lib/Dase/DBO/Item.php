@@ -55,7 +55,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			$c = $this->getCollection();
 			$entry = new Dase_Atom_Entry_Item;
-			$entry = $this->injectAtomEntryData($entry);
+			$entry = $this->injectAtomEntryData($entry,$app_root);
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
@@ -1024,7 +1024,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setFeedType('item');
 		//todo: this needs to be passed in?
 		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
-		$feed->addItemEntry($this); //checks cache 
+		$feed->addItemEntry($this,$app_root); //checks cache 
 		//add comments
 		foreach ($this->getComments() as $comment) {
 			$entry = $feed->addEntry('comment');
@@ -1032,7 +1032,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		//todo: this may be TOO expensive
 		foreach ($this->getRelatedItems() as $related) {
-			$feed->addItemEntry($related);
+			$feed->addItemEntry($related,$app_root);
 		}
 		return $feed->asXml($app_root);
 	}
