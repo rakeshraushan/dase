@@ -172,11 +172,11 @@ class Dase_Search_Result
 			$item->collection || $item->getCollection();
 			$item->item_type || $item->getItemType();
 			//will check cache
-			$entry = $feed->addItemEntry($item);
+			$entry = $feed->addItemEntry($item,$app_root);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
 			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		return $feed->asXml();
+		return $feed->asXml($app_root);
 	}
 
 	public function getItemAsAtomFeed($app_root,$db,$start,$max,$num)
@@ -191,7 +191,7 @@ class Dase_Search_Result
 			$feed->setId($app_root.'/search/'.md5($this->url));
 			$feed->setOpensearchTotalResults(0);
 			$feed->setOpensearchQuery($this->_getQueryAsString());
-			return $feed->asXml();
+			return $feed->asXml($app_root);
 		}
 		$num = $num ? $num : 1;
 
@@ -216,7 +216,7 @@ class Dase_Search_Result
 			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed,$app_root);
 			//uses cache
-			$feed->addItemEntry($item);
+			$feed->addItemEntry($item,$app_root);
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 			$feed->addLink($app_root.'/'.$this->url.'&num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");
@@ -229,7 +229,7 @@ class Dase_Search_Result
 			}
 			$feed->setOpensearchQuery($this->_getQueryAsString());
 			$feed->setOpensearchTotalResults($this->count);
-			return $feed->asXml();
+			return $feed->asXml($app_root);
 		}
 	}
 }

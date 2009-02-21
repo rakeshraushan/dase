@@ -148,7 +148,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		$items->orderBy('updated DESC');
 		foreach ($items->find() as $item) {
-			$feed->addItemEntry($item,$this);
+			$feed->addItemEntry($item,$app_root);
 		}
 		return $feed->asXml($app_root);
 	}
