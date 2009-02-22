@@ -167,7 +167,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$file_info = getimagesize($thumbnail);
 
-		$media_file = new Dase_DBO_MediaFile;
+		$media_file = new Dase_DBO_MediaFile($this->db);
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number.'_100.jpg';
 		if ($file_info) {
@@ -200,7 +200,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$file_info = getimagesize($viewitem);
 
-		$media_file = new Dase_DBO_MediaFile;
+		$media_file = new Dase_DBO_MediaFile($this->db);
 		$media_file->item_id = $item->id;
 		$media_file->filename = $item->serial_number . '_400.jpg';
 		if ($file_info) {
@@ -261,7 +261,7 @@ class Dase_File_Image extends Dase_File
 			$file_info = getimagesize($newimage);
 
 			//create the media_file entry
-			$media_file = new Dase_DBO_MediaFile;
+			$media_file = new Dase_DBO_MediaFile($this->db);
 			$media_file->item_id = $item->id;
 			$media_file->filename = $item->serial_number.$size_info['size_tag'].".jpg";
 			if ($file_info) {

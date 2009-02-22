@@ -52,7 +52,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$sql .= " AND i.status = 'public' ";
 		}
 		$data = array();
-		foreach (Dase_DBO::query($sql,array($it_ascii,$coll,$att_ascii)) as $row) {
+		foreach (Dase_DBO::query($this->db,$sql,array($it_ascii,$coll,$att_ascii)) as $row) {
 			$item_url = $app_root.'/item/'.$coll.'/'.$row['serial_number'];
 			$data[$item_url] = $row['value_text'];
 		}
@@ -67,7 +67,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemAtom($r)
 	{
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if ($item) {
 			$r->renderResponse($item->asAtomEntry($r->app_root));
 		} else {
@@ -77,7 +77,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemJson($r)
 	{
-		$r->renderResponse(Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson($r->app_root));
+		$r->renderResponse(Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'))->asAtomJson($r->app_root));
 	}
 
 	public function deleteItem($r)
@@ -85,7 +85,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//what about dependent children items?  (like budget item)!
 		//probably need another relationship type -- dependent
 		$user = $r->getUser('service');
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('write',$item)) {
 			$r->renderError(401,'user cannot delete this item');
 		}
@@ -131,12 +131,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public function getItemTypeItemsAtom($r)
 	{
 		$app_root = $r->app_root;
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($app_root.'/'.$t->getUrl($c->ascii_id));
+		$feed->setId($t->getUrl($app_root));
 		$feed->setTitle($t->name.' Items');
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->item_type_id = $t->id;
 		$items->orderBy('updated DESC');
 		//can filter by author
@@ -149,7 +149,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		if ($r->has('sort')) {
 			$feed->sortBy($r->get('sort'));
 		}
-		$r->renderResponse($feed->asXml($app_root));
+		$r->renderResponse($feed->asXml());
 	}
 
 	public function getItemTypeItemsJson($r)
@@ -157,7 +157,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$app_root = $r->app_root;
 		$res = array();
 		$coll = $r->get('collection_ascii_id');
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->status = 'public';
 		$items->item_type_id = $this->type->id;
 		$items->orderBy('updated DESC');
@@ -167,7 +167,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		foreach ($items->find() as $item) {
 			$item_array  = array(
-				'url' => $app_root.'/'.$item->getUrl($coll),
+				'url' => $item->getUrl($app_root),
 				//expensive??
 				'title' => $item->getTitle(),
 				'serial_number' => $item->serial_number,
@@ -199,9 +199,9 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$r->get('item_type_ascii_id'),
 			$r->get('parent_type_ascii_id'),
 		);
-		$st = Dase_DBO::query($sql,$bound);
+		$st = Dase_DBO::query($this->db,$sql,$bound);
 		while ($sernum = $st->fetchColumn()) {
-			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
+			$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$sernum);
 			$items[$sernum] = $item->asArray();
 		}
 		$r->renderResponse(Dase_Json::get($items));
@@ -212,7 +212,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		//he we are getting (child) item_type items
 		//which have are related to parent item_type item
 		//specified
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		$prefix = $r->retrieve('db')->table_prefix;
 		$sql = "
 			SELECT ir.child_serial_number
@@ -229,14 +229,14 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$r->get('item_type_ascii_id'),
 			$r->get('parent_type_ascii_id'),
 		);
-		$st = Dase_DBO::query($sql,$bound);
+		$st = Dase_DBO::query($this->db,$sql,$bound);
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($r->app_root.$r->getUrl());
+		$feed->setId($r->getUrl());
 		$feed->updated = date(DATE_ATOM);
 		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
 		while ($sernum = $st->fetchColumn()) {
-			$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$sernum);
-			$feed->addItemEntry($item,$app_root);
+			$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$sernum);
+			$feed->addItemEntry($item,$r->app_root);
 			//todo: need to override updated and author here??
 		}
 		$r->renderResponse($feed->asXml());
@@ -244,16 +244,16 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getRelationAtom($r) 
 	{
-		$c = Dase_DBO_Collection::get($r->get('collection_ascii_id'));
+		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		if (!$c) {
 			$r->renderError(401);
 		}
 		$parent = $this->type;
-		$child = Dase_DBO_ItemType::get($c->ascii_id,$r->get('child_type_ascii_id'));
+		$child = Dase_DBO_ItemType::get($this->db,$c->ascii_id,$r->get('child_type_ascii_id'));
 		if (!$parent || !$child) {
 			$r->renderError(401);
 		}
-		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel = new Dase_DBO_ItemTypeRelation($this->db);
 		$rel->collection_ascii_id = $r->get('collection_ascii_id');
 		$rel->parent_type_ascii_id = $parent->ascii_id;
 		$rel->child_type_ascii_id = $child->ascii_id;
@@ -270,7 +270,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function putItem($r) 
 	{
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		try {
 			$item_handler = new Dase_Handler_Item;
 			$item_handler->item = $item;
@@ -299,7 +299,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	private function _updateContent($r,$user)
 	{
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('write',$item)) {
 			$r->renderError(401,'cannot write to this item');
 		}
@@ -320,7 +320,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public function getContentJson($r)
 	{
 		$user = $r->getUser();
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('read',$item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
@@ -333,7 +333,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	public function getContent($r)
 	{
 		$user = $r->getUser();
-		$item = Dase_DBO_Item::get($r->get('collection_ascii_id'),$r->get('serial_number'));
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('read',$item)) {
 			$r->renderError(401,'user cannot read this item');
 		}

@@ -50,7 +50,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($app_root,$entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->update();
 		} else {
 			$c = $this->getCollection();
@@ -59,11 +59,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($app_root,$entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->update();
 			$atom->insert();
 		}
-		return $entry;
+		return $atom;
 	}
 
 	public static function getByUrl($db,$url)
@@ -365,10 +365,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getItemType()
 	{
-		$db = $this->db;
 		if ($this->item_type) {
 			return $this->item_type;
 		}
+		$db = $this->db;
 		$item_type = new Dase_DBO_ItemType($db);
 		if ($this->item_type_id) {
 			$item_type->load($this->item_type_id);
@@ -425,17 +425,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getMediaCount()
 	{
-		$db = $this->db;
 		$prefix = $this->db->table_prefix;
 		$this->collection || $this->getCollection();
-		$db = Dase_DB::get();
 		$sql = "
 			SELECT count(*) 
 			FROM {$prefix}media_file
 			WHERE p_serial_number = ?
 			AND p_collection_ascii_id = ?
 			";
-		return Dase_DBO::query($db,$sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
+		return Dase_DBO::query($this->db,$sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
 	}
 
 	function setItemType($type_ascii_id='')
@@ -524,9 +522,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//always begins 'admin_'
 		//NOTE: we now create att if it does not exist
 		if (false === strpos($att_ascii_id,'admin_')) {
-			$att = Dase_DBO_Attribute::findOrCreate($this->p_collection_ascii_id,$att_ascii_id);
+			$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,$att_ascii_id);
 		} else {
-			$att = Dase_DBO_Attribute::findOrCreateAdmin($att_ascii_id);
+			$att = Dase_DBO_Attribute::findOrCreateAdmin($this->db,$att_ascii_id);
 		}
 		if ($att) {
 			$v = new Dase_DBO_Value($this->db);
@@ -713,7 +711,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_relations->collection_ascii_id = $this->p_collection_ascii_id;
 		$item_relations->child_serial_number = $this->serial_number;
 		foreach ($item_relations->find() as $item_relation) {
-			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+			$parent_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
 				$item_relation->parent_serial_number);
 			if ($parent_item) {
 				$related[] = $parent_item;
@@ -723,7 +721,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_relations->collection_ascii_id = $this->p_collection_ascii_id;
 		$item_relations->parent_serial_number = $this->serial_number;
 		foreach ($item_relations->find() as $item_relation) {
-			$child_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+			$child_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
 				$item_relation->child_serial_number);
 			if ($child_item) {
 				$related[] = $child_item;
@@ -740,7 +738,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$item_relations->child_serial_number = $this->serial_number;
 		foreach ($item_relations->find() as $item_relation) {
 			$parent_type = $item_relation->getParentType();
-			$parent_item = Dase_DBO_Item::get($item_relation->collection_ascii_id,
+			$parent_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
 				$item_relation->parent_serial_number);
 			if ($parent_item) {
 				//$label = $parent_type->name.': '.$parent_item->getTitle();
@@ -1034,18 +1032,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getRelatedItems() as $related) {
 			$feed->addItemEntry($related,$app_root);
 		}
-		return $feed->asXml($app_root);
+		return $feed->asXml();
 	}
 
 	function asAtomEntry($app_root)
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItem($this);
-		if ($atom) {
-			$entry = Dase_Atom_Entry_Item::load($atom->xml);
-		} else {
-			$entry = $this->saveAtom();
+		if (!$atom) {
+			$atom = $this->saveAtom();
 		}
-		return $entry->asXml($app_root);
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->loadXml($atom->getConvertedXml($app_root));
+		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
+		$root = $e->item(0);
+		$root = $this->dom->importNode($root,true);
+		$entry = new Dase_Atom_Entry_Item($this->dom,$root);
+		return $entry->asXml();
 	}
 
 	/** experimental */
@@ -1064,7 +1066,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry = $feed->addEntry();
 			$m->injectAtomEntryData($entry,$app_root);
 		}
-		return $feed->asXml($app_root);
+		return $feed->asXml();
 	}	
 
 	public function getUrl($app_root) 

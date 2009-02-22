@@ -360,24 +360,14 @@ class Dase_Atom
 		$updated = $this->addElement('updated',$text);
 	}
 
-	function asXml($app_root='',$node=null) 
+	function asXml($node=null) 
 	{
 		//format output
 		$this->dom->formatOutput = true;
 		if ($node) {
-			$xmlstr = $this->dom->saveXML($node);
-			if ($app_root) {
-				return str_replace('{APP_ROOT}',$app_root,$xmlstr);
-			} else {
-				return $xmlstr;
-			}
+			return $this->dom->saveXML($node);
 		} else {
-			$xmlstr = $this->dom->saveXML();
-			if ($app_root) {
-				return str_replace('{APP_ROOT}',$app_root,$xmlstr);
-			} else {
-				return $xmlstr;
-			}
+			return $this->dom->saveXML();
 		}
 	}
 

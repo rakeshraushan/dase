@@ -54,7 +54,7 @@ class Dase_Handler_Users extends Dase_Handler
 				$name = $r->get('name');
 				$user = Dase_DBO_DaseUser::get($this->db,$eid);
 				if (!$user) {
-					$user = new Dase_DBO_DaseUser();
+					$user = new Dase_DBO_DaseUser($this->db);
 					$user->name = $name; 
 					$user->eid = strtolower($eid); 
 					$user->updated = date(DATE_ATOM);
@@ -73,7 +73,7 @@ class Dase_Handler_Users extends Dase_Handler
 
 	public function getUsersAtom($r) 
 	{
-		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom($app_root));
+		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom($this->db,$app_root));
 	}
 }
 

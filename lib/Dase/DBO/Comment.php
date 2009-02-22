@@ -10,7 +10,7 @@ class Dase_DBO_Comment extends Dase_DBO_Autogen_Comment
 	function getItem()
 	{
 		if (!$this->item) {
-			$this->item = Dase_DBO_Item::get($this->p_collection_ascii_id,$this->p_serial_number);
+			$this->item = Dase_DBO_Item::get($this->db,$this->p_collection_ascii_id,$this->p_serial_number);
 		}
 		return $this->item;
 	}

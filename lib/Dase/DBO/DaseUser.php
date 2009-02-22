@@ -106,10 +106,10 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($user_array);
 	}
 
-	public static function listAsAtom($app_root,$limit=100)
+	public static function listAsAtom($db,$app_root,$limit=100)
 	{
 		
-		$users = new Dase_DBO_DaseUser($this->db);
+		$users = new Dase_DBO_DaseUser($db);
 		if ($limit) {
 			$users->setLimit($limit);
 		}
@@ -431,7 +431,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				$entry->addCategory($count,"http://daseproject.org/category/item_count");
 			}
 		}
-		return $feed->asXml($app_root);
+		return $feed->asXml();
 	}
 
 	public function getAtompubServiceDoc($app_root) 
@@ -441,7 +441,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$coll = $ws->addCollection($this->getUrl($app_root).'/sets.atom','User '.$this->eid.' Sets');
 		$coll->addAccept('application/atom+xml;type=entry');
 		$coll->addCategorySet()->addCategory('set','http://daseproject.org/category/entrytype');
-		return $svc->asXml($app_root);
+		return $svc->asXml();
 	}
 
 }
