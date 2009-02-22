@@ -302,7 +302,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	function checkCollectionAuth($collection,$auth_level)
 	{
 		if (!$collection) {
-			Dase_Log::get()->debug('attempting get to authorization for non-existing collection');
+			$this->log->debug('attempting get to authorization for non-existing collection');
 			return false;
 		}
 		if ('read' == $auth_level) {

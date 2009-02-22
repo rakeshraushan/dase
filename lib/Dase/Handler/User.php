@@ -157,8 +157,8 @@ class Dase_Handler_User extends Dase_Handler
 		$recent = array();
 		foreach ($items->find() as $item) {
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
-			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail',$app_root);
-			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($app_root);
+			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail',$r->app_root);
+			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($r->app_root);
 		}
 		$r->renderResponse(Dase_Json::get($recent));
 	}

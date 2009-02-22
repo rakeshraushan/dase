@@ -25,9 +25,6 @@ $conf['app']['max_items'] = 30;
 //$conf['default_handler'] = 'collections';
 $conf['app']['default_handler'] = 'install';
 
-//keep tiffs 
-$conf['app']['keep_tiffs'] = true;
-
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['app']['cache_type'] = 'file';
 

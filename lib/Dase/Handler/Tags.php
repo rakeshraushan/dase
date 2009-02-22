@@ -30,10 +30,9 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public function getService($r)
 	{
-		$app_root = $r->app_root;
 		$svc = new Dase_Atom_Service;	
 		$meta_workspace = $svc->addWorkspace('DASe Sets Workspace');
-		$meta_coll = $meta_workspace->addCollection($app_root.'/tags','DASe Sets');
+		$meta_coll = $meta_workspace->addCollection($r->app_root.'/tags','DASe Sets');
 		$meta_coll->addAccept('application/atom+xml;type=entry');
 		$scheme = new Dase_DBO_CategoryScheme($this->db);
 		$scheme->applies_to = 'set';
@@ -48,9 +47,9 @@ class Dase_Handler_Tags extends Dase_Handler
 	public function getTagsAtom($r)
 	{
 		if ($r->has('category')) {
-			$r->renderResponse(Dase_DBO_Tag::listAsFeed($this->db,$this->app_root,$r->get('category')));
+			$r->renderResponse(Dase_DBO_Tag::listAsFeed($this->db,$r->app_root,$r->get('category')));
 		} else {
-			$r->renderResponse(Dase_DBO_Tag::listAsFeed($this->db,$this->app_root));
+			$r->renderResponse(Dase_DBO_Tag::listAsFeed($this->db,$r->app_root));
 		}
 
 	}

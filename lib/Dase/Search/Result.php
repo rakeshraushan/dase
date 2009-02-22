@@ -216,7 +216,12 @@ class Dase_Search_Result
 			$feed->setFeedType('searchitem');
 			$item->injectAtomFeedData($feed,$app_root);
 			//uses cache
-			$feed->addItemEntry($item,$app_root);
+			$entry = $feed->addItemEntry($item,$app_root);
+			//for single item view, add collection name as cat label
+			$collection = $item->getCollection();
+			$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
+			$coll_cat->setAttribute('label',$collection->collection_name);
+
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
 			$feed->addLink($app_root.'/'.$this->url.'&num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");

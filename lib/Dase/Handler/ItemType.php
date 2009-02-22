@@ -30,7 +30,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getValuesListJson($r)
 	{
-		$app_root = $r->app_root;
 		$it_ascii = $r->get('item_type_ascii_id');
 		$att_ascii = $r->get('att_ascii_id');
 		$coll = $r->get('collection_ascii_id');
@@ -53,7 +52,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		$data = array();
 		foreach (Dase_DBO::query($this->db,$sql,array($it_ascii,$coll,$att_ascii)) as $row) {
-			$item_url = $app_root.'/item/'.$coll.'/'.$row['serial_number'];
+			$item_url = $r->app_root.'/item/'.$coll.'/'.$row['serial_number'];
 			$data[$item_url] = $row['value_text'];
 		}
 		asort($data);
@@ -130,11 +129,10 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsAtom($r)
 	{
-		$app_root = $r->app_root;
 		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($t->getUrl($app_root));
+		$feed->setId($t->getUrl($r->app_root));
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item($this->db);
 		$items->item_type_id = $t->id;
@@ -154,7 +152,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function getItemTypeItemsJson($r)
 	{
-		$app_root = $r->app_root;
 		$res = array();
 		$coll = $r->get('collection_ascii_id');
 		$items = new Dase_DBO_Item($this->db);
@@ -167,7 +164,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		}
 		foreach ($items->find() as $item) {
 			$item_array  = array(
-				'url' => $item->getUrl($app_root),
+				'url' => $item->getUrl($r->app_root),
 				//expensive??
 				'title' => $item->getTitle(),
 				'serial_number' => $item->serial_number,

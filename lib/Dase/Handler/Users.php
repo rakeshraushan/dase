@@ -73,7 +73,7 @@ class Dase_Handler_Users extends Dase_Handler
 
 	public function getUsersAtom($r) 
 	{
-		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom($this->db,$app_root));
+		$r->renderResponse(Dase_DBO_DaseUser::listAsAtom($this->db,$r->app_root));
 	}
 }
 

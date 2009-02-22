@@ -172,17 +172,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $entry->asXml();
 	}
 
-	static function dataAsJson($db)
-	{
-		$result = array();
-		$colls = new Dase_DBO_Collection($db);
-		foreach ($colls->find() as $c) {
-			$result[$c->ascii_id]['visibility'] = $c->visibility;
-			$result[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
-		}
-		return Dase_Json::get($result);
-	}
-
 	static function listAsArray($db,$public_only = false)
 	{
 		$colls = new Dase_DBO_Collection($db);
@@ -225,7 +214,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setId($app_root);
 		$feed->setFeedType('collection_list');
 		//todo:fix this to *not* simply be a time stamp
-		$feed->setUpdated(Dase_DBO_Collections::getLastCreated($db));
+		$feed->setUpdated(Dase_DBO_Collection::getLastCreated($db));
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink($app_root.'/collections.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");

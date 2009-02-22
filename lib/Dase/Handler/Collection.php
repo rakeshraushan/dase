@@ -70,25 +70,24 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getArchiveUris($r)
 	{
-		$app_root = $r->app_root;
 		$coll = $this->collection->ascii_id;
 		$output = "#collection\n";
-		$output .= $app_root.'/collection/'.$coll."/entry.atom\n";
+		$output .= $r->app_root.'/collection/'.$coll."/entry.atom\n";
 		$output .= "#attributes\n";
 		foreach ($this->collection->getAttributes() as $att) {
-			$output .= $app_root.'/attribute/'.$coll.'/'.$att->ascii_id.".atom\n";
+			$output .= $r->app_root.'/attribute/'.$coll.'/'.$att->ascii_id.".atom\n";
 		}	
 		$output .= "#item_types\n";
 		foreach ($this->collection->getItemTypes() as $it) {
-			$output .= $it->getUrl($app_root).".atom\n";
+			$output .= $it->getUrl($r->app_root).".atom\n";
 		}	
 		$output .= "#item_type_relations\n";
 		foreach ($this->collection->getItemTypeRelations() as $itr) {
-			$output .= $itr->getUrl($app_root).".atom\n";
+			$output .= $itr->getUrl($r->app_root).".atom\n";
 		}	
 		$output .= "#items\n";
 		foreach ($this->collection->getItems() as $item) {
-			$output .= $item->getUrl($app_root).".atom\n";
+			$output .= $item->getUrl($r->app_root).".atom\n";
 		}	
 		$r->renderResponse($output);
 
@@ -141,7 +140,6 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsUris($r) 
 	{
-		$app_root = $r->app_root;
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
 			$output .= $item->getUrl($r->app_root); 
@@ -180,7 +178,6 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsThatLackMediaUris($r) 
 	{
-		$app_root = $r->app_root;
 		$output = '';
 		$i = 0;
 		$limit = '';
@@ -196,7 +193,7 @@ class Dase_Handler_Collection extends Dase_Handler
 				}
 				if ($r->get('showmedialink')) {
 					//returns list of media links, not item links!!
-					$output .= $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
+					$output .= $item->getEditMediaUrl($r->app_root); 
 				} else {
 					$output .= $item->getUrl($r->app_root); 
 				}
@@ -214,7 +211,6 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsThatLackMediaJson($r) 
 	{
-		$app_root = $r->app_root;
 		$items = array();
 		$i = 0;
 		$limit = '';
@@ -225,7 +221,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			if (!$item->getMediaCount()) {
 				$i++;
 				$edit = $item->getUrl($r->app_root); 
-				$edit_media = $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
+				$edit_media = $item->getEditMediaUrl($r->app_root); 
 				$items[$edit]['edit'] = $edit;
 				$items[$edit]['edit-media'] = $edit_media;
 				foreach ($item->getMetadata() as $row) {
@@ -469,7 +465,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-			echo $item->asAtomEntry($app_root);
+			echo $item->asAtomEntry($r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -557,7 +553,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
-			echo $itr->asAtomEntry($app_root);
+			echo $itr->asAtomEntry($r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -590,7 +586,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item/".$r->get('collection_ascii_id')."/".$item->serial_number.'.atom');
-			echo $item->asAtomEntry($app_root);
+			echo $item->asAtomEntry($r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
@@ -612,7 +608,6 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributesJson($r) 
 	{
-		$app_root = $r->app_root;
 		$filter = $r->has('filter') ? $r->get('filter') : '';
 		$r->checkCache();
 		$c = $this->collection;
