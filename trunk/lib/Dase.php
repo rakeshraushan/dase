@@ -11,8 +11,10 @@ class Dase
 		$c = new Dase_Config($base_path);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		//imagemagick
+
+		//imagemagick binary, the one & only global
 		define('CONVERT',$c->getAppSettings('convert'));
+
 		$r = new Dase_Http_Request($base_path);
 		$log = new Dase_Log($c->getLogDir(),'dase.log',Dase_Log::DEBUG);
 		$cookie = new Dase_Cookie($r->app_root,$r->module,$c->getAuth('token'));

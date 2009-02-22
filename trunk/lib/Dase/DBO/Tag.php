@@ -58,7 +58,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$tag = new Dase_DBO_Tag($this->db);
 				$tag->load($row['tag_id']);
 				if ($tag->ascii_id) { //compat
-					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),$app_root);
+					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
 					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
 				}
 			}
@@ -70,7 +70,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			foreach ($tags->find() as $tag) {
 				$tag = clone $tag;
 				if ($tag->ascii_id) { //compat: make sure tag has ascii_id
-					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),$app_root);
+					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
 					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
 				}
 			}

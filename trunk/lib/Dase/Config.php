@@ -15,6 +15,11 @@ class Dase_Config {
 		$this->conf['request_handler'] = array();
 	}
 
+	public function getBasePath()
+	{
+		return $this->base_dir;
+	}
+
 	public function get($key)
 	{
 		if (isset($this->conf[$key])) {

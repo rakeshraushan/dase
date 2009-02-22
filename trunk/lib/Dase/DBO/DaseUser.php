@@ -390,7 +390,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	{
 		$prefix = $this->db->table_prefix;
 		$tag_count = array();
-		$db = Dase_DB::get();
+		$dbh = $this->db->getDbh();
 		$sql = "
 			SELECT tag.id, count(*) 
 			FROM {$prefix}tag_item,{$prefix}tag 
@@ -398,7 +398,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			AND dase_user_id = ? 
 			GROUP BY tag.id
 			";
-		$sth = $db->prepare($sql);	
+		$sth = $dbh->prepare($sql);	
 		$sth->execute(array($this->id));
 		while (list($id,$count) = $sth->fetch()) {
 			$tag_count[$id] = $count;
@@ -427,7 +427,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				} else {
 					$count = 0;
 				}
-				$entry = $tag->injectAtomEntryData($feed->addEntry('set'),$app_root);
+				$entry = $tag->injectAtomEntryData($feed->addEntry('set'),$this,$app_root);
 				$entry->addCategory($count,"http://daseproject.org/category/item_count");
 			}
 		}

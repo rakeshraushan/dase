@@ -199,7 +199,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getMetadata($att_ascii_id = '',$app_root)
+	public function getMetadata($att_ascii_id = '',$app_root='')
 	{
 		$db = $this->db;
 		$prefix = $this->db->table_prefix;
@@ -226,7 +226,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			";
 		$st = Dase_DBO::query($db,$sql,$bound_params);
 		while ($row = $st->fetch()) {
-			$row['href'] = $app_root.'/attribute/'.$this->p_collection_ascii_id.'/'.$row['ascii_id'];
+			if ($app_root) {
+				$row['href'] = $app_root.'/attribute/'.$this->p_collection_ascii_id.'/'.$row['ascii_id'];
+			}
 			$metadata[] = $row;
 		}
 		return $metadata;
@@ -1048,8 +1050,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$dom->loadXml($atom->getConvertedXml($app_root));
 		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $e->item(0);
-		$root = $this->dom->importNode($root,true);
-		$entry = new Dase_Atom_Entry_Item($this->dom,$root);
+		$entry = new Dase_Atom_Entry_Item($dom,$root);
 		//for single item view, add collection name as cat label
 		$collection = $this->getCollection();
 		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);

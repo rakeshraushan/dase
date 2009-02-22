@@ -75,8 +75,8 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 		$entry->setId($url);
 		$entry->setSummary($this->description);
 		$entry->addLink($url.'.atom','edit');
-		$entry->addLink($this->getChildType()->getUrl($app_root),'http://daseproject.org/relation/child_type');
-		$entry->addLink($this->getParentType()->getUrl($app_root),'http://daseproject.org/relation/parent_type');
+		$entry->addLink($this->getChildType()->getUrl($coll,$app_root),'http://daseproject.org/relation/child_type');
+		$entry->addLink($this->getParentType()->getUrl($coll,$app_root),'http://daseproject.org/relation/parent_type');
 		$entry->addCategory('item_type_relation','http://daseproject.org/category/entrytype','Item Type Relation');
 		$entry->setUpdated(date(DATE_ATOM));
 		$entry->addAuthor();

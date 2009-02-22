@@ -148,7 +148,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 		if (!$etable) { return; }
 		$eclass = ucfirst($etable);
 		$params[] = $entity_obj->id;
-		$prefix = $this->db->table_prefix;
+		$prefix = $db->table_prefix;
 		$sql = "
 			SELECT cat.id, csh.id as scheme_id, cat.term, cat.label 
 			FROM {$prefix}category cat, {$prefix}{$etable}_category e2cat, {$prefix}category_scheme csh
