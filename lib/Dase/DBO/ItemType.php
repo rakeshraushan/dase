@@ -41,7 +41,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	public function asAtomEntry($collection_ascii_id,$app_root)
 	{
 		$c = $this->getCollection();
-		$entry = new Dase_Atom_Entry_ItemType($this->db);
+		$entry = new Dase_Atom_Entry_ItemType;
 		$entry = $this->injectAtomEntryData($entry,$collection_ascii_id,$app_root);
 		return $entry->asXml();
 	}
@@ -49,7 +49,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$collection_ascii_id,$app_root)
 	{
 		$entry->setTitle($this->name);
-		$entry->setId($base_url);
+		$entry->setId($this->getUrl($collection_ascii_id,$app_root));
 		$entry->setSummary($this->description);
 		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'.atom','edit');
 		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/items.cats','http://daseproject.org/relation/item_type/items','application/atomcat+xml','',$this->name.' Items');

@@ -2,7 +2,9 @@
 
 include 'config.php';
 
-$coll = 'itsprop';
+$app_root = 'http://quickdraw.laits.utexas.edu/dase1';
+
+$coll = 'test';
 $user = 'pkeane';
 $pass = 'okthen';
 $target_dir = '/mnt/home/pkeane/dase_backup_sets';
@@ -26,7 +28,7 @@ if (!file_exists($target_dir.'/'.$coll.'/media')) {
 	mkdir($target_dir.'/'.$coll.'/media');
 }
 
-foreach (file(APP_ROOT.'/collection/'.$coll.'/archive.uris') as $ln) {
+foreach (file($app_root.'/collection/'.$coll.'/archive.uris') as $ln) {
 	$ln = trim($ln);
 	if ('#' == substr($ln,0,1)) {
 		$entrytype = substr($ln,1);

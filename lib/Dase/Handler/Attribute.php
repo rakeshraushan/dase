@@ -42,7 +42,9 @@ class Dase_Handler_Attribute extends Dase_Handler
 	public function getAttributeAtom($r) 
 	{
 		$entry = new Dase_Atom_Entry;
-		$r->renderResponse($this->attribute->injectAtomEntryData($entry)->asXml());
+		$r->renderResponse(
+			$this->attribute->injectAtomEntryData(
+				$entry,$r->get('collection_ascii_id'),$r->app_root)->asXml());
 	}
 
 	/** implicit 1000 limit */
