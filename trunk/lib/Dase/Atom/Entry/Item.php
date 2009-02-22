@@ -471,7 +471,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			//make sure relationship is legit
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-					$coll,$parent->serial_number,$sernum
+					$db,$coll,$parent->serial_number,$sernum
 				);
 			}
 			if ($itr) {
@@ -512,7 +512,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				file_put_contents($new_file,file_get_contents($enc['href']));
 
 				try {
-					$file = Dase_File::newFile($new_file,$enc['mime_type']);
+					$file = Dase_File::newFile($db,$new_file,$enc['mime_type']);
 					$media_file = $file->addToCollection($item,false);
 				} catch(Exception $e) {
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
@@ -592,7 +592,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$coll = $this->getCollectionAsciiId();
 		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
-			$parent = Dase_DBO_Item::getByUrl($ln['href']);
+			$parent = Dase_DBO_Item::getByUrl($db,$ln['href']);
 			//make sure relationship is legit
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(

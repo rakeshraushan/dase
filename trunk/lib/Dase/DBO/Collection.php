@@ -150,7 +150,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($items->find() as $item) {
 			$feed->addItemEntry($item,$app_root);
 		}
-		return $feed->asXml($app_root);
+		return $feed->asXml();
 	}
 
 	function asAtomEntry($app_root)
@@ -172,10 +172,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $entry->asXml();
 	}
 
-	static function dataAsJson()
+	static function dataAsJson($db)
 	{
 		$result = array();
-		$colls = new Dase_DBO_Collection($this->db);
+		$colls = new Dase_DBO_Collection($db);
 		foreach ($colls->find() as $c) {
 			$result[$c->ascii_id]['visibility'] = $c->visibility;
 			$result[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
@@ -212,7 +212,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return Dase_Json::get($result);
 	}
 
-	static function listAsAtom($app_root,$db,$public_only = false)
+	static function listAsAtom($db,$app_root,$public_only = false)
 	{
 		$c = new Dase_DBO_Collection($db);
 		$c->orderBy('collection_name');
@@ -225,7 +225,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setId($app_root);
 		$feed->setFeedType('collection_list');
 		//todo:fix this to *not* simply be a time stamp
-		$feed->setUpdated(date(DATE_ATOM));
+		$feed->setUpdated(Dase_DBO_Collections::getLastCreated($db));
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink($app_root.'/collections.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
@@ -249,16 +249,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXML();
 	}
 
-	static function getLastCreated()
+	static function getLastCreated($db)
 	{
-		$prefix = $this->db->table_prefix;
+		$prefix = $db->table_prefix;
 		$sql = "
 			SELECT created
 			FROM {$prefix}collection
 			ORDER BY created DESC
 			";
 		//returns first non-null created
-		foreach (Dase_DBO::query($sql) as $row) {
+		foreach (Dase_DBO::query($db,$sql) as $row) {
 			if ($row['created']) {
 				return $row['created'];
 			}

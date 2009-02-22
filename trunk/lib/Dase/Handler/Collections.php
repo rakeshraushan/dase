@@ -48,7 +48,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$ascii_id.'.atom');
-			echo Dase_DBO_Collection::get($ascii_id)->asAtomEntry($r->app_root);
+			echo Dase_DBO_Collection::get($this->db,$ascii_id)->asAtomEntry($r->app_root);
 			exit;
 		} else {
 			$r->renderError(415,'cannoot accept '.$content_type);
@@ -57,17 +57,17 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getCollectionsJson($r) 
 	{
-		$r->renderResponse(Dase_DBO_Collection::listAsJson());
+		$r->renderResponse(Dase_DBO_Collection::listAsJson($this->db));
 	}
 
 	public function getDataJson($r) 
 	{
-		$r->renderResponse(Dase_DBO_Collection::dataAsJson());
+		$r->renderResponse(Dase_DBO_Collection::dataAsJson($this->db));
 	}
 
 	public function getAclJson($r) 
 	{
-		$r->renderResponse(Dase_Json::get(Dase_Acl::generate()));
+		$r->renderResponse(Dase_Json::get(Dase_Acl::generate($this->db)));
 	}
 
 	public function getCollectionsAtom($r) 
@@ -77,7 +77,7 @@ class Dase_Handler_Collections extends Dase_Handler
 		} else {
 			$public_only = true;
 		}
-		$r->renderResponse(Dase_DBO_Collection::listAsAtom($r->app_root,$r->retrieve('db'),$public_only));
+		$r->renderResponse(Dase_DBO_Collection::listAsAtom($this->db,$r->app_root,$public_only));
 	}
 
 	public function getCollections($r) 

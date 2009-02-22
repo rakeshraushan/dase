@@ -80,15 +80,15 @@ class Dase_Handler_Collection extends Dase_Handler
 		}	
 		$output .= "#item_types\n";
 		foreach ($this->collection->getItemTypes() as $it) {
-			$output .= $app_root.'/'.$it->getUrl($coll).".atom\n";
+			$output .= $it->getUrl($app_root).".atom\n";
 		}	
 		$output .= "#item_type_relations\n";
 		foreach ($this->collection->getItemTypeRelations() as $itr) {
-			$output .= $app_root.'/'.$itr->getUrl().".atom\n";
+			$output .= $itr->getUrl($app_root).".atom\n";
 		}	
 		$output .= "#items\n";
 		foreach ($this->collection->getItems() as $item) {
-			$output .= $app_root.'/'.$item->getUrl($coll).".atom\n";
+			$output .= $item->getUrl($app_root).".atom\n";
 		}	
 		$r->renderResponse($output);
 
@@ -144,7 +144,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$app_root = $r->app_root;
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
-			$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
+			$output .= $item->getUrl($r->app_root); 
 			$output .= "\n";
 		}
 		$r->renderResponse($output);
@@ -198,7 +198,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					//returns list of media links, not item links!!
 					$output .= $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
 				} else {
-					$output .= $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
+					$output .= $item->getUrl($r->app_root); 
 				}
 				$output .= "\n";
 			}
@@ -224,7 +224,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		foreach ($this->collection->getItems() as $item) {
 			if (!$item->getMediaCount()) {
 				$i++;
-				$edit = $app_root.'/'.$item->getUrl($this->collection->ascii_id); 
+				$edit = $item->getUrl($r->app_root); 
 				$edit_media = $app_root.'/'.$item->getEditMediaUrl($this->collection->ascii_id); 
 				$items[$edit]['edit'] = $edit;
 				$items[$edit]['edit-media'] = $edit_media;
@@ -253,13 +253,12 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemsMarkedToBeDeletedUris($r) 
 	{
-		$app_root = $r->app_root;
 		$output = '';
 		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->collection->id;
 		$items->status = 'delete';
 		foreach ($items->find() as $item) {
-			$output .= $item->getUrl($this->collection->ascii_id,$app_root)."\n"; 
+			$output .= $item->getUrl($r->app_root)."\n"; 
 		}
 		$r->renderResponse($output);
 	}
@@ -325,7 +324,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getItemTypeRelationAtom($r) 
 	{
-		$itr = Dase_DBO_ItemTypeRelation::get($r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
+		$itr = Dase_DBO_ItemTypeRelation::get($this->db,$r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
 		$r->renderResponse($itr->asAtomEntry($r->app_root));
 	}
 
@@ -429,7 +428,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
 		try {
-			$file = Dase_File::newFile($new_file,null,null,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,null,null,$r->base_path);
 			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
@@ -638,7 +637,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'attribute_name' => $att->attribute_name,
 					'input_type' => $att->html_input_type,
 					'sort_order' => $att->sort_order,
-					'href' => $app_root.'/'.$att->getUrl($c->ascii_id,$r->app_root),
+					'href' => $att->getUrl($c->ascii_id,$r->app_root),
 					'collection' => $r->get('collection_ascii_id')
 				);
 		}
@@ -710,7 +709,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			FROM {$prefix}attribute a
 			WHERE a.collection_id = 0
 			";
-		$st = Dase_DBO::query($sql);
+		$st = Dase_DBO::query($this->db,$sql);
 		$sql = "
 			SELECT count(DISTINCT value_text) 
 			FROM {$prefix}value v 
@@ -719,8 +718,8 @@ class Dase_Handler_Collection extends Dase_Handler
 			(SELECT id FROM {$prefix}item i
 			WHERE i.collection_id = $c->id)
 			";
-		$db = Dase_DB::get();
-		$sth = $db->prepare($sql);
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
 		$tallies = array();
 		while ($row = $st->fetch()) {
 			$sth->execute(array($row['id']));

@@ -30,6 +30,7 @@ abstract class Dase_File
 	protected $mime_type;
 	protected $orig_name;
 	protected $path_to_media;
+	protected $db;
 
 	protected function __construct($file,$mime='')
 	{  //can ONLY be called by subclass
@@ -52,7 +53,7 @@ abstract class Dase_File
 		}
 	}
 
-	static function newFile($file,$mime='',$orig_name='',$base_path)
+	static function newFile($db,$file,$mime='',$orig_name='',$base_path)
 	{
 		if (!$mime) {
 			$mime = Dase_File::getMimeType($file);
@@ -69,16 +70,11 @@ abstract class Dase_File
 			$dasefile->mime_type = $mime;
 			$dasefile->base_path = $base_path;
 			$dasefile->orig_name = $orig_name;
+			$dasefile->db = $db;
 			return $dasefile;
 		} else {
 			throw new Exception("cannot determin mime type for $file");
 		}
-	}
-
-	static function newFileFromUrl($file)
-	{
-		$mime = Dase_File::getMimeType($file,1);
-
 	}
 
 	function getFilepath()
@@ -137,7 +133,7 @@ abstract class Dase_File
 				LIMIT 1
 				";
 			$hash = $metadata['md5'];
-			$res = Dase_DBO::query($sql,array($c->id,'admin_checksum',$hash),true)->fetch();
+			$res = Dase_DBO::query($this->db,$sql,array($c->id,'admin_checksum',$hash),true)->fetch();
 			if ($res && $res->value_text) {
 				throw new Exception('duplicate file');
 			} 
@@ -164,7 +160,7 @@ abstract class Dase_File
 		}
 		//should this be try-catch?
 		if ($this->copyTo($target)) {
-			$media_file = new Dase_DBO_MediaFile;
+			$media_file = new Dase_DBO_MediaFile($this->db);
 			$mediafile_meta = array(
 				'file_size','height','width','mime_type','updated','md5'
 			);
@@ -256,7 +252,7 @@ abstract class Dase_File
 		if (!file_exists($target)) {
 			copy($this->base_path.'/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
-		$media_file = new Dase_DBO_MediaFile;
+		$media_file = new Dase_DBO_MediaFile($this->db);
 		$media_file->item_id = $item->id;
 		$media_file->filename = $size.'.jpg';
 		$media_file->width = 80;
@@ -277,7 +273,7 @@ abstract class Dase_File
 		if (!file_exists($target)) {
 			copy($this->base_path.'/www/images/thumb_icons/'.$size.'.jpg',$target);
 		}
-		$media_file = new Dase_DBO_MediaFile;
+		$media_file = new Dase_DBO_MediaFile($this->db);
 		$media_file->item_id = $item->id;
 		$media_file->filename = $size.'.jpg';
 		$media_file->width = 80;

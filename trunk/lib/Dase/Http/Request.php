@@ -144,7 +144,7 @@ class Dase_Http_Request
 	public function checkCache($ttl=null)
 	{
 		$cache = $this->retrieve('cache');
-		$content = $cache->getData($this->getCacheId(),$ttl);
+		$content = $cache->getData($this->getCacheId(),$ttl,$this->retrieve('log'));
 		if ($content) {
 			$this->renderResponse($content,false);
 		}

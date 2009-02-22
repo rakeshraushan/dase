@@ -216,20 +216,18 @@ class Dase_Atom_Feed extends Dase_Atom
 		//ItemAsAtom cache always uses {APP_ROOT}
 		$atom = Dase_DBO_ItemAsAtom::getByItem($item);
 		if (!$atom) {
-			if (!$c) {
-				$c = $item->getCollection();
-			}
-			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,$app_root);
+			$app_root = '{APP_ROOT}';
+			$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,'{APP_ROOT}');
 			$atom = new Dase_DBO_ItemAsAtom($item->db);
 			$atom->item_id = $item->id;
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
-			$atom->relative_url = 'item/'.$c->ascii_id.'/'.$item->serial_number;
+			$atom->relative_url = 'item/'.$item->p_collection_ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($app_root,$entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->insert();
 		}
 		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($atom->xml);
+		$dom->loadXml($atom->getConvertedXml($app_root));
 		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $e->item(0);
 		$root = $this->dom->importNode($root,true);
@@ -328,10 +326,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function asXml($app_root='')
+	function asXml()
 	{
 		$this->attachEntries();
-		return parent::asXml($app_root);
+		return parent::asXml();
 	}
 
 	public function filter($att,$val) 

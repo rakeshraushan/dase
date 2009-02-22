@@ -36,7 +36,7 @@ class Dase_Acl
 		'xsl' => 1,
 	);
 
-	public static function generate()
+	public static function generate($db)
 	{
 		$acl = array();
 		$cache = Dase_Cache::get('acl');
@@ -44,7 +44,7 @@ class Dase_Acl
 		if ($data) {
 			return unserialize($data);
 		} else {
-			$colls = new Dase_DBO_Collection();
+			$colls = new Dase_DBO_Collection($db);
 			foreach ($colls->find() as $c) {
 				foreach ($c->getManagers() as $m) {
 					$acl[$c->ascii_id]['user'][$m->dase_user_eid] = $m->auth_level;
@@ -55,7 +55,7 @@ class Dase_Acl
 		}
 	}
 
-	public static function getCollectionData()
+	public static function getCollectionData($db)
 	{
 		$cdata = array();
 		$cache = Dase_Cache::get('collection_data');
@@ -63,7 +63,7 @@ class Dase_Acl
 		if ($data) {
 			return $data;
 		} else {
-			$colls = new Dase_DBO_Collection();
+			$colls = new Dase_DBO_Collection($db);
 			foreach ($colls->find() as $c) {
 				$cdata[$c->ascii_id]['visibility'] = $c->visibility;
 				$cdata[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
@@ -85,9 +85,9 @@ class Dase_Acl
 		return $data;
 	}
 
-	public static function check($coll,$size,$eid=null)
+	public static function check($db,$coll,$size,$eid=null)
 	{
-		$cdata = Dase_Acl::getCollectionData();
+		$cdata = Dase_Acl::getCollectionData($db);
 		$gate = self::$sizes[$size];
 		if (!$gate) {
 			return $cdata[$coll]['path_to_media_files'];

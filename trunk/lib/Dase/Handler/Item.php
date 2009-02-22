@@ -166,7 +166,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'user cannot write this item');
 		}
-		$r->renderResponse($this->item->getMetadataJson());
+		$r->renderResponse($this->item->getMetadataJson($r->app_root));
 	}
 
 	public function getMetadataCats($r)
@@ -212,7 +212,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$comment = new Dase_DBO_Comment;
+		$comment = new Dase_DBO_Comment($this->db);
 		$comment->load($r->get('comment_id'));
 		if ($user->eid == $comment->updated_by_eid) {
 			$comment->delete();
@@ -307,7 +307,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$content_type = $r->getContentType();
 		if ('text/uri-list' == $content_type) {
 			$uri = trim($r->getBody());
-			$parent = Dase_DBO_Item::getByUrl($uri);
+			$parent = Dase_DBO_Item::getByUrl($this->db,$uri);
 			if ($parent) {
 				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
 					$this->db,$coll,$parent->serial_number,$sernum
@@ -379,7 +379,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$r->has('value_id')) {
 			$r->renderError(400,'missing identifier');
 		}
-		$value = new Dase_DBO_Value;
+		$value = new Dase_DBO_Value($this->db);
 		$value->load($r->get('value_id'));
 		if ($value) {
 			$r->renderResponse($value->value_text);
@@ -485,7 +485,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 			file_put_contents($new_file,file_get_contents($url));
 			try {
-				$file = Dase_File::newFile($new_file,$content_type,null,$r->base_path);
+				$file = Dase_File::newFile($this->db,$new_file,$content_type,null,$r->base_path);
 				//since we are swapping in:
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
@@ -544,7 +544,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$content_type,$slug_name,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,$content_type,$slug_name,$r->base_path);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original

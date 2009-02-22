@@ -65,7 +65,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 
 	public static function getLabel($db,$scheme,$term)
 	{
-		$prefix = $this->db->table_prefix;
+		$prefix = $db->table_prefix;
 		$sql = "
 			SELECT cat.label 
 			FROM {$prefix}category cat, {$prefix}category_scheme csh
@@ -97,7 +97,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 			if ($label) {
 				$cat->label = $label;
 			} else {
-				$cat->label = Dase_DBO_Category::getLabel($scheme,$term);
+				$cat->label = Dase_DBO_Category::getLabel($db,$scheme,$term);
 			}
 			$cat->insert();
 		}

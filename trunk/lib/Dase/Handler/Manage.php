@@ -45,7 +45,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
-		$cats = new Dase_DBO_Category;
+		$cats = new Dase_DBO_Category($this->db);
 		$cats->scheme = 'community';
 		$tpl->assign('communities',$cats->find());
 		$tpl->assign('community',$this->collection->getCommunity());
@@ -80,7 +80,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getAttribute($r)
 	{
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
 		if (!$att) {
 			$r->renderError(404,'so such attribute');
 		}
@@ -96,7 +96,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getAttributeForm($r)
 	{
-		$att = new Dase_DBO_Attribute;
+		$att = new Dase_DBO_Attribute($this->db);
 
 		//since this is new:
 		$att->is_public = 1;
@@ -114,7 +114,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function deleteManager($r)
 	{
-		$manager = new Dase_DBO_CollectionManager;
+		$manager = new Dase_DBO_CollectionManager($this->db);
 		if ($r->get('manager_eid') == $this->user->eid) {
 			$r->renderError('400','cannot delete yourself');
 		}
@@ -131,7 +131,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToAttribute($r)
 	{
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
 		if ($r->has('method') && ('delete '.$att->attribute_name == $r->get('method'))) {
 			$d = $att->attribute_name;
 			$count = count($att->getCurrentValues());
@@ -217,7 +217,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$response['defined'] = $def_value_array;
 		foreach ($def_value_array as $df_text) {
 			if (trim($df_text)) {
-				$def_value = new Dase_DBO_DefinedValue;
+				$def_value = new Dase_DBO_DefinedValue($this->db);
 				$def_value->value_text = htmlspecialchars(trim($df_text),ENT_NOQUOTES,'UTF-8');
 				$def_value->attribute_id = $att->id;
 				$def_value->insert();
@@ -229,7 +229,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getAttributeDefinedValuesJson($r)
 	{
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
 		$response = array();
 		$def_value_array = $att->getDefinedValues(); 
 		$response['count'] = count($def_value_array);
@@ -250,21 +250,20 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getItemType($r)
 	{
 		$coll = $this->collection->ascii_id;
-		$app_root = $r->app_root;
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('type',$type);
 		$tpl->assign('attributes',$this->collection->getAttributes('attribute_name'));
 		$tpl->assign('item_types',$this->collection->getItemTypes());
-		$tpl->assign('edit_url',$app_root.'/'.$type->getUrl($coll).'.atom');
+		$tpl->assign('edit_url',$type->getUrl($coll,$r->app_root).'.atom');
 		$r->set('tab','item_types');
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
 	}
 
 	public function getItemTypeForm($r)
 	{
-		$type = new Dase_DBO_ItemType;
+		$type = new Dase_DBO_ItemType($this->db);
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('type',$type);
@@ -275,7 +274,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToItemType($r)
 	{
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
 		//should redo this w/ http delete
 		if ($r->has('_method') && ('delete '.$type->name == $r->get('_method'))) {
 			$d = $type->name;
@@ -300,7 +299,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 		$type_ascii_id = Dase_Util::dirify($r->get('name'));
 		//note if type_ascii_id MATCHES, we do not create a new type, we grab match
-		$type = Dase_DBO_ItemType::findOrCreate($this->collection->ascii_id,$type_ascii_id);
+		$type = Dase_DBO_ItemType::findOrCreate($this->db,$this->collection->ascii_id,$type_ascii_id);
 		$type->name = $r->get('name');
 		$type->description = $r->get('description');
 		$type->update();
@@ -312,7 +311,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
 		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
-		$ita = new Dase_DBO_AttributeItemType;
+		$ita = new Dase_DBO_AttributeItemType($this->db);
 		$ita->attribute_id = $att->id;
 		$ita->item_type_id = $type->id;
 		if (!$ita->findOne()) {
@@ -355,7 +354,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function getItemTypeAttributesJson($r)
 	{
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
 		$response = array();
 		foreach ($type->getAttributes() as $att) {
 			$a['attribute_name'] = $att->attribute_name;
@@ -372,7 +371,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getItemTypeRelationsJson($r)
 	{
 		$res = array();
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
 		$res['parents'] = array();
 		$res['children'] = array();
 		foreach ($type->getParentRelations() as $p) {
@@ -400,9 +399,9 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function deleteItemTypeAttribute($r)
 	{
-		$type = Dase_DBO_ItemType::get($this->collection->ascii_id,$r->get('type_ascii_id'));
-		$att = Dase_DBO_Attribute::get($this->collection->ascii_id,$r->get('att_ascii_id'));
-		$ita = new Dase_DBO_AttributeItemType;
+		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
+		$att = Dase_DBO_Attribute::get($this->db,$this->collection->ascii_id,$r->get('att_ascii_id'));
+		$ita = new Dase_DBO_AttributeItemType($this->db);
 		$ita->attribute_id = $att->id;
 		$ita->item_type_id = $type->id;
 		if ($ita->findOne()) {
@@ -415,7 +414,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function deleteItemTypeRelation($r)
 	{
-		$rel = new Dase_DBO_ItemTypeRelation;
+		$rel = new Dase_DBO_ItemTypeRelation($this->db);
 		//does NOT delete actual relationships
 		//which is good, since it'd be too easy
 		//to do accidentally
@@ -446,7 +445,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$params['msg'] = 'You must enter an EID';
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/managers',$params);
 		}
-		if (!Dase_DBO_DaseUser::get($r->get('dase_user_eid'))) {
+		if (!Dase_DBO_DaseUser::get($this->db,$r->get('dase_user_eid'))) {
 			$params['msg'] = 'User '.$r->get('dase_user_eid').' does not yet exist';
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/managers',$params);
 		}
@@ -498,7 +497,7 @@ class Dase_Handler_Manage extends Dase_Handler
 				$item->setValue('title',$name);
 			}
 
-			$file = Dase_File::newFile($path,$type,$name,$r->base_path);
+			$file = Dase_File::newFile($this->db,$path,$type,$name,$r->base_path);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);
 			$item->buildSearchIndex();

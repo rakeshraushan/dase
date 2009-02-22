@@ -24,13 +24,13 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 
 		/*
-		if (!Dase_Acl::check($this->collection_ascii_id,$this->size)) {
+		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size)) {
 			if (!$path) {
 				$this->user = $r->getUser();
 				if (!$this->user) {
 					$r->renderError(401,'cannot access media');
 				}
-				if (!Dase_Acl::check($this->collection_ascii_id,$this->size,$this->user->eid)) {
+				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid)) {
 					$r->renderError(401,'cannot access media');
 				}
 			}
@@ -114,7 +114,7 @@ class Dase_Handler_Media extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($new_file,$content_type,null,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,$content_type,null,$r->base_path);
 			//since we are swapping in:
 			$item->deleteAdminValues();
 			//note: this deletes ALL media!!!

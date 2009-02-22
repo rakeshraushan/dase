@@ -261,7 +261,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 	function addItemType($item_type_ascii)
 	{
 		$c = $this->getCollection();
-		$type = Dase_DBO_ItemType::get($c->ascii_id,$item_type_ascii);
+		$type = Dase_DBO_ItemType::get($this->db,$c->ascii_id,$item_type_ascii);
 		if ($type) {
 			$ita = new Dase_DBO_AttributeItemType($this->db);
 			$ita->attribute_id = $this->id;

@@ -4,7 +4,7 @@ require_once 'Dase/DBO/Autogen/CategoryScheme.php';
 
 class Dase_DBO_CategoryScheme extends Dase_DBO_Autogen_CategoryScheme 
 {
-	public static function listAsFeed($db,$order_by='created DESC',$app_root)
+	public static function listAsFeed($db,$app_root,$order_by='created DESC')
 	{
 		$schemes = new Dase_DBO_CategoryScheme($db);
 		$schemes->orderBy($order_by);

@@ -169,14 +169,14 @@ class Dase_Search_Result
 			$setnum = $num + $start - 1;
 			$item = new Dase_DBO_Item($db);
 			$item->load($item_id);
-			$item->collection || $item->getCollection();
-			$item->item_type || $item->getItemType();
+			$item->getCollection();
+			$item->getItemType();
 			//will check cache
 			$entry = $feed->addItemEntry($item,$app_root);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
 			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		return $feed->asXml($app_root);
+		return $feed->asXml();
 	}
 
 	public function getItemAsAtomFeed($app_root,$db,$start,$max,$num)
@@ -191,7 +191,7 @@ class Dase_Search_Result
 			$feed->setId($app_root.'/search/'.md5($this->url));
 			$feed->setOpensearchTotalResults(0);
 			$feed->setOpensearchQuery($this->_getQueryAsString());
-			return $feed->asXml($app_root);
+			return $feed->asXml();
 		}
 		$num = $num ? $num : 1;
 
@@ -229,7 +229,7 @@ class Dase_Search_Result
 			}
 			$feed->setOpensearchQuery($this->_getQueryAsString());
 			$feed->setOpensearchTotalResults($this->count);
-			return $feed->asXml($app_root);
+			return $feed->asXml();
 		}
 	}
 }

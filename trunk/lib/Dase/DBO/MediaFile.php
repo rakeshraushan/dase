@@ -78,17 +78,17 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return "media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
 	}
 
-	public static function getUniqueBaseIdent($title,$collection_ascii_id)
+	public static function getUniqueBaseIdent($db,$title,$collection_ascii_id)
 	{
 		$check_ident = Dase_Util::dirify($title);
-		$mf = new Dase_DBO_MediaFile($this->db);
+		$mf = new Dase_DBO_MediaFile($db);
 		$mf->p_serial_number = $check_ident;
 		$mf->p_collection_ascii_id = $collection_ascii_id;
 		if (!$mf->findOne()) {
 			return $check_ident;
 		} else {
 			$check_ident = $check_ident.time();
-			return Dase_DBO_MediaFile::getUniqueBaseIdent($check_ident,$collection_ascii_id);
+			return Dase_DBO_MediaFile::getUniqueBaseIdent($db,$check_ident,$collection_ascii_id);
 		}
 	}
 

@@ -37,7 +37,7 @@ class Dase_Handler_User extends Dase_Handler
 
 	public function getPing($r) 
 	{
-		$pinged = Dase_DBO_DaseUser::get($r->get('eid'));
+		$pinged = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		if ($pinged) {
 		$r->renderResponse($pinged->eid);
 		} else {
@@ -118,9 +118,9 @@ class Dase_Handler_User extends Dase_Handler
 	public function getRecentItemsAtom($r)
 	{
 		//todo: implement http authorization!
-		$items = new Dase_DBO_Item;
+		$items = new Dase_DBO_Item($this->db);
 		$items->created_by_eid = $this->user->eid;
-		$items->collection_id = Dase_DBO_Collection::get($r->get('collection_ascii_id'))->id;
+		$items->collection_id = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'))->id;
 		$items->orderBy('created DESC');
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
@@ -143,11 +143,10 @@ class Dase_Handler_User extends Dase_Handler
 	public function getRecentItemsJson($r)
 	{
 		//todo: implement http authorization!
-		$db = $r->retrieve('db');
 		$coll = $r->get('collection_ascii_id');
-		$items = new Dase_DBO_Item($db);
+		$items = new Dase_DBO_Item($this->db);
 		$items->created_by_eid = $this->user->eid;
-		$items->collection_id = Dase_DBO_Collection::get($db,$coll)->id;
+		$items->collection_id = Dase_DBO_Collection::get($this->db,$coll)->id;
 		$items->orderBy('created DESC');
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
@@ -159,7 +158,7 @@ class Dase_Handler_User extends Dase_Handler
 		foreach ($items->find() as $item) {
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
 			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail',$app_root);
-			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($coll,$app_root);
+			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($app_root);
 		}
 		$r->renderResponse(Dase_Json::get($recent));
 	}
