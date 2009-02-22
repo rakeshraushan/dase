@@ -121,7 +121,7 @@ abstract class Dase_File
 
 		//prevents 2 files in same collection w/ same md5
 		if ($check_for_dups) {
-			$prefix = Dase_Config::get('table_prefix');
+			$prefix = $this->db->table_prefix;
 			$sql = "
 				SELECT v.value_text
 				FROM {$prefix}value v, {$prefix}item i, {$prefix}attribute a
@@ -137,14 +137,6 @@ abstract class Dase_File
 			if ($res && $res->value_text) {
 				throw new Exception('duplicate file');
 			} 
-		}
-
-		if ('image/tiff' == $this->mime_type && !Dase_Config::get('keep_tiffs')) {
-			//subclasses always call this, so it's ok to return false here
-			foreach ($metadata as $term => $text) {
-				$item->setValue('admin_'.$term,$text);
-			}
-			return false; 
 		}
 
 		$subdir =  Dase_Util::getSubdir($item->serial_number);
@@ -244,7 +236,7 @@ abstract class Dase_File
 		}
 	}
 
-	function makeThumbnail($item)
+	function makeThumbnail($item,$path_to_media)
 	{
 		$size = $this->size;
 		$collection = $item->getCollection();
@@ -262,10 +254,10 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::get()->info("created $media_file->size $media_file->filename");
+		$this->db->log->info("created $media_file->size $media_file->filename");
 	}
 
-	function makeViewitem($item)
+	function makeViewitem($item,$path_to_media)
 	{
 		$size = $this->size;
 		$collection = $item->getCollection();
@@ -283,7 +275,7 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		Dase_Log::get()->info("created $media_file->size $media_file->filename");
+		$this->db->log->info("created $media_file->size $media_file->filename");
 	}
 
 }

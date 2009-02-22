@@ -11,8 +11,9 @@ class Dase
 		$c = new Dase_Config($base_path);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
+		//imagemagick
+		define('CONVERT',$c->getAppSettings('convert'));
 		$r = new Dase_Http_Request($base_path);
-		$r->initPlugin($c->getCustomHandlers());
 		$log = new Dase_Log($c->getLogDir(),'dase.log',Dase_Log::DEBUG);
 		$cookie = new Dase_Cookie($r->app_root,$r->module,$c->getAuth('token'));
 		$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir());
@@ -22,6 +23,8 @@ class Dase
 		$r->store('cache',$cache);
 		$r->store('db',$db);
 		$r->store('log',$log);
+
+		$r->initPlugin($c->getCustomHandlers());
 
 		$app = new Dase;
 		$app->config = $c;

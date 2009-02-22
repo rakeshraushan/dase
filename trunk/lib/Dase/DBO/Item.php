@@ -145,7 +145,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$search_table->collection_ascii_id = $this->p_collection_ascii_id;
 		$search_table->updated = date(DATE_ATOM);
 		if ($composite_value_text) {
-			print_r($search_table);exit;
 			$search_table->insert();
 		}
 
@@ -1022,11 +1021,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$feed->setFeedType('item');
 		//todo: this needs to be passed in?
 		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
-		$feed->addItemEntry($this,$app_root); //checks cache 
+		$entry = $feed->addItemEntry($this,$app_root); //checks cache 
+		//for single item view, add collection name as cat label
+		$collection = $this->getCollection();
+		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
+		$coll_cat->setAttribute('label',$collection->collection_name);
 		//add comments
 		foreach ($this->getComments() as $comment) {
-			$entry = $feed->addEntry('comment');
-			$comment->injectAtomEntryData($entry,$app_root);
+			$comment_entry = $feed->addEntry('comment');
+			$comment->injectAtomEntryData($comment_entry,$app_root);
 		}
 		//todo: this may be TOO expensive
 		foreach ($this->getRelatedItems() as $related) {
@@ -1047,6 +1050,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$root = $e->item(0);
 		$root = $this->dom->importNode($root,true);
 		$entry = new Dase_Atom_Entry_Item($this->dom,$root);
+		//for single item view, add collection name as cat label
+		$collection = $this->getCollection();
+		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
+		$coll_cat->setAttribute('label',$collection->collection_name);
 		return $entry->asXml();
 	}
 

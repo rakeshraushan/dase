@@ -103,6 +103,6 @@ class Dase_DBO_ItemTypeRelation extends Dase_DBO_Autogen_ItemTypeRelation
 			$item_rel->saveParentAtom();
 			$item_rel->saveChildAtom();
 		}
-		Dase_Log::get()->debug('updated atom caches for '.$i.' items');
+		$this->log->debug('updated atom caches for '.$i.' items');
 	}
 }

@@ -55,7 +55,7 @@ class Dase_Acl
 		}
 	}
 
-	public static function getCollectionData($db)
+	public static function getCollectionData($db,$path_to_media)
 	{
 		$cdata = array();
 		$cache = Dase_Cache::get('collection_data');
@@ -66,7 +66,7 @@ class Dase_Acl
 			$colls = new Dase_DBO_Collection($db);
 			foreach ($colls->find() as $c) {
 				$cdata[$c->ascii_id]['visibility'] = $c->visibility;
-				$cdata[$c->ascii_id]['path_to_media_files'] = Dase_Config::get('path_to_media').'/'.$c->ascii_id;
+				$cdata[$c->ascii_id]['path_to_media_files'] = $path_to_media.'/'.$c->ascii_id;
 			}
 			$cache->setData($cdata);
 			return $cdata;
@@ -85,9 +85,9 @@ class Dase_Acl
 		return $data;
 	}
 
-	public static function check($db,$coll,$size,$eid=null)
+	public static function check($db,$coll,$size,$eid=null,$path_to_media)
 	{
-		$cdata = Dase_Acl::getCollectionData($db);
+		$cdata = Dase_Acl::getCollectionData($db,$path_to_media);
 		$gate = self::$sizes[$size];
 		if (!$gate) {
 			return $cdata[$coll]['path_to_media_files'];

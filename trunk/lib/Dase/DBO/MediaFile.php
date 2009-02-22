@@ -20,11 +20,11 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return $coll;
 	}
 
-	public function getLocalPath()
+	public function getLocalPath($path_to_media)
 	{
 		$c = $this->getCollection();
 		$subdir = Dase_Util::getSubdir($this->p_serial_number,$this->size);
-		$path = Dase_Config::get('path_to_media').'/'.
+		$path = $path_to_media.'/'.
 			$c->ascii_id.'/'.
 			$this->size.'/'.
 			$subdir.'/'.
@@ -32,41 +32,11 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		if (file_exists($path)) {
 			return $path;
 		} else {
-			$path = Dase_Config::get('path_to_media').'/'.
+			$path = $path_to_media.'/'.
 				$c->ascii_id.'/'.
 				$this->size.'/'.
 				$this->filename;
 			return $path;
-		}
-	}
-
-	public function resize($geometry)
-	{
-		$file = $this->getLocalPath();
-		if (file_exists($file)) {
-			$results = exec("/usr/bin/convert \"$file\" -format jpeg -resize '$geometry >' -colorspace RGB $file");
-			$file_info = getimagesize($file);
-			$this->width = $file_info[0];
-			$this->height = $file_info[1];
-			$this->update();
-		}
-	}
-
-	function getMd5() {
-		$file = $this->getLocalPath();
-		if (file_exists($file)) {
-			return md5_file($file);
-		} else {
-			return false;
-		}
-	}
-
-	function getFileSize() {
-		$file = $this->getLocalPath();
-		if (file_exists($file)) {
-			return filesize($file);
-		} else {
-			return false;
 		}
 	}
 

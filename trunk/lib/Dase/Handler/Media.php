@@ -24,13 +24,13 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 
 		/*
-		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size)) {
+		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,null,$this->path_to_media)) {
 			if (!$path) {
 				$this->user = $r->getUser();
 				if (!$this->user) {
 					$r->renderError(401,'cannot access media');
 				}
-				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid)) {
+				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid,$this->path_to_media)) {
 					$r->renderError(401,'cannot access media');
 				}
 			}
@@ -139,7 +139,7 @@ class Dase_Handler_Media extends Dase_Handler
 		$m = $item->getEnclosure();
 		if ($m) {
 			$format = Dase_File::$types_map[$m->mime_type]['ext'];
-			$r->serveFile($m->getLocalPath(),$m->mime_type);
+			$r->serveFile($m->getLocalPath($this->path_to_media),$m->mime_type);
 		} else {
 			$r->renderError(404);
 		}
@@ -154,7 +154,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		$m = $item->getEnclosure();
 		if ($m) {
-			$r->renderResponse($m->asAtom($app_root));
+			$r->renderResponse($m->asAtom($r->app_root));
 		} else {
 			$r->renderError(404);
 		}
@@ -243,7 +243,7 @@ class Dase_Handler_Media extends Dase_Handler
 		} else {
 			$limit = 20;
 		}
-		$r->renderResponse($c->asAtom($app_root,$limit));
+		$r->renderResponse($c->asAtom($r->app_root,$limit));
 	}
 
 	public function postToCollection($r)

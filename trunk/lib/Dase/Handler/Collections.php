@@ -6,7 +6,6 @@ class Dase_Handler_Collections extends Dase_Handler
 	//and create parameters based on templates
 	public $resource_map = array(
 		'/' => 'collections',
-		'data' => 'data',
 		'acl' => 'acl',
 		"pk/{id}/{ddd}" => 'test',
 	);
@@ -58,11 +57,6 @@ class Dase_Handler_Collections extends Dase_Handler
 	public function getCollectionsJson($r) 
 	{
 		$r->renderResponse(Dase_DBO_Collection::listAsJson($this->db));
-	}
-
-	public function getDataJson($r) 
-	{
-		$r->renderResponse(Dase_DBO_Collection::dataAsJson($this->db));
 	}
 
 	public function getAclJson($r) 

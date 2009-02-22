@@ -56,7 +56,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
 			$r->logger()->info('created collection '.$c->collection_name);
-			$media_dir =  Dase_Config::get('path_to_media').'/'.$ascii_id;
+			$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$ascii_id;
 			if (file_exists($media_dir)) {
 				//$r->renderError(409,'collection media archive exists');
 				$r->logger()->info('collection media archive exists');

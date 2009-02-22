@@ -476,17 +476,20 @@ class Dase_Handler_Manage extends Dase_Handler
 		//todo: check ppd?
 		$input_name = '';
 		//form can use any 'name' it wishes
-		foreach ($_FILES as $k => $v) {
+		foreach ($r->_files as $k => $v) {
 			$input_name = $k;
 			break; //just get the first one
 		}
-		if ($input_name && is_file($_FILES[$input_name]['tmp_name'])) {
-			$name = $_FILES[$input_name]['name'];
-			$path = $_FILES[$input_name]['tmp_name'];
-			$type = $_FILES[$input_name]['type'];
+		if ($input_name && is_file($r->_files[$input_name]['tmp_name'])) {
+			$name = $r->_files[$input_name]['name'];
+			$path = $r->_files[$input_name]['tmp_name'];
+			$type = $r->_files[$input_name]['type'];
 			if (!Dase_Media::isAcceptable($type)) {
-				$r->renderError(415,'unsupported media type: '.$type);
 				$r->logger()->debug($type.' is not a supported media type');
+				$r->renderError(415,'unsupported media type: '.$type);
+			}
+			if (!is_uploaded_file($path)) {
+				$r->renderError(400,'no go upload');
 			}
 			$r->logger()->info('uploading file '.$name.' type: '.$type);
 
