@@ -520,9 +520,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		} 
 		//messy
-		$item->expireCaches(
-			$r->config->get('cache'),$r->config->get('base_dir').'/'.$r->config->get('cache_dir')
-		);
+		$item->expireCaches($r->retrieve('cache'));
 		$item->buildSearchIndex();
 		return $item;
 	}

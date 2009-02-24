@@ -50,6 +50,7 @@ class TestOfCache extends UnitTestCase {
 		$cache = Dase_Cache::get('file',$cache_dir);
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
+		$this->dump(date(DATE_ATOM));
 		$this->dump('pausing for 2 seconds...');
 		sleep(2);
 		$this->assertFalse('hello world' == $cache->getData('my_cache_file',1));
