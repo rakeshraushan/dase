@@ -82,6 +82,13 @@ class Dase_Http_Request
 		}
 	}
 
+	public function setAuth($auth_config)
+	{
+		$this->token = $auth_config['token'];
+		$this->ppd_token = $auth_config['ppd_token'];
+		$this->superusers = $auth_config['superuser'];
+	}
+
 	public function getBody()
 	{
 		return file_get_contents("php://input");
@@ -453,8 +460,7 @@ class Dase_Http_Request
 		$eid = strtolower($eid);
 
 		if ($eid) {
-			$user = new Dase_DBO_DaseUser($this->retrieve('db'));
-			$this->user = $user->retrieveByEid($eid);
+			$this->user = $this->retrieve('user')->retrieveByEid($eid);
 			return $this->user;
 		} else {
 			if (!$force_login) { return; }

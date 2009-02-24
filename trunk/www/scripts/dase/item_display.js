@@ -186,7 +186,7 @@ Dase.initItemStatusForm = function(form) {
 				}
 			}
 			Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-				Dase.pageReload();
+				Dase.pageReload(resp);
 			},Dase.user.eid,Dase.user.htpasswd);
 		},Dase.user.eid,Dase.user.htpasswd);
 		return false;

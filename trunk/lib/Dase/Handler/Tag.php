@@ -245,7 +245,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//OR an atom entry that lists tag_items a la OAI-ORE
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
@@ -264,7 +264,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	{
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
@@ -282,7 +282,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//move some of this into model
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401,'user does not have write privileges');
 		}
@@ -322,7 +322,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			if ('set' != $set_entry->entrytype) {
 				$r->renderError(400,'must be a set entry');
 			}
-			$set = $set_entry->update($r);
+			$set = $set_entry->update($this->db,$r);
 			if ($set) {
 				$r->renderOk('set updated');
 			} else {

@@ -24,7 +24,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$atom_author = $this->getAuthorName();
 		//should be exception??
 		if (!$atom_author || $atom_author != $user->eid) {
-			$request->renderError(401,'users do not match');
+			$r->renderError(401,'users do not match');
 		}
 		$ascii_id = $this->getAsciiId();
 		$set = Dase_DBO_Tag::get($db,$ascii_id,$user->eid);
@@ -58,7 +58,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$atom_author = $this->getAuthorName();
 		//should be exception??
 		if (!$atom_author || $atom_author != $user->eid) {
-			$request->renderError(401,'users do not match');
+			$r->renderError(401,'users do not match');
 		}
 		$set = new Dase_DBO_Tag($db);
 		$set->ascii_id = $this->getAsciiId();

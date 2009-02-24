@@ -932,7 +932,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 
 			//adds a link to any parent item(s)
-			foreach ($this->getParentItemsArray() as $url => $set) {
+			foreach ($this->getParentItemsArray($app_root) as $url => $set) {
 				$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
 					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
 			}
@@ -1342,7 +1342,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		// attributes json (includes tallies)
 		$cache_id = "get|collection/".$this->p_collection_ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
-		$cache = new Dase_Cache($type,$cache_path);
+		$cache = Dase_Cache::get($type,$cache_path);
 		$cache->expire($cache_id);
 	
 	}

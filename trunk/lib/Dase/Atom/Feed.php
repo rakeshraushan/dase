@@ -141,7 +141,11 @@ class Dase_Atom_Feed extends Dase_Atom
 			print "an error has occurred";
 			exit;
 		}
-		$dom->loadXML($xml);
+		if (!@ $dom->loadXML($xml)) {
+			$entry = new Dase_Atom_Feed;
+			$entry->setTitle($xml);
+			return $entry;
+		}
 		return self::_init($dom);
 	}
 

@@ -41,7 +41,7 @@ Dase.demo.processGet = function(form) {
 		if (json.id) {
 			var data = {'atom':json};
 			var templateObj = TrimPath.parseDOMTemplate("atom_display_jst");
-			Dase.$('atomDisplay').innerHTML = Dase.util.trim(templateObj.process(data));
+			Dase.$('atomDisplay').innerHTML = Dase.trim(templateObj.process(data));
 		}
 	},Dase.user.eid,Dase.user.htpasswd);
 };

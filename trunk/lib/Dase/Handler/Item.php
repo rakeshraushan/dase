@@ -346,7 +346,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
-			$this->item->expireCaches($r->config['cache'],$r->config['base_dir'].'/'.$r->config['cache_dir']);
+			$this->item->expireCaches($r->retrieve('config')->getCacheType(),$r->retrieve('config')->getCacheDir());
 			$this->item->saveAtom();
 			if (!$type) {
 				$type = 'default/none';
@@ -448,6 +448,8 @@ class Dase_Handler_Item extends Dase_Handler
 			$item = $item_entry->update($this->db,$r);
 			if ($item) {
 				$r->renderOk('item has been updated');
+			} else {
+				$r->renderError(500,'item not updated');
 			}
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);

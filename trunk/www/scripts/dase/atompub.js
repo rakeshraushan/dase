@@ -88,7 +88,7 @@ Dase.atompub.putJson = function(url,json_obj,my_func,user,pass) {
 	//alert(JSON.stringify(json_obj));
 	var data = {'atom':json_obj};
 	var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-	var atom = Dase.util.trim(templateObj.process(data));
+	var atom = Dase.trim(templateObj.process(data));
 	//alert(atom);
 	var headers = {
 		'Content-Type':'application/atom+xml;type=entry'
@@ -118,6 +118,46 @@ Dase.atom.jsonEntry = function(title,entrytype,categories) {
 	return atom;
 };
 
+Dase.atompub.json2atom = function(json) {
+	var atom = new Dase.htmlbuilder('entry',{'xmlns':"http://www.w3.org/2005/Atom"});
+	var id = atom.add('id',null,json.id);
+	var title = atom.add('title',null,json.title);
+	var updated = atom.add('updated',null,json.updated);
+	var author = atom.add('author');
+	author.add('name',null,json.author_name);
+	atom.add('category',{'term':json.entrytype,'scheme':"http://daseproject.org/category/entrytype"});
+	if (json.summary) {
+		var summary = atom.add('summary',null,json.summary);
+	}
+	if (json.rights) {
+		var rights = atom.add('rights',null,json.rights);
+	}
+	if (json.content.text) {
+		var content = atom.add('content',{'type':json.content.type},json.content.text);
+	}
 
-Dase.addLoadEvent(function() {
-});
+	for (var i=0;i<json.category.length;i++) {
+		var c = json.category[i];
+		var cat = atom.add('category',{'term':c.term,'scheme':c.scheme})
+		if (c.scheme) {
+			cat.set('scheme',c.scheme.replace(/</g,'&lt;').replace(/&/g,'&amp;'));
+		}
+		if (c.value) {
+			cat.setText(c.value);
+		}
+	}
+	for (var i=0;i<json.link.length;i++) {
+		var ln = json.link[i];
+		var link = atom.add('link',{'rel':ln.rel,'href':ln.href})
+		if (ln.type) {
+			link.set('type',ln.type);
+		}
+		if (ln.length) {
+			link.set('length',ln.length);
+		}
+		if (ln.title) {
+			link.set('title',ln.title.replace(/</g,'&lt;').replace(/&/g,'&amp;'));
+		}
+	}
+	return atom.getString();
+}

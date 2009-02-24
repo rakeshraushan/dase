@@ -22,6 +22,7 @@ class Dase_Handler_Tags extends Dase_Handler
 		$tag = Dase_DBO_Tag::create($this->db,$tag_name,$user);
 		if ($tag) {
 			//todo: should send a 201 w/ location header
+			$user->expireDataCache($r->retrieve('cache'));
 			$r->renderResponse('Created "'.$tag_name.'"');
 		} else {
 			$r->renderError(409,'Please choose another name.');

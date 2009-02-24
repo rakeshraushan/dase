@@ -14,7 +14,7 @@ Dase.pageInit = function() {
 		data.date = Dase.atompub.getDate();
 		data.ascii_id = ascii_id; 
 		var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-		var atom = Dase.util.trim(templateObj.process(data));
+		var atom = Dase.trim(templateObj.process(data));
 		var content_headers = {
 			'Content-Type':'application/atom+xml;type=entry; charset=UTF-8;',
 			//'Content-Type':'application/json',

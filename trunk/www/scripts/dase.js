@@ -1,21 +1,8 @@
-//method params for ajax:
-//Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers,error_func) 
-
-var Dase;
-if (Dase && (typeof Dase != "object" || Dase.NAME)) {
-	throw new Error("Namespace 'Dase' already exists");
-}
-
-// Create our namespace, and specify some meta-information
-Dase = {};
-Dase.NAME = "Dase";    // The name of this namespace
+var Dase = {};
 Dase.user = {};
-Dase.util = {};
-Dase.widget = {};
+
 //note: since modules create a module-specific base href, we need to strip module/<mod_name>
 Dase.base_href = document.getElementsByTagName('base')[0].href.replace(/\/modules\/[^/]*/,'');
-
-/* utilities */
 
 /* from DOM Scripting p. 103 */
 Dase.addLoadEvent = function(func) {
@@ -32,28 +19,19 @@ Dase.addLoadEvent = function(func) {
 	}
 };
 
+/****** utiltities **************/
+
 Dase.$ = function(id) {
 	return document.getElementById(id);
 };
 
-Dase.util.trim = function(str) {
+Dase.trim = function(str) {
 	//from: http://blog.stevenlevithan.com/archives/faster-trim-javascript
 	var	str = str.replace(/^\s\s*/, ''),
 	ws = /\s/,
 	i = str.length;
 	while (ws.test(str.charAt(--i)));
 	return str.slice(0, i + 1);
-}
-
-Dase.logoff = function() {
-	if (Dase.user.eid) {
-		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
-		function(resp) { 
-			window.location.href = Dase.base_href+'login/form';
-		});
-	} else {
-		window.location.href = Dase.base_href+'login/form';
-	}
 }
 
 Dase.addClass = function(elem,cname) {
@@ -90,22 +68,6 @@ Dase.hasClass = function(elem,cname) {
 	return false;
 };
 
-Dase.getElementsByClass = function(parent,cname,tagname) {
-	var res = [];
-	var c;
-	if (tagname) {
-		c = parent.getElementsByTagName(tagname);
-	} else {
-		c = parent.getElementsByTagName('*');
-	}
-	for (var i=0;i<c.length;i++) {
-		if (Dase.hasClass(c[i],cname)) {
-			res.push(c[i]);
-		}
-	}
-	return res;
-}
-
 Dase.getLinkByRel = function(rel) {
 	//return FIRST hit
 	var links = document.getElementsByTagName('link');
@@ -127,15 +89,6 @@ Dase.getMeta = function(name) {
 		}
 	}
 	return;
-};
-
-Dase.displayError = function(msg) {
-	var jsalert = Dase.$('msg');
-	if (!jsalert) return false;
-	Dase.removeClass(jsalert,'hide');
-	jsalert.innerHTML = '';
-	jsalert.innerHTML = msg;
-	return true;
 };
 
 Dase.toggle = function(el) {
@@ -195,14 +148,6 @@ Dase.highlight = function(target,time,cname) {
 	},time);
 }
 
-Dase.removeFromArray = function(ar,val) {
-	for (var i=0;i<ar.length;i++) {
-		if (val == ar[i]) {
-			ar.splice(i,1);
-		}
-	}
-}
-
 Dase.pageReload = function(msg) {
 	var curr = window.location.href;
 	if (msg) {
@@ -223,7 +168,18 @@ Dase.truncate = function(str,len) {
 	return small.toString();
 };
 
-/* end utilities */
+/*** end utils ****/
+
+Dase.logoff = function() {
+	if (Dase.user.eid) {
+		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
+		function(resp) { 
+			window.location.href = Dase.base_href+'login/form';
+		});
+	} else {
+		window.location.href = Dase.base_href+'login/form';
+	}
+}
 
 Dase.getEid = function() {
 	var base = Dase.base_href;
@@ -468,7 +424,6 @@ Dase.initMenu = function(id) {
 				if (listItemLink) {
 					listItemLink.onclick = function() {
 						if (!Dase.user.eid) {
-							//Dase.displayError('You need to be logged in'); 
 							Dase.logoff();
 							return false;
 						} 
@@ -629,32 +584,6 @@ Dase.createXMLHttpRequest = function() {
 	return xmlhttp;
 };
 
-Dase.getHtml = function(url,elem_id,my_func) {
-	var target = Dase.$(elem_id);
-	if (target) {
-		target.innerHTML = '<div class="loading">Loading...</div>';
-	}
-
-	// this is to deal with IE6 cache behavior
-	var date = new Date();
-	url = url + '?' + date.getTime();
-
-	var xmlhttp = Dase.createXMLHttpRequest();
-	xmlhttp.open('GET', url, true);
-	xmlhttp.send(null);
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var returnStr = xmlhttp.responseText;
-			if (Dase.$(elem_id)) {
-				Dase.$(elem_id).innerHTML = returnStr;
-			}
-			if (my_func) { 
-				my_func(); 
-			}
-		}
-	};
-};
-
 Dase.ajax = function(url,method,my_func,msgBody,username,password,content_headers,error_func) {
 	if (!method) {
 		method = 'POST';
@@ -694,30 +623,6 @@ Dase.ajax = function(url,method,my_func,msgBody,username,password,content_header
 				}
 			} 
 		}
-	};
-};
-
-Dase.getElementHtml = function(url,target,my_func) {
-	//this assumes a DOM node being passed in (NOT elem id)
-	if (target) {
-		target.innerHTML = '<div class="loading">Loading...</div>';
-	}
-
-	// this is to deal with IE6 cache behavior
-	var date = new Date();
-	url = url + '?' + date.getTime();
-
-	var xmlhttp = Dase.createXMLHttpRequest();
-	xmlhttp.open('GET', url, true);
-	xmlhttp.send(null);
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var returnStr = xmlhttp.responseText;
-			target.innerHTML = returnStr;
-			if (my_func) {
-				my_func();
-			}
-		} 
 	};
 };
 
@@ -795,7 +700,6 @@ Dase.initAddToCart = function() {
 			anchors[i].onclick = function(e) {
 				this.innerHTML = '(remove)';
 				Dase.removeClass(this.parentNode.getElementsByTagName('span')[0],'hide');
-	//			var inputElem = this.parentNode.parentNode.getElementsByTagName('input')[0];
 				var item = {};
 				item.item_unique = this.href;
 				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
@@ -969,18 +873,6 @@ Dase.initRemoveItems = function() {
 		return false;
 	};
 };
-
-//from http://www.quirksmode.org/js/findpos.html
-Dase.scrollTo = function (obj) {
-	var curleft = curtop = 0;
-	if (obj.offsetParent) {
-		do {
-			curleft += obj.offsetLeft;
-			curtop += obj.offsetTop;
-		} while (obj = obj.offsetParent);
-		window.scroll(curleft,curtop);
-	}
-}
 
 Dase.getFeedUrl = function() {
 	var links = document.getElementsByTagName('link');

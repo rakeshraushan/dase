@@ -18,7 +18,7 @@ class TestOfDatabase extends UnitTestCase {
 			'pass' => 'dase_dev_user88',
 			'table_prefix' => '',
 		);
-		$log = new Dase_Log(dirname(__FILE__).'/temp/','dase.log',Dase_Log::DEBUG);
+		$log = new Dase_Log(dirname(__FILE__).'/files/log','dase.log',Dase_Log::DEBUG);
 		$db = new Dase_DB($db_settings,$log);
 		$this->assertTrue($dbh = $db->getDbh());
 	}
@@ -31,7 +31,7 @@ class TestOfDatabase extends UnitTestCase {
 			'pass' => 'dase_dev_user88',
 			'table_prefix' => '',
 		);
-		$log = new Dase_Log(dirname(__FILE__).'/temp/','dase.log',Dase_Log::DEBUG);
+		$log = new Dase_Log(dirname(__FILE__).'/files/log','dase.log',Dase_Log::DEBUG);
 		$db = new Dase_DB($db_settings,$log);
 		$c = Dase_DBO_Collection::get($db,'test');
 		$this->assertTrue('Test Collection' == $c->collection_name);

@@ -1,5 +1,5 @@
 {extends file="layout.tpl"}
-{block name="title"}DASe: Collections List{/block} 
+{block name="title"}DASe Login{/block} 
 
 {block name="content"}
 <div class="list" id="browse">

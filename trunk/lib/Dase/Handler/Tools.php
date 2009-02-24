@@ -6,6 +6,7 @@ class Dase_Handler_Tools extends Dase_Handler
 		'/' => 'demo',
 		'demo' => 'demo',
 		'cd' => 'cache_deleter',
+		'htmlbuilder' => 'htmlbuilder',
 	);
 
 	protected function setup($r)
@@ -22,6 +23,8 @@ class Dase_Handler_Tools extends Dase_Handler
 			$t->assign('url',$r->get('url'));
 			$t->assign('entry',$entry);
 			$t->assign('atom_doc',$entry->asXml());
+		} else {
+			$t->assign('url',$r->app_root."/item/test/000524619.atom");
 		}	
 		$r->renderResponse($t->fetch('tools/demo.tpl'));
 	}
@@ -31,5 +34,11 @@ class Dase_Handler_Tools extends Dase_Handler
 	{
 		$num = $r->retrieve('cache')->expunge();
 		$r->renderResponse('cache deleted '.$num.' files removed');
+	}
+
+	public function getHtmlbuilder($r)
+	{
+		$t = new Dase_Template($r);
+		$r->renderResponse($t->fetch('tools/htmlbuilder.tpl'));
 	}
 }
