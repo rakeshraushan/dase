@@ -3,9 +3,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>
-			{block name="title"}DASe: Digital Archive Services{/block}
-		</title>
+		<title>{block name="title"}DASe: Digital Archive Services{/block}</title>
 		<style type="text/css">
 			{block name="style"}{/block}
 		</style>
@@ -146,20 +144,20 @@
 
 		<div class="spacer"></div>
 
-			<div id="footer">
-				<a href="manage" class="hide" id="manageLink"></a> |
-				<a href="apps/help" id="helpModule">FAQ</a> | 
-				<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-				<a href="copyright">Copyright/Usage Statement</a> | 
-				<a href="resources">Resources</a> | 
-				<a href="admin" class="hide" id="adminLink"></a> |
-				{$request->elapsed} seconds |
-				<img src="www/images/dasepowered.png" alt="DASePowered icon">
-			</div><!--closes footer-->
-			<div id="debugData" class="pagedata"></div>
-			<div id="jsTemplates" class="pagedata"></div>
+		<div id="footer">
+			<a href="manage" class="hide" id="manageLink"></a> |
+			<a href="apps/help" id="helpModule">FAQ</a> | 
+			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
+			<a href="copyright">Copyright/Usage Statement</a> | 
+			<a href="resources">Resources</a> | 
+			<a href="admin" class="hide" id="adminLink"></a> |
+			{$request->elapsed} seconds |
+			<img src="www/images/dasepowered.png" alt="DASePowered icon">
+		</div><!--closes footer-->
+		<div id="debugData" class="pagedata"></div>
+		<div id="jsTemplates" class="pagedata"></div>
 
-			{include file='resources/atom_template.tpl'}
+		{include file='resources/atom_template.tpl'}
 
-		</body>
-	</html>
+	</body>
+</html>

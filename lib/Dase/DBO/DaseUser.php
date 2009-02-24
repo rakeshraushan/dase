@@ -261,10 +261,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return Dase_Json::get($this->getCartArray());
 	}
 
-	function expireDataCache()
+	function expireDataCache($cache)
 	{
-		$cache = Dase_Cache::get($this->eid."_data");
-		$cache->expire();
+		$cache->expire($this->eid."_data");
 	}
 
 	public function isSuperuser()

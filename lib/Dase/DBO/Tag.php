@@ -87,7 +87,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if ($tag->findOne()) {
 			return false;
 		} else {
-			$user->expireDataCache();
 			$tag->name = $tag_name;
 			$tag->type = 'set';
 			$tag->background = 'white';
@@ -104,7 +103,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		if (!$ascii_id || !$eid) {
 			return false;
 		}
-		$user = Dase_DBO_DaseUser::get($db,$eid);
+		$user = new Dase_DBO_DaseUser($db);
+		$user->retrieveByEid($eid);
 		$tag = new Dase_DBO_Tag($db);
 		$tag->ascii_id = $ascii_id;
 		$tag->dase_user_id = $user->id;
@@ -427,7 +427,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	public function deleteCategories()
 	{
 		foreach (Dase_DBO_Category::getAll($this->db,$this) as $cat) {
-			Dase_DBO_Category::remove($this,$cat->scheme_id);
+			Dase_DBO_Category::remove($this->db,$this,$cat->scheme_id);
 		}
 	}
 

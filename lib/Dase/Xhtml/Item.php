@@ -3,6 +3,7 @@
 class Dase_Xhtml_Item extends Dase_Xhtml
 {
 	private $_metadata;
+	private $_media;
 
 	function __construct(DOMDocument $dom,$serial_number,$is_sub=false)
 	{
@@ -20,8 +21,7 @@ class Dase_Xhtml_Item extends Dase_Xhtml
 	public function setItemType($ascii_id,$name)
 	{
 		$h3 = $this->addChildElement($this->root,'h3',$name);
-		$h3->setAttribute('class','item_type');
-		$h3->setAttribute('id',$ascii_id);
+		$h3->setAttribute('class',$ascii_id);
 	}
 
 	public function addMetadata($att_ascii_id,$att_name,$value_text)
@@ -41,5 +41,15 @@ class Dase_Xhtml_Item extends Dase_Xhtml
 		//items will be appended in asXml method
 		$this->root->appendChild($subitem->root);
 		return $subitem;
+	}
+
+	public function addMediaFile($mime_type,$filename)
+	{
+		if (!$this->_media) {
+			$this->_media = $this->addChildElement($this->root,'ul');
+			$this->_media->setAttribute('class','media');
+		}
+		$li = $this->addChildElement($this->_media,'li',$filename);
+		$li->setAttribute('class',$mime_type); 
 	}
 }

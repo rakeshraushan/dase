@@ -57,7 +57,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 			";
 		foreach (Dase_DBO::query($db,$sql,$params) as $row) {
 			$e2cat_class = "Dase_DBO_".$eclass."Category";
-			$e2cat = new $e2cat_class;
+			$e2cat = new $e2cat_class($db);
 			$e2cat->load($row['id']);
 			$e2cat->delete();
 		}

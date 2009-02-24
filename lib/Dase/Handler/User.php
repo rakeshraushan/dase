@@ -190,7 +190,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToCart($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
@@ -225,7 +225,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToCartEmptier($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
@@ -244,7 +244,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function deleteTagItem($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		$tag = new Dase_DBO_Tag($this->db);
@@ -305,7 +305,7 @@ class Dase_Handler_User extends Dase_Handler
 			$u->has_access_exception = 0;
 		}
 		$u->update();
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		$r->renderResponse('ok');
 	}
 
@@ -344,7 +344,7 @@ class Dase_Handler_User extends Dase_Handler
 			$u->has_access_exception = 0;
 		}
 		$u->update();
-		$u->expireDataCache();
+		$u->expireDataCache($r->retrieve('cache'));
 		$r->renderRedirect("user/$u->eid/settings");
 	}
 
@@ -358,7 +358,7 @@ class Dase_Handler_User extends Dase_Handler
 				$u->has_access_exception = 0;
 			}
 			$u->update();
-			$u->expireDataCache();
+			$u->expireDataCache($r->retrieve('cache'));
 		}
 		$r->renderRedirect("user/$u->eid/settings");
 	}

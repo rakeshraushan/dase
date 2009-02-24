@@ -1,6 +1,7 @@
 {extends file="layout.tpl"}
 
 {block name="head"}
+<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
 <script type="text/javascript" src="www/scripts/dase/collection_browse.js"></script>
 {/block}
 
@@ -36,25 +37,6 @@
 			<a href="collection/{$collection->asciiId}/admin_attributes">Admin Attributes</a>
 		</div>
 		<div id="attColumn"><!-- insert template output--></div>
-
-		<!-- javascript template -->
-		<textarea class="javascript_template" id="atts_jst">
-			{literal}
-			<a href="#" id="attSorter">toggle sort</a>
-			<h4>Select Attribute:</h4>
-			<ul id="attList">
-				{for att in atts}
-				<li>
-				<a href="attribute/${att.collection}/${att.ascii_id}/values.json"
-					id="${att.ascii_id}" class="att_link ${att.sort_order}"
-					><span class="att_name">${att.attribute_name}</span> <span class="tally" id="tally-${att.ascii_id}"></span></a>
-				</li>
-				{/for}
-			</ul>
-			{/literal}
-		</textarea>
-		<!-- end javascript template -->
-
 		<div id="valColumn" class="hide"><!--insert template output--></div>
 
 		<!-- javascript template -->
