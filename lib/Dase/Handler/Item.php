@@ -346,7 +346,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
-			$this->item->expireCaches($r->retrieve('config')->getCacheType(),$r->retrieve('config')->getCacheDir());
+			$this->item->expireCaches($r->retrieve('cache'));
 			$this->item->saveAtom();
 			if (!$type) {
 				$type = 'default/none';
@@ -557,7 +557,7 @@ class Dase_Handler_Item extends Dase_Handler
 			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
-		$item->expireCaches($r->config['cache'],$r->config['base_dir'].'/'.$r->config['cache_dir']);
+		$item->expireCaches($r->retrieve('cache'));
 		$item->buildSearchIndex();
 		//delete uploaded file
 		unlink($new_file);

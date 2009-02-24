@@ -1338,11 +1338,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	}
 
 	/** expires any cache that might hold stale metadata */
-	public function expireCaches($type,$cache_path)
+	public function expireCaches($cache)
 	{
+		//more will (perhaps) go here
+		//
 		// attributes json (includes tallies)
 		$cache_id = "get|collection/".$this->p_collection_ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
-		$cache = Dase_Cache::get($type,$cache_path);
 		$cache->expire($cache_id);
 	
 	}

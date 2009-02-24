@@ -348,6 +348,7 @@ Dase.placeUserCollections = function(eid) {
 	for (var i in Dase.user.collections) {
 		var c = Dase.user.collections[i];
 		if ("1" != c.is_public) {
+			//todo: replace w/ htmlbuilder
 			hasSpecial++;
 			var li = document.createElement('li');
 			li.setAttribute('id',c.ascii_id);
@@ -535,20 +536,39 @@ Dase.loadingMsg = function(displayBool) {
 }
 
 Dase.placeUserTags = function(user) {
-	if (!Dase.$('sets_jst')) return;
-	var templateObj = TrimPath.parseDOMTemplate("sets_jst");
-	Dase.$('sets-submenu').innerHTML = templateObj.process(user);
+	if (!Dase.$('sets-submenu')) return;
+	// user sets menu 
+	var h = new Dase.htmlbuilder;
+	for (var n in user.tags) {
+		var tag = user.tags[n];
+		if ('set' == tag.type || 'slideshow' == tag.type) {
+			var li = h.add('li');
+			var a = li.add('a');
+			a.set('href','tag/'+user.eid+'/'+tag.ascii_id);
+			a.setText(tag.name+' ('+tag.count+')');
+		}
+	}
+	h.attach(Dase.$('sets-submenu'));
 
-	var templateObj = TrimPath.parseDOMTemplate("saveto_jst");
-	var target = Dase.$('saveChecked');
+	//save to select menu
+	var h = new Dase.htmlbuilder;
+	var sel = h.add('select',{'id':'saveToSelect','name':'collection_ascii_id'});
+	sel.add('option',{'value':''},'save checked items to...');
+	for (var n in user.tags) {
+		var tag = user.tags[n];
+		if ('admin' != tag.type) {
+			var opt = sel.add('option',{'value':tag.ascii_id});
+			opt.setText(tag.name+' ('+tag.count+')');
+		}
+	}
+	var inp = h.add('input',{'type':'submit','value':'add'});
 	var item_set = Dase.$('itemSet');
 	if (item_set) {
 		var items = item_set.getElementsByTagName('td');
 	}
-	if (target && item_set && items.length) {
-		target.innerHTML = templateObj.process(user);
+	if (Dase.$('saveChecked') && item_set && items.length) {
+		h.attach(Dase.$('saveChecked'));
 	}
-
 	Dase.initCreateNewSet();
 }
 

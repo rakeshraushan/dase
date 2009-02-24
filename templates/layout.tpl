@@ -32,6 +32,7 @@
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
 		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		{block name="head"}{/block}
 
@@ -84,8 +85,9 @@
 				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
 				<ul class="hide" id="sets-submenu">
-					<li></li>
-					<!-- insert javascript template output -->
+					<li>
+					<a href='new' id='createNewSet' class='edit'>create new set</a>
+					</li>
 				</ul>
 				</li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
@@ -103,34 +105,6 @@
 				<li><a href="" class="main">My Sets</a></li>
 				<li><a href="" class="main">My Preferences</a></li>
 			</ul>
-
-			<textarea class="javascript_template" id="sets_jst">
-				<li><a href='new' id='createNewSet' class='edit'>create new set</a></li>
-				{literal}
-				{for tag in tags}
-				{if 'set' == tag.type || 'slideshow' == tag.type}
-				<li>
-				<a href='tag/${eid}/${tag.ascii_id}'>${tag.name} (${tag.count})</a>
-				</li>
-				{/if}
-				{/for}
-				{/literal}
-			</textarea>
-
-			<textarea class="javascript_template" id="saveto_jst">
-				<select id='saveToSelect' name='collection_ascii_id'>
-					<option value=''>save checked items to...</option>
-					{literal}
-					{for tag in tags}
-					{if 'admin' != tag.type}
-					<option value='${tag.ascii_id}'>${tag.name} (${tag.count})</option>
-					{/if}
-					{/for}
-					{/literal}
-				</select>
-				<input type='submit' value='add'>
-			</textarea>
-
 
 			<h5 id="ajaxMsg" class="hide">loading...</h5>
 

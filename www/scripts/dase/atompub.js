@@ -83,13 +83,8 @@ Dase.atompub.getAtom = function(url,my_func,username,password) {
 	};
 };
 
-
 Dase.atompub.putJson = function(url,json_obj,my_func,user,pass) {
-	//alert(JSON.stringify(json_obj));
-	var data = {'atom':json_obj};
-	var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-	var atom = Dase.trim(templateObj.process(data));
-	//alert(atom);
+	var atom = Dase.atompub.json2atom(json_obj);
 	var headers = {
 		'Content-Type':'application/atom+xml;type=entry'
 	}

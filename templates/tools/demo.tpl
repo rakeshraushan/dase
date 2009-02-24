@@ -1,6 +1,7 @@
 {extends file="tools/layout.tpl"}
 
 {block name="head"}
+<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
 <script type="text/javascript" src="www/scripts/dase/demo.js"></script>
 {/block}
 
