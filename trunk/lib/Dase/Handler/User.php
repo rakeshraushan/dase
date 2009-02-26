@@ -101,10 +101,10 @@ class Dase_Handler_User extends Dase_Handler
 					$r->renderError(400,'must be a set entry');
 				}
 				try {
-					$set = $set_entry->insert($db,$r);
+					$set = $set_entry->insert($this->db,$r);
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-					header("Location: ".$set->getBaseUrl().'.atom?type=entry');
+					header("Location: ".$set->getUrl($r->app_root).'.atom?type=entry');
 					echo $set->asAtomEntry($r->app_root);
 					exit;
 				} catch (Dase_Exception $e) {
@@ -257,11 +257,6 @@ class Dase_Handler_User extends Dase_Handler
 		} else {
 			$r->renderError(401,'user does not own tag');
 		}
-	}
-
-	public function adminCollectionsAsJson($r)
-	{
-		$r->renderResponse(Dase_User::get($r)->getCollections(),$r);
 	}
 
 	public function getCart($r)

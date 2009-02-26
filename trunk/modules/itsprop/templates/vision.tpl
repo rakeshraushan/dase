@@ -12,7 +12,13 @@
 <div id="vision_page" class="main">
 	<h1>Proposals for {$dept->dept_name.text}</h1>
 	<h4>Chairperson: {$dept->dept_chair.text}</h4>
-
+	<br>
+<p><strong>NOTE:</strong> Vision Statements are due by noon on April 2, 2009. There
+  will be no submission for your vision statement and rankings.
+  Instead, your work will be saved automatically as you complete
+  it, and we will use the latest version posted for our review
+  process. Please print out a copy of your vision statement using the
+  <a href="department/{$dept->dept_id.text}/vision/preview" target="_blank">preview/print vision statement</a> link.</p>
 	<h2>Vision Statement</h2>
 	<div class="vision_instruction">
 		<p>
@@ -27,20 +33,26 @@
 
 		<h4>The Vision Statement must include:</h4>
 
-		<p>
-		1) A short statement of the department's instructional
-		technology plan with an explanation of how it addresses
-		pedagogical goals.
-		</p>
+  <p>1) A short statement of the department's instructional
+  technology plan with an explanation of how it addresses
+  pedagogical goals.</p>
+  <p> 2) A brief explanation of how each proposed
+  project fits (or does not fit) departmental goals and plans.</p>
+ <p> 3) A written statement addressing the priority ordering of all
+  proposals from the department.</p>
 
-		<p><strong>-AND-</strong></p>
-
-		<p>
-		2) A brief explanation of how each proposed project fits
-		(or does not fit) departmental goals and plans.
-		</p>
 	</div>
+		
+	{if !$dept->content}
+	<form method="post" action="{$dept->editContentLink}" class="show" id="vision_form">
+		{assign var=rows value=$dept->content|count_words}
+		<textarea rows="{$rows/11}" id="vision_text" name="vision">{$dept->content}</textarea>
+		<p>
+		<input type="submit" value="update">
+		</p>
+	</form>
 
+	{else}
 	<div id="vision_statement">{$dept->content|nl2br}</div>
 	<form method="post" action="{$dept->editContentLink}" class="hide" id="vision_form">
 		{assign var=rows value=$dept->content|count_words}
@@ -49,14 +61,19 @@
 		<input type="submit" value="update">
 		</p>
 	</form>
-	<p><a href="ss" id="toggle_vision">add/edit vision statement</a></p>
+	{/if}
+	<p><a href="ss" id="toggle_vision">add/edit vision statement</a> | <a href="department/{$dept->dept_id.text}/vision/preview" target="_blank">preview/print vision statement</a></p>
 
 	<h2>Proposals</h2>
 
 	<div class="vision_instruction">
-		Please rank the proposals numerically in the space below.  You can enter
-		each proposal's rank number and click "update sort order" - OR -  move a
-		single item to the top with 'top' arrow.
+		Please rank the proposals numerically in the space below
+		(top being highest, bottom being lowest). Simply click
+		and drag each proposal to your desired rank ordering
+		and click “update sort order.” The numerical order
+		will then automatically update. You may view the text
+		of each proposal by clicking “preview” near the
+		proposal’s title.
 	</div>
 	<div id="propsList">
 		<h2 id="loadingProps"><img src="{$app_root}www/images/indicator.gif"> loading proposals...</h2>

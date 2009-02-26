@@ -50,7 +50,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml(); //so we don't get xml declaration
 			$atom->update();
 		} else {
 			$c = $this->getCollection();
@@ -59,7 +59,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml(); //so we don't get xml declaration
 			$atom->update();
 			$atom->insert();
 		}

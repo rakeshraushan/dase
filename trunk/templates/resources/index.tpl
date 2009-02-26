@@ -2,7 +2,6 @@
 
 {block name="title"}DASe Resources{/block} 
 
-
 {block name="content"}
 <div class="full" id="resources">
 	<h1>DASe Resources</h1>

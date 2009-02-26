@@ -84,9 +84,7 @@ Dase.initCreateAttribute = function() {
 			}];
 			//this can all be cleaned up/compressed
 			var jsa = Dase.atom.jsonEntry(att_name,'attribute',cats);
-			var data = {'atom':jsa};
-			var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-			atom_xml = Dase.trim(templateObj.process(data));
+			atom_xml = Dase.atompub.json2atom(jsa);
 			post_url = Dase.base_href+'collection/'+this.options[this.selectedIndex].className+'/attributes';
 			headers = {
 				'Content-Type':'application/atom+xml;type=entry',

@@ -10,16 +10,20 @@
 <div id="updateMsg" class="hide">proposal updated</div>
 {assign var=metadata value="$proposal->metadata}
 <div class="main">
+	<div class="hide" id="unsaved">You have unsaved changes.</div>
 	<div id="proposalForm"> 
 		<div class="controls">
-			<a href="{$previewLink}">preview/submit</a>
+			<a href="{$previewLink}" id="previewLink" target="_blank">preview/submit</a>
 		</div>
 		<h1>Proposal: {$proposal->title}</h1>
 		<input type="hidden" name="eid" value="{$person->serial_number}"/>
 		<p>
 		Please fill out each of the sections below completely. If
 		a section does not apply to you, simply enter
-		N/A. <strong>Important:</strong> You must click the
+		N/A.
+		</p>
+		<p>
+		<strong>Important:</strong> You must click the
 		“update” button at the end of each section to save
 		any inputted information. The text box will flash a
 		yellow color to confirm it has saved the text. When
@@ -76,6 +80,9 @@
 			<textarea id="proposal_description"rows="{$rows/11+2}"  name="proposal_description">{$proposal->proposal_description.text}</textarea>
 			<p>
 			<input class="proposal_description" action="{$proposal->proposal_description.edit}" type="submit" value="update"/>
+			<!--
+			<span id="description_word_count" class="mini">({$proposal->proposal_description.text|count_words} words)</span>
+			-->
 			</p>
 		</div>
 		</p>
@@ -200,7 +207,6 @@
 					<option>Wages: graduate</option>
 					<option>Wages: undergraduate</option>
 					<option>Wages: workstudy</option>
-					<option>Salary: FY 2009-2010</option>
 					<option>Salary: Summer 2010</option>
 				</select>
 				<label>quantity</label>

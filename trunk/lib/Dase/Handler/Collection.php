@@ -593,14 +593,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 	}
 
-	public function rebuildIndexes($r) 
-	{
-		$c = Dase_Collection::get($r->get('collection_ascii_id'));
-		$c->buildSearchIndex();
-		$params['msg'] = "rebuilt indexes for $c->collection_name";
-		$r->renderRedirect('',$params);
-	}
-
 	public function getAttributesAtom($r) 
 	{
 		$r->renderResponse($this->collection->getAttributesAtom($r->app_root)->asXml());
@@ -723,21 +715,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 1;
 		$r->renderResponse(Dase_Json::get($result));
-	}
-
-	public function itemsByTypeAsAtom($r) {
-		$item_type = new Dase_DBO_ItemType($this->db);
-		$item_type->ascii_id = $r->get('item_type_ascii_id');
-		$item_type->findOne();
-		$r->renderResponse($item_type->getItemsAsFeed($r->app_root));
-	}
-
-	public function buildIndex($r) 
-	{
-		$c = Dase_Collection::get($r->get('collection_ascii_id'));
-		$c->buildSearchIndex();
-		$params['msg'] = "rebuilt indexes for $c->collection_name";
-		$r->renderRedirect('',$params);
 	}
 
 	public function getServiceAtom($r)

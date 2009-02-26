@@ -1,9 +1,9 @@
-Dase.pageInit = function() {
+Dase.pageInitUser = function() {
 	var form = Dase.$('newCollection');
 	form.onsubmit = function() {
 		data = {};
-		data.collection_name = form.collection_name.value;
-		data.eid = Dase.user.eid;
+		data.title = form.collection_name.value;
+		data.author_name = Dase.user.eid;
 		var ascii_id = form.collection_name.value.replace(/(collection|archive)/i,'').replace(/ /gi,"_").replace(/(__|_$)/g,'').toLowerCase();
 		//make sure ascii_id has only 'word' characters
 		if (ascii_id.search(/[\W]/) >= 0) {
@@ -11,10 +11,13 @@ Dase.pageInit = function() {
 			return false;
 		}
 		data.id = Dase.base_href+'collection/'+ascii_id; 
-		data.date = Dase.atompub.getDate();
-		data.ascii_id = ascii_id; 
-		var templateObj = TrimPath.parseDOMTemplate("atom_jst");
-		var atom = Dase.trim(templateObj.process(data));
+		data.updated = Dase.atompub.getDate();
+		data.content = {};
+		data.content.text = ascii_id; 
+		data.entrytype = 'collection';
+		data.category = [];
+		data.link = [];
+		var atom = Dase.atompub.json2atom(data);
 		var content_headers = {
 			'Content-Type':'application/atom+xml;type=entry; charset=UTF-8;',
 			//'Content-Type':'application/json',

@@ -43,7 +43,8 @@ class Dase_Handler_Collections extends Dase_Handler
 			if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
 				$r->set('ascii_id',Dase_Util::dirify($_SERVER['HTTP_SLUG']));
 			}
-			$ascii_id = $coll_entry->create($r);
+			$ascii_id = $coll_entry->create($this->db,$r);
+			$user->expireDataCache($r->retrieve('cache'));
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$ascii_id.'.atom');

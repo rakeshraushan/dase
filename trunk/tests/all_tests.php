@@ -21,6 +21,7 @@ class AllTests extends TestSuite {
 		$this->addFile(dirname(__FILE__).'/config_test.php');
 		$this->addFile(dirname(__FILE__).'/compile_test.php');
 		$this->addFile(dirname(__FILE__).'/auth_test.php');
+		$this->addFile(dirname(__FILE__).'/web_page_test.php');
 	}
 }
 
