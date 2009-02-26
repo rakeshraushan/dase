@@ -148,11 +148,14 @@ Dase.initPersonProposals = function() {
 	}
 	if (!url) return;
 	//alert('initPersonProposals');
-	Dase.getJSON(url,function(resp) {
-		var target = Dase.$('userProposals');
-		var data = { 'proposals':resp};
-		var templateObj = TrimPath.parseDOMTemplate("user_proposals_jst");
-		target.innerHTML = templateObj.process(data);
+	Dase.getJSON(url,function(props) {
+		h = new Dase.htmlbuilder;
+		for (var i=0;i<props.length;i++) {
+			var prop = props[i];
+			var li = h.add('li');
+			li.add('a',{'class':'sub','target':'_blank','href':'proposal/'+prop.serial_number},prop.title);
+		}
+		h.attach(Dase.$('userProposals'));
 		Dase.removeClass(target,'hide');
 
 	},null,null,'itsprop',Dase.itsprop.service_pass);
