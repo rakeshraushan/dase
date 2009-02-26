@@ -230,6 +230,7 @@
 			</form>
 		</div>
 	</div>
+
 	<textarea class="javascript_template" id="proposal_courses_jst">
 		<ul id="courses">
 			{literal}
@@ -243,6 +244,7 @@
 			{/literal}
 		</ul>
 	</textarea>
+
 	<textarea class="javascript_template" id="proposal_budget_items_jst">
 		<table class="listing" id="budget_items_table">
 			<tr>
@@ -271,5 +273,6 @@
 			{/literal}
 		</table>
 	</textarea>
+
 	{/block}
 

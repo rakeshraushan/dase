@@ -23,7 +23,7 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/form.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/atompub.js"></script>
-		<script type="text/javascript" src="{$app_root}www/scripts/trimpath/template.js"></script>
+		<script type="text/javascript" src="{$app_root}www/scripts/dase/htmlbuilder.js"></script>
 		<script type="text/javascript" src="scripts/itsprop.js"></script>
 		<script type="text/javascript" src="scripts/jquery-1.2.6.js"></script>
 		<script type="text/javascript" src="scripts/jquery-ui-personalized-1.5.3.js"></script>
@@ -101,14 +101,6 @@
 				| <span>{$timer} seconds</span>
 			</div>
 			<div id="debugData" class="pagedata"></div>
-			{include file='atom_template.tpl'}
-			<textarea class="javascript_template" id="user_proposals_jst">
-				{literal}
-				{for p in proposals}
-				<li><a class="sub" href="proposal/${p.serial_number}" target="_blank">${p.title}</a></li>
-				{/for}
-				{/literal}
-			</textarea>
 		</div>
 	</body>
 </html>
