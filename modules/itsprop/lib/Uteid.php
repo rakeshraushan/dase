@@ -45,9 +45,8 @@ class Uteid
 				echo "Invalid EID signature";
 				exit;
 			}
-			$db_user = new Dase_DBO_DaseUser($db);
+			$db_user = $r->retrieve('user');
 			if (!$db_user->retrieveByEid($ut_user->eid)) {
-				$db_user = new Dase_DBO_DaseUser($db);
 				$db_user->eid = strtolower($ut_user->eid); 
 				$db_user->name = $ut_user->name; 
 				$db_user->insert();

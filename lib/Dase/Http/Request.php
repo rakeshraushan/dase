@@ -107,7 +107,7 @@ class Dase_Http_Request
 				$this->renderError(404,'no such module');
 			}
 			$this->logger()->info('**PLUGIN ACTIVATED**: handler:'.$h.' module:'.$custom_handlers[$h]);
-			$this->module = $this->custom_handlers[$h];
+			$this->setModule($custom_handlers[$h]);
 		}
 	}
 
@@ -156,6 +156,12 @@ class Dase_Http_Request
 		if ($content) {
 			$this->renderResponse($content,false);
 		}
+	}
+
+	public function setModule($module) 
+	{
+		$this->env['module'] = $module;
+		$this->env['module_root'] = $this->env['app_root'].'/modules/'.$this->env['module'];
 	}
 
 	public function getModule()

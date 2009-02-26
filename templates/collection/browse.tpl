@@ -39,21 +39,6 @@
 		<div id="attColumn"><!-- insert template output--></div>
 		<div id="valColumn" class="hide"><!--insert template output--></div>
 
-		<!-- javascript template -->
-		<textarea class="javascript_template" id="vals_jst">
-			{literal}
-			<h4>Select ${att_name} Value:</h4>
-			<ul>
-				{for v in values}
-				<li>
-				<a href="search?${coll}.${att_ascii}=${encodeURIComponent(v.v)}" class="val_link">${v.v} <span class="tally">(${v.t})</span></a> 
-				</li>
-				{/for}
-			</ul>
-			{/literal}
-		</textarea>
-		<!-- end javascript template -->
-
 	</div> <!-- close browseColumns -->
 	<div class="spacer"></div>
 </div> <!-- close class full -->

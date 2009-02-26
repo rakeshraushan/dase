@@ -26,9 +26,6 @@ Dase.getAttributes = function(url,sort) {
 		params = 'filter=public';
 	}
 	Dase.getJSON(url,function(json) {
-			//var data = { 'atts': json };
-			//var templateObj = TrimPath.parseDOMTemplate("atts_jst");
-			//Dase.$('attColumn').innerHTML = templateObj.process(data);
 			Dase.$('attColumn').innerHTML = Dase.processAtts(json);
 			Dase.getAttributeTallies(url.replace(/attributes/,'attribute_tallies'));
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
@@ -52,6 +49,22 @@ Dase.processAtts = function(json) {
 		a.set('class','att_link '+att.sort_order);
 		a.add('span',{'class':'att_name'},att.attribute_name);
 		a.add('span',{'class':'tally','id':'tally-'+att.ascii_id});
+	}
+	return h.getString();
+}
+
+Dase.processVals = function(json) {
+	h = new Dase.htmlbuilder('div');
+	h.add('h4',null,'Select '+json.att_name+' Value:');
+	var ul = h.add('ul',{'id':'valList'});
+	for (var i=0;i<json.values.length;i++) {
+		var val = json.values[i];
+		var li = ul.add('li');
+		var a = li.add('a');
+		a.set('href','search?'+json.coll+'.'+json.att_ascii+'='+encodeURIComponent(val.v));
+		a.set('class','val_link');
+		a.add('span',null,val.v);
+		a.add('span',{'class':'tally'},'('+val.t+')');
 	}
 	return h.getString();
 }
@@ -95,11 +108,7 @@ Dase.bindGetValues = function(coll) {
 Dase.getAttributeValues = function(url) {
 	Dase.$('valColumn').innerHTML = 'loading...';
 	Dase.getJSON(url,function(json) {
-			var templateObj = TrimPath.parseDOMTemplate("vals_jst");
-			Dase.$('valColumn').innerHTML = templateObj.process(json);
-			//encodeURIComponent(text)
-			Dase.getAttributeTallies(url+'/tallies');
-			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
+			Dase.$('valColumn').innerHTML = Dase.processVals(json);
 			});
 };
 

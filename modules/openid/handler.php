@@ -9,9 +9,9 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 		'{eid}' => 'login',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
-		$this->save_dir = CACHE_DIR;
+		$this->save_dir = $r->retrieve('config')->getCacheDir();
 		session_save_path($this->save_dir);
 		require_once "Auth/OpenID/FileStore.php";
 		require_once "Auth/OpenID/Consumer.php";
@@ -19,21 +19,21 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 	}
 
 	//rewrite/replace for alternate authentication
-	public function getLogin($request)
+	public function getLogin($r)
 	{
-		$t = new Dase_Template($request,true);
+		$t = new Dase_Template($r,true);
 		//'target' is the page to redirect to after login is complete
-		$t->assign('target',$request->get('target'));
-		$request->renderResponse($t->fetch('login_form.tpl'));
+		$t->assign('target',$r->get('target'));
+		$r->renderResponse($t->fetch('login_form.tpl'));
 	}
 
-	public function getRegistration($request)
+	public function getRegistration($r)
 	{
-		$t = new Dase_Template($request,true);
-		$request->renderResponse($t->fetch('login_form.tpl'));
+		$t = new Dase_Template($r,true);
+		$r->renderResponse($t->fetch('login_form.tpl'));
 	}
 
-	public function getConfirmation($request)
+	public function getConfirmation($r)
 	{
 		session_start();
 		$store_path = $this->save_dir."/openid_consumer";
@@ -44,43 +44,40 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 		}
 		$store = new Auth_OpenID_FileStore($store_path);
 		$consumer = new Auth_OpenID_Consumer($store);
-		$response = $consumer->complete(APP_ROOT.'/'.$request->getUrl()); 
+		$response = $consumer->complete($r->app_root.'/'.$r->getUrl()); 
 		if ('success' == $response->status) {
 			$eid = trim(str_replace('http://','',$response->getDisplayIdentifier()),'/');
 			//life is simpler w/o dots in eid:
 			$eid = str_replace('.','_',$eid);
 			$eid = str_replace('/','_',$eid);
-			Dase_Cookie::setEid($eid);
-			if (!Dase_DBO_DaseUser::init($eid)) {
-				$u = new Dase_DBO_DaseUser;
-				$u->eid = $eid;
-				$u->name = $eid;
-				$u->insert();
-				if (!Dase_DBO_DaseUser::init($eid)) {
-					$request->renderError(500,'cannot initialize user');
-				}
+			$r->setCookie('eid',$eid);
+			$db_user = $r->retrieve('user');
+			if (!$db_user->retrieveByEid($eid)) {
+				$db_user->eid = strtolower($eid); 
+				$db_user->name = $eid; 
+				$db_user->insert();
 				$params = array(
 					'msg' => "Welcome, ".$eid,
 				);
-				$request->renderRedirect('/',$params);
+				$r->renderRedirect('/',$params);
 			}
 			//do this so cookie is passed along
-			$request->renderRedirect(urldecode($request->get('target')));
+			$r->renderRedirect(urldecode($r->get('target')));
 		} else {
 			//I could probably just display here instead of redirect
 			$params['msg'] = 'incorrect username/password';
-			$request->renderRedirect("login/form",$params);
+			$r->renderRedirect("login/form",$params);
 		}
 	}
 
-	public function getLoginForm($request)
+	public function getLoginForm($r)
 	{
-		$t = new Dase_Template($request,true);
-		$t->assign('target',$request->get('target'));
-		$request->renderResponse($t->fetch('login_form.tpl'));
+		$t = new Dase_Template($r,true);
+		$t->assign('target',$r->get('target'));
+		$r->renderResponse($t->fetch('login_form.tpl'));
 	}
 
-	public function postToLogin($request)
+	public function postToLogin($r)
 	{
 		session_start();
 		$store_path = $this->save_dir."/openid_consumer";
@@ -91,17 +88,17 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 		}
 		$store = new Auth_OpenID_FileStore($store_path);
 		$consumer = new Auth_OpenID_Consumer($store);
-		$auth_request = $consumer->begin($request->get('openid_identifier'));
+		$auth_request = $consumer->begin($r->get('openid_identifier'));
 		if ($auth_request) {
-			$redirect_url = $auth_request->redirectURL(APP_ROOT,APP_ROOT.'/login/confirmation');
+			$redirect_url = $auth_request->redirectURL($r->app_root,$r->app_root.'/login/confirmation');
 			if (Auth_OpenID::isFailure($redirect_url)) {
-				$request->renderError(500,"Could not redirect to server: " . $redirect_url->message);
+				$r->renderError(500,"Could not redirect to server: " . $redirect_url->message);
 			} else {
-				$request->renderRedirect($redirect_url);
+				$r->renderRedirect($redirect_url);
 			}
 		} else {
 			$params['msg'] = 'sorry, try again';
-			$request->renderRedirect('login',$params);
+			$r->renderRedirect('login',$params);
 		}
 	}
 
@@ -110,10 +107,10 @@ class Dase_ModuleHandler_Openid extends Dase_Handler
 	 * w/ an http delete to '/login' *or* '/login/{eid}'
 	 *
 	 */
-	public function deleteLogin($request)
+	public function deleteLogin($r)
 	{
-		Dase_Cookie::clear();
-		$request->renderRedirect('login/form');
+		$r->retrieve('cookie')->clear();
+		$r->renderRedirect('login/form');
 	}
 
 }
