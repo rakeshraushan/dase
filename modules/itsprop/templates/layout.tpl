@@ -17,7 +17,6 @@
 		 {block name="head-links"}{/block}
 
 		<script type="text/javascript" src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
-		<script type="text/javascript" src="{$app_root}www/scripts/jquery.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/http.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
@@ -26,6 +25,8 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/atompub.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="scripts/itsprop.js"></script>
+		<script type="text/javascript" src="scripts/jquery-1.2.6.js"></script>
+		<script type="text/javascript" src="scripts/jquery-ui-personalized-1.5.3.js"></script>
 		{block name="head"}{/block}
 
 		<style type="text/css"></style>
@@ -74,6 +75,7 @@
 					<li>
 					<a href="proposals" class="main">Proposals List</a>
 					</li>
+					<li id="department_lists"><p>Your Departments:</p></li>
 					{/if}
 					{foreach item=dept from=$request->chair_feed->entries}
 					<li>
@@ -93,7 +95,7 @@
 			<hr >
 			<div id="footer">
 				<img src="images/its.gif" title="LAITS" class="logo" alt="LAITS" height="33" width="79" ><a href="http://www.laits.utexas.edu/its/">Liberal Arts ITS</a>
-				| <a href="mailto:www@mail.laits.utexas.edu">www@mail.laits.utexas.edu</a> 
+				| <a href="mailto:proposalhelp@mail.laits.utexas.edu">proposalhelp@mail.laits.utexas.edu</a> 
 				| <a href="http://daseproject.org"><img height="11" id="daseLogo" width="71" alt="DASe powered icon" title="DASe powered!" src="images/dasepowered.png" ></a>
 				| <span id="date"></span>
 				| <span>{$timer} seconds</span>
@@ -103,7 +105,7 @@
 			<textarea class="javascript_template" id="user_proposals_jst">
 				{literal}
 				{for p in proposals}
-				<li><a class="sub" href="proposal/${p.serial_number}">${p.title}</a></li>
+				<li><a class="sub" href="proposal/${p.serial_number}" target="_blank">${p.title}</a></li>
 				{/for}
 				{/literal}
 			</textarea>

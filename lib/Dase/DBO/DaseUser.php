@@ -10,6 +10,11 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public $ppd_token;
 	public $token;
 
+	public static function get($db,$eid) {
+		$u = new Dase_DBO_DaseUser($db);
+		return $u->retrieveByEid($eid);
+	}
+
 	public function init($eid) 
 	{
 		$this->retrieveByEid($eid);
@@ -144,7 +149,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$entry->setEntryType('user');
 		$entry->setContent($this->eid);
 		$entry->addLink($this->getUrl($app_root).'.atom','self');
-		return $entry->asXML($app_root);
+		return $entry->asXML();
 	}
 
 	public function getTags($update_count = false)

@@ -227,7 +227,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$item->p_collection_ascii_id.'/'.$item->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->xml = $entry->asXml(); //so we don't get xml declaration
 			$atom->insert();
 		}
 		$dom = new DOMDocument('1.0','utf-8');

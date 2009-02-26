@@ -133,3 +133,15 @@ float:right;
 text-decoration:none;
 color:red;
 }
+
+ul#proposals_list_preview {
+	margin: 20px 0;
+	padding: 0;
+	list-style: none;
+}
+
+ul#proposals_list_preview li {
+	margin: 4px 0;
+	padding: 0;
+	list-style: none;
+}

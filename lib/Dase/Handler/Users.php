@@ -42,7 +42,7 @@ class Dase_Handler_Users extends Dase_Handler
 					$user = $entry->insert($this->db,$r);
 					header("HTTP/1.1 201 Created");
 					header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-					header("Location: ".$user->getBaseUrl().'.atom?type=entry');
+					header("Location: ".$user->getUrl($r->app_root).'.atom?type=entry');
 					echo $user->asAtomEntry($r->app_root);
 					exit;
 				} catch (Dase_Exception $e) {
@@ -63,7 +63,7 @@ class Dase_Handler_Users extends Dase_Handler
 				}
 				header("HTTP/1.1 201 Created");
 				header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-				header("Location: ".$user->getBaseUrl().'.atom?type=entry');
+				header("Location: ".$user->getUrl($r->app_root).'.atom?type=entry');
 				echo $user->asAtomEntry($r->app_root);
 				exit;
 			} else {

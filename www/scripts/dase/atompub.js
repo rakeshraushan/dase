@@ -128,9 +128,15 @@ Dase.atompub.json2atom = function(json) {
 		var rights = atom.add('rights',null,json.rights);
 	}
 	if (json.content.text) {
+		if (!json.content.type) {
+			json.content.type = 'text';
+		}
 		var content = atom.add('content',{'type':json.content.type},json.content.text);
 	}
 
+	if (!json.category) { 
+		json.category = {};
+	}
 	for (var i=0;i<json.category.length;i++) {
 		var c = json.category[i];
 		var cat = atom.add('category',{'term':c.term,'scheme':c.scheme})
@@ -140,6 +146,9 @@ Dase.atompub.json2atom = function(json) {
 		if (c.value) {
 			cat.setText(c.value);
 		}
+	}
+	if (!json.link) { 
+		json.link = {};
 	}
 	for (var i=0;i<json.link.length;i++) {
 		var ln = json.link[i];

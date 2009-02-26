@@ -51,8 +51,7 @@ class Dase_Cookie {
 		}
 		$pre = $this->getPrefix();
 		if ('module' == $type) {
-			$module = $this->config->get('module');
-			$pre = $pre.$module.'_';
+			$pre = $pre.$this->module.'_';
 		}
 		if (isset($this->cookiemap[$type])) {
 			$cookiename = $pre . $this->cookiemap[$type];

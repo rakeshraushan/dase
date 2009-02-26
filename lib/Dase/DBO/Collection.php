@@ -280,7 +280,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
 			ORDER BY m.dase_user_eid";
-		return Dase_DBO::query($sql,array($this->ascii_id),true);
+		return Dase_DBO::query($this->db,$sql,array($this->ascii_id),true);
 	}
 
 	function getAttributes($sort = 'sort_order')
@@ -309,36 +309,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$att_array[] = "after ".$att->attribute_name;
 		}
 		return $att_array;
-	}
-
-	function changeAttributeSort($att_ascii_id,$new_so)
-	{
-		$prefix = $this->db->table_prefix;
-		$att_ascii_id_array = array();
-		$sql = "
-			SELECT ascii_id 
-			FROM {$prefix}attribute
-			WHERE collection_id = ?
-			ORDER BY sort_order";
-		$sth = Dase_DBO::query($sql,array($this->id))->fetch(); 
-		while ($row = $sth->fetch()) {
-			if ($att_ascii_id != $row['ascii_id']) {
-				$att_ascii_id_array[] = $row['ascii_id'];
-			}
-		} 
-		array_splice($att_ascii_id_array,$new_so-1,0,$att_ascii_id);
-		$sql = "
-			UPDATE {$prefix}attribute
-			SET sort_order = ?,
-			updated = ?
-			WHERE ascii_id = ?
-			AND collection_id = ?";
-		$so = 1;
-		foreach ($att_ascii_id_array as $ascii) {
-			$now = date(DATE_ATOM);
-			Dase_DBO::query($sql,array($so,$now,$ascii,$this->id));
-			$so++;
-		}
 	}
 
 	function getAdminAttributes()

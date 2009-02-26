@@ -1,7 +1,7 @@
 <?php
 class Uteid 
 {
-	public static function login($r)
+	public static function login($db,$r)
 	{
 		if (!extension_loaded("eid")) {
 			dl("eid.so");
@@ -24,7 +24,7 @@ class Uteid
 			unset($ut_user);
 		}
 		if ($ut_user == NULL) {
-			$url = APP_ROOT . '/modules/'.$r->module.'/login';
+			$url = $r->app_root.'/modules/'.$r->module.'/login';
 			header ("Set-Cookie: DOC=$url; path=/; domain=.utexas.edu;");
 			header ("Location: https://utdirect.utexas.edu");
 			echo "user is not logged in";
@@ -45,25 +45,14 @@ class Uteid
 				echo "Invalid EID signature";
 				exit;
 			}
-
-			$prefix = Dase_Config::get('table_prefix');
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT * FROM {$prefix}dase_user 
-				WHERE lower(eid) = ?
-				";	
-			$sth = $db->prepare($sql);
-			$sth->execute(array(strtolower($ut_user->eid)));
-			$row = $sth->fetch();
-			if ($row) {
-				$db_user = new Dase_DBO_DaseUser($row);
-			} else {
-				$db_user = new Dase_DBO_DaseUser();
-				$db_user->name = $ut_user->name; 
+			$db_user = new Dase_DBO_DaseUser($db);
+			if (!$db_user->retrieveByEid($ut_user->eid)) {
+				$db_user = new Dase_DBO_DaseUser($db);
 				$db_user->eid = strtolower($ut_user->eid); 
+				$db_user->name = $ut_user->name; 
 				$db_user->insert();
 			}
-			Dase_Cookie::setEid($db_user->eid);
+			$r->setCookie('eid',$db_user->eid);
 			return $db_user;
 		}
 	}

@@ -74,7 +74,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			} else {
 				$r->logger()->info('could not create admin user');
 			}
-			$user->expireDataCache();
 			return $ascii_id;
 		} else {
 			return false;

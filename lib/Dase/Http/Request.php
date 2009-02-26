@@ -86,6 +86,7 @@ class Dase_Http_Request
 	{
 		$this->token = $auth_config['token'];
 		$this->ppd_token = $auth_config['ppd_token'];
+		$this->service_token = $auth_config['service_token'];
 		$this->superusers = $auth_config['superuser'];
 	}
 
@@ -486,6 +487,7 @@ class Dase_Http_Request
 			$service_users = $this->retrieve('config')->getServiceusers();
 			//if eid is among service users, get password w/ service_token as salt
 			if (isset($service_users[$eid])) {
+				$this->logger()->debug('serviceuser request from '.$eid);
 				$passwords[] = md5($this->service_token.$eid);
 			}
 

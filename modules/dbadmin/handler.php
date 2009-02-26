@@ -8,30 +8,29 @@ class Dase_ModuleHandler_Dbadmin extends Dase_Handler {
 		'index/{msg}' => 'info',
 	);
 
-	public function setup($request)
+	public function setup($r)
 	{
+		$this->db = $r->retrieve('db');
 	}
 
-	public function getInfo($request) 
+	public function getInfo($r) 
 	{
-		$tpl = new Dase_Template($request,true);
+		$tpl = new Dase_Template($r,true);
 
 		$types['sqlite'] = "SQLite";
 		$types['mysql'] = "MySQL";
 		$types['pgsql'] = "PostgreSQL";
 
-		$db_type = Dase_DB::getDbType();
-
-		foreach (Dase_DB::listTables() as $t) {
+		foreach ($this->db->listTables() as $t) {
 			$tables[$t][] = 'id';
-			foreach (Dase_DB::listColumns($t) as $c) {
+			foreach ($this->db->listColumns($t) as $c) {
 				if ('id' != $c) {
 					$tables[$t][] = $c;
 				}
 			}
 		}
 		$tpl->assign('tables',$tables);
-		$tpl->assign('db',$types[$db_type]);
-		$request->renderResponse($tpl->fetch('index.tpl'));
+		$tpl->assign('db',$types[$this->db->getDbType()]);
+		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
 }

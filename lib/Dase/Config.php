@@ -145,6 +145,16 @@ class Dase_Config {
 		$this->conf[$key] = $value;
 	}
 
+	public function getSecret($key)
+	{
+		return md5($this->getAuth('token').$key);
+	}
+
+	public function getServicePassword($serviceuser)
+	{
+		return md5($this->getAuth('service_token').$serviceuser);
+	}
+
 	public function load($conf_file)
 	{
 		if ('/' != substr($conf_file,0,1)) {

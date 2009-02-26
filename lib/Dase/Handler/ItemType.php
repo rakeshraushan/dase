@@ -132,7 +132,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		$t = $this->type;
 		$feed = new Dase_Atom_Feed;
-		$feed->setId($t->getUrl($r->app_root));
+		$feed->setId($t->getUrl($c->ascii_id,$r->app_root));
 		$feed->setTitle($t->name.' Items');
 		$items = new Dase_DBO_Item($this->db);
 		$items->item_type_id = $t->id;
