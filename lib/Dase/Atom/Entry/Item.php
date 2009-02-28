@@ -621,8 +621,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);
-		$method = 'get'.ucfirst($var);
-		if (method_exists($classname,$method)) {
+		$method = 'get'.ucfirst(substr($var,1));
+		//for arrow get must be prefixed w/ underscore
+		//if it is an atom element, since arrow gets
+		//are used fro retrieving metadata aon entry items
+		if ('_'== substr($var,0,1) && method_exists($classname,$method)) {
 			return $this->{$method}();
 		} elseif ($this->getMetadata($var)) {
 			return $this->getMetadata($var);

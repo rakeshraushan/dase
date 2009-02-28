@@ -73,7 +73,6 @@
 			</td>
 			<td class="metadata">
 				<!-- is there a better place for this?-->
-				<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">

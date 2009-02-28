@@ -101,6 +101,33 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($this->type->name);
 	}
 
+	public function getItemTypeJson($r)
+	{
+		$items_array = array();
+		$res = array();
+		$coll = $r->get('collection_ascii_id');
+		$items = new Dase_DBO_Item($this->db);
+		$items->status = 'public';
+		$items->item_type_id = $this->type->id;
+		$items->orderBy('updated DESC');
+		//can filter by author
+		if ($r->has('created_by_eid')) {
+			$items->created_by_eid = $r->get('created_by_eid');
+		}
+		foreach ($items->find() as $item) {
+			$item_array  = array(
+				'url' => $item->getUrl($r->app_root),
+				//expensive??
+				'title' => $item->getTitle(),
+				'serial_number' => $item->serial_number,
+			);
+			$items_array[] = $item_array;
+		}
+		$res['items'] = $items_array;
+		$res['name'] =  $this->type->name;
+		$r->renderResponse(Dase_Json::get($res));
+	}
+
 	public function getItemTypeAtom($r)
 	{
 		$r->renderResponse($this->type->asAtomEntry($r->get('collection_ascii_id'),$r->app_root));
@@ -199,7 +226,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$st = Dase_DBO::query($this->db,$sql,$bound);
 		while ($sernum = $st->fetchColumn()) {
 			$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$sernum);
-			$items[$sernum] = $item->asArray();
+			$items[$sernum] = $item->asArray($r->app_root);
 		}
 		$r->renderResponse(Dase_Json::get($items));
 	}
@@ -271,6 +298,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		try {
 			$item_handler = new Dase_Handler_Item;
 			$item_handler->item = $item;
+			$item_handler->db = $this->db;
 			$item_handler->putItem($r);
 		} catch (Exception $e) {
 			$r->renderError(500,$e->getMessage());

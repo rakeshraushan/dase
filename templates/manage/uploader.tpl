@@ -27,17 +27,4 @@
 	</form>
 </div>
 <ul id="recent"></ul>
-
-<!-- javascript template for recent-->
-<textarea class="javascript_template" id="recent_jst">
-	{literal}
-	{for sernum in recent}
-	<li>
-	<a href='${sernum.item_record_href}'><img src="${sernum.thumbnail_href}"/></a>
-	<h4><a href='${sernum.item_record_href}'>${sernum.title}</a></h4>
-	</li>
-	{/for}
-	{/literal}
-</textarea>
-<!-- end javascript template -->
 {/block}

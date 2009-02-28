@@ -23,7 +23,6 @@
 		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
 		<script type="text/javascript" src="www/scripts/http.js"></script>
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
-		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/atompub.js"></script>

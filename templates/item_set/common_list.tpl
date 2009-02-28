@@ -16,7 +16,7 @@
 		</div>
 		<div class="spacer"></div>
 		{if "" != $sort}
-		{assign var=sort_attribute_value value=$it|select:"$sort"}
+		{assign var=sort_attribute_value value=$it->$sort.text}
 		<h5 class="sorted_by">{$it|label:$sort}: {$sort_attribute_value}</h5>
 		{/if}
 		<h5 class="collection_name">[{$it->collection}]</h5>

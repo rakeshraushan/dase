@@ -20,7 +20,6 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
 		'{collection_ascii_id}/{serial_number}/item_type' => 'item_type',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
-		'{collection_ascii_id}/{serial_number}/templates' => 'input_templates',
 		'{collection_ascii_id}/{serial_number}/comments/{comment_id}' => 'comment',
 	);
 
@@ -104,7 +103,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$r->renderResponse($this->item->getContentJson());
+		$r->renderResponse($this->item->getContentJson(true));
 	}
 
 	/** this is for simply getting the content 
@@ -169,15 +168,6 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->getMetadataJson($r->app_root));
 	}
 
-	public function getMetadataCats($r)
-	{
-		$user = $r->getUser('http');
-		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'user cannot read this item');
-		}
-		$r->renderResponse($this->item->getMetadataAsCategories());
-	}
-
 	public function getMetadataTxt($r)
 	{
 		$user = $r->getUser('http');
@@ -198,12 +188,6 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 			$r->renderResponse($output);
 		}
-	}
-
-	public function getInputTemplates($r)
-	{
-		$t = new Dase_Template($r);
-		$r->renderResponse($t->fetch('item/jstemplates.tpl'));
 	}
 
 	public function deleteComment($r)

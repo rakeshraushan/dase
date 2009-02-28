@@ -2,8 +2,7 @@ Dase.updateDefinedValues = function(json) {
 	var data = { 
 		'defined': json.defined 
 	};
-	var templateObj = TrimPath.parseDOMTemplate("inp_"+json.input+"_jst");
-	Dase.$('defined_values_sample').innerHTML = templateObj.process(data);
+	Dase.createDefinedInputSample(json,Dase.$('defined_values_sample'));
 	var inp = Dase.$('defined_values_input');
 	inp.value = '';
 	inp.rows = json.count;
@@ -13,14 +12,34 @@ Dase.updateDefinedValues = function(json) {
 	}
 };
 
+Dase.createDefinedInputSample = function(json,target) {
+	var h;
+
+	if ('select' == json.input) {
+		h = new Dase.htmlbuilder('select');
+		for (var i=0;i<json.defined.length;i++) {
+			var v = json.defined[i];
+			h.add('option',null,v);
+		}
+	}
+
+	if ('checkbox' == json.input || 'radio' == json.input) {
+		h = new Dase.htmlbuilder;
+		for (var i=0;i<json.defined.length;i++) {
+			var v = json.defined[i];
+			p = h.add('p');
+			p.add('input',{'type':json.input,'name':'sample'});
+			p.add('span',null,' '+v);
+		}
+	}
+
+	h.attach(target);
+};
+
 Dase.setDefinedValues = function(form) {
 	Dase.ajax(form.action,'get',function(resp) {
 		var json = JSON.parse(resp);
-		var data = { 
-			'defined': json.defined 
-		};
-		var templateObj = TrimPath.parseDOMTemplate("inp_"+json.input+"_jst");
-		Dase.$('defined_values_sample').innerHTML = templateObj.process(data);
+		Dase.createDefinedInputSample(json,Dase.$('defined_values_sample'));
 		var inp = Dase.$('defined_values_input');
 		inp.value = '';
 		inp.rows = json.count;

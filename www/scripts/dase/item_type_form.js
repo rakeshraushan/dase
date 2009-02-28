@@ -4,12 +4,20 @@ Dase.setTypeAtts = function(form) {
 	//bust cache for frequent updating
 	var url = form.action+'?cb='+d.getTime();
 	Dase.ajax(url,'get',function(resp) {
-		var json = JSON.parse(resp);
-		var data = { 
-			'atts': json 
-		};
-		var templateObj = TrimPath.parseDOMTemplate("type_atts_jst");
-		Dase.$('deletableAtts').innerHTML = templateObj.process(data);
+		var atts = JSON.parse(resp);
+		h = new Dase.htmlbuilder;
+		for (var key in atts) {
+			var att = atts[key];
+			var li = h.add('li');
+			var a = li.add('a');
+			a.set('href','manage/'+att.collection_ascii_id+'/attribute/'+att.att_ascii_id);
+			a.setText(att.attribute_name);
+			a = li.add('a');
+			a.set('href','manage/'+att.collection_ascii_id+'/item_type/'+att.item_type_ascii+'/attribute/'+att.att_ascii_id);
+			a.set('class','delete');
+			a.setText('delete');
+		}
+		h.attach(Dase.$('deletableAtts'));
 		links = Dase.$('deletableAtts').getElementsByTagName('a');
 		for (var i=0;i<links.length;i++) {
 			ln = links[i];
@@ -32,12 +40,39 @@ Dase.setTypeAtts = function(form) {
 
 Dase.setTypeRels = function(form) {
 	Dase.ajax(form.action,'get',function(resp) {
-		var json = JSON.parse(resp);
-		var data = { 
-			'rels': json 
-		};
-		var templateObj = TrimPath.parseDOMTemplate("type_rels_jst");
-		Dase.$('deletableTypes').innerHTML = templateObj.process(data);
+		var rels = JSON.parse(resp);
+		var h = new Dase.htmlbuilder;
+		for (var key in rels.parents) {
+			var r = rels.parents[key];
+			var li = h.add('li');
+			var a = li.add('a');
+			a.set('href','manage/'+r.collection_ascii_id+'/item_type/'+r.ascii_id);
+			a.setText(r.name);
+			li.add('span',null,'(parent)');
+			a = li.add('a');
+			a.set('href','manage/'+r.collection_ascii_id+'/item_type_relation/'+r.relation_id);
+			a.set('class','delete');
+			a.setText('delete');
+			if (r.title) {
+				li.add('p',{'class':'relationDesc'},r.title);
+			}
+		}
+		for (var key in rels.children) {
+			var r = rels.children[key];
+			var li = h.add('li');
+			var a = li.add('a');
+			a.set('href','manage/'+r.collection_ascii_id+'/item_type/'+r.ascii_id);
+			a.setText(r.name);
+			li.add('span',null,'(child)');
+			a = li.add('a');
+			a.set('href','manage/'+r.collection_ascii_id+'/item_type_relation/'+r.relation_id);
+			a.set('class','delete');
+			a.setText('delete');
+			if (r.title) {
+				li.add('p',{'class':'relationDesc'},r.title);
+			}
+		}
+		h.attach(Dase.$('deletableTypes'));
 		links = Dase.$('deletableTypes').getElementsByTagName('a');
 		for (var i=0;i<links.length;i++) {
 			ln = links[i];
@@ -81,42 +116,42 @@ Dase.initCreateAttribute = function() {
 			var cats = [{
 				'term':this.className,
 				'scheme':'http://daseproject.org/category/parent_item_type'
-			}];
-			//this can all be cleaned up/compressed
-			var jsa = Dase.atom.jsonEntry(att_name,'attribute',cats);
-			atom_xml = Dase.atompub.json2atom(jsa);
-			post_url = Dase.base_href+'collection/'+this.options[this.selectedIndex].className+'/attributes';
-			headers = {
-				'Content-Type':'application/atom+xml;type=entry',
-			}
-			Dase.ajax(post_url,'POST',function(resp) {
-				var atts_form = Dase.$('type_atts_form');
-				if (atts_form) {
-					Dase.setTypeAtts(atts_form);
+				}];
+				//this can all be cleaned up/compressed
+				var jsa = Dase.atom.jsonEntry(att_name,'attribute',cats);
+				atom_xml = Dase.atompub.json2atom(jsa);
+				post_url = Dase.base_href+'collection/'+this.options[this.selectedIndex].className+'/attributes';
+				headers = {
+					'Content-Type':'application/atom+xml;type=entry',
 				}
-			},atom_xml,Dase.user.eid,Dase.user.htpasswd,headers);
-			return false;
-		} else {
-			return false;
-		}
+				Dase.ajax(post_url,'POST',function(resp) {
+					var atts_form = Dase.$('type_atts_form');
+					if (atts_form) {
+						Dase.setTypeAtts(atts_form);
+					}
+				},atom_xml,Dase.user.eid,Dase.user.htpasswd,headers);
+				return false;
+			} else {
+				return false;
+			}
+		};
 	};
-};
 
-Dase.pageInit = function() {
-	var del = Dase.$('deleteType');
-	if (del) {
-		del.onclick = function()
-		{
-			return confirm('are you sure?');
+	Dase.pageInit = function() {
+		var del = Dase.$('deleteType');
+		if (del) {
+			del.onclick = function()
+			{
+				return confirm('are you sure?');
+			}
 		}
-	}
-	var atts_form = Dase.$('type_atts_form');
-	if (atts_form) {
-		Dase.setTypeAtts(atts_form);
-	}
-	var rels_form = Dase.$('type_rels_form');
-	if (rels_form) {
-		Dase.setTypeRels(rels_form);
-	}
-	Dase.initCreateAttribute()
-};
+		var atts_form = Dase.$('type_atts_form');
+		if (atts_form) {
+			Dase.setTypeAtts(atts_form);
+		}
+		var rels_form = Dase.$('type_rels_form');
+		if (rels_form) {
+			Dase.setTypeRels(rels_form);
+		}
+		Dase.initCreateAttribute()
+	};

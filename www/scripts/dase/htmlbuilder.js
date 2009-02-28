@@ -19,6 +19,7 @@ Dase.htmlbuilder = function(tagName,keyvals,text) {
 };
 
 Dase.htmlbuilder.buildstring = function(el,result) {
+//	alert(JSON.stringify(el));
 	if (el.tagName) {
 		result.push('<'+el.tagName);
 		if (el.keyvals) {

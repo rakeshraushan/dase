@@ -149,13 +149,14 @@ Dase.initPersonProposals = function() {
 	if (!url) return;
 	//alert('initPersonProposals');
 	Dase.getJSON(url,function(props) {
-		h = new Dase.htmlbuilder;
+		var h = new Dase.htmlbuilder;
 		for (var i=0;i<props.length;i++) {
 			var prop = props[i];
 			var li = h.add('li');
 			li.add('a',{'class':'sub','target':'_blank','href':'proposal/'+prop.serial_number},prop.title);
 		}
-		h.attach(Dase.$('userProposals'));
+		var target = Dase.$('userProposals');
+		h.attach(target);
 		Dase.removeClass(target,'hide');
 
 	},null,null,'itsprop',Dase.itsprop.service_pass);
@@ -198,11 +199,16 @@ Dase.initProposalCourses = function() {
 	var url = Dase.getLinkByRel('courses');
 	if (!url) return;
 	//alert('initProposalCourses');
-	Dase.getJSON(url,function(resp) {
+	Dase.getJSON(url,function(classes) {
 		var target = Dase.$('classesList');
-		var data = { 'classes':resp};
-		var templateObj = TrimPath.parseDOMTemplate("proposal_courses_jst");
-		target.innerHTML = templateObj.process(data);
+		var ul = new Dase.htmlbuilder('ul',{'id':'courses'});
+		for (var ser in classes) {
+			var c = classes[ser];
+			var li = ul.add('li');
+			li.setText(c.metadata.title+' ('+c.metadata.course_number+') ['+c.metadata.course_enrollment+' students '+c.metadata.course_frequency+']');
+			var a = li.add('a',{'href':c.edit,'class':'delete'},'delete');
+		}
+		ul.attach(target);
 		Dase.removeClass(target,'hide');
 		var button = Dase.$('add_class');
 		button.value = 'add';
@@ -231,19 +237,42 @@ Dase.initProposalBudgetItems = function() {
 	var url = Dase.getLinkByRel('budget_items');
 	if (!url) return;
 	//alert('initProposalBudgetItems');
-	Dase.getJSON(url,function(resp) {
+	Dase.getJSON(url,function(items) {
 		var target = Dase.$('budgetItemsList');
 		var grand_total = 0;
-		for (var it in resp) {
-			var p = resp[it].metadata.budget_item_price;
-			var q = resp[it].metadata.budget_item_quantity;
-			resp[it].metadata.total = p*q;
+		for (var it in items) {
+			var p = items[it].metadata.budget_item_price;
+			var q = items[it].metadata.budget_item_quantity;
+			items[it].metadata.total = p*q;
 			grand_total += p*q;
 		}
-		var data = { 'items':resp};
-		data['grand_total'] = grand_total;
-		var templateObj = TrimPath.parseDOMTemplate("proposal_budget_items_jst");
-		target.innerHTML = templateObj.process(data);
+		items['grand_total'] = grand_total;
+
+		var table = new Dase.htmlbuilder('table',{'class':'listing','id':'budget_items_table'});
+		var tr = table.add('tr');
+		var th = tr.add('th');
+		th = tr.add('th',null,'type');
+		th = tr.add('th',null,'description');
+		th = tr.add('th',null,'quantity');
+		th = tr.add('th',null,'price per unit');
+		th = tr.add('th',null,'total');
+		for (var ser in items) {
+			var it = items[ser];
+			if (it.metadata) {
+				var tr = table.add('tr');
+				var td = tr.add('td');
+				td.add('a',{'href':it.edit,'class':'delete'},'delete');
+				tr.add('td',null,it.metadata.budget_item_type);
+				tr.add('td',null,it.metadata.budget_item_description);
+				tr.add('td',null,it.metadata.budget_item_quantity);
+				tr.add('td',null,'$'+it.metadata.budget_item_price);
+				tr.add('td',null,'$'+it.metadata.total);
+			}
+		}
+		var tr = table.add('tr');
+		tr.add('td',{'colspan':'5'},'grand total:');
+		tr.add('td',null,'$'+items.grand_total);
+		table.attach(target);
 		Dase.removeClass(target,'hide');
 		var button = Dase.$('add_budget_item');
 		button.value = 'add budget item';

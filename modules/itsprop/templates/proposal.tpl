@@ -223,56 +223,12 @@
 		</p>
 
 
-		</div>
-		<div class="deleteControl">
-			<form action="{$proposal->editLink}" id="deleteProposal">
-				<input type="submit" value="delete this proposal"/>
-			</form>
-		</div>
 	</div>
-
-	<textarea class="javascript_template" id="proposal_courses_jst">
-		<ul id="courses">
-			{literal}
-			{for c in classes}
-			<li>${c.metadata.title}
-			(${c.metadata.course_number})
-			[${c.metadata.course_enrollment} students ${c.metadata.course_frequency}]
-			<a href="${c.edit}" class="delete">delete</a>
-			</li>
-			{/for}
-			{/literal}
-		</ul>
-	</textarea>
-
-	<textarea class="javascript_template" id="proposal_budget_items_jst">
-		<table class="listing" id="budget_items_table">
-			<tr>
-				<th></th>
-				<th>type</th>
-				<th>description</th>
-				<th>quantity</th>
-				<th>price per unit</th>
-				<th>total</th>
-			</tr>
-			{literal}
-			{for item in items}
-			<tr>
-				<td><a href="${item.edit}" class="delete">delete</a></td>
-				<td>${item.metadata.budget_item_type}</td>
-				<td>${item.metadata.budget_item_description}</td>
-				<td>${item.metadata.budget_item_quantity}</td>
-				<td>$${item.metadata.budget_item_price}</td>
-				<td>$${item.metadata.total}</td>
-			</tr>
-			{/for}
-			<tr>
-				<td colspan="5">grand total:</td>
-				<td>$${grand_total}</td>
-			</tr>
-			{/literal}
-		</table>
-	</textarea>
-
-	{/block}
+	<div class="deleteControl">
+		<form action="{$proposal->editLink}" id="deleteProposal">
+			<input type="submit" value="delete this proposal"/>
+		</form>
+	</div>
+</div>
+{/block}
 

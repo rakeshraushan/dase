@@ -125,42 +125,5 @@
 	</div>
 	<div class="spacer"></div>
 </div>
-
-<!-- javascript templates for atts-->
-<textarea class="javascript_template" id="type_atts_jst">
-	{literal}
-	{for a in atts}
-	<li><a href="manage/${a.collection_ascii_id}/attribute/${a.att_ascii_id}">${a.attribute_name}</a> <a href="manage/${a.collection_ascii_id}/item_type/${a.item_type_ascii}/attribute/${a.att_ascii_id}" class="delete">delete</a></li>
-	{/for}
-	{/literal}
-</textarea>
-<!-- end javascript template -->
-
-<!-- javascript templates for rels-->
-<textarea class="javascript_template" id="type_rels_jst">
-	{literal}
-	{for r in rels.parents}
-	<li>
-	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
-	(parent) 
-	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> 
-	{if r.title}
-	<p class="relationDesc">${r.title}</p>
-	{/if}
-	</li>
-	{/for}
-	{for r in rels.children}
-	<li>
-	<a href="manage/${r.collection_ascii_id}/item_type/${r.ascii_id}">${r.name}</a> 
-	(child) 
-	<a href="manage/${r.collection_ascii_id}/item_type_relation/${r.relation_id}" class="delete">delete</a> 
-	{if r.title}
-	<p class="relationDesc">${r.title}</p>
-	{/if}
-	</li>
-	{/for}
-	{/literal}
-</textarea>
-<!-- end javascript template -->
 {/block} 
 
