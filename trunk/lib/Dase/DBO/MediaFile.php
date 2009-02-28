@@ -23,7 +23,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 	public function getLocalPath($path_to_media)
 	{
 		$c = $this->getCollection();
-		$subdir = Dase_Util::getSubdir($this->p_serial_number,$this->size);
+		$subdir = Dase_Util::getSubdir($this->p_serial_number);
 		$path = $path_to_media.'/'.
 			$c->ascii_id.'/'.
 			$this->size.'/'.

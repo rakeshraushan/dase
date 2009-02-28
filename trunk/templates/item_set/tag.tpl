@@ -80,7 +80,6 @@
 			<div id="tagType" class="pagedata">{$items->tagType}</div>
 			{if $bulkedit}
 			<!-- the presence of the following means editing is authorized -->
-			<a href="tag/{$items->eid}/{$items->asciiId}/templates" class="pagedata" id="jsTemplatesUrl"></a>
 			<div id="collectionAsciiId" class="pagedata">{$items->collectionAsciiId}</div>
 			{/if}
 			<div class="spacer"></div>

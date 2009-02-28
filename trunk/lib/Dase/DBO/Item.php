@@ -44,14 +44,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$db = $this->db;
 		$atom = new Dase_DBO_ItemAsAtom($db);
 		$atom->item_id = $this->id;
+		$atom->app_root = $app_root;
 		if ($atom->findOne()) {
 			$entry = new Dase_Atom_Entry_Item;
 			$entry = $this->injectAtomEntryData($entry,$app_root);
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml(); //so we don't get xml declaration
-			$atom->update();
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
+			$atom->insert();
 		} else {
 			$c = $this->getCollection();
 			$entry = new Dase_Atom_Entry_Item;
@@ -59,8 +60,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml(); //so we don't get xml declaration
-			$atom->update();
+			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
 			$atom->insert();
 		}
 		return $atom;
@@ -199,7 +199,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getMetadata($att_ascii_id = '',$app_root='')
+	public function getMetadata($app_root,$att_ascii_id='')
 	{
 		$db = $this->db;
 		$prefix = $this->db->table_prefix;
@@ -232,18 +232,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$metadata[] = $row;
 		}
 		return $metadata;
-	}
-
-	public function getMetadataAsCategories()
-	{
-		$cats = new Dase_Atom_Categories;
-		$cats->setScheme('http://daseproject.org/category/metadata');
-		foreach($this->getMetadata() as $m) {
-			$cats->addCategory(
-				$m['href'],'http://daseproject.org/category/metadata',
-				$m['attribute_name'],$m['value_text']);
-		}
-		return $cats->asXml();
 	}
 
 	public function getAdminMetadata($att_ascii_id = '',$app_root)

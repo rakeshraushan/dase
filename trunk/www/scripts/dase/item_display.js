@@ -8,26 +8,18 @@ Dase.pageInitUser = function(eid) {
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
-	var templates_url = Dase.$('jsTemplatesUrl').href;
-	if (!templates_url) return;
 	var controls = Dase.$('adminPageControls');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
-		//get jstemplates by making an ajax request
-		//see templates/item/jstemplates.tpl
-		Dase.ajax(templates_url,'get',function(resp) {
-			//retrieve templates and put on page
-			Dase.$('jsTemplates').innerHTML = resp;
-			Dase.initEditMetadata();
-			Dase.initAddMetadata();
-			Dase.initAddContent();
-			Dase.initSetItemType();
-			Dase.initSetItemStatus();
-			Dase.initAddAnnotation();
-			Dase.initSetParent(controls);
-			Dase.initRemoveParents();
-		});
+		Dase.initEditMetadata();
+		Dase.initAddMetadata();
+		Dase.initAddContent();
+		Dase.initSetItemType();
+		Dase.initSetItemStatus();
+		Dase.initAddAnnotation();
+		Dase.initSetParent(controls);
+		Dase.initRemoveParents();
 	}
 	return;
 };
@@ -40,6 +32,64 @@ Dase.sortByTitle = function(a,b) {
 	return 0
 
 }
+
+//from item_set_display
+Dase.getInputForm = function(resp) {
+	var vals = resp.values;
+	var form = new Dase.htmlbuilder('form',{'method':'post'});
+	form.set('action','item/'+resp.coll_ser+'/metadata');
+	form.add('input',{'type':'hidden','name':'ascii_id','value':resp.ascii_id});
+	switch(resp.html_input_type) {
+		case 'text':
+		form.add('input',{'type':'text','name':'value'});
+		break;
+		case 'textarea':
+	form.add('p').add('textarea',{'name':'value'},' ');
+	break;
+	case 'radio':
+	for (var i=0;i<vals.length;i++) {
+		var v = vals[i];
+		var p = form.add('p');
+		p.add('input',{'type':'radio','name':'value[]','value':v});
+		p.add('span',null,' '+v);
+	}
+	break;
+	case 'checkbox':
+	for (var i=0;i<vals.length;i++) {
+		var v = vals[i];
+		var p = form.add('p');
+		p.add('input',{'type':'checkbox','name':'value[]','value':v});
+		p.add('span',null,' '+v);
+	}
+	break;
+	case 'select':
+	var sel = form.add('p').add('select',{'name':'value'});
+	sel.add('option',{'value':''},'select one:');
+	for (var i=0;i<vals.length;i++) {
+		var v = vals[i];
+		sel.add('option',{'value':v},v);
+	}
+	break;
+	case 'listbox':
+form.add('p').add('textarea',{'name':'value'},' ');
+break;
+case 'no_edit':
+form.add('input',{'type':'text','name':'value','disabled':'disabled'});
+break;
+case 'text_with_menu':
+form.add('input',{'type':'text','name':'blank','id':'autofill_target'});
+var sel = form.add('p').add('select',{'name':'value','id':'select_autofill'});
+sel.add('option',{'value':''},'select one:');
+for (var i=0;i<vals.length;i++) {
+	var v = vals[i];
+	sel.add('option',{'value':v},v);
+}
+break;
+	}
+	form.add('input',{'type':'submit','value':'add'});
+	return form.getString();
+}
+
 
 Dase.initRemoveParents = function() {
 	var edit_url = Dase.atompub.getEditLink();
@@ -97,9 +147,21 @@ Dase.initSetParent = function(controls) {
 						data.items=pt_json.items.sort(Dase.sortByTitle);
 						data.count=pt_json.items.length;
 						data.name=pt_json.name;
-						var templateObj = TrimPath.parseDOMTemplate("parent_link_jst");
-						//display the form
-						mform.innerHTML = templateObj.process(data);
+						var h = new Dase.htmlbuilder;
+						h.add('h1','attach to '+data.name);
+						h.add('ul',{'id':'currentLinks'});
+						var form = h.add('form',{'id':'setParentForm'});
+						var sel = form.add('select',{'name':'url'});
+						sel.add('option',null,'select one of ('+data.count+')');
+						for (var i=0;i<data.items.length;i++) {
+							var item = data.items[i];
+							sel.add('option',{'value':item.url},item.title);
+						}
+						form.add('input',{'type':'submit','value':'create link','id':'createLink'});
+						form.add('span',null,' ');
+						form.add('input',{'type':'submit','value':'cancel','id':'cancelLink'});
+						form.add('span',{'id':'updateMsg'});
+						form.attach(mform);
 						var parents = [];
 						var edit_url = Dase.atompub.getJsonEditLink();
 						Dase.getJSON(edit_url,function(atom_json){
@@ -125,13 +187,13 @@ Dase.initSetParentForm = function(form,atom_json) {
 		return false;
 	}; 
 	form.onsubmit = function() {
-		Dase.$('updateMsg').innerHTML = "creating parent link...";
+		Dase.$('updateMsg').innerHTML = " creating parent link...";
 		var link = {};
 		link.href = form.url.options[form.url.selectedIndex].value;
 		link.rel = 'http://daseproject.org/relation/parent';
 		atom_json.link[atom_json.link.length] = link;
 		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-		   Dase.pageReload();
+			Dase.pageReload();
 		},Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	};
@@ -161,9 +223,19 @@ Dase.initSetItemStatus = function() {
 		}
 		if (Dase.toggle(status_form)) {
 			var status = Dase.$('itemStatus').innerHTML;
-			var data = {'status':status};
-			var templateObj = TrimPath.parseDOMTemplate("item_status_jst");
-			status_form.innerHTML = templateObj.process(data);
+			var h = new Dase.htmlbuilder;
+			h.add('h1',null,'Item Status ('+status+')');
+			var form = h.add('form',{'id':'itemStatusForm'});
+			var sel = form.add('select',{'name':'status'});
+			sel.add('option',null,'select status:');
+			sel.add('option',{'value':'public'},'public');
+			sel.add('option',{'value':'draft'},'draft');
+			sel.add('option',{'value':'delete'},'delete');
+			sel.add('option',{'value':'archive'},'archive');
+			form.add('input',{'type':'submit','value':'update status'});
+			form.add('span',null,' ');
+			form.add('span',{'id':'updateMsg'});
+			h.attach(status_form);
 			Dase.initItemStatusForm(Dase.$('itemStatusForm'));
 		}
 		return false;
@@ -291,67 +363,75 @@ Dase.initEditMetadata = function() {
 							}
 						};
 					}
-				forms[i].onsubmit = function() {
-					var value_text = '';
-					for (var k=0;k<this.elements.length;k++) {
-						if ('text' == this.elements[k].type || 'textarea' == this.elements[k].type) {
-							value_text = this.elements[k].value;
-							break;
-						}
-						if ('radio' == this.elements[k].type && this.elements[k].checked) {
-							value_text = this.elements[k].value;
-							break;
-						}
-					}
-					//Dase.loadingMsg(true);
-					//handle delete case
-					var value_id = this.className;
-					Dase.addClass(this,'updated');
-					Dase.ajax(this.action,'put',function(resp) { 
-						var value_text = resp;
-						Dase.$('val_'+value_id).value = value_text;
-						Dase.$('val_'+value_id).size = value_text.length;
-						Dase.$('val_'+value_id).onfocus = function() {
-							Dase.removeClass(Dase.$('label_'+value_id),'updated');
-						};
-						//handle radio buttons
-						var radios = Dase.$('val_'+value_id).getElementsByTagName('input');
-						for (var j=0;j<radios.length;j++) {
-							radios[j].onfocus = function() {
-								Dase.removeClass(Dase.$('label_'+value_id),'updated');
+					forms[i].onsubmit = function() {
+						var value_text = '';
+						for (var k=0;k<this.elements.length;k++) {
+							if ('text' == this.elements[k].type || 'textarea' == this.elements[k].type) {
+								value_text = this.elements[k].value;
+								break;
+							}
+							if ('radio' == this.elements[k].type && this.elements[k].checked) {
+								value_text = this.elements[k].value;
+								break;
 							}
 						}
-						Dase.$('label_'+value_id).className = 'updated';
-						Dase.highlight(Dase.$('form_'+value_id),500,'updated');
-					},value_text,Dase.user.eid,Dase.user.htpasswd); 
-					return false;
+						//Dase.loadingMsg(true);
+						//handle delete case
+						var value_id = this.className;
+						Dase.addClass(this,'updated');
+						Dase.ajax(this.action,'put',function(resp) { 
+							var value_text = resp;
+							Dase.$('val_'+value_id).value = value_text;
+							Dase.$('val_'+value_id).size = value_text.length;
+							Dase.$('val_'+value_id).onfocus = function() {
+								Dase.removeClass(Dase.$('label_'+value_id),'updated');
+							};
+							//handle radio buttons
+							var radios = Dase.$('val_'+value_id).getElementsByTagName('input');
+							for (var j=0;j<radios.length;j++) {
+								radios[j].onfocus = function() {
+									Dase.removeClass(Dase.$('label_'+value_id),'updated');
+								}
+							}
+							Dase.$('label_'+value_id).className = 'updated';
+							Dase.highlight(Dase.$('form_'+value_id),500,'updated');
+						},value_text,Dase.user.eid,Dase.user.htpasswd); 
+						return false;
+					}
 				}
-			}
-			Dase.$('formText').innerHTML = 'Edit Metadata';
-		});
-		return false;
-	};
-};
-
-Dase.initAddMetadata = function()
-{
-	var mlink = Dase.$('addMetadataLink');
-	var mform = Dase.$('ajaxFormHolder');
-	var coll = Dase.$('collectionAsciiId').innerHTML;
-	if (!mlink || !mform) return;
-	mlink.onclick = function() {
-		Dase.addClass(Dase.$('adminPageControls'),'hide');
-		Dase.removeClass(Dase.$('pageReloader'),'hide');
-		Dase.$('pageReloaderLink').onclick = function() {
-			Dase.pageReload();
+				Dase.$('formText').innerHTML = 'Edit Metadata';
+			});
 			return false;
-		}
-		if (Dase.toggle(mform)) {
-			mform.innerHTML = '<h1 class="loading">Loading...</h1>';
-			Dase.getJSON(this.href, function(json){
-			    var data = { 'atts': json };
-				var templateObj = TrimPath.parseDOMTemplate("select_att_jst");
-				mform.innerHTML = templateObj.process(data);
+		};
+	};
+
+	Dase.initAddMetadata = function()
+	{
+		var mlink = Dase.$('addMetadataLink');
+		var mform = Dase.$('ajaxFormHolder');
+		var coll = Dase.$('collectionAsciiId').innerHTML;
+		if (!mlink || !mform) return;
+		mlink.onclick = function() {
+			Dase.addClass(Dase.$('adminPageControls'),'hide');
+			Dase.removeClass(Dase.$('pageReloader'),'hide');
+			Dase.$('pageReloaderLink').onclick = function() {
+				Dase.pageReload();
+				return false;
+			}
+			if (Dase.toggle(mform)) {
+				mform.innerHTML = '<h1 class="loading">Loading...</h1>';
+				Dase.getJSON(this.href, function(atts){
+					h = new Dase.htmlbuilder;
+					h.add('h1',null,'Add Metadata');
+					var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
+					var sel = form.add('select',{'name':'att_ascii_id'});
+					sel.add('option',{'value':''},'select an attribute');
+					for (var i=0;i<atts.length;i++) {
+						var att = atts[i];
+						sel.add('option',{'value':att.href},att.attribute_name);
+					}
+					h.add('div',{'id':'addMetadataFormTarget'});
+				h.attach(mform);
 				var getForm = Dase.$('getInputForm');
 				Dase.initGetInputForm(getForm);
 			});
@@ -375,18 +455,23 @@ Dase.initAddContent = function()
 		}
 		if (Dase.toggle(cform)) {
 			cform.innerHTML = '<h1 class="loading">Loading...</h1>';
-			Dase.getJSON(this.href, function(json){
-				//note: we do not use versions in jst due to problems iterating w/in pre tag
-			    var data = { 'content': json };
-				data.coll_ser = Dase.$('collSer').innerHTML;
-				var templateObj = TrimPath.parseDOMTemplate("textual_content_jst");
-				cform.innerHTML = templateObj.process(data);
+			Dase.getJSON(this.href, function(content){
+				var coll_ser = Dase.$('collSer').innerHTML;
+				var h = new Dase.htmlbuilder;
+				h.add('h1',null,'Add/Edit Textual Content');
+				var form = h.add('form',{'action':'item/'+coll_ser+'/content','method':'post','id':'textualContentForm'});
+				if (content.latest.text) {
+					form.add('h4',null,'last updated '+content.latest.date);
+				}
+				form.add('p').add('textarea',{'cols':'50','rows':'15','name':'content'},content.latest.text+' ');
+				form.add('p').add('input',{'type':'submit','value':'update'});
+				h.attach(cform);
 				var contentForm = Dase.$('textualContentForm');
 				Dase.initContentForm(contentForm);
-			});
-		}
-		return false;
-	};
+		});
+	}
+	return false;
+};
 };
 
 Dase.initSetItemType = function()
@@ -413,9 +498,20 @@ Dase.initSetItemType = function()
 					data.current = 'default/none';
 				}
 				data.coll_ser = Dase.$('collSer').innerHTML;
-			    data.types = json;
-				var templateObj = TrimPath.parseDOMTemplate("item_type_jst");
-				type_form.innerHTML = templateObj.process(data);
+				data.types = json;
+				var h = new Dase.htmlbuilder;
+				h.add('h1',null,'Set Item Type '+data.current);
+				var form = h.add('form',{'action':'item/'+data.coll_ser+'/item_type','method':'post','id':'itemTypeForm'});
+				var select = form.add('select',{'name':'item_type'});
+				select.add('option',null,'select one:');
+				for (var i=0;i<data.types.length;i++) {
+					var t = data.types[i];
+					select.add('option',{'value':t.ascii_id},t.name);
+				}
+				form.add('input',{'type':'submit','value':'set'});
+				form.add('span',null,' ');
+				form.add('span',{'id':'updateMsg'});
+				h.attach(type_form);
 				Dase.initItemTypeForm(Dase.$('itemTypeForm'));
 			});
 		}
@@ -445,7 +541,7 @@ Dase.initContentForm = function(form) {
 		}
 		var cont = Dase.$('itemContent');
 		if (cont) {
-		   cont.innerHTML = "<h2>Loading content...</h2>";
+			cont.innerHTML = "<h2>Loading content...</h2>";
 		}
 		Dase.ajax(this.action,'post',function(resp) { 
 			Dase.pageReload(resp);
@@ -462,32 +558,49 @@ Dase.initGetInputForm = function(form) {
 	//var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
 	//what if the attribute had it's own complete url in the original json?
 	var url = this.options[this.selectedIndex].value+'.json';
-		Dase.getJSON(url,function(resp) {
-			resp.coll_ser = Dase.$('collSer').innerHTML;
-			if (!resp.html_input_type) {
-				resp.html_input_type = 'text';
+	Dase.getJSON(url,function(resp) {
+		resp.coll_ser = Dase.$('collSer').innerHTML;
+		if (!resp.html_input_type) {
+			resp.html_input_type = 'text';
+		}
+		Dase.$('addMetadataFormTarget').innerHTML = Dase.getInputForm(resp);
+
+		var select_autofill = Dase.$('select_autofill');
+		if  (select_autofill) {
+			select_autofill.onchange = function() {
+				Dase.$('autofill_target').value = this.options[this.selectedIndex].value;
 			}
-			var templateObj = TrimPath.parseDOMTemplate('input_form_'+resp.html_input_type+'_jst');
-			Dase.$('addMetadataFormTarget').innerHTML = templateObj.process(resp);
-			var input_form = Dase.$('ajaxFormHolder').getElementsByTagName('form')[1];
-			input_form.onsubmit = function() {
-				var content_headers = {
-					'Content-Type':'application/x-www-form-urlencoded'
+		}
+
+		var input_form = Dase.$('ajaxFormHolder').getElementsByTagName('form')[1];
+		input_form.onsubmit = function() {
+			var content_headers = {
+				'Content-Type':'application/x-www-form-urlencoded'
+			}
+			Dase.loadingMsg(true);
+			Dase.ajax(this.action,'post',function() { 
+				Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(meta) {
+				var h = new Dase.htmlbuilder;
+				var seen;
+				for (var i=0;i<meta.length;i++) {
+					var m = meta[i];
+					if (m.collection_id != 0) {
+						if (seen != m.attribute_name) {
+							h.add('dt',null,m.attribute_name);
+							seen = m.attribute_name;
+						}
+						h.add('dd',null,m.value_text)
+					}
 				}
-				Dase.loadingMsg(true);
-				Dase.ajax(this.action,'post',function() { 
-					Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(metadata_json) {
-					data = {'meta':metadata_json};
-					var templateObj = TrimPath.parseDOMTemplate('metadata_jst');
-					Dase.$('metadata').innerHTML = templateObj.process(data);
-				});
-			},Dase.form.serialize(this),null,null,content_headers); 
-			Dase.$('addMetadataFormTarget').innerHTML = '';
-			form.att_ascii_id.selectedIndex = 0; //reset attribute selector
-			return false;
-		};
-	});
-	return false;
+				h.attach(Dase.$('metadata'));
+			});
+		},Dase.form.serialize(this),null,null,content_headers); 
+		Dase.$('addMetadataFormTarget').innerHTML = '';
+		form.att_ascii_id.selectedIndex = 0; //reset attribute selector
+		return false;
+	};
+});
+return false;
 }
 };
 
@@ -499,9 +612,9 @@ Dase.buildEditMetadataForm = function(json) {
 		html_form += '<label id="label_'+json[i].value_id+'" for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
 		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" "value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
 		html_form += "</form>";
-		}
 	}
-	return html_form;
+}
+return html_form;
 };
 
 Dase.getFormElement = function(set) {

@@ -1,5 +1,8 @@
 <?php
 
+class Dase_Handler_Exception extends Exception {
+}
+
 /** this class is always subclassed by a request-specific handler */
 
 class Dase_Handler {
@@ -73,8 +76,9 @@ class Dase_Handler {
 
 	protected function setup($r)
 	{
-		return;
+		//throw new Dase_Handler_Exception('define setup function');
 	}
+
 			
 }
 

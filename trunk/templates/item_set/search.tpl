@@ -17,24 +17,6 @@
 		<div id="sortByAttFormDiv"></div>
 	</div>
 	{/if}
-
-
-	<!-- javascript template for sort by attribute pull-down-->
-	<textarea class="javascript_template" id="attributes_jst">
-		{literal}
-		<form id="sortByAttForm" action="search" method="get">
-			<select name="att_ascii_id">
-				<option value="">select an attribute</option>
-				{for att in atts}
-				<option value="${att.ascii_id}">${att.attribute_name}</option>
-				{/for}
-			</select>
-			<input type='submit' value='sort results'/>
-		</form>
-		{/literal}
-	</textarea>
-	<!-- end javascript template -->
-
 	<div id="contentHeader">
 		{if $items->collection}
 		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>

@@ -182,37 +182,5 @@
 	</div>
 </div>
 <div class="spacer"></div>
-<!-- javascript templates for defined values-->
-<textarea class="javascript_template" id="inp_select_jst">
-	{literal}
-	<select>
-	<option>select one:</option>
-	{for v in defined}
-	<option>${v}</option>
-	{/for}
-	</select>
-	{/literal}
-</textarea>
-<textarea class="javascript_template" id="inp_radio_jst">
-	{literal}
-	{for v in defined}
-	<p>
-	<input type="radio" name="sample"> ${v}
-	</p>
-	{/for}
-	{/literal}
-</textarea>
-<textarea
-	class="javascript_template"
-	id="inp_checkbox_jst">
-	{literal}
-	{for v in defined}
-	<p>
-	<input type="checkbox" name="sample"> ${v}
-	</p>
-	{/for}
-	{/literal}
-</textarea>
-<!-- end javascript template -->
 {/block}
 

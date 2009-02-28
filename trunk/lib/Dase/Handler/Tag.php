@@ -8,13 +8,11 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}' => 'tag',
 		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', //for json
 		'{eid}/{tag_ascii_id}/background' => 'background',
-		'{eid}/{tag_ascii_id}/templates' => 'bulk_edit_templates',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
 		'{eid}/{tag_ascii_id}/data' => 'tag_data',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
-		'{eid}/{tag_ascii_id}/template' => 'tag_template',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
 		'{eid}/{tag_ascii_id}/expunger' => 'tag_expunger',
 		//for set delete:
@@ -44,12 +42,6 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(404,'no such tag');
 		}
 	}	
-
-	public function getBulkEditTemplates($r)
-	{
-		$t = new Dase_Template($r);
-		$r->renderResponse($t->fetch('item_set/jstemplates.tpl'));
-	}
 
 	public function getTagAtom($r)
 	{
@@ -81,12 +73,6 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401);
 		}
 		$r->renderResponse($this->tag->asJson($r->app_root));
-	}
-
-	public function getTagTemplate($r)
-	{
-		$t = new Dase_Template($r);
-		$r->renderResponse($t->fetch('item_set/jstemplates.tpl'));
 	}
 
 	public function getTagList($r)

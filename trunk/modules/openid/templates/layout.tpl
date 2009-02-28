@@ -34,7 +34,6 @@
 		<script type="text/javascript" src="www/scripts/json2.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
-		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
 		{block name="head"}{/block}
 
 
@@ -130,6 +129,5 @@
 			<img src="www/images/dasepowered.png" alt="DASePowered icon">
 		</div><!--closes footer-->
 		<div id="debugData" class="pagedata"></div>
-		<div id="jsTemplates" class="pagedata"></div>
 	</body>
 </html>

@@ -25,7 +25,7 @@
 		<script type="text/javascript" src="www/scripts/md5.js"></script>
 		<script type="text/javascript" src="www/scripts/dase.js"></script>
 		<script type="text/javascript" src="www/scripts/dase/form.js"></script>
-		<script type="text/javascript" src="www/scripts/trimpath/template.js"></script>
+		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
 		{block name="head"}{/block}
 
 		<style type="text/css">

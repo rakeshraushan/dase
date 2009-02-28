@@ -74,7 +74,7 @@
 				<select name="docs">
 					<option selected="selected">select a document to load</option>
 					{foreach item=item from=$collection->entries}{if 'application/json' == $item->contentType}
-					<option value="{$item->contentSrc}">{$item->title}</option>
+					<option value="{$item->contentSrc}">{$item->_title}</option>
 					{/if}{/foreach}
 				</select>
 				<input type="submit" name="save" value="save"/>
