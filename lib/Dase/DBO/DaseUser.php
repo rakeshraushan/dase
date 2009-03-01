@@ -50,7 +50,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		//should be called app token?
 		$this->token = $auth_config['token'];
 		$this->ppd_token = $auth_config['ppd_token'];
-		$this->superusers = $auth_config['superuser'];
+		$this->superusers = isset($auth_config['superuser']) ? $auth_config['superuser'] : array();
 	}
 
 	public function getUrl($app_root)
