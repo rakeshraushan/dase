@@ -94,6 +94,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		$tpl->assign('conf',$conf);
 		$lc = $r->base_path.'/inc/local_config.php';
+		$tpl->assign('path_to_media',$this->path_to_media);
 		$tpl->assign('lc',$lc);
 		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
