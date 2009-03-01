@@ -132,6 +132,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		} catch (PDOException $e) {
 			$resp['db'] = 0;
 			$resp['db_msg'] = $e->getMessage();
+			$r->logger()->debug('DBO error: '.$resp['db_mgs']);
 		}
 		if ($resp['db'] && $resp['path']) {
 			$tpl = new Dase_Template($r,true);

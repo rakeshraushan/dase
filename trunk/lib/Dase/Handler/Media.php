@@ -120,7 +120,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 			unlink($new_file);
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('media handler error: '.$e->getMessage());
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
@@ -172,7 +172,7 @@ class Dase_Handler_Media extends Dase_Handler
 			//move actual files to 'deleted' directory
 			$item->deleteMedia($this->path_to_media);
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('media handler error: '.$e->getMessage());
 			$r->renderError(500,'could not delete media ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();

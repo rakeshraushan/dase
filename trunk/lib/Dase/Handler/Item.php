@@ -420,7 +420,7 @@ class Dase_Handler_Item extends Dase_Handler
 			try {
 				$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			} catch(Exception $e) {
-				$r->logger()->debug('error',$e->getMessage());
+				$r->logger()->debug('item handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('item' != $item_entry->entrytype) {
@@ -477,7 +477,7 @@ class Dase_Handler_Item extends Dase_Handler
 				$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 				unlink($new_file);
 			} catch(Exception $e) {
-				$r->logger()->debug('error',$e->getMessage());
+				$r->logger()->debug('item handler error: '.$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
 			$item->buildSearchIndex();
@@ -534,7 +534,7 @@ class Dase_Handler_Item extends Dase_Handler
 			//then return the Dase_DBO_MediaFile for the original
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('item handler error: '.$e->getMessage());
 			//delete uploaded file
 			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
