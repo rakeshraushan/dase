@@ -21,6 +21,7 @@ class Dase_Http_Request
 		'xhtml' =>'application/xhtml+xml',
 	);
 
+	private $eid_is_service_user;
 	private $env = array();
 	private $members = array();
 	private $object_store = array();
@@ -468,6 +469,9 @@ class Dase_Http_Request
 
 		if ($eid) {
 			$this->user = $this->retrieve('user')->retrieveByEid($eid);
+			if ($this->eid_is_service_user) {
+				$this->user->is_service_user = true;
+			}
 			return $this->user;
 		} else {
 			if (!$force_login) { return; }
@@ -494,6 +498,7 @@ class Dase_Http_Request
 			//if eid is among service users, get password w/ service_token as salt
 			if (isset($service_users[$eid])) {
 				$this->logger()->debug('serviceuser request from '.$eid);
+				$this->eid_is_service_user = true;
 				$passwords[] = md5($this->service_token.$eid);
 			}
 

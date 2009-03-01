@@ -14,7 +14,6 @@ class Dase_Handler_Service extends Dase_Handler
 
 	public function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	public function getServiceTxt($r)

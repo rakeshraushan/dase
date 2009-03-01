@@ -8,7 +8,6 @@ class Dase_Handler_Auth extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		$service_users = $r->retrieve('config')->getAuth('serviceuser');
 		if (isset($service_users[$r->get('serviceuser')])) {
 			//just authorize them

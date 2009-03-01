@@ -557,10 +557,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return "deleted admin metadata for " . $this->serial_number . "\n";
 	}
 
-	function expunge($path_to_media,$app_root)
+	function expunge($path_to_media='')
 	{
-		$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.atom';
-		file_put_contents($filename,$this->asAtom($app_root));
+		if ($path_to_media) {
+			$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.atom';
+			file_put_contents($filename,$this->asAtom('http://daseproject.org/deleted/'));
+		}
 		
 		$this->deleteMedia();
 		$this->deleteValues();
@@ -632,11 +634,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function deleteMedia()
+	function deleteMedia($path_to_media)
 	{
 		$mf = new Dase_DBO_MediaFile($this->db);
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
+			$doomed->moveFileToDeleted($path_to_media);
 			$doomed->delete();
 		}
 	}

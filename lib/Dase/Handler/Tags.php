@@ -11,7 +11,6 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}	
 
 	public function postToTags($r)

@@ -7,6 +7,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	private $superusers = array();
 	public $http_password;
 	public $is_superuser;
+	public $is_service_user;
 	public $ppd_token;
 	public $token;
 

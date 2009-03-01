@@ -21,7 +21,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		$this->type = Dase_DBO_ItemType::get($this->db,$r->get('collection_ascii_id'),$r->get('item_type_ascii_id'));
 		if (!$this->type) {
 			$r->renderError(404);
@@ -296,7 +295,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	{
 		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		try {
-			$item_handler = new Dase_Handler_Item;
+			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
 			$item_handler->item = $item;
 			$item_handler->db = $this->db;
 			$item_handler->putItem($r);

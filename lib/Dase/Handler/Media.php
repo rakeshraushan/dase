@@ -10,12 +10,10 @@ class Dase_Handler_Media extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		//todo: finish
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
-		$this->path_to_media = $r->retrieve('config')->getMediaDir();
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
 		} 
@@ -156,7 +154,7 @@ class Dase_Handler_Media extends Dase_Handler
 		if ($m) {
 			$r->renderResponse($m->asAtom($r->app_root));
 		} else {
-			$r->renderError(404);
+			$r->renderError(404,'no enclosure');
 		}
 	}
 
@@ -171,7 +169,8 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		try {
 			$item->deleteAdminValues();
-			$item->deleteMedia();
+			//move actual files to 'deleted' directory
+			$item->deleteMedia($this->path_to_media);
 		} catch(Exception $e) {
 			$r->logger()->debug('error',$e->getMessage());
 			$r->renderError(500,'could not delete media ('.$e->getMessage().')');
@@ -254,7 +253,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		//hand off to item handler
 		try {
-			$item_handler = new Dase_Handler_Item;
+			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
 			//allows us to dictate serial number
 			$slug = '';
 			if (isset( $_SERVER['HTTP_SLUG'])) {
@@ -264,7 +263,7 @@ class Dase_Handler_Media extends Dase_Handler
 			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);
 			$item_handler->postToMedia($r);
 		} catch (Exception $e) {
-			$r->renderError(500,$e->getMessage());
+			$r->renderError(409,$e->getMessage());
 		}
 		//if something goes wrong and control returns here
 		$r->renderError(500,'error in post to collection');

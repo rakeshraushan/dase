@@ -26,7 +26,6 @@ class Dase_Handler_Tag extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		//Locates requested tag.  Method still needs to authorize.
 		$tag = new Dase_DBO_Tag($this->db);
 		if ($r->has('tag_ascii_id') && $r->has('eid')) {

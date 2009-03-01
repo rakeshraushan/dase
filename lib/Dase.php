@@ -76,7 +76,7 @@ class Dase
 			$classname = 'Dase_Handler_'.Dase_Util::camelize($r->handler);
 		}
 		if (class_exists($classname,true)) {
-			$handler = new $classname();
+			$handler = new $classname($r->retrieve('db'),$c->getMediaDir());
 			$handler->dispatch($r);
 		} else {
 			$r->renderError(404,'no such handler class');

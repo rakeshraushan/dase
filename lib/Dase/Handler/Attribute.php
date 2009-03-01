@@ -13,16 +13,14 @@ class Dase_Handler_Attribute extends Dase_Handler
 
 	public function setup($r)
 	{
-		$db = $r->retrieve('db');
-		$this->db = $db;
 		if ($r->has('collection_ascii_id')) {
-			$this->collection = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
+			$this->collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		}
 		if ($r->has('att_ascii_id') && $r->has('collection_ascii_id')) {
-			$this->attribute = Dase_DBO_Attribute::get($db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
+			$this->attribute = Dase_DBO_Attribute::get($this->db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
 		} 
 		if ($r->has('att_ascii_id') && !$r->has('collection_ascii_id')) {
-			$this->attribute = Dase_DBO_Attribute::getAdmin($db,'admin_'.$r->get('att_ascii_id'));
+			$this->attribute = Dase_DBO_Attribute::getAdmin($this->db,'admin_'.$r->get('att_ascii_id'));
 		} 
 		if (!$this->attribute) {
 			$r->renderError('404');

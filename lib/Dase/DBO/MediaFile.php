@@ -20,6 +20,15 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		return $coll;
 	}
 
+	public function moveFileToDeleted($path_to_media) {
+		$c = $this->getCollection();
+		$dest = $path_to_media.'/'.$c->ascii_id.'/deleted/'.$this->filename; 
+		$src = $this->getLocalPath($path_to_media);
+		if (copy($src,$dest)) {
+			@unlink($src);
+		}
+	}
+
 	public function getLocalPath($path_to_media)
 	{
 		$c = $this->getCollection();
@@ -83,7 +92,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 	{
 		$d = "http://daseproject.org/ns/1.0";
 		//this function assumes p_collection_ascii_id & p_serial_number are set
-		$entry->setId($this->getLink());
+		$entry->setId($this->getLink($app_root));
 		$entry->setTitle($this->filename);
 		$entry->addAuthor();
 
@@ -97,7 +106,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$ext = Dase_File::$types_map[$this->mime_type]['ext'];
 		$edit_media_url = $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
 		$entry->addLink($edit_media_url,'edit-media');
-		$entry->setMediaContent($this->getLink(),$this->mime_type);
+		$entry->setMediaContent($this->getLink($app_root),$this->mime_type);
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
 		//todo: beef up w/ bitrate, samplingrate, etc.
 		foreach ($this->getDerivatives() as $med) {
