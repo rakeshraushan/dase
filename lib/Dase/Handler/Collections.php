@@ -33,7 +33,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			try {
 				$coll_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				$r->logger()->debug('error',$e->getMessage());
+				$r->logger()->debug('colls handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('collection' != $coll_entry->entrytype) {

@@ -425,7 +425,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('coll handler error: '.$e->getMessage());
 			$item->expunge();
 			$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
 		}
@@ -447,7 +447,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item' != $item_entry->entrytype) {
@@ -480,7 +480,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$att_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('attribute' != $att_entry->entrytype) {
@@ -510,7 +510,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$type_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type' != $type_entry->entrytype) {
@@ -539,7 +539,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('error',$e->getMessage());
+			$r->logger()->debug('coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type_relation' != $entry->entrytype) {
