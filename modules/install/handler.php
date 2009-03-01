@@ -107,7 +107,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToConfigChecker($r) 
 	{
 		$resp = array();
-		if (is_writeable($r->path_to_media)) {
+		if (is_writeable($this->path_to_media)) {
 			$resp['path'] = 1;
 		} else {
 			$resp['path'] = 0;
@@ -115,10 +115,9 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$resp['db'] = 1;
 		$resp['proceed'] = 0;
 
-		$db = new Dase_DB($r->retrieve('config')->get('db'),$r->logger());
 		try {
 			//just testing config
-			$db->getDbh();
+			$this->db->getDbh();
 		} catch (PDOException $e) {
 			$resp['db'] = 0;
 			$resp['db_msg'] = $e->getMessage();
