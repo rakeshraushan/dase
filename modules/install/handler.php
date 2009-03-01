@@ -41,7 +41,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		try {
 			//try to connect
-			$db = Dase_DB::get();
+			$dbh = $this->db->getDbh();
 		} catch (PDOException $e) {
 			//local_config.php is not setup
 			$this->db_set = 0;
@@ -49,7 +49,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		try {
 			//see if we have users
-			$u = new Dase_DBO_DaseUser;
+			$u = $r->retrieve('user');
 			if ($u->findOne()) {
 				//if so, make sure user is logged in
 				//and is a superuser
@@ -79,10 +79,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function getInfo($r) 
 	{
-		$conf = var_export(Dase_Config::getAll(),true);
+		$conf = var_export($r->retrieve('config')->getAll(),true);
 		$file_contents = "<?php \$conf=$conf;";
 		$tpl = new Dase_Template($r,true);
-		$conf = Dase_Config::getAll();
+		$conf = $r->retrieve('config')->getAll();
 		if (isset($conf['superuser'])  && is_array($conf['superuser'])) {
 			$eid = array_shift(array_keys($conf['superuser']));
 			$tpl->assign('eid',$eid);
@@ -93,7 +93,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$tpl->assign('convert_path',$path_array[0]);
 		}
 		$tpl->assign('conf',$conf);
-		$lc = DASE_PATH.'/inc/local_config.php';
+		$lc = $r->base_path.'/inc/local_config.php';
 		$tpl->assign('lc',$lc);
 		$r->renderResponse($tpl->fetch('index.tpl'));
 	}

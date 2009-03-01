@@ -88,7 +88,7 @@ class Dase_Http_Request
 		$this->token = $auth_config['token'];
 		$this->ppd_token = $auth_config['ppd_token'];
 		$this->service_token = $auth_config['service_token'];
-		$this->superusers = $auth_config['superuser'];
+		$this->superusers = isset($auth_config['superuser']) ? $auth_config['superuser'] : array();
 	}
 
 	public function getBody()
