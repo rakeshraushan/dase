@@ -107,7 +107,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToConfigChecker($r) 
 	{
 		$resp = array();
-		if (is_writeable($r->get('path_to_media'))) {
+		if (is_writeable($r->path_to_media)) {
 			$resp['path'] = 1;
 		} else {
 			$resp['path'] = 0;
@@ -115,24 +115,13 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$resp['db'] = 1;
 		$resp['proceed'] = 0;
 
-		$db = array();
-		$db['name'] = $r->get('db_name');
-		$db['path'] = $r->get('db_path');
-		$db['type'] = $r->get('db_type');
-		$db['host'] = $r->get('db_host');
-		$db['user'] = $r->get('db_user');
-		$db['pass'] = $r->get('db_pass');
-		if ('sqlite' == $db['type']) {
-			$dsn = "sqlite:".$db['path'];
-		} else {
-			$dsn = $db['type'].':host='.$db['host'].';dbname='.$db['name'];
-		}
+		$db = new Dase_DB($r->retrieve('config')->get('db'),$r->logger());
 		try {
-			$pdo = new PDO($dsn, $db['user'], $db['pass']);
+			//just testing config
+			$db->getDbh();
 		} catch (PDOException $e) {
 			$resp['db'] = 0;
 			$resp['db_msg'] = $e->getMessage();
-			$r->logger()->debug('DBO error: '.$resp['db_mgs']);
 		}
 		if ($resp['db'] && $resp['path']) {
 			$tpl = new Dase_Template($r,true);
@@ -149,8 +138,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$tpl->assign('ppd_token',md5(time().'def'));
 			$tpl->assign('service_token',md5(time().'ghi'));
 			$tpl->assign('db',$db);
-			if (!file_exists(DASE_PATH.'/inc/local_config.php')) {
-				$resp['local_config_path'] = DASE_PATH.'/inc/local_config.php';
+			if (!file_exists($r->base_path.'/inc/local_config.php')) {
+				$resp['local_config_path'] = $r->base_path.'/inc/local_config.php';
 				$resp['config'] = $tpl->fetch('local_config.tpl');
 			} else {
 				$resp['proceed'] = 1;
@@ -173,7 +162,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		//todo: i need an sqlite schema as well
 		$table_prefix = Dase_Config::get('table_prefix');
 		//the schema uses variable $table_prefix
-		include(DASE_PATH.'/modules/install/'.$type.'_schema.php');
+		include($r->base_path.'/modules/install/'.$type.'_schema.php');
 		$db = Dase_DB::get();
 		try {
 			if (false === $db->exec($query)) {
