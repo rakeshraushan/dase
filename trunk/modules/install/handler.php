@@ -149,23 +149,23 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function postToSetupTables($r) 
 	{
-		$count = count(Dase_DB::listTables());
+		$count = count($this->db->listTables());
 		if ($count) {
 			$resp['msg'] = "$count tables already exist.";
 			$resp['ok'] = 1;
 			$r->renderResponse(Dase_Json::get($resp));
 		}
 		$resp = array();
-		$dbconf = Dase_Config::get('db');
+		$dbconf = $r->retrieve('config')->get('db');
 		$type = $dbconf['type'];
 		//todo: i need an sqlite schema as well
-		$table_prefix = Dase_Config::get('table_prefix');
+		$table_prefix = $dbconf['table_prefix'];
 		//the schema uses variable $table_prefix
 		include($r->base_path.'/modules/install/'.$type.'_schema.php');
-		$db = Dase_DB::get();
+		$dbh = $this->db->getDbh();
 		try {
-			if (false === $db->exec($query)) {
-				$error_info = $db->errorInfo();
+			if (false === $dbh->exec($query)) {
+				$error_info = $dbh->errorInfo();
 				$resp['msg'] = $error_info[2];
 			} else {
 				$resp['msg'] = "Database tables have been created.";
@@ -183,7 +183,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	{
 		$resp = array();
 		$superusers = Dase_Config::get('superuser');
-		$u = new Dase_DBO_DaseUser;
+		$u = new Dase_DBO_DaseUser($this->db);
 		$u->eid = array_shift(array_keys($superusers));
 		if ($u->findOne()) {
 			$resp['msg'] = "Admin user \"$u->eid\" already exists";
@@ -209,7 +209,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$feed = Dase_Atom_Feed::retrieve($url);
 		$coll_ascii_id = $feed->getAsciiId();
 		$feed->ingest($r,true);
-		$cm = new Dase_DBO_CollectionManager;
+		$cm = new Dase_DBO_CollectionManager($this->db);
 		$cm->dase_user_eid = $u->eid;
 		$cm->collection_ascii_id = $coll_ascii_id;
 		$cm->auth_level = 'superuser';
