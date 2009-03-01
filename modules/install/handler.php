@@ -13,27 +13,28 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		'create_sample' => 'create_sample',
 	);
 
-	public function setup($request)
+	public function setup($r)
 	{
-		$cache_dir = Dase_Config::get('cache_dir');
-		$logfile = Dase_Config::get('logfile');
 
-		if (!file_exists($cache_dir) || !file_exists($logfile)) {
-			//report error here!
-			$this->db_set = 0;
-			return;
-		}
+		$config = $r->retrieve('config');
 
-		if (!is_writeable($cache_dir)) {
+		if (!is_writeable($config->getCacheDir())) {
 			$html = "<html><body>";
-			$html .= "<h3>".$cache_dir." directory must be writeable by the web server</h3>";
+			$html .= "<h3>".$config->getCacheDir()." must be writeable by the web server.</h3>";
 			$html .= "</body></html>";
 			echo $html;
 			exit;
 		}
-		if (!is_writeable($logfile)) {
+		if (!is_writeable($config->getLogDir())) {
 			$html = "<html><body>";
-			$html .= "<h3>".$logfile." file must be writeable by the web server for logging</h3>";
+			$html .= "<h3>".$config->getLogDir()." must be writeable by the web server.</h3>";
+			$html .= "</body></html>";
+			echo $html;
+			exit;
+		}
+		if (!is_writeable($config->getMediaDir())) {
+			$html = "<html><body>";
+			$html .= "<h3>".$config->getMediaDir()." must be writeable by the web server.</h3>";
 			$html .= "</body></html>";
 			echo $html;
 			exit;
@@ -52,16 +53,16 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			if ($u->findOne()) {
 				//if so, make sure user is logged in
 				//and is a superuser
-				$user = $request->getUser();
+				$user = $r->getUser();
 				if ($user->isSuperuser()) {
-					$this->done($request);
+					$this->done($r);
 				} else {
-					$request->renderError(401);
+					$r->renderError(401);
 				}
 			} else {
 				//if we are here, means local_config.php is OK, we need to setup tables and user
-				if ('info' == $request->resource) {
-					$this->getSetup($request);
+				if ('info' == $r->resource) {
+					$this->getSetup($r);
 				}
 			}
 		} catch (Exception $e) {
@@ -70,17 +71,17 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 	}
 
-	public function getSetup($request) 
+	public function getSetup($r) 
 	{
-		$tpl = new Dase_Template($request,true);
-		$request->renderResponse($tpl->fetch('setup.tpl'));
+		$tpl = new Dase_Template($r,true);
+		$r->renderResponse($tpl->fetch('setup.tpl'));
 	}
 
-	public function getInfo($request) 
+	public function getInfo($r) 
 	{
 		$conf = var_export(Dase_Config::getAll(),true);
 		$file_contents = "<?php \$conf=$conf;";
-		$tpl = new Dase_Template($request,true);
+		$tpl = new Dase_Template($r,true);
 		$conf = Dase_Config::getAll();
 		if (isset($conf['superuser'])  && is_array($conf['superuser'])) {
 			$eid = array_shift(array_keys($conf['superuser']));
@@ -94,19 +95,19 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$tpl->assign('conf',$conf);
 		$lc = DASE_PATH.'/inc/local_config.php';
 		$tpl->assign('lc',$lc);
-		$request->renderResponse($tpl->fetch('index.tpl'));
+		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
 
-	public function done($request) 
+	public function done($r) 
 	{
 		//setup method determined we are good to go
-		$request->renderRedirect();
+		$r->renderRedirect();
 	}
 
-	public function postToConfigChecker($request) 
+	public function postToConfigChecker($r) 
 	{
 		$resp = array();
-		if (is_writeable($request->get('path_to_media'))) {
+		if (is_writeable($r->get('path_to_media'))) {
 			$resp['path'] = 1;
 		} else {
 			$resp['path'] = 0;
@@ -115,12 +116,12 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$resp['proceed'] = 0;
 
 		$db = array();
-		$db['name'] = $request->get('db_name');
-		$db['path'] = $request->get('db_path');
-		$db['type'] = $request->get('db_type');
-		$db['host'] = $request->get('db_host');
-		$db['user'] = $request->get('db_user');
-		$db['pass'] = $request->get('db_pass');
+		$db['name'] = $r->get('db_name');
+		$db['path'] = $r->get('db_path');
+		$db['type'] = $r->get('db_type');
+		$db['host'] = $r->get('db_host');
+		$db['user'] = $r->get('db_user');
+		$db['pass'] = $r->get('db_pass');
 		if ('sqlite' == $db['type']) {
 			$dsn = "sqlite:".$db['path'];
 		} else {
@@ -133,15 +134,15 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$resp['db_msg'] = $e->getMessage();
 		}
 		if ($resp['db'] && $resp['path']) {
-			$tpl = new Dase_Template($request,true);
-			$tpl->assign('main_title',$request->get('main_title'));
-			if ($request->get('table_prefix')) {
-				$tpl->assign('table_prefix',trim($request->get('table_prefix'),'_').'_');
+			$tpl = new Dase_Template($r,true);
+			$tpl->assign('main_title',$r->get('main_title'));
+			if ($r->get('table_prefix')) {
+				$tpl->assign('table_prefix',trim($r->get('table_prefix'),'_').'_');
 			}
-			$tpl->assign('eid',$request->get('eid'));
-			$tpl->assign('password',$request->get('password'));
-			$tpl->assign('path_to_media',$request->get('path_to_media'));
-			$tpl->assign('convert_path',$request->get('convert_path'));
+			$tpl->assign('eid',$r->get('eid'));
+			$tpl->assign('password',$r->get('password'));
+			$tpl->assign('path_to_media',$r->get('path_to_media'));
+			$tpl->assign('convert_path',$r->get('convert_path'));
 			$tpl->assign('db',$db);
 			$tpl->assign('token',md5(time().'abc'));
 			$tpl->assign('ppd_token',md5(time().'def'));
@@ -154,16 +155,16 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				$resp['proceed'] = 1;
 			}
 		}
-		$request->renderResponse(Dase_Json::get($resp));
+		$r->renderResponse(Dase_Json::get($resp));
 	}
 
-	public function postToSetupTables($request) 
+	public function postToSetupTables($r) 
 	{
 		$count = count(Dase_DB::listTables());
 		if ($count) {
 			$resp['msg'] = "$count tables already exist.";
 			$resp['ok'] = 1;
-			$request->renderResponse(Dase_Json::get($resp));
+			$r->renderResponse(Dase_Json::get($resp));
 		}
 		$resp = array();
 		$dbconf = Dase_Config::get('db');
@@ -186,10 +187,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		} catch (Exception $e) {
 			$resp['msg'] = "There was a problem creating database tables: ".$e->getMessage();
 		}
-		$request->renderResponse(Dase_Json::get($resp));
+		$r->renderResponse(Dase_Json::get($resp));
 	}
 
-	public function postToCreateAdmin($request) 
+	public function postToCreateAdmin($r) 
 	{
 		$resp = array();
 		$superusers = Dase_Config::get('superuser');
@@ -198,7 +199,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		if ($u->findOne()) {
 			$resp['msg'] = "Admin user \"$u->eid\" already exists";
 			$resp['ok'] = 1;
-			$request->renderResponse(Dase_Json::get($resp));
+			$r->renderResponse(Dase_Json::get($resp));
 		}
 		$u->name = $u->eid;
 		if ($u->insert()) {
@@ -208,17 +209,17 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$resp['msg'] = "There was a problem creating admin user \"$u->eid\".";
 			$resp['ok'] = 0;
 		}
-		$request->renderResponse(Dase_Json::get($resp));
+		$r->renderResponse(Dase_Json::get($resp));
 	}
 
-	public function postToCreateSample($request)
+	public function postToCreateSample($r)
 	{
 
 		$resp = array();
 		$url = "http://daseproject.org/collection/sample.atom";
 		$feed = Dase_Atom_Feed::retrieve($url);
 		$coll_ascii_id = $feed->getAsciiId();
-		$feed->ingest($request,true);
+		$feed->ingest($r,true);
 		$cm = new Dase_DBO_CollectionManager;
 		$cm->dase_user_eid = $u->eid;
 		$cm->collection_ascii_id = $coll_ascii_id;
