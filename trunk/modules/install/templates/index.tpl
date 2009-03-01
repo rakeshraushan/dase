@@ -49,7 +49,7 @@
 								<label for="path_to_media">Path to Media Directory (must be writable by web server)</label>
 							</th>
 							<td>
-								<input type="text" size="40" name="path_to_media" value="{$conf.path_to_media}"/>
+								<input type="text" size="40" name="path_to_media" value="{$path_to_media}"/>
 								<span id="path_to_media_msg" class="error"></span>
 							</td>
 						</tr>
