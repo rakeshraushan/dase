@@ -11,6 +11,7 @@ class Dase_Config {
 		$this->base_dir = $base_dir;
 		$this->conf['app'] = array();
 		$this->conf['auth'] = array();
+		$this->conf['auth']['superuser'] = array();
 		$this->conf['db'] = array();
 		$this->conf['request_handler'] = array();
 	}

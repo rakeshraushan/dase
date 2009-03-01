@@ -26,6 +26,11 @@ class Dase_Log
 		}
 	}
 
+	public function is_writeable()
+	{
+		return is_writeable($this->logfile);
+	}
+
 	private function _init()
 	{
 		if (!$this->logfile || !$filehandle = fopen($this->logfile, 'a')) {
