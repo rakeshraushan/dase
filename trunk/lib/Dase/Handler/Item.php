@@ -25,9 +25,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		$this->item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
-		$this->path_to_media = $r->retrieve('config')->getMediaDir();
 		if (!$this->item) {
 			$r->renderError(404);
 		}
@@ -42,7 +40,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot delete this item');
 		}
 		try {
-			$this->item->expunge($this->path_to_media,$r->app_root);
+			$this->item->expunge($this->path_to_media);
 			$r->renderOk('item deleted');
 		} catch (Exception $e) {
 			$r->renderError(500);

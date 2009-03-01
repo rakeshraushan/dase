@@ -26,8 +26,6 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function setup($r)
 	{
-		$db = $r->retrieve('db');
-		$this->db = $db;
 		//all routes here require superuser privileges
 		$this->user = $r->getUser();
 		if ( 'modules' != $r->resource && !$this->user->isSuperuser()) {

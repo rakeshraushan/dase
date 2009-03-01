@@ -34,10 +34,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$db = $r->retrieve('db');
-		$this->db = $db;
-		$this->collection = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
-		$this->path_to_media = $r->retrieve('config')->getAppSettings('path_to_media');
+		$this->collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
 		if (!$this->collection) {
 			$r->renderError(404);
 		}

@@ -32,6 +32,20 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $ascii_id;
 	}
 
+	/** called reduce since empty is reserved */
+	public function reduce($messages = false)
+	{
+		$items = new Dase_DBO_Item($this->db);
+		$items->collection_id = $this->id;
+		foreach ($items->find() as $item) {
+			$this->log->info("item $this->ascii_id:$item->serial_number deleted");
+			if ($messages) {
+				print "item $this->ascii_id:$item->serial_number deleted\n";
+			}
+			$item->expunge();
+		}
+	}
+
 	public function expunge($messages = false)
 	{
 		$items = new Dase_DBO_Item($this->db);
@@ -494,6 +508,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($serial_number) {
 			$item->serial_number = $serial_number;
 			if ($item->findOne()) {
+				$this->log->info("duplicate serial number: ".$serial_number);
 				throw new Dase_Exception('duplicate serial number!');
 				return;
 			}

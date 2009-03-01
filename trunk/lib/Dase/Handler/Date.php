@@ -9,7 +9,6 @@ class Dase_Handler_Date extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	public function getDate($r) {

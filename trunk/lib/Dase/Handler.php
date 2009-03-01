@@ -7,10 +7,19 @@ class Dase_Handler_Exception extends Exception {
 
 class Dase_Handler {
 
+	protected $db;
+	protected $path_to_media;
 	protected $request;
+
+	public function __construct($db,$path_to_media)
+	{
+		$this->db = $db;
+		$this->path_to_media = $path_to_media;
+	}
 
 	public function dispatch($r)
 	{
+		
 		$log = $r->logger();
 
 		//if it is a module subclass, append the module resource map
@@ -76,7 +85,6 @@ class Dase_Handler {
 
 	protected function setup($r)
 	{
-		//throw new Dase_Handler_Exception('define setup function');
 	}
 
 			

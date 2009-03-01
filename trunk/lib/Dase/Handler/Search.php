@@ -13,7 +13,6 @@ class Dase_Handler_Search extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 		//setting $r allows app cache-ability
 		//but...breaks intermediate caching (work on that)
 		if ($r->getCookie('max')) {

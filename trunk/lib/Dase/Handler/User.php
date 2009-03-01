@@ -24,7 +24,6 @@ class Dase_Handler_User extends Dase_Handler
 
 	protected function setup($r)
 	{ 
-		$this->db = $r->retrieve('db');
 		if ('atom' == $r->format || 'ping' == $r->resource ) {
 			$this->user = $r->getUser('http');
 		} else {

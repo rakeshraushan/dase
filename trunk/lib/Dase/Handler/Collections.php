@@ -12,7 +12,6 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	public function postToCollections($r) 

@@ -89,6 +89,11 @@
 					<img alt="icon" src="www/images/tango-icons/utilities-terminal.png"/><sup>AtomPub Demo</sup>
 				</a>
 				</li>
+				<li class="htmlbuilder-tab">
+				<a href="tools/htmlbuilder">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>HTML Builder Demo</sup>
+				</a>
+				</li>
 			</ul>
 			<h5 id="ajaxMsg">loading...</h5>
 		</div> <!-- closes sidebar -->

@@ -14,7 +14,6 @@ class Dase_Handler_Category extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	private function _getUri($r)

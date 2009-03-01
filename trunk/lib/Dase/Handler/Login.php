@@ -10,7 +10,6 @@ class Dase_Handler_Login extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	public function getLogin($r)

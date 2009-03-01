@@ -437,16 +437,18 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function insert($db,$r,$fetch_enclosure=false) 
 	{
-		$eid = $r->getUser('http')->eid;
+		$user = $r->getUser('http');
+		//allows service_user to  override created_by_eid 
 		$author = $this->getAuthorName();
-		//allows created_by_eid to be author, NOT necessarily user
-		if (!$author) {
-			$author = $eid;
+		if ($user->is_service_user && $author) {
+			$created_by_eid = $author;
+		} else {
+			$created_by_eid = $user->eid;
 		}
 		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		$sn = Dase_Util::makeSerialNumber($r->get('slug'));
-		$item = $c->createNewItem($sn,$author);
+		$item = $c->createNewItem($sn,$created_by_eid);
 		foreach ($this->getMetadata() as $att => $keyval) {
 			//creates atribute if it doesn't exist!
 			Dase_DBO_Attribute::findOrCreate($db,$c->ascii_id,$att);
@@ -494,7 +496,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$content->p_collection_ascii_id = $c->ascii_id;
 			$content->p_serial_number = $item->serial_number;
 			$content->updated = date(DATE_ATOM);
-			$content->updated_by_eid = $author;
+			$content->updated_by_eid = $created_by_eid;
 			$content->insert();
 		}
 		//$item->setValue('title',$this->getTitle());
@@ -503,7 +505,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($fetch_enclosure) {
 			$enc = $this->getEnclosure(); 
 			if ($enc) {
-				$upload_dir = $r->config->get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+				$upload_dir = $r->retrieve('config')->get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
 					$r->renderError(401,'missing upload directory');
 				}
@@ -513,7 +515,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 				try {
 					$file = Dase_File::newFile($db,$new_file,$enc['mime_type']);
-					$media_file = $file->addToCollection($item,false);
+					$media_file = $file->addToCollection($item,false,$r->retrieve('config')->get('path_to_media'));
 				} catch(Exception $e) {
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}
