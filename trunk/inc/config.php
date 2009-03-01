@@ -30,8 +30,8 @@ $conf['app']['cache_type'] = 'file';
 
 //eid & admin password
 //$conf['auth']['superuser']['<username>'] = '<password>';
-//$conf['auth']['service_token'] = "big-hash-here";
 //$conf['auth']['serviceuser']['prop'] = 'ok';
+$conf['auth']['service_token'] = " ***thecatinthehatcameback*** ";
 
 //define module handlers (can override existing handler)
 //$conf['request_handler']['<handler>'] = '<module_name>';
