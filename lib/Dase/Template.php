@@ -51,7 +51,7 @@ class Dase_Template {
 
 		$this->smarty->register_modifier('shift', 'array_shift');
 		//todo: confusing! $app_root shouldn't have trailing /
-		$this->smarty->assign('app_root', $request->app_root.'/');
+		$this->smarty->assign('app_root', trim($request->app_root.'/').'/');
 		if ($request->module) {
 			$this->smarty->assign('module_root', $request->module_root.'/');
 			if (file_exists($request->base_path.'/modules/'.$request->module.'/templates/menu.tpl')) {
