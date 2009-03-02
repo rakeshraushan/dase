@@ -16,7 +16,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			";
 		$tags = array();
 		foreach (Dase_DBO::query($user->db,$sql,array($user->id))->fetchAll() as $row) { 
-			$row['count'] = $row['item_count'];
 			if ($row['ascii_id']) { //compat: skip tags w/o ascii_id
 				$tags[] = $row;
 			}

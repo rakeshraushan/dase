@@ -545,7 +545,7 @@ Dase.placeUserTags = function(user) {
 			var li = h.add('li');
 			var a = li.add('a');
 			a.set('href','tag/'+user.eid+'/'+tag.ascii_id);
-			a.setText(tag.name+' ('+tag.count+')');
+			a.setText(tag.name+' ('+tag.item_count+')');
 		}
 	}
 	h.attach(Dase.$('sets-submenu'),true); //append
@@ -558,7 +558,7 @@ Dase.placeUserTags = function(user) {
 		var tag = user.tags[n];
 		if ('admin' != tag.type) {
 			var opt = sel.add('option',{'value':tag.ascii_id});
-			opt.setText(tag.name+' ('+tag.count+')');
+			opt.setText(tag.name+' ('+tag.item_count+')');
 		}
 	}
 	var inp = h.add('input',{'type':'submit','value':'add'});
