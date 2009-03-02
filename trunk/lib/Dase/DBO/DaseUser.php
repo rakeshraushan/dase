@@ -157,7 +157,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	{
 		$tag_array = array();
 		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
-			if (!$row['item_count']) {
+			if (!$row['item_count'] || 'null' == $row['item_count']) {
 				$row['item_count'] = 0;
 			}
 			$tag_array[] = $row;
