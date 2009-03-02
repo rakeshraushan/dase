@@ -615,16 +615,10 @@ class Dase_Http_Request
 		exit;
 	}
 
-	public function renderError($code,$msg='')
+	public function renderError($code,$msg='',$log_error=true)
 	{
-		//todo: put in configuration
-		//(fix for polling load balancer)
-		if ('service-info' == $this->handler) {
-			exit;
-		}
-
 		$response = new Dase_Http_Response($this);
-		$response->error($code,$msg);
+		$response->error($code,$msg,$log_error);
 		exit;
 	}
 
