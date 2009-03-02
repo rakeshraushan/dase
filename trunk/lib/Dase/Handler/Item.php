@@ -473,7 +473,7 @@ class Dase_Handler_Item extends Dase_Handler
 				//since we are swapping in:
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
-				$item->deleteMedia();
+				$item->deleteMedia($this->path_to_media);
 				$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
 				unlink($new_file);
 			} catch(Exception $e) {

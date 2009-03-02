@@ -564,7 +564,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			file_put_contents($filename,$this->asAtom('http://daseproject.org/deleted/'));
 		}
 		
-		$this->deleteMedia();
+		$this->deleteMedia($path_to_media);
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->deleteSearchIndexes();
@@ -634,12 +634,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function deleteMedia($path_to_media)
+	function deleteMedia($path_to_media='')
 	{
 		$mf = new Dase_DBO_MediaFile($this->db);
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
-			$doomed->moveFileToDeleted($path_to_media);
+			if ($path_to_media) {
+				$doomed->moveFileToDeleted($path_to_media);
+			}
 			$doomed->delete();
 		}
 	}
