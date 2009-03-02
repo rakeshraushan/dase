@@ -32,7 +32,7 @@ class Dase_Cookie {
 		//dates disagree)
 		$prefix = str_replace('http://','',$this->app_root);
 		$prefix = str_replace('.','_',$prefix);
-		return str_replace('/','_',$prefix) . '_';
+		$prefix = str_replace('/','_',$prefix) . '_';
 	}
 
 	public function setEid($eid) 
@@ -79,7 +79,7 @@ class Dase_Cookie {
 	public function clearByType($type) 
 	{
 		$pre = $this->getPrefix();
-		if ('module' == $type) {
+		if ('module' == $type && $this->module) {
 			//allows each module their own module cookie
 			$pre = $pre.$this->module.'_';
 		}

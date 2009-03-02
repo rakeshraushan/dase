@@ -47,7 +47,7 @@ class Dase_Http_Request
 		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
 		$env['remote_addr'] = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 		$env['http_user_agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-		$env['app_root'] = $env['protocol'].'://'.$env['http_host'].dirname($env['script_name']);
+		$env['app_root'] = trim($env['protocol'].'://'.$env['http_host'].dirname($env['script_name']),'/');
 		//env is assign to this twice since it needs to be use in other methods
 		$this->env = $env;
 		$env['format'] = $this->getFormat();
