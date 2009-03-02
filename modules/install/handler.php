@@ -107,12 +107,12 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToConfigChecker($r) 
 	{
 		$db = array();
-		$db['name'] = $request->get('db_name');
-		$db['path'] = $request->get('db_path');
-		$db['type'] = $request->get('db_type');
-		$db['host'] = $request->get('db_host');
-		$db['user'] = $request->get('db_user');
-		$db['pass'] = $request->get('db_pass');
+		$db['name'] = $r->get('db_name');
+		$db['path'] = $r->get('db_path');
+		$db['type'] = $r->get('db_type');
+		$db['host'] = $r->get('db_host');
+		$db['user'] = $r->get('db_user');
+		$db['pass'] = $r->get('db_pass');
 		if ('sqlite' == $db['type']) {
 			$dsn = "sqlite:".$db['path'];
 		} else {
