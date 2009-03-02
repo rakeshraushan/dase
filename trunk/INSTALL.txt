@@ -9,8 +9,7 @@ is properly set (if the directory is called 'dase', and it lives at
 3. Make sure you have an empty mysql database set up and you know the
 path,name,username, and password.
 
-4. make the 'dase/cache' and 'dase/media' directory are apache-writeable, and create an empty
-file 'dase/log/dase.log' and make it apache-writeable
+4. make the 'dase/files' directory apache-writeable
 
 5. Point a web browser at the directory and follow instructions 
 
