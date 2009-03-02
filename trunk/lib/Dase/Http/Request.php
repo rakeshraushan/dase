@@ -120,7 +120,16 @@ class Dase_Http_Request
 
 	public function getLogData()
 	{
-		return print_r($this->env,true);
+		$env = $this->env;
+		$out = $env['method']."method\n";
+		$out .= $env['server_addr']."server addr\n";
+		$out .= $env['remote_addr']."remote addr\n";
+		$out .= $env['http_user_agent']."http_user_agent\n";
+		$out .= $env['app_root']."app_root\n";
+		$out .= $env['format']."format\n";
+		$out .= $env['module']."module\n"; 
+		$out .= $env['handler']."handler\n"; 
+		return $out;
 	}
 
 	public function setCookie($cookie_type,$value)
