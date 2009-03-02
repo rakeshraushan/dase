@@ -130,7 +130,7 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function error($code,$msg='')
+	public function error($code,$msg='',$log_error = true)
 	{
 		if (isset(self::$codes[$code])) {
 			$message = $code.' '.self::$codes[$code]; 
@@ -155,7 +155,9 @@ class Dase_Http_Response
 			$error_text .= "DASe Error Report\n\n";
 			$error_text .= "[http_error_code] => $code\n";
 		}
-		$this->request->logger()->debug($error_text);
+		if ($log_error) {
+			$this->request->logger()->debug($error_text);
+		}
 		if ($msg) {
 			print $msg;
 		} else {
