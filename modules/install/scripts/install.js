@@ -62,7 +62,7 @@ Dase.install.config = function(form) {
 				if (!json.db) {
 				Dase.$('db_msg').innerHTML = 'could not connect to db';
 				}
-				if (json.path && json.db && json.config) {
+				if (json.db && json.config) {
 				Dase.$('config_check_msg').innerHTML = 'success!';
 				Dase.$('local_config_msg').innerHTML = 'copy the following to '+json.local_config_path+':';
 				Dase.$('local_config_txt').value = json.config;
