@@ -5,23 +5,22 @@ $conf['db']['host'] = '{$db.host}';
 $conf['db']['name'] = '{$db.name}';
 $conf['db']['user'] = '{$db.user}';
 $conf['db']['pass'] = '{$db.pass}';
+$conf['db']['table_prefix'] = '{$table_prefix}';
 
-$conf['table_prefix'] = '{$table_prefix}';
+$conf['app']['main_title'] = '{$main_title}';
+$conf['app']['path_to_local_css'] = '';
+$conf['app']['page_logo']['link_target'] = '';
+$conf['app']['page_logo']['src'] = '';
+$conf['app']['page_logo']['alt'] = '';
+$conf['app']['convert'] = '{$convert_path}';
+$conf['app']['default_handler'] = 'collections';
 
-$conf['main_title'] = '{$main_title}';
-$conf['path_to_local_css'] = '';
-$conf['page_logo']['link_target'] = '';
-$conf['page_logo']['src'] = '';
-$conf['page_logo']['alt'] = '';
+//$conf['request_handler']['login'] = 'openid';
+//$conf['request_handler']['db'] = 'dbadmin';
 
-$conf['superuser']['{$eid}'] = '{$password}';
-
-$conf['token'] = '{$token}';
-$conf['ppd_token'] = "{$ppd_token}";
-$conf['path_to_media'] = '{$path_to_media}';
-$conf['convert'] = '{$convert_path}';
-$conf['default_handler'] = 'collections';
-
-$conf['serviceuser']['test'] = '1';
-$conf['service_token'] = "{$service_token}";
+$conf['auth']['superuser']['{$eid}'] = '{$password}';
+$conf['auth']['token'] = '{$token}';
+$conf['auth']['ppd_token'] = "{$ppd_token}";
+$conf['auth']['serviceuser']['test'] = '1';
+$conf['auth']['service_token'] = "{$service_token}";
 
