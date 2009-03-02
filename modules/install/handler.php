@@ -188,8 +188,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToCreateAdmin($r) 
 	{
 		$resp = array();
-		$superusers = Dase_Config::get('superuser');
-		$u = new Dase_DBO_DaseUser($this->db);
+		$superusers = $r->retrieve('config')->getSuperusers();
+		$u = $r->retrieve('user');
 		$u->eid = array_shift(array_keys($superusers));
 		if ($u->findOne()) {
 			$resp['msg'] = "Admin user \"$u->eid\" already exists";
