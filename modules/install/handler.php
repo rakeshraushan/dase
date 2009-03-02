@@ -106,6 +106,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function postToConfigChecker($r) 
 	{
+		$resp = array();
+		$resp['db'] = 1;
+		$resp['proceed'] = 0;
+
 		$db = array();
 		$db['name'] = $r->get('db_name');
 		$db['path'] = $r->get('db_path');
@@ -125,11 +129,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$resp['db_msg'] = $e->getMessage();
 		}   
 
-		$resp = array();
-		$resp['db'] = 1;
-		$resp['proceed'] = 0;
-
-		if ($resp['db'] && $resp['path']) {
+		if ($resp['db']) {
 			$tpl = new Dase_Template($r,true);
 			$tpl->assign('main_title',$r->get('main_title'));
 			if ($r->get('table_prefix')) {
