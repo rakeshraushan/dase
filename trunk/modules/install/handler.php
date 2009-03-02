@@ -94,7 +94,6 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		$tpl->assign('conf',$conf);
 		$lc = $r->base_path.'/inc/local_config.php';
-		$tpl->assign('path_to_media',$this->path_to_media);
 		$tpl->assign('lc',$lc);
 		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
@@ -107,22 +106,29 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function postToConfigChecker($r) 
 	{
-		$resp = array();
-		if (is_writeable($this->path_to_media)) {
-			$resp['path'] = 1;
+		$db = array();
+		$db['name'] = $request->get('db_name');
+		$db['path'] = $request->get('db_path');
+		$db['type'] = $request->get('db_type');
+		$db['host'] = $request->get('db_host');
+		$db['user'] = $request->get('db_user');
+		$db['pass'] = $request->get('db_pass');
+		if ('sqlite' == $db['type']) {
+			$dsn = "sqlite:".$db['path'];
 		} else {
-			$resp['path'] = 0;
+			$dsn = $db['type'].':host='.$db['host'].';dbname='.$db['name'];
 		}
-		$resp['db'] = 1;
-		$resp['proceed'] = 0;
-
-		try {
-			//just testing config
-			$this->db->getDbh();
+		try { 
+			$pdo = new PDO($dsn, $db['user'], $db['pass']);
 		} catch (PDOException $e) {
 			$resp['db'] = 0;
 			$resp['db_msg'] = $e->getMessage();
-		}
+		}   
+
+		$resp = array();
+		$resp['db'] = 1;
+		$resp['proceed'] = 0;
+
 		if ($resp['db'] && $resp['path']) {
 			$tpl = new Dase_Template($r,true);
 			$tpl->assign('main_title',$r->get('main_title'));
@@ -131,7 +137,6 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			}
 			$tpl->assign('eid',$r->get('eid'));
 			$tpl->assign('password',$r->get('password'));
-			$tpl->assign('path_to_media',$r->get('path_to_media'));
 			$tpl->assign('convert_path',$r->get('convert_path'));
 			$tpl->assign('db',$db);
 			$tpl->assign('token',md5(time().'abc'));

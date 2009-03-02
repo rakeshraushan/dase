@@ -59,9 +59,6 @@ Dase.install.config = function(form) {
 				//reload
 				window.location.href = window.location.href;
 				}
-				if (!json.path) {
-				Dase.$('path_to_media_msg').innerHTML = 'path must be writable by web server';
-				}
 				if (!json.db) {
 				Dase.$('db_msg').innerHTML = 'could not connect to db';
 				}
