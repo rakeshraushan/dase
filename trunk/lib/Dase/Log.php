@@ -83,7 +83,7 @@ class Dase_Log
 
 	public function getAsArray()
 	{
-		if ($this->logfile) {
+		if ($this->logfile && file_exists($this->logfile)) {
 			return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		}
 	}
