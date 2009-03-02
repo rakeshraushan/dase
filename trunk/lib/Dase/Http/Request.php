@@ -128,11 +128,7 @@ class Dase_Http_Request
 		$out .= '[format] '.$env['format']."\n";
 		$out .= '[module] '.$env['module']."\n"; 
 		$out .= '[handler] '.$env['handler']."\n"; 
-
-		//a fix for a polling load balancer
-		if ('server-info' != $env['handler']) {
-			return $out;
-		}
+		return $out;
 	}
 
 	public function setCookie($cookie_type,$value)
@@ -621,6 +617,12 @@ class Dase_Http_Request
 
 	public function renderError($code,$msg='')
 	{
+		//todo: put in configuration
+		//(fix for polling load balancer)
+		if ('service-info' == $this->handler) {
+			exit;
+		}
+
 		$response = new Dase_Http_Response($this);
 		$response->error($code,$msg);
 		exit;
