@@ -18,27 +18,27 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 		$config = $r->retrieve('config');
 
+		$html = "<html><body>";
+		$fix_needed = 0;
 		if (!is_writeable($config->getCacheDir())) {
-			$html = "<html><body>";
 			$html .= "<h3>".$config->getCacheDir()." must be writeable by the web server.</h3>";
-			$html .= "</body></html>";
-			echo $html;
-			exit;
+			$fix_needed = 1;
 		}
 		if (!is_writeable($config->getLogDir())) {
-			$html = "<html><body>";
 			$html .= "<h3>".$config->getLogDir()." must be writeable by the web server.</h3>";
-			$html .= "</body></html>";
-			echo $html;
-			exit;
+			$fix_needed = 1;
 		}
 		if (!is_writeable($config->getMediaDir())) {
-			$html = "<html><body>";
 			$html .= "<h3>".$config->getMediaDir()." must be writeable by the web server.</h3>";
+			$fix_needed = 1;
+		}
+
+		if ($fix_needed) {
 			$html .= "</body></html>";
 			echo $html;
 			exit;
 		}
+
 		try {
 			//try to connect
 			$dbh = $this->db->getDbh();
