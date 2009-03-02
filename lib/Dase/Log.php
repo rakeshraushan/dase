@@ -85,6 +85,8 @@ class Dase_Log
 	{
 		if ($this->logfile && file_exists($this->logfile)) {
 			return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		} else {
+			return array();
 		}
 	}
 }
