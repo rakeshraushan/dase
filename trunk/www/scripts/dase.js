@@ -548,7 +548,7 @@ Dase.placeUserTags = function(user) {
 			a.setText(tag.name+' ('+tag.count+')');
 		}
 	}
-	h.attach(Dase.$('sets-submenu'));
+	h.attach(Dase.$('sets-submenu'),true); //append
 
 	//save to select menu
 	var h = new Dase.htmlbuilder;
