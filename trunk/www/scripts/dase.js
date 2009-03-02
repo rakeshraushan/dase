@@ -539,6 +539,7 @@ Dase.placeUserTags = function(user) {
 	if (!Dase.$('sets-submenu')) return;
 	// user sets menu 
 	var h = new Dase.htmlbuilder;
+	var li = h.add('li').add('a',{'href':'new','id':'createNewSet','class':'edit'},'create new set');
 	for (var n in user.tags) {
 		var tag = user.tags[n];
 		if ('set' == tag.type || 'slideshow' == tag.type) {
@@ -548,7 +549,7 @@ Dase.placeUserTags = function(user) {
 			a.setText(tag.name+' ('+tag.item_count+')');
 		}
 	}
-	h.attach(Dase.$('sets-submenu'),true); //append
+	h.attach(Dase.$('sets-submenu')); //append
 
 	//save to select menu
 	var h = new Dase.htmlbuilder;
