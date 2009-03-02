@@ -19,7 +19,7 @@
 		</div>
 		<div class="spacer"></div>
 		<h5>
-			{$it->title|truncate:80:"..."}
+			{$it->_title|truncate:80:"..."}
 		</h5>
 		{if "" != $sort}
 		{assign var=sort_attribute_value value=$it->$sort.text}
