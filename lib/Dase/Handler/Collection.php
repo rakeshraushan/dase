@@ -454,9 +454,6 @@ class Dase_Handler_Collection extends Dase_Handler
 			$item_entry->setEntryType('item');
 			$r->renderError(400,'must be an item entry');
 		}
-		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$r->set('slug',$_SERVER['HTTP_SLUG']);
-		}
 		try {
 			$item = $item_entry->insert($this->db,$r,$fetch_enclosure);
 			header("HTTP/1.1 201 Created");
@@ -569,10 +566,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($client_md5 && md5($json) != $client_md5) {
 			$r->renderError(412,'md5 does not match');
 		}
-		$slug = '';
-		if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-			$slug = $_SERVER['HTTP_SLUG'];
-		} 
+		$slug = $r->slug ? $r->slug : ''; 
 		$sernum = Dase_Util::makeSerialNumber($slug);
 		try {
 			$item = $this->collection->createNewItem($sernum,$user->eid);

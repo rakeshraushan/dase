@@ -23,6 +23,7 @@ class Dase_Http_Request
 
 	private $eid_is_service_user;
 	private $env = array();
+	//members are variables 'set'
 	private $members = array();
 	private $object_store = array();
 	private $params;
@@ -45,6 +46,7 @@ class Dase_Http_Request
 		$env['server_addr'] = $_SERVER['SERVER_ADDR'];
 		$env['query_string'] =	$_SERVER['QUERY_STRING'];
 		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
+		$env['slug'] = $_SERVER['HTTP_SLUG'];
 		$env['remote_addr'] = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 		$env['http_user_agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$env['app_root'] = trim($env['protocol'].'://'.$env['http_host'].dirname($env['script_name']),'/');

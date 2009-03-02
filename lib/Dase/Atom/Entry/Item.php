@@ -447,7 +447,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		if (!$c) { return; }
-		$sn = Dase_Util::makeSerialNumber($r->get('slug'));
+		$sn = Dase_Util::makeSerialNumber($r->slug);
 		$item = $c->createNewItem($sn,$created_by_eid);
 		foreach ($this->getMetadata() as $att => $keyval) {
 			//creates atribute if it doesn't exist!

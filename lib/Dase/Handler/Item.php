@@ -505,9 +505,9 @@ class Dase_Handler_Item extends Dase_Handler
 		$bits = $r->getBody();
 
 		$slug_name = '';
-		if ( isset( $r->_server['HTTP_SLUG'] ) ) {
-			$item->setValue('title',$_SERVER['HTTP_SLUG']);
-			$slug_name = $r->_server['HTTP_SLUG'];
+		if ( $r->slug ) {
+			$item->setValue('title',$r->slug);
+			$slug_name = $r->slug;
 		}
 
 		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
