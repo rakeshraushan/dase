@@ -33,7 +33,7 @@ class Dase_Log
 
 	private function _init()
 	{
-		if (!$this->logfile || !$filehandle = fopen($this->logfile, 'a')) {
+		if (!$this->logfile || !is_writeable($this->logfile) || !$filehandle = fopen($this->logfile, 'a')) {
 			return false;
 		}
 		$this->filehandle = $filehandle;
