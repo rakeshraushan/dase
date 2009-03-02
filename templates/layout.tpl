@@ -84,9 +84,6 @@
 				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
 				<ul class="hide" id="sets-submenu">
-					<li>
-					<a href='new' id='createNewSet' class='edit'>create new set</a>
-					</li>
 				</ul>
 				</li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
