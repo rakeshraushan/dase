@@ -15,12 +15,12 @@ $conf['app']['page_logo']['alt'] = '';
 $conf['app']['convert'] = '{$convert_path}';
 $conf['app']['default_handler'] = 'collections';
 
-//$conf['request_handler']['login'] = 'openid';
-//$conf['request_handler']['db'] = 'dbadmin';
-
 $conf['auth']['superuser']['{$eid}'] = '{$password}';
 $conf['auth']['token'] = '{$token}';
 $conf['auth']['ppd_token'] = "{$ppd_token}";
 $conf['auth']['serviceuser']['test'] = '1';
 $conf['auth']['service_token'] = "{$service_token}";
+
+//$conf['request_handler']['login'] = 'openid';
+//$conf['request_handler']['db'] = 'dbadmin';
 
