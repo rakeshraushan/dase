@@ -39,11 +39,12 @@ class Dase_Log
 
 		$filehandle = fopen($this->logfile, 'a');
 
-		if (!$filehandle) {
+		if (!is_resource($filehandle)) {
 			return false;
 		}
 
 		$this->filehandle = $filehandle;
+		return true;
 	}
 
 	private function _write($msg,$backtrace=false)
