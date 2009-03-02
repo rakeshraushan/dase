@@ -79,7 +79,7 @@ class Dase
 			$handler = new $classname($r->retrieve('db'),$c->getMediaDir());
 			$handler->dispatch($r);
 		} else {
-			$r->renderError(404,'no such handler class',false); //will NOT be logged
+			$r->renderError(404,'no such handler class'); //will NOT be logged
 		}
 	}
 }
