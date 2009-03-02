@@ -10,10 +10,11 @@ else
 	echo "usage: tools/setup.sh <apache_group>"
 fi
 
-chgrp $APACHE_GRP cache
+chgrp $APACHE_GRP files/cache
 chmod g+w cache
-touch log/dase.log
-chgrp $APACHE_GRP log/dase.log 
-chmod g+w log/dase.log 
+chgrp $APACHE_GRP files/log
+chmod g+w log
+chgrp $APACHE_GRP files/media
+chmod g+w media
 
 
