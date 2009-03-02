@@ -39,8 +39,8 @@ class Dase_Handler_Collections extends Dase_Handler
 			if ('collection' != $coll_entry->entrytype) {
 				$r->renderError(400,'must be a collection entry');
 			}
-			if ( isset( $_SERVER['HTTP_SLUG'] ) ) {
-				$r->set('ascii_id',Dase_Util::dirify($_SERVER['HTTP_SLUG']));
+			if ( $r->slug ) {
+				$r->set('ascii_id',Dase_Util::dirify($r->slug));
 			}
 			$ascii_id = $coll_entry->create($this->db,$r);
 			$user->expireDataCache($r->retrieve('cache'));

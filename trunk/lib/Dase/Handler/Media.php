@@ -255,11 +255,7 @@ class Dase_Handler_Media extends Dase_Handler
 		try {
 			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
 			//allows us to dictate serial number
-			$slug = '';
-			if (isset( $_SERVER['HTTP_SLUG'])) {
-				$slug = $_SERVER['HTTP_SLUG'];
-			}
-			$sernum = Dase_Util::makeSerialNumber($slug);
+			$sernum = Dase_Util::makeSerialNumber($r->slug);
 			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);
 			$item_handler->postToMedia($r);
 		} catch (Exception $e) {
