@@ -41,7 +41,9 @@ class Dase_Log
 
 	private function _write($msg,$backtrace=false)
 	{
-		$this->_init();
+		if (!$this->_init()) {
+			return false;
+		}
 		$date = date(DATE_W3C);
 		$msg = $date.' | pid: '.getmypid().' : '.$msg."\n";
 		if ($backtrace) {
