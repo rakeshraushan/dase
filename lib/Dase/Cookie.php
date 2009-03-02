@@ -32,7 +32,7 @@ class Dase_Cookie {
 		//dates disagree)
 		$prefix = str_replace('http://','',$this->app_root);
 		$prefix = str_replace('.','_',$prefix);
-		$prefix = str_replace('/','_',$prefix) . '_';
+		return str_replace('/','_',$prefix) . '_';
 	}
 
 	public function setEid($eid) 
