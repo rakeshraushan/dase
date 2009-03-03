@@ -6,13 +6,13 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 		'{eid}' => 'login',
 	);
 
-	protected function setup($request)
+	protected function setup($r)
 	{
 	}
 
-	public function getLogin($request)
+	public function getLogin($r)
 	{
-		$target = $request->get('target');
+		$target = $r->get('target');
 
 		if (!extension_loaded("eid")) {
 			dl("eid.so");
@@ -57,29 +57,18 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 				exit;
 			}
 
-			$prefix = Dase_Config::get('table_prefix');
-			$db = Dase_DB::get();
-			$sql = "
-				SELECT * FROM {$prefix}dase_user 
-				WHERE lower(eid) = ?
-				";	
-			$sth = $db->prepare($sql);
-			$sth->execute(array(strtolower($ut_user->eid)));
-			$row = $sth->fetch();
-			if ($row) {
-				$db_user = new Dase_DBO_DaseUser($row);
-			} else {
-				$db_user = new Dase_DBO_DaseUser();
-				$db_user->name = $ut_user->name; 
+			$db_user = $r->retrieve('user');
+			if (!$db_user->retrieveByEid($ut_user->eid)) {
 				$db_user->eid = strtolower($ut_user->eid); 
+				$db_user->name = $ut_user->name; 
 				$db_user->insert();
 			}
-			Dase_Cookie::setEid($db_user->eid);
-			Dase_DBO_DaseUser::init($db_user->eid);
+			$r->setCookie('eid',$db_user->eid);
+			$db_user->getHttpPassword();
 			if ($target) {
-				$request->renderRedirect(urldecode($target));
+				$r->renderRedirect(urldecode($target));
 			} else {
-				$request->renderRedirect();
+				$r->renderRedirect();
 			}
 		}
 	}
@@ -89,16 +78,16 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 	 * w/ an http delete to '/login' *or* '/login/{eid}'
 	 *
 	 */
-	public function deleteLogin($request)
+	public function deleteLogin($r)
 	{
 		setcookie('DOC','',time()-86400,'/','.utexas.edu');
 		setcookie('FC','',time()-86400,'/','.utexas.edu');
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
-		Dase_Cookie::clear();
+		$r->retrieve('cookie')->clear();
 		//redirect messes up safari!!
-		//$request->renderRedirect('login/form');
-		$request->renderOk();
+		//$r->renderRedirect('login/form');
+		$r->renderOk();
 	}
 
 }

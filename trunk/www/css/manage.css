@@ -1,8 +1,9 @@
 div#adminHeader {
-	background-color: #333;
-	color: #ccc;
+	background-color: #000;
+	color: #fff;
 	font-weight: bold;
 	margin-top: 0px;
+	font-size: .9em;
 	padding:4px;
 	padding-left: 18px;
 }
@@ -10,7 +11,7 @@ div#adminHeader {
 div#adminHeader p {
 	color: white;
 	margin:0;
-	font-size: 1.7em;
+	font-size: 1.5em;
 	padding:6px 0 0 0;
 }
 
@@ -28,10 +29,6 @@ div.login {
 div.login a {
 	color: #fff;
 	font-weight: bold;
-}
-
-span#userName {
-	color: #ccc;
 }
 
 div#catColumn {
