@@ -76,11 +76,11 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getCollections($r) 
 	{
-		$r->getUser();
+		$user = $r->getUser();
 		//if no collections, redirect to archive admin screen
 		//will force login screen for non-superusers if no collections
 		$c = new Dase_DBO_Collection($r->retrieve('db'));
-		if (!$c->findCount() && $r->getUser()->isSuperuser()) {
+		if (!$c->findCount() && $user && $user->isSuperuser()) {
 			$r->renderRedirect('admin');
 		}
 		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/collections.atom');
