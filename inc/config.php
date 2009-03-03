@@ -11,9 +11,11 @@ $conf['db']['table_prefix'] = '';
 $conf['app']['main_title'] = "My DASe Archive";
 
 //must be apache writeable
-$conf['app']['media_base_dir'] = 'files';
-$conf['app']['cache_base_dir'] = 'files';
-$conf['app']['log_base_dir'] = 'files';
+//only set these (in local_config) to override 
+//default <base_path>/files/...
+//$conf['app']['media_dir'] = '/usr/local/dase/media';
+//$conf['app']['cache_dir'] = '/usr/local/dase/cache';
+//$conf['app']['log_dir'] = '/usr/local/dase/log';
 
 //path to imagemagick convert
 $conf['app']['convert'] = '/usr/bin/convert';

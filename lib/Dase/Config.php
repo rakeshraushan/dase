@@ -48,47 +48,50 @@ class Dase_Config {
 
 	public function getCacheDir()
 	{
-		$cache_base_dir = $this->getAppSettings('cache_base_dir');
-		if (!$cache_base_dir) {
-			throw new Dase_Cache_Exception('no cache_base_dir defined');
+		$cache_dir = $this->getAppSettings('cache_dir');
+		if (!$cache_dir) {
+			//default
+			return $this->base_dir.'/files/cache';
 		}
-		if ('/' == substr($cache_base_dir,0,1)) {
-			return $cache_base_dir;
+		if ('/' == substr($cache_dir,0,1)) {
+			return $cache_dir;
 		}
 		if (!$this->base_dir) {
 			throw new Dase_Cache_Exception('no base_dir defined');
 		}
-		return $this->base_dir.'/'.$cache_base_dir.'/cache';
+		return $this->base_dir.'/'.$cache_dir;
 	}
 
 	public function getLogDir()
 	{
-		$log_base_dir = $this->getAppSettings('log_base_dir');
-		if (!$log_base_dir) {
-			throw new Dase_Log_Exception('no log_base_dir defined');
+		$log_dir = $this->getAppSettings('log_dir');
+		if (!$log_dir) {
+			//default
+			return $this->base_dir.'/files/log';
 		}
-		if ('/' == substr($log_base_dir,0,1)) {
-			return $log_base_dir;
+		if ('/' == substr($log_dir,0,1)) {
+			return $log_dir;
 		}
 		if (!$this->base_dir) {
 			throw new Dase_Log_Exception('no base_dir defined');
 		}
-		return $this->base_dir.'/'.$log_base_dir.'/log';
+		return $this->base_dir.'/'.$log_dir;
 	}
 
 	public function getMediaDir()
 	{
-		$media_base_dir = $this->getAppSettings('media_base_dir');
-		if (!$media_base_dir) {
-			throw new Dase_Media_Exception('no media_base_dir defined');
+		$media_dir = $this->getAppSettings('media_dir');
+		if (!$media_dir) {
+			//default
+			return $this->base_dir.'/files/media';
 		}
-		if ('/' == substr($media_base_dir,0,1)) {
-			return $media_base_dir;
+		if ('/' == substr($media_dir,0,1)) {
+			return $media_dir;
 		}
 		if (!$this->base_dir) {
 			throw new Dase_Media_Exception('no base_dir defined');
 		}
-		return $this->base_dir.'/'.$media_base_dir.'/media';
+		return $this->base_dir.'/'.$media_dir;
 	}
 
 	public function getAppSettings($setting='') 
@@ -96,6 +99,8 @@ class Dase_Config {
 		if ($setting) {
 			if (isset($this->conf['app'][$setting])) {
 				return $this->conf['app'][$setting];
+			} else {
+				return false;
 			}
 		} else {
 			return $this->conf['app'];
