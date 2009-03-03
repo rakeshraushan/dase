@@ -484,7 +484,7 @@ class Dase_Http_Request
 			}
 			return $this->user;
 		} else {
-			if (!$force_login) { return; }
+			if (!$force_login) { return false; }
 			if ('html' == $this->format) {
 				$params['target'] = $this->url;
 				$this->renderRedirect('login/form',$params);
