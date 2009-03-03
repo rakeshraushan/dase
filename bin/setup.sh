@@ -11,10 +11,10 @@ else
 fi
 
 chgrp $APACHE_GRP files/cache
-chmod g+w cache
+chmod g+w files/cache
 chgrp $APACHE_GRP files/log
-chmod g+w log
+chmod g+w files/log
 chgrp $APACHE_GRP files/media
-chmod g+w media
+chmod g+w files/media
 
 
