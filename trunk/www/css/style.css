@@ -10,14 +10,12 @@ html #maincontent {
 }
 
 #header {
-	background-color: #222;
+	background-color: #000;
 	color: #fff;
 	font-weight: bold;
-	font-size: 1.8em;
-	font-size: 1.5em;
-	line-height: 1em;
+	font-size: 1em;
 	margin-top: 0px;
-	padding:11px 0 10px 18px;
+	padding:4px 0 4px 18px;
 }
 
 #sidebar {
@@ -865,16 +863,13 @@ form#ingestCollectionForm label {
 
 /************ MISCELLANEOUS STYLES ***************/
 
-span#userName {
-	color: #ccc;
-}
-
 div.login {
-	color: #ccc;
+	font-size: .9em;
+	color: #fff;
 	float:right;
 	font-weight: bold;
-	margin-right: 20px;
-	padding-top: 5px;
+	margin-right: 15px;
+	padding-top: 4px;
 }
 
 div.login a.alert {
