@@ -61,8 +61,8 @@ class Dase_Template {
 		$this->smarty->assign('msg', $request->get('msg'));
 		$this->smarty->assign('request', $request);
 		$this->smarty->assign('main_title', $request->retrieve('config')->getAppSettings('main_title'));
-		$this->smarty->assign('page_logo', $c->get('page_logo'));
-		$this->smarty->assign('local_css', $c->get('path_to_local_css'));
+		$this->smarty->assign('page_logo', $request->retrieve('config')->get('page_logo'));
+		$this->smarty->assign('local_css', $request->retrieve('config')->get('path_to_local_css'));
 		error_reporting($er);
 	}
 
