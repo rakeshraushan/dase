@@ -59,7 +59,7 @@ class Dase
 				$c->set('module',$r->module);
 
 				//module can set/override configurations
-				$handler_config_file = $c->get('base_path').'/modules/'.$r->module.'/inc/config.php';
+				$handler_config_file = $r->base_path.'/modules/'.$r->module.'/inc/config.php';
 				$c->load($handler_config_file);
 
 				//modules can carry their own libraries
