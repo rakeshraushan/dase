@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(E_ALL);
 ini_set('include_path','../lib');
 function __autoload($class_name) {
 	@include __autoloadFilename($class_name);
