@@ -124,7 +124,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed = $this->getBaseAtomFeed($app_root);
 		$feed->setFeedType('attributes');
 		foreach ($this->getAttributes() as $att) {
-			$att->injectAtomEntryData($feed->addEntry(),$app_root);
+			$att->injectAtomEntryData($feed->addEntry(),$this->ascii_id,$app_root);
 		}
 		return $feed;
 	}
@@ -180,7 +180,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory($app_root.'',"http://daseproject.org/category/base_url");
+		foreach ($this->getAttributes() as $a) {
+			$entry->addCategory($a->ascii_id,"http://daseproject.org/category/attribute",$a->attribute_name);
+		}
+		foreach ($this->getItemTypes() as $item_type) {
+			$entry->addCategory($item_type->ascii_id,"http://daseproject.org/category/item_type",$item_type->name);
+		}
+		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
 		$entry->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		return $entry->asXml();
@@ -331,6 +337,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$att->collection_id = 0;
 		$att->orderBy('sort_order');
 		return $att->find();
+	}
+
+	/** this is NOT visibility, it is public/private */ 
+	function updateVisibility($visibility)
+	{
+		if ('public' == $visibility) {
+			$this->is_public = 1;
+			$this->update();
+		}
+		if ('private' == $visibility) {
+			$this->is_public = 0;
+			$this->update();
+		}
 	}
 
 	function updateItemCount()

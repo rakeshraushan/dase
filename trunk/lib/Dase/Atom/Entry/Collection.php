@@ -4,7 +4,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 {
 	function __construct($dom=null,$root=null)
 	{
-		parent::__construct($dom,$root);
+		parent::__construct($dom,$root,'collection');
 	}
 
 	function create($db,$r)
@@ -78,6 +78,47 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		} else {
 			return false;
 		}
+	}
+
+	function getAttributes()
+	{
+		return $this->getCategoriesByScheme('http://daseproject.org/category/attribute'); 
+	}
+
+	function getItemTypes()
+	{
+		return $this->getCategoriesByScheme('http://daseproject.org/category/item_type'); 
+	}
+
+	function getVisibility()
+	{
+		$vcat = array_pop($this->getCategoriesByScheme('http://daseproject.org/category/visibility')); 
+		return $vcat['term'];
+	}
+
+	/** for now, PUT of a collection entry can only add, NOT delete item_types & attributes */
+	function update($db,$r)
+	{
+		$coll = $this->getAsciiId();
+		foreach ($this->getAttributes() as $att) {
+			Dase_DBO_Attribute::findOrCreate($db,$coll,$att['term']);
+		}
+		foreach ($this->getItemTypes() as $type) {
+			Dase_DBO_ItemType::findOrCreate($db,$coll,$type['term']);
+		}
+		$coll = Dase_DBO_Collection::get($db,$coll);
+		$coll->updateVisibility($this->getVisibility());
+		$r->renderResponse('updated collection');
+	}
+
+	public function addAttribute($ascii_id,$name='')
+	{
+		$this->addCategory($ascii_id,'http://daseproject.org/category/attribute',$name);
+	}
+
+	public function addItemType($ascii_id,$name='')
+	{
+		$this->addCategory($ascii_id,'http://daseproject.org/category/item_type',$name);
 	}
 
 	function getItemCount()

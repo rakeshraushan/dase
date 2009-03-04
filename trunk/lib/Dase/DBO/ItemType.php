@@ -24,7 +24,11 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	public static function findOrCreate($db,$collection_ascii_id,$ascii_id) 
 	{
 		$type = new Dase_DBO_ItemType($db);
-		$type->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
+		$coll = Dase_DBO_Collection::get($db,$collection_ascii_id);
+		if (!$coll) {
+			throw new Exception('no such collection');
+		}
+		$type->collection_id = $coll->id;
 		$type->ascii_id = $ascii_id;
 		if (!$type->findOne()) {
 			$type->name = ucwords(str_replace('_',' ',$ascii_id));
@@ -52,9 +56,10 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$entry->setId($this->getUrl($collection_ascii_id,$app_root));
 		$entry->setSummary($this->description);
 		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'.atom','edit');
-		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/items.cats','http://daseproject.org/relation/item_type/items','application/atomcat+xml','',$this->name.' Items');
-		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/attributes.cats','http://daseproject.org/relation/item_type/attributes','application/atomcat+xml','',$this->name.' Attributes');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/items.atom','http://daseproject.org/relation/item_type/items','application/atom+xml','',$this->name.' Items');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/items.json','http://daseproject.org/relation/item_type/items','application/json','',$this->name.' Items');
 		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/attributes.atom','http://daseproject.org/relation/item_type/attributes','application/atom+xml','',$this->name.' Attributes');
+		$entry->addLink($this->getUrl($collection_ascii_id,$app_root).'/attributes.json','http://daseproject.org/relation/item_type/attributes','application/json','',$this->name.' Attributes');
 		$entry->addCategory('item_type','http://daseproject.org/category/entrytype','Item Type');
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);

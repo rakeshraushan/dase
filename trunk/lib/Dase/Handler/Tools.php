@@ -23,7 +23,7 @@ class Dase_Handler_Tools extends Dase_Handler
 			$t->assign('entry',$entry);
 			$t->assign('atom_doc',$entry->asXml());
 		} else {
-			$t->assign('url',$r->app_root."/item/test/000524619.atom");
+			$t->assign('url',$r->app_root."/service");
 		}	
 		$r->renderResponse($t->fetch('tools/demo.tpl'));
 	}
