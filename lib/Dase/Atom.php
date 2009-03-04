@@ -259,6 +259,11 @@ class Dase_Atom
 		return $this->getLink('service');
 	}
 
+	function getSelf()
+	{
+		return $this->getLink('self');
+	}
+
 	function getLink($rel='alternate',$title='') 
 	{
 

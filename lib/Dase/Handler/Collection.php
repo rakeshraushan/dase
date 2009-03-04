@@ -291,7 +291,11 @@ class Dase_Handler_Collection extends Dase_Handler
 		} else {
 			$limit = 5;
 		}
-		$r->renderResponse($this->collection->asAtom($r->app_root,$limit));
+		if ('entry' == $r->get('type')) {
+			$r->renderResponse($this->collection->asAtomEntry($r->app_root));
+		} else {
+			$r->renderResponse($this->collection->asAtom($r->app_root,$limit));
+		}
 	}
 
 	public function deleteCollection($r)
@@ -385,6 +389,44 @@ class Dase_Handler_Collection extends Dase_Handler
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
+	}
+
+	public function putCollection($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'cannot update collection');
+		}
+		$content_type = $r->getContentType();
+		if ('application/atom+xml;type=entry' == $content_type ||
+			'application/atom+xml' == $content_type
+		) {
+			$raw_input = $r->getBody();
+			$client_md5 = $r->getHeader('Content-MD5');
+			//if Content-MD5 header isn't set, we just won't check
+			if ($client_md5 && md5($raw_input) != $client_md5) {
+				$r->renderError(412,'md5 does not match');
+			}
+			try {
+				$collection_entry = Dase_Atom_Entry::load($raw_input,'collection');
+			} catch(Exception $e) {
+				$r->logger()->debug('collection handler error: '.$e->getMessage());
+				$r->renderError(400,'bad xml');
+			}
+			if ('collection' != $collection_entry->entrytype) {
+				//$collection_entry->setEntryType('collection');
+				$r->renderError(400,'must be an collection entry');
+			}
+			$collection = $collection_entry->update($this->db,$r);
+			if ($collection) {
+				$r->renderOk('collection has been updated');
+			} else {
+				$r->renderError(500,'collection not updated');
+			}
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
+		$r->renderError(500,'an error occurred');
 	}
 
 	public function postToIngester($r) 

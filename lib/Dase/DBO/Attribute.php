@@ -50,8 +50,15 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	public static function findOrCreate($db,$collection_ascii_id,$attribute_ascii_id) 
 	{
+		if (!$collection_ascii_id || !$attribute_ascii_id) {
+			throw new Exception('missing method parameter');
+		}
 		$att = new Dase_DBO_Attribute($db);
-		$att->collection_id = Dase_DBO_Collection::get($db,$collection_ascii_id)->id;
+		$coll = Dase_DBO_Collection::get($db,$collection_ascii_id);
+		if (!$coll) {
+			throw new Exception('no such collection');
+		}
+		$att->collection_id = $coll->id;
 		$att->ascii_id = $attribute_ascii_id;
 		if (!$att->findOne()) {
 			$att->attribute_name = ucwords(str_replace('_',' ',strtolower($attribute_ascii_id)));
