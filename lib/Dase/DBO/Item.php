@@ -52,7 +52,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 			$atom->updated = date(DATE_ATOM);
 			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-			$atom->insert();
+			$atom->update();
 		} else {
 			$c = $this->getCollection();
 			$entry = new Dase_Atom_Entry_Item;
