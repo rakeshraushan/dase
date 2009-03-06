@@ -7,6 +7,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/entry' => 'entry',
 		'{collection_ascii_id}/archive' => 'archive',
+		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
@@ -102,6 +103,11 @@ class Dase_Handler_Collection extends Dase_Handler
 			$types[] = $type;
 		}
 		$r->renderResponse(Dase_Json::get($types));
+	}
+
+	public function getLastSerialNumber($r)
+	{
+		$r->renderResponse($this->collection->getLastSerialNumber());
 	}
 
 	public function getEntryAtom($r)
