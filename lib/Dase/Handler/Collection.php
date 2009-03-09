@@ -307,7 +307,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function deleteCollection($r)
 	{
 		$user = $r->getUser('http');
-		if (!$user->isSuperuser()) {
+		if (!$user->isSuperuser($r->retrieve('config')->getSuperusers())) {
 			$r->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
 		if ($this->collection->item_count < 5) {

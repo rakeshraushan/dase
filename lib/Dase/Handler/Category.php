@@ -53,7 +53,7 @@ class Dase_Handler_Category extends Dase_Handler
 	{
 		//todo: http auth here for atompub
 		$this->user = $r->getUser('http');
-		if (!$this->user->isSuperuser()) {
+		if (!$this->user->isSuperuser($r->retrieve('config')->getSuperusers())) {
 			$r->renderError(401);
 		}
 		$scheme = new Dase_DBO_CategoryScheme($this->db);

@@ -147,7 +147,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
 			$r->app_root.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom?type=feed',
-			$user->eid,$user->getHttpPassword()
+			$user->eid,$user->getHttpPassword($r->retrieve('config')->getAuth('token'))
 		);
 
 		if ($user->can('write',$this->item)) {

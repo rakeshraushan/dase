@@ -90,7 +90,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		if ($this->tag->isSingleCollection()) {
 			$t->assign('is_single_collection',1);
@@ -107,7 +107,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
@@ -134,7 +134,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource');
 		}
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
@@ -149,7 +149,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$sort_array = $r->get('set_sort_item',true);
 		$this->tag->sort($sort_array);
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
@@ -171,7 +171,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$u = $r->getUser();
 		$tag_ascii_id = $r->get('tag_ascii_id');
 		$tag_item_id = $r->get('tag_item_id');
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
 		$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));

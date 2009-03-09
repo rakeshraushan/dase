@@ -175,7 +175,7 @@ class Dase_Handler_User extends Dase_Handler
 		$data = $cache->getData($cache_id,3000);
 		if (!$data) {
 			$u = $r->getUser();
-			$data = $u->getDataJson();
+			$data = $u->getDataJson($r->retrieve('config')->getAuth());
 			$cache->setData($cache_id,$data);
 		}
 		$r->renderResponse($data);
@@ -265,7 +265,7 @@ class Dase_Handler_User extends Dase_Handler
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
-			$http_pw = $u->getHttpPassword();
+			$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 			$t = new Dase_Template($r);
 			$json_url = $r->app_root.'/tag/'.$tag->id.'.json';
 			$t->assign('json_url',$json_url);
@@ -283,7 +283,7 @@ class Dase_Handler_User extends Dase_Handler
 		$t = new Dase_Template($r);
 		$u->collections = $u->getCollections();
 		$t->assign('user',$u);
-		$t->assign('http_password',$u->getHttpPassword());
+		$t->assign('http_password',$u->getHttpPassword($r->retrieve('config')->getAuth('token')));
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);
 	}
 
@@ -306,7 +306,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function getHttpPassword($r) 
 	{
 		$u = $this->user;
-		$r->renderResponse($u->getHttpPassword());
+		$r->renderResponse($u->getHttpPassword($r->retrieve('config')->getAuth('token')));
 	}
 
 	public function postToKey($r)

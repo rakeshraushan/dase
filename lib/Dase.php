@@ -21,7 +21,6 @@ class Dase
 		$cache = Dase_Cache::get($c->getCacheType(),$c->getCacheDir());
 		$db = new Dase_DB($c->get('db'),$log);
 		$user = new Dase_DBO_DaseUser($db);
-		$user->setAuth($c->getAuth());
 		$r->setAuth($c->getAuth());
 		$r->store('user',$user);
 		$r->store('config',$c);
