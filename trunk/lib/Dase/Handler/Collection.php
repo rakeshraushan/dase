@@ -107,7 +107,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getLastSerialNumber($r)
 	{
-		$r->renderResponse($this->collection->getLastSerialNumber());
+		$r->renderResponse($this->collection->getLastSerialNumber($r->get('begins_with')));
 	}
 
 	public function getEntryAtom($r)

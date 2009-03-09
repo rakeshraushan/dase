@@ -18,12 +18,19 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 	}
 
-	public function getLastSerialNumber()
+	public function getLastSerialNumber($begins_with)
 	{
 		$item = new Dase_DBO_Item($this->db);
+		$item->collection_id = $this->id;
 		$item->orderBy('serial_number DESC');
-		$item->findOne();
-		return $item->serial_number;
+		if (false !== $begins_with) {
+			$item->addWhere('serial_number',$begins_with.'%','like');
+		}
+		if ($item->findOne()) {
+			return $item->serial_number;
+		} else {
+			return false;
+		}
 	}
 
 

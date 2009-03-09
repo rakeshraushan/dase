@@ -295,7 +295,7 @@ class Dase_Http_Request
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
 			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
-			if ($value) {
+			if (false !== $value) {
 				return $value;
 			} else {
 				if (isset($this->params[$key])) {
