@@ -4,6 +4,7 @@ class Dase_Handler_Media extends Dase_Handler
 {
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/{size}/{serial_number}' => 'media_file',
 		'{collection_ascii_id}/{serial_number}' => 'media', //for 'PUT'
 	);
@@ -234,6 +235,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 	}
 
+	/** this is simply a GET of the same URI we post media to */
 	public function getCollectionAtom($r) 
 	{
 		$c = Dase_DBO_Collection::get($this->db,$this->collection_ascii_id);
@@ -243,6 +245,20 @@ class Dase_Handler_Media extends Dase_Handler
 			$limit = 20;
 		}
 		$r->renderResponse($c->asAtom($r->app_root,$limit));
+	}
+
+	/** this simply allows us to see if a media archive exists
+	 * even if the corresponding collection does not
+	 * */
+	public function getArchive($r) 
+	{
+		$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$this->collection_ascii_id;
+		if (file_exists($media_dir)) {
+			//todo: think about this...
+			$r->renderOk('media archive exists');
+		} else {
+			$r->renderError(404,'media archive does not exist');
+		}
 	}
 
 	public function postToCollection($r)
