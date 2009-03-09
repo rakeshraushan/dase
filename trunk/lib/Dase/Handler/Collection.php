@@ -151,6 +151,17 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($output);
 	}
 
+	public function getItemsAtom($r)
+	{
+		if ($r->has('limit')) {
+			$limit = $r->get('limit');
+		} else {
+			$limit = 20;
+		}
+		//can limit to specific sernums
+		$r->renderResponse($this->collection->getItemsBySerialNumbersAsAtom($r->app_root,$limit,$r->get('serial_numbers')));
+	}
+
 	public function getItemsThatLackMediaTxt($r) 
 	{
 		$output = '';
