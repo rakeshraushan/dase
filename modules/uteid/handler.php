@@ -64,7 +64,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 				$db_user->insert();
 			}
 			$r->setCookie('eid',$db_user->eid);
-			$db_user->getHttpPassword($r->config('retrieve')->getAuth('token'));
+			$db_user->getHttpPassword($r->retrieve('config')->getAuth('token'));
 			if ($target) {
 				$r->renderRedirect(urldecode($target));
 			} else {
