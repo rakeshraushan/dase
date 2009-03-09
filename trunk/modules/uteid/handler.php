@@ -35,7 +35,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 			unset($ut_user);
 		}
 		if ($ut_user == NULL) {
-			$url = APP_ROOT . '/login?target='.$target;
+			$url = $r->app_root . '/login?target='.$target;
 			header ("Set-Cookie: DOC=$url; path=/; domain=.utexas.edu;");
 			header ("Location: https://utdirect.utexas.edu");
 			echo "user is not logged in";
