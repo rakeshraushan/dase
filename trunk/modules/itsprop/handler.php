@@ -135,7 +135,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		}
 		$sort_array = $r->get('set_sort_item',true);
 		$this->tag->sort($sort_array);
-		$http_pw = $u->getHttpPassword();
+		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));

@@ -22,7 +22,7 @@ class Dase_Handler_Auth extends Dase_Handler
 	{
 		$user = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		if ($user) {
-			$r->renderResponse($user->getHttpPassword());
+			$r->renderResponse($user->getHttpPassword($r->retrieve('config')->getAuth('token')));
 		} else {
 			$r->renderError(404);
 		}

@@ -18,7 +18,7 @@ class Dase_Handler_Tools extends Dase_Handler
 		$user = $r->getUser();
 		$t = new Dase_Template($r);
 		if ($r->has('url')) {
-			$entry = Dase_Atom_Entry::retrieve($r->get('url'),$user->eid,$user->getHttpPassword());
+			$entry = Dase_Atom_Entry::retrieve($r->get('url'),$user->eid,$user->getHttpPassword($r->retrieve('config')->getAuth('token')));
 			$t->assign('url',$r->get('url'));
 			$t->assign('entry',$entry);
 			$t->assign('atom_doc',$entry->asXml());

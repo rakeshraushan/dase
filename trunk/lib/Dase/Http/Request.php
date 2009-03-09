@@ -501,6 +501,8 @@ class Dase_Http_Request
 
 		if ($this->htuser && $this->htpass) {
 			$eid = $this->htuser;
+			$this->logger()->debug('adding password '.substr(md5($this->token.$eid.'httpbasic'),0,12));
+			$this->logger()->debug('token is '.$this->token);
 			$passwords[] = substr(md5($this->token.$eid.'httpbasic'),0,12);
 
 			//for service users:

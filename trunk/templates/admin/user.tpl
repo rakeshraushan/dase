@@ -4,6 +4,7 @@
 <div id="contentHeader">
 	<h1>Dase User Information</h1>
 	<h2>{$user->name} ({$user->eid})</h2>
+	<h3>{$htpass}</h3>
 </div>
 <div id="userInfo">
 	<h3>sets</h3>

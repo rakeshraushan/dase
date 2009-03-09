@@ -54,7 +54,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 				//if so, make sure user is logged in
 				//and is a superuser
 				$user = $r->getUser();
-				if ($user->isSuperuser()) {
+				if ($user->isSuperuser($r->retrieve('config')->getSuperusers())) {
 					$this->done($r);
 				} else {
 					$r->renderError(401);

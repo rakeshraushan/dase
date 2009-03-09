@@ -16,13 +16,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $u->retrieveByEid($eid);
 	}
 
-	public function init($eid) 
-	{
-		$this->retrieveByEid($eid);
-		$this->getHttpPassword();
-		return $this;
-	}
-
 	/** this is case insensitive! */
 	public function retrieveByEid($eid)
 	{
@@ -43,14 +36,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		} else {
 			return false;
 		}
-	}
-
-	public function setAuth($auth_config)
-	{
-		//should be called app token?
-		$this->token = $auth_config['token'];
-		$this->ppd_token = $auth_config['ppd_token'];
-		$this->superusers = isset($auth_config['superuser']) ? $auth_config['superuser'] : array();
 	}
 
 	public function getUrl($app_root)
@@ -91,10 +76,13 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $tag->item_count;
 	}
 
-	public function getHttpPassword()
+	public function getHttpPassword($token)
 	{
+		if (!$token) {
+			throw new Dase_Exception('user auth is not set');
+		}
 		if (!$this->http_password) {
-			$this->http_password = substr(md5($this->token.$this->eid.'httpbasic'),0,12);
+			$this->http_password = substr(md5($token.$this->eid.'httpbasic'),0,12);
 		}
 		return $this->http_password;
 	}
@@ -200,17 +188,23 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user_colls;
 	}
 
-	public function getData()
+	public function getData($auth_config)
 	{
+		if (!isset($auth_config['token']) || !isset($auth_config['ppd_token'])) {
+			throw new Dase_Exception('missing auth config data');
+		}
+		if (!isset($auth_config['superusers'])) {
+			$auth_config['superusers'] = array();
+		}
 		$user_data = array();
 		//todo: is this is taking too long:
 		$user_data[$this->eid]['cart_count'] = $this->initCart();
 		$user_data[$this->eid]['tags'] = $this->getTags();
-		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword();
+		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword($auth_config['token']);
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
-		$user_data[$this->eid]['ppd'] = md5($this->eid.$this->ppd_token);
-		if ($this->isSuperuser()) {
+		$user_data[$this->eid]['ppd'] = md5($this->eid.$auth_config['ppd_token']);
+		if ($this->isSuperuser($auth_config['superusers'])) {
 			$user_data[$this->eid]['is_superuser'] = 1;
 		}
 
@@ -233,9 +227,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user_data;
 	}
 
-	public function getDataJson()
+	public function getDataJson($auth_config)
 	{
-		return Dase_Json::get($this->getData());
+		return Dase_Json::get($this->getData($auth_config));
 	}
 
 	public function getCartArray()
@@ -272,9 +266,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$cache->expire($this->eid."_data");
 	}
 
-	public function isSuperuser()
+	public function isSuperuser($superusers)
 	{
-		if (in_array($this->eid,array_keys($this->superusers))) {
+		if (in_array($this->eid,array_keys($superusers))) {
 			$this->is_superuser = true;
 			return true;
 		}
