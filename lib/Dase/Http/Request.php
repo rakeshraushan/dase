@@ -295,7 +295,7 @@ class Dase_Http_Request
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
 			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
-			if (false !== $value) {
+			if ($value || '0' === substr($value,0,1)) {
 				return $value;
 			} else {
 				if (isset($this->params[$key])) {
@@ -561,7 +561,6 @@ class Dase_Http_Request
 	{
 		$get = $this->_get;
 		if (Dase_Util::getVersion() >= 520) {
-			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($get[$key])) {
@@ -575,7 +574,6 @@ class Dase_Http_Request
 	{
 		$post = $this->_post;
 		if (Dase_Util::getVersion() >= 520) {
-			//fix this!! need to wrap filter_input
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($post[$key])) {
