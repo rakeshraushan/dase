@@ -381,7 +381,12 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(400,'missing identifier');
 		}
 		$value_id = $r->get('value_id');
-		$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
+		if ('title' == $value_id) {
+			//convenience
+			$this->item->updateTitle(strip_tags($value_text),$user->eid);
+		} else {
+			$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
+		}
 		$r->renderResponse($value_text);
 	}
 

@@ -96,19 +96,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
-	public function select($att,$return_first = true) 
-	{
-		foreach ($this->getMetadata() as $k => $v) {
-			if ($k == $att) {
-				if ($return_first) {
-					return $v['value'];
-				} else {
-					return $v['values']; //will be an array
-				}
-			}
-		}
-	}
-
 	function getParentLinkNodesByItemType($item_type)
 	{
 		$links = array();
@@ -626,7 +613,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$method = 'get'.ucfirst(substr($var,1));
 		//for arrow get must be prefixed w/ underscore
 		//if it is an atom element, since arrow gets
-		//are used fro retrieving metadata aon entry items
+		//are used for retrieving metadata on entry items
 		if ('_'== substr($var,0,1) && method_exists($classname,$method)) {
 			return $this->{$method}();
 		} elseif ($this->getMetadata($var)) {
