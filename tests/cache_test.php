@@ -33,16 +33,15 @@ class TestOfCache extends UnitTestCase {
 		$c = new Dase_Config(dirname(__FILE__).'/..');
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$this->dump($c->getCacheDir());
 		$cache = Dase_Cache::get('file',$c->getCacheDir());
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
-		$this->dump($cache->getData('my_cache_file'));
 		$this->assertTrue('hello world' == $cache->getData('my_cache_file'));
 	}
 
 	/* NOTE: this is purposely slow
 	 */
+	/*
 	function testDataIsExpired() {
 		$c = new Dase_Config(dirname(__FILE__).'/..');
 		$c->load('inc/config.php');
@@ -50,11 +49,11 @@ class TestOfCache extends UnitTestCase {
 		$cache = Dase_Cache::get('file',$c->getCacheDir());
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
-		$this->dump(date(DATE_ATOM));
 		$this->dump('pausing for 2 seconds...');
 		sleep(2);
 		$this->assertFalse('hello world' == $cache->getData('my_cache_file',1));
 	}
+	 */
 }
 
 
