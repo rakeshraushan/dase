@@ -18,7 +18,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
 		'{collection_ascii_id}/attribute_tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/service' => 'service',
-		'{collection_ascii_id}/items' => 'items',
+		'{collection_ascii_id}/items/{start}:{end}' => 'items_by_range',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/item_types/service' => 'item_types_service',
 		'{collection_ascii_id}/item_type_relation/{item_type_relation_ascii_id}' => 'item_type_relation',
@@ -151,15 +151,9 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($output);
 	}
 
-	public function getItemsAtom($r)
+	public function getItemsByRangeAtom($r)
 	{
-		if ($r->has('limit')) {
-			$limit = $r->get('limit');
-		} else {
-			$limit = 20;
-		}
-		//can limit to specific sernums
-		$r->renderResponse($this->collection->getItemsBySerialNumbersAsAtom($r->app_root,$limit,$r->get('serial_numbers')));
+		$r->renderResponse($this->collection->getItemsBySerialNumberRangeAsAtom($r->app_root,$r->get('start'),$r->get('end')));
 	}
 
 	public function getItemsThatLackMediaTxt($r) 

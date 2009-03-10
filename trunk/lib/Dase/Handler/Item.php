@@ -12,6 +12,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//also atom categories PUT
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		//used for put and delete
+		'{collection_ascii_id}/{serial_number}/metadata/title' => 'title',
 		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata_value',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/parents' => 'parents',
@@ -381,13 +382,28 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(400,'missing identifier');
 		}
 		$value_id = $r->get('value_id');
-		if ('title' == $value_id) {
-			//convenience
-			$this->item->updateTitle(strip_tags($value_text),$user->eid);
-		} else {
-			$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
-		}
+		$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
 		$r->renderResponse($value_text);
+	}
+
+	public function putTitle($r)
+	{
+		$title_text = $r->getBody();
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot put title');
+		}
+		$this->item->updateTitle(strip_tags($title_text),$user->eid);
+		$r->renderResponse($title_text);
+	}
+
+	public function getTitle($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'cannot get title');
+		}
+		$r->renderResponse($this->item->getTitle());
 	}
 
 	public function deleteMetadataValue($r)
