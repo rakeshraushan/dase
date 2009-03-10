@@ -183,26 +183,20 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
-	function getItemsBySerialNumbersAsAtom($app_root,$limit=20,$sernums='')
+	function getItemsBySerialNumberRangeAsAtom($app_root,$start,$end)
 	{
 		$feed = $this->getBaseAtomFeed($app_root);
 		$feed->setFeedType('collection');
-		$feed->addLink($app_root.'/collection/'.$this->ascii_id.'/items.atom?serial_numbers='.$sernums,'self');
+		$feed->addLink($app_root.'/collection/'.$this->ascii_id.'/items/range/'.$start.'/'.$end.'.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$items = new Dase_DBO_Item($this->db);
 		$items->collection_id = $this->id;
-		if ($limit && is_numeric($limit)) {
-			$items->setLimit($limit);
-		}
+		$items->addWhere('serial_number',$start,'>=');
+		$items->addWhere('serial_number',$end,'<=');
+		$items->setLimit(100);
 		$items->orderBy('updated DESC');
 		foreach ($items->find() as $item) {
-			if ($sernums) {
-				if (in_array($item->serial_number,explode(',',$sernums))) {
-					$feed->addItemEntry($item,$app_root);
-				}	
-			} else {
-				$feed->addItemEntry($item,$app_root);
-			}
+			$feed->addItemEntry($item,$app_root);
 		}
 		return $feed->asXml();
 	}

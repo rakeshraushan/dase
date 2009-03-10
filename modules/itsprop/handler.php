@@ -525,15 +525,19 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public function postToProposalForm($r)
 	{
+		$prop_name = $r->get('proposal_name');
+		if (!$prop_name) {
+			$prop_name = 'default title';
+		}
 		$proposal = new Dase_Atom_Entry_Item;
-		$proposal->setTitle($r->get('proposal_name'));
+		$proposal->setTitle($prop_name);
 		$proposal->setItemType('proposal');
 		$proposal->addAuthor($this->user->eid);
-		$proposal->addMetadata('title',$r->get('proposal_name')); 
+		$proposal->addMetadata('title',$prop_name); 
 		$proposal->addMetadata('proposal_budget_description','enter budget description here'); 
 		$proposal->addMetadata('proposal_collaborators','enter collaborators here'); 
 		$proposal->addMetadata('proposal_description','enter description here'); 
-		$proposal->addMetadata('proposal_name',$r->get('proposal_name')); 
+		$proposal->addMetadata('proposal_name',$prop_name); 
 		$proposal->addMetadata('proposal_previous_funding','enter previous funding here'); 
 		$proposal->addMetadata('proposal_professional_assistance','enter professional assistance here'); 
 		$proposal->addMetadata('proposal_faculty_workshop','no'); 

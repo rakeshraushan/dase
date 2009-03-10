@@ -212,8 +212,8 @@ Dase.initProposalShortForm = function() {
 			alert('please select a Project Type');
 			return false;
 		}
-		if (!this.proposal_name.value) {
-			alert('please enter a Proposal Title');
+		if (!Dase.trim(this.proposal_name.value)) {
+			alert('Please enter a Proposal Title.\nYou will be able to edit it later.');
 			return false;
 		}
 	}

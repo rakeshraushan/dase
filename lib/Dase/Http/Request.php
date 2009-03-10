@@ -123,7 +123,8 @@ class Dase_Http_Request
 	public function getLogData()
 	{
 		$env = $this->env;
-		$out = '[method] '.$env['method']."\n";
+		$out = '[request_uri] '.$env['request_uri']."\n";
+		$out .= '[method] '.$env['method']."\n";
 		$out .= '[remote_addr] '.$env['remote_addr']."\n";
 		$out .= '[http_user_agent] '.$env['http_user_agent']."\n";
 		$out .= '[app_root] '.$env['app_root']."\n";
@@ -295,7 +296,7 @@ class Dase_Http_Request
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
 			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
-			if ($value || '0' === substr($value,0,1)) {
+			if (trim($value) || '0' === substr($value,0,1)) {
 				return $value;
 			} else {
 				if (isset($this->params[$key])) {
@@ -501,8 +502,8 @@ class Dase_Http_Request
 
 		if ($this->htuser && $this->htpass) {
 			$eid = $this->htuser;
-			$this->logger()->debug('adding password '.substr(md5($this->token.$eid.'httpbasic'),0,12));
-			$this->logger()->debug('token is '.$this->token);
+			//$this->logger()->debug('adding password '.substr(md5($this->token.$eid.'httpbasic'),0,12));
+			//$this->logger()->debug('token is '.$this->token);
 			$passwords[] = substr(md5($this->token.$eid.'httpbasic'),0,12);
 
 			//for service users:
