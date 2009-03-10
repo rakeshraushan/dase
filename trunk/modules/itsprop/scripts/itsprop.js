@@ -171,7 +171,7 @@ Dase.initPersonProposals = function() {
 		}
 	}
 	if (!url) return;
-	//alert('initPersonProposals');
+	//alert(url);
 	Dase.getJSON(url,function(props) {
 		var h = new Dase.htmlbuilder;
 		for (var i=0;i<props.length;i++) {
