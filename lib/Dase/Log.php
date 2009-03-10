@@ -26,9 +26,14 @@ class Dase_Log
 		}
 	}
 
-	public function is_writeable()
+	public function dir_is_writeable()
 	{
-		return is_writeable($this->logfile);
+		return is_writeable(dirname($this->logfile));
+	}
+
+	public function getFilename()
+	{
+		return $this->logfile;
 	}
 
 	private function _init()
@@ -87,6 +92,11 @@ class Dase_Log
 	{
 		@unlink($this->logfile);
 		return $this->_write("---- dase log ----\n\n");
+	}
+
+	public function delete()
+	{
+		@unlink($this->logfile);
 	}
 
 	public function getAsArray()
