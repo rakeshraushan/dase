@@ -23,6 +23,30 @@ Dase.insertDate = function() {
 	Dase.$('date').innerHTML = formatted_date;;
 };
 
+Dase.initEditTitle = function() {
+	var edit = Dase.$('editTitleToggle');
+	if (!edit) return;
+	edit.onclick = function() {
+		Dase.addClass(Dase.$('prop_title'),'hide');
+		Dase.removeClass(Dase.$('editTitleForm'),'hide');
+		return false;
+	}
+	var submit = Dase.$('editTitleSubmit');
+	var val = Dase.$('editTitleValue');
+	submit.onclick = function() {
+		var put_url = this.getAttribute('action');
+		var parts = put_url.split('/');
+		parts.pop();
+		var title_url = parts.join('/')+'/title';
+		Dase.ajax(this.getAttribute('action'),'put',function() {
+			Dase.$('editTitleForm').innerHTML = 'updating title...';
+			Dase.ajax(title_url,'put',function() {
+				Dase.$('editTitleForm').innerHTML = 'updating title......';
+				Dase.pageReload('updated title');
+			},val.value,'itsprop',Dase.itsprop.service_pass);
+		},val.value,'itsprop',Dase.itsprop.service_pass);
+	}
+}
 
 Dase.initProposalForm = function() {
 	var form = Dase.$('proposalForm');
@@ -387,6 +411,7 @@ Dase.initModule = function() {
 		}
 		Dase.initProposalShortForm();
 		Dase.initProposalForm();
+		Dase.initEditTitle();
 		Dase.initProposalCourses();
 		Dase.initCourseForm();
 		Dase.initProposalBudgetItems();

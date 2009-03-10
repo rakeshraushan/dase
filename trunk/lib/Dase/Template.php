@@ -135,7 +135,8 @@ function _smarty_dase_atom_entry_label(Dase_Atom_Entry $entry,$att)
 function _smarty_dase_atom_entry_select(Dase_Atom_Entry $entry,$att)
 {
 	//returns value of attribute 
-	return $entry->select($att);
+	$set = $entry->getMetadata($att);
+	return $set['text'];
 }
 
 function _smarty_dase_atom_entry_select_media(Dase_Atom_Entry $entry,$size)

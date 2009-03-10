@@ -1,7 +1,7 @@
 <!doctype html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<title>Proposal: {$proposal->title}</title>
+		<title>Proposal: {$proposal->title.text}</title>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8">
 		<base href="{$module_root}">
 		<meta http-equiv="Content-Style-Type" content="text/css"> 
@@ -43,7 +43,7 @@
 			</div>
 		</div>
 		<div id="container">
-			<h1>Proposal: {$proposal->title}</h1>
+			<h1>Proposal: {$proposal->title.text}</h1>
 			<dl>
 				<dt><h3>Submitter:</h3></dt>
 				<dd>{$person->person_name.text}</dd>

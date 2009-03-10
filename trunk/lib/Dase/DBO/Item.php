@@ -502,8 +502,28 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->buildSearchIndex();
 	}
 
+	/** simple convenience method */
+	function updateTitle($value_text,$eid)
+	{
+		//todo: set value revision history as well (using eid)
+		$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,'title');
+		if ($att) {
+			$v = new Dase_DBO_Value($this->db);
+			$v->item_id = $this->id;
+			$v->attribute_id = $att->id;
+			if ($v->findOne()) {
+				$v->value_text = trim($value_text);
+				return($v->update());
+			} else {
+				$v->value_text = trim($value_text);
+				return($v->insert());
+			}
+		}
+	}
+
 	function setValue($att_ascii_id,$value_text)
 	{
+		//todo: this needs work -- no need to 'new' an att
 		//todo: set value revision history as well
 		$att = new Dase_DBO_Attribute($this->db);
 		$att->ascii_id = $att_ascii_id;

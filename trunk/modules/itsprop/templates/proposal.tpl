@@ -15,8 +15,8 @@
 		<div class="controls">
 			<a href="{$previewLink}" id="previewLink" target="_blank">preview/submit</a>
 		</div>
-		<h1>Proposal: {$proposal->title}</h1>
-		<input type="hidden" name="eid" value="{$person->serial_number}"/>
+		<h1>Proposal: {$proposal->title.text}</h1>
+		<input type="hidden" name="eid" value="{$person->serialNumber}"/>
 		<p>
 		Please fill out each of the sections below completely. If
 		a section does not apply to you, simply enter
@@ -33,7 +33,11 @@
 		</p>
 		<p>
 		<label for="proposal_title">Proposal Title</label>
-		<p class="val">{$proposal->proposal_name.text}</p>
+		<p class="val" id="prop_title">{$proposal->proposal_name.text} <a href="#" id="editTitleToggle" class="modify">(edit)</a></p>
+		<p id="editTitleForm" class="hide">
+		<input class="long" id="editTitleValue" type="text" name="prop_title" value="{$proposal->proposal_name.text}">
+		<input type="submit" id="editTitleSubmit" value="update title" action="{$proposal->proposal_name.edit}">
+		</p>
 		</p>
 		<p>
 		<label for="name">Proposer Name</label>
