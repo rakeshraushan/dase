@@ -531,6 +531,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//1. status
 		$status = $this->getStatus();
+		$r->logger()->debug('--------status----------------'.$status);
+		$r->logger()->debug('--------status----------------'.$item->status);
 		if (($status != $item->status) && in_array($status,array('delete','draft','public','archive'))) {
 			$item->status = $status;
 		}

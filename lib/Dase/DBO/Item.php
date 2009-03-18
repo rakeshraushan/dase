@@ -199,7 +199,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getMetadata($app_root,$att_ascii_id='')
+	public function getMetadata($app_root='{APP_ROOT}',$att_ascii_id='')
 	{
 		$db = $this->db;
 		$prefix = $this->db->table_prefix;
@@ -226,9 +226,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			";
 		$st = Dase_DBO::query($db,$sql,$bound_params);
 		while ($row = $st->fetch()) {
-			if ($app_root) {
-				$row['href'] = $app_root.'/attribute/'.$this->p_collection_ascii_id.'/'.$row['ascii_id'];
-			}
+			$row['href'] = $app_root.'/attribute/'.$this->p_collection_ascii_id.'/'.$row['ascii_id'];
 			$metadata[] = $row;
 		}
 		return $metadata;
@@ -513,11 +511,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->attribute_id = $att->id;
 			if ($v->findOne()) {
 				$v->value_text = trim($value_text);
-				return($v->update());
+				$v->update();
 			} else {
 				$v->value_text = trim($value_text);
-				return($v->insert());
+				$v->insert();
 			}
+			$this->saveAtom();
 		}
 	}
 
@@ -541,6 +540,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->attribute_id = $att->id;
 			$v->value_text = trim($value_text);
 			return($v->insert());
+			$this->saveAtom();
 		} else {
 			//simply returns false if no such attribute
 			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
@@ -560,6 +560,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$doomed->delete();
 			}
 		}
+		$this->saveAtom();
 	}
 
 	function deleteAdminValues()
@@ -1053,7 +1054,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed->asXml();
 	}
 
-	function asAtomEntry($app_root)
+	function asAtomEntry($app_root="{APP_ROOT}")
 	{
 		$atom = Dase_DBO_ItemAsAtom::getByItem($this);
 		if (!$atom) {
@@ -1222,6 +1223,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if ($eid) {
 			$comments->updated_by_eid = $eid;
 		}
+		$comments->orderBy('updated DESC');
 		return $comments->find();
 	}
 
@@ -1230,7 +1232,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$comments = '';
 		foreach ($this->getComments($eid) as $c_obj) {
 			$c['id'] = $c_obj->id;
-			$c['updated'] = $c_obj->updated;
+			//$c['updated'] = $c_obj->updated;
 			$c['updated'] = date('D M j, Y \a\t g:ia',strtotime($c_obj->updated));
 			$c['eid'] = $c_obj->updated_by_eid;
 			$c['text'] = $c_obj->text;

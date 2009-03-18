@@ -26,6 +26,7 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/dase/htmlbuilder.js"></script>
 		<script type="text/javascript" src="scripts/itsprop.js"></script>
 		<script type="text/javascript" src="scripts/jquery-1.2.6.js"></script>
+		<script type="text/javascript" src="scripts/jquery.tablesorter.js"></script>
 		<script type="text/javascript" src="scripts/jquery-ui-personalized-1.5.3.js"></script>
 		{block name="head"}{/block}
 
@@ -45,6 +46,9 @@
 					{if $user}
 					<div class="controls">
 						<a href="logout" class="logout">logout {$user->eid}</a>
+						{if $request->is_evaluator}
+						(evaluator)
+						{/if}
 					</div>
 					{/if}
 					<h3>Liberal Arts Instructional Technology Services</h3>
@@ -64,8 +68,30 @@
 					<li>
 					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
 					</li>
-					<li class="hide" id="userProposals"></li>
+					<li class="headline hide" id="propsLabel">Your Proposals:</li>
+					<li>
+					<ul id="userProposals"></ul>
+					</li>
+
+					{if $request->is_evaluator}
+					<li class="headline">Evaluator Links:</li>
+					<li>
+					<a href="proposals" class="main">Proposals List</a>
+					</li>
+					{/if}
+
+					{if $request->is_chair}
+					<li class="headline">Your Departments:</li>
+					{/if}
+
+					{foreach item=dept from=$request->chair_feed->entries}
+					<li>
+					<a href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
+					</li>
+					{/foreach}
+
 					{if $request->is_superuser}
+					<li class="headline">Site Administration:</li>
 					<li>
 					<a href="persons" class="main">Manage Users</a>
 					</li>
@@ -75,13 +101,8 @@
 					<li>
 					<a href="proposals" class="main">Proposals List</a>
 					</li>
-					<li id="department_lists"><p>Your Departments:</p></li>
 					{/if}
-					{foreach item=dept from=$request->chair_feed->entries}
-					<li>
-					<a href="department/{$dept->dept_id.text}/vision" class="main">{$dept->dept_name.text} Proposals</a>
-					</li>
-					{/foreach}
+
 				</ul>
 				<h5 class="hide" id="ajaxMsg">loading...</h5>
 			</div> 

@@ -48,6 +48,7 @@
 		<dt>email</dt> <dd> {$person->person_email.text|default:'--'}</dd>
 		<dt>phone</dt> <dd> {$person->person_phone.text|default:'--'}</dd>
 		<dt>dept</dt> <dd> {$dept_title|default:'--'}</dd>
+		<dt>role</dt> <dd> {$person->person_role.text|default:'--'}</dd>
 	</dl>
 </div>
 {/block}

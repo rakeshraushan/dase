@@ -6,7 +6,7 @@
 		<base href="{$module_root}">
 		<meta http-equiv="Content-Style-Type" content="text/css"> 
 
-		<link rel="stylesheet" type="text/css" href="css/preview.css">
+		<link rel="stylesheet" type="text/css" href="css/preview_eval.css">
 		<link rel="stylesheet" type="text/css" href="css/print.css" media="print">
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>

@@ -37,6 +37,7 @@ Dase.initEditTitle = function() {
 		var put_url = this.getAttribute('action');
 		var parts = put_url.split('/');
 		parts.pop();
+		//update proposal title AND entry title
 		var title_url = parts.join('/')+'/title';
 		Dase.ajax(this.getAttribute('action'),'put',function() {
 			Dase.$('editTitleForm').innerHTML = 'updating title...';
@@ -51,22 +52,39 @@ Dase.initEditTitle = function() {
 Dase.initProposalForm = function() {
 	var form = Dase.$('proposalForm');
 	if (!form) return;
-	//alert('initProposalForm');
 	var labels = form.getElementsByTagName('label');
+			/*
 	for (var i=0;i<labels.length;i++) {
-		labels[i].onclick = function() {
-			var sec = Dase.$('div_'+this.getAttribute('for'));
-			if (sec) {
-				var span = this.getElementsByTagName('span')[0];
-				if ('expand [+]' == span.innerHTML) {
-					span.innerHTML = 'collapse [-]';
+		var sec = Dase.$('div_'+labels[i].getAttribute('for'));
+		if (sec) {
+			var ex = labels[i].getElementsByTagName('a')[0];
+			ex.sec = sec;
+			ex.onclick = function() {
+				if ('expand [+]' == this.innerHTML) {
+					this.innerHTML = 'collapse [-]';
 				} else {
-					span.innerHTML = 'expand [+]';
+					this.innerHTML = 'expand [+]';
 				}
-				Dase.toggle(sec);
+				Dase.toggle(this.sec);
+				return false;
 			}
 		}
 	}
+			*/
+	$('#proposalForm').find('label').find('a').click(function(){
+	//	$(this).parent().parent().next('div').toggle();
+		var id = $(this).parent().attr('for');
+		$('#div_'+id).toggle();
+		if ('expand [+]' == this.innerHTML) {
+			this.innerHTML = 'collapse [-]';
+		} else {
+			this.innerHTML = 'expand [+]';
+		}
+		return false;
+	});
+
+
+
 	var inputs = document.getElementsByTagName('input');
 	for (var i=0;i<inputs.length;i++) {
 		var inp = inputs[i];
@@ -179,10 +197,11 @@ Dase.initPersonProposals = function() {
 			var li = h.add('li');
 			li.add('a',{'class':'sub','target':'_blank','href':'proposal/'+prop.serial_number},prop.title);
 		}
-		var target = Dase.$('userProposals');
-		h.attach(target);
-		Dase.removeClass(target,'hide');
-
+		if (props.length) {
+			Dase.$('userProposals').innerHTML = h.getString();
+			Dase.removeClass(Dase.$('userProposals'),'hide');
+			Dase.removeClass(Dase.$('propsLabel'),'hide');
+		}
 	},null,null,'itsprop',Dase.itsprop.service_pass);
 };
 
@@ -217,6 +236,15 @@ Dase.initProposalShortForm = function() {
 			return false;
 		}
 	}
+   /*
+	$('#proposalShortForm').submit(function() {
+		var val = this.options[this.selectedIndex].value;
+		if (!val) {
+			alert('please select a Project Type');
+			return false;
+		}
+	});
+	*/
 };
 
 Dase.initProposalCourses = function() {
@@ -401,6 +429,10 @@ Dase.initBudgetForm = function() {
 	}
 }
 
+Dase.initSortableProps = function() {
+	$('#sortableProps').tablesorter();
+}
+
 Dase.initModule = function() {
 	var url = Dase.getLinkByRel('service_pass');
 	if (!url) return;
@@ -418,6 +450,7 @@ Dase.initModule = function() {
 		Dase.initBudgetForm();
 		Dase.initPersonProposals();
 		Dase.initDeleteProposal();
+		Dase.initSortableProps();
 	},null,null,null,null,function(error) {
 		//alert(error);
 		window.location.href = Dase.base_href+'modules/itsprop/logout';

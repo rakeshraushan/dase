@@ -77,15 +77,20 @@ a:hover {
 	text-decoration: underline;
 }
 
+div#topMenu {
+	margin: 8px auto;
+	width: 90%;
+}
+
 div#container {
 	margin: 8px auto;
-	width: 97%;
+	width: 90%;
 }
 
 div#content {
 	margin-top: 1em;
 	margin-left:170px;
-	width: 83%;
+	/*width: 83%;*/
 	min-height: 12em;
 	padding: 0 20px;
 }
@@ -127,6 +132,7 @@ div#content h1 {
 
 .itspropBanner div.controls {
 	margin-top: 40px;
+	color: #fff;
 }
 
 .itspropBanner  a {
@@ -222,6 +228,22 @@ div.loader {
 	margin: 0;
 }
 
+#menu li.headline {
+	font-weight: bold;
+	font-size: 11px;
+	display: block;
+	padding: 4px 10px;
+	text-decoration: none;
+	background-color: #bbd;
+	border-bottom: 1px solid #fff;
+	border-top: 2px solid #fff;
+	border-right: 1px solid #ddd;
+}
+
+#menu li.hide {
+	display: none; 
+}
+
 #menu li span { /* used for un-linked menu items */
 	display: block;
 	padding: 6px 10px;
@@ -305,7 +327,7 @@ div#msg {
 }
 
 div#home {
-	width: 80%;
+	max-width: 80%;
 }
 
 div#home p {
@@ -391,6 +413,10 @@ form.shortForm p {
 
 #proposalForm input[type=submit] {
 	margin: 1px 6px;
+}
+
+a.control {
+	float: right;
 }
 
 span.control {
@@ -781,3 +807,32 @@ span.mini {
 	font-size: .85em;
 	color: #666;
 }
+
+
+/******
+ * tble sorter
+ * *******************/
+table.listing th.header { 
+	background-image: url(../images/bg.gif); 
+	cursor: pointer; 
+	font-weight: bold; 
+	background-repeat: no-repeat; 
+	background-position: center left; 
+	padding-left: 20px; 
+	border-right: 1px solid #dad9c7; 
+	margin-left: -1px; 
+}
+
+table.listing th.headerSortUp { 
+	background-image: url(../images/asc.gif); 
+	color: #000; 
+	background-color: #bbd;
+} 
+
+table.listing th.headerSortDown { 
+	background-image: url(../images/desc.gif); 
+	color: #000; 
+	background-color: #bbd;
+} 
+
+ 

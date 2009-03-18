@@ -8,13 +8,46 @@ body {
 	font-size: 84%;
 	background: white fixed no-repeat left top;
 	color: black;
-	font-family: serif;
+	font-family: georgia,serif;
 	line-height: 1.2em;
 }
 
 div#container {
 	margin: 20px auto;
 	width: 90%;
+}
+
+div#topMenu {
+	margin: 10px auto 30px auto;
+	width: 90%;
+	padding: 10px 10px 3px 10px;
+	border-bottom: 4px solid #bbd;
+}
+
+div#topMenu  a {
+	z-index: -1;
+	font-family: verdana, arial, sans;
+	color: #666;
+	background-color: #ccc;
+	font-weight: bold;
+	font-size: 1.5 em;
+	padding: 6px 10px 3px 10px;
+	margin-right: 12px;
+	text-decoration: none;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-topleft: 5px;
+	-webkit-border-radius-topright: 5px;
+	-webkit-border-radius-topleft: 5px;
+}
+
+div#topMenu  a:hover {
+	text-decoration: underline;
+}
+
+div#topMenu  a.here {
+	background-color: #bbd;
+	padding-bottom: 4px;
+	color: #000;
 }
 
 div#submission {
@@ -58,7 +91,7 @@ a:link img, a:visited img {
 }
 h1, h2, h4, h5, h6 {
 	background: white;
-	color: #005a9c;
+	color: #448;
 	font-weight: bold;
 	text-align: left;
 }

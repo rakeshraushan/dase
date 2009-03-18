@@ -21,7 +21,7 @@ Dase.itsprop.initForm = function() {
 		Dase.ajax(url,'post',function(txt) {
 		},html,'itsprop',Dase.itsprop.service_pass);
 	}
-}
+};
 
 Dase.itsprop.initUnsubmit = function() {
 	var button = Dase.$('unsubmitFormButton');
@@ -35,8 +35,52 @@ Dase.itsprop.initUnsubmit = function() {
 	}
 };
 
+Dase.initEvaluation = function() {
+	$('#topMenu').find("a[href!='proposals']").click(function() {
+		$('#topMenu').find('a').removeClass('here');
+		$(this).addClass('here');
+		var target = $(this).attr('id').replace(/-link/,'');
+		$('#prop').addClass('hide');
+		$('#vision').addClass('hide');
+		$('#notes').addClass('hide');
+		$('#'+target).removeClass('hide');
+		return false;
+	});
+};
+
+Dase.initComments = function() {
+	url = $('#addCommentForm').attr('action');
+	$.ajax({
+		'url':url,
+		'dataType':'json',
+		'success':function(data) { 
+			var h = new Dase.htmlbuilder;
+			for (var i=0;i<data.length;i++) {
+				var comm = data[i];
+				var parts = comm.text.split('|');
+				h.add('dt',null,parts[1]+' ('+comm.updated+'):');
+				h.add('dd',null,parts[0]);
+				h.attach(Dase.$('comments'));
+			}
+		}
+	});
+	$('#addCommentForm').submit(function(event) {
+		var o = {
+			'url':url,
+			'type':'POST',
+			'data':event.target.comment.value+'|'+event.target.commenter.value,
+			'complete': function() { Dase.initComments(); }
+		};
+		$.ajax(o);
+		event.target.reset();
+		return false;
+	});
+};
+
 Dase.addLoadEvent(function() {
 	Dase.itsprop.initForm();
+	Dase.initEvaluation();
+	Dase.initComments();
 	Dase.itsprop.initUnsubmit();
 });
 

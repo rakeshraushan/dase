@@ -46,6 +46,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		if ($collection) {
 			$i = 0;
 			foreach ($collection->getItems() as $item) {
+				$item->flushAtom();
 				if (!$item->p_collection_ascii_id) {
 					$item->p_collection_ascii_id = $collection->ascii_id;
 					if ($item->update()) {

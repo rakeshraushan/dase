@@ -22,6 +22,7 @@ Dase.addLoadEvent = function(func) {
 /****** utiltities **************/
 
 Dase.$ = function(id) {
+	if (!id) return;
 	return document.getElementById(id);
 };
 

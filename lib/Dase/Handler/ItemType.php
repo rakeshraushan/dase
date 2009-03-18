@@ -54,8 +54,12 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$item_url = $r->app_root.'/item/'.$coll.'/'.$row['serial_number'];
 			$data[$item_url] = $row['value_text'];
 		}
-		asort($data);
-		$r->renderResponse(Dase_Json::get($data));
+		if (count($data)) {
+			asort($data);
+			$r->renderResponse(Dase_Json::get($data));
+		} else {
+			$r->renderError('404','no values');
+		}
 
 	}
 
@@ -297,7 +301,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		try {
 			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
 			$item_handler->item = $item;
-			$item_handler->db = $this->db;
 			$item_handler->putItem($r);
 		} catch (Exception $e) {
 			$r->renderError(500,$e->getMessage());

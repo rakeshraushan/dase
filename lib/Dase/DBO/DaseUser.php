@@ -204,7 +204,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
 		$user_data[$this->eid]['ppd'] = md5($this->eid.$auth_config['ppd_token']);
-		if ($this->isSuperuser($auth_config['superusers'])) {
+		if ($this->isSuperuser($auth_config['superuser'])) {
 			$user_data[$this->eid]['is_superuser'] = 1;
 		}
 
