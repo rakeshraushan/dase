@@ -32,10 +32,10 @@
 		<select name="proposal_project_type">
 			<option value="">Select category best describing your proposal ...</option>
 			<option value="">---------------------</option>
-			<option>Course materials development</option>
-			<option>Computer labs and/or servers</option>
-			<option>Technology classroom</option>
-			<option>Network</option>
+			<option value="Course materials development">Course materials development</option>
+			<option value="Computer labs and/or servers">Computer labs and/or servers</option>
+			<option value="Technology classroom">Technology classroom</option>
+			<option value="Network">Network</option>
 		</select>
 		</p>
 		<p>

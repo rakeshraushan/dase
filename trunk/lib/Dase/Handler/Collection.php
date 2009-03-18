@@ -18,6 +18,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}' => 'attribute',
 		'{collection_ascii_id}/attribute_tallies' => 'attribute_tallies',
 		'{collection_ascii_id}/service' => 'service',
+		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/items/{start}:{end}' => 'items_by_range',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/item_types/service' => 'item_types_service',

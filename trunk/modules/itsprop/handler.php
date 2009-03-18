@@ -19,6 +19,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		'proposal/{serial_number}/unarchiver' => 'proposal_unarchiver',
 		'proposal/{serial_number}/archiver' => 'proposal_archiver',
 		'proposal/{serial_number}/email' => 'email',
+		'proposal/{serial_number}/eval' => 'proposal_eval',
 		'proposal/{serial_number}/preview' => 'proposal_preview',
 		'proposal/{serial_number}/courses' => 'proposal_courses',
 		'proposal/{serial_number}/budget_items' => 'proposal_budget_items',
@@ -34,6 +35,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public function setup($r)
 	{
+		$this->is_superuser = false;
+		$this->is_eval = false;
+		$this->is_chair = false;
 		$this->db = $r->retrieve('db');
 		if ('welcome' != $r->resource && 'login' != $r->resource && 'department_proposals' != $r->resource) {
 			$this->user = $r->getUser('cookie',false);
@@ -44,16 +48,21 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				$chair_feed = Dase_Atom_Feed::retrieve($r->app_root. "/search.atom?itsprop.dept_chair_eid=$eid");
 				if (count($chair_feed->entries)) {
 					$r->set('chair_feed',$chair_feed);
+					$r->set('is_chair',1);
 					$this->is_chair = true;
+				}
+
+				$person_data = Dase_Json::toPhp(Dase_Http::get($r->app_root.'/search.json?itsprop.person_role=evaluator&itsprop.person_eid='.$eid.'&auth=http','pkeane','opendata'));
+				if ($person_data['count']) {
+					$r->set('is_evaluator',1);
+					$this->is_eval = true;
 				}
 
 				$is_super = $this->_isSuperuser($r,$this->user->eid);
 				if ($is_super) {
 					$this->is_superuser = true;
 					$r->set('is_superuser',1);
-				} else {
-					$this->is_superuser = false;
-				}
+				} 
 				$this->service_pass = $r->retrieve('config')->getServicePassword('itsprop');
 			}
 		}
@@ -146,6 +155,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function getDepartmentProposals($r)
 	{
 
+		if (!$this->is_chair && !$this->is_eval && !$this->is_superuser) {
+			$r->renderError(401,'not authorized');
+		}
 		$this->user = $r->getUser('cookie',false);
 		if (!$this->user) {
 			$r->renderResponse('please logout and login again');
@@ -326,6 +338,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public function getProposals($r) 
 	{
+		if (!$this->is_chair && !$this->is_eval && !$this->is_superuser) {
+			$r->renderError(401,'not authorized');
+		}
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
 		$tpl->assign('proposals', Dase_Atom_Feed::retrieve($r->app_root. "/item_type/itsprop/proposal/items.atom"));
@@ -523,6 +538,52 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$r->renderResponse($tpl->fetch('preview.tpl'));
 	}
 
+	public function getProposalEval($r)
+	{
+		$tpl = new Dase_Template($r,true);
+		$tpl->assign('user',$this->user);
+		$proposal = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('serial_number').".atom");
+		if (is_numeric($proposal)) {
+			$r->renderResponse($tpl->fetch('proposal404.tpl'));
+		}
+
+		$dept_array = $proposal->getParentLinks();
+		$department = Dase_Atom_Entry_Item::retrieve($dept_array[0]['href'].'.atom');
+		$chair_email = $department->dept_chair_email['text'];
+		$chair_name = $department->dept_chair['text'];
+		$tpl->assign('chair_email',$chair_email);
+		$tpl->assign('chair_name',$chair_name);
+
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$tpl->assign('person',$person);
+		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
+		$budget_items = Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('budget_item')));
+		$grand_total = 0;
+		$display_bud = array();
+		foreach ($budget_items as $bud) {
+			$p = $bud['metadata']['budget_item_price'];
+			$q = $bud['metadata']['budget_item_quantity'];
+			$bud['total'] = $p*$q;
+			$grand_total += $bud['total'];
+			$display_bud[] = $bud;
+
+		}
+		/* vision preview */
+
+		$props = Dase_Atom_Feed::retrieve($department->getChildfeedLinkUrlByTypeAtom('proposal'));
+		$props = $props->filterOnExists('proposal_submitted');
+		$props->sortBy('proposal_chair_rank');
+		$tpl->assign('props',$props);
+		$tpl->assign('dept',$department);
+
+
+		$tpl->assign('grand_total',$grand_total);
+		$tpl->assign('budget_items',$display_bud);
+		$tpl->assign('proposal',$proposal);
+		$tpl->assign('propLink',$r->app_root.'/modules/itsprop/proposal/'.$r->get('serial_number'));
+		$r->renderResponse($tpl->fetch('eval.tpl'));
+	}
+
 	public function postToProposalForm($r)
 	{
 		$prop_name = $r->get('proposal_name');
@@ -588,6 +649,13 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public function postToProposalBudgetItems($r)
 	{
+		/** json experiment
+		$set['desc'] = $r->get('budget_item_description');
+		$set['price'] = $r->get('budget_item_price');
+		$set['quant'] = $r->get('budget_item_quantity');
+		$set['type'] = $r->get('budget_item_type');
+		print Dase_Json::get($set);exit;
+		 */
 		$budget_item = new Dase_Atom_Entry_Item;
 		$budget_item->setTitle($r->get('budget_item_title'));
 		$budget_item->setItemType('budget_item');

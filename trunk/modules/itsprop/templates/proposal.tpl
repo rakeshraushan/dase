@@ -15,7 +15,7 @@
 		<div class="controls">
 			<a href="{$previewLink}" id="previewLink" target="_blank">preview/submit</a>
 		</div>
-		<h1>Proposal: {$proposal->title.text}</h1>
+		<h1>Proposal: {$proposal->proposal_name.text}</h1>
 		<input type="hidden" name="eid" value="{$person->serialNumber}"/>
 		<p>
 		Please fill out each of the sections below completely. If
@@ -53,7 +53,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_collaborators"><span class="control">expand [+]</span>Additional Participants [optional]:</label>
+		<label for="proposal_collaborators"><a href="#" class="control">expand [+]</a>Additional Participants [optional]:</label>
 		<div id="div_proposal_collaborators" class="hide">
 			<p class="instruction">Enter name(s) of additional participants, co-proposers, or principal investigator (if different from proposer).</p>
 			{assign var=rows value=$proposal->proposal_collaborators.text|count_words}
@@ -65,7 +65,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_summary"><span class="control">expand [+]</span>Summary:</label>
+		<label for="proposal_summary"><a class="control">expand [+]</a>Summary:</label>
 		<div id="div_proposal_summary" class="hide">
 			<p class="instruction">A one paragraph summary of the project and supporting argument, not to exceed 150 words:</p>
 			{assign var=rows value=$proposal->proposal_summary.text|count_words}
@@ -77,7 +77,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_description"><span class="control">expand [+]</span>Description:</label>
+		<label for="proposal_description"><a class="control">expand [+]</a>Description:</label>
 		<div id="div_proposal_description" class="hide">
 			<p class="instruction">A detailed description of the project with supporting argument, not to exceed 1,000 words. Be sure to include previous experience with similar projects and the outcome of those projects. Explain how you will gauge the success of this project, including: pedagogical goals, scope of impact, and projected date of completion. Please indicate if you anticipate that this project will require more than one year of funding.</p>
 			{assign var=rows value=$proposal->proposal_description.text|count_words}
@@ -92,7 +92,7 @@
 		</p>
 
 		<p>
-		<label for="courses"><span class="control">expand [+]</span>Students and Classes Served:</label>
+		<label for="courses"><a class="control">expand [+]</a>Students and Classes Served:</label>
 		<div id="div_courses" class="hide">
 			<form action="proposal/{$proposal->serialNumber}/courses" method="post" id="courseForm">
 				<div id="classesList" class="hide"></div>
@@ -121,7 +121,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_previous_funding"><span class="control">expand [+]</span>Previous Funding:</label>
+		<label for="proposal_previous_funding"><a class="control">expand [+]</a>Previous Funding:</label>
 		<div id="div_proposal_previous_funding" class="hide">
 			<p class="instruction">Did you receive funding in prior years for this particular project? If so, when? Please add justification why funding should continue.</p>
 			{assign var=rows value=$proposal->proposal_previous_funding.text|count_words}
@@ -133,7 +133,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_sta"><span class="control">expand [+]</span>Student Technology Assistant:</label>
+		<label for="proposal_sta"><a class="control">expand [+]</a>Student Technology Assistant:</label>
 		<div id="div_proposal_sta" class="hide textchoice">
 			<p>If submitting a proposal for development of course materials, would you be interested in...</p>
 
@@ -145,7 +145,7 @@
 		</div>
 		</p>
 
-		<label for="proposal_faculty_workshop"><span class="control">expand [+]</span>Summer Faculty Workshop:</label>
+		<label for="proposal_faculty_workshop"><a class="control">expand [+]</a>Summer Faculty Workshop:</label>
 		<div id="div_proposal_faculty_workshop" class="hide textchoice">
 			<p>If submitting a proposal for development of course materials, would you be interested in...</p>
 
@@ -158,7 +158,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_professional_assistance"><span class="control">expand [+]</span>Professional Assistance:</label>
+		<label for="proposal_professional_assistance"><a class="control">expand [+]</a>Professional Assistance:</label>
 		<div id="div_proposal_professional_assistance" class="hide">
 			<p class="instruction">Enter a description of any professional assistance requested from Liberal Arts Instructional Technology Services (LAITS).</p>
 			{assign var=rows value=$proposal->proposal_professional_assistance.text|count_words}
@@ -170,7 +170,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_renovation_description"><span class="control">expand [+]</span>Renovation Description:</label>
+		<label for="proposal_renovation_description"><a class="control">expand [+]</a>Renovation Description:</label>
 		<div id="div_proposal_renovation_description" class="hide">
 			<p class="instruction">Include renovation schedules and costs, including electrical, lighting, furniture, and architectural changes. If you do not have an official renovation cost estimate, describe as best you can the nature and scope of the proposed work.</p>
 			{assign var=rows value=$proposal->proposal_renovation_description.text|count_words}
@@ -182,7 +182,7 @@
 		</p>
 
 		<p>
-		<label for="proposal_budget_description"><span class="control">expand [+]</span>Budget Description:</label>
+		<label for="proposal_budget_description"><a class="control">expand [+]</a>Budget Description:</label>
 		<div id="div_proposal_budget_description" class="hide">
 			<p class="instruction">Include budget schedules and costs, including electrical, lighting, furniture, and architectural changes. If you do not have an official budget cost estimate, describe as best you can the nature and scope of the proposed work.</p>
 			{assign var=rows value=$proposal->proposal_budget_description.text|count_words}
@@ -194,7 +194,7 @@
 		</p>
 
 		<p>
-		<label for="budget"><span class="control">expand [+]</span>Itemized Budget:</label>
+		<label for="budget"><a class="control">expand [+]</a>Itemized Budget:</label>
 
 		<div id="div_budget" class="hide">
 			<form action="proposal/{$proposal->serialNumber}/budget_items" method="post" id="budgetForm">
