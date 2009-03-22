@@ -156,7 +156,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 
 		if (!$this->is_chair && !$this->is_eval && !$this->is_superuser) {
-			$r->renderError(401,'not authorized');
+		//	$r->renderError(401,'not authorized');
 		}
 		$this->user = $r->getUser('cookie',false);
 		if (!$this->user) {
@@ -190,7 +190,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		//fragile?? (dept must be first parent)
 		//$dept_array = $person->getParentLinkNodesByItemType('department');
 		$parent = $proposal->getParentLinks();
-		$title = 'Liberal Arts ITS Grant Proposal: '.$proposal->title;
+		$title = 'Liberal Arts ITS Grant Proposal: '.$proposal->proposal_name['text'];
 		$department = Dase_Atom_Entry_Item::retrieve($parent[0]['href'].'.atom');
 		$email = $department->dept_chair_email['text'];
 		$chair_name = $department->dept_chair['text'];
@@ -352,7 +352,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('serial_number').".atom");
 		$metadata_array = $proposal->getRawMetadata();
 		$metadata_array['proposal_submitted'] = array(date(DATE_ATOM));
-		$metadata_array['proposal_chair_rank'] = array('&nbsp;');
+		//$metadata_array['proposal_chair_rank'] = array('&nbsp;');
 		$proposal->replaceMetadata($metadata_array);
 		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
 		$params['msg'] = "your proposal has been submitted";

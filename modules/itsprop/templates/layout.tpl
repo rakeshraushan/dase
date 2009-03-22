@@ -108,6 +108,7 @@
 			</div> 
 
 			<div id="content">
+				<h4 class="highlight">This website was recently upgraded.  Please report any problems to pkeane@mail.utexas.edu.</h4>
 				{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 				{block name="content"}default content{/block}
 			</div>

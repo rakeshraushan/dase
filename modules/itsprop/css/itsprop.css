@@ -490,6 +490,14 @@ textarea.highlight {
 	background-color: #ffc;
 }
 
+h4.highlight {
+	background-color: #ffc;
+	padding: 10px;
+	font-size: .8em;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
 input.updating {
 	background-color: #fff;
 	color: blue;
