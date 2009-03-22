@@ -10,50 +10,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		parent::__construct($dom,$root,'item');
 	}
 
-	function getSerialNumber() 
-	{
-		if (!$this->serial_number) {
-			//serial numbers are modelled the same way as 
-			//ascii ids (last segment of id)
-			$this->serial_number = $this->getAsciiId();
-		}
-		return $this->serial_number;
-	}
-
-	function getItemLink()
-	{
-		//shouldn't this just be rel="alternate" link?
-		return $this->getLink('http://daseproject.org/relation/search-item');
-	}
-
-	function getAttributesLink()
-	{
-		return $this->getLink('http://daseproject.org/relation/attributes');
-	}
-
-	function getMetadataLink()
-	{
-		return $this->getLink('http://daseproject.org/relation/metadata');
-	}
-
-	//not yet used???
-	function getDescription()
-	{
-		return $this->getAtomElementText('summary');
-	}
-
-	function getViewitemLink()
-	{
-		$x = new DomXPath($this->dom);
-		$x->registerNamespace('media',Dase_Atom::$ns['media']);
-		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
-		$elem =  $x->query("media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
-		if ($elem) {
-			return $elem->getAttribute('url');
-		} else {
-			return 'www/images/laits_colors.jpg';
-		}
-	}
+	/********** start hierarchy stuff **************************/
 
 	function getChildfeedLinkUrlByTypeJson($item_type)
 	{
@@ -66,7 +23,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
-
 	function getChildfeedLinkUrlByTypeAtom($item_type)
 	{
 		$type = $this->getItemType();
@@ -75,24 +31,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			if (strpos($link['href'],$desc)) {
 				return $link['href'];
 			}
-		}
-	}
-
-	function getThumbnailLink()
-	{
-		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
-		if ($elem) {
-			return $elem->getAttribute('url');
-		} else {
-			return 'www/images/laits_colors.jpg';
-		}
-	}
-
-	function getThumbnailBase64()
-	{
-		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
-		if ($elem) {
-			return base64_encode(file_get_contents($elem->getAttribute('url')));
 		}
 	}
 
@@ -143,6 +81,82 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		return $links;
+	}
+
+	function getParentItemTypeLinks()
+	{
+		$parent_types = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('http://daseproject.org/relation/parent_item_type' == $el->getAttribute('rel')) {
+				$parent_types[$el->getAttribute('href')] = $el->getattribute('title');
+			}
+		}
+		return $parent_types;
+	}
+
+	/********** end hierarchy stuff **************************/
+
+	function getSerialNumber() 
+	{
+		if (!$this->serial_number) {
+			//serial numbers are modelled the same way as 
+			//ascii ids (last segment of id)
+			$this->serial_number = $this->getAsciiId();
+		}
+		return $this->serial_number;
+	}
+
+	function getItemLink()
+	{
+		//shouldn't this just be rel="alternate" link?
+		return $this->getLink('http://daseproject.org/relation/search-item');
+	}
+
+	function getAttributesLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/attributes');
+	}
+
+	function getMetadataLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/metadata');
+	}
+
+	//not yet used???
+	function getDescription()
+	{
+		return $this->getAtomElementText('summary');
+	}
+
+	function getViewitemLink()
+	{
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		$elem =  $x->query("media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
+		if ($elem) {
+			return $elem->getAttribute('url');
+		} else {
+			return 'www/images/laits_colors.jpg';
+		}
+	}
+
+	function getThumbnailLink()
+	{
+		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
+		if ($elem) {
+			return $elem->getAttribute('url');
+		} else {
+			return 'www/images/laits_colors.jpg';
+		}
+	}
+
+	function getThumbnailBase64()
+	{
+		$elem = $this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail')->item(0);
+		if ($elem) {
+			return base64_encode(file_get_contents($elem->getAttribute('url')));
+		}
 	}
 
 	public function getLabel($att) 
@@ -223,17 +237,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 		return $item_type;
-	}
-
-	function getParentItemTypeLinks()
-	{
-		$parent_types = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('http://daseproject.org/relation/parent_item_type' == $el->getAttribute('rel')) {
-				$parent_types[$el->getAttribute('href')] = $el->getattribute('title');
-			}
-		}
-		return $parent_types;
 	}
 
 	function getCollection()
@@ -452,6 +455,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
+		//hierarchy stuff
 		$sernum = $item->serial_number;
 		$coll = $c->ascii_id;
 		foreach ($this->getParentLinks() as $ln) {
@@ -576,8 +580,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			label="Proposal: Cool Art Website"/>
 		 */
 
+		//hierarchy stuff
 		Dase_DBO_ItemRelation::removeParents($db,$c->ascii_id,$sernum); 
-
 		$coll = $this->getCollectionAsciiId();
 		foreach ($this->getParentLinks() as $ln) {
 			//make sure parent is a legitimate item
@@ -603,6 +607,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				//nothin'	
 			}
 		}
+
 		$item->buildSearchIndex();
 		$item->saveAtom();
 		return $item;

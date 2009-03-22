@@ -11,6 +11,9 @@
 		<script type="text/javascript" src="{$app_root}www/scripts/json2.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/dase.js"></script>
 		<script type="text/javascript" src="{$app_root}www/scripts/md5.js"></script>
+		<script type="text/javascript" src="scripts/jquery-1.2.6.js"></script>
+		<script type="text/javascript" src="scripts/jquery.tablesorter.js"></script>
+		<script type="text/javascript" src="scripts/jquery-ui-personalized-1.5.3.js"></script>
 		<script type="text/javascript" src="scripts/preview.js"></script>
 	</head>
 	<body>

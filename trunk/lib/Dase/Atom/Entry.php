@@ -460,6 +460,7 @@ class Dase_Atom_Entry extends Dase_Atom
 
 	function getJsonEditLink()
 	{
+		//maybe filter by @type ??
 		return $this->getLink('http://daseproject.org/relation/edit');
 	}
 
