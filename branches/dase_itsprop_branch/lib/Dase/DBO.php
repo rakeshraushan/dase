@@ -362,6 +362,7 @@ class Dase_DBO implements IteratorAggregate
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
+				Dase_Log::debug("problem updating: ".$errs[2]);
 				//throw new Dase_DBO_Exception('could not update '. $errs[2]);
 			}
 		}
