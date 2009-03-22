@@ -105,7 +105,7 @@
 			<textarea class="javascript_template" id="user_proposals_jst">
 				{literal}
 				{for p in proposals}
-				<li><a class="sub" href="proposal/${p.serial_number}">${p.title}</a></li>
+				<li><a class="sub" href="proposal/${p.serial_number}" target="_blank">${p.title}</a></li>
 				{/for}
 				{/literal}
 			</textarea>

@@ -19,6 +19,26 @@ Class Dase_Util
 		}
 	}
 
+	public static function stripInvalidChars( $in ) {
+		$out = "";
+		$length = strlen($in);
+		for ( $i = 0; $i < $length; $i++) {
+			$current = ord($in{$i});
+			if (($current == 0x9) ||
+				($current == 0xA) || 
+				($current == 0xD) || 
+				($current >= 0x20 && $current <= 0xD7FF) || 
+				($current >= 0xE000 && $current <= 0xFFFD) || 
+				($current >= 0x10000 && $current <= 0x10FFFF)
+			){
+				$out .= chr($current);
+			} else{
+				$out .= " ";
+			}
+		}
+		return $out;
+	}
+
 	/** from http://www.weberdev.com/get_example-3543.html */
 	public static function getUniqueName()
 	{
