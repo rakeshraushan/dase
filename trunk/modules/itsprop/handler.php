@@ -186,7 +186,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$container = trim(file_get_contents("php://input"));
 		$sernum = $r->get('serial_number');
 		$proposal = Dase_Atom_Entry_Item::retrieve($r->app_root.'/item/itsprop/'.$sernum.'.atom');
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$eid_sernum = str_replace('.','_',$proposal->getAuthorName());
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		//fragile?? (dept must be first parent)
 		//$dept_array = $person->getParentLinkNodesByItemType('department');
 		$parent = $proposal->getParentLinks();
@@ -287,7 +288,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$depts_json = file_get_contents($r->app_root.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
 		$depts = Dase_Json::toPhp($depts_json);
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('eid').".atom");
+		$eid_sernum = str_replace('.','_',$r->get('eid'));
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		if (is_numeric($person)) {
 			$r->renderError($person);
 		}
@@ -299,7 +301,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$tpl->assign('person', Dase_Atom_Feed::retrieve($r->app_root. "/item/itsprop/".$this->user->eid.".atom"));
+		$eid_sernum = str_replace('.','_',$this->user->eid);
+		$tpl->assign('person', Dase_Atom_Feed::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom"));
 		$tpl->assign('persons', Dase_Atom_Feed::retrieve($r->app_root. "/item_type/itsprop/person/items.atom"));
 		$r->renderResponse($tpl->fetch('persons.tpl'));
 	}
@@ -331,7 +334,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	{
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
-		$tpl->assign('person', Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$this->user->eid.".atom"));
+		$eid_sernum = str_replace('.','_',$this->user->eid);
+		$tpl->assign('person', Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom"));
 		$tpl->assign('depts', Dase_Atom_Feed::retrieve($r->app_root. "/item_type/itsprop/department/items.atom?sort=dept_name"));
 		$r->renderResponse($tpl->fetch('departments.tpl'));
 	}
@@ -376,7 +380,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 				$r->renderError(401);
 			}
 		}
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('eid').".atom");
+		$eid_sernum = str_replace('.','_',$r->get('eid'));
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		$metadata_array = $person->getRawMetadata();
 		$dept_array = $person->getParentLinkNodesByItemType('department');
 		if (count($dept_array)) {
@@ -408,7 +413,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 		$person->replaceMetadata($metadata_array);
 		$person->putToUrl($person->getEditLink(),'itsprop',$this->service_pass);
-		$r->renderRedirect($r->app_root.'/modules/itsprop/person/'.$r->get('eid'));
+		$r->renderRedirect($r->app_root.'/modules/itsprop/person/'.$eid_sernum);
 	}
 
 	public function getHome($r) 
@@ -469,7 +474,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('user',$this->user);
 		$depts_json = file_get_contents($r->app_root.'/item_type/itsprop/department/dept_name/values.json?public_only=1');
 		$tpl->assign('depts', Dase_Json::toPhp($depts_json));
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$this->user->eid.".atom");
+		$eid_sernum = str_replace('.','_',$this->user->eid);
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		$tpl->assign('person',$person);
 		$r->renderResponse($tpl->fetch('proposal_form.tpl'));
 	}
@@ -489,7 +495,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		}
 
 		//$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$this->user->eid.".atom");
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$eid_sernum = str_replace('.','_',$proposal->getAuthorName());
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		$tpl->assign('person',$person);
 
 		$tpl->assign('courses',$proposal->getChildfeedLinkUrlByTypeJson('course'));
@@ -517,7 +524,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('chair_email',$chair_email);
 		$tpl->assign('chair_name',$chair_name);
 
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$eid_sernum = str_replace('.','_',$proposal->getAuthorName());
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		$tpl->assign('person',$person);
 		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
 		$budget_items = Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('budget_item')));
@@ -554,7 +562,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$tpl->assign('chair_email',$chair_email);
 		$tpl->assign('chair_name',$chair_name);
 
-		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$proposal->getAuthorName().".atom");
+		$eid_sernum = str_replace('.','_',$proposal->getAuthorName());
+		$person = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$eid_sernum.".atom");
 		$tpl->assign('person',$person);
 		$tpl->assign('courses',Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('course'))));
 		$budget_items = Dase_Json::toPhp(file_get_contents($proposal->getChildfeedLinkUrlByTypeJson('budget_item')));

@@ -11,10 +11,10 @@ class Dase_Handler {
 	protected $path_to_media;
 	protected $request;
 
-	public function __construct($db,$path_to_media)
+	public function __construct($db,$config)
 	{
 		$this->db = $db;
-		$this->path_to_media = $path_to_media;
+		$this->path_to_media = $config->getMediaDir();
 	}
 
 	public function dispatch($r)
