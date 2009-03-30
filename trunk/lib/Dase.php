@@ -80,7 +80,8 @@ class Dase
 			$handler = new $classname($r->retrieve('db'),$this->config);
 			$handler->dispatch($r);
 		} else {
-			$r->renderError(404,'no such handler class'); //will NOT be logged
+			$r->renderRedirect($this->config->getAppSettings('default_handler'));
+			//$r->renderError(404,'no such handler class'); //will NOT be logged
 		}
 	}
 }

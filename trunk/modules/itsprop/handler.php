@@ -52,7 +52,10 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 					$this->is_chair = true;
 				}
 
-				$person_data = Dase_Json::toPhp(Dase_Http::get($r->app_root.'/search.json?itsprop.person_role=evaluator&itsprop.person_eid='.$eid.'&auth=http','pkeane','opendata'));
+				$this->service_pass = $r->retrieve('config')->getServicePassword('itsprop');
+
+				$person_data = Dase_Json::toPhp(Dase_Http::get($r->app_root.'/search.json?itsprop.person_role=evaluator&itsprop.person_eid='.$eid.'&auth=http','itsprop',$this->service_pass));
+				//print_r($person_data); exit;
 				if ($person_data['count']) {
 					$r->set('is_evaluator',1);
 					$this->is_eval = true;
@@ -63,7 +66,6 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 					$this->is_superuser = true;
 					$r->set('is_superuser',1);
 				} 
-				$this->service_pass = $r->retrieve('config')->getServicePassword('itsprop');
 			}
 		}
 	}
@@ -356,7 +358,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('serial_number').".atom");
 		$metadata_array = $proposal->getRawMetadata();
 		$metadata_array['proposal_submitted'] = array(date(DATE_ATOM));
-		//$metadata_array['proposal_chair_rank'] = array('&nbsp;');
+		//$metadata_array['proposal_chair_rank'] = array('-');
 		$proposal->replaceMetadata($metadata_array);
 		$proposal->putToUrl($proposal->getEditLink(),'itsprop',$this->service_pass);
 		$params['msg'] = "your proposal has been submitted";
@@ -428,7 +430,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function getHomeForm($r) 
 	{
 		if (!$this->is_superuser) {
-			$r->renderError(404);
+			$r->renderError(401);
 		}
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
@@ -450,7 +452,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 	public function postToHomeForm($r) 
 	{
 		if (!$this->is_superuser) {
-			$r->renderError(404);
+			$r->renderError(401);
 		}
 		if ('cancel' != $r->get('cancel')) {
 			$home = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/page-home.atom");
@@ -548,6 +550,9 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 
 	public function getProposalEval($r)
 	{
+		if (!$this->is_eval && !$this->is_superuser) {
+			$r->renderError(401);
+		}
 		$tpl = new Dase_Template($r,true);
 		$tpl->assign('user',$this->user);
 		$proposal = Dase_Atom_Entry::retrieve($r->app_root. "/item/itsprop/".$r->get('serial_number').".atom");
@@ -613,7 +618,7 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		$proposal->addMetadata('proposal_faculty_workshop','no'); 
 		$proposal->addMetadata('proposal_sta','no'); 
 		$proposal->addMetadata('proposal_chair_rank','99'); 
-		$proposal->addMetadata('proposal_chair_comments','&nbsp;'); 
+		$proposal->addMetadata('proposal_chair_comments','-'); 
 		$proposal->addMetadata('proposal_project_type',$r->get('proposal_project_type')); 
 		$proposal->addMetadata('proposal_renovation_description','enter renovation description here'); 
 		$proposal->addMetadata('proposal_summary','enter summary here'); 
@@ -622,7 +627,8 @@ class Dase_ModuleHandler_Itsprop extends Dase_Handler {
 		//department is a url
 		$proposal->addLink($r->get('department'),'http://daseproject.org/relation/parent');
 		//person too
-		$user_url =  $this->app_root.'/item/itsprop/'.$this->user->eid;
+		$eid_sernum = str_replace('.','_',$this->user->eid);
+		$user_url =  $this->app_root.'/item/itsprop/'.$eid_sernum;
 		$proposal->addLink($user_url,'http://daseproject.org/relation/parent');
 		$result = $proposal->postToUrl($r->app_root.'/collection/itsprop','itsprop',$this->service_pass);
 		if (Dase_Util::isUrl($result)) {

@@ -1227,15 +1227,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $comments->find();
 	}
 
-	public function getCommentsJson($eid='')
+	public function getCommentsJson($app_root,$eid='')
 	{
-		$comments = '';
+		$comments = array();
 		foreach ($this->getComments($eid) as $c_obj) {
 			$c['id'] = $c_obj->id;
 			//$c['updated'] = $c_obj->updated;
 			$c['updated'] = date('D M j, Y \a\t g:ia',strtotime($c_obj->updated));
 			$c['eid'] = $c_obj->updated_by_eid;
 			$c['text'] = $c_obj->text;
+			$c['url'] = $this->getUrl($app_root).'/comments/'.$c_obj->id;
 			$comments[] = $c;
 		}
 		return Dase_Json::get($comments);

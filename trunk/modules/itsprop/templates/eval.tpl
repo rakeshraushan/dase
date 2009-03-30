@@ -5,6 +5,7 @@
 		<meta http-equiv="content-type" content="text/html;charset=utf-8">
 		<base href="{$module_root}">
 		<meta http-equiv="Content-Style-Type" content="text/css"> 
+		<meta content="{$user->eid}" name="eid">
 
 		<link rel="comments" type="application/json" href="{$app_root}item/itsprop/{$proposal->serialNumber}/comments.json">
 		<link rel="stylesheet" type="text/css" href="css/preview_eval.css">
@@ -107,12 +108,14 @@
 			<div id="notes">
 				<h1>{$proposal->title.text} -- comments</h1>
 				<p>
-				<form id="addCommentForm" action="{$app_root}item/itsprop/{$proposal->serialNumber}/comments.json" method="post">
+				{if $request->is_superuser}
+				<form id="addCommentForm" action="{$app_root}item/itsprop/{$proposal->serialNumber}/comments.json?limit=0" method="post">
 					<h3>add a comment</h3>
 					<textarea name="comment" cols="60" rows="6"></textarea>
 					<input type="hidden" name="commenter" value="{$user->name}">
 					<input type="submit" value="submit">
 				</form>
+				{/if}
 				<dl id="comments"></dl>
 			</div>
 		</div>

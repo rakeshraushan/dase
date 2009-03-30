@@ -45,6 +45,10 @@ class Uteid
 				echo "Invalid EID signature";
 				exit;
 			}
+			//test
+			if ('pkeane' == $ut_user->eid) {
+				//$ut_user->eid = 'p.keane';
+			}
 			$db_user = $r->retrieve('user');
 			if (!$db_user->retrieveByEid($ut_user->eid)) {
 				$db_user->eid = strtolower($ut_user->eid); 

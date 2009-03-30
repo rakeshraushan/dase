@@ -57,7 +57,7 @@ class Dase_Config {
 			return $cache_dir;
 		}
 		if (!$this->base_dir) {
-			throw new Dase_Cache_Exception('no base_dir defined');
+			throw new Dase_Config_Exception('no base_dir defined');
 		}
 		return $this->base_dir.'/'.$cache_dir;
 	}
