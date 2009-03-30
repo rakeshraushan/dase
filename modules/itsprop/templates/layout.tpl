@@ -58,7 +58,9 @@
 
 			<div id="sidebar">
 
+				{if $user->eid}
 				<ul id="menu">
+					<!--
 					<li class="home">
 					<a href="home" class="main">Home</a>
 					</li>
@@ -68,6 +70,7 @@
 					<li>
 					<a href="person/{$user->eid}/proposal_form" class="main">Create a Proposal</a>
 					</li>
+					-->
 					<li class="headline hide" id="propsLabel">Your Proposals:</li>
 					<li>
 					<ul id="userProposals"></ul>
@@ -105,10 +108,14 @@
 
 				</ul>
 				<h5 class="hide" id="ajaxMsg">loading...</h5>
+				{/if}
 			</div> 
 
 			<div id="content">
-				<h4 class="highlight">This website was recently upgraded.  Please report any problems to pkeane@mail.utexas.edu.</h4>
+				<!--
+				<h4 class="highlight">This website was recently upgraded.  Please report any problems to pkeane@mail.utexas.edu. <br>There remain unresolved problems with the IE browser please use Firefox or Safari.</h4>
+				-->
+				<h4 class="highlight">Thanks to all who submitted proposals. The submission period has now ended.</h4>
 				{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 				{block name="content"}default content{/block}
 			</div>

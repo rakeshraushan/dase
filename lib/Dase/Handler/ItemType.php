@@ -299,7 +299,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 	{
 		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		try {
-			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
+			$item_handler = new Dase_Handler_Item($this->db,$r->retrieve('config'));
 			$item_handler->item = $item;
 			$item_handler->putItem($r);
 		} catch (Exception $e) {

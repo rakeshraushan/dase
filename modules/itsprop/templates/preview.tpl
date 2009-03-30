@@ -18,10 +18,10 @@
 	</head>
 	<body>
 		<div id="submission" {if 'yes' == $submitted}class="hide"{/if}>
+			<!--
 			<div class="inner">
 				{if $proposal->proposal_submitted.text}
 				<h3>Proposal was submitted {$proposal->proposal_submitted.text|date_format:"%a, %b %e %Y at %l:%M%p"}
-					<!-- <span class="miniLink">(<a href="home">return</a>)</span>--></h3>
 				{if $request->is_superuser}
 				<div class="controls">
 					<form>
@@ -31,10 +31,6 @@
 				{/if}
 				{else}
 				{if $person->person_eid.text == $user->eid || $request->is_superuser}
-				<!--
-				<p><a href="{$propLink}">return to proposal form to continue editing</a></p>
-				<strong>OR</strong>
-				-->
 				<form id="submitForm" method="post" action="{$propLink}/archiver">
 					<input id="submitFormButton" type="submit" value="Submit Proposal Now">
 					<input name="chair_name" value="{$chair_name}" type="hidden">
@@ -44,9 +40,10 @@
 				{/if}
 				{/if}
 			</div>
+		-->
 		</div>
 		<div id="container">
-			<h1>Proposal: {$proposal->title.text}</h1>
+			<h1><!--Proposal: -->{$proposal->title.text}</h1>
 			<dl>
 				<dt><h3>Submitter:</h3></dt>
 				<dd>{$person->person_name.text}</dd>
@@ -85,7 +82,7 @@
 			{$proposal->proposal_renovation_description.text|nl2br}
 			<h2>Budget Description</h2>
 			{$proposal->proposal_budget_description.text|nl2br}
-			<h2>Itemized Budget</h2>
+			<h2 class="force_break">Itemized Budget</h2>
 			<div class="tdiv">
 				<table>
 					<tr>

@@ -98,6 +98,7 @@ h1, h2, h4, h5, h6 {
 h1 {
 	clear: both;
 	font-size: 160%;
+	line-height: 1.6em;
 	margin-top: 1em
 }
 h2 {
@@ -105,6 +106,11 @@ h2 {
 	font-size: 120%;
 	padding-top: 0.6em;
 }
+
+h2.force_break {
+	page-break-before: always
+}
+
 h3 {
 	font-size: 120%;
 	margin: 12px 0px;
@@ -178,3 +184,10 @@ ul#proposals_list_preview li {
 	padding: 0;
 	list-style: none;
 }
+
+a.delete {
+	color: red;
+	margin-left: 10px;
+	font-size: 9px;
+}
+

@@ -382,7 +382,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(400,'missing identifier');
 		}
 		$value_id = $r->get('value_id');
-		$this->item->updateMetadata($value_id,strip_tags($value_text),$user->eid);
+		$this->item->updateMetadata($value_id,htmlspecialchars($value_text),$user->eid);
 		$r->renderResponse($value_text);
 	}
 
@@ -393,7 +393,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot put title');
 		}
-		$this->item->updateTitle(strip_tags($title_text),$user->eid);
+		$this->item->updateTitle(htmlspecialchars($title_text),$user->eid);
 		$r->renderResponse($title_text);
 	}
 
@@ -467,7 +467,10 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot read comments on this item');
 		}
 		//todo: should displayed comments be limited to this user???
-		$r->renderResponse($this->item->getCommentsJson($user->eid));
+		if ('0' == $r->get('limit')) {
+			$r->renderResponse($this->item->getCommentsJson($r->app_root));
+		}
+		$r->renderResponse($this->item->getCommentsJson($r->app_root,$user->eid));
 	}
 
 	/** this allows us to swap in an item file from the interwebs */
