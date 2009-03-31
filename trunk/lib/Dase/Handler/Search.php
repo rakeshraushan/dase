@@ -17,11 +17,11 @@ class Dase_Handler_Search extends Dase_Handler
 		//but...breaks intermediate caching (work on that)
 		if ($r->getCookie('max')) {
 			$r->set('max',$r->getCookie('max'));
-			$r->setQueryStringParam('max',$cookie->get('max'));
+			$r->setQueryStringParam('max',$r->getCookie('max'));
 		}
 
 		if ($r->getCookie('display')) {
-			$r->set('display',$cookie->get('display'));
+			$r->set('display',$r->getCookie('display'));
 		}
 
 		if ($r->has('max')) {
