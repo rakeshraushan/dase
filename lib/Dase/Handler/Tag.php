@@ -6,7 +6,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
-		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', //for json
+		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', 
 		'{eid}/{tag_ascii_id}/background' => 'background',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',

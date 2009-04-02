@@ -429,11 +429,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','edit' );
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
-		//todo: beware expense??
-		foreach (Dase_DBO_Category::getAll($this->db,$this) as $cat) {
-			$scheme = $cat->getScheme();
-			$entry->addCategory($cat->term,$scheme,$cat->label);
+
+		$tag_cat = new Dase_DBO_TagCategory($db);
+		$tag_cat->tag_id = $this->id;
+		foreach ($tag_cat->find() as $tc) {
+			$entry->addCategory($tc->term,'/http://daseproject.org/category'.$tc->scheme,$tc->label);
 		}
+
 		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory("set","http://daseproject.org/category/entrytype");
 		$entry->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
@@ -449,17 +451,12 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public function deleteCategories()
 	{
-		foreach (Dase_DBO_Category::getAll($this->db,$this) as $cat) {
-			Dase_DBO_Category::remove($this->db,$this,$cat->scheme_id);
+		$tag_cat = new Dase_DBO_TagCategory($this->db);
+		$tag_cat=>tag_id = $this->id;
+		foreach ($tag_cat->find() as $tc) {
+			$tc->delete();
 		}
-		/*** newly refactored:
-		 *
-		 *   $tag_cat = new Dase_DBO_TagCategory($this->db);
-		 *   $tag_cat=>tag_id = $this->id;
-		 *   foreach ($tag_cat->find() as $tc) {
-		 *   $tc->delete();
-		 *   }
-		 */
+
 	}
 
 	public function isBulkEditable($user)
