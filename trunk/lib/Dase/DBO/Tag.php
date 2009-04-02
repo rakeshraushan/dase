@@ -433,7 +433,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_cat = new Dase_DBO_TagCategory($this->db);
 		$tag_cat->tag_id = $this->id;
 		foreach ($tag_cat->find() as $tc) {
-			$entry->addCategory($tc->term,'/http://daseproject.org/category'.$tc->scheme,$tc->label);
+			$entry->addCategory($tc->term,'/http://daseproject.org/category/'.$tc->scheme,$tc->label);
 		}
 
 		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
