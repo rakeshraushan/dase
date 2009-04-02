@@ -430,7 +430,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
 
-		$tag_cat = new Dase_DBO_TagCategory($db);
+		$tag_cat = new Dase_DBO_TagCategory($this->db);
 		$tag_cat->tag_id = $this->id;
 		foreach ($tag_cat->find() as $tc) {
 			$entry->addCategory($tc->term,'/http://daseproject.org/category'.$tc->scheme,$tc->label);
