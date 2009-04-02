@@ -155,7 +155,7 @@ class Dase_DBO_Category extends Dase_DBO_Autogen_Category
 			WHERE e2cat.{$etable}_id = ?
 			AND cat.id = e2cat.category_id
 			AND csh.id = cat.scheme_id
-			GROUP BY cat.id, csh.id, term, label
+			GROUP BY cat.id, csh.id, cat.term, cat.label
 			";
 		foreach (Dase_DBO::query($db,$sql,$params) as $row) {
 			$category = new Dase_DBO_Category($db,$row);

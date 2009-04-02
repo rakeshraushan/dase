@@ -269,7 +269,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		//hand off to item handler
 		try {
-			$item_handler = new Dase_Handler_Item($this->db,$this->path_to_media);
+			$item_handler = new Dase_Handler_Item($this->db,$r->retrieve('config'));
 			//allows us to dictate serial number
 			$sernum = Dase_Util::makeSerialNumber($r->slug);
 			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);

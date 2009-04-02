@@ -47,7 +47,18 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		//note that ONLY mutable categories will be affected
 		$set->deleteCategories();
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($db,$set,$category['scheme'],$category['term'],$category['label']);
+			//Dase_DBO_Category::add($db,$set,$category['scheme'],$category['term'],$category['label']);
+
+			/******* newly refactored*************/
+
+			$tag_cat = new Dase_DBO_TagCategory($db);
+			$tag_cat->tag_id = $set->id;
+			$tag_cat->category_id = 0;
+			$tag_cat->term = $category['term'];
+			$tag_cat->label = $category['label'];
+			$scheme = str_replace('http://daseproject.org/category/','',$category['scheme']);
+			$tag_cat->scheme = $scheme;
+			$tag_cat->insert();
 		}
 		return $set;
 	}
@@ -75,7 +86,14 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$set->insert();
 		/*
 		foreach ($this->getCategories() as $category) {
-			Dase_DBO_Category::add($db,$set,$category['scheme'],$category['term'],$category['label']);
+			$tag_cat = new Dase_DBO_TagCategory($db);
+			$tag_cat->tag_id = $set->id;
+			$tag_cat->category_id = 0;
+			$tag_cat->term = $category['term'];
+			$tag_cat->label = $category['label'];
+			$scheme = str_replace('http://daseproject.org/category/','',$category['scheme']);
+			$tag_cat->scheme = $scheme;
+			$tag_cat->insert();
 		}
 		 */
 		return $set;

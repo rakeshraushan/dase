@@ -15,6 +15,7 @@ class AuthenticationTest extends WebTestCase {
 	function tearDown() {
 	}
 
+	/**
 	function test404Header() {
 		$this->dump(date(DATE_ATOM));
 		$r = new Dase_Http_Request(dirname(__FILE__).'/..');
@@ -24,6 +25,7 @@ class AuthenticationTest extends WebTestCase {
 		$this->get($app_root.'/xxxxxxxxxxxxx');
 		$this->assertResponse(404);
 	}
+	**/
 
 	function test401Header() {
 		$r = new Dase_Http_Request(dirname(__FILE__).'/..');

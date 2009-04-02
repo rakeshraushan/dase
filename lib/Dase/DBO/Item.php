@@ -442,21 +442,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function getChildTypesList()
-	{
-		$children = array();
-		$itr = new Dase_DBO_ItemTypeRelation($this->db);
-		$itr->collection_ascii_id = $this->getCollection()->ascii_id;
-		$itr->parent_type_ascii_id = $this->getItemType()->ascii_id;
-		foreach ($itr->find() as $rel) {
-			$children[$rel->child_type_ascii_id] = array(
-				'title' => $rel->title,
-				'count' => $rel->getChildCount($this->serial_number),
-			);
-		}
-		return $children;
-	}
-
 	function updateMetadata($value_id,$value_text,$eid)
 	{
 		$v = new Dase_DBO_Value($this->db);
@@ -592,7 +577,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteContent();
 		$this->deleteComments();
 		$this->deleteTagItems();
-		$this->deleteItemRelations();
 		$this->deleteItemAsAtom();
 		$this->delete();
 		$this->getCollection()->updateItemCount();
@@ -603,25 +587,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$atom = Dase_DBO_ItemAsAtom::getByItem($this);
 		if ($atom) {
 			$atom->delete();
-		}
-	}
-
-	function deleteItemRelations()
-	{
-		$irs = new Dase_DBO_ItemRelation($this->db);
-		$irs->parent_serial_number = $this->serial_number;
-		foreach ($irs->find() as $ir) {
-			$child = $ir->getChild();
-			$ir->delete();
-			$child->saveAtom();
-		}
-		$irs = new Dase_DBO_ItemRelation($this->db);
-		$irs->child_serial_number = $this->serial_number;
-		foreach ($irs->find() as $ir) {
-			//redo parent atom cache
-			$parent = $ir->getParent();
-			$ir->delete();
-			$parent->saveAtom();
 		}
 	}
 
@@ -719,65 +684,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $text;
 	}
 
-	public function getRelatedItems()
-	{
-		$related = array();
-		$item_relations = new Dase_DBO_ItemRelation($this->db);
-		$item_relations->collection_ascii_id = $this->p_collection_ascii_id;
-		$item_relations->child_serial_number = $this->serial_number;
-		foreach ($item_relations->find() as $item_relation) {
-			$parent_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
-				$item_relation->parent_serial_number);
-			if ($parent_item) {
-				$related[] = $parent_item;
-			}
-		}
-		$item_relations = new Dase_DBO_ItemRelation($this->db);
-		$item_relations->collection_ascii_id = $this->p_collection_ascii_id;
-		$item_relations->parent_serial_number = $this->serial_number;
-		foreach ($item_relations->find() as $item_relation) {
-			$child_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
-				$item_relation->child_serial_number);
-			if ($child_item) {
-				$related[] = $child_item;
-			}
-		}
-		return $related;
-	}
-
-	public function getParentItemsArray($app_root)
-	{
-		$parent_items = array();
-		$item_relations = new Dase_DBO_ItemRelation($this->db);
-		$item_relations->collection_ascii_id = $this->p_collection_ascii_id;
-		$item_relations->child_serial_number = $this->serial_number;
-		foreach ($item_relations->find() as $item_relation) {
-			$parent_type = $item_relation->getParentType();
-			$parent_item = Dase_DBO_Item::get($this->db,$item_relation->collection_ascii_id,
-				$item_relation->parent_serial_number);
-			if ($parent_item) {
-				//$label = $parent_type->name.': '.$parent_item->getTitle();
-				$label = $parent_item->getTitle();
-				$url = $parent_item->getUrl($app_root);
-				$parent_items[$url] = array(
-					'label' => $label,
-					'item_type' => $parent_type->ascii_id,
-				);
-			}
-		}
-		return $parent_items;
-	}
-
-	public function getParentTypes()
-	{
-		$types = array();
-		foreach ($this->getItemType()->getParentRelations() as $rel) {
-			$parent_type = $rel->getParentType();
-			$types[] = $parent_type;
-		}
-		return $types;
-	}
-
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
 	{
 		if (!$this->id) { return false; }
@@ -858,9 +764,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'http://daseproject.org/relation/attributes','application/json','',$type->name.' Attributes' );
 		}
 
-		/* parents link (can be posted to) */
-		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/parents','http://daseproject.org/relation/parents');
-
 		/* threading extension */
 
 		$replies = $entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments','replies' );
@@ -922,44 +825,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		//this will only "take" if there is not already a title
 		$entry->setTitle($this->serial_number);
-
-		/**************************
-		 *    hierarchy stuff
-		 * ************************/
-
-		if ('default' != $type->name) {
-
-			//simply creates link that points to childern
-
-			foreach ($this->getChildTypesList() as $child => $set) {
-				//one for the Atom version
-				$entry->addLink(
-					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.atom',
-					'http://daseproject.org/relation/childfeed','application/atom+xml','',$set['title'])
-					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
-				//one for the JSON version
-				$entry->addLink(
-					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$child.'/children_of/'.$type->ascii_id.'/'.$this->serial_number.'.json',
-					'http://daseproject.org/relation/childfeed','application/json','',$set['title'])
-					->setAttributeNS(Dase_Atom::$ns['thr'],'thr:count',$set['count']);
-			}
-
-
-			//adds a link to any parent item(s)
-			foreach ($this->getParentItemsArray($app_root) as $url => $set) {
-				$entry->addLink($url,'http://daseproject.org/relation/parent','','',$set['label'])
-					->setAttributeNS(Dase_Atom::$ns['d'],'d:item_type',$set['item_type']);
-			}
-
-			/* creates a link to the parent types items (in json)
-			 * so you indicate linking is available AND
-			 * suitable for creating a pull-down menu
-			 */
-			foreach ($this->getParentTypes() as $pt) {
-				$entry->addLink($pt->getUrl($this->p_collection_ascii_id,$app_root).'.json',
-					'http://daseproject.org/relation/parent_item_type','application/json','',$pt->name);
-			}
-		}
 
 		/* content */
 
@@ -1114,8 +979,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach(Dase_Media::getAcceptedTypes() as $type) {
 			$media_coll->addAccept($type);
 		}
-		$parents_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/parents.atom',$c->collection_name.' Item '.$this->serial_number.' Parents'); 
-		$parents_coll->addAccept('text/uri-list');
 		$comments_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
 		$comments_coll->addAccept('text/plain');
 		$comments_coll->addAccept('text/html');

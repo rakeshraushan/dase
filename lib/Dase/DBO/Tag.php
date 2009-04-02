@@ -44,6 +44,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			} else {
 				return $feed->asXml();
 			}
+			/************** to be replaced **********
 			$prefix = $db->table_prefix;
 			$sql = "
 				SELECT tc.tag_id 
@@ -61,6 +62,29 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
 				}
 			}
+			***************/
+			/***************newly refactored*******************/
+
+			 	$tag_cat = new Dase_DBO_TagCategory($db);
+				$tag_cat->term = $term;
+				$tag_cat->scheme = $scheme;
+				$in_set = array();
+				foreach ($tag_cat->find() as $tc) {
+					$in_set[] = $tc->tag_id;
+				}
+
+				$tags = new Dase_DBO_Tag($db);
+				$tags->is_public = true;
+				$tags->orderBy('updated DESC');
+				foreach ($tags->find() as $tag) {
+					$tag = clone $tag;
+					if ($tag->ascii_id and in_array($tag->id,$in_set)) {
+						$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
+						$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+					}
+				}
+
+			 /*********************************************/
 
 		} else {
 			$tags = new Dase_DBO_Tag($db);
@@ -428,6 +452,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		foreach (Dase_DBO_Category::getAll($this->db,$this) as $cat) {
 			Dase_DBO_Category::remove($this->db,$this,$cat->scheme_id);
 		}
+		/*** newly refactored:
+		 *
+		 *   $tag_cat = new Dase_DBO_TagCategory($this->db);
+		 *   $tag_cat=>tag_id = $this->id;
+		 *   foreach ($tag_cat->find() as $tc) {
+		 *   $tc->delete();
+		 *   }
+		 */
 	}
 
 	public function isBulkEditable($user)

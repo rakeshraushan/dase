@@ -18,8 +18,6 @@ Dase.pageInitUser = function(eid) {
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
 		Dase.initAddAnnotation();
-		Dase.initSetParent(controls);
-		Dase.initRemoveParents();
 	}
 	return;
 };
@@ -89,115 +87,6 @@ break;
 	form.add('input',{'type':'submit','value':'add'});
 	return form.getString();
 }
-
-
-Dase.initRemoveParents = function() {
-	var edit_url = Dase.atompub.getEditLink();
-	var edit_json_url = Dase.atompub.getJsonEditLink();
-	var pars = Dase.$('parentLinks');
-	if (!pars) return;
-	var links = pars.getElementsByTagName('a');
-	for (var i=0;i<links.length;i++) {
-		if ('hide' == links[i].className) {
-			links[i].className = 'delete';
-			links[i].onclick = function() {
-				if (confirm('are you sure?')) {
-					var href = this.href;
-					this.innerHTML = 'deleting parent link...';
-					this.className = 'modify';
-					var rel = 'http://daseproject.org/relation/parent';
-					Dase.getJSON(edit_json_url,function(atom_json){
-						for (var j=0;j<atom_json.link.length;j++) {
-							if ((href == atom_json.link[j].href) && (rel == atom_json.link[j].rel)) {
-								atom_json.link[j].rel = 'remove';
-								Dase.atompub.putJson(edit_url,atom_json,function(resp) {
-									Dase.addClass(Dase.$('p_'+href),'hide');
-								},Dase.user.eid,Dase.user.htpasswd);
-							}
-						}
-					},Dase.user.eid,Dase.user.htpasswd);
-				}
-				return false;
-			}
-		}
-	}
-}
-
-Dase.initSetParent = function(controls) {
-	var mform = Dase.$('ajaxFormHolder');
-	var links = controls.getElementsByTagName('a');
-	//find the "link to parent links
-	for (var i=0;i<links.length;i++) {
-		if ('setParentLink' == links[i].className) {
-			links[i].onclick = function() {
-				var parent_type_url = this.href;
-				Dase.addClass(Dase.$('adminPageControls'),'hide');
-				Dase.removeClass(Dase.$('pageReloader'),'hide');
-				//init the page reloading 'close' link
-				Dase.$('pageReloaderLink').onclick = function() {
-					Dase.pageReload();
-					return false;
-				}
-				//display the form
-				if (Dase.toggle(mform)) {
-					mform.innerHTML = '<h1 class="loading">Loading...</h1>';
-					//retrieve the items of the parent type
-					Dase.getJSON(parent_type_url,function(pt_json) {
-						var data = {};
-						data.items=pt_json.items.sort(Dase.sortByTitle);
-						data.count=pt_json.items.length;
-						data.name=pt_json.name;
-						var h = new Dase.htmlbuilder;
-						h.add('h1','attach to '+data.name);
-						h.add('ul',{'id':'currentLinks'});
-						var form = h.add('form',{'id':'setParentForm'});
-						var sel = form.add('select',{'name':'url'});
-						sel.add('option',null,'select one of ('+data.count+')');
-						for (var i=0;i<data.items.length;i++) {
-							var item = data.items[i];
-							sel.add('option',{'value':item.url},item.title);
-						}
-						form.add('input',{'type':'submit','value':'create link','id':'createLink'});
-						form.add('span',null,' ');
-						form.add('input',{'type':'submit','value':'cancel','id':'cancelLink'});
-						form.add('span',{'id':'updateMsg'});
-						form.attach(mform);
-						var parents = [];
-						var edit_url = Dase.atompub.getJsonEditLink();
-						Dase.getJSON(edit_url,function(atom_json){
-							var pForm = Dase.$('setParentForm');
-							Dase.initSetParentForm(pForm,atom_json);
-						},Dase.user.eid,Dase.user.htpasswd);
-					});
-					return false;
-				}
-			}
-		}
-	}
-}
-
-Dase.initSetParentForm = function(form,atom_json) {
-	Dase.$('cancelLink').onclick = function() {
-		Dase.addClass(Dase.$('ajaxFormHolder'),'hide');
-		Dase.removeClass(Dase.$('adminPageControls'),'hide');
-		Dase.addClass(Dase.$('pageReloader'),'hide');
-		form.onsubmit = function() {
-			return false;
-		}
-		return false;
-	}; 
-	form.onsubmit = function() {
-		Dase.$('updateMsg').innerHTML = " creating parent link...";
-		var link = {};
-		link.href = form.url.options[form.url.selectedIndex].value;
-		link.rel = 'http://daseproject.org/relation/parent';
-		atom_json.link[atom_json.link.length] = link;
-		Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-			Dase.pageReload();
-		},Dase.user.eid,Dase.user.htpasswd);
-		return false;
-	};
-};
 
 Dase.initAddAnnotation = function() {
 	var tog = Dase.$('annotationToggle');

@@ -26,12 +26,6 @@ CREATE TABLE {$table_prefix}attribute (
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
-CREATE TABLE {$table_prefix}attribute_category (
-    id serial NOT NULL,
-    attribute_id integer,
-    category_id integer
-);
-
 CREATE TABLE {$table_prefix}attribute_item_type (
     id serial NOT NULL,
     item_type_id integer NOT NULL,
@@ -66,12 +60,6 @@ CREATE TABLE {$table_prefix}collection (
     updated character varying(50),
     visibility character varying(50),
     item_count integer DEFAULT 0
-);
-
-CREATE TABLE {$table_prefix}collection_category (
-    id serial NOT NULL,
-    collection_id integer,
-    category_id integer
 );
 
 CREATE TABLE {$table_prefix}collection_manager (
@@ -150,12 +138,6 @@ CREATE TABLE {$table_prefix}input_template (
     attribute_id integer
 );
 
-CREATE TABLE {$table_prefix}item_category (
-    id serial NOT NULL,
-    item_id integer,
-    category_id integer
-);
-
 CREATE TABLE {$table_prefix}item_as_atom (
     id serial NOT NULL,
     item_id integer,
@@ -166,29 +148,12 @@ CREATE TABLE {$table_prefix}item_as_atom (
     updated character varying(50)
 );
 
-CREATE TABLE {$table_prefix}item_relation (
-    id serial NOT NULL,
-    parent_serial_number character varying(200),
-    child_serial_number character varying(200),
-	item_type_relation_id integer,
-    collection_ascii_id character varying(200)
-);
-
-
 CREATE TABLE {$table_prefix}item_type (
     id serial NOT NULL,
     collection_id integer DEFAULT 0 NOT NULL,
     name character varying(200),
     ascii_id character varying(200) NOT NULL,
     description character varying(2000)
-);
-
-CREATE TABLE {$table_prefix}item_type_relation (
-    id serial NOT NULL,
-    parent_type_ascii_id character varying(200),
-    child_type_ascii_id character varying(200),
-    title character varying(200),
-    collection_ascii_id character varying(200)
 );
 
 CREATE TABLE {$table_prefix}media_file (
@@ -273,17 +238,12 @@ CREATE TABLE {$table_prefix}tag_category (
     category_id integer
 );
 
-CREATE TABLE {$table_prefix}tag_item_category (
-    id serial NOT NULL,
-    tag_item_id integer,
-    category_id integer
-);
-
 CREATE TABLE {$table_prefix}value (
     id serial NOT NULL,
     item_id integer,
     attribute_id integer,
-    value_text text
+    value_text text,
+    url character varying(2000)
 );
 
 CREATE TABLE {$table_prefix}value_revision_history (

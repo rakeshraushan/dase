@@ -14,9 +14,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'{collection_ascii_id}/{item_type_ascii_id}/{att_ascii_id}/values' => 'values_list',
 		'{collection_ascii_id}/{item_type_ascii_id}/service' => 'service',
 		'{collection_ascii_id}/{item_type_ascii_id}/attributes' => 'attributes',
-		//usually retrieved as atom:feed
-		'{collection_ascii_id}/{item_type_ascii_id}/children_of/{parent_type_ascii_id}/{parent_serial_number}' => 'related_item_type_items',
-		'{collection_ascii_id}/{child_type_ascii_id}/children_of/{item_type_ascii_id}' => 'relation',
 	);
 
 	protected function setup($r)
@@ -84,8 +81,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 
 	public function deleteItem($r)
 	{
-		//what about dependent children items?  (like budget item)!
-		//probably need another relationship type -- dependent
 		$user = $r->getUser('service');
 		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$user->can('write',$item)) {
@@ -152,11 +147,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$r->renderResponse($this->type->getAtompubServiceDoc($r->app_root));
 	}
 
-	public function getRelationChildren($r)
-	{
-		$this->getRelationChildrenAtom($r);
-	}
-
 	public function getItemTypeItemsAtom($r)
 	{
 		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
@@ -202,97 +192,6 @@ class Dase_Handler_ItemType extends Dase_Handler
 			$res[] = $item_array;
 		}
 		$r->renderResponse(Dase_Json::get($res));
-	}
-
-	public function getRelatedItemTypeItemsJson($r)
-	{
-		//he we are getting (child) item_type items
-		//which have are related to parent item_type item
-		//specified
-		$items = array();
-		$prefix = $r->retrieve('db')->table_prefix;
-		$sql = "
-			SELECT ir.child_serial_number
-			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
-			WHERE ir.collection_ascii_id = ?
-			AND itr.id = ir.item_type_relation_id
-			AND ir.parent_serial_number = ?
-			AND itr.child_type_ascii_id = ?
-			AND itr.parent_type_ascii_id = ?
-			";
-		$bound = array(
-			$r->get('collection_ascii_id'),
-			$r->get('parent_serial_number'),
-			$r->get('item_type_ascii_id'),
-			$r->get('parent_type_ascii_id'),
-		);
-		$st = Dase_DBO::query($this->db,$sql,$bound);
-		while ($sernum = $st->fetchColumn()) {
-			$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$sernum);
-			$items[$sernum] = $item->asArray($r->app_root);
-		}
-		$r->renderResponse(Dase_Json::get($items));
-	}
-
-	public function getRelatedItemTypeItemsAtom($r)
-	{
-		//he we are getting (child) item_type items
-		//which have are related to parent item_type item
-		//specified
-		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
-		$prefix = $r->retrieve('db')->table_prefix;
-		$sql = "
-			SELECT ir.child_serial_number
-			FROM {$prefix}item_relation ir, {$prefix}item_type_relation itr
-			WHERE ir.collection_ascii_id = ?
-			AND itr.id = ir.item_type_relation_id
-			AND ir.parent_serial_number = ?
-			AND itr.child_type_ascii_id = ?
-			AND itr.parent_type_ascii_id = ?
-			";
-		$bound = array(
-			$r->get('collection_ascii_id'),
-			$r->get('parent_serial_number'),
-			$r->get('item_type_ascii_id'),
-			$r->get('parent_type_ascii_id'),
-		);
-		$st = Dase_DBO::query($this->db,$sql,$bound);
-		$feed = new Dase_Atom_Feed;
-		$feed->setId($r->getUrl());
-		$feed->updated = date(DATE_ATOM);
-		$feed->setTitle('feed of '.$this->type->name.' child entries for item '.$r->get('collection_ascii_id').'/'.$r->get('parent_serial_number'));
-		while ($sernum = $st->fetchColumn()) {
-			$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$sernum);
-			$feed->addItemEntry($item,$r->app_root);
-			//todo: need to override updated and author here??
-		}
-		$r->renderResponse($feed->asXml());
-	}
-
-	public function getRelationAtom($r) 
-	{
-		$c = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
-		if (!$c) {
-			$r->renderError(401);
-		}
-		$parent = $this->type;
-		$child = Dase_DBO_ItemType::get($this->db,$c->ascii_id,$r->get('child_type_ascii_id'));
-		if (!$parent || !$child) {
-			$r->renderError(401);
-		}
-		$rel = new Dase_DBO_ItemTypeRelation($this->db);
-		$rel->collection_ascii_id = $r->get('collection_ascii_id');
-		$rel->parent_type_ascii_id = $parent->ascii_id;
-		$rel->child_type_ascii_id = $child->ascii_id;
-		if (!$rel->findOne()) {
-			$r->renderError(404);
-		}
-		$r->renderResponse($rel->asAtomEntry($r->app_root));
-	}
-
-	public function postToRelations($r)
-	{
-		//todo: implement this
 	}
 
 	public function putItem($r) 
