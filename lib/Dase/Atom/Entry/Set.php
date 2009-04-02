@@ -58,7 +58,9 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 			$tag_cat->label = $category['label'];
 			$scheme = str_replace('http://daseproject.org/category/','',$category['scheme']);
 			$tag_cat->scheme = $scheme;
-			$tag_cat->insert();
+			if ('utexas/course' == $scheme) {
+				$tag_cat->insert();
+			}
 		}
 		return $set;
 	}
