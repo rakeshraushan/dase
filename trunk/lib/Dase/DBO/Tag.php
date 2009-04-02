@@ -452,7 +452,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	public function deleteCategories()
 	{
 		$tag_cat = new Dase_DBO_TagCategory($this->db);
-		$tag_cat=>tag_id = $this->id;
+		$tag_cat->tag_id = $this->id;
 		foreach ($tag_cat->find() as $tc) {
 			$tc->delete();
 		}
