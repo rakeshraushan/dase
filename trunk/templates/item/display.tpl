@@ -98,13 +98,6 @@
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
 							id="setItemStatusLink">set status (<span id="itemStatus">{$item->entry->status}</span>)</a>
-						{if $item->entry->parentItemTypeLinks|@count}
-						{foreach item=parent key=href from=$item->entry->parentItemTypeLinks}
-						|
-						<a href="{$href}" class="setParentLink">link to {$parent}</a>
-						{/foreach}
-						{/if}
-
 					</div>
 				</div>
 
@@ -148,27 +141,6 @@
 				</div>
 				{/if}
 
-				{if $item->entry->parentLinks|@count}
-				<div id="parentLinks">
-					<h3>parent links</h3>
-					<ul>
-						{foreach item=link from=$item->entry->parentLinks}
-						<li id="p_{$link.href}"><a href="{$link.href}">{$link.title}</a> <a class="hide" href="{$link.href}">[x]</a></li>
-						{/foreach}
-					</ul>
-				</div>
-				{/if}
-
-				{if $item->entry->childFeedLinks|@count}
-				<div id="childLinks">
-					<h3>child links</h3>
-					<ul>
-						{foreach item=link from=$item->entry->childFeedLinks}
-						<li><a href="{$link.href}">{$link.title}</a> ({$link.count})</li>
-						{/foreach}
-					</ul>
-				</div>
-				{/if}
 				<div class="notesForm">
 					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
 					<form class="hide" action="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" name="notes_form" id="notesForm" method="post">

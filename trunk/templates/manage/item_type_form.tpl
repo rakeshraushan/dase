@@ -97,28 +97,6 @@
 					<ul id="deletableAtts"></ul>
 				</div>
 			</div>
-			<div id="related">
-				<h3>Item Types related to "{$type->name}" Item Type</h3>
-				<form
-					id="type_rels_form"
-					action="manage/{$collection->ascii_id}/item_type/{$type->ascii_id}/relations.json" 
-					method="post">
-					<select name="rel_type_ascii_id">
-						<option>select one:</option>
-						{foreach item=t from=$item_types}
-						<option value="{$t->ascii_id}">{$t->name}</option>
-						{/foreach}
-					</select>
-					<select name="rel">
-						<option value="child">child</option>
-						<option value="parent">parent</option>
-					</select>
-					<input type="submit" value="add"/>
-				</form>
-				<div id="type_rels_list">
-					<ul id="deletableTypes"></ul>
-				</div>
-			</div>
 			{/if}
 		</div>
 		{/if}

@@ -30,14 +30,6 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `{$table_prefix}attribute_category` (
-`id` int(11) NOT NULL auto_increment,
-`attribute_id` int(11) default NULL,
-`category_id` int(11) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE `{$table_prefix}attribute_item_type` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
@@ -77,14 +69,6 @@ CREATE TABLE `{$table_prefix}collection` (
 `collection_name` varchar(200) default NULL,
 `item_count` int(11) default 0,
 `ascii_id` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE `{$table_prefix}collection_category` (
-`id` int(11) NOT NULL auto_increment,
-`collection_id` int(11) default NULL,
-`category_id` int(11) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -187,22 +171,6 @@ CREATE TABLE `{$table_prefix}item_as_atom` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}item_category` (
-`id` int(11) NOT NULL auto_increment,
-`item_id` int(11) default NULL,
-`category_id` int(11) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}item_relation` (
-`id` int(11) NOT NULL auto_increment,
-`parent_serial_number` varchar(200) default NULL,
-`child_serial_number` varchar(200) default NULL,
-`item_type_relation_id` int(11) default NULL,
-`collection_ascii_id` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}item_type` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` int(11) default NULL,
@@ -211,16 +179,6 @@ CREATE TABLE `{$table_prefix}item_type` (
 `name` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}item_type_relation` (
-`id` int(11) NOT NULL auto_increment,
-`parent_type_ascii_id` varchar(200) default NULL,
-`child_type_ascii_id` varchar(200) default NULL,
-`title` varchar(200) default NULL,
-`collection_ascii_id` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE `{$table_prefix}media_file` (
 `id` int(11) NOT NULL auto_increment,
@@ -315,18 +273,12 @@ PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `{$table_prefix}tag_item_category` (
-`id` int(11) NOT NULL auto_increment,
-`tag_item_id` int(11) default NULL,
-`category_id` int(11) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}value` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` int(11) default NULL,
 `item_id` int(11) default NULL,
 `value_text` text default NULL,
+`url` varchar(2000) default NULL,
 PRIMARY KEY (`id`),
 KEY `value_text` (`value_text`(50))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

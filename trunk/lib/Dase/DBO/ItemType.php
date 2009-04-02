@@ -6,8 +6,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 {
 	public $attributes;
 	public $collection;
-	public $parents = array();
-	public $children = array();
 
 	public static function get($db,$collection_ascii_id,$ascii_id)
 	{
@@ -131,28 +129,6 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			$atts[] = $a;
 		}
 		return Dase_Json::get($atts);
-	}
-
-	public function getParentRelations()
-	{
-		$rel = new Dase_DBO_ItemTypeRelation($this->db);
-		$rel->child_type_ascii_id = $this->ascii_id;
-		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
-		foreach ($rel->find() as $r) {
-			$this->parents[] = clone $r;
-		}
-		return $this->parents;
-	}
-
-	public function getChildRelations()
-	{
-		$rel = new Dase_DBO_ItemTypeRelation($this->db);
-		$rel->parent_type_ascii_id = $this->ascii_id;
-		$rel->collection_ascii_id = $this->getCollection()->ascii_id;
-		foreach ($rel->find() as $r) {
-			$this->children[] = clone $r;
-		}
-		return $this->children;
 	}
 
 	public function expunge()

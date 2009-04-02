@@ -10,92 +10,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		parent::__construct($dom,$root,'item');
 	}
 
-	/********** start hierarchy stuff **************************/
-
-	function getChildfeedLinkUrlByTypeJson($item_type)
-	{
-		$type = $this->getItemType();
-		$desc = $item_type.'/children_of/'.$type['term'];
-		foreach ($this->getChildJsonFeedLinks() as $link) {
-			if (strpos($link['href'],$desc)) {
-				return $link['href'];
-			}
-		}
-	}
-
-	function getChildfeedLinkUrlByTypeAtom($item_type)
-	{
-		$type = $this->getItemType();
-		$desc = $item_type.'/children_of/'.$type['term'];
-		foreach ($this->getChildFeedLinks() as $link) {
-			if (strpos($link['href'],$desc)) {
-				return $link['href'];
-			}
-		}
-	}
-
-	function getParentLinkNodesByItemType($item_type)
-	{
-		$links = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
-			if ($item_type == $link->getAttributeNS(Dase_Atom::$ns['d'],'item_type')) {
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
-	function getParentLinkTitleByItemType($item_type)
-	{
-		//only gets FIRST one (often OK)
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $link) {
-			if ($item_type == $link->getAttributeNS(Dase_Atom::$ns['d'],'item_type')) {
-				return $link->getAttribute('title');
-			}
-		}
-		return false;
-	}
-
-	function getParentLinks() 
-	{
-		return $this->getLinksByRel('http://daseproject.org/relation/parent'); 
-	}
-
-	function getChildFeedLinks() 
-	{
-		$links = array();
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
-			if ('application/atom+xml' == $link['type']) {
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
-	function getChildJsonFeedLinks() 
-	{
-		$links = array();
-		foreach ($this->getLinksByRel('http://daseproject.org/relation/childfeed') as $link) {
-			if ('application/json' == $link['type']) {
-				$links[] = $link;
-			}
-		}
-		return $links;
-	}
-
-	function getParentItemTypeLinks()
-	{
-		$parent_types = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('http://daseproject.org/relation/parent_item_type' == $el->getAttribute('rel')) {
-				$parent_types[$el->getAttribute('href')] = $el->getattribute('title');
-			}
-		}
-		return $parent_types;
-	}
-
-	/********** end hierarchy stuff **************************/
-
 	function getSerialNumber() 
 	{
 		if (!$this->serial_number) {
@@ -455,29 +369,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		//hierarchy stuff
-		$sernum = $item->serial_number;
-		$coll = $c->ascii_id;
-		foreach ($this->getParentLinks() as $ln) {
-			//make sure parent is a legitimate item
-			$parent = Dase_DBO_Item::getByUrl($db,$ln['href']);
-			//make sure relationship is legit
-			if ($parent) {
-				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-					$db,$coll,$parent->serial_number,$sernum
-				);
-			}
-			if ($itr) {
-				$item_relation = new Dase_DBO_ItemRelation($db);
-				$item_relation->collection_ascii_id = $coll;
-				$item_relation->parent_serial_number = $parent->serial_number;
-				$item_relation->child_serial_number = $sernum;
-				$item_relation->item_type_relation_id = $itr->id;
-				$item_relation->insert();
-				$item_relation->saveParentAtom();
-			} 
-		}
-
 		$content = new Dase_DBO_Content($db);
 		$atom_content = $this->getContent();
 		if ($atom_content) {
@@ -520,9 +411,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	/** used w/ PUT request -- affects categories:
 	 *  1. deletes and replaces status 
-	 *  2. deletes and replaces item_type (beware messing up semantics of existing relations)
+	 *  2. deletes and replaces item_type
 	 *  3. deletes and replaces all metadata & private metadata (NOT admin metadata)
-	 *  4. delete and replace any item relations to a parent item
 	 */
 	function update($db,$r) 
 	{
@@ -556,7 +446,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 
 		//3. metadata
-		//only deletes collection (not admin) metadata
+		//only deletes collection metadata (not admin) metadata
 		//then replaces it
 		$item->deleteValues();
 		foreach ($this->getMetadata(null,true) as $att => $keyval) {
@@ -570,42 +460,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//3.5 content!
 		if ($this->getContent()) {
 			$item->setContent($this->getContent(),$eid,$this->getContentType());
-		}
-
-		//4. replace parent item relations
-
-		/* sample parent item indicator
-			<category term="http://quickdraw.laits.utexas.edu/dase1/item/test/000524615" 
-			scheme="parent" 
-			label="Proposal: Cool Art Website"/>
-		 */
-
-		//hierarchy stuff
-		Dase_DBO_ItemRelation::removeParents($db,$c->ascii_id,$sernum); 
-		$coll = $this->getCollectionAsciiId();
-		foreach ($this->getParentLinks() as $ln) {
-			//make sure parent is a legitimate item
-			$parent = Dase_DBO_Item::getByUrl($db,$ln['href']);
-			//make sure relationship is legit
-			if ($parent) {
-				$itr = Dase_DBO_ItemTypeRelation::getByItemSerialNumbers(
-					$db,$coll,$parent->serial_number,$sernum
-				);
-			}
-			if ($itr) {
-				$item_relation = new Dase_DBO_ItemRelation($db);
-				$item_relation->collection_ascii_id = $coll;
-				$item_relation->parent_serial_number = $parent->serial_number;
-				$item_relation->child_serial_number = $sernum;
-				if (!$item_relation->findOne()) {
-					$item_relation->item_type_relation_id = $itr->id;
-					$item_relation->insert();
-					//too expensive??  maybe simply expire atom cache??
-					$item_relation->saveParentAtom();
-				}
-			} else {
-				//nothin'	
-			}
 		}
 
 		$item->buildSearchIndex();
@@ -625,8 +479,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			return $this->{$method}();
 		} elseif ($this->getMetadata($var)) {
 			return $this->getMetadata($var);
-		} elseif ($this->getParentLinkTitleByItemType($var)) {
-			return $this->getParentLinkTitleByItemType($var);
 		} else {
 			return parent::__get($var);
 		}

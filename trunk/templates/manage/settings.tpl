@@ -60,22 +60,6 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Community
-				<div class="current">
-				{$community->label}
-				</div>
-			</th>
-			<td class="data">
-				<select name="community">
-					<option value="">select a community:</option>
-					<option value="">none</option>
-					{foreach item=com from=$communities}
-					<option value="{$com->term}">{$com->label}</option>
-					{/foreach}
-				</select>
-			</td>
-		</tr>
-		<tr>
 			<th>Created</th>
 			<td class="data">{$collection->created}</td>
 		</tr>

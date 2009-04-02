@@ -15,8 +15,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/item_type/{type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/item_type/{type_ascii_id}/attributes' => 'item_type_attributes',
 		'{collection_ascii_id}/item_type/{type_ascii_id}/attribute/{att_ascii_id}' => 'item_type_attribute',
-		'{collection_ascii_id}/item_type/{type_ascii_id}/relations' => 'item_type_relations',
-		'{collection_ascii_id}/item_type_relation/{id}' => 'item_type_relation',
 		'{collection_ascii_id}/managers' => 'managers',
 		'{collection_ascii_id}/managers/{manager_eid}' => 'manager',
 		'{collection_ascii_id}/settings' => 'settings',
@@ -43,10 +41,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
-		$cats = new Dase_DBO_Category($this->db);
-		$cats->scheme = 'community';
-		$tpl->assign('communities',$cats->find());
-		$tpl->assign('community',$this->collection->getCommunity());
 		$r->renderResponse($tpl->fetch('manage/settings.tpl'));
 	}
 
@@ -62,7 +56,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$this->collection->description = trim($r->get('description'));
 		$this->collection->visibility = $r->get('visibility');
 		$this->collection->update();
-		//$this->collection->setCommunity($r->get('community'));
 		$params['msg'] = "settings updated";
 		$this->user->expireDataCache($r->retrieve('cache'));
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/settings',$params);
@@ -318,38 +311,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/item_type/'.$type->ascii_id);
 	}
 
-	public function postToItemTypeRelations($r)
-	{
-		$type_ascii = $r->get('type_ascii_id');
-		$rel_type_ascii = $r->get('rel_type_ascii_id');
-		$rel = $r->get('rel');
-		$coll = $this->collection->ascii_id;
-		$type = Dase_DBO_ItemType::get($this->db,$coll,$type_ascii);
-	   	$rel_type = Dase_DBO_ItemType::get($this->db,$coll,$rel_type_ascii);
-		if (!$type || !$rel_type) {
-			$r->renderError(409);
-		}
-		if ('parent' == $rel) {
-			$itr = new Dase_DBO_ItemTypeRelation($this->db);
-			$itr->parent_type_ascii_id = $rel_type_ascii;
-			$itr->child_type_ascii_id = $type_ascii;
-			$itr->collection_ascii_id = $coll;
-			$itr->title = $rel_type->name.' '.$type->name.'s';
-			$itr->insert();
-			$itr->updateAtomCache();
-		}	
-		if ('child' == $rel) {
-			$itr = new Dase_DBO_ItemTypeRelation($this->db);
-			$itr->parent_type_ascii_id = $type_ascii;
-			$itr->child_type_ascii_id = $rel_type_ascii;
-			$itr->collection_ascii_id = $coll;
-			$itr->title = $type->name.' '.$rel_type->name.'s';
-			$itr->insert();
-			$itr->updateAtomCache();
-		}	
-		$r->renderRedirect('manage/'.$coll.'/item_type/'.$type_ascii);
-	}
-
 	public function getItemTypeAttributesJson($r)
 	{
 		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
@@ -366,35 +327,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderResponse(Dase_Json::get($response));
 	}
 
-	public function getItemTypeRelationsJson($r)
-	{
-		$res = array();
-		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
-		$res['parents'] = array();
-		$res['children'] = array();
-		foreach ($type->getParentRelations() as $p) {
-			$parent = $p->getParentType();
-			$res['parents'][$parent->ascii_id]['relation_id'] = $p->id;
-			$res['parents'][$parent->ascii_id]['title'] = $p->title;
-			$res['parents'][$parent->ascii_id]['collection_ascii_id'] = $p->collection_ascii_id;
-			$res['parents'][$parent->ascii_id]['id'] = $parent->id;
-			$res['parents'][$parent->ascii_id]['name'] = $parent->name;
-			$res['parents'][$parent->ascii_id]['ascii_id'] = $parent->ascii_id;
-		}
-		foreach ($type->getChildRelations() as $c) {
-			$child = $c->getChildType();
-			$res['children'][$child->ascii_id]['relation_id'] = $c->id;
-			$res['children'][$child->ascii_id]['title'] = $c->title;
-			$res['children'][$child->ascii_id]['collection_ascii_id'] = $c->collection_ascii_id;
-			$res['children'][$child->ascii_id]['id'] = $child->id;
-			$res['children'][$child->ascii_id]['name'] = $child->name;
-			$res['children'][$child->ascii_id]['ascii_id'] = $child->ascii_id;
-		}
-		ksort($res['parents']);
-		ksort($res['children']);
-		$r->renderResponse(Dase_Json::get($res));
-	}
-
 	public function deleteItemTypeAttribute($r)
 	{
 		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
@@ -404,21 +336,6 @@ class Dase_Handler_Manage extends Dase_Handler
 		$ita->item_type_id = $type->id;
 		if ($ita->findOne()) {
 			$ita->delete();
-			$r->renderOk('done');
-		} else {
-			$r->renderError(400);
-		}
-	}
-
-	public function deleteItemTypeRelation($r)
-	{
-		$rel = new Dase_DBO_ItemTypeRelation($this->db);
-		//does NOT delete actual relationships
-		//which is good, since it'd be too easy
-		//to do accidentally
-		if ($rel->load($r->get('id'))) {
-			$rel->updateAtomCache();
-			$rel->delete();
 			$r->renderOk('done');
 		} else {
 			$r->renderError(400);

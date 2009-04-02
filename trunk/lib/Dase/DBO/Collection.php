@@ -125,10 +125,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$feed->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		//todo: is this too expensive??
-		$comm = $this->getCommunity();
-		if ($comm) {
-			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
-		}
 		$feed->setId($this->getUrl($app_root));
 		$feed->addAuthor();
 		$feed->addLink($this->getUrl($app_root),'alternate');
@@ -149,10 +145,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->collection_name.' Item Types');
 		$feed->setUpdated($this->updated);
-		$comm = $this->getCommunity();
-		if ($comm) {
-			$feed->addCategory($comm->term,$comm->getScheme(),$comm->label);
-		}
 		$feed->setId($this->getUrl($app_root));
 		$feed->addAuthor();
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
@@ -600,14 +592,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($this->getAttributes() as $att) {
 			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
 		}
-		$ws->addCollection($app_root.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
-			->addAccept('application/json');
 		$media_repos = $app_root.'/media/'.$this->ascii_id.'.atom';
 		$media_coll = $ws->addCollection($media_repos,$this->collection_name.' Media');
 		foreach(Dase_Media::getAcceptedTypes() as $type) {
 			//$media_coll->addAccept($type,true);
 			$media_coll->addAccept($type);
 		}
+		//json items collection
+		$ws->addCollection($app_root.'/collection/'.$this->ascii_id.'.atom',$this->collection_name.' JSON Items')
+			->addAccept('application/json');
 		$item_types_repos = $app_root.'/collection/'.$this->ascii_id.'/item_types.atom';
 		$ws->addCollection($item_types_repos,$this->collection_name.' Item Types')
 			->addAccept('application/atom+xml;type=entry')
@@ -638,22 +631,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($this->getAttributes() as $att) {
 			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
 		}
-		$parent_types = $coll->addCategorySet('yes','http://daseproject.org/category/parent_item_type');
-		$child_types = $coll->addCategorySet('yes','http://daseproject.org/category/child_item_type');
-		foreach ($this->getItemTypes() as $it) {
-			$parent_types->addCategory($it->ascii_id,'',$it->name);
-			$child_types->addCategory($it->ascii_id,'',$it->name);
-		}
 		return $svc->asXml();
-	}
-
-	public function setCommunity($community_term,$community_label='')
-	{
-		Dase_DBO_Category::set($this->db,$this,'community',$community_term,$community_label);
-	}
-
-	public function getCommunity()
-	{
-		return Dase_DBO_Category::get($this->db,$this,'community');
 	}
 }

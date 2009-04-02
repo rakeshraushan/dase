@@ -38,75 +38,6 @@ Dase.setTypeAtts = function(form) {
 	});
 };
 
-Dase.setTypeRels = function(form) {
-	Dase.ajax(form.action,'get',function(resp) {
-		var rels = JSON.parse(resp);
-		var h = new Dase.htmlbuilder;
-		for (var key in rels.parents) {
-			var r = rels.parents[key];
-			var li = h.add('li');
-			var a = li.add('a');
-			a.set('href','manage/'+r.collection_ascii_id+'/item_type/'+r.ascii_id);
-			a.setText(r.name);
-			li.add('span',null,'(parent)');
-			a = li.add('a');
-			a.set('href','manage/'+r.collection_ascii_id+'/item_type_relation/'+r.relation_id);
-			a.set('class','delete');
-			a.setText('delete');
-			if (r.title) {
-				li.add('p',{'class':'relationDesc'},r.title);
-			}
-		}
-		for (var key in rels.children) {
-			var r = rels.children[key];
-			var li = h.add('li');
-			var a = li.add('a');
-			a.set('href','manage/'+r.collection_ascii_id+'/item_type/'+r.ascii_id);
-			a.setText(r.name);
-			li.add('span',null,'(child)');
-			a = li.add('a');
-			a.set('href','manage/'+r.collection_ascii_id+'/item_type_relation/'+r.relation_id);
-			a.set('class','delete');
-			a.setText('delete');
-			if (r.title) {
-				li.add('p',{'class':'relationDesc'},r.title);
-			}
-		}
-		h.attach(Dase.$('deletableTypes'));
-		links = Dase.$('deletableTypes').getElementsByTagName('a');
-		for (var i=0;i<links.length;i++) {
-			ln = links[i];
-			if (Dase.hasClass(ln,'modify')) {
-				ln.onclick = function() {
-					var form = Dase.$(this.id.replace(/link/,'form'));
-					form.action = this.href;
-					Dase.toggle(form);
-					form.onsubmit = function() {
-						Dase.ajax(this.action,'post',function(resp) {
-							Dase.pageInit();
-						},this.title.value);
-						return false;
-					};
-					return false;
-				};
-			}
-			if (Dase.hasClass(ln,'delete')) {
-				ln.onclick = function() {
-					if (confirm('are you sure?')) {
-						Dase.ajax(this.href,'delete',function(resp) {
-							var rels_form = Dase.$('type_rels_form');
-							if (rels_form) {
-								Dase.setTypeRels(rels_form);
-							}
-						});
-						return false;
-					}
-				};
-			}
-		}
-	});
-};
-
 Dase.initCreateAttribute = function() {
 	var select = Dase.$('att_select');
 	if (!select) return;
@@ -148,10 +79,6 @@ Dase.initCreateAttribute = function() {
 		var atts_form = Dase.$('type_atts_form');
 		if (atts_form) {
 			Dase.setTypeAtts(atts_form);
-		}
-		var rels_form = Dase.$('type_rels_form');
-		if (rels_form) {
-			Dase.setTypeRels(rels_form);
 		}
 		Dase.initCreateAttribute()
 	};
