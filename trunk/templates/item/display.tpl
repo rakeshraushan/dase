@@ -69,14 +69,14 @@
 					{/if}
 					{/foreach}
 				</table>
-				<span class="addToCart hide">in cart</span> <a href="{$item->unique}" class="addToCart hide" id="addToCart_{$item->unique}">add to cart</a>
+				<span class="addToCart hide">in cart</span> <a href="{$item->entry->unique}" class="addToCart hide" id="addToCart_{$item->entry->unique}">add to cart</a>
 			</td>
 			<td class="metadata">
 				<!-- is there a better place for this?-->
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
-						<a href="{$app_root}test/demo?url={$item->entry->editLink|escape:'url'}" 
+						<a href="{$app_root}tools/demo?url={$item->entry->editLink|escape:'url'}" 
 							id="editLink">poster</a>
 						|
 						<a href="{$item->entry->metadataLink}" 

@@ -224,4 +224,29 @@ class Dase_DB {
 		$writer->endDocument();
 		return $writer->flush(true);
 	}	
+
+	public function getSchema()
+	{
+		$tables = array();
+		foreach ($this->listTables() as $table) {
+			$t = '';
+			$t2 = '';
+			$t .= "CREATE TABLE `{\$table_prefix}$table` (\n";
+			//$t .= "CREATE TABLE `$table` (\n";
+			foreach ($this->getMetadata($table) as $col) {
+				if ('id' != $col['column_name']) {
+					$cols = array();
+					if ('character varying' == $col['data_type']) {
+						$col['data_type'] = 'varchar('.$col['character_maximum_length'].')';
+					}
+					$t2 .= "`{$col['column_name']}` {$col['data_type']} default NULL,\n";
+				} else {
+					$t .= "`id` int(11) NOT NULL auto_increment,\n";
+				}
+			}
+			$t2 .= "PRIMARY KEY (`id`)\n) ENGINE=MyISAM DEFAULT CHARSET=utf8;\n";
+			$tables[] = $t.$t2;
+		}
+		return join("\n",$tables);
+	}
 }

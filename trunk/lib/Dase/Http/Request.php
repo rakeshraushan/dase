@@ -19,6 +19,7 @@ class Dase_Http_Request
 		'uris' =>'text/uri-list',
 		'uri' =>'text/uri-list',
 		'xhtml' =>'application/xhtml+xml',
+		'xml' =>'application/xml',
 	);
 
 	private $eid_is_service_user;

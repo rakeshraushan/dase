@@ -5,8 +5,6 @@ class Dase_Handler_Admin extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'collection_form',
 		'attributes' => 'attributes',
-		'category_scheme/form' => 'category_scheme_form',
-		'category_schemes' => 'category_schemes',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'docs' => 'docs',
@@ -22,6 +20,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'user/{eid}' => 'user',
 		'users' => 'users',
 		'cache' => 'cache',
+		'db' => 'db_schema',
 	);
 
 	public function setup($r)
@@ -218,41 +217,6 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse($tpl->fetch('admin/collection_form.tpl'));
 	}
 
-	public function getCategorySchemeForm($r)
-	{
-		if ($r->has('uri')) {
-			echo $r->get('uri');
-			exit;
-		}
-		$tpl = new Dase_Template($r);
-		$tpl->assign('category_schemes',Dase_Atom_Feed::retrieve($r->app_root.'/category_schemes.atom'));
-		$r->renderResponse($tpl->fetch('admin/category_scheme_form.tpl'));
-	}
-
-	public function postToCategorySchemes($r)
-	{
-		//need a similar method in CategorySchemes that's more AtomPub-ish
-		$category_scheme = new Dase_DBO_CategoryScheme($this->db);
-		$category_scheme->name = $r->get('name');
-		$category_scheme->fixed = $r->get('fixed') ? $r->has('fixed') : 0;
-		$category_scheme->uri = trim($r->get('uri'),'/');
-		if (!$category_scheme->uri || !$category_scheme->name) {
-			$params['msg'] = "missing information";
-			$r->renderRedirect('admin/category_scheme/form',$params);
-		}
-		if (substr_count($category_scheme->uri,'/') > 5) {
-			$params['msg'] = "URI has too many sections (max 6)";
-			$r->renderRedirect('admin/category_scheme/form',$params);
-		}
-		$category_scheme->description = $r->get('description');
-		$category_scheme->applies_to = $r->get('applies_to');
-		$category_scheme->created = date(DATE_ATOM);
-		$category_scheme->created_by_eid = $this->user->eid;
-		$category_scheme->insert();
-		$r->renderRedirect('admin/category_scheme/form');
-	}
-
-
 	public function getPalette($r)
 	{
 		$tpl = new Dase_Template($r);
@@ -281,6 +245,19 @@ class Dase_Handler_Admin extends Dase_Handler
 		}
 		$tpl->assign('atts',$atts);
 		$r->renderResponse($tpl->fetch('admin/attributes.tpl'));
+	}
+
+	public function getDbSchemaXml($r)
+	{
+		$r->renderResponse($this->db->getSchemaXml()); 
+	}
+
+	public function getDbSchema($r)
+	{
+		$sql = $this->db->getSchema(); 
+		$tpl = new Dase_Template($r);
+		$tpl->assign('sql',$sql);
+		$r->renderResponse($tpl->fetch('admin/sql.tpl'));
 	}
 
 }

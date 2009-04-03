@@ -33,7 +33,6 @@ class Dase_Atom_Entry extends Dase_Atom
 	protected $entrytype;
 	public static $types_map = array(
 		'attribute' => 'Dase_Atom_Entry_Attribute',
-		'category_scheme' => 'Dase_Atom_Entry_CategoryScheme',
 		'collection' => 'Dase_Atom_Entry_Collection',
 		'comment' => 'Dase_Atom_Entry_Comment',
 		'item' => 'Dase_Atom_Entry_Item',
