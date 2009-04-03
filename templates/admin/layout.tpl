@@ -97,11 +97,6 @@
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
 				</a>
 				</li>
-				<li class="category_scheme-tab">
-				<a href="admin/category_scheme/form">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Category Scheme</sup>
-				</a>
-				</li>
 				<li class="collection-tab">
 				<a href="admin/collection/form">
 					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Collection</sup>
@@ -142,11 +137,6 @@
 				<li class="managers-tab">
 				<a href="admin/users">
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
-				</a>
-				</li>
-				<li class="category_scheme-tab">
-				<a href="admin/category_scheme/form">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create a New Category Scheme</sup>
 				</a>
 				</li>
 				<li class="collection-tab">

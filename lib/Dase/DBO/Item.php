@@ -840,14 +840,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* put thumbnail in summary */
 		$thumb_url = $this->getMediaUrl('thumbnail');
 		if ($thumb_url) {
-			$entry->setThumbnail($thumb_url);	
+			$entry->setThumbnail($app_root.$thumb_url);	
 		}
 
 		/* enclosure */
 
 		$enc = $this->getEnclosure();
 		if ($enc) {
-			$entry->addLink($this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
+			$entry->addLink($app_root.$this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
 		}
 
 		/* edit-media link */
@@ -889,7 +889,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 		$feed->setUpdated($updated);
 		$feed->setTitle($this->getTitle());
-		$feed->setId('tag:'.Dase_Util::getUniqueName());
+		$feed->setId('tag:daseproject.org,2008:'.Dase_Util::getUniqueName());
 		$feed->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom','self' );
 		$feed->addAuthor();
 		return $feed;
@@ -911,10 +911,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		foreach ($this->getComments() as $comment) {
 			$comment_entry = $feed->addEntry('comment');
 			$comment->injectAtomEntryData($comment_entry,$app_root);
-		}
-		//todo: this may be TOO expensive
-		foreach ($this->getRelatedItems() as $related) {
-			$feed->addItemEntry($related,$app_root);
 		}
 		return $feed->asXml();
 	}

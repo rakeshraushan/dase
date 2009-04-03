@@ -32,24 +32,6 @@ CREATE TABLE {$table_prefix}attribute_item_type (
     attribute_id integer NOT NULL
 );
 
-CREATE TABLE {$table_prefix}category (
-    id serial NOT NULL,
-    term character varying(200),
-    label character varying(200),
-    scheme_id integer
-);
-
-CREATE TABLE {$table_prefix}category_scheme (
-    id serial NOT NULL,
-    uri character varying(200),
-    name character varying(200),
-    description character varying(2000),
-    created character varying(50),
-    created_by_eid character varying(50),
-    applies_to character varying(20),
-    fixed integer
-);
-
 CREATE TABLE {$table_prefix}collection (
     id serial NOT NULL,
     ascii_id character varying(200),
@@ -235,7 +217,10 @@ CREATE TABLE {$table_prefix}tag (
 CREATE TABLE {$table_prefix}tag_category (
     id serial NOT NULL,
     tag_id integer,
-    category_id integer
+    category_id integer,
+    term character varying(200),
+    label character varying(200),
+    scheme character varying(200)
 );
 
 CREATE TABLE {$table_prefix}value (
@@ -257,31 +242,7 @@ CREATE TABLE {$table_prefix}value_revision_history (
     "timestamp" character varying(50)
 );
 
-CREATE SEQUENCE {$table_prefix}attribute_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}collection_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}item_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}tag_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}tag_item_category_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -306,20 +267,6 @@ CREATE SEQUENCE {$table_prefix}attribute_item_type_seq
     CACHE 1;
 
 CREATE SEQUENCE {$table_prefix}collection_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}category_scheme_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}category_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -367,13 +314,6 @@ CREATE SEQUENCE {$table_prefix}item_as_atom_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}item_relation_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}input_template_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -381,13 +321,6 @@ CREATE SEQUENCE {$table_prefix}input_template_seq
     CACHE 1;
 
 CREATE SEQUENCE {$table_prefix}item_type_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}item_type_relation_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -445,32 +378,8 @@ EOF;
 
 
 $query .= "
-ALTER TABLE {$table_prefix}attribute_category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}attribute_category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}collection_category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}collection_category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}item_category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_category_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}tag_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}tag_item_category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}category 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}category_scheme 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}category_scheme_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}admin_search_table 
@@ -517,20 +426,12 @@ ALTER TABLE {$table_prefix}item_as_atom
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_as_atom_seq'::text);
 ";
 $query .= "
-ALTER TABLE {$table_prefix}item_relation 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_relation_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}input_template 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}item_type 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}item_type_relation 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_relation_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}media_file 
