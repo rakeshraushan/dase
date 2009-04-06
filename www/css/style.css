@@ -711,6 +711,18 @@ div.widget {
 	padding:10px 15px 15px 30px;
 }
 
+.setAdmin {
+	background-color:#b5becd;
+	background-color:#c5cedd;
+	padding:10px 15px 15px 30px;
+}
+
+.cartAdmin {
+	background-color:#ecd7d6;
+	background-color:#dcc7c6;
+	padding:10px 15px 15px 30px;
+}
+
 /************ SLIDESHOW DISPLAY **************/
 
 #backgroundColorSelect {

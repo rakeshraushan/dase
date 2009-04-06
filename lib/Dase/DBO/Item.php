@@ -186,7 +186,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public
+			a.is_on_list_display, a.is_public,v.url
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -208,7 +208,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public
+			a.is_on_list_display, a.is_public,v.url
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -413,14 +413,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	function getMediaCount()
 	{
 		$prefix = $this->db->table_prefix;
-		$this->collection || $this->getCollection();
+		$c = $this->getCollection();
 		$sql = "
 			SELECT count(*) 
 			FROM {$prefix}media_file
 			WHERE p_serial_number = ?
 			AND p_collection_ascii_id = ?
 			";
-		return Dase_DBO::query($this->db,$sql,array($this->serial_number,$this->collection->ascii_id),true)->fetchColumn();
+		return Dase_DBO::query($this->db,$sql,array($this->serial_number,$c->ascii_id),true)->fetchColumn();
 	}
 
 	function setItemType($type_ascii_id='')
@@ -524,8 +524,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->item_id = $this->id;
 			$v->attribute_id = $att->id;
 			$v->value_text = trim($value_text);
-			return($v->insert());
-			$this->saveAtom();
+			$v->insert();
+			return $v;
+			//too expensive:
+			//$this->saveAtom();
 		} else {
 			//simply returns false if no such attribute
 			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
@@ -795,30 +797,41 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addCategory('public','http://daseproject.org/category/status');
 		}
 
-		/* categories for metadata */
+		/* categories (or links!) for metadata */
 
 		foreach ($this->getRawMetadata() as $row) {
-			if (0 == $row['collection_id']) {
-				$meta = $entry->addCategory(
-					$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
-					$row['attribute_name'],$row['value_text']);
-			} else {
-				if ($row['is_public']) {
+			if ($row['url']) { //create metadata LINK
+				$entry->addLink(
+					$row['url'],
+					'http://daseproject.org/relation/metadata/'.
+					$this->p_collection_ascii_id.'/'.$row['ascii_id'],
+					'application/atom+xml',
+					'',
+					$row['value_text']
+				);
+			} else { //create metadata CATEGORY
+				if (0 == $row['collection_id']) {
 					$meta = $entry->addCategory(
-						$row['ascii_id'],'http://daseproject.org/category/metadata',
+						$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
 						$row['attribute_name'],$row['value_text']);
-					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				} else {
-					$meta = $entry->addCategory(
-						$row['ascii_id'],'http://daseproject.org/category/private_metadata',
-						$row['attribute_name'],$row['value_text']);
-					$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
-				}
-				if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
-					$entry->setTitle($row['value_text']);
-				}
-				if ('rights' == $row['ascii_id']) {
-					$entry->setRights($row['value_text']);
+					if ($row['is_public']) {
+						$meta = $entry->addCategory(
+							$row['ascii_id'],'http://daseproject.org/category/metadata',
+							$row['attribute_name'],$row['value_text']);
+						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					} else {
+						$meta = $entry->addCategory(
+							$row['ascii_id'],'http://daseproject.org/category/private_metadata',
+							$row['attribute_name'],$row['value_text']);
+						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					}
+					if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
+						$entry->setTitle($row['value_text']);
+					}
+					if ('rights' == $row['ascii_id']) {
+						$entry->setRights($row['value_text']);
+					}
 				}
 			}
 		}
@@ -1163,6 +1176,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public static function sortIdArrayByUpdated($db,$item_ids)
 	{
+		$sortable_array = array();
 		$prefix = $db->table_prefix;
 		$dbh = $db->getDbh();
 		$sql = "
@@ -1184,6 +1198,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public static function sortIdArray($db,$sort,$item_ids)
 	{
+		$sortable_array = array();
 		$test_att = new Dase_DBO_Attribute($db);
 		$test_att->ascii_id = $sort;
 		if (!$test_att->findOne()) {

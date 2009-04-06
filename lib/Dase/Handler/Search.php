@@ -142,6 +142,18 @@ class Dase_Handler_Search extends Dase_Handler
 			$url = str_replace('search?','search/item?',$r->url);
 			$r->renderRedirect($r->app_root.'/'.$url);
 		}
+		if (0 == $count) {
+			if ($feed->getCollection()) {
+				$node = $feed->getCollection();
+				$params['msg'] = 'no items found';
+				$params['failed_query'] = $feed->getQuery();
+				$r->renderRedirect($node['href'],$params);
+			} else {
+				$params['msg'] = 'no items found';
+				$params['failed_query'] = $feed->getQuery();
+				$r->renderRedirect($r->app_root.'/collections',$params);
+			}
+		}
 		$end = $this->start+$this->max-1;
 		if ($end > $count) {
 			$end = $count;

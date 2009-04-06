@@ -358,7 +358,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			Dase_DBO_Attribute::findOrCreate($db,$c->ascii_id,$att);
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
-					$item->setValue($att,$v['text']);
+					$val = $item->setValue($att,$v['text']);
 				}
 			}
 		}
@@ -452,7 +452,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		foreach ($this->getMetadata(null,true) as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
-					$item->setValue($att,$v['text']);
+					$val = $item->setValue($att,$v['text']);
 				}
 			}
 		}
@@ -463,7 +463,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 
 		$item->buildSearchIndex();
-		$item->saveAtom();
+		//already don ein buildSearchIndex
+		//$item->saveAtom();
 		return $item;
 	}
 

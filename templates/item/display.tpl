@@ -137,7 +137,7 @@
 
 				{if $item->content}
 				<div id="itemContent">
-					{$item->content|markdown}
+					{$item->entry->content|markdown}
 				</div>
 				{/if}
 

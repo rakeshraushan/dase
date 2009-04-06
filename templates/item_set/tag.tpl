@@ -84,7 +84,7 @@
 			{/if}
 			<div class="spacer"></div>
 		</div>
-		<div class="tagAdmin">
+		<div class="{$items->tagType|lower|default:'set'}Admin">
 			<h4>set slideshow background color</h4>
 			<form id="backgroundColorSelect" style="background-color: {$items->background}" action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
 				<select name="background">
