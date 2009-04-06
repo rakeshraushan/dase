@@ -158,11 +158,14 @@ class Dase_Search_Result
 				);
 			}
 		}
+
 		//here is where we place a collection link *only* if there is one collection
 		if (1 == count($this->tallies)) {
+			$coll = array_pop(array_keys($this->tallies));
 			$feed->addLink($app_root.'/collection/'.$coll,'http://daseproject.org/relation/collection','text/html',null,$this->tallies[$coll]['name']);
 			$feed->addLink($app_root.'/collection/'.$coll.'/attributes.json','http://daseproject.org/relation/collection/attributes','application/json');
 		}
+
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->url);
 		$item_request_url = str_replace('search','search/item',$item_request_url);

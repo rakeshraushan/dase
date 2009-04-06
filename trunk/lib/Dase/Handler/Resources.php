@@ -24,7 +24,7 @@ class Dase_Handler_Resources extends Dase_Handler
 		$t = new Dase_Template($r);
 		$r->response_mime_type = 'text/plain';
 
-		$r->renderResponse(file_get_contents($r->base_path.'/tools/uploader.py'));
+		$r->renderResponse(file_get_contents($r->base_path.'/bin/uploader.py'));
 	}
 
 }

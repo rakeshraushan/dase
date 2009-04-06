@@ -200,6 +200,7 @@ class Dase_Search
 		if ($this->_isEmpty($search)) {
 			$search['find'] = array('%');
 		}
+
 		$this->search_array = $search;
 
 		// DONE parsing search string!!
@@ -399,6 +400,18 @@ class Dase_Search
 			$tallies[$ascii_id]['name'] = $collection_lookup[$coll_id]['collection_name'];
 			$item_ids = array_merge($item_ids,$set);
 		}
+
+		//so failed searches of one collection go to collection page
+		if (0 == count($items) && 1 == count($this->search_array['colls'])) {
+			$col = $this->search_array['colls'][0];
+			foreach ($collection_lookup as $id => $info_array) {
+				if ($col == $info_array['ascii_id']) {
+					$tallies[$col]['total'] = 0;
+					$tallies[$col]['name'] = $info_array['collection_name'];
+				}
+			}
+		}
+
 		//look into caching item_ids here to benefit first sort request?
 		//note: sorting all happens here!!! (kind of aspect-ily)
 		if ($this->request->has('sort')) {

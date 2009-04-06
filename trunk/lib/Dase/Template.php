@@ -59,6 +59,8 @@ class Dase_Template {
 			}
 		}
 		$this->smarty->assign('msg', $request->get('msg'));
+		//for searches w/ no results
+		$this->smarty->assign('failed_query', $request->get('failed_query'));
 		$this->smarty->assign('request', $request);
 		$this->smarty->assign('main_title', $request->retrieve('config')->getAppSettings('main_title'));
 		$this->smarty->assign('page_logo', $request->retrieve('config')->get('page_logo'));

@@ -21,7 +21,7 @@
 	<form method="get" action="search">
 		<div>
 			<h3 class="utilLabel">Search:</h3>
-			<input type="text" id="queryInput" name="q" size="30"/>
+			<input type="text" id="queryInput" name="q" size="30" value="{$failed_query}"/>
 			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}"/>
 			<!--
 			<select id="attributesSelect" class="hide"></select>

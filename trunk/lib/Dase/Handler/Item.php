@@ -492,6 +492,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
+			$r->logger()->debug('missing upload directory '.$upload_dir);
 			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
 
@@ -520,7 +521,9 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
 		$item->expireCaches($r->retrieve('cache'));
+
 		$item->buildSearchIndex();
+
 		//delete uploaded file
 		unlink($new_file);
 		//the returned atom entry links to derivs!
