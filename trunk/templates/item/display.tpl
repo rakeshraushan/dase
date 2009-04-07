@@ -135,6 +135,20 @@
 					{/foreach}
 				</dl>
 
+				{if $item->entry->metadataLinks|@count}
+				<div id="metadataLinks">
+					<h3>linked metadata</h3>
+					<dl>
+					{foreach item=set key=att_ascii_id from=$item->entry->metadataLinks}
+					<dt>{$set.attribute_name}</dt>
+					{foreach item=value from=$set.values}
+					<dd><a href="{$value.url}">{$value.text}</a></dd>
+					{/foreach}
+					{/foreach}
+					</dl>
+				</div>
+				{/if}
+
 				{if $item->content}
 				<div id="itemContent">
 					{$item->entry->content|markdown}
