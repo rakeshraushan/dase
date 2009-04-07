@@ -228,12 +228,57 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$this->addCategory($type_ascii_id,'http://daseproject.org/category/item_type',$type_name);
 	}
 
-	function getMetadata($att_ascii_id = '',$include_private_metadata=false) 
+	function getMetadataLinks($att='') 
+	{
+		if (count($this->_metadata_links)) {
+			if ($att_ascii_id) {
+				if (isset($this->_metadata_links[$att_ascii_id])) {
+					return $this->_metadata_links[$att_ascii_id];
+				} else {
+					return false;
+				}
+			}
+			return $this->_metadata_links;
+		}
+		$metadata = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if (0 === strpos($el->getAttribute('rel'),'http://daseproject.org/relation/metadata-link')) {
+				$v = array();
+				$set = explode('/',str_replace('http://daseproject.org/relation/metadata-link/','',$el->getAttribute('rel')));
+				if (2 == count($set)) {
+					$coll = $set[0];
+					$att_ascii_id = $set[1];
+					$metadata[$att_ascii_id]['attribute_name'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'attribute');
+					$v['text'] = $el->getAttribute('title');
+					$v['url'] = $el->getAttribute('href');
+					$v['coll'] = $coll;
+					$metadata[$att_ascii_id]['values'][] = $v;
+					//easy access to first value
+					if (1 == count($metadata[$att_ascii_id]['values'])) {
+						$metadata[$att_ascii_id]['text'] = $v['text'];
+						$metadata[$att_ascii_id]['url'] = $v['url'];
+						$metadata[$att_ascii_id]['coll'] = $v['coll'];
+					}
+				}
+			}
+		}
+		$this->_metadata_links = $metadata;
+		if ($att) {
+			if (isset($metadata[$att])) {
+				return $metadata[$att];
+			} else {
+				return false;
+			}
+		}
+		return $metadata;
+	}
+
+	function getMetadata($att = '',$include_private_metadata=false) 
 	{
 		if (count($this->_metadata)) {
-			if ($att_ascii_id) {
-				if (isset($this->_metadata[$att_ascii_id])) {
-					return $this->_metadata[$att_ascii_id];
+			if ($att) {
+				if (isset($this->_metadata[$att])) {
+					return $this->_metadata[$att];
 				} else {
 					return false;
 				}
@@ -274,9 +319,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 		}
 		$this->_metadata = $metadata;
-		if ($att_ascii_id) {
-			if (isset($metadata[$att_ascii_id])) {
-				return $metadata[$att_ascii_id];
+		if ($att) {
+			if (isset($metadata[$att])) {
+				return $metadata[$att];
 			} else {
 				return false;
 			}
@@ -294,6 +339,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	/** unlike getMetadata, here we do not break down
+	 * into text/edit/id
+	 ************************************************/
 	function getRawMetadata($att = '') 
 	{
 		$metadata = array();
@@ -308,6 +356,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				}
 		}
 		if ($att) {
+			//any easy way to get one value
 			if (isset($metadata[$att]) && count($metadata[$att])) {
 				return $metadata[$att][0];
 			} else {
@@ -453,6 +502,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
 					$val = $item->setValue($att,$v['text']);
+				}
+			}
+		}
+
+		foreach ($this->getMetadataLinks() as $att => $keyval) {
+			foreach ($keyval['values'] as $v) {
+				if (trim($v['text'])) {
+					//check that it's proper collection
+					if ($c->ascii_id = $v['coll']) {
+						$val = $item->setValueLink($att,$v['text'],$v['url']);
+					}
 				}
 			}
 		}

@@ -535,6 +535,38 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
+	function setValueLink($att_ascii_id,$value_text,$url)
+	{
+		//todo: this needs work -- no need to 'new' an att
+		//todo: set value revision history as well
+		$att = new Dase_DBO_Attribute($this->db);
+		$att->ascii_id = $att_ascii_id;
+		//allows for admin metadata, att_ascii for which
+		//always begins 'admin_'
+		//NOTE: we now create att if it does not exist
+		if (false === strpos($att_ascii_id,'admin_')) {
+			$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,$att_ascii_id);
+		} else {
+			$att = Dase_DBO_Attribute::findOrCreateAdmin($this->db,$att_ascii_id);
+		}
+		if ($att) {
+			$v = new Dase_DBO_Value($this->db);
+			$v->item_id = $this->id;
+			$v->attribute_id = $att->id;
+			$v->value_text = trim($value_text);
+			$v->url = $url;
+			$v->insert();
+			return $v;
+			//too expensive:
+			//$this->saveAtom();
+		} else {
+			//simply returns false if no such attribute
+			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
+			return false;
+		}
+	}
+
+	/** deletes non-admin values including those with urls (metadata-links) */
 	function deleteValues()
 	{
 		//should sanity check and archive values
@@ -801,14 +833,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		foreach ($this->getRawMetadata() as $row) {
 			if ($row['url']) { //create metadata LINK
-				$entry->addLink(
+				$metadata_link = $entry->addLink(
 					$row['url'],
-					'http://daseproject.org/relation/metadata/'.
+					'http://daseproject.org/relation/metadata-link/'.
 					$this->p_collection_ascii_id.'/'.$row['ascii_id'],
-					'application/atom+xml',
+					'',
 					'',
 					$row['value_text']
 				);
+				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
 			} else { //create metadata CATEGORY
 				if (0 == $row['collection_id']) {
 					$meta = $entry->addCategory(
