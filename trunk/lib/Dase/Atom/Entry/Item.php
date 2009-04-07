@@ -412,6 +412,18 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			}
 		}
 
+		foreach ($this->getMetadataLinks() as $att => $keyval) {
+			Dase_DBO_Attribute::findOrCreate($db,$c->ascii_id,$att);
+			foreach ($keyval['values'] as $v) {
+				if (trim($v['text'])) {
+					//check that it's proper collection
+					if ($c->ascii_id = $v['coll']) {
+						$val = $item->setValueLink($att,$v['text'],$v['url']);
+					}
+				}
+			}
+		}
+
 		//item_type
 		$item_type = $this->getItemType(); 
 		if ($item_type['term']) {
