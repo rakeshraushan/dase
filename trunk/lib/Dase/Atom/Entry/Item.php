@@ -4,6 +4,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	protected $_collection;
 	protected $_collectionAsciiId;
 	protected $_metadata;
+	protected $_metadata_links;
 
 	function __construct($dom = null,$root = null)
 	{
@@ -231,9 +232,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function getMetadataLinks($att='') 
 	{
 		if (count($this->_metadata_links)) {
-			if ($att_ascii_id) {
-				if (isset($this->_metadata_links[$att_ascii_id])) {
-					return $this->_metadata_links[$att_ascii_id];
+			if ($att) {
+				if (isset($this->_metadata_links[$att])) {
+					return $this->_metadata_links[$att];
 				} else {
 					return false;
 				}
@@ -552,7 +553,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			return $this->{$method}();
 		} elseif ($this->getMetadata($var)) {
 			return $this->getMetadata($var);
-		} else {
+        } elseif ($this->getMetadataLinks($var)){
+            return $this->getMetadataLinks($var);
+        } else {
 			return parent::__get($var);
 		}
 	}
