@@ -899,6 +899,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		/* edit-media link */
 
 		$entry->addLink($this->getEditMediaUrl($app_root),'edit-media');
+		$media_url = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/media';
+		$entry->addLink($media_url,'http://daseproject.org/relation/add-media');
 
 		/* media rss ext */
 
