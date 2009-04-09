@@ -53,6 +53,11 @@ class Dase_Handler_Media extends Dase_Handler
 		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
+	public function getMediaFilePng($r)
+	{
+		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
 	public function getMediaFileMp3($r)
 	{
 		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
@@ -72,6 +77,12 @@ class Dase_Handler_Media extends Dase_Handler
 	public function getMediaFileCss($r)
 	{
 		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
+	/** used to ADD a media file to an item */
+	public function putMediaFile($r)
+	{
+		//todo: not sure if this is needed -- add one size to an item
 	}
 
 	/** used for swap-out */

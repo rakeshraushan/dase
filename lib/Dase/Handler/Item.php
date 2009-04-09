@@ -467,6 +467,9 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 	}
 
+	/** like media->putMedia but this does NOT
+	 * delete existing media files
+	 */
 	public function postToMedia($r) 
 	{
 		$user = $r->getUser('service');
