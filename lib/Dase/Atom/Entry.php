@@ -107,8 +107,8 @@ class Dase_Atom_Entry extends Dase_Atom
 			$dom->loadXml($xml);
 		}
 		$root = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'*')->item(0);
-		if ('entry' != $root->nodeName) {
-			throw new Dase_Atom_Exception('wrong document type');
+		if ('entry' != $root->localName) {
+			throw new Dase_Atom_Exception('wrong document type '.$root->localName);
 		}
 		$entrytype = '';
 		foreach ($dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
