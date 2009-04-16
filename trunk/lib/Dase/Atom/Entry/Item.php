@@ -196,7 +196,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	}
 
 	function replaceMetadata($metadata_array) {
-		//metadata array is same strucutre as getRawMetadata 
+		//metadata array is expected to have same structure as getRawMetadata 
 		// $m[att_ascii_id] = array of values
 		$doomed = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
@@ -273,6 +273,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 		return $metadata;
 	}
+
+    function removeMetadataLinks(){
+        foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+            if (0 === strpos($el->getAttribute('rel'),'http://daseproject.org/relation/metadata-link')) {
+                    $doomed[] = $el;
+            }
+        }
+        foreach($doomed as $goner){
+            $this->root->removeChild($goner);
+        }
+    }
 
 	function getMetadata($att = '',$include_private_metadata=false) 
 	{
