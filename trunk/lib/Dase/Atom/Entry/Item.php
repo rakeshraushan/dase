@@ -285,6 +285,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
         }
     }
 
+	function removeMetadataLink($href){
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if (0 === strpos($el->getAttribute('rel'),'http://daseproject.org/relation/metadata-link')) {
+				if(0 === strpos($el->getAttribute('href'),$href)){
+					$doomed[] = $el;
+				}
+			}
+		}
+		foreach($doomed as $goner){
+			$this->root->removeChild($goner);
+		}
+	}
+
 	function getMetadata($att = '',$include_private_metadata=false) 
 	{
 		if (count($this->_metadata)) {
