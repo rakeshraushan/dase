@@ -186,7 +186,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url
+			a.is_on_list_display, a.is_public,v.url,v.parent_value_id
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -208,7 +208,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url
+			a.is_on_list_display, a.is_public,v.url,v.parent_value_id
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -505,37 +505,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function setValue($att_ascii_id,$value_text)
-	{
-		//todo: this needs work -- no need to 'new' an att
-		//todo: set value revision history as well
-		$att = new Dase_DBO_Attribute($this->db);
-		$att->ascii_id = $att_ascii_id;
-		//allows for admin metadata, att_ascii for which
-		//always begins 'admin_'
-		//NOTE: we now create att if it does not exist
-		if (false === strpos($att_ascii_id,'admin_')) {
-			$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,$att_ascii_id);
-		} else {
-			$att = Dase_DBO_Attribute::findOrCreateAdmin($this->db,$att_ascii_id);
-		}
-		if ($att) {
-			$v = new Dase_DBO_Value($this->db);
-			$v->item_id = $this->id;
-			$v->attribute_id = $att->id;
-			$v->value_text = trim($value_text);
-			$v->insert();
-			return $v;
-			//too expensive:
-			//$this->saveAtom();
-		} else {
-			//simply returns false if no such attribute
-			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
-			return false;
-		}
-	}
-
-	function setValueLink($att_ascii_id,$value_text,$url)
+	function setValue($att_ascii_id,$value_text,$url='',$parent_value_id=0)
 	{
 		//todo: this needs work -- no need to 'new' an att
 		//todo: set value revision history as well
@@ -555,6 +525,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->attribute_id = $att->id;
 			$v->value_text = trim($value_text);
 			$v->url = $url;
+			$v->parent_value_id = $parent_value_id;
 			$v->insert();
 			return $v;
 			//too expensive:
@@ -564,6 +535,16 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
 			return false;
 		}
+	}
+
+	function setValueLink($att_ascii_id,$value_text,$url)
+	{
+		return $this->setValue($att_ascii_id,$value_text,$url);
+	}
+
+	function setValueLinkModifier($att_ascii_id,$value_text,$parent_value_id)
+	{
+		return $this->setValue($att_ascii_id,$value_text,null,$parent_value_id);
 	}
 
 	/** deletes non-admin values including those with urls (metadata-links) */
@@ -831,6 +812,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* categories (or links!) for metadata */
 
+		$metadata_links = array(); //so we can set modifiers
+
+
+		//fix this!  we iterate twice (don't need to)
+
 		foreach ($this->getRawMetadata() as $row) {
 			if ($row['url']) { //create metadata LINK
 				$metadata_link = $entry->addLink(
@@ -842,28 +828,45 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$row['value_text']
 				);
 				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
+				$metadata_links[$row['id']] = $metadata_link;
+			} 
+		}
+		foreach ($this->getRawMetadata() as $row) {
+			if ($row['url']) { 
+				//already made metadata links
 			} else { //create metadata CATEGORY
 				if (0 == $row['collection_id']) {
 					$meta = $entry->addCategory(
 						$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
 						$row['attribute_name'],$row['value_text']);
 				} else {
-					if ($row['is_public']) {
-						$meta = $entry->addCategory(
-							$row['ascii_id'],'http://daseproject.org/category/metadata',
-							$row['attribute_name'],$row['value_text']);
-						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					//if ($row['parent_value_id'] && isset($metadata_links[$row['parent_value_id']])) { // it is a modifier
+					if ($row['parent_value_id'] ) { // it is a modifier
+						$modified_link = $metadata_links[$row['parent_value_id']];
+						$ns = Dase_Atom::$ns['atom'];
+						$cat = $modified_link->appendChild($entry->dom->createElementNS($ns,'category'));
+						$cat->appendChild($entry->dom->createTextNode($row['value_text']));
+						$cat->setAttribute('term',$row['ascii_id']);
+						$cat->setAttribute('scheme','http://daseproject.org/category/modifier');
+						$cat->setAttribute('label',$row['attribute_name']);
 					} else {
-						$meta = $entry->addCategory(
-							$row['ascii_id'],'http://daseproject.org/category/private_metadata',
-							$row['attribute_name'],$row['value_text']);
-						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
-					}
-					if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
-						$entry->setTitle($row['value_text']);
-					}
-					if ('rights' == $row['ascii_id']) {
-						$entry->setRights($row['value_text']);
+						if ($row['is_public']) {
+							$meta = $entry->addCategory(
+								$row['ascii_id'],'http://daseproject.org/category/metadata',
+								$row['attribute_name'],$row['value_text']);
+							$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+						} else {
+							$meta = $entry->addCategory(
+								$row['ascii_id'],'http://daseproject.org/category/private_metadata',
+								$row['attribute_name'],$row['value_text']);
+							$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+						}
+						if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
+							$entry->setTitle($row['value_text']);
+						}
+						if ('rights' == $row['ascii_id']) {
+							$entry->setRights($row['value_text']);
+						}
 					}
 				}
 			}

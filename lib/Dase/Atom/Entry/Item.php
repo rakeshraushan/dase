@@ -253,6 +253,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$v['text'] = $el->getAttribute('title');
 					$v['url'] = $el->getAttribute('href');
 					$v['coll'] = $coll;
+					$v['modifiers'] = array();
+					foreach ($el->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat_el) {
+						$modifier['att_ascii_id'] = $cat_el->getAttribute('term');
+						$modifier['attribute_name'] = $cat_el->getAttribute('label');
+						$modifier['value_text'] = $cat_el->nodeValue;
+						$v['modifiers'][] = $modifier;
+					}
 					$metadata[$att_ascii_id]['values'][] = $v;
 					//easy access to first value
 					if (1 == count($metadata[$att_ascii_id]['values'])) {
@@ -446,6 +453,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 						$val = $item->setValueLink($att,$v['text'],$v['url']);
 					}
 				}
+				foreach ($v['modifiers'] as $mod) {
+					$item->setValueLinkModifier($mod['att_ascii_id'],$mod['value_text'],$val->id);
+				}
 			}
 		}
 
@@ -550,6 +560,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					if ($c->ascii_id = $v['coll']) {
 						$val = $item->setValueLink($att,$v['text'],$v['url']);
 					}
+				}
+				foreach ($v['modifiers'] as $mod) {
+					$item->setValueLinkModifier($mod['att_ascii_id'],$mod['value_text'],$val->id);
 				}
 			}
 		}
