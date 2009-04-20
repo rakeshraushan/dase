@@ -61,6 +61,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$att->collection_id = $coll->id;
 		$att->ascii_id = $attribute_ascii_id;
 		if (!$att->findOne()) {
+			$attribute_ascii_id = array_pop(explode('#',$attribute_ascii_id)); //will use hashed value at end of URL
 			$att->attribute_name = ucwords(str_replace('_',' ',strtolower($attribute_ascii_id)));
 			$att->sort_order = 9999;
 			$att->in_basic_search = 1;
@@ -190,7 +191,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$v = new Dase_DBO_Value($this->db);
 			$v->attribute_id = $this->id;
 			foreach ($v->find() as $value) {
-				$values[] = $value->value_text;
+				if (trim($value->value_text)) {
+					$values[] = $value->value_text;
+				}
 			}
 			$values = array_values(array_unique($values));
 			asort($values);
