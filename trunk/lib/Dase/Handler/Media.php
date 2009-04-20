@@ -11,6 +11,8 @@ class Dase_Handler_Media extends Dase_Handler
 
 	protected function setup($r)
 	{
+		//I think we could define remote media collections here
+
 		//todo: finish
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');

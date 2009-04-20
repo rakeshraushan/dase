@@ -75,8 +75,8 @@ case 'no_edit':
 form.add('input',{'type':'text','name':'value','disabled':'disabled'});
 break;
 case 'text_with_menu':
-form.add('input',{'type':'text','name':'blank','id':'autofill_target'});
-var sel = form.add('p').add('select',{'name':'value','id':'select_autofill'});
+form.add('input',{'type':'text','name':'value','id':'autofill_target'});
+var sel = form.add('p').add('select',{'name':'blank','id':'select_autofill'});
 sel.add('option',{'value':''},'select one:');
 for (var i=0;i<vals.length;i++) {
 	var v = vals[i];
@@ -421,7 +421,6 @@ Dase.initItemTypeForm = function(form) {
 	}
 };
 
-
 //for adding textual content (atom:content) 
 Dase.initContentForm = function(form) {
 	form.onsubmit = function() {
@@ -444,8 +443,6 @@ Dase.initGetInputForm = function(form) {
 	coll = Dase.$('collectionAsciiId').innerHTML;
 	form.att_ascii_id.onchange = function() { //this is the attribute selector
 	Dase.$('addMetadataFormTarget').innerHTML = 'loading form...';
-	//var url = Dase.base_href+'attribute/'+coll+'/'+this.options[this.selectedIndex].value+'.json';
-	//what if the attribute had it's own complete url in the original json?
 	var url = this.options[this.selectedIndex].value+'.json';
 	Dase.getJSON(url,function(resp) {
 		resp.coll_ser = Dase.$('collSer').innerHTML;

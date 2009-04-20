@@ -302,10 +302,12 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$att_ascii = $r->get('ascii_id');
 		foreach ($r->get('value',true) as $val) {
-			$this->item->setValue($att_ascii,$val);
+			if ($val) {
+				$this->item->setValue($att_ascii,$val);
+			}
 		}
 		$this->item->buildSearchIndex();
-		$r->renderResponse('added metadata');
+		$r->renderResponse('added metadata (unless null)');
 	}
 
 	public function getMetadataValue($r)
