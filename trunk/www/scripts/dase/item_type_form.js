@@ -10,6 +10,7 @@ Dase.setTypeAtts = function(form) {
 			var att = atts[key];
 			var li = h.add('li');
 			var a = li.add('a');
+			att.att_ascii_id = encodeURIComponent(att.att_ascii_id);
 			a.set('href','manage/'+att.collection_ascii_id+'/attribute/'+att.att_ascii_id);
 			a.setText(att.attribute_name);
 			a = li.add('a');

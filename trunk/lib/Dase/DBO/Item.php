@@ -276,7 +276,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.id as att_id,a.ascii_id,
 			a.attribute_name,a.html_input_type,
-			v.value_text,v.id as value_id, a.collection_id
+			v.value_text,v.id as value_id, a.collection_id,v.url,v.parent_value_id
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -293,6 +293,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$set['attribute_name'] = $row['attribute_name'];
 			$set['html_input_type'] = $row['html_input_type'];
 			$set['value_text'] = $row['value_text'];
+			$set['metadata_link_url'] = $row['url'];
+			$set['parent_value_id'] = $row['parent_value_id'];
 			if (in_array($row['html_input_type'],
 				array('radio','checkbox','select','text_with_menu'))
 			) {
@@ -1030,6 +1032,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$comments_coll->addAccept('text/plain');
 		$comments_coll->addAccept('text/html');
 		$comments_coll->addAccept('application/xhtml+xml');
+		$metadata_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.atom',$c->collection_name.' Item '.$this->serial_number.' Metadata'); 
+		$metadata_coll->addAccept('application/x-www-form-urlencoded');
+		$metadata_coll->addAccept('application/json');
 		return $app->asXml();
 	}
 
