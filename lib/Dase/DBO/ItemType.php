@@ -94,8 +94,10 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		foreach($att_it->find() as $ait) {
 			$att = new Dase_DBO_Attribute($this->db);
 			$att->load($ait->attribute_id);
-			$attributes[] = $att;
+		//	for sorting
+			$attributes[strtolower($att->attribute_name)] = $att;
 		}
+		ksort($attributes);
 		$this->attributes = $attributes;
 		return $attributes;
 	}
@@ -123,8 +125,10 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 	{
 		$atts = array();
 		foreach ($this->getAttributes() as $att) {
-			$a['ascii_id'] = $att->ascii_id;
-			$a['attribute_name'] = $att->attribute_name;
+			$a = $att->asArray();
+			$a['att_ascii_id'] = $att->ascii_id;
+			$a['item_type_ascii'] = $this->ascii_id;
+			//$a['attribute_name'] = $att->attribute_name;
 			$a['href'] = $att->getUrl($collection_ascii_id,$app_root);
 			$atts[] = $a;
 		}

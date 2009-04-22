@@ -550,6 +550,7 @@ table#itemSet td div.cartAdd {
 	margin: 0 5px 0 0;
 }
 table#itemSet td div.cartAdd a {
+	font-size: .8em;
 	font-weight: normal;
 	padding: 1px 5px;
 }
