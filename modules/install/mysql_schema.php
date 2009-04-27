@@ -248,6 +248,7 @@ CREATE TABLE `{$table_prefix}value` (
 `item_id` integer default NULL,
 `value_text` text default NULL,
 `url` varchar(2000) default NULL,
+`parent_value_id` integer default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

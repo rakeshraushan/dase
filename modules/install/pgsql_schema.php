@@ -228,7 +228,8 @@ CREATE TABLE {$table_prefix}value (
     item_id integer,
     attribute_id integer,
     value_text text,
-    url character varying(2000)
+    url character varying(2000),
+    parent_value_id integer
 );
 
 CREATE TABLE {$table_prefix}value_revision_history (
