@@ -41,13 +41,13 @@ class Dase_ModuleHandler_Webspace extends Dase_Handler_Manage {
 				}
 			}
 		}
-		$tpl = new Dase_Template($r);
+		$tpl = new Dase_Template($r,true);
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('files',$files);
 		$tpl->assign('invalid_files',$invalid_files);
 		$tpl->assign('paths',$paths);
 		$tpl->assign('webspace_path',$ws_path);
 		$r->set('tab','module');
-		$r->renderResponse($tpl->fetch(DASE_PATH.'/modules/webspace/templates/index.tpl'));
+		$r->renderResponse($tpl->fetch('index.tpl'));
 	}
 }

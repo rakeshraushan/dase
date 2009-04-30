@@ -1,4 +1,4 @@
-{extends file="manage/layout.tpl"}
+{extends file="../../../templates/manage/layout.tpl"}
 
 {block name="head"}
 <link rel="stylesheet" type="text/css" href="{$module_root}css/style.css">
