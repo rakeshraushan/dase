@@ -32,7 +32,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$ascii_id;
 		if (file_exists($media_dir)) {
 			//todo: think about this...
-			$r->renderError(409,'collection media archive exists');
+			//$r->renderError(409,'collection media archive exists');
 		}
 		$c->is_public = 0;
 		$c->created = date(DATE_ATOM);

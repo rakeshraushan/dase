@@ -1,6 +1,8 @@
 Dase.pageInit = function() {
 	//javascript will change the 'name' attribute from
 	//sort_item to set_sort_item
+	//the handler for the post will only concern itself 
+	//with variables named set_sort_item
 	form = Dase.$('sortForm');
 	if (!form) return;
 	inputs = document.getElementsByTagName('input');
@@ -10,7 +12,7 @@ Dase.pageInit = function() {
 			_value = this.value;
 			if (_class != _value) {
 				Dase.$('row'+_class).className = 'shade';
-				this.name = 'set_'+this.name;
+				this.name = 'set_'+this.name.replace('set_','');
 			} else {
 				Dase.$('row'+_class).className = '';
 			}
@@ -20,7 +22,8 @@ Dase.pageInit = function() {
 	for (var i=0;i<toppers.length;i++) {
 		if ('topper' == toppers[i].className) { 
 			toppers[i].onclick = function() {
-				var inp = document.getElementsByName(this.id)[0];
+				var inp = document.getElementById('input_'+this.id);
+				if (!inp) return;
 				inp.value = 1;
 				inp.name = 'set_'+inp.name;
 				form.submit();

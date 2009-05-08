@@ -12,6 +12,15 @@ class Dase_DBO_ItemAsAtom extends Dase_DBO_Autogen_ItemAsAtom
 		return $atom->findOne();
 	}
 
+	public static function expire($db,$item_id) 
+	{
+		$atom = new Dase_DBO_ItemAsAtom($db);
+		$atom->item_id = $item_id;
+		if ($atom->findOne()) {
+			$atom->delete();
+		}
+	}
+
 	public function getConvertedXml($app_root)
 	{
 		return str_replace('{APP_ROOT}',$app_root,$this->xml);

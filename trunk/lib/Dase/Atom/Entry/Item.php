@@ -74,6 +74,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	/** only applies to tag_item */ 
+	public function getTagItemId() {
+		return $this->getCategoryTerm('http://daseproject.org/category/tag_item_id');
+	}
+
 	public function getLabel($att) 
 	{
 		//look in three places
@@ -483,7 +488,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($fetch_enclosure) {
 			$enc = $this->getEnclosure(); 
 			if ($enc) {
-				$upload_dir = $r->retrieve('config')->get('path_to_media').'/'.$c->ascii_id.'/uploaded_files';
+				$upload_dir = $r->retrieve('config')->getMediaDir().'/'.$c->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
 					$r->renderError(401,'missing upload directory');
 				}
@@ -493,7 +498,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 				try {
 					$file = Dase_File::newFile($db,$new_file,$enc['mime_type']);
-					$media_file = $file->addToCollection($item,false,$r->retrieve('config')->get('path_to_media'));
+					$media_file = $file->addToCollection($item,false,$r->retrieve('config')->getMediaDir());
 				} catch(Exception $e) {
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}

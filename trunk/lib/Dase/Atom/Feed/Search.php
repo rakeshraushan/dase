@@ -60,9 +60,20 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 			if ('http://daseproject.org/relation/collection' == $el->getAttribute('rel')) {
 				$res['href'] = $el->getAttribute('href');
 				$res['title'] = $el->getAttribute('title');
+				$res['ascii_id'] = array_pop(explode('/',$res['href']));
 				return $res;
 			}
 		}
+	}
+
+	function getCollectionFilters()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/collection_filter' == $el->getAttribute('scheme')) {
+				$colls[] = $el->getAttribute('term');
+			}
+		}
+		return $colls;
 	}
 
 	/** for single collection searches only */

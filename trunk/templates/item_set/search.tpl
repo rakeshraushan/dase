@@ -37,13 +37,16 @@
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="40" value="{$items->query}"/>
-				<!--
-				<input type="hidden" name="original_search" value="{$items->searchLink|replace:'search?':''}"/>
-				-->
+				<input id="queryInput" type="text" name="q" size="60" value="{$items->query}"/>
 				<input type="submit" value="Search" class="button"/>
+				{if $items->collection}
+				<input type="hidden" name="collection_ascii_id" value="{$items->collection.ascii_id}"/>
+				{else}
+				{foreach item=c from=$items->collectionFilters}
+				<input type="hidden" name="c" value="{$c}"/>
+				{/foreach}
+				{/if}
 			</div>
-			<div id="refinements"></div>
 		</form>
 		{if $items->count > $items->max}
 		<h4 class="pagerControl">

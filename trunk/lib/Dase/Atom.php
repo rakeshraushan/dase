@@ -110,6 +110,16 @@ class Dase_Atom
 		return $categories;
 	}
 
+	/** return just the first 'hit' */
+	function getCategoryTerm($scheme) 
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {
+			if ($scheme == $cat->getAttribute('scheme')) {
+				return $cat->getAttribute('term');
+			}
+		}
+	}
+
 	function getCategoriesByScheme($scheme) 
 	{
 		$categories = array();

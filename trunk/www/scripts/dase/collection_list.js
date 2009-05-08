@@ -16,6 +16,7 @@ Dase.pageInit = function() {
 		var pref_set = prefs.join('|');
 		url = Dase.$('settings-link').href+'/preferred';
 		//post preferred collections to dase
+		//before submitting form
 		Dase.ajax(url,'post',function(resp) {
 		//	alert(resp);
 		search_form.submit();
