@@ -40,6 +40,11 @@ class Dase_Handler_Media extends Dase_Handler
 		 */
 	}
 
+	public function getMediaFileTxt($r)
+	{
+		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+	}
+
 	public function getMediaFileJpg($r)
 	{
 		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);

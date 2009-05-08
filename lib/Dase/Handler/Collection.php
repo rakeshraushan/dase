@@ -80,10 +80,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		foreach ($this->collection->getItemTypes() as $it) {
 			$output .= $it->getUrl($this->collection->ascii_id,$r->app_root).".atom\n";
 		}	
-		$output .= "#item_type_relations\n";
-		foreach ($this->collection->getItemTypeRelations() as $itr) {
-			$output .= $itr->getUrl($r->app_root).".atom\n";
-		}	
 		$output .= "#items\n";
 		foreach ($this->collection->getItems() as $item) {
 			$output .= $item->getUrl($r->app_root).".atom\n";

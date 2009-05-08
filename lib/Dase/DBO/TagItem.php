@@ -16,6 +16,12 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		}
 	}
 
+	public function update() 
+	{
+		Dase_DBO_ItemAsAtom::expire($this->db,$this->item_id);
+		parent::update();
+	}
+
 	function getTag()
 	{
 		$tag = new Dase_DBO_Tag($this->db);

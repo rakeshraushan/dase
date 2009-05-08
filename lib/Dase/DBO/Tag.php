@@ -225,30 +225,36 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	/** this is for the slideshow sorter */
 	function sort($sort_array)
 	{
-		if (!count($sort_array)) {
-			return;
-		}
-		//reconstitute set w/ original order
-		$orig_set = array();
-		foreach ($this->getTagItems() as $ti) {
-			$orig_set[] = clone $ti;
-		}
+		if (!count($sort_array)) { return; }
 
-		foreach ($sort_array as $old_position => $new_position) {
-			$tag_item = $orig_set[$old_position-1];
+		$_moved = array(); 
+		$_place_taken = array();
+		foreach ($sort_array as $tag_item_id => $new_position) {
+			$tag_item = new Dase_DBO_TagItem($this->db);
+			$tag_item->load($tag_item_id);
 			$tag_item->sort_order = $new_position;
 			$tag_item->update();
-			unset($orig_set[$old_position-1]); //remove from array
+			$_moved[] = $tag_item->id;
+			$_place_taken[] = $new_position;
 		}
 		$sort_order = 0;
-		foreach ($orig_set as $ti) {
+		foreach ($this->getTagItems() as $ti) {
+			$ti = clone($ti);
 			$sort_order++;
-			//skip sort_orders that were used in a change
-			while (in_array($sort_order,$sort_array)) {
-				$sort_order++;
+			if (!in_array($ti->id,$_moved)) {
+				$sort_order = $this->getNextAvailable($sort_order,$_place_taken);
+				$ti->sort_order = $sort_order;
+				$ti->update();
 			}
-			$ti->sort_order = $sort_order;
-			$ti->update();
+		}
+	}
+
+	// a bit o' recursion
+	function getNextAvailable($sort_order,$_place_taken) {
+		if (in_array($sort_order,$_place_taken)) {
+			return $this->getNextAvailable($sort_order+1,$_place_taken);
+		} else {
+			return $sort_order;
 		}
 	}
 
@@ -389,10 +395,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		foreach($this->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
 			if ($item) {
+		//		$entry = $feed->addItemEntry($item,$app_root);
+
 				$entry = $feed->addEntry();
 				$item->injectAtomEntryData($entry,$app_root);
+
 				$setnum++;
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
+				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
 				$entry->addLink($app_root.'/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
 				if ($tag_item->annotation) {
 					$entry->setSummary($tag_item->annotation);

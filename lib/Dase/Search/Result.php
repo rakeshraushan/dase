@@ -98,9 +98,11 @@ class Dase_Search_Result
 				}
 			}
 		}
+		/* a test: leave collection completely out
 		if (count($this->search_array['colls']) == 1) {
 			$q .= ' c:'.$this->search_array['colls'][0];
 		}
+		 */
 		return trim($q);
 	}
 
@@ -138,6 +140,9 @@ class Dase_Search_Result
 		$feed->setOpensearchStartIndex($start);
 		$feed->setOpensearchItemsPerPage($max);
 		$feed->setOpensearchQuery($this->_getQueryAsString());
+		foreach ($this->search_array['colls'] as $c) {
+			$feed->addCategory($c,'http://daseproject.org/category/collection_filter');
+		}
 		//switch to the simple xml interface here
 		$div = simplexml_import_dom($feed->setSubtitle());
 		$ul = $div->addChild('ul');

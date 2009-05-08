@@ -48,6 +48,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
 		}
+		if (!$r->get('nocache')) {
+			$r->checkCache();
+		}
 		if ('entry' == $r->get('type')) {
 			$r->renderResponse($this->tag->asAtomEntry($r->app_root));
 		} else {
@@ -107,12 +110,16 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
+		$r->checkCache();
 		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
 		$t->assign('json_url',$json_url);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
+		if ($r->get('nocache')) {
+			$feed_url .= '?nocache=1';
+		}
 		$t->assign('feed_url',$feed_url);
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		if ($u->can('admin',$this->tag) && 'hide' != $u->cb) {
@@ -136,7 +143,8 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
-		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
+		//always get fresh (no cache)
+		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom?nocache=1';
 		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
@@ -149,11 +157,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$sort_array = $r->get('set_sort_item',true);
 		$this->tag->sort($sort_array);
-		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
-		$t = new Dase_Template($r);
-		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
-		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
-		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
+		$r->renderRedirect('tag/'.$u->eid.'/'.$this->tag->ascii_id.'/sorter');
 	}
 
 	public function getTagItemAtom($r)

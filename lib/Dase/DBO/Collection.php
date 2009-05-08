@@ -78,21 +78,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($item_types->find() as $type) {
 			$type->expunge();
 		}
-		$coll_cats = new Dase_DBO_CollectionCategory($this->db);
-		$coll_cats->collection_id = $this->id;
-		foreach ($coll_cats->find() as $cc) {
-			$cc->delete();
-		}
+
 		$atts = new Dase_DBO_Attribute($this->db);
 		$atts->collection_id = $this->id;
 		foreach ($atts->find() as $a) {
 			$a->delete();
 		}	
-		$itrs = new Dase_DBO_ItemTypeRelation($this->db);
-		$itrs->collection_ascii_id = $this->ascii_id;
-		foreach ($itrs->find() as $itr) {
-			$itr->delete();
-		}
+
 		$cms = new Dase_DBO_CollectionManager($this->db);
 		$cms->collection_ascii_id = $this->ascii_id;
 		foreach ($cms->find() as $cm) {
@@ -431,17 +423,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$types->orderBy('name');
 		foreach ($types->find() as $t) {
 			$res[] = clone $t;
-		}
-		return $res;
-	}
-
-	function getItemTypeRelations()
-	{
-		$res = array();
-		$rels = new Dase_DBO_ItemTypeRelation($this->db);
-		$rels->collection_ascii_id = $this->ascii_id;
-		foreach ($rels->find() as $r) {
-			$res[] = clone $r;
 		}
 		return $res;
 	}

@@ -801,8 +801,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);
+		if ($this->collection) {
+			$collection_name = $this->collection->collection_name;
+		} else {
+			$collection_name = '';
+		}
 		$entry->addCategory($this->p_collection_ascii_id,
-			'http://daseproject.org/category/collection');
+			'http://daseproject.org/category/collection',$collection_name);
 		$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
 		$entry->addCategory($this->serial_number,'http://daseproject.org/category/serial_number');
 
@@ -816,10 +821,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		$metadata_links = array(); //so we can set modifiers
 
-
-		//fix this!  we iterate twice (don't need to)
-
-		foreach ($this->getRawMetadata() as $row) {
+		$item_metadata = $this->getRawMetadata();
+		foreach ($item_metadata as $row) {
 			if ($row['url']) { //create metadata LINK
 				$metadata_link = $entry->addLink(
 					$row['url'],
@@ -833,7 +836,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$metadata_links[$row['id']] = $metadata_link;
 			} 
 		}
-		foreach ($this->getRawMetadata() as $row) {
+		foreach ($item_metadata as $row) {
 			if ($row['url']) { 
 				//already made metadata links
 			} else { //create metadata CATEGORY
@@ -879,6 +882,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* content */
 
+		$thumb_url = $this->getMediaUrl('thumbnail');
+		$viewitem_url = $this->getMediaUrl('viewitem');
 		$content = $this->getContents();
 		if ($content && $content->text) {
 			if ('application/json' == $content->type) {
@@ -886,12 +891,26 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				$entry->setContent($content->text,$content->type);
 			}
-		} 
-
-		/* put thumbnail in summary */
-		$thumb_url = $this->getMediaUrl('thumbnail');
-		if ($thumb_url) {
-			$entry->setThumbnail($app_root.$thumb_url);	
+			/* put thumbnail in summary */
+			if ($thumb_url) {
+				$entry->setThumbnail($app_root.$thumb_url);	
+			}
+		} else {
+			$list = '';
+			foreach ($item_metadata as $row) {
+				$list .= "
+					<dt>{$row['attribute_name']}</dt>
+					<dd>{$row['value_text']}</dd>
+					";
+			}
+			$splash = "
+				<div id=\"splash\">
+				<img src=\"{$app_root}$thumb_url\"/>
+				<img src=\"{$app_root}$viewitem_url\"/>
+				<dl>$list</dl>
+				</div>
+				";
+			$entry->setContent($splash,'html');
 		}
 
 		/* enclosure */
