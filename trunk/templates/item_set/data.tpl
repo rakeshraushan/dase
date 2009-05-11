@@ -5,48 +5,50 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
 		<style type="text/css">
 			{literal}
-			table#data {
-				font-size: .9em;
+			div#container {
+				margin: 20px auto;
+				width: 95%;
+			}
+			table#data dt {
+				font-weight: bold;
+				color: #009;
 			}
 			table#data th {
-				border: 1px solid #666;
+				border: 1px solid #999;
 				background-color: #eee;
 			}
 			table#data td {
+				padding: 12px;
 				border: 1px solid #999;
 			}
 			{/literal}
 		</style>
 	</head>
 	<body>
-		{if $is_single_collection}
-		<table id="data">
-			{foreach item=it from=$items->entries}
-			{if !$seen}
-			<tr>
-				<th>Thumbnail</th>
-				{foreach item=set key=ascii_id from=$it->metadata}
-				<th>{$set.attribute_name}</th>
+		<div id="container">
+			<h1>{$items->title}</h1>
+			<table id="data">
+				{foreach item=it from=$items->entries}
+				<tr>
+					<th>
+						<img src="data:image/png;base64,{$it->viewitemBase64}"/>
+						<h3>{$it->collection}</h3>
+					</th>
+					<td>
+						<dl>
+							{foreach item=set key=ascii_id from=$it->metadata}
+							<dt>{$set.attribute_name}</dt>
+							{foreach item=value from=$set.values}
+							<dd>
+							{$value.text}
+							</dd>
+							{/foreach}
+							{/foreach}
+						</dl>
+					</td>
+				</tr>
 				{/foreach}
-			</tr>
-			{/if}
-			{assign var="seen" value="1"}
-			<tr>
-				<td>
-					<img src="data:image/png;base64,{$it->thumbnailBase64}"/>
-				</td>
-				{foreach item=set key=ascii_id from=$it->metadata}
-				<td>
-					{foreach item=value from=$set.values}
-					{$value}
-					{/foreach}
-				</td>
-				{/foreach}
-			</tr>
-			{/foreach}
-		</table>
-		{else}
-		<h1 class="alert">Sorry, only single-collection sets (all items are from the same DASe collection) can be viewed in "data" mode</h1>
-		{/if}
+			</table>
+		</div>
 	</body>
 </html>

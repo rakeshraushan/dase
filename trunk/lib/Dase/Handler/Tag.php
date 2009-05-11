@@ -93,14 +93,14 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
+		$r->checkCache();
 		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
-		if ($this->tag->isSingleCollection()) {
-			$t->assign('is_single_collection',1);
-			$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
-			$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
-		}
-		//$r->response_mime_type = "application/octet-stream";
+		//cannot use eid/ascii since it'll sometimes be another user's tag
+		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
+		$t->assign('json_url',$json_url);
+		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
+		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
 		$r->renderResponse($t->fetch('item_set/data.tpl'));
 	}
 
@@ -129,9 +129,6 @@ class Dase_Handler_Tag extends Dase_Handler
 			$t->assign('is_admin',1);
 		}
 		$t->assign('display',$display);
-		if ($this->tag->isSingleCollection()) {
-			$t->assign('is_single_collection',1);
-		}
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}
 

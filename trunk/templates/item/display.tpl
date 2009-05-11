@@ -149,7 +149,7 @@
 				</div>
 				{/if}
 
-				{if $item->content}
+				{if 'text' == $item->entry->contentType && $item->entry->content}
 				<div id="itemContent">
 					{$item->entry->content|markdown}
 				</div>
