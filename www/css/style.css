@@ -620,16 +620,19 @@ tr.item td.metadata dl {
 }
 tr.item td.metadata dt {
 	color:#339;
-	float: left;
 	font-weight:bold;
-	line-height: 1.6em;
-	margin-right: 8px;
+	line-height: 1.2em;
+	margin-right: 6px;
+	margin-top: 2px;
 }
 tr.item td.metadata dd {
 	color:#339;
-	font-weight:bold;
-	line-height: 1.6em;
-	margin-left: 120px;
+	line-height: 1.2em;
+	margin-left: 20px;
+}
+
+tr.item td.metadata dd a {
+	font-weight: normal;
 }
 
 a.zoomer, a.unzoomer {

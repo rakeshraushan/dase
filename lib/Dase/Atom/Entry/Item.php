@@ -74,6 +74,17 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function getViewitemBase64()
+	{
+		$x = new DomXPath($this->dom);
+		$x->registerNamespace('media',Dase_Atom::$ns['media']);
+		$x->registerNamespace('atom',Dase_Atom::$ns['atom']);
+		$elem =  $x->query("media:content/media:category[. = 'viewitem']",$this->root)->item(0)->parentNode;
+		if ($elem) {
+			return base64_encode(file_get_contents($elem->getAttribute('url')));
+		}
+	}
+
 	/** only applies to tag_item */ 
 	public function getTagItemId() {
 		return $this->getCategoryTerm('http://daseproject.org/category/tag_item_id');
@@ -587,6 +598,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	{
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);
+		//strips initial underscore
 		$method = 'get'.ucfirst(substr($var,1));
 		//for arrow get must be prefixed w/ underscore
 		//if it is an atom element, since arrow gets

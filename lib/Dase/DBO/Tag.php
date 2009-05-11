@@ -490,23 +490,4 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 		return  false;
 	}
-
-	public function isSingleCollection()
-	{
-		$prefix = $this->db->table_prefix;
-		$dbh = $this->db->getDbh();
-		$sql = "
-			SELECT p_collection_ascii_id 
-			FROM {$prefix}tag_item 
-			where tag_id = ?
-			GROUP BY p_collection_ascii_id
-			";
-		$st = $dbh->prepare($sql);
-		$st->execute(array($this->id));
-		$colls = $st->fetchAll();
-		if (1 === count($colls) && $colls[0]['p_collection_ascii_id']) {
-			return true;
-		}
-		return  false;
-	}
 }

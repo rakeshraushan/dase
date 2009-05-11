@@ -30,12 +30,10 @@
 		</div>
 		<dl id="metadata" class="{$it->collectionAsciiId}">
 			{foreach item=set key=ascii_id from=$it->metadata}
-			{if 'yes' eq $set.display}
 			<dt>{$set.attribute_name}</dt>
 			{foreach item=value from=$set.values}
-			<dd><a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value|escape:'url'}">{$value}</a></dd>
+			<dd><a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a></dd>
 			{/foreach}
-			{/if}
 			{/foreach}
 		</dl>
 	</td>

@@ -26,9 +26,7 @@
 			<a href="{$items->gridLink}">grid</a> | 
 			<a href="{$items->listLink}">list</a> | 
 			<a href="#" id="startSlideshow">slideshow</a> 
-			{if $is_single_collection}
 			| <a href="{$items->dataLink}">data</a>
-			{/if}
 		   	]<span></h2>
 			<h3>{$items->subtitle}</h3>
 			{if $items->count}
