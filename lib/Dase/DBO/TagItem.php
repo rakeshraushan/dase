@@ -98,6 +98,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$position.' of '.count($tag_item_id_array));
 		$entry = $item->injectAtomEntryData($feed->addEntry(),$app_root);
+		//very strange to use summary for annotation (?)
 		$entry->setSummary($this->annotation);
 		return $feed->asXml();
 	}
