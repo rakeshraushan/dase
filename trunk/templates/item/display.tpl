@@ -54,7 +54,7 @@
 				<img src="{$item->entry->viewitemLink}"/>
 				<table>
 					{foreach item=m from=$item->media}
-					{if $m.label != 'thumbnail' && $m.label != 'viewitem'}
+					{if $m.label != 'thumbnail' && $m.label != 'viewitem' && $m.label != 'tiff'}
 					<tr>
 						<td><a href="{$m.href}"><img src="www/images/media-icons/{$m.label}.png" alt="image icon"/></a></td>
 						<td><a href="{$m.href}">{$m.label}</a></td>

@@ -27,9 +27,6 @@
 				<a href="{$items->gridLink}">grid</a> | 
 				<a href="{$items->listLink}">list</a> | 
 				<a href="#" id="startSlideshow">slideshow</a> 
-				{if $items->collection}
-				| <a href="{$items->dataLink}">data</a> 
-				{/if}
 				]<span></h3>
 		{else}
 		<h3 class="searchEcho">Search Results: 0 items found</h3>
