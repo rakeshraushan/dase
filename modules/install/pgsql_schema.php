@@ -165,6 +165,13 @@ CREATE TABLE {$table_prefix}tag_item (
     updated character varying(50)
 );
 
+CREATE TABLE {$table_prefix}recent_view (
+    id serial NOT NULL,
+    url character varying(4000),
+    title character varying(200),
+    dase_user_eid character varying(100),
+    "timestamp" character varying(50)
+);
 
 CREATE TABLE {$table_prefix}search_cache (
     id serial NOT NULL,
@@ -339,6 +346,12 @@ CREATE SEQUENCE {$table_prefix}tag_item_seq
     NO MINVALUE
     CACHE 1;
 
+CREATE SEQUENCE {$table_prefix}recent_view_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
 CREATE SEQUENCE {$table_prefix}search_cache_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -441,6 +454,10 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}media_file_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}tag_item 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_seq'::text);
+";
+$query .= "
+ALTER TABLE {$table_prefix}recent_view 
+ALTER id SET DEFAULT nextval('public.{$table_prefix}recent_view_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}search_cache 

@@ -86,6 +86,14 @@
 		<hex level="4">dfcbbc</hex>
 		<hex level="5">f2eae3</hex>
 	</hue>
+	<hue id="redrust" section="recent">
+		<hex level="1">a8721e</hex>
+		<hex level="2">d9c8ad</hex>
+		<hex level="3">e6d4b8</hex>
+		<hex level="4">f2dfc1</hex>
+		<hex level="5">ffebcc</hex>
+		<hex level="6">fff0d9</hex>
+	</hue>
 	<hue id="redrust" section="browse">
 		<hex level="1">a8721e</hex>
 		<hex level="2">d9c8ad</hex>

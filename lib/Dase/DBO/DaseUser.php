@@ -188,6 +188,22 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user_colls;
 	}
 
+	public function getRecentViews() {
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->dase_user_eid = $this->eid;
+		$recent->orderBy('timestamp DESC');
+		$recent->setLimit(10);
+		$recent_views = array();
+		foreach ($recent->find() as $rec) {
+			$set = array();
+			$rec = clone($rec);
+			$set['title'] = $rec->title;
+			$set['url'] = $rec->url;
+			$recent_views[] = $set;
+		}
+		return $recent_views;
+	}
+
 	public function getData($auth_config)
 	{
 		if (!isset($auth_config['token']) || !isset($auth_config['ppd_token'])) {
@@ -203,6 +219,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword($auth_config['token']);
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
+		$user_data[$this->eid]['recent_views'] = $this->getRecentViews();
 		$user_data[$this->eid]['ppd'] = md5($this->eid.$auth_config['ppd_token']);
 		if ($this->isSuperuser($auth_config['superuser'])) {
 			$user_data[$this->eid]['is_superuser'] = 1;

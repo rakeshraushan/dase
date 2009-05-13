@@ -1,5 +1,9 @@
 {extends file="layout.tpl"}
 
+{block name="head-meta"}
+<meta name="item-title" content="{$item->entry->_title}">
+{/block}
+
 {block name="head-links"}
 {if $item->entry->editLink}
 <!-- atompub -->

@@ -3,6 +3,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		{block name="head-meta"}{/block}
 		<title>{block name="title"}DASe: Digital Archive Services{/block}</title>
 		<style type="text/css">
 			{block name="style"}{/block}
@@ -88,6 +89,10 @@
 				</li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
 				</li>
+				<li id="recent-menu"><a href="" class="main">Recently Viewed</a>
+				<ul class="hide" id="recent-submenu">
+				</ul>
+				</li>
 				<li id="manage-menu" class="hide"><a href="settings" id="manage-menu-link" class="main"></a>
 				</li>
 				{if $module_menu}
@@ -100,6 +105,7 @@
 				<li><a href="" class="main">My Cart</a></li>
 				<li><a href="" class="main">My Sets</a></li>
 				<li><a href="" class="main">My Preferences</a></li>
+				<li><a href="" class="main">Recently Viewed</a></li>
 			</ul>
 
 			<h5 id="ajaxMsg" class="hide">loading...</h5>
