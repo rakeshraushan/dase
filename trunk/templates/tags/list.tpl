@@ -5,7 +5,7 @@
 {/block}
 
 {block name="content"}
-<div class="list" id="browse">
+<div class="list" id="setlist">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<ul>
 		{foreach item=set from=$sets->entries}
