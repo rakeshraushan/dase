@@ -76,6 +76,11 @@ html #maincontent {
 
 #settings {
 	background-color:#ceead8;
+	background-color:#f2dfc1;
+}
+
+#setlist {
+	background-color:#ceead8;
 }
 
 #resources {
@@ -806,10 +811,17 @@ a#slideshowExit {
  * #90A497
  * #F7FFFA
  * #F0FFF5
+		<hex level="1">a8721e</hex>
+		<hex level="2">d9c8ad</hex>
+		<hex level="3">e6d4b8</hex>
+		<hex level="4">f2dfc1</hex>
+		<hex level="5">ffebcc</hex>
+		<hex level="6">fff0d9</hex>
  */
 
 #settings h3 {
 	background-color: #90a497;
+	background-color: #d9c8ad;
 	color: #000;
 	padding: 5px 10px;
 	margin-bottom: 0;
@@ -818,6 +830,7 @@ a#slideshowExit {
 
 #settings div {
 	background-color: #f0fff5;
+	background-color: #fff0d9;
 	padding: 20px 10px;
 	margin: 0 0 20px 0;
 	width: 80%;
@@ -828,6 +841,38 @@ a#slideshowExit {
 }
 
 #settings p.current {
+	color: #888;
+}
+
+/*********** SETLIST PAGE *********************/
+
+/*
+ * #CEEAD7
+ * #90A497
+ * #F7FFFA
+ * #F0FFF5
+ */
+
+#setlist h3 {
+	background-color: #90a497;
+	color: #000;
+	padding: 5px 10px;
+	margin-bottom: 0;
+	width: 80%;
+}
+
+#setlist div {
+	background-color: #f0fff5;
+	padding: 20px 10px;
+	margin: 0 0 20px 0;
+	width: 80%;
+}
+
+#setlist ul {
+	margin: 20px 0;
+}
+
+#setlist p.current {
 	color: #888;
 }
 

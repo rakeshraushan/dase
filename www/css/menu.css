@@ -37,6 +37,13 @@ border-top: 1px solid #fff;
 #menu ul#admin-submenu a:hover { background-color: #eef1f8; }
 
   
+#menu li#recent-menu a.main { border: 1px solid #6480ae; border-left: 18px solid #6480ae; background-color: #ffffff; }
+#menu li#recent-menu a:hover , a:active { background-color: #d5deed; }
+#menu ul#recent-submenu { background-color: #d5deed; }
+#menu ul#recent-submenu a { background-color: #d5deed; }
+#menu ul#recent-submenu a:hover { background-color: #eef1f8; }
+
+  
 #menu li#resources-menu a.main { border: 1px solid #6480ae; border-left: 18px solid #6480ae; background-color: #ffffff; }
 #menu li#resources-menu a:hover , a:active { background-color: #d5deed; }
 #menu ul#resources-submenu { background-color: #d5deed; }
@@ -58,11 +65,11 @@ border-top: 1px solid #fff;
 #menu ul#slideshow-submenu a:hover { background-color: #eef1f8; }
 
   
-#menu li#settings-menu a.main { border: 1px solid #283b1c; border-left: 18px solid #283b1c; background-color: #ffffff; }
-#menu li#settings-menu a:hover , a:active { background-color: #ceead8; }
-#menu ul#settings-submenu { background-color: #ceead8; }
-#menu ul#settings-submenu a { background-color: #ceead8; }
-#menu ul#settings-submenu a:hover { background-color: #ebf6ef; }
+#menu li#shared-menu a.main { border: 1px solid #283b1c; border-left: 18px solid #283b1c; background-color: #ffffff; }
+#menu li#shared-menu a:hover , a:active { background-color: #ceead8; }
+#menu ul#shared-submenu { background-color: #ceead8; }
+#menu ul#shared-submenu a { background-color: #ceead8; }
+#menu ul#shared-submenu a:hover { background-color: #ebf6ef; }
 
   
 #menu li#set-menu a.main { border: 1px solid #263b5e; border-left: 18px solid #263b5e; background-color: #ffffff; }
@@ -107,11 +114,11 @@ border-top: 1px solid #fff;
 #menu ul#home-submenu a:hover { background-color: #f2eae3; }
 
   
-#menu li#recent-menu a.main { border: 1px solid #a8721e; border-left: 18px solid #a8721e; background-color: #ffffff; }
-#menu li#recent-menu a:hover , a:active { background-color: #f2dfc1; }
-#menu ul#recent-submenu { background-color: #f2dfc1; }
-#menu ul#recent-submenu a { background-color: #f2dfc1; }
-#menu ul#recent-submenu a:hover { background-color: #ffebcc; }
+#menu li#settings-menu a.main { border: 1px solid #a8721e; border-left: 18px solid #a8721e; background-color: #ffffff; }
+#menu li#settings-menu a:hover , a:active { background-color: #f2dfc1; }
+#menu ul#settings-submenu { background-color: #f2dfc1; }
+#menu ul#settings-submenu a { background-color: #f2dfc1; }
+#menu ul#settings-submenu a:hover { background-color: #ffebcc; }
 
   
 #menu li#browse-menu a.main { border: 1px solid #a8721e; border-left: 18px solid #a8721e; background-color: #ffffff; }
@@ -140,12 +147,5 @@ border-top: 1px solid #fff;
 #menu ul#tools-submenu { background-color: #d5deed; }
 #menu ul#tools-submenu a { background-color: #d5deed; }
 #menu ul#tools-submenu a:hover { background-color: #eef1f8; }
-
-  
-#menu li#shared-menu a.main { border: 1px solid #263b5e; border-left: 18px solid #263b5e; background-color: #ffffff; }
-#menu li#shared-menu a:hover , a:active { background-color: #d5deed; }
-#menu ul#shared-submenu { background-color: #d5deed; }
-#menu ul#shared-submenu a { background-color: #d5deed; }
-#menu ul#shared-submenu a:hover { background-color: #eef1f8; }
 
   

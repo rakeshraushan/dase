@@ -8,6 +8,14 @@
 		<hex level="5">eef1f8</hex>
 		<hex level="5">f1f6fe</hex>
 	</hue>
+	<hue id="ltblue" section="recent">
+		<hex level="1">6480ae</hex>
+		<hex level="2">6480ae</hex>
+		<hex level="3">9cacc6</hex>
+		<hex level="4">d5deed</hex>
+		<hex level="5">eef1f8</hex>
+		<hex level="5">f1f6fe</hex>
+	</hue>
 	<hue id="ltblue" section="resources">
 		<hex level="1">6480ae</hex>
 		<hex level="2">6480ae</hex>
@@ -32,7 +40,7 @@
 		<hex level="5">eef1f8</hex>
 		<hex level="6">f1f6fe</hex>
 	</hue>
-	<hue id="green" section="settings">
+	<hue id="green" section="shared">
 		<hex level="1">283b1c</hex>
 		<hex level="2">669966</hex>
 		<hex level="3">9dbda9</hex>
@@ -86,7 +94,7 @@
 		<hex level="4">dfcbbc</hex>
 		<hex level="5">f2eae3</hex>
 	</hue>
-	<hue id="redrust" section="recent">
+	<hue id="redrust" section="settings">
 		<hex level="1">a8721e</hex>
 		<hex level="2">d9c8ad</hex>
 		<hex level="3">e6d4b8</hex>
@@ -117,14 +125,6 @@
 		<hex level="5">faf7ec</hex>
 	</hue>
 	<hue id="blue" section="tools">
-		<hex level="1">263b5e</hex>
-		<hex level="2">6480ae</hex>
-		<hex level="3">9cacc6</hex>
-		<hex level="4">d5deed</hex>
-		<hex level="5">eef1f8</hex>
-		<hex level="5">f1f6fe</hex>
-	</hue>
-	<hue id="blue" section="shared">
 		<hex level="1">263b5e</hex>
 		<hex level="2">6480ae</hex>
 		<hex level="3">9cacc6</hex>

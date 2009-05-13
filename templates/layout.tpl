@@ -87,6 +87,7 @@
 				<ul class="hide" id="sets-submenu">
 				</ul>
 				</li>
+				<li id="shared-menu"><a href="tags" class="main">Shared Sets</a></li>
 				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
 				</li>
 				<li id="recent-menu"><a href="" class="main">Recently Viewed</a>
@@ -104,6 +105,7 @@
 				<li><a href="" class="main">Home/Search</a></li>
 				<li><a href="" class="main">My Cart</a></li>
 				<li><a href="" class="main">My Sets</a></li>
+				<li><a href="" class="main">Shared Sets</a></li>
 				<li><a href="" class="main">My Preferences</a></li>
 				<li><a href="" class="main">Recently Viewed</a></li>
 			</ul>
