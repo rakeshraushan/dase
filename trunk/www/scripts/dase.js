@@ -81,7 +81,6 @@ Dase.getLinkByRel = function(rel) {
 };
 
 Dase.getMeta = function(name) {
-	alert(name);
 	//return FIRST hit
 	var metas = document.getElementsByTagName('meta');
 	for (var i=0;i<metas.length;i++) {
@@ -227,6 +226,7 @@ Dase.initUser = function() {
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
+			Dase.user.recent_views = json[eid].recent_views;
 			Dase.user.current_collections = json[eid].current_collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.user.cart_count = json[eid].cart_count;
@@ -237,6 +237,7 @@ Dase.initUser = function() {
 			Dase.user.controls = json[eid].controls;
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
+			Dase.placeRecentViews(Dase.user);
 			Dase.placeUserCollections(eid);
 			Dase.placePreferredCollections(eid);
 			Dase.placeCollectionManageLink(eid);
@@ -534,6 +535,20 @@ Dase.loadingMsg = function(displayBool) {
 	} else {
 		Dase.addClass(loading,'hide');
 	}
+}
+
+Dase.placeRecentViews = function(user) {
+	if (!Dase.$('recent-submenu')) return;
+	// user sets menu 
+	var h = new Dase.htmlbuilder;
+	for (var i=0; i<user.recent_views.length;i++) {
+		var recent = user.recent_views[i];
+		var li = h.add('li');
+		var a = li.add('a');
+		a.set('href',recent.url);
+		a.setText(recent.title);
+	}
+	h.attach(Dase.$('recent-submenu')); //append
 }
 
 Dase.placeUserTags = function(user) {

@@ -19,12 +19,13 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/auth' => 'http_password',
 		'{eid}/key' => 'key',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
-		'{eid}/{collection_ascii_id}/recent' => 'recent_items',
+		'{eid}/recent' => 'recent_views',
+		'{eid}/{collection_ascii_id}/recent' => 'recent_uploads',
 	);
 
 	protected function setup($r)
 	{ 
-		if ('atom' == $r->format || 'ping' == $r->resource ) {
+		if ('atom' == $r->format || 'ping' == $r->resource || 'recent_views' == $r->resource) {
 			$this->user = $r->getUser('http');
 		} else {
 			$this->user = $r->getUser();
@@ -79,6 +80,29 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($this->user->getTagsAsAtom($r->app_root));
 	}
 
+	public function postToRecentViews($r) {
+		$this->user->expireDataCache($r->retrieve('cache'));
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->url= rawurldecode($r->get('url'));
+		$recent->title = $r->get('title');
+		$recent->dase_user_eid = $this->user->eid;
+		if ($recent->findOne()) {
+			$recent->timestamp = date(DATE_ATOM);
+			if ($recent->update()) {
+				$r->renderOk('recorded item view');
+			} else {
+				$r->renderError(500);
+			}
+		} else {
+			$recent->timestamp = date(DATE_ATOM);
+			if ($recent->insert()) {
+				$r->renderOk('recorded item view');
+			} else {
+				$r->renderError(500);
+			}
+		}
+	}
+
 	public function postToSets($r)
 	{
 		$content_type = $r->getContentType();
@@ -114,7 +138,7 @@ class Dase_Handler_User extends Dase_Handler
 			}
 	}
 
-	public function getRecentItemsAtom($r)
+	public function getRecentUploadsAtom($r)
 	{
 		//todo: implement http authorization!
 		$items = new Dase_DBO_Item($this->db);
@@ -139,7 +163,7 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($feed->asXml());
 	}
 
-	public function getRecentItemsJson($r)
+	public function getRecentUploadsJson($r)
 	{
 		//todo: implement http authorization!
 		$coll = $r->get('collection_ascii_id');

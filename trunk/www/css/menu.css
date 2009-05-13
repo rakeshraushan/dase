@@ -107,6 +107,13 @@ border-top: 1px solid #fff;
 #menu ul#home-submenu a:hover { background-color: #f2eae3; }
 
   
+#menu li#recent-menu a.main { border: 1px solid #a8721e; border-left: 18px solid #a8721e; background-color: #ffffff; }
+#menu li#recent-menu a:hover , a:active { background-color: #f2dfc1; }
+#menu ul#recent-submenu { background-color: #f2dfc1; }
+#menu ul#recent-submenu a { background-color: #f2dfc1; }
+#menu ul#recent-submenu a:hover { background-color: #ffebcc; }
+
+  
 #menu li#browse-menu a.main { border: 1px solid #a8721e; border-left: 18px solid #a8721e; background-color: #ffffff; }
 #menu li#browse-menu a:hover , a:active { background-color: #f2dfc1; }
 #menu ul#browse-submenu { background-color: #f2dfc1; }

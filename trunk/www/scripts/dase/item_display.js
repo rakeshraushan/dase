@@ -5,6 +5,7 @@ Dase.pageInit = function() {
 //item editing needs to know user, 
 //so we use the 'pageInitUser' function
 Dase.pageInitUser = function(eid) {
+	Dase.recordItemView(eid);
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
@@ -21,6 +22,18 @@ Dase.pageInitUser = function(eid) {
 	}
 	return;
 };
+
+Dase.recordItemView = function(eid) {
+	pageurl = 'http://'+encodeURIComponent(location.href.replace('http://',''));
+	title = encodeURIComponent(Dase.getMeta('item-title'));
+	var content_headers = {
+		'Content-Type':'application/x-www-form-urlencoded'
+	}
+	url = Dase.base_href+'user/'+Dase.user.eid+'/recent';
+	pairs = 'url='+pageurl+'&'+'title='+title;
+	Dase.ajax(url,'post',null,pairs,Dase.user.eid,Dase.user.htpasswd,content_headers); 
+}
+
 
 Dase.sortByTitle = function(a,b) {
 	var x = a.title.toLowerCase();

@@ -167,6 +167,15 @@ CREATE TABLE `{$table_prefix}media_file` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `{$table_prefix}recent_view` (
+`id` int(11) NOT NULL auto_increment,
+`url` varchar(4000) default NULL,
+`title` varchar(200) default NULL,
+`dase_user_eid` varchar(100) default NULL,
+`timestamp` varchar(50) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE `{$table_prefix}search_cache` (
 `id` int(11) NOT NULL auto_increment,
 `is_stale` boolean default NULL,
