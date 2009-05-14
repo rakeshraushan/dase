@@ -548,8 +548,10 @@ Dase.placeRecentViews = function(user) {
 		a.set('href',recent.url);
 		a.setText(recent.title);
 	}
+	var li = h.add('li').add('a',{'href':'#','id':'clearRecent','class':'edit'},'clear all');
 	h.attach(Dase.$('recent-submenu')); //append
-}
+	Dase.initClearRecent(user);
+};
 
 Dase.placeUserTags = function(user) {
 	if (!Dase.$('sets-submenu')) return;
@@ -587,7 +589,22 @@ Dase.placeUserTags = function(user) {
 		h.attach(Dase.$('saveChecked'));
 	}
 	Dase.initCreateNewSet();
-}
+};
+
+Dase.initClearRecent = function(user) {
+	var clearRecentLink = Dase.$('clearRecent');
+	if (clearRecentLink) {
+		clearRecentLink.onclick = function() {
+			url = Dase.base_href+'user/'+Dase.user.eid+'/recent';
+			Dase.ajax(url,'delete',function(resp) {
+				alert(resp);
+			},null,Dase.user.eid,Dase.user.htpasswd); 
+			user.recent_views = [];
+			Dase.placeRecentViews(user);
+			return false;
+		};
+	}
+};
 
 Dase.initCreateNewSet = function() {
 	var createNewSetLink = Dase.$('createNewSet');

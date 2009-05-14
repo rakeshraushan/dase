@@ -27,15 +27,6 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		return $this->getTitle();
 	}
 
-	function getItemCount()
-	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/item_count' == $el->getAttribute('scheme')) {
-				return $el->getAttribute('term');
-			}
-		}
-	}
-
 	function ingest($db,$r,$fetch_enclosures=false) 
 	{
 		$user = $r->getUser();

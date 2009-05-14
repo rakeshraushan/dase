@@ -92,6 +92,15 @@ class Dase_Atom
 		return $cat;
 	}
 
+	function getItemCount()
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/item_count' == $el->getAttribute('scheme')) {
+				return $el->getAttribute('term');
+			}
+		}
+	}
+
 	function getCategories() 
 	{
 		$categories = array();
