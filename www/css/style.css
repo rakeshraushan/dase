@@ -647,7 +647,6 @@ a.zoomer, a.unzoomer {
 }
 
 table#metadata {
-	width: 100%;
 }
 
 table#metadata th {
@@ -656,13 +655,14 @@ vertical-align: top;
 color: #339;
 border: 0px solid #ddf;
 padding: 2px;
-	width: 20%;
+width: 160px;
 }
 
 table#metadata td {
 text-align: left;
 padding: 2px;
 border: 0px solid #ddf;
+width: 500px;
 }
 
 table#metadata li a {
