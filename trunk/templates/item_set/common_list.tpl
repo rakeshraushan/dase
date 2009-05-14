@@ -33,11 +33,13 @@
 			<tr>
 				<th>{$set.attribute_name}</th>
 				<td>
-				{foreach item=value from=$set.values}
-				<a 
-					href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}"
-					>{$value.text}</a>;
-				{/foreach}
+					<ul>
+						{foreach item=value from=$set.values}
+						<li>
+						<a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a>
+						</li>
+						{/foreach}
+					</ul>
 				</td>
 				{/foreach}
 			</tr>
