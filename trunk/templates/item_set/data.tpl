@@ -9,10 +9,6 @@
 				margin: 20px auto;
 				width: 95%;
 			}
-			table#data dt {
-				font-weight: bold;
-				color: #009;
-			}
 			table#data th {
 				border: 1px solid #999;
 				background-color: #eee;
@@ -21,6 +17,30 @@
 				padding: 12px;
 				border: 1px solid #999;
 			}
+			table#metadata {
+			}
+
+			table#metadata th {
+				text-align: right;
+				vertical-align: top;
+				color: #339;
+				border: 0px solid #ddf;
+				padding: 2px;
+				width: 160px;
+				background-color: #fff;
+			}
+
+			table#metadata td {
+				text-align: left;
+				padding: 2px;
+				border: 0px solid #ddf;
+				width: 500px;
+			}
+
+			table#metadata li a {
+				font-weight: normal;
+			}
+
 			{/literal}
 		</style>
 	</head>
@@ -35,16 +55,32 @@
 						<h3>{$it->collection}</h3>
 					</th>
 					<td>
-						<dl>
+						<table id="metadata" class="{$it->collectionAsciiId}">
+							{foreach item=set key=ascii_id from=$it->metadata}
+							<tr>
+								<th>{$set.attribute_name}</th>
+								<td>
+									<ul>
+										{foreach item=value from=$set.values}
+										<li>
+										<a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a>
+										</li>
+										{/foreach}
+									</ul>
+								</td>
+								{/foreach}
+							</tr>
+						</table>
+						<!--
+						<dl id="metadata" class="{$it->collectionAsciiId}">
 							{foreach item=set key=ascii_id from=$it->metadata}
 							<dt>{$set.attribute_name}</dt>
 							{foreach item=value from=$set.values}
-							<dd>
-							{$value.text}
-							</dd>
+							<dd><a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a></dd>
 							{/foreach}
 							{/foreach}
 						</dl>
+						-->
 					</td>
 				</tr>
 				{/foreach}
