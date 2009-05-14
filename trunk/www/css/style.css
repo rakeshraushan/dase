@@ -654,7 +654,7 @@ table#metadata th {
 text-align: right;
 vertical-align: top;
 color: #339;
-border: 1px solid #ddf;
+border: 0px solid #ddf;
 padding: 2px;
 	width: 20%;
 }
@@ -662,7 +662,7 @@ padding: 2px;
 table#metadata td {
 text-align: left;
 padding: 2px;
-border: 1px solid #ddf;
+border: 0px solid #ddf;
 }
 
 table#metadata li a {
