@@ -103,6 +103,18 @@ class Dase_Handler_User extends Dase_Handler
 		}
 	}
 
+	public function deleteRecentViews($r) {
+		$this->user->expireDataCache($r->retrieve('cache'));
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->dase_user_eid = $this->user->eid;
+		$i=0;
+		foreach ($recent->find() as $doomed) {
+			$i++;
+			$doomed->delete();
+		}
+		$r->renderOk('deleted '.$i);
+	}
+
 	public function postToSets($r)
 	{
 		$content_type = $r->getContentType();

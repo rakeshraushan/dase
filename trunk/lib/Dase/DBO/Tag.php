@@ -78,6 +78,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$tags->orderBy('updated DESC');
 				foreach ($tags->find() as $tag) {
 					$tag = clone $tag;
+					if (!$tag->item_count) {
+						$tag->updateItemCount();
+					}
 					if ($tag->ascii_id and in_array($tag->id,$in_set)) {
 						$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
 						$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
@@ -92,6 +95,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$tags->orderBy('updated DESC');
 			foreach ($tags->find() as $tag) {
 				$tag = clone $tag;
+				if (!$tag->item_count) {
+					$tag->updateItemCount();
+				}
 				if ($tag->ascii_id) { //compat: make sure tag has ascii_id
 					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
 					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");

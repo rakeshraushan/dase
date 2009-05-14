@@ -646,6 +646,25 @@ a.zoomer, a.unzoomer {
 	color: #669;
 }
 
+table#metadata {
+	width: 100%;
+}
+
+table#metadata th {
+text-align: right;
+color: #339;
+border: 0;
+padding: 2px;
+	width: 20%;
+}
+
+table#metadata td {
+text-align: left;
+padding: 2px;
+border: 0;
+}
+
+
 /**** end list display *****/
 
 table#sorter {
@@ -709,6 +728,11 @@ div.widget {
 }
 
 .tagAdmin {
+	background-color:#b5becd;
+	padding:10px 15px 15px 30px;
+}
+
+.slideshowAdmin {
 	background-color:#b5becd;
 	padding:10px 15px 15px 30px;
 }

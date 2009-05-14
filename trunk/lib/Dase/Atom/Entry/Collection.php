@@ -121,15 +121,6 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$this->addCategory($ascii_id,'http://daseproject.org/category/item_type',$name);
 	}
 
-	function getItemCount()
-	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/item_count' == $el->getAttribute('scheme')) {
-				return $el->getAttribute('term');
-			}
-		}
-	}
-
 	function getName() 
 	{
 		return $this->getTitle();

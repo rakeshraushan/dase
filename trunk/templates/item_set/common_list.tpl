@@ -28,6 +28,21 @@
 		<div class="cartAdd">
 			<span class="hide">in cart</span> <a href="{$it->unique}" class="hide" id="addToCart_{$it->unique}">add to cart</a>
 		</div>
+		<table id="metadata" class="{$it->collectionAsciiId}">
+			{foreach item=set key=ascii_id from=$it->metadata}
+			<tr>
+				<th>{$set.attribute_name}</th>
+				<td>
+				{foreach item=value from=$set.values}
+				<a 
+					href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}"
+					>{$value.text}</a>;
+				{/foreach}
+				</td>
+				{/foreach}
+			</tr>
+		</table>
+		<!--
 		<dl id="metadata" class="{$it->collectionAsciiId}">
 			{foreach item=set key=ascii_id from=$it->metadata}
 			<dt>{$set.attribute_name}</dt>
@@ -36,6 +51,7 @@
 			{/foreach}
 			{/foreach}
 		</dl>
+		-->
 	</td>
 </tr>
 {/foreach}
