@@ -151,6 +151,17 @@ CREATE TABLE `{$table_prefix}item_type` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `{$table_prefix}job_queue` (
+`id` int(11) NOT NULL auto_increment,
+`method` varchar(100) default NULL,
+`dase_user_eid` varchar(100) default NULL,
+`created` varchar(50) default NULL,
+`run` varchar(50) default NULL,
+`completed` varchar(50) default NULL,
+`args` varchar(5000) default NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE `{$table_prefix}media_file` (
 `id` int(11) NOT NULL auto_increment,
 `file_size` integer default NULL,

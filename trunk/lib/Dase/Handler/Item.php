@@ -425,10 +425,10 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot read comments on this item');
 		}
 		//todo: should displayed comments be limited to this user???
-		if ('0' == $r->get('limit')) {
-			$r->renderResponse($this->item->getCommentsJson($r->app_root));
+		if ('0' == $r->get('all')) {
+			$r->renderResponse($this->item->getCommentsJson($r->app_root,$user->eid));
 		}
-		$r->renderResponse($this->item->getCommentsJson($r->app_root,$user->eid));
+		$r->renderResponse($this->item->getCommentsJson($r->app_root));
 	}
 
 	/** this allows us to swap in an item file from the interwebs */
