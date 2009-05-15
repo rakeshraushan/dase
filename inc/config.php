@@ -30,6 +30,10 @@ $conf['app']['default_handler'] = 'install';
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['app']['cache_type'] = 'file';
 
+//default <base_path>/files/<cron_output_dir>
+//note that cron user should be apache or in apache group
+$conf['app']['cron_output_dir'] = 'cron_output';
+
 //eid & admin password
 //$conf['auth']['superuser']['<username>'] = '<password>';
 //$conf['auth']['serviceuser']['prop'] = 'ok';
