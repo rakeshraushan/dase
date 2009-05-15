@@ -128,6 +128,10 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($u->can('write',$this->tag)) {
 			$t->assign('is_admin',1);
 		}
+		//grid is default, data has it's own method
+		if (!$display && 'list' == $u->display) {
+			$display = 'list';
+		}	
 		$t->assign('display',$display);
 		$r->renderResponse($t->fetch('item_set/tag.tpl'));
 	}

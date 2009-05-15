@@ -307,6 +307,9 @@ class Dase_Handler_User extends Dase_Handler
 			$t->assign('json_url',$json_url);
 			$t->assign('items',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
 			$t->assign('is_admin',1);
+			if ('list' == $u->display) {
+				$t->assign('display','list');
+			}
 			$r->renderResponse($t->fetch('item_set/tag.tpl'));
 		} else {
 			$r->renderError(404);
