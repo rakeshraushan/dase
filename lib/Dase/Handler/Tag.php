@@ -6,6 +6,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/download' => 'tag_zip_archive',
 		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', 
 		'{eid}/{tag_ascii_id}/background' => 'background',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
@@ -41,6 +42,25 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(404,'no such tag');
 		}
 	}	
+
+	public function getTagZipArchive($r) 
+	{
+		$out = '';
+		$tag = $this->tag;
+		$u = $r->getUser();
+		if (!$u->can('write',$tag)) {
+			$r->renderError(401,'user does not have download privileges');
+		}
+		foreach ($tag->getTagItems() as $ti) {
+			$item = $ti->getItem();
+			foreach (array('small','medium','large') as $size) {
+				$url = $item->getMediaUrl($size,$r->app_root);
+				$out .= "$url</br>";
+			}
+		}
+		$r->renderResponse($out);
+	}
+
 
 	public function getTagAtom($r)
 	{

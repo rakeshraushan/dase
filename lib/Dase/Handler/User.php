@@ -16,6 +16,7 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/cart' => 'cart',
 		'{eid}/cart/emptier' => 'cart_emptier',
 		'{eid}/sets' => 'sets',
+		'{eid}/set_copier' => 'set_copier',
 		'{eid}/auth' => 'http_password',
 		'{eid}/key' => 'key',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
@@ -113,6 +114,24 @@ class Dase_Handler_User extends Dase_Handler
 			$doomed->delete();
 		}
 		$r->renderOk('deleted '.$i);
+	}
+
+	public function postToSetCopier($r)
+	{
+		$user = $r->getUser('http');
+		$content_type = $r->getContentType();
+		if ('text/uri-list' == $content_type ) {
+			$url = $r->getBody();
+			$parts = explode('/',$url);
+			$tag_ascii = array_pop($parts);
+			$tag_eid = array_pop($parts);
+			$tag = Dase_DBO_Tag::get($this->db,$tag_ascii,$tag_eid);
+			if (!$user->can('read',$tag)) {
+				$r->renderError(401,$user->eid .' is not authorized to read this resource.');
+			}
+			$r->renderResponse($tag->name);
+		}
+		$r->renderError(418,'wrong media type');
 	}
 
 	public function postToSets($r)
