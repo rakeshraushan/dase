@@ -159,6 +159,7 @@ CREATE TABLE `{$table_prefix}job_queue` (
 `run` varchar(50) default NULL,
 `completed` varchar(50) default NULL,
 `args` varchar(5000) default NULL,
+`msg` varchar(2000) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

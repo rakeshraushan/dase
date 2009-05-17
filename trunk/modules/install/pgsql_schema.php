@@ -145,7 +145,8 @@ CREATE TABLE {$table_prefix}job_queue (
     created character varying(50),
     run character varying(50),
     completed character varying(50),
-    args character varying(5000)
+    args character varying(5000),
+    msg character varying(2000)
 );
 
 CREATE TABLE {$table_prefix}media_file (
