@@ -269,11 +269,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$v['text'] = $el->getAttribute('title');
 					$v['url'] = $el->getAttribute('href');
 					$v['coll'] = $coll;
+					$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
 					$v['modifiers'] = array();
 					foreach ($el->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat_el) {
 						$modifier['att_ascii_id'] = $cat_el->getAttribute('term');
 						$modifier['attribute_name'] = $cat_el->getAttribute('label');
 						$modifier['value_text'] = $cat_el->nodeValue;
+						$modifier['edit'] = $cat_el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
 						$v['modifiers'][] = $modifier;
 					}
 					$metadata[$att_ascii_id]['values'][] = $v;
