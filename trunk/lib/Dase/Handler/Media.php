@@ -19,6 +19,10 @@ class Dase_Handler_Media extends Dase_Handler
 		$this->serial_number = $r->get('serial_number');
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
+			if ('thumbnail' != $this->size && 'viewitem' != $this->size) {
+				//anything other than thumbnail requires eid
+				$user = $r->getUser();
+			}
 		} 
 		if ('get' != $r->method) {
 			$this->user = $r->getUser('service');
