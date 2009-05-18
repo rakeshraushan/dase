@@ -833,6 +833,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$row['value_text']
 				);
 				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
+				$metadata_link->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 				$metadata_links[$row['id']] = $metadata_link;
 			} 
 		}
@@ -854,6 +855,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$cat->setAttribute('term',$row['ascii_id']);
 						$cat->setAttribute('scheme','http://daseproject.org/category/modifier');
 						$cat->setAttribute('label',$row['attribute_name']);
+						$cat->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 					} else {
 						if ($row['is_public']) {
 							$meta = $entry->addCategory(
