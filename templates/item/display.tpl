@@ -7,9 +7,9 @@
 {block name="head-links"}
 {if $item->entry->editLink}
 <!-- atompub -->
-<link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}"/>
-<link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}"/>
-<link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}"/>
+<link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}">
+<link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}">
+<link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}">
 {/if}
 {/block}
 
@@ -55,12 +55,12 @@
 	<table id="item">
 		<tr>
 			<td class="image">
-				<img src="{$item->entry->viewitemLink}"/>
+				<img src="{$item->entry->viewitemLink}" alt="{$item->entry->_title}">
 				<table>
 					{foreach item=m from=$item->media}
 					{if $m.label != 'thumbnail' && $m.label != 'viewitem' && $m.label != 'tiff'}
 					<tr>
-						<td><a href="{$m.href}"><img src="www/images/media-icons/{$m.label}.png" alt="image icon"/></a></td>
+						<td><a href="{$m.href}"><img src="www/images/media-icons/{$m.label}.png" alt="image icon"></a></td>
 						<td><a href="{$m.href}">{$m.label}</a></td>
 						{if $m.height && $m.width}
 						<td><a href="{$m.href}">({$m.width}x{$m.height})</a></td>
@@ -162,17 +162,17 @@
 				<div class="notesForm">
 					<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" id="notesLink">add a user note</a> 
 					<form class="hide" action="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/comments" name="notes_form" id="notesForm" method="post">
-						<textarea rows="4" cols="50" id="note" name="note"></textarea>
+						<p><textarea rows="4" cols="50" id="note" name="note"></textarea></p>
 						<p>
-						<input type="submit" value="add note"/>
+						<input type="submit" value="add note">
 						</p>
 					</form>
 				</div>
-				<ul id="notes"><!-- ajax fills--></ul>
+				<ul id="notes"><li>&nbsp;</li></ul>
 				<a
-					href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?type=feed&auth=cookie"
+					href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?type=feed&amp;auth=cookie"
 					class="atomlogo"><img
-					src="www/images/atom.jpg"/></a> 
+					src="www/images/atom.jpg" alt="atom logo"></a> 
 			</td>
 		</tr>
 	</table>
@@ -184,8 +184,8 @@
 			<p class="annotation" id="annotationText">{$item->entry->summary}</p>
 			{/if}
 			<form class="hide" id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
-				<textarea name="annotation">{$item->entry->summary}</textarea>
-				<input type="submit" value="save"/>
+				<p><textarea name="annotation">{$item->entry->summary}</textarea></p>
+				<input type="submit" value="save">
 			</form>
 		</div>
 {/if}

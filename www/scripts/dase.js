@@ -771,13 +771,14 @@ Dase.initAddToCart = function() {
 
 Dase.initCart = function() {
 	Dase.loadingMsg(true);
-	var label = Dase.$('cartLink');
-	if (label) {
-		label.innerHTML = "My Cart ("+Dase.user.cart_count+")";
-	}
 	var cartCount = Dase.$('cartCount');
 	if (cartCount) {
+		/*
+		 this messed up style in IE7, see below for DOM method
 		cartCount.innerHTML = Dase.user.cart_count;
+		*/
+	   Dase.removeChildren(cartCount);
+	   cartCount.appendChild(document.createTextNode(Dase.user.cart_count));
 	}
 	var sr = Dase.$('itemSet');
 	if (!sr) {

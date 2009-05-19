@@ -122,18 +122,18 @@ class Dase_Search_Result
 		$feed = new Dase_Atom_Feed();
 		$feed->addAuthor();
 		$feed->setTitle('DASe Search Result');
-		$feed->addLink($app_root.'/'.$this->url.'&format=atom&start='.$start.'&max='.$max,'self');
+		$feed->addLink($app_root.'/'.$this->url.'&amp;format=atom&amp;start='.$start.'&amp;max='.$max,'self');
 		//$feed->addLink($this->url,'alternate','text/html','',$search_title);
 		$feed->addLink($this->url,'alternate','text/html','','Search Result');
-		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=grid','related','text/html','','grid');
-		$feed->addLink($this->url.'&start='.$start.'&max='.$max.'&display=list','related','text/html','','list');
+		$feed->addLink($this->url.'&amp;start='.$start.'&amp;max='.$max.'&amp;display=grid','related','text/html','','grid');
+		$feed->addLink($this->url.'&amp;start='.$start.'&amp;max='.$max.'&amp;display=list','related','text/html','','list');
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->setFeedType('search');
 		if (isset($next)) {
-			$feed->addLink($app_root.'/'.$this->url.'&start='.$next.'&max='.$max,'next');
+			$feed->addLink($app_root.'/'.$this->url.'&amp;start='.$next.'&amp;max='.$max,'next');
 		}
 		if (isset($previous)) {
-			$feed->addLink($app_root.'/'.$this->url.'&start='.$previous.'&max='.$max,'previous');
+			$feed->addLink($app_root.'/'.$this->url.'&amp;start='.$previous.'&amp;max='.$max,'previous');
 		}
 		$feed->setId($app_root.'/search/'.md5($this->url));
 		$feed->setOpensearchTotalResults($this->count);
@@ -185,7 +185,7 @@ class Dase_Search_Result
 			//will check cache
 			$entry = $feed->addItemEntry($item,$app_root);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
-			$entry->addLink($item_request_url.'&num=' . $setnum,'http://daseproject.org/relation/search-item');
+			$entry->addLink($item_request_url.'&amp;num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
 		return $feed->asXml();
 	}
@@ -234,14 +234,14 @@ class Dase_Search_Result
 			$coll_cat->setAttribute('label',$collection->collection_name);
 
 			$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
-			$feed->addLink($app_root.'/'.$this->url.'&num='.$num);
+			$feed->addLink($app_root.'/'.$this->url.'&amp;num='.$num);
 			$feed->addCategory($num,"http://daseproject.org/category/position");
-			$feed->addLink($app_root.'/'.$search_url.'&start='.$start,'http://daseproject.org/relation/feed-link');
+			$feed->addLink($app_root.'/'.$search_url.'&amp;start='.$start,'http://daseproject.org/relation/feed-link');
 			if ($next) {
-				$feed->addLink($app_root.'/'.$this->url.'&num='.$next,'next','application/xhtml+xml');
+				$feed->addLink($app_root.'/'.$this->url.'&amp;num='.$next,'next','application/xhtml+xml');
 			}
 			if ($previous) {
-				$feed->addLink($app_root.'/'.$this->url.'&num='.$previous,'previous','application/xhtml+xml');
+				$feed->addLink($app_root.'/'.$this->url.'&amp;num='.$previous,'previous','application/xhtml+xml');
 			}
 			$feed->setOpensearchQuery($this->_getQueryAsString());
 			$feed->setOpensearchTotalResults($this->count);
