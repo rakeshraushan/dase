@@ -82,9 +82,10 @@
 		<div id="sidebar">
 			<ul id="menu" class="hide">
 				<li id="home-menu"><a href="" class="main">Home/Search</a></li>
-				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart</a></li>
+				<li id="cart-menu"><a href="" class="main" id="cartLink">My Cart (<span id="cartCount"></span>)</a></li>
 				<li id="sets-menu"><a href="" class="main">My Sets</a>
 				<ul class="hide" id="sets-submenu">
+					<li>&nbsp;</li>
 				</ul>
 				</li>
 				<li id="shared-menu"><a href="tags" class="main">Shared Sets</a></li>
@@ -92,6 +93,7 @@
 				</li>
 				<li id="recent-menu"><a href="" class="main">Recently Viewed</a>
 				<ul class="hide" id="recent-submenu">
+					<li>&nbsp;</li>
 				</ul>
 				</li>
 				<li id="manage-menu" class="hide"><a href="settings" id="manage-menu-link" class="main"></a>

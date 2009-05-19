@@ -42,13 +42,16 @@ Dase.processAtts = function(json) {
 	var ul = h.add('ul',{'id':'attList'});
 	for (var i=0;i<json.length;i++) {
 		var att = json[i];
+
+
 		var li = ul.add('li');
 		var a = li.add('a');
 		a.set('href','attribute/'+att.collection+'/'+att.ascii_id+'/values.json');
 		a.set('id',att.ascii_id);
 		a.set('class','att_link '+att.sort_order);
 		a.add('span',{'class':'att_name'},att.attribute_name);
-		a.add('span',{'class':'tally','id':'tally-'+att.ascii_id});
+		/* NOTE: adding &nbsp; was necessary for IE7 here */
+		a.add('span',{'class':'tally','id':'tally-'+att.ascii_id},'&nbsp;');
 	}
 	return h.getString();
 }

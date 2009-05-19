@@ -7,7 +7,7 @@
 
 {block name="title"}DASe: {$collection->name|escape}{/block} 
 {block name="servicedoc"}
-<link rel="service" type="application/atomsvc+xml" href="collection/{$collection->asciiId}/service"/>
+<link rel="service" type="application/atomsvc+xml" href="collection/{$collection->asciiId}/service">
 {/block} 
 
 {block name="content"}
@@ -21,12 +21,12 @@
 	<form method="get" action="search">
 		<div>
 			<h3 class="utilLabel">Search:</h3>
-			<input type="text" id="queryInput" name="q" size="30" value="{$failed_query}"/>
-			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}"/>
+			<input type="text" id="queryInput" name="q" size="30" value="{$failed_query}">
+			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}">
 			<!--
 			<select id="attributesSelect" class="hide"></select>
 			-->
-			<input type="submit" value="go" class="button"/>
+			<input type="submit" value="go" class="button">
 		</div>
 	</form>
 	<h3 class="utilLabel">Browse:</h3>
