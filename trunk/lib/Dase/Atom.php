@@ -290,11 +290,11 @@ class Dase_Atom
 
 		//check cache
 		if ($title) {
-			if ($links[$rel][$title]) {
+			if ($this->links[$rel][$title]) {
 				return $links[$rel][$title];
 			}
 		} else {
-			if ($links[$rel]['_notitle']) {
+			if ($this->links[$rel]['_notitle']) {
 				return $links[$rel]['_notitle'];
 			}
 		}
@@ -303,12 +303,12 @@ class Dase_Atom
 			//allow filtering on title
 			if ($title) {
 				if ($rel == $el->getAttribute('rel') && $title == $el->getAttribute('title')) {
-					$links[$rel][$title] = $el->getAttribute('href');
+					$this->links[$rel][$title] = $el->getAttribute('href');
 					return $el->getAttribute('href');
 				}
 			} else {
 				if ($rel == $el->getAttribute('rel')) {
-					$links[$rel]['_notitle'] = $el->getAttribute('href');
+					$this->links[$rel]['_notitle'] = $el->getAttribute('href');
 					return $el->getAttribute('href');
 				}
 			}
