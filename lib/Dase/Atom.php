@@ -11,6 +11,7 @@ class Dase_Atom
 	protected $rights_is_set;
 	protected $title_is_set;
 	protected $updated_is_set;
+	protected $links = array(); //links cache
 	public static $ns = array(
 		'app' => 'http://www.w3.org/2007/app',
 		'atom' => 'http://www.w3.org/2005/Atom',
@@ -287,14 +288,27 @@ class Dase_Atom
 	function getLink($rel='alternate',$title='') 
 	{
 
+		//check cache
+		if ($title) {
+			if ($links[$rel][$title]) {
+				return $links[$rel][$title];
+			}
+		} else {
+			if ($links[$rel]['_notitle']) {
+				return $links[$rel]['_notitle'];
+			}
+		}
+
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			//allow filtering on title
 			if ($title) {
 				if ($rel == $el->getAttribute('rel') && $title == $el->getAttribute('title')) {
+					$links[$rel][$title] = $el->getAttribute('href');
 					return $el->getAttribute('href');
 				}
 			} else {
 				if ($rel == $el->getAttribute('rel')) {
+					$links[$rel]['_notitle'] = $el->getAttribute('href');
 					return $el->getAttribute('href');
 				}
 			}
