@@ -1,6 +1,8 @@
 <?php
 class Dase_Atom_Feed_Tag extends Dase_Atom_Feed 
 {
+	protected $_background;
+	protected $_tagType;
 	function __construct($dom = null)
 	{
 		parent::__construct($dom);
@@ -60,8 +62,12 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 
 	function getTagType()
 	{
+		if ($this->_tagType) {
+			return $this->_tagType;
+		}
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 			if ('http://daseproject.org/category/tag_type' == $el->getAttribute('scheme')) {
+				$this->_tagType = $el->getAttribute('term');
 				return $el->getAttribute('term');
 			}
 		}
@@ -69,8 +75,12 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 
 	function getBackground()
 	{
+		if ($this->_background) {
+			return $this->_background;
+		}
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/tag/background' == $el->getAttribute('scheme')) {
+			if ('http://daseproject.org/category/background' == $el->getAttribute('scheme')) {
+				$this->_background = $el->getAttribute('term');
 				return $el->getAttribute('term');
 			}
 		}

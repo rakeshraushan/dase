@@ -10,6 +10,7 @@
 <link rel="edit" type="application/atom+xml" href="{$item->entry->editLink}">
 <link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}">
 <link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}">
+<link rel="http://daseproject.org/relation/attributes" type="application/json" href="{$item->entry->attributesLink}">
 {/if}
 {/block}
 

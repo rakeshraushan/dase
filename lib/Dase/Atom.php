@@ -283,6 +283,7 @@ class Dase_Atom
 		return $this->getLink('self');
 	}
 
+	//todo: should also pass in media_type for filtering
 	function getLink($rel='alternate',$title='') 
 	{
 

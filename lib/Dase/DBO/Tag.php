@@ -399,20 +399,18 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		$setnum=0;
 		foreach($this->getTagItems() as $tag_item) {
-			$item = $tag_item->getItem();
-			if ($item) {
-		//		$entry = $feed->addItemEntry($item,$app_root);
+			//for speed & efficiency
+			$entry = $feed->addItemEntryByItemId($this->db,$tag_item->item_id,$app_root);
 
-				$entry = $feed->addEntry();
-				$item->injectAtomEntryData($entry,$app_root);
+			//	$entry = $feed->addEntry();
+			//	$item->injectAtomEntryData($entry,$app_root);
 
-				$setnum++;
-				$entry->addCategory($setnum,'http://daseproject.org/category/position');
-				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
-				$entry->addLink($app_root.'/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
-				if ($tag_item->annotation) {
-					$entry->setSummary($tag_item->annotation);
-				}
+			$setnum++;
+			$entry->addCategory($setnum,'http://daseproject.org/category/position');
+			$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
+			$entry->addLink($app_root.'/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+			if ($tag_item->annotation) {
+				$entry->setSummary($tag_item->annotation);
 			}
 		}
 		return $feed->asXml();

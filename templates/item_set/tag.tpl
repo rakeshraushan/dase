@@ -27,7 +27,7 @@
 			<a href="{$items->listLink}">list</a> | 
 			<a href="#" id="startSlideshow">slideshow</a> 
 			| <a href="{$items->dataLink}">data</a>
-		   	]<span></h2>
+			]<span></h2>
 			<h3>{$items->subtitle}</h3>
 			{if $items->count}
 			<div id="ajaxFormHolder" class="hide">
