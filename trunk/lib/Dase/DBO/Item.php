@@ -427,7 +427,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function setItemType($type_ascii_id='')
 	{
-		if (!$type_ascii_id || 'none' == $type_ascii_id) {
+		if (!$type_ascii_id || 'none' == $type_ascii_id || 'default' == $type_ascii_id) {
 			$this->item_type_id = 0;
 			$this->update();
 			return true;

@@ -389,6 +389,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
+		$tpl->assign('item_types',$this->collection->getItemTypes());
 		$r->renderResponse($tpl->fetch('manage/uploader.tpl'));
 	}
 
@@ -424,12 +425,14 @@ class Dase_Handler_Manage extends Dase_Handler
 			$file = Dase_File::newFile($this->db,$path,$type,$name,$r->base_path);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);
+			$item->setItemType($r->get('item_type'));
 			$item->buildSearchIndex();
 		} else {
 			//no file, if there is a title, assume it is a new item w/o media
 			if ($r->has('title')) {
 				$item = $this->collection->createNewItem(null,$this->user->eid);
 				$item->setValue('title',$r->get('title'));
+				$item->setItemType($r->get('item_type'));
 				$item->buildSearchIndex();
 			} else {
 				$r->renderError(400,'could not upload file');

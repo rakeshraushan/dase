@@ -22,6 +22,17 @@
 		<input type="file" name="uploaded_file" size="50"/>
 		</p>
 		<p>
+		{if $item_types|@count}
+		<select name="item_type">
+			<option value="default">Select an Item Type (optional):</option>
+			{foreach item=t from=$item_types}
+			<option ="{$t->ascii_id}">{$t->name}</option>
+			{/foreach}
+			<option ="default">none (default)</option>
+		</select>
+		{/if}
+		</p>
+		<p>
 		<input type="submit" value="Create New Item"/>
 		</p>
 	</form>

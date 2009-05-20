@@ -312,8 +312,10 @@ Dase.initEditMetadata = function() {
 		var mlink = Dase.$('addMetadataLink');
 		var mform = Dase.$('ajaxFormHolder');
 		var coll = Dase.$('collectionAsciiId').innerHTML;
+		var atts_link = Dase.getLinkByRel('http://daseproject.org/relation/attributes');
 		if (!mlink || !mform) return;
 		mlink.onclick = function() {
+			alert(atts_link);
 			Dase.addClass(Dase.$('adminPageControls'),'hide');
 			Dase.removeClass(Dase.$('pageReloader'),'hide');
 			Dase.$('pageReloaderLink').onclick = function() {
@@ -324,7 +326,7 @@ Dase.initEditMetadata = function() {
 				mform.innerHTML = '<h1 class="loading">Loading...</h1>';
 				Dase.getJSON(this.href, function(atts){
 					h = new Dase.htmlbuilder;
-					h.add('h1',null,'Add Metadata');
+					h.add('h1',null,'Add Metadata Individually');
 					var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
 					var sel = form.add('select',{'name':'att_ascii_id'});
 					sel.add('option',{'value':''},'select an attribute');
@@ -332,6 +334,16 @@ Dase.initEditMetadata = function() {
 						var att = atts[i];
 						sel.add('option',{'value':att.href},att.attribute_name);
 					}
+
+					h.add('h1',null,'Add Metadata by Input Template');
+					var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
+					var sel = form.add('select',{'name':'att_ascii_id'});
+					sel.add('option',{'value':''},'select an attribute');
+					for (var i=0;i<atts.length;i++) {
+						var att = atts[i];
+						sel.add('option',{'value':att.href},att.attribute_name);
+					}
+
 					h.add('div',{'id':'addMetadataFormTarget'});
 				h.attach(mform);
 				var getForm = Dase.$('getInputForm');
