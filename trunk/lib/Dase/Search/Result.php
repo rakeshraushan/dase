@@ -178,15 +178,10 @@ class Dase_Search_Result
 		foreach($item_ids as $item_id) {
 			$num++;
 			$setnum = $num + $start - 1;
-		//	$item = new Dase_DBO_Item($db);
-		//	$item->load($item_id);
-		//	$item->getCollection();
-		//	$item->getItemType();
-			//will check cache
-		//	$entry = $feed->addItemEntry($item,$app_root);
 			$entry = $feed->addItemEntryByItemId($db,$item_id,$app_root);
 			$entry->addCategory($setnum,'http://daseproject.org/category/position');
-			$entry->addLink($item_request_url.'&amp;num=' . $setnum,'http://daseproject.org/relation/search-item');
+			//an optimization
+			$entry->addLinkEarly($item_request_url.'&amp;num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
 		return $feed->asXml();
 	}

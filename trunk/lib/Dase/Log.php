@@ -26,6 +26,12 @@ class Dase_Log
 		}
 	}
 
+	public static function temp($log_dir,$log_file,$msg)
+	{
+		$log = new Dase_Log($log_dir,$log_file,Dase_Log::DEBUG);
+		$log->debug($msg);
+	}
+
 	public function dir_is_writeable()
 	{
 		return is_writeable(dirname($this->logfile));
