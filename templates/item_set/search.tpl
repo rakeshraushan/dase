@@ -47,7 +47,7 @@
 		</form>
 		{if $items->count > $items->max}
 		<h4 class="pagerControl">
-			{if $items->previous}
+			{if $start != 1 && $items->previous}
 			<a href="{$items->previous}">prev</a> 
 			{else}
 			<span class="nolink">prev</span>
@@ -72,7 +72,7 @@
 		</table>
 		{if $items->count > $items->max}
 		<h4 class="pagerControl">
-			{if $items->previous}
+			{if $start != 1 && $items->previous}
 			<a href="{$items->previous}">prev</a> 
 			{else}
 			<span class="nolink">prev</span>

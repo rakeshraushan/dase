@@ -221,6 +221,30 @@ class Dase_Atom
 		return $link;
 	}
 
+	function addLinkEarly($href,$rel='',$type='',$length='',$title='') 
+	{
+		//the idea here is that it is early in the document and so fast to find.
+		//an important optimization for large feeds
+		$ns = Dase_Atom::$ns['atom'];
+		$ref_node = $this->root->getElementsByTagNameNS($ns,'id')->item(0);
+		$link = $this->root->insertBefore($this->dom->createElementNS($ns,'link'),$ref_node);
+		//a felicitous attribute order
+		if ($rel) {
+			$link->setAttribute('rel',$rel);
+		}
+		if ($title) {
+			$link->setAttribute('title',$title);
+		}
+		$link->setAttribute('href',$href);
+		if ($type) {
+			$link->setAttribute('type',$type);
+		}
+		if ($length) {
+			$link->setAttribute('length',$length);
+		}
+		return $link;
+	}
+
 	function getLinks() {
 		$links = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
@@ -285,23 +309,21 @@ class Dase_Atom
 	}
 
 	//todo: should also pass in media_type for filtering
-	function getLink($rel='alternate',$title='') 
+	function getLink($rel='alternate',$title='_notitle') 
 	{
+		if (!$title) {
+			$title = '_notitle';
+		}
 
 		//check cache
-		if ($title) {
-			if ($this->links[$rel][$title]) {
-				return $links[$rel][$title];
-			}
-		} else {
-			if ($this->links[$rel]['_notitle']) {
-				return $links[$rel]['_notitle'];
-			}
+		if ($this->links[$rel][$title] || 0 === $this->links[$rel][$title]) {
+			return $this->links[$rel][$title];
 		}
 
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			//Dase_Log::temp('/mnt/home/pkeane','feed_problem','getting link '.$rel.'--'.$title);
 			//allow filtering on title
-			if ($title) {
+			if ($title && '_notitle' != $title) {
 				if ($rel == $el->getAttribute('rel') && $title == $el->getAttribute('title')) {
 					$this->links[$rel][$title] = $el->getAttribute('href');
 					return $el->getAttribute('href');
@@ -309,10 +331,13 @@ class Dase_Atom
 			} else {
 				if ($rel == $el->getAttribute('rel')) {
 					$this->links[$rel]['_notitle'] = $el->getAttribute('href');
+					//Dase_Log::temp('/mnt/home/pkeane','feed_problem',$el->getAttribute('href'));
 					return $el->getAttribute('href');
 				}
 			}
 		}
+		//not found
+		$this->links[$rel][$title] = 0;
 	}
 
 	function getRelatedLinks() 
