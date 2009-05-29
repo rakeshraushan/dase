@@ -65,10 +65,13 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public function getSearchJson($r)
 	{
+		/*
+		 *todo: make jsonified atom feed!!! Feed->asJson();
 		$r->checkCache();
 		$search = new Dase_Search($r);
 		$json_feed = $search->getResult()->getResultSetAsJsonFeed($r->app_root,$this->db,$this->max);
 		$r->renderResponse($json_feed);
+		 */
 	}
 
 	public function getSearchUris($r)
