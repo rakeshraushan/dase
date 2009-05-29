@@ -25,6 +25,7 @@ CREATE TABLE `{$table_prefix}attribute` (
 `usage_notes` varchar(2000) default NULL,
 `attribute_name` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
+`modifier_type` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -269,7 +270,7 @@ CREATE TABLE `{$table_prefix}value` (
 `item_id` integer default NULL,
 `value_text` text default NULL,
 `url` varchar(2000) default NULL,
-`parent_value_id` integer default NULL,
+`modifier` varchar(2000) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

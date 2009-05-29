@@ -314,7 +314,10 @@ class Dase_Search
 		foreach($search['qualified'] as $att => $val_array) {
 			foreach($val_array as $val) {
 				$qualified_val[] = "v.value_text $like ?";
-				$value_table_params[] = "%".$val."%";
+				//making qualified searches exact match
+				//otherwise db server maxes out
+				//$value_table_params[] = "%".$val."%";
+				$value_table_params[] = $val;
 			}
 			$qualified_sets[] = join(' AND ',$qualified_val);
 			$value_table_search_sets[] = "id IN (SELECT v.item_id FROM {$prefix}value v,{$prefix}attribute a WHERE v.attribute_id = a.id AND ".join(' AND ', $qualified_sets)." AND a.ascii_id = ?)";

@@ -100,6 +100,15 @@
 				</select>
 				</p>
 				<p>
+				<label for="mapped_admin_att">Mapped Admin Attribute</label>
+				<select name="mapped_admin_att">
+					<option value="">Select an Admin Attribute to Map</option>
+					{foreach item=admin_att from=$admin_atts}
+					<option value="{$admin_att->ascii_id}">{$admin_att->attribute_name}</option>
+					{/foreach}
+				</select>
+				</p>
+				<p>
 				<input type="checkbox" {if 1 == $att->in_basic_search}checked="checked"{/if} name="in_basic_search"> In Basic Search 
 				{if
 				$att->in_basic_search}

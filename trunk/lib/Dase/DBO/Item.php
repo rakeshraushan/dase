@@ -199,6 +199,127 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
+	public function getSolrDoc()
+	{
+		$dom = new DOMDocument();
+		$root_el = $dom->createElement('add');
+		$root = $dom->appendChild($root_el);
+		$doc_el = $dom->createElement('doc');
+		$doc = $root->appendChild($doc_el);
+		$id = $doc->appendChild($dom->createElement('field'));
+		$id->appendChild($dom->createTextNode($this->p_collection_ascii_id.'/'.$this->serial_number));
+		$id->setAttribute('name','id');
+		$col_obj = $this->getCollection();
+		$c = $doc->appendChild($dom->createElement('field'));
+		$c->appendChild($dom->createTextNode($col_obj->ascii_id));
+		$c->setAttribute('name','c');
+		$coll = $doc->appendChild($dom->createElement('field'));
+		$coll->appendChild($dom->createTextNode($col_obj->collection_name));
+		$coll->setAttribute('name','collection');
+		$it_obj = $this->getItemType();
+		$it = $doc->appendChild($dom->createElement('field'));
+		$it->appendChild($dom->createTextNode($it_obj->ascii_id));
+		$it->setAttribute('name','item_type');
+		$it_name = $doc->appendChild($dom->createElement('field'));
+		$it_name->appendChild($dom->createTextNode($it_obj->name));
+		$it_name->setAttribute('name','item_type_name');
+		$search_text = array();
+		$contents = $this->getContents();
+		if ($contents && $contents->text) {
+			$content = $doc->appendChild($dom->createElement('field'));
+			$content->appendChild($dom->createTextNode($contents->text));
+			$content->setAttribute('name','content');
+			$content_type = $doc->appendChild($dom->createElement('field'));
+			$content_type->appendChild($dom->createTextNode($contents->type));
+			$content_type->setAttribute('name','content_type');
+			if ('text' === $contents->type) {
+				$search_text[] = $contents->text;
+			}
+		}
+		$att_names = array();
+		$metadata_array = array();
+		foreach ($this->getRawMetadata() as $meta) {
+			$metadata_array[$meta['id']]['metadata'] = $meta;
+			if (!isset($metadata_array[$meta['id']]['modifier'])) {
+				$metadata_array[$meta['id']]['modifier']=array();
+			}
+			$search_text[] = $meta['value_text'];
+			if ($meta['url']) {
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($meta['url']));
+				$field->setAttribute('name','metadata_link_url_'.$meta['id']);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($meta['attribute_name']));
+				$field->setAttribute('name','metadata_link_attribute_'.$meta['id']);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode('http://daseproject.org/relation/metadata-link/'.$col_obj->ascii_id.'/'.$meta['ascii_id']));
+				$field->setAttribute('name','metadata_link_rel_'.$meta['id']);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($meta['value_text']));
+				$field->setAttribute('name','metadata_link_title_'.$meta['id']);
+				//attribute name lookup array before 'do_not_store' change
+				$att_names[$meta['ascii_id']] = $meta['attribute_name'];
+				$meta['ascii_id'] = 'do_not_store_'.$meta['ascii_id'];
+			}
+			if ($meta['parent_value_id']) {
+				//field will be created below
+				$metadata_array[$meta['parent_value_id']]['modifier'][] = $meta;
+			} else {
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($meta['value_text']));
+				if ('id' == $meta['ascii_id']) {
+					$meta['ascii_id'] = 'local_id';
+				}
+				$field->setAttribute('name','_'.$meta['ascii_id']);
+
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($meta['value_text']));
+				if ('id' == $meta['attribute_name']) {
+					$meta['attribute_name'] = 'local_id';
+				}
+				$field->setAttribute('name',$meta['attribute_name']);
+			}
+		}
+		foreach ($metadata_array as $m_id => $set) {
+			if (count($set['modifier'])) {
+				foreach ($set['modifier'] as $mod) {
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode('('.$set['metadata']['value_text'].') '.$mod['value_text']));
+				$field->setAttribute('name',$mod['ascii_id']);
+				}
+			}
+		}
+		$field = $doc->appendChild($dom->createElement('field'));
+		$field->appendChild($dom->createTextNode(join("\n",$search_text)));
+		$field->setAttribute('name','search_text');
+		$media_size_set = array();
+		foreach ($this->getMedia() as $m) {
+			//eliminate duplicate sizes
+			if (!isset($media_size_set[$m->size])) {
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($m->getRelativeLink()));
+				$field->setAttribute('name','media_link_'.$m->size);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($m->height));
+				$field->setAttribute('name','media_height_'.$m->size);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($m->width));
+				$field->setAttribute('name','media_width_'.$m->size);
+				$field = $doc->appendChild($dom->createElement('field'));
+				$field->appendChild($dom->createTextNode($m->file_size));
+				$field->setAttribute('name','media_file_size_'.$m->size);
+				$media_size_set[$m->size] = true;
+			}
+		}
+		$dom->formatOutput = true;
+		return $dom->saveXML();
+	}
+
+	public function postToSolr($url)
+	{
+		return Dase_Http::post($url,$this->getSolrDoc(),null,null,'text/xml');
+	}
+
 	public function getMetadata($app_root='{APP_ROOT}',$att_ascii_id='')
 	{
 		$db = $this->db;

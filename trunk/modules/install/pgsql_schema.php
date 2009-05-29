@@ -23,6 +23,7 @@ CREATE TABLE {$table_prefix}attribute (
     is_public boolean DEFAULT true,
     mapped_admin_att_id integer DEFAULT 0,
     updated character varying(50),
+    modifier character varying(200),
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
@@ -247,7 +248,7 @@ CREATE TABLE {$table_prefix}value (
     attribute_id integer,
     value_text text,
     url character varying(2000),
-    parent_value_id integer
+    modifier character varying(2000)
 );
 
 CREATE TABLE {$table_prefix}value_revision_history (
