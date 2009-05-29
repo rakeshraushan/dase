@@ -51,23 +51,6 @@ class Dase_Handler_Search extends Dase_Handler
 		$this->deleteRecent($this->db,$r);
 	}
 
-	public function getSearchCacheAtom($r)
-	{
-		$r->checkCache();
-		$search_cache = new Dase_DBO_SearchCache($this->db);
-		$search_cache->search_md5 = $r->get('md5_hash');
-		if ($search_cache->findOne()) {
-			$cache = Dase_Cache::get($search_cache->query);
-			$data = $cache->getData(60*30);
-			if ($data) { //30 minutes
-				$search_result = unserialize($data);
-				$atom_feed = $search_result->getResultSetAsAtomFeed($r->app_root,$this->db,$this->start,$this->max);
-				$r->renderResponse($atom_feed);
-			}
-		}
-		$r->renderError(404);
-	}
-
 	public function getSearchByHash($r)
 	{
 	}

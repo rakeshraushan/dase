@@ -76,6 +76,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$r->renderError(404,'so such attribute');
 		}
 		$tpl = new Dase_Template($r);
+		$tpl->assign('admin_atts',$this->collection->getAdminAttributes());
 		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes());
@@ -95,6 +96,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$att->is_on_list_display = 1;
 
 		$tpl = new Dase_Template($r);
+		$tpl->assign('admin_atts',$this->collection->getAdminAttributes());
 		$tpl->assign('ordered',$this->collection->getAttributesSortedArray());
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('attributes',$this->collection->getAttributes());

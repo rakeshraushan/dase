@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Value extends Dase_DBO
 {
 	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct($db,'value', array('attribute_id','item_id','parent_value_id','url','value_text'));
+		parent::__construct($db,'value', array('attribute_id','item_id','modifier','url','value_text'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

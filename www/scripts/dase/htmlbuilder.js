@@ -1,3 +1,19 @@
+/******* example
+ var h = new Dase.htmlbuilder;
+ h.add('h1',null,'Item Status ('+status+')');
+ var form = h.add('form',{'id':'itemStatusForm'});
+ var sel = form.add('select',{'name':'status'});
+ sel.add('option',null,'select status:');
+ sel.add('option',{'value':'public'},'public');
+ sel.add('option',{'value':'draft'},'draft');
+ sel.add('option',{'value':'delete'},'delete');
+ sel.add('option',{'value':'archive'},'archive');
+ form.add('input',{'type':'submit','value':'update status'});
+ form.add('span',null,' ');
+ form.add('span',{'id':'updateMsg'});
+ h.attach(status_form);
+ *************/
+
 Dase.htmlbuilder = function(tagName,keyvals,text) {
 	this.tagName = tagName || ''; //no tagname means container
 	this.keyvals = keyvals || {};

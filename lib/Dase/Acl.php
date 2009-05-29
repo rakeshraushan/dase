@@ -39,38 +39,23 @@ class Dase_Acl
 	public static function generate($db)
 	{
 		$acl = array();
-		$cache = Dase_Cache::get('acl');
-		$data = $cache->getData(1500);
-		if ($data) {
-			return unserialize($data);
-		} else {
-			$colls = new Dase_DBO_Collection($db);
-			foreach ($colls->find() as $c) {
-				foreach ($c->getManagers() as $m) {
-					$acl[$c->ascii_id]['user'][$m->dase_user_eid] = $m->auth_level;
-				}
+		$colls = new Dase_DBO_Collection($db);
+		foreach ($colls->find() as $c) {
+			foreach ($c->getManagers() as $m) {
+				$acl[$c->ascii_id]['user'][$m->dase_user_eid] = $m->auth_level;
 			}
-			$cache->setData(serialize($acl));
-			return $acl;
 		}
+		return $acl;
 	}
 
 	public static function getCollectionData($db,$path_to_media)
 	{
 		$cdata = array();
-		$cache = Dase_Cache::get('collection_data');
-		$data = $cache->getData(1500);
-		if ($data) {
-			return $data;
-		} else {
-			$colls = new Dase_DBO_Collection($db);
-			foreach ($colls->find() as $c) {
-				$cdata[$c->ascii_id]['visibility'] = $c->visibility;
-				$cdata[$c->ascii_id]['path_to_media_files'] = $path_to_media.'/'.$c->ascii_id;
-			}
-			$cache->setData($cdata);
-			return $cdata;
+		$colls = new Dase_DBO_Collection($db);
+		foreach ($colls->find() as $c) {
+			$cdata[$c->ascii_id]['visibility'] = $c->visibility;
 		}
+		return $cdata;
 	}
 
 	public static function retrieve($url)
