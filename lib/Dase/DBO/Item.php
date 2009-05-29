@@ -186,7 +186,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url,v.parent_value_id
+			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -261,24 +261,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$att_names[$meta['ascii_id']] = $meta['attribute_name'];
 				$meta['ascii_id'] = 'do_not_store_'.$meta['ascii_id'];
 			}
-			if ($meta['parent_value_id']) {
-				//field will be created below
-				$metadata_array[$meta['parent_value_id']]['modifier'][] = $meta;
-			} else {
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['value_text']));
-				if ('id' == $meta['ascii_id']) {
-					$meta['ascii_id'] = 'local_id';
-				}
-				$field->setAttribute('name','_'.$meta['ascii_id']);
-
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['value_text']));
-				if ('id' == $meta['attribute_name']) {
-					$meta['attribute_name'] = 'local_id';
-				}
-				$field->setAttribute('name',$meta['attribute_name']);
+			$field = $doc->appendChild($dom->createElement('field'));
+			$field->appendChild($dom->createTextNode($meta['value_text']));
+			if ('id' == $meta['ascii_id']) {
+				$meta['ascii_id'] = 'local_id';
 			}
+			$field->setAttribute('name','_'.$meta['ascii_id']);
+
+			$field = $doc->appendChild($dom->createElement('field'));
+			$field->appendChild($dom->createTextNode($meta['value_text']));
+			if ('id' == $meta['attribute_name']) {
+				$meta['attribute_name'] = 'local_id';
+			}
+			$field->setAttribute('name',$meta['attribute_name']);
 		}
 		foreach ($metadata_array as $m_id => $set) {
 			if (count($set['modifier'])) {
@@ -329,7 +324,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url,v.parent_value_id
+			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -359,6 +354,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
+		//modifiers NOT used w/ admin_metadata
 		$sql = "
 			SELECT a.ascii_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
@@ -397,7 +393,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.id as att_id,a.ascii_id,
 			a.attribute_name,a.html_input_type,
-			v.value_text,v.id as value_id, a.collection_id,v.url,v.parent_value_id
+			v.value_text,v.id as value_id, a.collection_id,v.url,v.modifier,a.modifier_type
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -415,7 +411,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$set['html_input_type'] = $row['html_input_type'];
 			$set['value_text'] = $row['value_text'];
 			$set['metadata_link_url'] = $row['url'];
-			$set['parent_value_id'] = $row['parent_value_id'];
+			$set['modifier'] = $row['modifier'];
+			$set['modifier_type'] = $row['modifier_type'];
 			if (in_array($row['html_input_type'],
 				array('radio','checkbox','select','text_with_menu'))
 			) {
@@ -565,13 +562,24 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function updateMetadata($value_id,$value_text,$eid)
+	function updateMetadata($value_id,$value_text,$eid,$modifier='')
 	{
 		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
 		$att = $v->getAttribute();
 		$rev = new Dase_DBO_ValueRevisionHistory($this->db);
 		$rev->added_text = $value_text;
+		if ($modifier) {
+			// a bit of a hack. to delete modifier
+			// you need to pass in '_delete'
+			if ('_delete' == $modifier) {
+				$rev->added_modifier = '';
+				$rev->deleted_modifier = $v->modifier;
+			} else {
+				$rev->added_modifier = $modifier;
+				$rev->deleted_modifier = $v->modifier;
+			}
+		}
 		$rev->attribute_name = $att->attribute_name;
 		$rev->collection_ascii_id = $this->p_collection_ascii_id;
 		$rev->dase_user_eid = $eid;
@@ -601,6 +609,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->collection_ascii_id = $this->p_collection_ascii_id;
 		$rev->dase_user_eid = $eid;
 		$rev->deleted_text = $v->value_text;
+		$rev->deleted_modifier = $v->modifier;
 		$rev->item_serial_number = $this->serial_number;
 		$rev->timestamp = date(DATE_ATOM);
 		$rev->insert();
@@ -628,7 +637,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function setValue($att_ascii_id,$value_text,$url='',$parent_value_id=0)
+	function setValue($att_ascii_id,$value_text,$url='',$modifier='')
 	{
 		//todo: this needs work -- no need to 'new' an att
 		//todo: set value revision history as well
@@ -648,7 +657,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->attribute_id = $att->id;
 			$v->value_text = trim($value_text);
 			$v->url = $url;
-			$v->parent_value_id = $parent_value_id;
+			$v->modifier = $modifier;
 			$v->insert();
 			return $v;
 			//too expensive:
@@ -660,15 +669,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function setValueLink($att_ascii_id,$value_text,$url)
+	function setValueLink($att_ascii_id,$value_text,$url,$modifier='')
 	{
-		return $this->setValue($att_ascii_id,$value_text,$url);
+		return $this->setValue($att_ascii_id,$value_text,$url,$modifier);
 	}
 
-	function setValueLinkModifier($att_ascii_id,$value_text,$parent_value_id)
-	{
-		return $this->setValue($att_ascii_id,$value_text,null,$parent_value_id);
-	}
 
 	/** deletes non-admin values including those with urls (metadata-links) */
 	function deleteValues()
@@ -940,8 +945,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		/* categories (or links!) for metadata */
 
-		$metadata_links = array(); //so we can set modifiers
-
 		$item_metadata = $this->getRawMetadata();
 		foreach ($item_metadata as $row) {
 			if ($row['url']) { //create metadata LINK
@@ -955,8 +958,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				);
 				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
 				$metadata_link->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
-				$metadata_links[$row['id']] = $metadata_link;
 			} 
+			if ($row['modifier']) {
+				$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
+				$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+			}
 		}
 		foreach ($item_metadata as $row) {
 			if ($row['url']) { 
@@ -967,34 +973,26 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
 						$row['attribute_name'],$row['value_text']);
 				} else {
-					//if ($row['parent_value_id'] && isset($metadata_links[$row['parent_value_id']])) { // it is a modifier
-					if ($row['parent_value_id'] ) { // it is a modifier
-						$modified_link = $metadata_links[$row['parent_value_id']];
-						$ns = Dase_Atom::$ns['atom'];
-						$cat = $modified_link->appendChild($entry->dom->createElementNS($ns,'category'));
-						$cat->appendChild($entry->dom->createTextNode($row['value_text']));
-						$cat->setAttribute('term',$row['ascii_id']);
-						$cat->setAttribute('scheme','http://daseproject.org/category/modifier');
-						$cat->setAttribute('label',$row['attribute_name']);
-						$cat->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					if ($row['is_public']) {
+						$meta = $entry->addCategory(
+							$row['ascii_id'],'http://daseproject.org/category/metadata',
+							$row['attribute_name'],$row['value_text']);
+						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
 					} else {
-						if ($row['is_public']) {
-							$meta = $entry->addCategory(
-								$row['ascii_id'],'http://daseproject.org/category/metadata',
-								$row['attribute_name'],$row['value_text']);
-							$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
-						} else {
-							$meta = $entry->addCategory(
-								$row['ascii_id'],'http://daseproject.org/category/private_metadata',
-								$row['attribute_name'],$row['value_text']);
-							$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
-						}
-						if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
-							$entry->setTitle($row['value_text']);
-						}
-						if ('rights' == $row['ascii_id']) {
-							$entry->setRights($row['value_text']);
-						}
+						$meta = $entry->addCategory(
+							$row['ascii_id'],'http://daseproject.org/category/private_metadata',
+							$row['attribute_name'],$row['value_text']);
+						$meta->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+					}
+					if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
+						$entry->setTitle($row['value_text']);
+					}
+					if ('rights' == $row['ascii_id']) {
+						$entry->setRights($row['value_text']);
+					}
+					if ($row['modifier']) {
+						$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
+						$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
 					}
 				}
 			}
@@ -1178,53 +1176,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$metadata_coll->addAccept('application/x-www-form-urlencoded');
 		$metadata_coll->addAccept('application/json');
 		return $app->asXml();
-	}
-
-	public function asArray($app_root)
-	{
-		$j = array();
-		$item_array['serial_number'] = $this->serial_number;
-		$item_array['created'] = $this->created;
-		$item_array['updated'] = $this->updated;
-		$item_array['collection'] = $this->p_collection_ascii_id;
-		$item_array['edit'] = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom';
-		$item_array['metadata'] = array();
-		foreach ($this->getMetadata($app_root) as $row) {
-			//note: a simpler way would be to ALWAYS make value an array.
-			//but this is a bit more concise (only an array if multiple) 
-			if (isset($item_array['metadata'][$row['ascii_id']])) {
-				if (is_array($item_array['metadata'][$row['ascii_id']])) {
-					$item_array['metadata'][$row['ascii_id']][] = $row['value_text'];
-				} else {
-					$orig = $item_array['metadata'][$row['ascii_id']];
-					$item_array['metadata'][$row['ascii_id']] = array();;
-					$item_array['metadata'][$row['ascii_id']][] = $orig;
-					$item_array['metadata'][$row['ascii_id']][] = $row['value_text'];
-				}
-			} else {
-				$item_array['metadata'][$row['ascii_id']] = $row['value_text'];
-			}
-		}
-		$item_array['media'] = array();
-		foreach ($this->getMedia() as $m) {
-		$item_array['media'][$m->size] = 
-			$app_root.'/media/'.
-			$this->p_collection_ascii_id.'/'.$m->size.'/'.$m->filename;
-		}
-		$con = $this->getContents();
-		if ($con) {
-			$content[$con->id]['updated'] = $con->updated;
-			$content[$con->id]['eid'] = $con->updated_by_eid;
-			$content[$con->id]['text'] = $con->text;
-			$item_array['content'][] = $content;
-		}
-
-		return $item_array;
-	}
-
-	public function asJson($app_root)
-	{
-		return Dase_Json::get($this->asArray($app_root),true);
 	}
 
 	public function statusAsJson()

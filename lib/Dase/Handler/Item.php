@@ -133,7 +133,6 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		//$r->renderResponse($this->item->asJson());
 		$r->renderResponse($this->item->asAtomJson($r->app_root));
 	}
 

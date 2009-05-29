@@ -17,26 +17,6 @@ class Dase_Search_Result
 		$this->count = count($item_ids);
 	}
 
-	public function getResultSetAsJsonFeed($app_root,$db,$max = 500)
-	{
-		//todo: this needs lots of work!
-		$json_tag;
-		$json_tag['uri'] = 'ssssssss';
-		$json_tag['updated'] = date(DATE_ATOM);
-		$json_tag['name'] = 'search: '.str_replace('&quot;','"',$this->_getQueryAsString());
-		$json_tag['is_public'] = 1;
-		$item_ids = array_slice($this->item_ids,0,$max);
-		$count = 0;
-		foreach($item_ids as $item_id) {
-			$count++;
-			$item = new Dase_DBO_Item($db);
-			$item->load($item_id);
-			$json_tag['items'][] = $item->asArray($app_root);
-		}
-		$json_tag['count'] = $count;
-		return Dase_Json::get($json_tag);	
-	}
-
 	public function getResultSetUris($app_root,$db)
 	{
 		//inefficient, but ok for now
