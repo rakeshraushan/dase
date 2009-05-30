@@ -138,7 +138,9 @@ class Dase_Handler_Manage extends Dase_Handler
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/attributes',$params);
 		}
 		$att->attribute_name = $r->get('attribute_name');
+		$att->modifier_type = $r->get('modifier_type');
 		$att->usage_notes = $r->get('usage_notes');
+		$att->mapped_admin_att_id = $r->get('mapped_admin_att_id');
 		if ($r->has('is_on_list_display')) {
 			$att->is_on_list_display = 1;
 		} else {
@@ -428,6 +430,8 @@ class Dase_Handler_Manage extends Dase_Handler
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);
 			$item->setItemType($r->get('item_type'));
+			//here's where we map admin_att to real att
+			$item->mapConfiguredAdmingAtts();
 			$item->buildSearchIndex();
 		} else {
 			//no file, if there is a title, assume it is a new item w/o media
