@@ -100,11 +100,15 @@
 				</select>
 				</p>
 				<p>
+				<label for="modifier_type">Modifier Type</label>
+				<input type="text" name="modifier_type" value="{$att->modifier_type}"/>
+				</p>
+				<p>
 				<label for="mapped_admin_att">Mapped Admin Attribute</label>
-				<select name="mapped_admin_att">
+				<select name="mapped_admin_att_id">
 					<option value="">Select an Admin Attribute to Map</option>
 					{foreach item=admin_att from=$admin_atts}
-					<option value="{$admin_att->ascii_id}">{$admin_att->attribute_name}</option>
+					<option value="{$admin_att->id}" {if $att->mapped_admin_att_id == $admin_att->id}selected="selected"{/if}>{$admin_att->attribute_name}</option>
 					{/foreach}
 				</select>
 				</p>

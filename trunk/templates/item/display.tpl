@@ -119,7 +119,7 @@
 					{foreach item=set key=att_ascii_id from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="search?{$item->collectionAsciiId}.{$att_ascii_id}={$value.text|escape:'url'}">{$value.text}</a></dd>
+					<dd><a href="search?{$item->collectionAsciiId}.{$att_ascii_id}={$value.text|escape:'url'}">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
 					{/foreach}
 					{/foreach}
 				</dl>
@@ -147,7 +147,7 @@
 					{foreach item=set key=att_ascii_id from=$item->entry->metadataLinks}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a href="{$value.url}">{$value.text}</a></dd>
+					<dd><a href="{$value.url}">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
 					{/foreach}
 					{/foreach}
 					</dl>

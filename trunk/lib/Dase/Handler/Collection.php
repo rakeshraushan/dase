@@ -466,13 +466,16 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory');
 		}
-		$item = $this->collection->createNewItem(null,$this->user->eid);
+		$item = $this->collection->createNewItem(null,$eid);
 		$item->setValue('title',urldecode($filename));
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
 		try {
 			$file = Dase_File::newFile($this->db,$new_file,null,null,$r->base_path);
-			$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
+			//$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
+			//accept dups
+			$media_file = $file->addToCollection($item,false,$this->path_to_media); //check for dups
+			$item->mapConfiguredAdminAtts();
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
 			$r->logger()->debug('coll handler error: '.$e->getMessage());

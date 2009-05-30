@@ -88,6 +88,16 @@ class Dase_Search_Result
 
 	public function getResultSetAsAtomFeed($app_root,$db,$start,$max)
 	{
+		return $this->getResultSet($app_root,$db,$start,$max)->asXml();
+	}
+
+	public function getResultSetAsJsonFeed($app_root,$db,$start,$max)
+	{
+		return $this->getResultSet($app_root,$db,$start,$max)->asJson();
+	}
+
+	public function getResultSet($app_root,$db,$start,$max)
+	{
 		$next = $start + $max;
 		if ($next > $this->count) {
 			unset($next);
@@ -163,7 +173,7 @@ class Dase_Search_Result
 			//an optimization
 			$entry->addLinkEarly($item_request_url.'&amp;num=' . $setnum,'http://daseproject.org/relation/search-item');
 		}
-		return $feed->asXml();
+		return $feed;
 	}
 
 	public function getItemAsAtomFeed($app_root,$db,$start,$max,$num)

@@ -322,7 +322,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$metadata = array();
 		$bound_params = array();
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,
+			SELECT a.ascii_id, a.id as att_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
 			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -348,7 +348,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $metadata;
 	}
 
-	public function getAdminMetadata($att_ascii_id = '',$app_root)
+	public function getAdminMetadata($app_root='{APP_ROOT}',$att_ascii_id = '')
 	{
 		$db = $this->db;
 		$prefix = $this->db->table_prefix;
@@ -356,7 +356,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$bound_params = array();
 		//modifiers NOT used w/ admin_metadata
 		$sql = "
-			SELECT a.ascii_id, a.attribute_name,
+			SELECT a.ascii_id, a.id as att_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
 			a.is_on_list_display, a.is_public
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -958,11 +958,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				);
 				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
 				$metadata_link->setAttributeNS($d,'d:edit-id',$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id']);
+				if ($row['modifier']) {
+					$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
+					if ($row['modifier_type']) {
+						$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+					}
+				}
 			} 
-			if ($row['modifier']) {
-				$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
-				$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
-			}
 		}
 		foreach ($item_metadata as $row) {
 			if ($row['url']) { 
@@ -991,8 +993,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$entry->setRights($row['value_text']);
 					}
 					if ($row['modifier']) {
-						$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
-						$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+						$meta->setAttributeNS($d,'d:mod',$row['modifier']);
+						if ($row['modifier_type']) {
+							$meta->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+						}
 					}
 				}
 			}
@@ -1372,5 +1376,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$cache_id = "get|collection/".$this->p_collection_ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
 		$cache->expire($cache_id);
 	
+	}
+
+	public function mapConfiguredAdminAtts()
+	{
+		$c = $this->getCollection();
+		foreach ($c->getAttributes() as $att) {
+			if ($att->mapped_admin_att_id) {
+				foreach ($this->getAdminMetadata() as $row) {
+					if ($att->mapped_admin_att_id == $row['att_id']) {
+						$this->setValue($att->ascii_id,$row['value_text']);
+					}
+				}
+			}
+		}
 	}
 }

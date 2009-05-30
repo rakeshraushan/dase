@@ -489,7 +489,7 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $irt;	
 	}
 
-	function asJson() 
+	function asArray() 
 	{
 		$atom_array = array(
 			'id' => $this->getId(),
@@ -506,6 +506,11 @@ class Dase_Atom_Entry extends Dase_Atom
 				'text' => $this->getContent(),
 			),
 		);
-		return Dase_Json::get($atom_array);
+		return $atom_array;
+	}
+
+	function asJson() 
+	{
+		return Dase_Json::get($this->asArray());
 	}
 }

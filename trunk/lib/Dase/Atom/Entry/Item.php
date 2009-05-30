@@ -269,14 +269,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$v['url'] = $el->getAttribute('href');
 					$v['coll'] = $coll;
 					$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
-					$v['modifiers'] = array();
-					foreach ($el->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat_el) {
-						$modifier['att_ascii_id'] = $cat_el->getAttribute('term');
-						$modifier['attribute_name'] = $cat_el->getAttribute('label');
-						$modifier['value_text'] = $cat_el->nodeValue;
-						$modifier['edit'] = $cat_el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
-						$v['modifiers'][] = $modifier;
-					}
+					$v['mod'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'mod');
+					$v['modtype'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'modtype');
 					$metadata[$att_ascii_id]['values'][] = $v;
 					//easy access to first value
 					if (1 == count($metadata[$att_ascii_id]['values'])) {
@@ -343,6 +337,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
 				$v['id'] = array_pop(explode('/',$v['edit'])); //provides the last segment, i.e. value id
 				$v['text'] = $el->nodeValue;
+				$v['mod'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'mod');
+				$v['modtype'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'modtype');
 				$metadata[$att_ascii_id]['values'][] = $v;
 				//easy access to first value
 				if (1 == count($metadata[$att_ascii_id]['values'])) {
@@ -358,6 +354,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$v['edit'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'edit-id');
 					$v['id'] = array_pop(explode('/',$v['edit'])); //provides the last segment, i.e. value id
 					$v['text'] = $el->nodeValue;
+					$v['mod'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'mod');
+					$v['modtype'] = $el->getAttributeNS(Dase_Atom::$ns['d'],'modtype');
 					$metadata[$att_ascii_id]['values'][] = $v;
 					//easy access to first value
 					if (1 == count($metadata[$att_ascii_id]['values'])) {
@@ -380,6 +378,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getValue($att_ascii_id)
 	{
+		//does NOT return modifier
 		$v = $this->getMetadata($att_ascii_id,true);
 		if (isset($v['text'])) {
 			return $v['text'];
@@ -390,6 +389,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	/** unlike getMetadata, here we do not break down
 	 * into text/edit/id
+	 * it is used in Feed class to do filtering
 	 ************************************************/
 	function getRawMetadata($att = '') 
 	{
@@ -456,7 +456,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			Dase_DBO_Attribute::findOrCreate($db,$c->ascii_id,$att);
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
-					$val = $item->setValue($att,$v['text']);
+					$val = $item->setValue($att,$v['text'],null,$v['mod']);
 				}
 			}
 		}
@@ -467,11 +467,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (trim($v['text'])) {
 					//check that it's proper collection
 					if ($c->ascii_id = $v['coll']) {
-						$val = $item->setValueLink($att,$v['text'],$v['url']);
+						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod']);
 					}
-				}
-				foreach ($v['modifiers'] as $mod) {
-					$item->setValueLinkModifier($mod['att_ascii_id'],$mod['value_text'],$val->id);
 				}
 			}
 		}
@@ -538,8 +535,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//1. status
 		$status = $this->getStatus();
-		$r->logger()->debug('--------status----------------'.$status);
-		$r->logger()->debug('--------status----------------'.$item->status);
+		//$r->logger()->debug('--------status----------------'.$status);
+		//$r->logger()->debug('--------status----------------'.$item->status);
 		if (($status != $item->status) && in_array($status,array('delete','draft','public','archive'))) {
 			$item->status = $status;
 		}
@@ -565,7 +562,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		foreach ($this->getMetadata(null,true) as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
-					$val = $item->setValue($att,$v['text']);
+					$val = $item->setValue($att,$v['text'],null,$v['mod']);
 				}
 			}
 		}
@@ -575,11 +572,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (trim($v['text'])) {
 					//check that it's proper collection
 					if ($c->ascii_id = $v['coll']) {
-						$val = $item->setValueLink($att,$v['text'],$v['url']);
+						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod']);
 					}
-				}
-				foreach ($v['modifiers'] as $mod) {
-					$item->setValueLinkModifier($mod['att_ascii_id'],$mod['value_text'],$val->id);
 				}
 			}
 		}

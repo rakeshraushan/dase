@@ -494,6 +494,26 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $this->getAtomElementText('subtitle');
 	}
 
+	function asJson() 
+	{
+		//todo: all the opensearch methods
+		$feed_array = array(
+			'id' => $this->getId(),
+			'title' => $this->getTitle(),
+			'subtitle' => $this->getSubtitle(),
+			'updated' => $this->getUpdated(),
+			'feedtype' => $this->getFeedtype(),
+		//	'author_name' => $this->getAuthorName(),
+			'rights' => $this->getRights(),
+			'category' => $this->getCategories(),
+			'link' => $this->getLinks(),
+		);
+		foreach ($this->getEntries() as $entry) {
+			$feed_array['entries'][] = $entry->asArray();
+		}
+		return Dase_Json::get($feed_array);
+	}
+
 	function __get($var) {
 		//allows smarty to invoke function as if getter
 		$classname = get_class($this);
