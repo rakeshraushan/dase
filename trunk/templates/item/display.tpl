@@ -11,6 +11,7 @@
 <link rel="service" type="application/atomsvc+xml" href="{$item->entry->serviceLink}">
 <link rel="http://daseproject.org/relation/edit" type="application/json" href="{$item->entry->jsonEditLink}">
 <link rel="http://daseproject.org/relation/attributes" type="application/json" href="{$item->entry->attributesLink}">
+<link rel="http://daseproject.org/relation/input_template" type="text/html" href="{$item->entry->alternateLink}/input_template">
 {/if}
 {/block}
 

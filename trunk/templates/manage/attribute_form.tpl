@@ -107,6 +107,7 @@
 				<label for="mapped_admin_att">Mapped Admin Attribute</label>
 				<select name="mapped_admin_att_id">
 					<option value="">Select an Admin Attribute to Map</option>
+					<option value="">-- none --</option>
 					{foreach item=admin_att from=$admin_atts}
 					<option value="{$admin_att->id}" {if $att->mapped_admin_att_id == $admin_att->id}selected="selected"{/if}>{$admin_att->attribute_name}</option>
 					{/foreach}

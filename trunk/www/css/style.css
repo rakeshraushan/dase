@@ -494,6 +494,22 @@ span#itemType {
 	font-weight: normal;
 }
 
+div#tdiv {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #ffd;
+	border: 1px solid #aa8;
+	margin-top: 20px;
+	padding: 10px;
+}
+
+div#tdiv label {
+	display: block;
+	font-weight: bold;
+	color: #666;
+}
+
+
 /*****  ITEM SET DISPLAY PAGE **************/
 
 div.pageControls {
@@ -1014,6 +1030,7 @@ span.position {
 	padding: 5px;
 	
 	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 	/*
 	margin: 10px 0 0 18px;
 	padding: 5em 1em;

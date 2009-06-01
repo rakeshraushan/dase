@@ -294,6 +294,7 @@ class Dase_Http_Request
 
 	public function get($key,$as_array = false)
 	{
+		//note: cannot deal well w/ php style array params
 		$post = $this->_post;
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
@@ -582,7 +583,16 @@ class Dase_Http_Request
 			return trim(filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING));
 		} else {
 			if (isset($post[$key])) {
-				return strip_tags($post[$key]);
+				if (is_array($post[$key])) {
+					$clean_array = array();
+					foreach ($post[$key] as $inp) {
+						$inp = strip_tags($inp);
+						$clean_array[] = $inp;
+					}
+					return $clean_array;
+				} else {
+					return strip_tags($post[$key]);
+				}
 			}
 		}
 		return false;

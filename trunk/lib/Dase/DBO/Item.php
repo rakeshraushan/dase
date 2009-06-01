@@ -482,6 +482,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			$item_type->name = 'default';
 			$item_type->ascii_id = 'default';
+			$item_type->collection_id = $this->collection_id;
 		}
 		$this->item_type = $item_type;
 		return $this->item_type;
