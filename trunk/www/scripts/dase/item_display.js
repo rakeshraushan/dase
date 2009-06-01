@@ -259,103 +259,129 @@ Dase.initEditMetadata = function() {
 									//	alert(resp);
 								},null,Dase.user.eid,Dase.user.htpasswd);
 								return false;
-							}
-							} else {
-								return false;
-							}
-						};
+							};
+						} else {
+							return false;
+						}
+					};
+				}
+				forms[i].onsubmit = function() {
+					var value_text = '';
+					for (var k=0;k<this.elements.length;k++) {
+						if ('text' == this.elements[k].type || 'textarea' == this.elements[k].type) {
+							value_text = this.elements[k].value;
+							break;
+						}
+						if ('radio' == this.elements[k].type && this.elements[k].checked) {
+							value_text = this.elements[k].value;
+							break;
+						}
 					}
-					forms[i].onsubmit = function() {
-						var value_text = '';
-						for (var k=0;k<this.elements.length;k++) {
-							if ('text' == this.elements[k].type || 'textarea' == this.elements[k].type) {
-								value_text = this.elements[k].value;
-								break;
-							}
-							if ('radio' == this.elements[k].type && this.elements[k].checked) {
-								value_text = this.elements[k].value;
-								break;
+					//Dase.loadingMsg(true);
+					//handle delete case
+					var value_id = this.className;
+					Dase.addClass(this,'updated');
+					Dase.ajax(this.action,'put',function(resp) { 
+						var value_text = resp;
+						Dase.$('val_'+value_id).value = value_text;
+						Dase.$('val_'+value_id).size = value_text.length;
+						Dase.$('val_'+value_id).onfocus = function() {
+							Dase.removeClass(Dase.$('label_'+value_id),'updated');
+						};
+						//handle radio buttons
+						var radios = Dase.$('val_'+value_id).getElementsByTagName('input');
+						for (var j=0;j<radios.length;j++) {
+							radios[j].onfocus = function() {
+								Dase.removeClass(Dase.$('label_'+value_id),'updated');
 							}
 						}
-						//Dase.loadingMsg(true);
-						//handle delete case
-						var value_id = this.className;
-						Dase.addClass(this,'updated');
-						Dase.ajax(this.action,'put',function(resp) { 
-							var value_text = resp;
-							Dase.$('val_'+value_id).value = value_text;
-							Dase.$('val_'+value_id).size = value_text.length;
-							Dase.$('val_'+value_id).onfocus = function() {
-								Dase.removeClass(Dase.$('label_'+value_id),'updated');
-							};
-							//handle radio buttons
-							var radios = Dase.$('val_'+value_id).getElementsByTagName('input');
-							for (var j=0;j<radios.length;j++) {
-								radios[j].onfocus = function() {
-									Dase.removeClass(Dase.$('label_'+value_id),'updated');
-								}
-							}
-							Dase.$('label_'+value_id).className = 'updated';
-							Dase.highlight(Dase.$('form_'+value_id),500,'updated');
-						},value_text,Dase.user.eid,Dase.user.htpasswd); 
-						return false;
-					}
+						Dase.$('label_'+value_id).className = 'updated';
+						Dase.highlight(Dase.$('form_'+value_id),500,'updated');
+					},value_text,Dase.user.eid,Dase.user.htpasswd); 
+					return false;
 				}
-				Dase.$('formText').innerHTML = 'Edit Metadata';
-			});
-			return false;
-		};
-	};
-
-	Dase.initAddMetadata = function()
-	{
-		var mlink = Dase.$('addMetadataLink');
-		var mform = Dase.$('ajaxFormHolder');
-		var coll = Dase.$('collectionAsciiId').innerHTML;
-		var atts_link = Dase.getLinkByRel('http://daseproject.org/relation/attributes');
-		if (!mlink || !mform) return;
-		mlink.onclick = function() {
-			//alert(atts_link);
-			Dase.addClass(Dase.$('adminPageControls'),'hide');
-			Dase.removeClass(Dase.$('pageReloader'),'hide');
-			Dase.$('pageReloaderLink').onclick = function() {
-				Dase.pageReload();
-				return false;
 			}
-			if (Dase.toggle(mform)) {
-				mform.innerHTML = '<h1 class="loading">Loading...</h1>';
-				Dase.getJSON(this.href, function(atts){
-					h = new Dase.htmlbuilder;
-					h.add('h1',null,'Add Metadata Individually');
-					var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
-					var sel = form.add('select',{'name':'att_ascii_id'});
-					sel.add('option',{'value':''},'select an attribute');
-					for (var i=0;i<atts.length;i++) {
-						var att = atts[i];
-						sel.add('option',{'value':att.href},att.attribute_name);
-					}
-					h.add('div',{'id':'addMetadataFormTarget'},'&nbsp;');
-
-					var tdiv = h.add('div',{'id':'tdiv'});
-					tdiv.add('h1',null,'Add Metadata by Input Template');
-
-				h.attach(mform);
-				var getForm = Dase.$('getInputForm');
-				Dase.initGetInputForm(getForm);
-				var inputTempDiv = Dase.$('tdiv');
-				Dase.initInputTemplate(inputTempDiv);
-			});
-		}
+			Dase.$('formText').innerHTML = 'Edit Metadata';
+		});
 		return false;
+	};
+};
+
+Dase.initAddMetadata = function()
+{
+	var mlink = Dase.$('addMetadataLink');
+	var mform = Dase.$('ajaxFormHolder');
+	var coll = Dase.$('collectionAsciiId').innerHTML;
+	var atts_link = Dase.getLinkByRel('http://daseproject.org/relation/attributes');
+	if (!mlink || !mform) return;
+	mlink.onclick = function() {
+		//alert(atts_link);
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
+		if (Dase.toggle(mform)) {
+			mform.innerHTML = '<h1 class="loading">Loading...</h1>';
+			Dase.getJSON(this.href, function(atts){
+				h = new Dase.htmlbuilder;
+				//individual attribute
+				h.add('h1',null,'Add Metadata Individually');
+				var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
+				var sel = form.add('select',{'name':'att_ascii_id'});
+				sel.add('option',{'value':''},'select an attribute');
+				for (var i=0;i<atts.length;i++) {
+					var att = atts[i];
+					sel.add('option',{'value':att.href},att.attribute_name);
+				}
+			h.add('div',{'id':'addMetadataFormTarget'},'&nbsp;');
+
+			//input template
+			var tdiv = h.add('div',{'id':'tdiv'});
+			tdiv.add('h1',null,'Add Metadata by Input Template');
+
+			h.attach(mform);
+
+			//individual attribute
+			var getForm = Dase.$('getInputForm');
+			Dase.initGetInputForm(getForm);
+
+			//input template
+			var inputTempDiv = Dase.$('tdiv');
+			Dase.initInputTemplate(inputTempDiv);
+		});
 	}
+	return false;
+}
 };
 
 Dase.initInputTemplate = function(target) {
 	var url = Dase.getLinkByRel('http://daseproject.org/relation/input_template');
 	Dase.ajax(url,'get',function(resp) {
 		target.innerHTML += resp;
+		Dase.initTemplateTextWithMenu(target);
 	});
 };
+
+
+Dase.initTemplateTextWithMenu = function(target) {
+	//activate all text_with_menu elements in input template
+	var inps = target.getElementsByTagName('input');
+	for (var i=0;i<inps.length;i++) {
+		var text_target = inps[i];
+		if ('autofill_target' == text_target.className) {
+			dynamic_select = Dase.$('autofill_select_'+text_target.name);
+			if (dynamic_select) {
+				dynamic_select.text_target = text_target;
+				dynamic_select.onchange = function() {
+					this.text_target.value = this.options[this.selectedIndex].value;
+				}
+			}
+		}
+	}
+};
+
 
 Dase.initAddContent = function()
 {
@@ -380,11 +406,11 @@ Dase.initAddContent = function()
 				if (content.latest.text) {
 					form.add('h4',null,'last updated '+content.latest.date);
 				}
-				form.add('p').add('textarea',{'cols':'50','rows':'15','name':'content'},content.latest.text+' ');
-				form.add('p').add('input',{'type':'submit','value':'update'});
-				h.attach(cform);
-				var contentForm = Dase.$('textualContentForm');
-				Dase.initContentForm(contentForm);
+			form.add('p').add('textarea',{'cols':'50','rows':'15','name':'content'},content.latest.text+' ');
+			form.add('p').add('input',{'type':'submit','value':'update'});
+			h.attach(cform);
+			var contentForm = Dase.$('textualContentForm');
+			Dase.initContentForm(contentForm);
 		});
 	}
 	return false;
@@ -494,27 +520,27 @@ Dase.initGetInputForm = function(form) {
 			Dase.loadingMsg(true);
 			Dase.ajax(this.action,'post',function() { 
 				Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(meta) {
-				var h = new Dase.htmlbuilder;
-				var seen;
-				for (var i=0;i<meta.length;i++) {
-					var m = meta[i];
-					if (m.collection_id != 0) {
-						if (seen != m.attribute_name) {
-							h.add('dt',null,m.attribute_name);
-							seen = m.attribute_name;
+					var h = new Dase.htmlbuilder;
+					var seen;
+					for (var i=0;i<meta.length;i++) {
+						var m = meta[i];
+						if (m.collection_id != 0) {
+							if (seen != m.attribute_name) {
+								h.add('dt',null,m.attribute_name);
+								seen = m.attribute_name;
+							}
+							h.add('dd',null,m.value_text)
 						}
-						h.add('dd',null,m.value_text)
 					}
-				}
-				h.attach(Dase.$('metadata'));
-			});
-		},Dase.form.serialize(this),null,null,content_headers); 
-		Dase.$('addMetadataFormTarget').innerHTML = '';
-		form.att_ascii_id.selectedIndex = 0; //reset attribute selector
-		return false;
-	};
-});
-return false;
+					h.attach(Dase.$('metadata'));
+				});
+			},Dase.form.serialize(this),null,null,content_headers); 
+			Dase.$('addMetadataFormTarget').innerHTML = '';
+			form.att_ascii_id.selectedIndex = 0; //reset attribute selector
+			return false;
+		};
+	});
+	return false;
 }
 };
 
