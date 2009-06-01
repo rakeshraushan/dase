@@ -5,6 +5,7 @@ class Dase_Handler_Item extends Dase_Handler
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
 		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
+		'{collection_ascii_id}/{serial_number}/input_template' => 'input_template',
 		'{collection_ascii_id}/{serial_number}/ping' => 'ping',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
@@ -32,6 +33,16 @@ class Dase_Handler_Item extends Dase_Handler
 
 		//all auth happens in individual methods
 	}	
+
+	public function getInputTemplate($r) 
+	{
+		$t = new Dase_Template($r);
+		$type = $this->item->getItemType();
+		$t->assign('item_url','item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
+		$t->assign('atts',$type->getAttributes());
+		$r->renderResponse($t->fetch('item/input_template.tpl'));
+
+	}
 
 	public function deleteItem($r)
 	{
@@ -273,6 +284,33 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setContent($content,$user->eid,$content_type)) {
 			$r->renderResponse('content updated');
 		}
+	}
+
+	//for input template
+	public function postToItem($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' != $content_type) {
+			$r->renderError(401);
+		} 
+		$type = $this->item->getItemType();
+		$set = '';
+		foreach ($type->getAttributes() as $att) {
+			$val_set = $r->get($att->ascii_id,true);
+			if (count($r->get($att->ascii_id,true)) && is_array($val_set)) {
+				foreach ($val_set as $val) {
+					if ($att->ascii_id && $val) {
+						$this->item->setValue($att->ascii_id,$val);
+					}
+				}
+			}
+		}
+		$this->item->buildSearchIndex();
+		$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
 	}
 
 	/** this is used to UPDATE an item's type (comes from a form)*/

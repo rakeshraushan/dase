@@ -140,7 +140,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$att->attribute_name = $r->get('attribute_name');
 		$att->modifier_type = $r->get('modifier_type');
 		$att->usage_notes = $r->get('usage_notes');
-		$att->mapped_admin_att_id = $r->get('mapped_admin_att_id');
+		$att->mapped_admin_att_id = $r->get('mapped_admin_att_id') ? $r->get('mapped_admin_att_id') : 0;
 		if ($r->has('is_on_list_display')) {
 			$att->is_on_list_display = 1;
 		} else {

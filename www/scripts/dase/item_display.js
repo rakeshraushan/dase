@@ -315,7 +315,7 @@ Dase.initEditMetadata = function() {
 		var atts_link = Dase.getLinkByRel('http://daseproject.org/relation/attributes');
 		if (!mlink || !mform) return;
 		mlink.onclick = function() {
-			alert(atts_link);
+			//alert(atts_link);
 			Dase.addClass(Dase.$('adminPageControls'),'hide');
 			Dase.removeClass(Dase.$('pageReloader'),'hide');
 			Dase.$('pageReloaderLink').onclick = function() {
@@ -334,24 +334,27 @@ Dase.initEditMetadata = function() {
 						var att = atts[i];
 						sel.add('option',{'value':att.href},att.attribute_name);
 					}
+					h.add('div',{'id':'addMetadataFormTarget'},'&nbsp;');
 
-					h.add('h1',null,'Add Metadata by Input Template');
-					var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
-					var sel = form.add('select',{'name':'att_ascii_id'});
-					sel.add('option',{'value':''},'select an attribute');
-					for (var i=0;i<atts.length;i++) {
-						var att = atts[i];
-						sel.add('option',{'value':att.href},att.attribute_name);
-					}
+					var tdiv = h.add('div',{'id':'tdiv'});
+					tdiv.add('h1',null,'Add Metadata by Input Template');
 
-					h.add('div',{'id':'addMetadataFormTarget'});
 				h.attach(mform);
 				var getForm = Dase.$('getInputForm');
 				Dase.initGetInputForm(getForm);
+				var inputTempDiv = Dase.$('tdiv');
+				Dase.initInputTemplate(inputTempDiv);
 			});
 		}
 		return false;
 	}
+};
+
+Dase.initInputTemplate = function(target) {
+	var url = Dase.getLinkByRel('http://daseproject.org/relation/input_template');
+	Dase.ajax(url,'get',function(resp) {
+		target.innerHTML += resp;
+	});
 };
 
 Dase.initAddContent = function()

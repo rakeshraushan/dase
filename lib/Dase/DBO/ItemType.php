@@ -87,15 +87,26 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 
 	public function getAttributes()
 	{
-		//todo: fix this!!
 		$attributes = array();
-		$att_it = new Dase_DBO_AttributeItemType($this->db);
-		$att_it->item_type_id = $this->id;
-		foreach($att_it->find() as $ait) {
-			$att = new Dase_DBO_Attribute($this->db);
-			$att->load($ait->attribute_id);
-		//	for sorting
-			$attributes[strtolower($att->attribute_name)] = $att;
+		if ('default' == $this->ascii_id) {
+			$c = $this->getCollection();
+			foreach ($c->getAttributes() as $att) {
+				$att = clone($att);
+				$att->getFormValues();
+				$attributes[strtolower($att->attribute_name)] = $att;
+			}
+		} else {
+			$att_it = new Dase_DBO_AttributeItemType($this->db);
+			$att_it->item_type_id = $this->id;
+			foreach($att_it->find() as $ait) {
+				$att = new Dase_DBO_Attribute($this->db);
+				if ($att->load($ait->attribute_id)) {
+					$att->getFormValues();
+					//	for sorting
+					//	are attribute names unique???
+					$attributes[strtolower($att->attribute_name)] = $att;
+				}
+			}
 		}
 		ksort($attributes);
 		$this->attributes = $attributes;
