@@ -431,7 +431,7 @@ class Dase_Handler_Manage extends Dase_Handler
 			$media_file = $file->addToCollection($item,false,$this->path_to_media);
 			$item->setItemType($r->get('item_type'));
 			//here's where we map admin_att to real att
-			$item->mapConfiguredAdmingAtts();
+			$item->mapConfiguredAdminAtts();
 			$item->buildSearchIndex();
 		} else {
 			//no file, if there is a title, assume it is a new item w/o media

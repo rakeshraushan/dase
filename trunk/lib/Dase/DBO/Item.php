@@ -66,6 +66,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $atom;
 	}
 
+	public function saveAtomFile($path_to_media)
+	{
+		$subdir = Dase_Util::getSubdir($this->serial_number);
+		$path = $path_to_media.'/'.$this->p_collection_ascii_id.'/atom/'.$subdir;
+		if (!file_exists($path)) {
+			mkdir($path);
+		}
+		$filename = $this->serial_number.'.atom';
+		$app_root = '{APP_ROOT}';
+		$entry = new Dase_Atom_Entry_Item;
+		$entry = $this->injectAtomEntryData($entry,$app_root);
+		if (file_put_contents($path.'/'.$filename,$entry->asXml($entry->root))) {
+			return $path.'/'.$filename;
+		}	
+	}
+
 	public static function getByUrl($db,$url)
 	{
 		//ignores everything but last two sections
@@ -287,6 +303,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(join("\n",$search_text)));
 		$field->setAttribute('name','search_text');
+		/*
 		$media_size_set = array();
 		foreach ($this->getMedia() as $m) {
 			//eliminate duplicate sizes
@@ -306,6 +323,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_size_set[$m->size] = true;
 			}
 		}
+		 */
+		$app_root = '{APP_ROOT}';
+		$entry = new Dase_Atom_Entry_Item;
+		$entry = $this->injectAtomEntryData($entry,$app_root);
+		$atom_str = $entry->asXml($entry->root);
+		$field = $doc->appendChild($dom->createElement('field'));
+		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
+		$field->setAttribute('name','atom');
 		$dom->formatOutput = true;
 		return $dom->saveXML();
 	}
@@ -1022,6 +1047,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$entry->setThumbnail($app_root.$thumb_url);	
 			}
 		} else {
+			/** skip splash while working on Solr stuff
 			$list = '';
 			foreach ($item_metadata as $row) {
 				$list .= "
@@ -1037,6 +1063,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				</div>
 				";
 			$entry->setContent($splash,'html');
+			 */
 		}
 
 		/* enclosure */
@@ -1104,7 +1131,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//for single item view, add collection name as cat label
 		$collection = $this->getCollection();
 		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
-		$coll_cat->setAttribute('label',$collection->collection_name);
+		if ($coll_cat) {
+			$coll_cat->setAttribute('label',$collection->collection_name);
+		}
 		//add comments
 		foreach ($this->getComments() as $comment) {
 			$comment_entry = $feed->addEntry('comment');
@@ -1127,8 +1156,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//for single item view, add collection name as cat label
 		$collection = $this->getCollection();
 		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
-		$coll_cat->setAttribute('label',$collection->collection_name);
-		return $entry->asXml();
+		if ($coll_cat) {
+			$coll_cat->setAttribute('label',$collection->collection_name);
+		}
+		return $entry->asXml($entry->root); //leaves off xml declaration
 	}
 
 	/** experimental */
