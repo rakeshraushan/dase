@@ -80,6 +80,11 @@ class Dase_Atom
 		}
 	}
 
+	function getAuthorName()
+	{
+		return $this->getXpathValue("atom:author/atom:name",$this->root);
+	}
+
 	function addCategory($term,$scheme='',$label='',$text='') 
 	{
 		$cat = $this->addElement('category',$text);

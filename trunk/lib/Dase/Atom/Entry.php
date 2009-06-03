@@ -463,11 +463,6 @@ class Dase_Atom_Entry extends Dase_Atom
 		return $this->getLink('http://daseproject.org/relation/edit');
 	}
 
-	function getAuthorName()
-	{
-		return $this->getXpathValue("atom:author/atom:name",$this->root);
-	}
-
 	function getEnclosure() 
 	{
 		//note: only gets one!!!
