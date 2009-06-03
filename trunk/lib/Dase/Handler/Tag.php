@@ -9,6 +9,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/download' => 'tag_zip_archive',
 		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', 
 		'{eid}/{tag_ascii_id}/background' => 'background',
+		'{eid}/{tag_ascii_id}/visibility' => 'visibility',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
@@ -51,14 +52,29 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401,'user does not have download privileges');
 		}
+
+		//ZIP stuff
+		$zip = new ZipArchive();
+		$filename = "/tmp/".$u->eid."-".$tag->ascii_id.".zip";
+		if (file_exists($filename)) {
+			unlink($filename);
+		}
+		if ($zip->open($filename, ZIPARCHIVE::CREATE)!==TRUE) {
+			$r->renderError(401,'cannot create zip');
+		}
+		$img_links = array();
 		foreach ($tag->getTagItems() as $ti) {
 			$item = $ti->getItem();
-			foreach (array('small','medium','large') as $size) {
-				$url = $item->getMediaUrl($size,$r->app_root);
-				$out .= "$url</br>";
+			//todo work on other sizes
+			foreach (array('small','medium','large','full') as $size) {
+				$img = file_get_contents($item->getMediaUrl($size,$r->app_root));
+				if (strlen($img)) {
+					$zip->addFromString($u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg',$img);
+				}
 			}
 		}
-		$r->renderResponse($out);
+		$zip->close();
+		$r->serveFile($filename,'application/zip',true);
 	}
 
 
@@ -147,6 +163,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($u->can('admin',$this->tag) && 'hide' != $u->cb) {
 			$t->assign('bulkedit',1);
 		}
+		if ($this->tag->is_public) {
+			$t->assign('is_public',1);
+		}
 		if ($u->can('write',$this->tag)) {
 			$t->assign('is_admin',1);
 		}
@@ -229,6 +248,26 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,'not authorized to set background');
 		}
 		$this->tag->setBackground($r->get('background'));
+		if ('list' == $r->get('display')) {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
+		} else {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'?nocache=1');
+		}
+	}
+
+	public function postToVisibility($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->tag)) {
+			$r->renderError(401,'not authorized to set visibility');
+		}
+		if ('public' == $r->get('visibility')) {
+			$this->tag->is_public = 1;
+		}
+		if ('private' == $r->get('visibility')) {
+			$this->tag->is_public = 0;
+		}
+		$this->tag->update();
 		if ('list' == $r->get('display')) {
 			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
 		} else {

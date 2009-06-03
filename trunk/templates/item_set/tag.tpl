@@ -14,7 +14,9 @@
 	<div class="pageControls">
 		<h4>
 
+			{if 1 == $is_admin}
 			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">slide sorter</a>
+			{/if}
 			{if $bulkedit}
 			| <a href="collection/{$items->collectionAsciiId}/attributes" id="bulkEditor">bulk editor</a>
 			{/if}
@@ -42,8 +44,9 @@
 					{include file='item_set/common_grid.tpl' start=$startIndex}
 					{/if}
 				</table>
+				<p>
 				<a href="" id="checkall">check/uncheck all</a>
-				<div>&nbsp;</div>
+				</p>
 				<div class="widget">
 					<div id="saveChecked" {if 0 == $items->count}class="hide"{/if}></div>
 				</div>
@@ -52,21 +55,36 @@
 			{if 'cart' == $items->tagType}
 			<div class="widget">
 				<form method="post" id="cartEmptyForm" action="user/{$items->eid}/cart/emptier">
-					<input type="hidden" name="submit_confirm" value="are you sure you want to empty your cart?"/>
-					<input type="submit" id="cartEmptyButton" value="empty cart"/>
+					<input type="hidden" name="submit_confirm" value="are you sure you want to empty your cart?">
+					<input type="submit" id="cartEmptyButton" value="empty cart">
 				</form>
 			</div>
 			{else}
 			<div class="widget">
 				<form method="get" id="removeFromForm" action="{$items->link}">
-					<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items"/>
+					<p>
+					<input type="submit" name="remove_checked" id="removeFromSet" value="remove checked items">
+					</p>
 				</form>
 			</div>
 			<div class="widget">
 				<!-- why "get"?????? -->
 				<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
-					<input type="hidden" name="submit_confirm" value="are you sure?"/>
-					<input type="submit" id="setExpungerButton" value="delete entire set"/>
+					<p>
+					<input type="hidden" name="submit_confirm" value="are you sure?">
+					<input type="submit" id="setExpungerButton" value="delete set">
+					</p>
+				</form>
+			</div>
+			{/if}
+			{/if}
+			{else} {* number of items is zero *}
+			{if $is_admin}
+			{if 'cart' != $items->tagType}
+			<div class="widget">
+				<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
+					<input type="hidden" name="submit_confirm" value="are you sure?">
+					<input type="submit" id="setExpungerButton" value="delete set">
 				</form>
 			</div>
 			{/if}
@@ -82,17 +100,36 @@
 			{/if}
 			<div class="spacer"></div>
 		</div>
+		{if 1 == $is_admin}
 		<div class="{$items->tagType|lower|default:'set'}Admin">
 			<h4>set slideshow background color</h4>
-			<form id="backgroundColorSelect" style="background-color: {$items->background}" action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
-				<select name="background">
+			<form action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
+				<p>
+				<select name="background" class="{$items->background}">
 					<option>select a color:</option>
-					<option {if "black" == $items->background}selected="selected"{/if}>black</option>
-					<option {if "white" == $items->background}selected="selected"{/if}>white</option>
-					<option {if "gray" == $items->background}selected="selected"{/if}>gray</option>
+					<option class="black" {if "black" == $items->background}selected="selected"{/if}>black</option>
+					<option class="white" {if "white" == $items->background}selected="selected"{/if}>white</option>
 				</select>
-				<input type="hidden" name="display" value="{$display}"/>
-				<input type="submit" value="save"/>
+				<input type="hidden" name="display" value="{$display}">
+				<input type="submit" value="save">
+				</p>
 			</form>
+			<form action="tag/{$items->eid}/{$items->asciiId}/visibility" method="post">
+				<p>
+				{if 1 == $is_public}
+				<h5>This set is PUBLIC</h5>
+				<input type="hidden" name="visibility" value="private">
+				<input type="submit" value="make private">
+				{else}
+				<h5>This set is PRIVATE</h5>
+				<input type="hidden" name="visibility" value="public">
+				<input type="submit" value="make public">
+				{/if}
+				</p>
+			</form>
+			<p>
+			<h4><a href="tag/{$items->eid}/{$items->asciiId}/download">download this set</a></h4>
+			</p>
 		</div>
+		{/if}
 		{/block}
