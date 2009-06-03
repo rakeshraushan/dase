@@ -5,10 +5,13 @@ Dase.pageInit = function() {
 //item editing needs to know user, 
 //so we use the 'pageInitUser' function
 Dase.pageInitUser = function(eid) {
+	Dase.initAddAnnotation();
 	Dase.recordItemView(eid);
 	if ('hide' == Dase.user.controls) return;
 	var auth_info = Dase.checkAdminStatus(eid);
-	if (!auth_info) return;
+	if (!auth_info) {
+		return;
+	};
 	var controls = Dase.$('adminPageControls');
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
 	{
@@ -18,7 +21,6 @@ Dase.pageInitUser = function(eid) {
 		Dase.initAddContent();
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
-		Dase.initAddAnnotation();
 	}
 	return;
 };
@@ -102,8 +104,11 @@ break;
 }
 
 Dase.initAddAnnotation = function() {
+	var owner = Dase.getMeta('tagOwner');
+	if (Dase.user.eid != owner) return;
 	var tog = Dase.$('annotationToggle');
 	if (!tog) return;
+	Dase.removeClass(tog,'hide');
 	tog.onclick = function() {
 		Dase.toggle(Dase.$('annotationText'));
 		Dase.toggle(Dase.$('setAnnotationForm'));

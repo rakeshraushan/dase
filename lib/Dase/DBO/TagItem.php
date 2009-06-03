@@ -63,7 +63,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$feed->setTitle($item->getTitle());
 		$feed->setId($app_root.'/tag/item/'.$tag->id.'/'.$this->id);
 		$feed->setGenerator('DASe','http://daseproject.org','1.0');
-		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
+		$feed->addAuthor($tag->eid);
 
 		//$feed->addCategory($tag->type,"http://daseproject.org/category/tag_type",$tag->type);
 		$feed->addCategory('set',"http://daseproject.org/category/tag_type");

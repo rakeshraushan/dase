@@ -753,6 +753,10 @@ div.widget {
 	padding:10px 15px 15px 30px;
 }
 
+.tagAdmin form {
+	margin-bottom: 15px;
+}
+
 .slideshowAdmin {
 	background-color:#b5becd;
 	padding:10px 15px 15px 30px;

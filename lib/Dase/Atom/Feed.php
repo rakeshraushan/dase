@@ -93,7 +93,7 @@ class Dase_Atom_Feed extends Dase_Atom
 	{
 		if ($dom) {
 			//reader object
-			$this->root = $dom;
+			$this->root = $dom->documentElement;
 			$this->dom = $dom;
 		}  else {
 			//creator object

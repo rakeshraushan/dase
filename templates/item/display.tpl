@@ -2,6 +2,9 @@
 
 {block name="head-meta"}
 <meta name="item-title" content="{$item->entry->_title}">
+{if 'set' == $item->tagType}
+<meta name="tagOwner" content="{$item->authorName}">
+{/if}
 {/block}
 
 {block name="head-links"}
@@ -180,15 +183,16 @@
 	</table>
 </div> 
 {if 'set' == $item->tagType}
-		<div class="tagAdmin">
-			<h3>Annotation <a href="#" class="modify" id="annotationToggle">add/update</a></h3>
-			{if $item->entry->summary}
-			<p class="annotation" id="annotationText">{$item->entry->summary}</p>
-			{/if}
-			<form class="hide" id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
-				<p><textarea name="annotation">{$item->entry->summary}</textarea></p>
-				<input type="submit" value="save">
-			</form>
-		</div>
+<div class="tagAdmin">
+	{if $item->entry->summary}
+	<h3>Annotation</h3>
+	<p class="annotation" id="annotationText">{$item->entry->summary}</p>
+	{/if}
+	<form class="hide" id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
+		<p><textarea name="annotation">{$item->entry->summary}</textarea></p>
+		<input type="submit" value="save">
+	</form>
+	<a href="#" class="hide modify" id="annotationToggle">add/update annotation</a>
+</div>
 {/if}
 {/block} 
