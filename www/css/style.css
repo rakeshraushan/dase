@@ -776,9 +776,16 @@ div.widget {
 
 /************ SLIDESHOW DISPLAY **************/
 
-#backgroundColorSelect {
-	padding: 10px;
-	width: 30%;
+select.white, option.white, option.white:active {
+	color: black;
+	background-color: white;
+	border: 2px solid #999;
+}
+
+select.black, option.black, option.black:active {
+	color: white;
+	background-color: black;
+	border: 2px solid #999;
 }
 
 body.black {
@@ -789,11 +796,6 @@ body.black {
 body.white {
 	background-color: white;
 	color: #999;
-}
-
-body.gray {
-	background-color: gray;
-	color: #333;
 }
 
 div#slideshowContainer {

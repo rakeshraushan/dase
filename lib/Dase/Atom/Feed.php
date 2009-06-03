@@ -1,7 +1,7 @@
 <?php
 
 /*** a minimal atom feed
- 
+
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>tag:daseproject.org,2008:temp</id>
   <author><name/></author>
@@ -455,6 +455,23 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	}
 
+	public function sortByPublished()
+	{
+		$entries = $this->getEntries();
+		usort($entries,array('Dase_Atom_Feed','_sortByEntryPublished'));
+		$this->_entries = $entries;
+		return $this;
+
+	}
+
+	public static function _sortByEntryPublished($a,$b)
+	{
+		$at = $a->getPublished();
+		$bt = $b->getPublished();
+		return strnatcasecmp($at,$bt);
+
+	}
+
 	public function getCount()
 	{
 		return count($this->getEntries());
@@ -503,7 +520,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			'subtitle' => $this->getSubtitle(),
 			'updated' => $this->getUpdated(),
 			'feedtype' => $this->getFeedtype(),
-		//	'author_name' => $this->getAuthorName(),
+			//	'author_name' => $this->getAuthorName(),
 			'rights' => $this->getRights(),
 			'category' => $this->getCategories(),
 			'link' => $this->getLinks(),

@@ -324,6 +324,11 @@ class Dase_Atom_Entry extends Dase_Atom
 		$published = $this->addElement('published',$text);
 	}
 
+	function getPublished()
+	{
+		return $this->getAtomElementText('published');
+	}
+
 	function setSource()
 	{
 		if ($this->source_is_set) {
