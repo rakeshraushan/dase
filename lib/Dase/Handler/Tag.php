@@ -228,9 +228,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$this->tag->setBackground($r->get('background'));
 		if ('list' == $r->get('display')) {
-			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
 		} else {
-			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id);
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'?nocache=1');
 		}
 	}
 
