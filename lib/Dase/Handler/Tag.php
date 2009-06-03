@@ -130,7 +130,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
-		$r->checkCache();
+		if (!$r->get('nocache')) {
+			$r->checkCache();
+		}
 		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
