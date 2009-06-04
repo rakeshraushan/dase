@@ -93,7 +93,8 @@ class Dase_Http_Response
 			} else {
 				header("Content-Disposition: inline; filename=$filename");
 			}
-			print file_get_contents($path);
+			//print file_get_contents($path);
+			readfile($path);
 		}
 		exit;
 	}
