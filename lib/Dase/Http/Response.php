@@ -90,11 +90,20 @@ class Dase_Http_Response
 			header('Content-Type: '.$mime_type);
 			if ($download) {
 				header("Content-Disposition: attachment; filename=$filename");
+				//from http://us.php.net/fread
+				$total     = filesize($path);
+				$blocksize = (2 << 20); //2M chunks
+				$sent      = 0;
+				$handle    = fopen($path, "r");
+				// Now we need to loop through the file and echo out chunks of file data
+				while($sent < $total){
+					echo fread($handle, $blocksize);
+					$sent += $blocksize;
+				}
 			} else {
 				header("Content-Disposition: inline; filename=$filename");
+				print file_get_contents($path);
 			}
-			//print file_get_contents($path);
-			readfile($path);
 		}
 		exit;
 	}

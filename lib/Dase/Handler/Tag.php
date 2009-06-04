@@ -62,21 +62,28 @@ class Dase_Handler_Tag extends Dase_Handler
 		if ($zip->open($filename, ZIPARCHIVE::CREATE)!==TRUE) {
 			$r->renderError(401,'cannot create zip');
 		}
-		$img_links = array();
 		foreach ($tag->getTagItems() as $ti) {
 			$item = $ti->getItem();
 			//todo work on other sizes
 			foreach (array('small','medium','large','full') as $size) {
+			//foreach (array('small','medium','large') as $size) {
+				/*
 				$img = file_get_contents($item->getMediaUrl($size,$r->app_root));
 				if (strlen($img)) {
 					$zip->addFromString($u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg',$img);
 				}
+				 */
+				$fn = $this->path_to_media."/tmp/".$u->eid.'-'.$tag->ascii_id.'-'.$size.'-'.$item->serial_number;
+				file_put_contents($fn,file_get_contents($item->getMediaUrl($size,$r->app_root)));
+				if (filesize($fn)) {
+					$zip->addFile($fn,$u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg');
+				}
+
 			}
 		}
 		$zip->close();
 		$r->serveFile($filename,'application/zip',true);
 	}
-
 
 	public function getTagAtom($r)
 	{
