@@ -55,7 +55,7 @@ class Dase_Handler_Tag extends Dase_Handler
 
 		//ZIP stuff
 		$zip = new ZipArchive();
-		$filename = "/tmp/".$u->eid."-".$tag->ascii_id.".zip";
+		$filename = $this->path_to_media."/tmp/".$u->eid."-".$tag->ascii_id.".zip";
 		if (file_exists($filename)) {
 			unlink($filename);
 		}
