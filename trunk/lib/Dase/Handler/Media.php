@@ -6,7 +6,7 @@ class Dase_Handler_Media extends Dase_Handler
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/{size}/{serial_number}' => 'media_file',
-		'{collection_ascii_id}/{serial_number}' => 'media', //for 'PUT'
+		'{collection_ascii_id}/{serial_number}' => 'media', //for 'PUT' & 'DELETE'
 	);
 
 	protected function setup($r)
