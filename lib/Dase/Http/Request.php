@@ -472,8 +472,9 @@ class Dase_Http_Request
 			$eid = $this->getEid(true);
 			break;
 		case 'none':
-			//allows nothing to happen
-			return;
+			//returns a null user
+			$u = new Dase_DBO_DaseUser($this->retrieve('db'));
+			return $u;
 		default:
 			$eid = $this->retrieve('cookie')->getEid($this->_cookie);
 		}
