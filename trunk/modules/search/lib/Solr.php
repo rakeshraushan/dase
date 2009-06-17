@@ -39,7 +39,7 @@ class Solr {
 			$start_param = '&start=0';
 		}
 		//print $this->url."/select/?q=".$this->q."&version=2.2&start=0".$rows_param."&indent=on";
-		$res = file_get_contents($this->solr_url."/select/?q=".$this->q."&version=2.2".$rows_param.$start_param);
+		$res = file_get_contents($this->solr_url."/select/?q=".$this->q."&version=2.2".$rows_param.$start_param."&facet=true&facet.field=collection");
 		return $res;
 	}
 

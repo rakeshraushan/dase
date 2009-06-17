@@ -38,10 +38,12 @@ class Dase_Handler_Login extends Dase_Handler
 		$username = strtolower($r->get('username'));
 		$pass = $r->get('password');
 		$superusers = $r->retrieve('config')->getSuperusers();
+		//todo: this is why params are not saved -- super ONLY
 		if (isset($superusers[$username]) && $superusers[$username] == $pass) {
 			$user = new Dase_DBO_DaseUser($this->db);
 			$user->retrieveByEid($username);
 			$user->initCart();
+			$r->setCookie('collections',Dase_Json::get(Dase_DBO_Collection::getLookupArray($this->db)));
 			$r->setCookie('eid',$username);
 			$r->setCookie('max',$user->max_items);
 			$r->setCookie('display',$user->display);

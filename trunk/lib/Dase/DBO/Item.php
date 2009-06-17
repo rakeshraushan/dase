@@ -239,6 +239,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$it_name = $doc->appendChild($dom->createElement('field'));
 		$it_name->appendChild($dom->createTextNode($it_obj->name));
 		$it_name->setAttribute('name','item_type_name');
+		//for limiting to specific collection item_type
+		$col_it = $doc->appendChild($dom->createElement('field'));
+		$col_it->appendChild($dom->createTextNode($col_obj->ascii_id.'_'.$it_obj->ascii_id));
+		$col_it->setAttribute('name','coll_item_type');
 		$search_text = array();
 		$contents = $this->getContents();
 		if ($contents && $contents->text) {
@@ -279,6 +283,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
+			//since we are already using 'id'
 			if ('id' == $meta['ascii_id']) {
 				$meta['ascii_id'] = 'local_id';
 			}
