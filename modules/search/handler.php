@@ -46,6 +46,12 @@ class Dase_ModuleHandler_Search extends Dase_Handler
 		$r->renderResponse($t->fetch('home.tpl'));
 	}
 
+	public function getSearchXml($r) 
+	{
+		$s = new Solr($r);
+		$r->renderResponse($s->getResults());
+	}
+
 	public function getSearchAtom($r) 
 	{
 		$s = new Solr($r);
