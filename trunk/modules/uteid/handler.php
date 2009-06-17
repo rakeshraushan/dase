@@ -65,7 +65,6 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 			}
 
 			$r->setCookie('eid',$db_user->eid);
-			$r->setCookie('collections',Dase_Json::get(Dase_DBO_Collection::getLookupArray($this->db)));
 			$r->setCookie('max',$db_user->max_items);
 			$r->setCookie('display',$db_user->display);
 
