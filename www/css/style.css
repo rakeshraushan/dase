@@ -254,6 +254,11 @@ div#valColumn.empty {
 	background-color:#f2dfc1;
 }
 
+a.manage {
+	color: #900;
+	font-size: 12px;
+}
+
 /*****  ITEM DISPLAY PAGE **************/
 table#item {
 }

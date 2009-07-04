@@ -15,6 +15,10 @@ div#adminHeader p {
 	padding:6px 0 0 0;
 }
 
+div#adminHeader p a {
+	color: #ccc;
+}
+
 div#admin {
 	background-color:#eef1f8;
 }
