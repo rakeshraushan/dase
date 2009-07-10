@@ -8,20 +8,19 @@ class Dase_Handler_Exception extends Exception {
 class Dase_Handler {
 
 	protected $db;
-	protected $path_to_media;
+	protected $config;
 	protected $request;
 
 	public function __construct($db,$config)
 	{
 		$this->db = $db;
-		$this->path_to_media = $config->getMediaDir();
+		//config is passed to handler for local config settings
+		$this->config = $config;
 	}
 
 	public function dispatch($r)
 	{
 		
-		$log = $r->logger();
-
 		//if it is a module subclass, append the module resource map
 		if (isset($this->module_resource_map)) {
 			$this->resource_map = array_merge($this->resource_map,$this->module_resource_map);
@@ -43,7 +42,7 @@ class Dase_Handler {
 
 			//second, see if uri_regex matches the request uri (a.k.a. path)
 			if (preg_match("!^$uri_regex\$!",$r->path,$uri_matches)) {
-				$log->debug("matched resource $resource");
+				Dase_Log::debug(LOG_FILE,"matched resource $resource");
 				//create parameters based on uri template and request matches
 				if (isset($template_matches[1]) && isset($uri_matches[1])) { 
 					array_shift($uri_matches);
@@ -51,7 +50,7 @@ class Dase_Handler {
 					$r->setParams($params);
 				}
 				$method = $this->determineMethod($resource,$r);
-				$log->debug("try method $method");
+				Dase_Log::debug(LOG_FILE,"try method $method");
 				if (method_exists($this,$method)) {
 					$r->resource = $resource;
 					$this->setup($r);

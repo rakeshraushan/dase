@@ -2,7 +2,7 @@
 
 {block name="content"}
 <div class="full" id="settings">
-	<h1>Preferences for {$user->name}</h1>
+	<h1>Settings for {$user->name}</h1>
 	<!--
 	<h2>{$user->ppd}</h2>
 	-->

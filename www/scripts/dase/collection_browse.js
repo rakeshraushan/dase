@@ -64,7 +64,7 @@ Dase.processVals = function(json) {
 		var val = json.values[i];
 		var li = ul.add('li');
 		var a = li.add('a');
-		a.set('href','search?'+json.coll+'.'+json.att_ascii+'='+encodeURIComponent(val.v));
+		a.set('href','search?c='+json.coll+'&amp;q='+json.att_ascii+':&quot;'+encodeURIComponent(val.v)+'&quot;');
 		a.set('class','val_link');
 		a.add('span',null,val.v);
 		a.add('span',{'class':'tally'},'('+val.t+')');

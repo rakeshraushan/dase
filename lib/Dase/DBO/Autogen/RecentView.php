@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_RecentView extends Dase_DBO
 {
 	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct($db,'recent_view', array('dase_user_eid','timestamp','title','url'));
+		parent::__construct($db,'recent_view', array('count','dase_user_eid','timestamp','title','type','url'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

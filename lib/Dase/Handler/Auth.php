@@ -8,10 +8,10 @@ class Dase_Handler_Auth extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$service_users = $r->retrieve('config')->getAuth('serviceuser');
-		if (isset($service_users[$r->get('serviceuser')])) {
+		$serviceusers = $r->getServiceusers();
+		if (isset($serviceusers[$r->get('serviceuser')])) {
 			//just authorize them
-			$service_user = $r->getUser('http');
+			$serviceuser = $r->getUser('http');
 		} else {
 			$r->renderError(401);
 		}
@@ -22,7 +22,7 @@ class Dase_Handler_Auth extends Dase_Handler
 	{
 		$user = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		if ($user) {
-			$r->renderResponse($user->getHttpPassword($r->retrieve('config')->getAuth('token')));
+			$r->renderResponse($user->getHttpPassword($r->getAuthToken()));
 		} else {
 			$r->renderError(404);
 		}

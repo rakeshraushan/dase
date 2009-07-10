@@ -21,18 +21,19 @@ Dase.pageInitUser = function(eid) {
 		Dase.initAddContent();
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
+		Dase.initReindexItem();
 	}
 	return;
 };
 
 Dase.recordItemView = function(eid) {
-	pageurl = 'http://'+encodeURIComponent(location.href.replace('http://',''));
-	title = encodeURIComponent(Dase.getMeta('item-title'));
+	var pageurl = 'http://'+encodeURIComponent(location.href.replace('http://',''));
+	var title = encodeURIComponent(Dase.getMeta('item-title'));
 	var content_headers = {
 		'Content-Type':'application/x-www-form-urlencoded'
 	}
-	url = Dase.base_href+'user/'+Dase.user.eid+'/recent';
-	pairs = 'url='+pageurl+'&'+'title='+title;
+	var url = Dase.base_href+'user/'+Dase.user.eid+'/recent';
+	var pairs = 'url='+pageurl+'&'+'title='+title;
 	Dase.ajax(url,'post',null,pairs,Dase.user.eid,Dase.user.htpasswd,content_headers); 
 }
 
@@ -145,6 +146,20 @@ Dase.initSetItemStatus = function() {
 			h.attach(status_form);
 			Dase.initItemStatusForm(Dase.$('itemStatusForm'));
 		}
+		return false;
+	};
+
+};
+
+Dase.initReindexItem = function() {
+	var link = Dase.$('reindexLink');
+	if (!link) return;
+	link.onclick = function() {
+		var orig = Dase.$('metadata').innerHTML;
+		Dase.$('metadata').innerHTML = '<h2 class="alert">reindexing item...</h2>';
+		Dase.ajax(this.href,'post',function(resp) { 
+			Dase.$('metadata').innerHTML = orig;
+		},null,Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	};
 

@@ -88,17 +88,17 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 
 	function getSearchTallies()
 	{
-		//may want to adjust this to use atom related links
-		//but keep in mind search refine javascript
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
+		$tallied = array();
+		$single_coll = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if ('http://daseproject.org/relation/single_collection_search' == $el->getAttribute('rel')) {
+				$single_coll['href'] = $el->getAttribute('href');
+				$single_coll['title'] = $el->getAttribute('title');
+				$single_coll['count'] = $el->getAttributeNS(Dase_Atom::$ns['thr'],'count');
+				$tallied[] = $single_coll;
+			}
 		}
-		$dom = new DOMDocument('1.0','utf-8');
-		//need to import AND append!
-		$node = $dom->importNode($x->query("atom:subtitle/h:div/h:ul")->item(0),true);
-		$dom->appendChild($node);
-		return $dom->saveHTML();
+		return $tallied;
 	}
 
 	function getCount()

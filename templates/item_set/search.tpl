@@ -2,9 +2,15 @@
 
 {block name="title"}Item Set{/block}
 
+{block name="head-meta"}
+<meta name="item_count" content="{$items->count}">
+<meta name="query" content="{$items->query}">
+{/block}
+
 {block name="head"}
 <script type="text/javascript" src="www/scripts/dase/search_sorting.js"></script>
 <script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/scripts/dase/search_result.js"></script>
 <script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
 {/block}
 
@@ -22,7 +28,7 @@
 		<h2 class="collectionLink"><a href="{$items->collection.href}">{$items->collection.title}</a></h2>
 		{/if}
 		{if $items->count}
-		<h3 class="searchEcho">Search Results {$start} - {$end} of {$items->count}  
+		<h3 class="searchEcho">Search Results {$start+1} - {$end} of {$items->count}  
 			<span id="displaySelect">[ 
 				<a href="{$items->gridLink}">grid</a> | 
 				<a href="{$items->listLink}">list</a> | 
@@ -34,10 +40,10 @@
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="60" value="{$items->query}"/>
+				<input id="queryInput" type="text" name="q" size="60" value="{$items->query|htmlspecialchars}"/>
 				<input type="submit" value="Search" class="button"/>
 				{if $items->collection}
-				<input type="hidden" name="collection_ascii_id" value="{$items->collection.ascii_id}"/>
+				<input type="hidden" name="c" value="{$items->collection.ascii_id}"/>
 				{else}
 				{foreach item=c from=$items->collectionFilters}
 				<input type="hidden" name="c" value="{$c}"/>
@@ -72,7 +78,7 @@
 		</table>
 		{if $items->count > $items->max}
 		<h4 class="pagerControl">
-			{if $start != 1 && $items->previous}
+			{if $start != 0 && $items->previous}
 			<a href="{$items->previous}">prev</a> 
 			{else}
 			<span class="nolink">prev</span>
@@ -98,7 +104,11 @@
 {if $items->count}
 <div class="full" id="searchTallies">
 	<h3>Search Results by Collection</h3>
-	{$items->searchTallies}
+	<ul>
+		{foreach item=tal from=$items->searchTallies}
+		<li><a href="search?{$tal.href}">{$tal.title} ({$tal.count})</a></li>
+		{/foreach}
+	</ul>
 </div>
 {/if}
 <!-- we just need a place to stash the current url so our refine code can parse it -->

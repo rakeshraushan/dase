@@ -29,26 +29,16 @@ class Dase_Config {
 		}
 	}
 
-	public function getSuperusers()
-	{
-		return $this->getAuth('superuser');
-	}
-
-	public function getServiceusers()
-	{
-		return $this->getAuth('serviceuser');
-	}
-
 	public function getCacheType()
 	{
-		if (isset($this->conf['app']['cache_type'])) {
-			return $this->conf['app']['cache_type'];
+		if (isset($this->conf['cache']['type'])) {
+			return $this->conf['cache']['type'];
 		}
 	}
 
 	public function getCacheDir()
 	{
-		$cache_dir = $this->getAppSettings('cache_dir');
+		$cache_dir = $this->getCache('dir');
 		if (!$cache_dir) {
 			//default
 			return $this->base_dir.'/files/cache';
@@ -104,6 +94,52 @@ class Dase_Config {
 			}
 		} else {
 			return $this->conf['app'];
+		}
+	}
+
+	public function getLocalSettings($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['local'][$setting])) {
+				return $this->conf['local'][$setting];
+			} else {
+				return false;
+			}
+		} else {
+			return $this->conf['app'];
+		}
+	}
+
+	public function getCache($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['cache'][$setting])) {
+				return $this->conf['cache'][$setting];
+			}
+		} else {
+			return $this->conf['cache'];
+		}
+	}
+
+	public function getSearch($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['search'][$setting])) {
+				return $this->conf['search'][$setting];
+			}
+		} else {
+			return $this->conf['search'];
+		}
+	}
+
+	public function getDocStore($setting='') 
+	{
+		if ($setting) {
+			if (isset($this->conf['docstore'][$setting])) {
+				return $this->conf['docstore'][$setting];
+			}
+		} else {
+			return $this->conf['docstore'];
 		}
 	}
 

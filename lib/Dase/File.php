@@ -254,7 +254,7 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		$this->db->log->info("created $media_file->size $media_file->filename");
+		Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 	}
 
 	function makeViewitem($item,$path_to_media)
@@ -275,7 +275,7 @@ abstract class Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		$this->db->log->info("created $media_file->size $media_file->filename");
+		Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 	}
 
 }

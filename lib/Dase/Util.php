@@ -19,6 +19,16 @@ Class Dase_Util
 		}
 	}
 
+	public static function unhtmlspecialchars( $string )
+	{
+		$string = str_replace ( '&amp;', '&', $string );
+		$string = str_replace ( '&#039;', '\'', $string );
+		$string = str_replace ( '&quot;', '"', $string );
+		$string = str_replace ( '&lt;', '<', $string );
+		$string = str_replace ( '&gt;', '>', $string );
+		return $string;
+	}
+
 	public static function getTime()
 	{
 		list($usec, $sec) = explode(" ", microtime());
@@ -50,7 +60,6 @@ Class Dase_Util
 				| ($ipbits[2] << 8)
 					| $ipbits[3], $sec, $usec);
 
-		// Tag on the extension and return the filename
 		return $uid;
 	} 
 

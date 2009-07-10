@@ -14,15 +14,16 @@ class Dase_DBO implements IteratorAggregate
 	protected $order_by;
 	protected $qualifiers = array();
 	public $bind = array();
+	public $config;
 	public $db;
-	public $log;
 	public $id = 0;
 	public $sql;
 
 	function __construct($db, $table, $fields )
 	{
 		$this->db = $db;
-		$this->log = $db->log;
+		//so any DBO has a copy of config
+		$this->config = $db->config;
 		$this->table = $db->table_prefix.$table;
 		foreach( $fields as $key ) {
 			$this->fields[ $key ] = null;
@@ -134,7 +135,7 @@ class Dase_DBO implements IteratorAggregate
 				throw new Dase_DBO_Exception($errs[2]);
 			}
 		}
-		$this->log->debug($sql . ' /// '.$id);
+		Dase_Log::debug(LOG_FILE,$sql . ' /// '.$id);
 		$sth->setFetchMode(PDO::FETCH_INTO, $this);
 		$sth->execute(array( ':id' => $this->id));
 		if ($sth->fetch()) {
@@ -182,7 +183,7 @@ class Dase_DBO implements IteratorAggregate
 		if ($sth->execute($bind)) {
 			$last_id = $dbh->lastInsertId($seq);
 			$this->id = $last_id;
-			$this->log->debug($sql." /// last insert id = $last_id");
+			Dase_Log::debug(LOG_FILE,$sql." /// last insert id = $last_id");
 			return $last_id;
 		} else { 
 			$error = $sth->errorInfo();
@@ -257,7 +258,7 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
-		$this->log->debug('[DBO find] '.$log_sql);
+		Dase_Log::debug(LOG_FILE,'[DBO find] '.$log_sql);
 
 		$sth->setFetchMode(PDO::FETCH_INTO,$this);
 		$sth->execute($bind);
@@ -310,9 +311,9 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($bind as $k => $v) {
 			$log_sql = preg_replace("/$k/","'$v'",$log_sql,1);
 		}
-		$this->log->debug('[DBO findCount] '.$log_sql);
+		Dase_Log::debug(LOG_FILE,'[DBO findCount] '.$log_sql);
 		$sth->execute($bind);
-		//$this->log->debug('DB ERROR: '.print_r($sth->errorInfo(),true));
+		//Dase_Log::debug(LOG_FILE,'DB ERROR: '.print_r($sth->errorInfo(),true));
 		return $sth->fetchColumn();
 	}
 
@@ -336,9 +337,9 @@ class Dase_DBO implements IteratorAggregate
 		foreach ($params as $bp) {
 			$sql = preg_replace('/\?/',"'$bp'",$sql,1);
 		}
-		$db->log->debug("----------------------------");
-		$db->log->debug("[DBO query]".$sql);
-		$db->log->debug("----------------------------");
+		Dase_Log::debug(LOG_FILE,"----------------------------");
+		Dase_Log::debug(LOG_FILE,"[DBO query]".$sql);
+		Dase_Log::debug(LOG_FILE,"----------------------------");
 
 		if (!$sth->execute($params)) {
 			$errs = $sth->errorInfo();
@@ -362,11 +363,11 @@ class Dase_DBO implements IteratorAggregate
 		$sql = "UPDATE {$this->{'table'}} SET $set WHERE id=?";
 		$values[] = $this->id;
 		$sth = $dbh->prepare( $sql );
-		$this->log->debug($sql . ' /// ' . join(',',$values));
+		Dase_Log::debug(LOG_FILE,$sql . ' /// ' . join(',',$values));
 		if (!$sth->execute($values)) {
 			$errs = $sth->errorInfo();
 			if (isset($errs[2])) {
-				$this->log->debug("updating error: ".$errs[2]);
+				Dase_Log::debug(LOG_FILE,"updating error: ".$errs[2]);
 				//throw new Dase_DBO_Exception('could not update '. $errs[2]);
 			}
 		} else {
@@ -380,7 +381,7 @@ class Dase_DBO implements IteratorAggregate
 		$sth = $dbh->prepare(
 			'DELETE FROM '.$this->table.' WHERE id=:id'
 		);
-		$this->log->debug("deleting id $this->id from $this->table table");
+		Dase_Log::debug(LOG_FILE,"deleting id $this->id from $this->table table");
 		return $sth->execute(array( ':id' => $this->id));
 		//probably need to destroy $this here
 	}

@@ -440,9 +440,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 	function insert($db,$r,$fetch_enclosure=false) 
 	{
 		$user = $r->getUser('http');
-		//allows service_user to  override created_by_eid 
+		//allows service user to  override created_by_eid 
 		$author = $this->getAuthorName();
-		if ($user->is_service_user && $author) {
+		if ($user->is_serviceuser && $author) {
 			$created_by_eid = $author;
 		} else {
 			$created_by_eid = $user->eid;
@@ -497,7 +497,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($fetch_enclosure) {
 			$enc = $this->getEnclosure(); 
 			if ($enc) {
-				$upload_dir = $r->retrieve('config')->getMediaDir().'/'.$c->ascii_id.'/uploaded_files';
+				$upload_dir = MEDIA_DIR.'/'.$c->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
 					$r->renderError(401,'missing upload directory');
 				}
@@ -507,14 +507,14 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 				try {
 					$file = Dase_File::newFile($db,$new_file,$enc['mime_type']);
-					$media_file = $file->addToCollection($item,false,$r->retrieve('config')->getMediaDir());
+					$media_file = $file->addToCollection($item,false,MEDIA_DIR);
 				} catch(Exception $e) {
 					$r->renderError(500,'could not ingest enclosure file ('.$e->getMessage().')');
 				}
 			}
 		} 
 		//messy
-		$item->expireCaches($r->retrieve('cache'));
+		$item->expireCaches($r->getCache());
 		$item->buildSearchIndex();
 		return $item;
 	}
@@ -535,8 +535,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//1. status
 		$status = $this->getStatus();
-		//$r->logger()->debug('--------status----------------'.$status);
-		//$r->logger()->debug('--------status----------------'.$item->status);
+		//Dase_Log::debug(LOG_FILE,'--------status----------------'.$status);
+		//Dase_Log::debug(LOG_FILE,'--------status----------------'.$item->status);
 		if (($status != $item->status) && in_array($status,array('delete','draft','public','archive'))) {
 			$item->status = $status;
 		}

@@ -57,7 +57,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$this->collection->visibility = $r->get('visibility');
 		$this->collection->update();
 		$params['msg'] = "settings updated";
-		$this->user->expireDataCache($r->retrieve('cache'));
+		$this->user->expireDataCache($r->getCache());
 		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/settings',$params);
 	}
 
@@ -411,13 +411,13 @@ class Dase_Handler_Manage extends Dase_Handler
 			$path = $r->_files[$input_name]['tmp_name'];
 			$type = $r->_files[$input_name]['type'];
 			if (!Dase_Media::isAcceptable($type)) {
-				$r->logger()->debug($type.' is not a supported media type');
+				Dase_Log::debug(LOG_FILE,$type.' is not a supported media type');
 				$r->renderError(415,'unsupported media type: '.$type);
 			}
 			if (!is_uploaded_file($path)) {
 				$r->renderError(400,'no go upload');
 			}
-			$r->logger()->info('uploading file '.$name.' type: '.$type);
+			Dase_Log::info(LOG_FILE,'uploading file '.$name.' type: '.$type);
 
 			$item = $this->collection->createNewItem(null,$this->user->eid);
 			if ($r->has('title')) {
@@ -428,7 +428,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 			$file = Dase_File::newFile($this->db,$path,$type,$name,$r->base_path);
 			//this'll create thumbnail, viewitem, and any derivatives
-			$media_file = $file->addToCollection($item,false,$this->path_to_media);
+			$media_file = $file->addToCollection($item,false,MEDIA_DIR);
 			$item->setItemType($r->get('item_type'));
 			//here's where we map admin_att to real att
 			$item->mapConfiguredAdminAtts();

@@ -19,11 +19,9 @@
 		<link rel="stylesheet" type="text/css" href="www/css/yui.css">
 		<link rel="stylesheet" type="text/css" href="www/css/style.css">
 		<link rel="stylesheet" type="text/css" href="www/css/menu.css">
-		{block name="head-links"}{/block}
-		{if $local_css}
-		<link rel="stylesheet" type="text/css" href="{$local_css}">
-		{/if}
+		<link rel="stylesheet" type="text/css" href="www/css/local.css">
 		<link rel="shortcut icon" href="www/images/favicon.ico">
+		{block name="head-links"}{/block}
 
 		<!-- atompub discovery -->
 		<link rel="service" type="application/atomsvc+xml" href="service">
@@ -59,7 +57,9 @@
 		</noscript>
 
 		<div id="logoffControl" class="login hide">
-			<a href="settings" class="edit" id="settings-link"><span id="userName"></span></a> 
+			<span id="userName"></span> 
+			|
+			<a href="settings" class="edit" id="settings-link">settings</a> 
 			|
 			<a href="logoff" class="edit" id="logoff-link">logout</a>
 			<div id="eid" class="pagedata"></div>
@@ -69,9 +69,9 @@
 			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 		</div>
 
-		{if $page_logo.src}
+		{if $page_logo_src}
 		<div id="pageLogo">
-			<a href="{$page_logo.link_target}"><img src="{$page_logo.src}" alt="{$page_logo.alt}"></a>
+			<a href="{$page_logo_link_target}"><img src="{$page_logo_src}" alt="page logo"></a>
 		</div>
 		{/if}
 
@@ -88,15 +88,16 @@
 					<li>&nbsp;</li>
 				</ul>
 				</li>
-				<li id="shared-menu"><a href="tags" class="main">Shared Sets</a></li>
-				<li id="settings-menu"><a href="settings" id="settings-menu-link" class="main">My Preferences</a>
-				</li>
+				<li id="shared-menu"><a href="tags" class="main">Public/Shared Sets</a></li>
 				<li id="recent-menu"><a href="" class="main">Recently Viewed</a>
 				<ul class="hide" id="recent-submenu">
 					<li>&nbsp;</li>
 				</ul>
 				</li>
-				<li id="manage-menu" class="hide"><a href="settings" id="manage-menu-link" class="main"></a>
+				<li id="searches-menu"><a href="" class="main">Recent Searches</a>
+				<ul class="hide" id="searches-submenu">
+					<li>&nbsp;</li>
+				</ul>
 				</li>
 				{if $module_menu}
 				{include file="$module_menu"}
@@ -107,9 +108,9 @@
 				<li><a href="" class="main">Home/Search</a></li>
 				<li><a href="" class="main">My Cart</a></li>
 				<li><a href="" class="main">My Sets</a></li>
-				<li><a href="" class="main">Shared Sets</a></li>
-				<li><a href="" class="main">My Preferences</a></li>
+				<li><a href="" class="main">Public/Shared Sets</a></li>
 				<li><a href="" class="main">Recently Viewed</a></li>
+				<li><a href="" class="main">Recent Searches</a></li>
 			</ul>
 
 			<h5 id="ajaxMsg" class="hide">loading...</h5>

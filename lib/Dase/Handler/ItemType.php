@@ -29,7 +29,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$it_ascii = $r->get('item_type_ascii_id');
 		$att_ascii = $r->get('att_ascii_id');
 		$coll = $r->get('collection_ascii_id');
-		$prefix = $r->retrieve('db')->table_prefix;
+		$prefix = TABLE_PREFIX;
 		$sql = "
 			SELECT v.value_text,i.serial_number
 			FROM {$prefix}value v,{$prefix}collection c,{$prefix}item i, {$prefix}attribute a, {$prefix}item_type it 
@@ -198,7 +198,8 @@ class Dase_Handler_ItemType extends Dase_Handler
 	{
 		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		try {
-			$item_handler = new Dase_Handler_Item($this->db,$r->retrieve('config'));
+			$item_handler = new Dase_Handler_Item($this->config);
+			$item_handler->setDb($this->db);
 			$item_handler->item = $item;
 			$item_handler->putItem($r);
 		} catch (Exception $e) {

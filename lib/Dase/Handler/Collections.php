@@ -17,7 +17,7 @@ class Dase_Handler_Collections extends Dase_Handler
 	public function postToCollections($r) 
 	{
 		$user = $r->getUser('http');
-		if (!$user->isSuperuser($r->retrieve('config')->getSuperusers())) {
+		if (!$user->is_superuser) {
 			$r->renderError(401,$user->eid.' is not permitted to create a collection');
 		}
 		$content_type = $r->getContentType();
@@ -33,7 +33,7 @@ class Dase_Handler_Collections extends Dase_Handler
 			try {
 				$coll_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				$r->logger()->debug('colls handler error: '.$e->getMessage());
+				Dase_Log::debug(LOG_FILE,'colls handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('collection' != $coll_entry->entrytype) {
@@ -43,7 +43,7 @@ class Dase_Handler_Collections extends Dase_Handler
 				$r->set('ascii_id',Dase_Util::dirify($r->slug));
 			}
 			$ascii_id = $coll_entry->create($this->db,$r);
-			$user->expireDataCache($r->retrieve('cache'));
+			$user->expireDataCache($r->getCache());
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/collection/".$ascii_id.'.atom');
@@ -79,8 +79,8 @@ class Dase_Handler_Collections extends Dase_Handler
 		$user = $r->getUser();
 		//if no collections, redirect to archive admin screen
 		//will force login screen for non-superusers if no collections
-		$c = new Dase_DBO_Collection($r->retrieve('db'));
-		if (!$c->findCount() && $user && $user->isSuperuser($r->retrieve('config')->getSuperusers())) {
+		$c = new Dase_DBO_Collection($this->db);
+		if (!$c->findCount() && $user && $user->is_superuser) {
 			$r->renderRedirect('admin');
 		}
 		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/collections.atom');

@@ -38,7 +38,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		$c->collection_name = $collection_name;
 		if (Dase_DBO_Collection::get($db,$ascii_id) || $c->findOne()) {
 			//$r->renderError(409,'collection already exists');
-			$r->logger()->info('collection exists '.$c->collection_name);
+			Dase_Log::info(LOG_FILE,'collection exists '.$c->collection_name);
 			return;
 		}
 		$c->ascii_id = $ascii_id;
@@ -46,21 +46,23 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			$r->logger()->info('created collection '.$c->collection_name);
-			$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$ascii_id;
-			if (file_exists($media_dir)) {
+			$cache = Dase_Cache::get(CACHE_TYPE);
+			$cache->expire('app_data');
+			Dase_Log::info(LOG_FILE,'created collection '.$c->collection_name);
+			$coll_media_dir =  MEDIA_DIR.'/'.$ascii_id;
+			if (file_exists($coll_media_dir)) {
 				//$r->renderError(409,'collection media archive exists');
-				$r->logger()->info('collection media archive exists');
+				Dase_Log::info(LOG_FILE,'collection media archive exists');
 			} else {
-				if (mkdir("$media_dir")) {
-					chmod("$media_dir",0775);
+				if (mkdir("$coll_media_dir")) {
+					chmod("$coll_media_dir",0775);
 					foreach (Dase_Acl::$sizes as $size => $access_level) {
-						mkdir("$media_dir/$size");
-						$r->logger()->info('created directory '.$media_dir.'/'.$size);
-						chmod("$media_dir/$size",0775);
+						mkdir("$coll_media_dir/$size");
+						Dase_Log::info(LOG_FILE,'created directory '.$coll_media_dir.'/'.$size);
+						chmod("$coll_media_dir/$size",0775);
 					}
 					//todo: compat only!
-					symlink($media_dir,$media_dir.'_collection');
+					symlink($coll_media_dir,$coll_media_dir.'_collection');
 				}
 			}
 			foreach ($this->getEntries() as $entry) {

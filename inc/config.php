@@ -14,7 +14,6 @@ $conf['app']['main_title'] = "My DASe Archive";
 //only set these (in local_config) to override 
 //default <base_path>/files/...
 //$conf['app']['media_dir'] = '/usr/local/dase/media';
-//$conf['app']['cache_dir'] = '/usr/local/dase/cache';
 //$conf['app']['log_dir'] = '/usr/local/dase/log';
 
 //path to imagemagick convert
@@ -27,29 +26,29 @@ $conf['app']['max_items'] = 30;
 //$conf['default_handler'] = 'collections';
 $conf['app']['default_handler'] = 'install';
 
-//cache can be file or memcached (only 'file' is implemented) 
-$conf['app']['cache_type'] = 'file';
-
-//default <base_path>/files/<cron_output_dir>
-//note that cron user should be apache or in apache group
-$conf['app']['cron_output_dir'] = 'cron_output';
-
 //eid & admin password
 //$conf['auth']['superuser']['<username>'] = '<password>';
 //$conf['auth']['serviceuser']['prop'] = 'ok';
-$conf['auth']['service_token'] = " ***thecatinthehatcameback*** ";
+$conf['auth']['service_token'] = "changeme";
+
+//used to create only-known-by-server security hash
+$conf['auth']['token'] = 'changeme'.date('Ymd',time());
+
+//POST/PUT/DELETE token:	
+$conf['auth']['ppd_token'] = "changeme".date('Ymd',time());
 
 //define module handlers (can override existing handler)
 //$conf['request_handler']['<handler>'] = '<module_name>';
 //$conf['request_handler']['login'] = 'openid';
 $conf['request_handler']['db'] = 'dbadmin';
 $conf['request_handler']['install'] = 'install';
-$conf['request_handler']['grants'] = 'itsprop';
 
-//used to create only-known-by-server security hash
-$conf['auth']['token'] = '++foxinsocks++'.date('Ymd',time());
+//cache can be file or memcached (only 'file' is implemented) 
+$conf['cache']['type'] = 'file';
+//$conf['cache']['dir'] = '/usr/local/dase/cache';
 
-//POST/PUT/DELETE token:	
-$conf['auth']['ppd_token'] = "--greeneggsandham--".date('Ymd',time());
+//search engine
+$conf['search']['engine'] = 'db';
 
-
+//db, file, or something else...
+$conf['docstore']['type'] = 'db';

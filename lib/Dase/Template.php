@@ -17,23 +17,20 @@
 class Dase_Template {
 
 	protected $smarty;
-	protected $request;
 
 	public function __construct($request,$use_module_template_dir=false)
 	{
 		// make sure E_STRICT is turned off
 		$er = error_reporting(E_ALL^E_NOTICE);
 
-		$this->request = $request;
 		require_once 'smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
-		$this->smarty->request = $request;
-		$this->smarty->compile_dir = $request->retrieve('config')->getCacheDir(); 
+		$this->smarty->compile_dir = CACHE_DIR; 
 		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
 		if ($use_module_template_dir) {
-			$this->smarty->template_dir = $request->base_path.'/modules/'.$request->module.'/templates';
+			$this->smarty->template_dir = BASE_PATH.'/modules/'.$request->module.'/templates';
 		} else {
-			$this->smarty->template_dir = $request->base_path.'/templates';
+			$this->smarty->template_dir = BASE_PATH.'/templates';
 		}
 		$this->smarty->caching = false;
 		$this->smarty->security = false;
@@ -54,17 +51,18 @@ class Dase_Template {
 		$this->smarty->assign('app_root', trim($request->app_root,'/').'/');
 		if ($request->module) {
 			$this->smarty->assign('module_root', $request->module_root.'/');
-			if (file_exists($request->base_path.'/modules/'.$request->module.'/templates/menu.tpl')) {
-				$this->smarty->assign('module_menu', $request->base_path.'/modules/'.$request->module.'/templates/menu.tpl');
+			if (file_exists(BASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl')) {
+				$this->smarty->assign('module_menu', BASE_PATH.'/modules/'.$request->module.'/templates/menu.tpl');
 			}
 		}
+		$this->smarty->assign('app_data', $GLOBALS['app_data']);
 		$this->smarty->assign('msg', $request->get('msg'));
 		//for searches w/ no results
 		$this->smarty->assign('failed_query', $request->get('failed_query'));
 		$this->smarty->assign('request', $request);
-		$this->smarty->assign('main_title', $request->retrieve('config')->getAppSettings('main_title'));
-		$this->smarty->assign('page_logo', $request->retrieve('config')->get('page_logo'));
-		$this->smarty->assign('local_css', $request->retrieve('config')->get('path_to_local_css'));
+		$this->smarty->assign('main_title', MAIN_TITLE);
+		$this->smarty->assign('page_logo_link_target', PAGE_LOGO_LINK_TARGET);
+		$this->smarty->assign('page_logo_src', PAGE_LOGO_SRC);
 		error_reporting($er);
 	}
 
@@ -109,7 +107,9 @@ class Dase_Template {
 
 	function __destruct() 
 	{
-		$this->request->logger()->debug('finished templating '.$this->smarty->request->getElapsed());
+		$now = Dase_Util::getTime();
+		$elapsed = round($now - START_TIME,4);
+		Dase_Log::debug(LOG_FILE,'finished templating '.$elapsed);
 	}
 
 	// template inheritance

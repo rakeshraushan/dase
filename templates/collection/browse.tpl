@@ -15,7 +15,7 @@
 	{if $msg}<h3 class="msg">{$msg}</h3>{/if}
 	<div id="collectionAsciiId" class="hide">{$collection->asciiId}</div>
 	<div class="contentHeader">
-		<h2 class="collectionLink">{$collection->name|escape} ({$collection->itemCount} items)</h2>
+		<h2 class="collectionLink">{$collection->name|escape} ({$collection->itemCount} items) <a id="manageLinkHeader" class="hide manage"></a></h2>
 		<h3 class="collectionDescription">{$collection->description|escape}</h3>
 	</div>
 	<form method="get" action="search">

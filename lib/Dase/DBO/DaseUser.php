@@ -7,7 +7,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	private $superusers = array();
 	public $http_password;
 	public $is_superuser;
-	public $is_service_user;
+	public $is_serviceuser;
 	public $ppd_token;
 	public $token;
 
@@ -76,13 +76,23 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $tag->item_count;
 	}
 
-	public function getHttpPassword($token)
+	public function setHttpPassword($token)
+	{
+		$this->http_password = substr(md5($token.$this->eid.'httpbasic'),0,12);
+		return $this->http_password;
+	}
+
+	public function getHttpPassword($token=null)
 	{
 		if (!$token) {
+			if ($this->http_password) {
+				//would have been set by request
+				return $this->http_password;
+			}
 			throw new Dase_Exception('user auth is not set');
 		}
 		if (!$this->http_password) {
-			$this->http_password = substr(md5($token.$this->eid.'httpbasic'),0,12);
+			$this->http_password = $this->setHttpPassword($token);
 		}
 		return $this->http_password;
 	}
@@ -192,6 +202,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$recent = new Dase_DBO_RecentView($this->db);
 		$recent->dase_user_eid = $this->eid;
 		$recent->orderBy('timestamp DESC');
+		$recent->type = 'item';
 		$recent->setLimit(10);
 		$recent_views = array();
 		foreach ($recent->find() as $rec) {
@@ -202,6 +213,24 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$recent_views[] = $set;
 		}
 		return $recent_views;
+	}
+
+	public function getRecentSearches() {
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->dase_user_eid = $this->eid;
+		$recent->orderBy('timestamp DESC');
+		$recent->type = 'search';
+		$recent->setLimit(10);
+		$recent_searches = array();
+		foreach ($recent->find() as $rec) {
+			$set = array();
+			$rec = clone($rec);
+			$set['title'] = $rec->title;
+			$set['url'] = $rec->url;
+			$set['count'] = $rec->count;
+			$recent_searches[] = $set;
+		}
+		return $recent_searches;
 	}
 
 	public function getData($auth_config)
@@ -220,6 +249,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['name'] = $this->name;
 		$user_data[$this->eid]['collections'] = $this->getCollections();
 		$user_data[$this->eid]['recent_views'] = $this->getRecentViews();
+		$user_data[$this->eid]['recent_searches'] = $this->getRecentSearches();
 		$user_data[$this->eid]['ppd'] = md5($this->eid.$auth_config['ppd_token']);
 		if ($this->isSuperuser($auth_config['superuser'])) {
 			$user_data[$this->eid]['is_superuser'] = 1;
@@ -235,7 +265,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['backtrack'] = $this->backtrack;
 		$user_data[$this->eid]['current_search_cache_id'] = $this->current_search_cache_id;
 		$user_data[$this->eid]['display'] = $this->display;
-		$user_data[$this->eid]['last_action'] = $this->last_action;
+		$user_data[$this->eid]['last_action'] = $this->last_actionSearches;
 		$user_data[$this->eid]['last_item'] = $this->last_item;
 		$user_data[$this->eid]['max_items'] = $this->max_items;
 		$user_data[$this->eid]['controls'] = $this->cb;
@@ -318,7 +348,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	function checkCollectionAuth($collection,$auth_level)
 	{
 		if (!$collection) {
-			$this->log->debug('attempting get to authorization for non-existing collection');
+			Dase_Log::debug(LOG_FILE,'attempting get to authorization for non-existing collection');
 			return false;
 		}
 		if ('read' == $auth_level) {

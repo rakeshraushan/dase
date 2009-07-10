@@ -66,15 +66,15 @@
 
 		<div id="adminHeader">
 			DASe Collection Builder
-			<p id="collection_name">{$collection->collection_name}</p>
+			<p id="collection_name"><a href="collection/{$collection->ascii_id}">{$collection->collection_name}</a></p>
 			<div class="hide" id="collection_ascii_id">{$collection->ascii_id}</div>
 		</div>
 
 		<div id="sidebar">
 			<ul id="menu" class="hide">
 				<li>
-				<a href="collection/{$collection->ascii_id}">
-					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to {$collection->collection_name}</sup>
+				<a href=".">
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Home/Search</sup>
 				</a>
 				</li>
 				<li class="settings-tab">
@@ -109,7 +109,7 @@
 			<ul id="menuGrayed">
 				<li>
 				<a href="collection/{$collection->ascii_id}">
-					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Return to {$collection->collection_name}</sup>
+					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Home/Search</sup>
 				</a>
 				</li>
 				<li class="settings-tab">

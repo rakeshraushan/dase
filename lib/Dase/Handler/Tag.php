@@ -55,7 +55,7 @@ class Dase_Handler_Tag extends Dase_Handler
 
 		//ZIP stuff
 		$zip = new ZipArchive();
-		$filename = $this->path_to_media."/tmp/".$u->eid."-".$tag->ascii_id.".zip";
+		$filename = MEDIA_DIR."/tmp/".$u->eid."-".$tag->ascii_id.".zip";
 		if (file_exists($filename)) {
 			unlink($filename);
 		}
@@ -73,7 +73,7 @@ class Dase_Handler_Tag extends Dase_Handler
 					$zip->addFromString($u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg',$img);
 				}
 				 */
-				$fn = $this->path_to_media."/tmp/".$u->eid.'-'.$tag->ascii_id.'-'.$size.'-'.$item->serial_number;
+				$fn = MEDIA_DIR."/tmp/".$u->eid.'-'.$tag->ascii_id.'-'.$size.'-'.$item->serial_number;
 				file_put_contents($fn,file_get_contents($item->getMediaUrl($size,$r->app_root)));
 				if (filesize($fn)) {
 					$zip->addFile($fn,$u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg');
@@ -137,13 +137,12 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
 		}
 		$r->checkCache();
-		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
 		$t->assign('json_url',$json_url);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
-		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$u->getHttpPassword()));
 		$r->renderResponse($t->fetch('item_set/data.tpl'));
 	}
 
@@ -156,7 +155,6 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$r->get('nocache')) {
 			$r->checkCache();
 		}
-		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//cannot use eid/ascii since it'll sometimes be another user's tag
 		$json_url = $r->app_root.'/tag/'.$this->tag->id.'.json';
@@ -166,7 +164,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			$feed_url .= '?nocache=1';
 		}
 		$t->assign('feed_url',$feed_url);
-		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$u->getHttpPassword()));
 		if ($u->can('admin',$this->tag) && 'hide' != $u->cb) {
 			$t->assign('bulkedit',1);
 		}
@@ -190,11 +188,10 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('read',$this->tag)) {
 			$r->renderError(401,$u->eid .' is not authorized to read this resource');
 		}
-		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
 		//always get fresh (no cache)
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom?nocache=1';
-		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$http_pw));
+		$t->assign('tag_feed',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$u->getHttpPassword()));
 		$r->renderResponse($t->fetch('item_set/tag_sorter.tpl'));
 	}
 
@@ -224,10 +221,9 @@ class Dase_Handler_Tag extends Dase_Handler
 		$u = $r->getUser();
 		$tag_ascii_id = $r->get('tag_ascii_id');
 		$tag_item_id = $r->get('tag_item_id');
-		$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 		$t = new Dase_Template($r);
-		//$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
-		$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$http_pw));
+		//$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$u->eid.'/'.$tag_ascii_id.'/'.$tag_item_id.'?format=atom',$u->eid,$u->getHttpPassword()));
+		$t->assign('item',Dase_Atom_Feed::retrieve($r->app_root.'/tag/item/'.$this->tag->id.'/'.$tag_item_id.'?format=atom',$u->eid,$u->getHttpPassword()));
 		$r->renderResponse($t->fetch('item/display.tpl'));
 	}
 
@@ -303,7 +299,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//OR an atom entry that lists tag_items a la OAI-ORE
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
@@ -322,7 +318,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	{
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
@@ -340,7 +336,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//move some of this into model
 		$tag = $this->tag;
 		$u = $r->getUser();
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401,'user does not have write privileges');
 		}
@@ -374,7 +370,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			try {
 				$set_entry = Dase_Atom_Entry::load($raw_input);
 			} catch(Exception $e) {
-				$r->logger()->debug('tag handler error: '.$e->getMessage());
+				Dase_Log::debug(LOG_FILE,'tag handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('set' != $set_entry->entrytype) {

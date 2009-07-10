@@ -1,10 +1,11 @@
 <?php
 
-class Dase_Cookie {
+class Dase_Http_Cookie {
 
-	//this class deals with the eid cookie and the 
-	//encrypted eid cookie AND provides minimal
-	//generic functionality
+	/** this class deals with the eid cookie and the 
+	 * encrypted eid cookie AND provides minimal
+	 * generic functionality
+	 */
 
 	protected $user_cookiename = 'DASE_USER';
 	protected $auth_cookiename = 'DASE_AUTH';

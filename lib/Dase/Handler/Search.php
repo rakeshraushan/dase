@@ -1,5 +1,6 @@
 <?php
 
+
 class Dase_Handler_Search extends Dase_Handler
 {
 
@@ -27,12 +28,12 @@ class Dase_Handler_Search extends Dase_Handler
 		if ($r->has('max')) {
 			$this->max = $r->get('max');
 		} else {
-			$this->max = $r->retrieve('config')->getAppSettings('max_items');
+			$this->max = MAX_ITEMS;
 		}
 		if ($r->has('start')) {
 			$this->start = $r->get('start');
 		} else {
-			$this->start = 1;
+			$this->start = 0;
 		}
 	}
 
@@ -57,16 +58,18 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public function getSearchAtom($r)
 	{
-		$r->checkCache();
-		$search = new Dase_Search($r);
-		$atom_feed = $search->getResult()->getResultSetAsAtomFeed($r->app_root,$this->db,$this->start,$this->max);
+		//TEMP!!!!!!!!!!!!!!!!!
+		//$r->checkCache();
+		$search = Dase_SearchEngine::get($this->config);
+		$search->prepareSearch($r,$this->start,$this->max);
+		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
 	}
 
 	public function getSearchJson($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Search($r);
+		$search = new Dase_Search($r,$this->db,$this->config);
 		$json_feed = $search->getResult()->getResultSetAsJsonFeed($r->app_root,$this->db,$this->start,$this->max);
 		$r->renderResponse($json_feed);
 	}
@@ -74,7 +77,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchUris($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Search($r);
+		$search = new Dase_Search($r,$this->db,$this->config);
 		$sernums = $search->getResult()->getResultSetUris($r->app_root,$this->db);
 		$r->renderResponse(join("\n",$sernums));
 	}
@@ -82,7 +85,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchCsv($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Search($r);
+		$search = new Dase_Search($r,$this->db,$this->config);
 		$sernums = $search->getResult()->getResultSetCsv($this->db);
 		$r->renderResponse(join(",",$sernums));
 	}
@@ -90,9 +93,10 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchItemAtom($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Search($r);
-		$search_result = $search->getResult();
-		$atom_feed = $search_result->getItemAsAtomFeed($r->app_root,$this->db,$this->start,$this->max,$r->get('num'));
+		$search = Dase_SearchEngine::get($this->config);
+		$num = $r->get('num')-1;
+		$search->prepareSearch($r,$num,1);
+		$atom_feed = $search->getResultsAsItemAtom();
 		$r->renderResponse($atom_feed);
 	}
 
@@ -101,9 +105,10 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/'.$r->url.'&format=atom');
-		if (!$feed->getOpensearchTotal()) {
-			$r->renderError(404,'no such item');
-		}
+		//todo: figure this out
+		//if (!$feed->getOpensearchTotal()) {
+		//	$r->renderError(404,'no such item');
+		//}
 		$tpl->assign('item',$feed);
 		$r->renderResponse($tpl->fetch('item/display.tpl'));
 	}
@@ -112,12 +117,15 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
+
 		//default slidehow max of 100
 		$json_url = $r->app_root.'/'.$r->url.'&format=json&max=100';
 		$tpl->assign('json_url',$json_url);
+
 		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
+
 		//single hit goes directly to item
 		$count = $feed->getCount();
 		if (1 == $count) {
@@ -137,7 +145,7 @@ class Dase_Handler_Search extends Dase_Handler
 				$r->renderRedirect($r->app_root.'/collections',$params);
 			}
 		}
-		$end = $this->start+$this->max-1;
+		$end = $this->start+$this->max;
 		if ($end > $count) {
 			$end = $count;
 		}

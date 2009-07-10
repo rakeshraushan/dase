@@ -58,7 +58,7 @@ class Dase_Http_Response
 	{
 		if ($set_cache) {
 			$cache_id = $this->request->getCacheId();
-			$this->request->retrieve('cache')->setData($cache_id,$content);
+			$this->request->getCache()->setData($cache_id,$content);
 		}
 		if ($status_code) {
 			$message = $status_code.' '.self::$codes[$status_code]; 
@@ -69,11 +69,11 @@ class Dase_Http_Response
 		exit;
 	}
 
-	public function serveFile($path,$mime_type,$download=false,$base_path)
+	public function serveFile($path,$mime_type,$download=false)
 	{
 		if (!file_exists($path)) {
 			header('Content-Type: image/jpeg');
-			readfile($base_path.'/www/images/unavail.jpg');
+			readfile(BASE_PATH.'/www/images/unavail.jpg');
 			exit;
 		}
 		$filename = basename($path);
@@ -135,7 +135,7 @@ class Dase_Http_Response
 				$redirect_path .= '?'.join("&",$query_array);
 			}
 		}
-		$this->request->logger()->info('redirecting to '.$redirect_path);
+		Dase_Log::info(LOG_FILE,'redirecting to '.$redirect_path);
 		header("Location:". $redirect_path,TRUE,$code);
 		exit;
 	}
@@ -166,7 +166,7 @@ class Dase_Http_Response
 			$error_text .= "[http_error_code] => $code\n";
 		}
 		if ($log_error) {
-			$this->request->logger()->debug($error_text);
+			Dase_Log::debug(LOG_FILE,'redirecting to '.$error_text);
 		}
 		if ($msg) {
 			print $msg;
@@ -200,7 +200,9 @@ class Dase_Http_Response
 	{
 		//see http://bugs.php.net/bug.php?id=34206
 		// if strange 'failed to open stream' messages appear
-		$this->request->logger()->debug('finished request '.$this->request->getElapsed());
+		$now = Dase_Util::getTime();
+		$elapsed = round($now - START_TIME,4);
+		Dase_Log::debug(LOG_FILE,'finished request '.$elapsed);
 	}
 }
 

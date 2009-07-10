@@ -14,16 +14,14 @@ class TestOfDatabase extends UnitTestCase {
 		$c = new Dase_Config(dirname(__FILE__).'/..');
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$log = new Dase_Log($c->getLogDir(),'dase.log',Dase_Log::DEBUG);
-		$db = new Dase_DB($c->get('db'),$log);
+		$db = new Dase_DB($c);
 		$this->assertTrue($dbh = $db->getDbh());
 	}
 	function testDatabaseSelect() {
 		$c = new Dase_Config(dirname(__FILE__).'/..');
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$log = new Dase_Log($c->getLogDir(),'dase.log',Dase_Log::DEBUG);
-		$db = new Dase_DB($c->get('db'),$log);
+		$db = new Dase_DB($c);
 		$c = Dase_DBO_Collection::get($db,'test');
 		$this->assertTrue('Test Collection' == $c->collection_name);
 	}

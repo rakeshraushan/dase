@@ -9,21 +9,21 @@ class Dase_DB {
 	private $user;
 	private $pass;
 	public $table_prefix;
-	public $log;
 	public $dbh;
 
-	public function __construct($config,$log)
+	public function __construct($config)
 	{ 
-		$this->type = $config['type'];
-		$this->host = $config['host'];
-		$this->name = $config['name'];
-		$this->user = $config['user'];
-		$this->pass = $config['pass'];
-		if (isset($config['path'])) {
-			$this->path = $config['path'];
+		$this->type = $config->getDb('type');
+		$this->host = $config->getDb('host');
+		$this->name = $config->getDb('name');
+		$this->user = $config->getDb('user');
+		$this->pass = $config->getDb('pass');
+		if ($config->getDb('path')) {
+			$this->path = $config->getDb('path');
 		}
-		$this->table_prefix = $config['table_prefix'];
-		$this->log = $log;
+		$this->table_prefix = $config->getDb('table_prefix');
+		//also store copy of config object
+		$this->config = $config;
 	}
 
 	public function getDbh()

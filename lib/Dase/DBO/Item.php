@@ -93,103 +93,25 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_DBO_Item::get($db,$coll,$sernum);
 	}
 
-	public function deleteSearchIndexes()
+	public function deleteSearchIndex()
 	{
-		$prefix = $this->db->table_prefix;
-		$dbh = $this->db->getDbh();
-		$sql = "
-			DELETE
-			FROM {$prefix}search_table 
-			WHERE item_id = $this->id
-			";
-		$dbh->query($sql);
-		$sql = "
-			DELETE
-			FROM {$prefix}admin_search_table 
-			WHERE item_id = $this->id
-			";
-		$dbh->query($sql);
+		$engine = Dase_SearchEngine::get($this->config);
+		Dase_Log::debug(LOG_FILE,"deleted index for " . $this->serial_number);
+		return $engine->deleteItemIndex($this->getUnique());
 	}
 
-	public function buildSearchIndex()
+	public function buildSearchIndex($freshness=0)
 	{
-		$db = $this->db;
-		//todo: should this be here??
-		$this->saveAtom();
+		$engine = Dase_SearchEngine::get($this->db,$this->config);
+		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
+		return $engine->buildItemIndex($this,$freshness);
+	}
 
-		$prefix = $db->table_prefix;
-		$dbh = $db->getDbh();
-		//todo: make sure item->id is an integer
-		$sql = "
-			DELETE
-			FROM {$prefix}search_table 
-			WHERE item_id = $this->id
-			";
-		$dbh->query($sql);
-		$sql = "
-			DELETE
-			FROM {$prefix}admin_search_table 
-			WHERE item_id = $this->id
-			";
-		$dbh->query($sql);
-		//search table
-		$composite_value_text = '';
-		$sql = "
-			SELECT value_text
-			FROM {$prefix}value v
-			WHERE v.item_id = $this->id
-			AND v.value_text != ''
-			AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where a.in_basic_search = true)
-			";
-		$st = $dbh->prepare($sql);
-		$st->execute();
-		//todo: this should be a foreach
-		while ($value_text = $st->fetchColumn()) {
-			$composite_value_text .= $value_text . " ";
-		}
-
-		//todo: fix this to get the latest version of content only
-		$content = $this->getContents();
-		if ($content && $content->text) {
-			$composite_value_text .= $content->text . " ";
-		}
-		$c = $this->getCollection();
-		$search_table = new Dase_DBO_SearchTable($db);
-		$search_table->value_text = $composite_value_text;
-		$search_table->item_id = $this->id;
-		$search_table->collection_id = $this->collection_id;
-		$search_table->collection_ascii_id = $this->p_collection_ascii_id;
-		$search_table->updated = date(DATE_ATOM);
-		if ($composite_value_text) {
-			$search_table->insert();
-		}
-
-		//admin search table
-		$composite_value_text = '';
-		$sql = "
-			SELECT value_text
-			FROM {$prefix}value
-			WHERE item_id = $this->id
-			";
-		$st = $dbh->prepare($sql);
-		$st->execute();
-		while ($value_text = $st->fetchColumn()) {
-			$composite_value_text .= $value_text . " ";
-		}
-		$content = $this->getContents();
-		if ($content && $content->text) {
-			$composite_value_text .= $content->text . " ";
-		}
-		$search_table = new Dase_DBO_AdminSearchTable($db);
-		$search_table->value_text = $composite_value_text;
-		$search_table->item_id = $this->id;
-		$search_table->collection_id = $this->collection_id;
-		$search_table->collection_ascii_id = $this->p_collection_ascii_id;
-		$search_table->updated = date(DATE_ATOM);
-		$search_table->insert();
-		$this->updated = date(DATE_ATOM);
-		$this->update();
-		$this->log->debug("built indexes for " . $this->serial_number);
+	public function store()
+	{
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		Dase_Log::debug(LOG_FILE,"saved as document: " . $this->serial_number);
+		return $ds->storeItem($this);
 	}
 
 	public function getRawMetadata()
@@ -213,136 +135,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$metadata[] = $row;
 		}
 		return $metadata;
-	}
-
-	public function getSolrDoc()
-	{
-		$dom = new DOMDocument();
-		$root_el = $dom->createElement('add');
-		$root = $dom->appendChild($root_el);
-		$doc_el = $dom->createElement('doc');
-		$doc = $root->appendChild($doc_el);
-		$id = $doc->appendChild($dom->createElement('field'));
-		$id->appendChild($dom->createTextNode($this->p_collection_ascii_id.'/'.$this->serial_number));
-		$id->setAttribute('name','id');
-		$col_obj = $this->getCollection();
-		$c = $doc->appendChild($dom->createElement('field'));
-		$c->appendChild($dom->createTextNode($col_obj->ascii_id));
-		$c->setAttribute('name','c');
-		$coll = $doc->appendChild($dom->createElement('field'));
-		$coll->appendChild($dom->createTextNode($col_obj->collection_name));
-		$coll->setAttribute('name','collection');
-		$it_obj = $this->getItemType();
-		$it = $doc->appendChild($dom->createElement('field'));
-		$it->appendChild($dom->createTextNode($it_obj->ascii_id));
-		$it->setAttribute('name','item_type');
-		$it_name = $doc->appendChild($dom->createElement('field'));
-		$it_name->appendChild($dom->createTextNode($it_obj->name));
-		$it_name->setAttribute('name','item_type_name');
-		//for limiting to specific collection item_type
-		$col_it = $doc->appendChild($dom->createElement('field'));
-		$col_it->appendChild($dom->createTextNode($col_obj->ascii_id.'_'.$it_obj->ascii_id));
-		$col_it->setAttribute('name','coll_item_type');
-		$search_text = array();
-		$contents = $this->getContents();
-		if ($contents && $contents->text) {
-			$content = $doc->appendChild($dom->createElement('field'));
-			$content->appendChild($dom->createTextNode($contents->text));
-			$content->setAttribute('name','content');
-			$content_type = $doc->appendChild($dom->createElement('field'));
-			$content_type->appendChild($dom->createTextNode($contents->type));
-			$content_type->setAttribute('name','content_type');
-			if ('text' === $contents->type) {
-				$search_text[] = $contents->text;
-			}
-		}
-		$att_names = array();
-		$metadata_array = array();
-		foreach ($this->getRawMetadata() as $meta) {
-			$metadata_array[$meta['id']]['metadata'] = $meta;
-			if (!isset($metadata_array[$meta['id']]['modifier'])) {
-				$metadata_array[$meta['id']]['modifier']=array();
-			}
-			$search_text[] = $meta['value_text'];
-			if ($meta['url']) {
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['url']));
-				$field->setAttribute('name','metadata_link_url_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['attribute_name']));
-				$field->setAttribute('name','metadata_link_attribute_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode('http://daseproject.org/relation/metadata-link/'.$col_obj->ascii_id.'/'.$meta['ascii_id']));
-				$field->setAttribute('name','metadata_link_rel_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['value_text']));
-				$field->setAttribute('name','metadata_link_title_'.$meta['id']);
-				//attribute name lookup array before 'do_not_store' change
-				$att_names[$meta['ascii_id']] = $meta['attribute_name'];
-				$meta['ascii_id'] = 'do_not_store_'.$meta['ascii_id'];
-			}
-			$field = $doc->appendChild($dom->createElement('field'));
-			$field->appendChild($dom->createTextNode($meta['value_text']));
-			//since we are already using 'id'
-			if ('id' == $meta['ascii_id']) {
-				$meta['ascii_id'] = 'local_id';
-			}
-			$field->setAttribute('name','_'.$meta['ascii_id']);
-
-			$field = $doc->appendChild($dom->createElement('field'));
-			$field->appendChild($dom->createTextNode($meta['value_text']));
-			if ('id' == $meta['attribute_name']) {
-				$meta['attribute_name'] = 'local_id';
-			}
-			$field->setAttribute('name',$meta['attribute_name']);
-		}
-		foreach ($metadata_array as $m_id => $set) {
-			if (count($set['modifier'])) {
-				foreach ($set['modifier'] as $mod) {
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode('('.$set['metadata']['value_text'].') '.$mod['value_text']));
-				$field->setAttribute('name',$mod['ascii_id']);
-				}
-			}
-		}
-		$field = $doc->appendChild($dom->createElement('field'));
-		$field->appendChild($dom->createTextNode(join("\n",$search_text)));
-		$field->setAttribute('name','search_text');
-		/*
-		$media_size_set = array();
-		foreach ($this->getMedia() as $m) {
-			//eliminate duplicate sizes
-			if (!isset($media_size_set[$m->size])) {
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($m->getRelativeLink()));
-				$field->setAttribute('name','media_link_'.$m->size);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($m->height));
-				$field->setAttribute('name','media_height_'.$m->size);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($m->width));
-				$field->setAttribute('name','media_width_'.$m->size);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($m->file_size));
-				$field->setAttribute('name','media_file_size_'.$m->size);
-				$media_size_set[$m->size] = true;
-			}
-		}
-		 */
-		$app_root = '{APP_ROOT}';
-		$entry = new Dase_Atom_Entry_Item;
-		$entry = $this->injectAtomEntryData($entry,$app_root);
-		$atom_str = $entry->asXml($entry->root);
-		$field = $doc->appendChild($dom->createElement('field'));
-		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
-		$field->setAttribute('name','atom');
-		$dom->formatOutput = true;
-		return $dom->saveXML();
-	}
-
-	public function postToSolr($url)
-	{
-		return Dase_Http::post($url,$this->getSolrDoc(),null,null,'text/xml');
 	}
 
 	public function getMetadata($app_root='{APP_ROOT}',$att_ascii_id='')
@@ -521,7 +313,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	public function getMedia($order_by='file_size')
 	{
 		$db = $this->db;
-		$this->log->debug("getting media for " . $this->id);
+		Dase_Log::debug(LOG_FILE,"getting media for " . $this->id);
 		$m = new Dase_DBO_MediaFile($db);
 		$m->p_collection_ascii_id = $this->p_collection_ascii_id;
 		$m->p_serial_number = $this->serial_number;
@@ -620,8 +412,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->insert();
 		$v->value_text = $value_text;
 		$v->update();
-		//todo: queue up to do in another process
-		//$this->buildSearchIndex();
+		$this->buildSearchIndex();
 
 		//experiment:
 		//$this->flushAtom();
@@ -695,7 +486,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			//$this->saveAtom();
 		} else {
 			//simply returns false if no such attribute
-			$this->log->debug('[WARNING] no such attribute '.$att_ascii_id);
+			Dase_Log::debug(LOG_FILE,'[WARNING] no such attribute '.$att_ascii_id);
 			return false;
 		}
 	}
@@ -747,7 +538,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteMedia($path_to_media);
 		$this->deleteValues();
 		$this->deleteAdminValues();
-		$this->deleteSearchIndexes();
+		$this->deleteSearchIndex();
 		$this->deleteContent();
 		$this->deleteComments();
 		$this->deleteTagItems();
@@ -962,7 +753,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if ($this->getCollection()) {
 			$collection_name = $this->collection->collection_name;
 		} else {
-			$collection_name = '';
+			//not sure why this is ever run???
+			//$collection_name = '';
+			if (isset($GLOBALS['app_data']['collections'][$this->p_collection_ascii_id])) {
+				$collection_name = $GLOBALS['app_data']['collections'][$this->p_collection_ascii_id];
+			}
 		}
 		$entry->addCategory($this->p_collection_ascii_id,
 			'http://daseproject.org/category/collection',$collection_name);
@@ -1043,6 +838,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$viewitem_url = $this->getMediaUrl('viewitem');
 		$content = $this->getContents();
 		if ($content && $content->text) {
+			if (!$content->type) {
+				$content->type = 'text';
+			}
 			if ('application/json' == $content->type) {
 				$entry->setExternalContent($base_url.'/content','application/json');
 			} else {
@@ -1053,7 +851,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$entry->setThumbnail($app_root.$thumb_url);	
 			}
 		} else {
-			/** skip splash while working on Solr stuff
+			/** skip splash for now 
 			$list = '';
 			foreach ($item_metadata as $row) {
 				$list .= "

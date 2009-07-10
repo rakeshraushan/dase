@@ -227,6 +227,7 @@ Dase.initUser = function() {
 			Dase.user.tags = json[eid].tags;
 			Dase.user.collections = json[eid].collections;
 			Dase.user.recent_views = json[eid].recent_views;
+			Dase.user.recent_searches = json[eid].recent_searches;
 			Dase.user.current_collections = json[eid].current_collections;
 			Dase.user.is_superuser = json[eid].is_superuser;
 			Dase.user.cart_count = json[eid].cart_count;
@@ -238,6 +239,7 @@ Dase.initUser = function() {
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
 			Dase.placeRecentViews(Dase.user);
+			Dase.placeRecentSearches(Dase.user);
 			Dase.placeUserCollections(eid);
 			Dase.placePreferredCollections(eid);
 			Dase.placeCollectionManageLink(eid);
@@ -324,16 +326,17 @@ Dase.placeCollectionManageLink = function(eid) {
 	var auth_info = Dase.checkAdminStatus(eid);
 	if (!auth_info) return;
 	var manageLink = Dase.$('manageLink');
-	var menuItem = Dase.$('manage-menu');
-	var menuItemLink = Dase.$('manage-menu-link');
+	var manageLinkHeader = Dase.$('manageLinkHeader');
+	//set footer link
 	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
 		manageLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
 		manageLink.innerHTML = 'Manage '+auth_info.collection_name;
 		Dase.removeClass(manageLink,'hide');
-		if (menuItemLink && menuItem && auth_info.collection_ascii_id) {
-			menuItemLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
-			menuItemLink.innerHTML = 'Manage '+auth_info.collection_name;
-			Dase.removeClass(menuItem,'hide');
+		//set menu link
+		if (manageLinkHeader && auth_info.collection_ascii_id) {
+			manageLinkHeader.setAttribute('href','manage/'+auth_info.collection_ascii_id);
+			manageLinkHeader.innerHTML = '[manage collection]';
+			Dase.removeClass(manageLinkHeader,'hide');
 		}
 	}
 };
@@ -536,6 +539,22 @@ Dase.loadingMsg = function(displayBool) {
 		Dase.addClass(loading,'hide');
 	}
 }
+
+Dase.placeRecentSearches = function(user) {
+	if (!Dase.$('searches-submenu')) return;
+	// user sets menu 
+	var h = new Dase.htmlbuilder;
+	for (var i=0; i<user.recent_searches.length;i++) {
+		var recent = user.recent_searches[i];
+		var li = h.add('li');
+		var a = li.add('a');
+		a.set('href',recent.url);
+		a.setText(recent.title+' ('+recent.count+')');
+	}
+	var li = h.add('li').add('a',{'href':'#','id':'clearRecent','class':'edit'},'clear all');
+	h.attach(Dase.$('searches-submenu')); //append
+	//Dase.initClearRecent(user);
+};
 
 Dase.placeRecentViews = function(user) {
 	if (!Dase.$('recent-submenu')) return;

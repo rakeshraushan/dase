@@ -2,13 +2,9 @@
 
 ini_set('include_path','.:'.dirname(__FILE__).'/../lib');
 
-function __autoload($class_name) {
-	@include __autoloadFilename($class_name);
-}
+define('BASE_PATH',dirname(__FILE__).'/..');
 
-function __autoloadFilename($class_name) {
-	return str_replace('_','/',$class_name) . '.php';
-}
+require_once('../inc/bootstrap.php');
 require_once('show_passes.php');
 require_once('simpletest/autorun.php');
 SimpleTest::prefer(new ShowPasses());

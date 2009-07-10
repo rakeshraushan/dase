@@ -37,7 +37,7 @@ class Dase_Handler_Login extends Dase_Handler
 		//all valid users need to be superusers
 		$username = strtolower($r->get('username'));
 		$pass = $r->get('password');
-		$superusers = $r->retrieve('config')->getSuperusers();
+		$superusers = $r->getSuperusers();
 		//todo: this is why params are not saved -- super ONLY
 		if (isset($superusers[$username]) && $superusers[$username] == $pass) {
 			$user = new Dase_DBO_DaseUser($this->db);
@@ -62,7 +62,7 @@ class Dase_Handler_Login extends Dase_Handler
 	 */
 	public function deleteLogin($r)
 	{
-		$r->retrieve('cookie')->clear();
+		$r->clearCookies();
 		$r->renderRedirect('login/form');
 	}
 }
