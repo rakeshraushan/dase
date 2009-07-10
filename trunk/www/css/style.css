@@ -671,17 +671,17 @@ table#metadata {
 }
 
 table#metadata th {
-text-align: right;
+text-align: left;
 vertical-align: top;
 color: #339;
 border: 0px solid #ddf;
-padding: 2px;
-width: 160px;
+padding: 1px;
+width: 140px;
 }
 
 table#metadata td {
 text-align: left;
-padding: 2px;
+padding: 1px;
 border: 0px solid #ddf;
 width: 500px;
 }

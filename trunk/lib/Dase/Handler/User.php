@@ -21,12 +21,13 @@ class Dase_Handler_User extends Dase_Handler
 		'{eid}/key' => 'key',
 		'{eid}/tag_items/{tag_item_id}' => 'tag_item',
 		'{eid}/recent' => 'recent_views',
+		'{eid}/recent_searches' => 'recent_searches',
 		'{eid}/{collection_ascii_id}/recent' => 'recent_uploads',
 	);
 
 	protected function setup($r)
 	{ 
-		if ('atom' == $r->format || 'ping' == $r->resource || 'recent_views' == $r->resource) {
+		if ('atom' == $r->format || 'ping' == $r->resource || 'recent_views' == $r->resource || 'recent_searches' == $r->resource) {
 			$this->user = $r->getUser('http');
 		} else {
 			$this->user = $r->getUser();
@@ -81,11 +82,38 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($this->user->getTagsAsAtom($r->app_root));
 	}
 
-	public function postToRecentViews($r) {
-		$this->user->expireDataCache($r->retrieve('cache'));
+	public function postToRecentSearches($r) {
+		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);
 		$recent->url= rawurldecode($r->get('url'));
 		$recent->title = $r->get('title');
+		$recent->type = 'search';
+		$recent->count = $r->get('count');
+		$recent->dase_user_eid = $this->user->eid;
+		if ($recent->findOne()) {
+			$recent->timestamp = date(DATE_ATOM);
+			if ($recent->update()) {
+				$r->renderOk('recorded search view');
+			} else {
+				$r->renderError(500);
+			}
+		} else {
+			$recent->timestamp = date(DATE_ATOM);
+			if ($recent->insert()) {
+				$r->renderOk('recorded search view');
+			} else {
+				$r->renderError(500);
+			}
+		}
+	}
+
+	public function postToRecentViews($r) {
+		$this->user->expireDataCache($r->getCache());
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->url= rawurldecode($r->get('url'));
+		$recent->title = $r->get('title');
+		$recent->type = 'item';
+		$recent->count = 0;
 		$recent->dase_user_eid = $this->user->eid;
 		if ($recent->findOne()) {
 			$recent->timestamp = date(DATE_ATOM);
@@ -105,9 +133,10 @@ class Dase_Handler_User extends Dase_Handler
 	}
 
 	public function deleteRecentViews($r) {
-		$this->user->expireDataCache($r->retrieve('cache'));
+		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);
 		$recent->dase_user_eid = $this->user->eid;
+		$recent->type = 'item';
 		$i=0;
 		foreach ($recent->find() as $doomed) {
 			$i++;
@@ -148,7 +177,7 @@ class Dase_Handler_User extends Dase_Handler
 				try {
 					$set_entry = Dase_Atom_Entry::load($raw_input);
 				} catch(Exception $e) {
-					$r->logger()->debug('user handler error: '.$e->getMessage());
+					Dase_Log::debug(LOG_FILE,'user handler error: '.$e->getMessage());
 					$r->renderError(400,'bad xml');
 				}
 				if ('set' != $set_entry->entrytype) {
@@ -225,12 +254,12 @@ class Dase_Handler_User extends Dase_Handler
 		//operations that change user date are required to expire this cache
 		//NOTE: request_url is '/user/{eid}/data'
 		//need to have SOME data returned if there is no user
-		$cache = clone($r->retrieve('cache'));
+		$cache = clone($r->getCache());
 		$cache_id = $r->get('eid') . '_data';
 		$data = $cache->getData($cache_id,3000);
 		if (!$data) {
 			$u = $r->getUser();
-			$data = $u->getDataJson($r->retrieve('config')->getAuth());
+			$data = $u->getDataJson($r->getAuthConfig());
 			$cache->setData($cache_id,$data);
 		}
 		$r->renderResponse($data);
@@ -244,7 +273,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToCart($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
@@ -279,7 +308,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToCartEmptier($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		$tag = new Dase_DBO_Tag($this->db);
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
@@ -298,7 +327,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function deleteTagItem($r)
 	{
 		$u = $this->user;
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		$tag = new Dase_DBO_Tag($this->db);
@@ -320,11 +349,10 @@ class Dase_Handler_User extends Dase_Handler
 		$tag->dase_user_id = $u->id;
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
-			$http_pw = $u->getHttpPassword($r->retrieve('config')->getAuth('token'));
 			$t = new Dase_Template($r);
 			$json_url = $r->app_root.'/tag/'.$tag->id.'.json';
 			$t->assign('json_url',$json_url);
-			$t->assign('items',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$tag->id.'.atom',$u->eid,$http_pw));
+			$t->assign('items',Dase_Atom_Feed::retrieve($r->app_root.'/tag/'.$tag->id.'.atom',$u->eid,$u->getHttpPassword()));
 			$t->assign('is_admin',1);
 			if ('list' == $u->display) {
 				$t->assign('display','list');
@@ -335,13 +363,26 @@ class Dase_Handler_User extends Dase_Handler
 		}
 	}
 
+	public function getCartAtom($r)
+	{
+		$u = $this->user;
+		$tag = new Dase_DBO_Tag($this->db);
+		$tag->dase_user_id = $u->id;
+		$tag->type = 'cart';
+		if ($tag->findOne()) {
+			$r->renderResponse($tag->asAtom($r->app_root));
+		} else {
+			$r->renderError(404);
+		}
+	}
+
 	public function getSettings($r)
 	{
-		$u= $this->user;
+		$u = $this->user;
 		$t = new Dase_Template($r);
 		$u->collections = $u->getCollections();
 		$t->assign('user',$u);
-		$t->assign('http_password',$u->getHttpPassword($r->retrieve('config')->getAuth('token')));
+		$t->assign('http_password',$u->getHttpPassword());
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);
 	}
 
@@ -357,14 +398,8 @@ class Dase_Handler_User extends Dase_Handler
 			$u->has_access_exception = 0;
 		}
 		$u->update();
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		$r->renderResponse('ok');
-	}
-
-	public function getHttpPassword($r) 
-	{
-		$u = $this->user;
-		$r->renderResponse($u->getHttpPassword($r->retrieve('config')->getAuth('token')));
 	}
 
 	public function postToKey($r)
@@ -396,7 +431,7 @@ class Dase_Handler_User extends Dase_Handler
 			$u->has_access_exception = 0;
 		}
 		$u->update();
-		$u->expireDataCache($r->retrieve('cache'));
+		$u->expireDataCache($r->getCache());
 		$r->renderRedirect("user/$u->eid/settings");
 	}
 
@@ -410,7 +445,7 @@ class Dase_Handler_User extends Dase_Handler
 				$u->has_access_exception = 0;
 			}
 			$u->update();
-			$u->expireDataCache($r->retrieve('cache'));
+			$u->expireDataCache($r->getCache());
 		}
 		$r->renderRedirect("user/$u->eid/settings");
 	}

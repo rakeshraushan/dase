@@ -309,7 +309,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function deleteCollection($r)
 	{
 		$user = $r->getUser('http');
-		if (!$user->isSuperuser($r->retrieve('config')->getSuperusers())) {
+		if (!$user->is_superuser) {
 			$r->renderError(401,$user->eid.' is not permitted to delete a collection');
 		}
 		if ($this->collection->item_count < 5) {
@@ -418,7 +418,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			try {
 				$collection_entry = Dase_Atom_Entry::load($raw_input,'collection');
 			} catch(Exception $e) {
-				$r->logger()->debug('collection handler error: '.$e->getMessage());
+				Dase_Log::debug(LOG_FILE,'collection handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('collection' != $collection_entry->entrytype) {
@@ -462,7 +462,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$url = $r->getBody();
 		$filename = array_pop(explode('/',$url));
 		$ext = array_pop(explode('.',$url));
-		$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
+		$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory');
 		}
@@ -472,13 +472,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		file_put_contents($new_file,file_get_contents($url));
 		try {
 			$file = Dase_File::newFile($this->db,$new_file,null,null,$r->base_path);
-			//$media_file = $file->addToCollection($item,true,$this->path_to_media); //check for dups
+			//$media_file = $file->addToCollection($item,true,MEDIA_DIR); //check for dups
 			//accept dups
-			$media_file = $file->addToCollection($item,false,$this->path_to_media); //check for dups
+			$media_file = $file->addToCollection($item,false,MEDIA_DIR); //check for dups
 			$item->mapConfiguredAdminAtts();
 			$item->buildSearchIndex();
 		} catch(Exception $e) {
-			$r->logger()->debug('coll handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 			$item->expunge();
 			$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
 		}
@@ -500,7 +500,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 		} catch(Exception $e) {
-			$r->logger()->debug('coll handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item' != $item_entry->entrytype) {
@@ -530,7 +530,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$att_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('coll handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('attribute' != $att_entry->entrytype) {
@@ -560,7 +560,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$type_entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('coll handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type' != $type_entry->entrytype) {
@@ -589,7 +589,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$entry = Dase_Atom_Entry::load($raw_input);
 		} catch(Exception $e) {
-			$r->logger()->debug('coll handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 			$r->renderError(400,'bad xml');
 		}
 		if ('item_type_relation' != $entry->entrytype) {
@@ -704,7 +704,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAttributeTalliesJson($r) 
 	{
-		$prefix = $r->retrieve('db')->table_prefix;
+		$prefix = $this->db->table_prefix;
 		//todo: work on cacheing here
 		//$r->checkCache(1500);
 		$c = $this->collection;
@@ -733,7 +733,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getAdminAttributeTalliesJson($r) 
 	{
-		$prefix = $r->retrieve('db')->table_prefix;
+		$prefix = $this->db->table_prefix;
 		$c = $this->collection;
 		$sql = "
 			SELECT id, ascii_id

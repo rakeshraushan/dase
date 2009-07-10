@@ -154,20 +154,8 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		$ait = new Dase_DBO_AttributeItemType($this->db);
 		$ait->item_type_id = $this->id;
 		foreach ($ait->find() as $doomed) {
-			$this->log->info('deleted attribute_item_type '.$doomed->id);
+			Dase_Log::info(LOG_FILE,'deleted attribute_item_type '.$doomed->id);
 			$doomed->delete();
-		}
-		$itr = new Dase_DBO_ItemTypeRelation($this->db);
-		$itr->parent_type_ascii_id = $this->id;
-		foreach ($itr->find() as $doomed_rel) {
-			$this->log->info('deleted item_type_relation '.$doomed->id);
-			$doomed_rel->expunge();
-		}
-		$itr = new Dase_DBO_ItemTypeRelation($this->db);
-		$itr->child_type_ascii_id = $this->id;
-		foreach ($itr->find() as $doomed_rel) {
-			$this->log->info('deleted item_type_relation '.$doomed->id);
-			$doomed_rel->expunge();
 		}
 		$this->delete();
 	}

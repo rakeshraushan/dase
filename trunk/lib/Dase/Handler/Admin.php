@@ -27,14 +27,14 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		//all routes here require superuser privileges
 		$this->user = $r->getUser();
-		if ( 'modules' != $r->resource && !$this->user->isSuperuser($r->retrieve('config')->getSuperusers())) {
+		if ( 'modules' != $r->resource && !$this->user->is_superuser) {
 			$r->renderError(401);
 		}
 	}
 
 	public function deleteCache($r)
 	{
-		$num = $r->retrieve('cache')->expunge();
+		$num = $r->getCache()->expunge();
 		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 
@@ -83,7 +83,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function deleteLog($r)
 	{
-		if ($r->logger()->truncate()) {
+		if (Dase_Log::truncate(LOG_FILE)) {
 			$r->renderResponse('log has been truncated');
 		} else {
 			$r->renderError(500);
@@ -133,7 +133,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$user = Dase_DBO_DaseUser::get($this->db,$r->get('eid'));
 		$tpl = new Dase_Template($r);
 		$tpl->assign('user',$user);
-		$tpl->assign('htpass',$user->getHttpPassword($r->retrieve('config')->getAuth('token')));
+		$tpl->assign('htpass',$user->getHttpPassword($r->getAuthToken()));
 		$tpl->assign('tags',$user->getTags(true));
 		$tpl->assign('collections',$user->getCollections());
 		$r->renderResponse($tpl->fetch('admin/user.tpl'));

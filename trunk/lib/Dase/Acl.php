@@ -10,6 +10,7 @@ class Dase_Acl
 	public static $sizes = array(
 		'aiff' => 2,
 		'archive' => 1,
+		'atom' => 0,
 		'css' => 1,
 		'deleted' => 1,
 		'doc' => 1,

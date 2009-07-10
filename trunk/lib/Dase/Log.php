@@ -5,19 +5,14 @@ class Dase_Log_Exception extends Exception {}
 class Dase_Log 
 {
 	private $filehandle;
-	private $logfile;
-	private $log_level;
+	private $log_file;
+	private static $instance;
 
 	const OFF 		= 1;	// Nothing at all.
 	const INFO 		= 2;	// Production 
 	const DEBUG 	= 3;	// Most Verbose
 
-	/** supply defaults so it is easy to create a fake log */
-	public function __construct($log_dir,$logfile='dase.log',$log_level)
-	{
-		$this->logfile = $log_dir.'/'.$logfile;
-		$this->log_level = $log_level;
-	}
+	public function __construct() {}
 
 	public function __destruct()
 	{
@@ -26,29 +21,63 @@ class Dase_Log
 		}
 	}
 
-	public static function temp($log_dir,$log_file,$msg)
+	public static function getInstance() 
 	{
-		$log = new Dase_Log($log_dir,$log_file,Dase_Log::DEBUG);
-		$log->debug($msg);
+		if (empty( self::$instance )) {
+			self::$instance = new Dase_Log;
+		}
+		return self::$instance;
 	}
 
-	public function dir_is_writeable()
+	public static function debug($log_file,$msg,$backtrace = false)
 	{
-		return is_writeable(dirname($this->logfile));
+		//notices helpful for debugging (including all sql)
+		$log = Dase_Log::getInstance();
+		$log->setLogFile($log_file);
+		if (LOG_LEVEL >= Dase_Log::DEBUG) {
+			$log->_write($msg,$backtrace);
+		}
 	}
 
-	public function getFilename()
+	public static function info($log_file,$msg,$backtrace = false)
 	{
-		return $this->logfile;
+		//normal notices, ok for production
+		$log = Dase_Log::getInstance();
+		$log->setLogFile($log_file);
+		if (LOG_LEVEL >= Dase_Log::INFO) {
+			$log->_write($msg,$backtrace);
+		}
+	}
+
+	public static function truncate($log_file)
+	{
+		$log = Dase_Log::getInstance();
+		$log->setLogFile($log_file);
+		@unlink($log_file);
+		return $this->_write("---- dase log ----\n\n");
+	}
+
+	public static function readLastLine($log_file)
+	{
+		$log = Dase_Log::getInstance();
+		$log->setLogFile($log_file);
+		if ($log->log_file && file_exists($log->log_file)) {
+			return trim(array_pop(file($log->log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)));
+		}
+	}
+
+	public function setLogFile($log_file)
+	{
+		$this->log_file = $log_file;
 	}
 
 	private function _init()
 	{
-		if (!$this->logfile) { 
+		if (!$this->log_file) { 
 			return false;
 		}
 
-		$filehandle = fopen($this->logfile, 'a');
+		$filehandle = fopen($this->log_file, 'a');
 
 		if (!is_resource($filehandle)) {
 			return false;
@@ -73,44 +102,9 @@ class Dase_Log
 			ob_end_clean();
 		}
 		if (fwrite($this->filehandle, $msg) === FALSE) {
-			throw new Dase_Log_Exception('cannot write to logfile '.$this->logfile);
+			throw new Dase_Log_Exception('cannot write to log_file '.$this->log_file);
 		}
 		return true;
 	}
 
-	public function debug($msg,$backtrace = false)
-	{
-		//notices helpful for debugging (including all sql)
-		if ($this->log_level >= Dase_Log::DEBUG) {
-			$this->_write($msg,$backtrace);
-		}
-	}
-
-	public function info($msg,$backtrace = false)
-	{
-		//normal notices, ok for production
-		if ($this->log_level >= Dase_Log::INFO) {
-			$this->_write($msg,$backtrace);
-		}
-	}
-
-	public function truncate()
-	{
-		@unlink($this->logfile);
-		return $this->_write("---- dase log ----\n\n");
-	}
-
-	public function delete()
-	{
-		@unlink($this->logfile);
-	}
-
-	public function getAsArray()
-	{
-		if ($this->logfile && file_exists($this->logfile)) {
-			return file($this->logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		} else {
-			return array();
-		}
-	}
 }

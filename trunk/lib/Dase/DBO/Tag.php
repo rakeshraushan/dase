@@ -347,7 +347,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		foreach($this->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
 			if (!$item) {
-				$this->log->debug('tag_item missing item: '.$tag_item->id);
+				Dase_Log::debug(LOG_FILE,'tag_item missing item: '.$tag_item->id);
 				continue;
 			}
 			$json_item = array();

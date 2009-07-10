@@ -29,8 +29,8 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$r->renderError(409,'collection already exists');
 		}
 		$c->ascii_id = $ascii_id;
-		$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$ascii_id;
-		if (file_exists($media_dir)) {
+		$coll_media_dir =  MEDIA_DIR.'/'.$ascii_id;
+		if (file_exists($coll_media_dir)) {
 			//todo: think about this...
 			//$r->renderError(409,'collection media archive exists');
 		}
@@ -38,15 +38,17 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			$r->logger()->info('created collection '.$c->collection_name);
-			if (mkdir("$media_dir")) {
-				chmod("$media_dir",0775);
+			$cache = Dase_Cache::get(CACHE_TYPE);
+			$cache->expire('app_data');
+			Dase_Log::info(LOG_FILE,'created collection '.$c->collection_name);
+			if (mkdir("$coll_media_dir")) {
+				chmod("$coll_media_dir",0775);
 				foreach (Dase_Acl::$sizes as $size => $access_level) {
-					mkdir("$media_dir/$size");
-					$r->logger()->info('created directory '.$media_dir.'/'.$size);
-					chmod("$media_dir/$size",0775);
+					mkdir("$coll_media_dir/$size");
+					Dase_Log::info(LOG_FILE,'created directory '.$coll_media_dir.'/'.$size);
+					chmod("$coll_media_dir/$size",0775);
 				}
-				symlink($media_dir,$media_dir.'_collection');
+				symlink($coll_media_dir,$coll_media_dir.'_collection');
 			}
 			foreach (array('title','description','keyword','rights') as $att) {
 				$a = new Dase_DBO_Attribute($db);
@@ -70,9 +72,9 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 			$cm->created = date(DATE_ATOM);
 			$cm->created_by_eid = $user->eid;
 			if ($cm->insert()) {
-				$r->logger()->info('created admin user '.$ascii_id.'::'.$user->eid);
+				Dase_Log::info(LOG_FILE,'created admin user '.$ascii_id.'::'.$user->eid);
 			} else {
-				$r->logger()->info('could not create admin user');
+				Dase_Log::info(LOG_FILE,'could not create admin user');
 			}
 			return $ascii_id;
 		} else {

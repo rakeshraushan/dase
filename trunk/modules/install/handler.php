@@ -16,19 +16,17 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function setup($r)
 	{
 
-		$config = $r->retrieve('config');
-
 		$html = "<html><body>";
 		$fix_needed = 0;
-		if (!is_writeable($config->getCacheDir())) {
+		if (!is_writeable(CACHE_DIR)) {
 			$html .= "<h3>".$config->getCacheDir()." must be writeable by the web server.</h3>";
 			$fix_needed = 1;
 		}
-		if (!is_writeable($config->getLogDir())) {
-			$html .= "<h3>".$config->getLogDir()." must be writeable by the web server.</h3>";
+		if (!is_writeable(LOG_FILE)) {
+			$html .= "<h3>".LOG_FILE." must be writeable by the web server.</h3>";
 			$fix_needed = 1;
 		}
-		if (!is_writeable($config->getMediaDir())) {
+		if (!is_writeable(MEDIA_DIR)) {
 			$html .= "<h3>".$config->getMediaDir()." must be writeable by the web server.</h3>";
 			$fix_needed = 1;
 		}
@@ -49,12 +47,12 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		}
 		try {
 			//see if we have users
-			$u = $r->retrieve('user');
-			if ($u->findOne()) {
+			$u = $r->getUser('none');
+			if ($u->findOne()) { //get ANY user
 				//if so, make sure user is logged in
 				//and is a superuser
 				$user = $r->getUser();
-				if ($user->isSuperuser($r->retrieve('config')->getSuperusers())) {
+				if ($user->eid_is_superuser) {
 					$this->done($r);
 				} else {
 					$r->renderError(401);
@@ -79,10 +77,10 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 
 	public function getInfo($r) 
 	{
-		$conf = var_export($r->retrieve('config')->getAll(),true);
+		$conf = var_export($this->config->getAll(),true);
 		$file_contents = "<?php \$conf=$conf;";
 		$tpl = new Dase_Template($r,true);
-		$conf = $r->retrieve('config')->getAll();
+		$conf = $this->config->getAll();
 		if (isset($conf['superuser'])  && is_array($conf['superuser'])) {
 			$eid = array_shift(array_keys($conf['superuser']));
 			$tpl->assign('eid',$eid);
@@ -162,12 +160,12 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$r->renderResponse(Dase_Json::get($resp));
 		}
 		$resp = array();
-		$dbconf = $r->retrieve('config')->get('db');
+		$dbconf = $this->config->get('db');
 		$type = $dbconf['type'];
 		//todo: i need an sqlite schema as well
 		$table_prefix = $dbconf['table_prefix'];
 		//the schema uses variable $table_prefix
-		include($r->base_path.'/modules/install/'.$type.'_schema.php');
+		include(BASE_PATH.'/modules/install/'.$type.'_schema.php');
 		$dbh = $this->db->getDbh();
 		try {
 			if (false === $dbh->exec($query)) {
@@ -188,8 +186,8 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToCreateAdmin($r) 
 	{
 		$resp = array();
-		$superusers = $r->retrieve('config')->getSuperusers();
-		$u = $r->retrieve('user');
+		$superusers = $this->config->getSuperusers();
+		$u = clone $r->getUser('none');
 		$u->eid = array_shift(array_keys($superusers));
 		if ($u->findOne()) {
 			$resp['msg'] = "Admin user \"$u->eid\" already exists";

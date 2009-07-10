@@ -29,13 +29,13 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 
 		/*
-		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,null,$this->path_to_media)) {
+		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,null,MEDIA_DIR)) {
 			if (!$path) {
 				$this->user = $r->getUser();
 				if (!$this->user) {
 					$r->renderError(401,'cannot access media');
 				}
-				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid,$this->path_to_media)) {
+				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid,MEDIA_DIR)) {
 					$r->renderError(401,'cannot access media');
 				}
 			}
@@ -46,48 +46,48 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function getMediaFileTxt($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFileJpg($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFilePdf($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFileGif($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFilePng($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFileMp3($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFileMov($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	/** for html files */
 	public function getMediaFile($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	public function getMediaFileCss($r)
 	{
-		$r->serveFile($this->_getFilePath($this->path_to_media,$this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
+		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
 	/** used to ADD a media file to an item */
@@ -117,7 +117,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 
 		$bits = $r->getBody();
-		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
+		$upload_dir = MEDIA_DIR.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
@@ -139,11 +139,11 @@ class Dase_Handler_Media extends Dase_Handler
 			//since we are swapping in:
 			$item->deleteAdminValues();
 			//note: this deletes ALL media!!!
-			$item->deleteMedia($this->path_to_media);
-			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
+			$item->deleteMedia(MEDIA_DIR);
+			$media_file = $file->addToCollection($item,false,MEDIA_DIR);  //set 2nd param to true to test for dups
 			unlink($new_file);
 		} catch(Exception $e) {
-			$r->logger()->debug('media handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'media handler error: '.$e->getMessage());
 			$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
@@ -160,7 +160,7 @@ class Dase_Handler_Media extends Dase_Handler
 		$m = $item->getEnclosure();
 		if ($m) {
 			$format = Dase_File::$types_map[$m->mime_type]['ext'];
-			$r->serveFile($m->getLocalPath($this->path_to_media),$m->mime_type);
+			$r->serveFile($m->getLocalPath(MEDIA_DIR),$m->mime_type);
 		} else {
 			$r->renderError(404);
 		}
@@ -193,9 +193,9 @@ class Dase_Handler_Media extends Dase_Handler
 		try {
 			$item->deleteAdminValues();
 			//move actual files to 'deleted' directory
-			$item->deleteMedia($this->path_to_media);
+			$item->deleteMedia(MEDIA_DIR);
 		} catch(Exception $e) {
-			$r->logger()->debug('media handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'media handler error: '.$e->getMessage());
 			$r->renderError(500,'could not delete media ('.$e->getMessage().')');
 		}
 		$item->buildSearchIndex();
@@ -236,12 +236,12 @@ class Dase_Handler_Media extends Dase_Handler
 		return $serial_number;
 	}
 
-	private function _getFilePath($path_to_media,$collection_ascii_id,$serial_number,$size,$format)
+	private function _getFilePath($collection_ascii_id,$serial_number,$size,$format)
 	{
 		//look first in subdir
 		//get serial number w/o size extension
 		$subdir = Dase_Util::getSubdir($this->_fixSizeExt($serial_number,$size));
-		$path = $path_to_media.'/'.
+		$path = MEDIA_DIR.'/'.
 			$collection_ascii_id.'/'.
 			$size.'/'.
 			$subdir.'/'.
@@ -249,7 +249,7 @@ class Dase_Handler_Media extends Dase_Handler
 		if (file_exists($path)) {
 			return $path;
 		} else {
-			$path = $path_to_media.'/'.
+			$path = MEDIA_DIR.'/'.
 				$collection_ascii_id.'/'.
 				$size.'/'.
 				$serial_number.'.'.$format;
@@ -274,8 +274,8 @@ class Dase_Handler_Media extends Dase_Handler
 	 * */
 	public function getArchive($r) 
 	{
-		$media_dir =  $r->retrieve('config')->getMediaDir().'/'.$this->collection_ascii_id;
-		if (file_exists($media_dir)) {
+		$coll_media_dir =  MEDIA_DIR.'/'.$this->collection_ascii_id;
+		if (file_exists($coll_media_dir)) {
 			//todo: think about this...
 			$r->renderOk('media archive exists');
 		} else {
@@ -291,7 +291,8 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		//hand off to item handler
 		try {
-			$item_handler = new Dase_Handler_Item($this->db,$r->retrieve('config'));
+			$item_handler = new Dase_Handler_Item($this->config);
+			$item_handler->setDb($this->db);
 			//allows us to dictate serial number
 			$sernum = Dase_Util::makeSerialNumber($r->slug);
 			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);

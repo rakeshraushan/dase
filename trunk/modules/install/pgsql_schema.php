@@ -181,6 +181,8 @@ CREATE TABLE {$table_prefix}recent_view (
     id serial NOT NULL,
     url character varying(4000),
     title character varying(200),
+    type character varying(20),
+    count integer,
     dase_user_eid character varying(100),
     "timestamp" character varying(50)
 );

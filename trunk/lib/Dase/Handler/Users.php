@@ -31,7 +31,7 @@ class Dase_Handler_Users extends Dase_Handler
 				try {
 					$entry = Dase_Atom_Entry::load($raw_input);
 				} catch(Exception $e) {
-					$r->logger()->debug('users handler error: '.$e->getMessage());
+					Dase_Log::debug(LOG_FILE,'users handler error: '.$e->getMessage());
 					$r->renderError(400,'bad xml');
 				}
 				if ('user' != $entry->entrytype) {

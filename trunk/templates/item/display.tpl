@@ -107,6 +107,9 @@
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
 							id="setItemStatusLink">set status (<span id="itemStatus">{$item->entry->status}</span>)</a>
+						|
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/indexer" 
+							id="reindexLink">reindex</a>
 					</div>
 				</div>
 
@@ -123,7 +126,10 @@
 					{foreach item=set key=att_ascii_id from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
+					<!--
 					<dd><a href="search?{$item->collectionAsciiId}.{$att_ascii_id}={$value.text|escape:'url'}">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
+					-->
+					<dd><a href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
 					{/foreach}
 					{/foreach}
 				</dl>

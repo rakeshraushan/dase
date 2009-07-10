@@ -374,7 +374,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$new_sort_order = 0;
 		$coll = $this->getCollection(); 
 		foreach ($coll->getAttributes() as $att) {
-			//$this->log->debug('----------------'.$target);
+			//Dase_Log::debug(LOG_FILE,'----------------'.$target);
 			$new_sort_order++;
 			if ($new_sort_order == $target) {
 				$this->sort_order = $new_sort_order;

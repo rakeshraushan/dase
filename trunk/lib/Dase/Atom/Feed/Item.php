@@ -13,7 +13,8 @@ class Dase_Atom_Feed_Item extends Dase_Atom_Feed
 
 	function getFeedLink()
 	{
-		return $this->getLink('http://daseproject.org/relation/feed-link');
+		//return $this->getLink('http://daseproject.org/relation/feed-link');
+		return $this->getLink('up');
 	}
 
 	function getPrevious()

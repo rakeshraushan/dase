@@ -9,9 +9,9 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl;
 
-	function __construct($cache_dir,$ttl=10)
+	function __construct($ttl=10)
 	{
-		$this->cache_dir = $cache_dir;
+		$this->cache_dir = CACHE_DIR;
 		$this->ttl = $ttl;
 		$this->_initDir();
 	}
@@ -89,7 +89,7 @@ class Dase_Cache_File extends Dase_Cache
 	}
 
 	/** any data fetch can override the default ttl */
-	public function getData($filename,$ttl=0,$log=null)
+	public function getData($filename,$ttl=0)
 	{
 		$filepath = $this->getFilePath($filename);
 		if (!file_exists($filepath)) {
@@ -106,9 +106,7 @@ class Dase_Cache_File extends Dase_Cache
 			@unlink($filepath);
 			return false;
 		}
-		if ($log) {
-			$log->debug('cache HIT!!! '.$filepath);
-		}
+		Dase_Log::debug(LOG_FILE,'cache HIT!!! '.$filepath);
 		return file_get_contents($filepath);
 	}
 

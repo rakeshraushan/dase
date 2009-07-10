@@ -186,6 +186,8 @@ CREATE TABLE `{$table_prefix}recent_view` (
 `title` varchar(200) default NULL,
 `dase_user_eid` varchar(100) default NULL,
 `timestamp` varchar(50) default NULL,
+`type` varchar(20) default NULL,
+`count` int(11) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

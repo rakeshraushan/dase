@@ -4,6 +4,7 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
+		'{collection_ascii_id}/{serial_number}/indexer' => 'indexer',
 		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
 		'{collection_ascii_id}/{serial_number}/input_template' => 'input_template',
 		'{collection_ascii_id}/{serial_number}/ping' => 'ping',
@@ -18,6 +19,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
+		'{collection_ascii_id}/{serial_number}/solr' => 'solr',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
 		'{collection_ascii_id}/{serial_number}/item_type' => 'item_type',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
@@ -26,6 +28,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 	protected function setup($r)
 	{
+		//do we really want to hit db w/ every request?
 		$this->item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if (!$this->item) {
 			$r->renderError(404);
@@ -51,7 +54,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot delete this item');
 		}
 		try {
-			$this->item->expunge($this->path_to_media);
+			$this->item->expunge(MEDIA_DIR);
 			$r->renderOk('item deleted');
 		} catch (Exception $e) {
 			$r->renderError(500);
@@ -156,9 +159,10 @@ class Dase_Handler_Item extends Dase_Handler
 		//a bit inefficient since the setup item get is unecessary, assuming atom feed error reporting
 		$t = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve(
-			$r->app_root.'/item/'. $r->get('collection_ascii_id') . '/' . $r->get('serial_number').'.atom?type=feed',
-			$user->eid,$user->getHttpPassword($r->retrieve('config')->getAuth('token'))
-		);
+			$r->app_root.'/item/'. 
+			$r->get('collection_ascii_id') . '/' . 
+			$r->get('serial_number').'.atom?type=feed',
+				$user->eid,$user->getHttpPassword());
 
 		if ($user->can('write',$this->item)) {
 			$t->assign('is_admin',1);
@@ -238,6 +242,37 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$this->item->update();
 		$r->renderResponse('status updated');
+	}
+
+	/** displays the doc as POSTed to Solr */
+	public function getSolrXml($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		$solr = Dase_SearchEngine::get($this->config);
+		$r->renderResponse($solr->getItemSolrDoc($this->item));
+	}
+
+	/* displays Atom doc FROM Solr */
+	public function getSolrAtom($r)
+	{
+		/*
+			$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		 */
+		$r->checkCache();
+		if ('entry' == $r->get('format')) {
+			$as_feed = false;
+		} else {
+			$as_feed = true;
+		}
+
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		$r->renderResponse($ds->getItem($this->item->getUnique(),$r->app_root,$as_feed));
 	}
 
 	public function postToComments($r)
@@ -322,7 +357,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
-			$this->item->expireCaches($r->retrieve('cache'));
+			$this->item->expireCaches($r->getCache());
 			$this->item->saveAtom();
 			if (!$type) {
 				$type = 'default/none';
@@ -436,7 +471,7 @@ class Dase_Handler_Item extends Dase_Handler
 			try {
 				$item_entry = Dase_Atom_Entry::load($raw_input,'item');
 			} catch(Exception $e) {
-				$r->logger()->debug('item handler error: '.$e->getMessage());
+				Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
 				$r->renderError(400,'bad xml');
 			}
 			if ('item' != $item_entry->entrytype) {
@@ -481,7 +516,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$url = $r->getBody();
 			$filename = array_pop(explode('/',$url));
 			$ext = array_pop(explode('.',$url));
-			$upload_dir = $this->path_to_media.'/'.$this->collection->ascii_id.'/uploaded_files';
+			$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
 			if (!file_exists($upload_dir)) {
 				$r->renderError(401,'missing upload directory');
 			}
@@ -492,11 +527,11 @@ class Dase_Handler_Item extends Dase_Handler
 				//since we are swapping in:
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
-				$item->deleteMedia($this->path_to_media);
-				$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
+				$item->deleteMedia(MEDIA_DIR);
+				$media_file = $file->addToCollection($item,false,MEDIA_DIR);  //set 2nd param to true to test for dups
 				unlink($new_file);
 			} catch(Exception $e) {
-				$r->logger()->debug('item handler error: '.$e->getMessage());
+				Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
 			$item->buildSearchIndex();
@@ -532,9 +567,9 @@ class Dase_Handler_Item extends Dase_Handler
 			$slug_name = $r->slug;
 		}
 
-		$upload_dir = $this->path_to_media.'/'.$coll->ascii_id.'/uploaded_files';
+		$upload_dir = MEDIA_DIR.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$r->logger()->debug('missing upload directory '.$upload_dir);
+			Dase_Log::debug(LOG_FILE,'missing upload directory '.$upload_dir);
 			$r->renderError(401,'missing upload directory '.$upload_dir);
 		}
 
@@ -555,14 +590,14 @@ class Dase_Handler_Item extends Dase_Handler
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
-			$media_file = $file->addToCollection($item,false,$this->path_to_media);  //set 2nd param to true to test for dups
+			$media_file = $file->addToCollection($item,false,MEDIA_DIR);  //set 2nd param to true to test for dups
 		} catch(Exception $e) {
-			$r->logger()->debug('item handler error: '.$e->getMessage());
+			Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
 			//delete uploaded file
 			unlink($new_file);
 			$r->renderError(500,'could not ingest media file ('.$e->getMessage().')');
 		}
-		$item->expireCaches($r->retrieve('cache'));
+		$item->expireCaches($r->getCache());
 
 		$item->buildSearchIndex();
 
@@ -592,6 +627,27 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($this->item->getAtompubServiceDoc($r->app_root));
+	}
+
+	public function postToIndexer($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot index this item');
+		}
+
+		$resp = $this->item->buildSearchIndex();
+		//should use HTTP status code instead
+		if ('ok' == $resp) {
+			$r->renderOk('indexed item');
+		} else {
+			$r->renderError(500);
+		}
+	}
+
+	public function getIndexer($r)
+	{
+		$r->renderError(405,'POST method expected');
 	}
 }
 

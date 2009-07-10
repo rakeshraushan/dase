@@ -161,7 +161,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$results = exec(CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
 		if (!file_exists($thumbnail)) {
-			$this->db->log->info("failed to write $thumbnail");
+			Dase_Log::info(LOG_FILE,"failed to write $thumbnail");
 		}
 		$file_info = getimagesize($thumbnail);
 
@@ -180,7 +180,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		$this->db->log->info("created $media_file->size $media_file->filename");
+		Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 	}
 
 	function makeViewitem($item,$path_to_media,$rotate)
@@ -194,7 +194,7 @@ class Dase_File_Image extends Dase_File
 		}
 		$results = exec(CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
 		if (!file_exists($viewitem)) {
-			$this->db->log->info("failed to write $viewitem");
+			Dase_Log::info(LOG_FILE,"failed to write $viewitem");
 		}
 		$file_info = getimagesize($viewitem);
 
@@ -213,7 +213,7 @@ class Dase_File_Image extends Dase_File
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
-		$this->db->log->info("created $media_file->size $media_file->filename");
+		Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 	}
 
 	function makeSizes($item,$path_to_media,$rotate)
@@ -253,8 +253,8 @@ class Dase_File_Image extends Dase_File
 			$command = CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage";
 			$results = exec($command);
 			if (!file_exists($newimage)) {
-				$this->db->log->debug("failed to write $size image");
-				$this->db->log->debug("UNSUCCESSFUL: $command");
+				Dase_Log::debug(LOG_FILE,"failed to write $size image");
+				Dase_Log::debug(LOG_FILE,"UNSUCCESSFUL: $command");
 			}
 			$file_info = getimagesize($newimage);
 
@@ -281,7 +281,7 @@ class Dase_File_Image extends Dase_File
 			$media_file->p_collection_ascii_id = $collection->ascii_id;
 			$media_file->p_serial_number = $item->serial_number;
 			$media_file->insert();
-			$this->db->log->info("created $media_file->size $media_file->filename");
+			Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 		}
 		return;
 	}

@@ -326,7 +326,6 @@ class Dase_Atom
 		}
 
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			//Dase_Log::temp('/mnt/home/pkeane','feed_problem','getting link '.$rel.'--'.$title);
 			//allow filtering on title
 			if ($title && '_notitle' != $title) {
 				if ($rel == $el->getAttribute('rel') && $title == $el->getAttribute('title')) {
@@ -336,7 +335,6 @@ class Dase_Atom
 			} else {
 				if ($rel == $el->getAttribute('rel')) {
 					$this->links[$rel]['_notitle'] = $el->getAttribute('href');
-					//Dase_Log::temp('/mnt/home/pkeane','feed_problem',$el->getAttribute('href'));
 					return $el->getAttribute('href');
 				}
 			}

@@ -24,7 +24,7 @@ class Dase_DBO_SearchCache extends Dase_DBO_Autogen_SearchCache
 		$search_caches = new Dase_DBO_SearchCache($db);
 		$search_caches->addWhere('timestamp',$one_hour_ago,'>');
 		$count = 0;
-		$cache = Dase_Cache::get($r->retrieve('config')->getCacheType(),$r->retrieve('config')->getCacheDir());
+		$cache = Dase_Cache::get(CACHE_TYPE);
 		foreach ($search_caches->find() as $sc) {
 			$cache->expungeByHash($sc->search_md5);
 			$sc->delete();
