@@ -992,6 +992,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getUnique() 
 	{
+		if (!$this->p_collection_ascii_id) {
+			$this->p_collection_ascii_id = $this->getCollection()->ascii_id;
+			$this->update();
+		}
 		return $this->p_collection_ascii_id.'/'.$this->serial_number;
 	}
 

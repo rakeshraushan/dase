@@ -40,7 +40,7 @@
 		<!-- SEARCH FORM -->
 		<form id="searchRefine" method="get" action="search">
 			<div>
-				<input id="queryInput" type="text" name="q" size="60" value="{$items->query|htmlspecialchars}"/>
+				<input id="queryInput" type="text" name="q" size="60" value="{$items->query|urldecode|htmlspecialchars}"/>
 				<input type="submit" value="Search" class="button"/>
 				{if $items->collection}
 				<input type="hidden" name="c" value="{$items->collection.ascii_id}"/>

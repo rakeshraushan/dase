@@ -37,6 +37,7 @@ class Dase_Template {
 		$this->smarty->register_block('block', '_smarty_swisdk_process_block');
 		$this->smarty->register_function('detect_ie', '_smarty_function_detect_ie');
 		$this->smarty->register_function('extends', '_smarty_swisdk_extends');
+		$this->smarty->register_modifier('solr_escape', '_smarty_solr_escape');
 		$this->smarty->register_modifier('filter', '_smarty_dase_atom_feed_filter');
 		$this->smarty->register_modifier('sortby', '_smarty_dase_atom_feed_sortby');
 		$this->smarty->register_modifier('select', '_smarty_dase_atom_entry_select');
@@ -63,6 +64,7 @@ class Dase_Template {
 		$this->smarty->assign('main_title', MAIN_TITLE);
 		$this->smarty->assign('page_logo_link_target', PAGE_LOGO_LINK_TARGET);
 		$this->smarty->assign('page_logo_src', PAGE_LOGO_SRC);
+
 		error_reporting($er);
 	}
 
@@ -118,6 +120,15 @@ class Dase_Template {
 }
 
 /** free-floating functions! */
+function _smarty_solr_escape($string)
+{
+	// solr specials: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+	$pattern= '/(\+|-|"|~|\(|\)|&&|\?|}|{|:|\[|\]|!)/';
+	//$pattern= '/(\+|"|~)/';
+	return preg_replace($pattern,'\\\$1',$string);
+
+}
+
 function _smarty_dase_atom_feed_filter(Dase_Atom_Feed $feed,$att,$val)
 {
 	//returns an array of entries that match 

@@ -12,8 +12,11 @@ class Dase_Handler_Media extends Dase_Handler
 	protected function setup($r)
 	{
 		//I think we could define remote media collections here
+		
+		if ('get' != $r->method) {
+			$this->user = $r->getUser('service');
+		}
 
-		//todo: finish
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
@@ -21,13 +24,11 @@ class Dase_Handler_Media extends Dase_Handler
 			$this->size = $r->get('size');
 			if ('thumbnail' != $this->size && 'viewitem' != $this->size) {
 				//anything other than thumbnail requires eid
-				//$user = $r->getUser();
+				if (!$r->checkUrlAuth()) { //allows url-based auth
+					$user = $r->getUser();
+				}
 			}
 		} 
-		if ('get' != $r->method) {
-			$this->user = $r->getUser('service');
-		}
-
 		/*
 		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,null,MEDIA_DIR)) {
 			if (!$path) {
@@ -291,8 +292,7 @@ class Dase_Handler_Media extends Dase_Handler
 		}
 		//hand off to item handler
 		try {
-			$item_handler = new Dase_Handler_Item($this->config);
-			$item_handler->setDb($this->db);
+			$item_handler = new Dase_Handler_Item($this->db,$this->config);
 			//allows us to dictate serial number
 			$sernum = Dase_Util::makeSerialNumber($r->slug);
 			$item_handler->item = $c->createNewItem($sernum,$this->user->eid);
