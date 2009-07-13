@@ -145,6 +145,19 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderOk('deleted '.$i);
 	}
 
+	public function deleteRecentSearches($r) {
+		$this->user->expireDataCache($r->getCache());
+		$recent = new Dase_DBO_RecentView($this->db);
+		$recent->dase_user_eid = $this->user->eid;
+		$recent->type = 'search';
+		$i=0;
+		foreach ($recent->find() as $doomed) {
+			$i++;
+			$doomed->delete();
+		}
+		$r->renderOk('deleted '.$i);
+	}
+
 	public function postToSetCopier($r)
 	{
 		$user = $r->getUser('http');

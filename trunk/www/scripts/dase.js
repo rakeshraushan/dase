@@ -548,12 +548,12 @@ Dase.placeRecentSearches = function(user) {
 		var recent = user.recent_searches[i];
 		var li = h.add('li');
 		var a = li.add('a');
-		a.set('href',recent.url);
+		a.set('href',encodeURI(recent.url));
 		a.setText(recent.title+' ('+recent.count+')');
 	}
-	var li = h.add('li').add('a',{'href':'#','id':'clearRecent','class':'edit'},'clear all');
+	var li = h.add('li').add('a',{'href':'#','id':'clearRecentSearches','class':'edit'},'clear all');
 	h.attach(Dase.$('searches-submenu')); //append
-	//Dase.initClearRecent(user);
+	Dase.initClearRecentSearches(user);
 };
 
 Dase.placeRecentViews = function(user) {
@@ -564,10 +564,10 @@ Dase.placeRecentViews = function(user) {
 		var recent = user.recent_views[i];
 		var li = h.add('li');
 		var a = li.add('a');
-		a.set('href',recent.url);
+		a.set('href',encodeURI(recent.url));
 		a.setText(recent.title);
 	}
-	var li = h.add('li').add('a',{'href':'#','id':'clearRecent','class':'edit'},'clear all');
+	var li = h.add('li').add('a',{'href':'#','id':'clearRecentViews','class':'edit'},'clear all');
 	h.attach(Dase.$('recent-submenu')); //append
 	Dase.initClearRecent(user);
 };
@@ -611,15 +611,30 @@ Dase.placeUserTags = function(user) {
 };
 
 Dase.initClearRecent = function(user) {
-	var clearRecentLink = Dase.$('clearRecent');
-	if (clearRecentLink) {
-		clearRecentLink.onclick = function() {
+	var clearRecentViewsLink = Dase.$('clearRecentViews');
+	if (clearRecentViewsLink) {
+		clearRecentViewsLink.onclick = function() {
 			url = Dase.base_href+'user/'+Dase.user.eid+'/recent';
 			Dase.ajax(url,'delete',function(resp) {
 				alert(resp);
 			},null,Dase.user.eid,Dase.user.htpasswd); 
 			user.recent_views = [];
 			Dase.placeRecentViews(user);
+			return false;
+		};
+	}
+};
+
+Dase.initClearRecentSearches = function(user) {
+	var clearRecentSearchesLink = Dase.$('clearRecentSearches');
+	if (clearRecentSearchesLink) {
+		clearRecentSearchesLink.onclick = function() {
+			url = Dase.base_href+'user/'+Dase.user.eid+'/recent_searches';
+			Dase.ajax(url,'delete',function(resp) {
+				alert(resp);
+			},null,Dase.user.eid,Dase.user.htpasswd); 
+			user.recent_searches = [];
+			Dase.placeRecentSearches(user);
 			return false;
 		};
 	}

@@ -251,7 +251,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$solr = Dase_SearchEngine::get($this->config);
+		$solr = Dase_SearchEngine::get($this->db,$this->config);
 		$r->renderResponse($solr->getItemSolrDoc($this->item));
 	}
 
@@ -638,9 +638,10 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$resp = $this->item->buildSearchIndex();
 		//should use HTTP status code instead
-		if ('ok' == $resp) {
+		if ('ok' == substr($resp,0,2)) {
 			$r->renderOk('indexed item');
 		} else {
+			Dase_Log::debug(LOG_FILE,'indexer error: '.$resp);
 			$r->renderError(500);
 		}
 	}

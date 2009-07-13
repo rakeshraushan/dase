@@ -35,6 +35,11 @@ class Dase_Handler_Search extends Dase_Handler
 		} else {
 			$this->start = 0;
 		}
+		if ($r->has('num')) {
+			$this->num = $r->get('num');
+		} else {
+			$this->num = 0;
+		}
 	}
 
 	/** this should be used sparingly, since it is a sledgehammer */
@@ -58,10 +63,9 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public function getSearchAtom($r)
 	{
-		//TEMP!!!!!!!!!!!!!!!!!
-		//$r->checkCache();
-		$search = Dase_SearchEngine::get($this->config);
-		$search->prepareSearch($r,$this->start,$this->max);
+		$r->checkCache();
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num);
 		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
 	}
@@ -93,9 +97,9 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchItemAtom($r)
 	{
 		$r->checkCache();
-		$search = Dase_SearchEngine::get($this->config);
-		$num = $r->get('num')-1;
-		$search->prepareSearch($r,$num,1);
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$this->max =1;
+		$search->prepareSearch($r,$this->start,$this->max,$this->num);
 		$atom_feed = $search->getResultsAsItemAtom();
 		$r->renderResponse($atom_feed);
 	}
@@ -124,14 +128,22 @@ class Dase_Handler_Search extends Dase_Handler
 
 		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
 		$tpl->assign('feed_url',$feed_url);
+
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
+
+		/*
+		if (strlen($r->get('q')) > 252) {
+			$params['msg'] = 'query is too long';
+			$r->renderRedirect($r->app_root.'/collections',$params);
+		}
+		 */
 
 		//single hit goes directly to item
 		$count = $feed->getCount();
 		if (1 == $count) {
 			$tpl->assign('item',$feed);
 			$url = str_replace('search?','search/item?',$r->url);
-			$r->renderRedirect($r->app_root.'/'.$url);
+			$r->renderRedirect($r->app_root.'/'.$url.'&num=1');
 		}
 		if (0 == $count) {
 			if ($feed->getCollection()) {

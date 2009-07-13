@@ -8,6 +8,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	private $solr_version;
 	private $start;
 	private $request;
+	public static $specialchars = array(
+			'+','-','&&','||','!','(',')','{','}','[',']','^','"','~','*','?',':','\\'
+		); //note the last one is a single backslash!
 
 
 	function __construct($db,$config) 
@@ -44,22 +47,28 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		return $url;
 	}
 
-	public function prepareSearch($request,$start=0,$max=30)
+	public function prepareSearch($request,$start,$max,$num=0)
 	{
 		$this->request = $request;
 		$this->start = $start;
 		$this->max = $max;
+		$this->num = $num;
+
+		if ($num) {
+			$start = $num-1;
+		}
+
 
 		$query_string = $request->query_string;
 
 		$matches = array();
 
 		//remove all collection filters
-		$query_string = preg_replace('/(\?|&|&amp;)c=([^&]+)/i','',$query_string);
-		$query_string = preg_replace('/(\?|&|&amp;)collection=([^&]+)/i','',$query_string);
+		$query_string = preg_replace('/(^|\?|&|&amp;)c=([^&]+)/i','',$query_string);
+		$query_string = preg_replace('/(^|\?|&|&amp;)collection=([^&]+)/i','',$query_string);
 
 		//get rid of type limit
-		$query_string = preg_replace('/(\?|&|&amp;)type=([^&]+)/i','',$query_string);
+		$query_string = preg_replace('/(^|\?|&|&amp;)type=([^&]+)/i','',$query_string);
 
 		$collection_param = '';
 		$sort_param = '';
@@ -79,7 +88,8 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		$sort = $request->get('sort');
 		if ($sort) {
-			$sort_param = '&sort='.$sort;
+			$sort_param = '&sort='.$sort.'+asc';
+			$query_string = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$query_string);
 		} else {
 			$sort_param = '&sort=_updated+desc';
 		}
@@ -95,6 +105,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			.'&facet.field=collection'
 			.$collection_param
 			.$sort_param;
+
 	}
 
 	private function _getSearchResults() 
@@ -113,6 +124,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 	public function getResultsAsAtom() 
 	{
+		$app_root = $this->request->app_root;
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXml($this->_getSearchResults());
 		$facets = array();
@@ -126,12 +138,12 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$grid_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=grid';
 		$list_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=list';
 
-		$id = $this->request->app_root.'/search/'.md5($url);
+		$id = $app_root.'/search/'.md5($url);
 		$updated = date(DATE_ATOM);
 
 		//todo: probably the q param
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
-		$query = htmlspecialchars($matches[2]);
+		$query = htmlspecialchars(urlencode($matches[2]));
 
 		$feed = <<<EOD
 <feed xmlns="http://www.w3.org/2005/Atom"
@@ -190,11 +202,10 @@ EOD;
 			}
 		}
 
-
-		if (count($tallied)) {
+		if (1 == count($tallied)) {
 			$coll = array_search($cname,$GLOBALS['app_data']['collections']);
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname\" thr:count=\"$count\" href=\"$this->request->app_root/collection/$coll\"/>\n";
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname attributes\" href=\"$this->request->app_root/collection/$coll/attributes.json\"/>\n";
+			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"$app_root/collection/$coll\"/>\n";
+			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname_specialchars attributes\" href=\"$app_root/collection/$coll/attributes.json\"/>\n";
 		}
 
 
@@ -225,13 +236,18 @@ EOD;
 			}
 		}
 		$feed .= "</feed>";
-		$feed = str_replace('{APP_ROOT}',$this->request->app_root,$feed);
+		$feed = str_replace('{APP_ROOT}',$app_root,$feed);
 		return $feed;
 	}
 
 	public function getResultsAsItemAtom() 
 	{
+		$app_root = $this->request->app_root;
 		$dom = new DOMDocument('1.0','utf-8');
+
+		//print($this->_getSearchResults());
+		//exit;
+
 		$dom->loadXml($this->_getSearchResults());
 		$url = $this->_cleanUpUrl($this->request->getUrl());
 
@@ -242,15 +258,14 @@ EOD;
 			}
 		}
 
-	//	$grid_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=grid';
-	//	$list_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=list';
-
-		$id = $this->request->app_root.'/search/'.md5($url);
+		$id = $app_root.'/search/'.md5($url);
 		$updated = date(DATE_ATOM);
 
 		//todo: probably the q param
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
-		$query = htmlspecialchars($matches[2]);
+
+		//solr escaped " fix
+		$query = stripslashes(htmlspecialchars($matches[2]));
 
 		$feed = <<<EOD
 <feed xmlns="http://www.w3.org/2005/Atom"
@@ -271,7 +286,7 @@ EOD;
   <Query xmlns="http://a9.com/-/spec/opensearch/1.1/" role="request" searchTerms="$query"/>
 EOD;
 
-		$num = $this->start + 1;
+		$num = $this->num;
 
 		$previous = 0;
 		$next = 0;
@@ -316,11 +331,10 @@ EOD;
 			}
 		}
 
-		$app_root = $this->request->app_root;
 		if (count($tallied)) {
 			$coll = array_search($cname,$GLOBALS['app_data']['collections']);
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname\" thr:count=\"$count\" href=\"$app_root/collection/$coll\"/>\n";
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname attributes\" href=\"$app_root/collection/$coll/attributes.json\"/>\n";
+			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"$app_root/collection/$coll\"/>\n";
+			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname_specialchars attributes\" href=\"$app_root/collection/$coll/attributes.json\"/>\n";
 		}
 
 		$search_request_url = str_replace('search/item','search',$this->request->url);
@@ -346,7 +360,7 @@ EOD;
 			}
 		}
 		$feed .= "</feed>";
-		$feed = str_replace('{APP_ROOT}',$this->request->app_root,$feed);
+		$feed = str_replace('{APP_ROOT}',$app_root,$feed);
 		return $feed;
 	}
 
