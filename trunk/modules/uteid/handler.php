@@ -57,7 +57,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 				exit;
 			}
 
-			$db_user = $r->retrieve('user');
+			$db_user = $r->getUser('none');
 			if (!$db_user->retrieveByEid($ut_user->eid)) {
 				$db_user->eid = strtolower($ut_user->eid); 
 				$db_user->name = $ut_user->name; 
@@ -68,7 +68,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 			$r->setCookie('max',$db_user->max_items);
 			$r->setCookie('display',$db_user->display);
 
-			$db_user->getHttpPassword($r->retrieve('config')->getAuth('token'));
+			$db_user->getHttpPassword($r->getAuthToken());
 			if ($target) {
 				$r->renderRedirect(urldecode($target));
 			} else {
@@ -88,7 +88,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 		setcookie('FC','',time()-86400,'/','.utexas.edu');
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
-		$r->retrieve('cookie')->clear();
+		$r->clearCookies();
 		//redirect messes up safari!!
 		//$r->renderRedirect('login/form');
 		$r->renderOk();

@@ -374,6 +374,10 @@ EOD;
 	{
 	}	
 
+	public function deleteItemIndex($item_unique)
+	{
+	}	
+
 	public function getIndexedTimestamp($item)
 	{
 		$url = $this->solr_base_url."/select/?q=_id:".$item->getUnique()."&version=".$this->solr_version;
@@ -506,7 +510,8 @@ EOD;
 		return $dom->saveXML();
 	}
 
-	public function postToSolr($item,$freshness,$commit=false)
+	//todo: make autocommit a config option
+	public function postToSolr($item,$freshness,$commit=true)
 	{
 		$start_check = Dase_Util::getTime();
 

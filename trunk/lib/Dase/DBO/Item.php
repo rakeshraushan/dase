@@ -95,7 +95,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function deleteSearchIndex()
 	{
-		$engine = Dase_SearchEngine::get($this->config);
+		$engine = Dase_SearchEngine::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"deleted index for " . $this->serial_number);
 		return $engine->deleteItemIndex($this->getUnique());
 	}
