@@ -124,6 +124,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 	public function getResultsAsAtom() 
 	{
+		//probably ought to use XMLReader for speed
 		$app_root = $this->request->app_root;
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXml($this->_getSearchResults());
