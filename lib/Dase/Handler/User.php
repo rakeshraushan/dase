@@ -85,7 +85,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToRecentSearches($r) {
 		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);
-		$recent->url= rawurldecode($r->get('url'));
+		$recent->url= rawurldecode(str_replace($r->app_root.'/','',$r->get('url')));
 		$recent->title = $r->get('title');
 		$recent->type = 'search';
 		$recent->count = $r->get('count');
@@ -110,7 +110,7 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToRecentViews($r) {
 		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);
-		$recent->url= rawurldecode($r->get('url'));
+		$recent->url= rawurldecode(str_replace($r->app_root.'/','',$r->get('url')));
 		$recent->title = $r->get('title');
 		$recent->type = 'item';
 		$recent->count = 0;
