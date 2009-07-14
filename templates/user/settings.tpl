@@ -17,8 +17,10 @@
 				<option value="50" {if 50 == $user->max_items}selected="selected"{/if}>50 items</option>
 				<option value="100" {if 100 == $user->max_items}selected="selected"{/if}>100 items</option>
 				<option value="200" {if 200 == $user->max_items}selected="selected"{/if}>200 items</option>
+				<!--
 				<option value="400" {if 400 == $user->max_items}selected="selected"{/if}>400 items</option>
 				<option value="1000" {if 1000 == $user->max_items}selected="selected"{/if}>1000 items</option>
+				-->
 			</select>
 			<select name="display">
 				<option value="grid" {if "grid" == $user->display}selected="selected"{/if}> in grid layout</option>

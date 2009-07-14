@@ -242,7 +242,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		$atom = new Dase_DBO_ItemAsAtom($db);
 		$atom->item_id = $item_id;
 		$atom->app_root = '{APP_ROOT}';
-		if ($atom->findOne()) {
+		if (!$atom->findOne()) {
 			$item = new Dase_DBO_Item($db);
 			if ($item->load($item_id)) {
 				$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,'{APP_ROOT}');
