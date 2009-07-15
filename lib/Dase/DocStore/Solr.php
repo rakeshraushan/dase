@@ -2,18 +2,17 @@
 Class Dase_DocStore_Solr extends Dase_DocStore
 {
 	private $solr_base_url;
-	private $solr_indexer_url;
+	private $solr_update_url;
 	private $solr_version;
 
 
 	function __construct($db,$config) 
 	{
 		$this->solr_base_url = $config->getSearch('solr_base_url');
-		$this->solr_indexer_url = $config->getSearch('solr_indexer_url');
+		$this->solr_update_url = $this->solr_base_url.'/update';;
 		$this->solr_version = $config->getSearch('solr_version');
 		$this->db = $db;
 	}
-
 
 	public function storeItem($item,$freshness=0)
 	{
@@ -21,6 +20,26 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		$engine = new Dase_SearchEngine_Solr($this->db,$this->config);
 		return $engine->buildItemIndex($item,$freshness);
 	}
+
+	public function deleteItem($item)
+	{
+		$delete_doc = '<delete><id>'.$item->getUnique().'</id></delete>';
+		$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+		return $resp;
+	}
+
+	public function deleteCollection($coll)
+	{
+		$start = Dase_Util::getTime();
+		$delete_doc = '<delete><query>c:'.$coll.'</query></delete>';
+		$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+		$end = Dase_Util::getTime();
+		$index_elapsed = round($end - $start,4);
+		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
+	}
+
 
 	public function getTimestamp($item_unique)
 	{

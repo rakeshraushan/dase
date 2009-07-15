@@ -4,7 +4,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	private $coll_filters = array();
 	private $max;
 	private $solr_base_url;
-	private $solr_indexer_url;
+	private $solr_update_url;
 	private $solr_version;
 	private $start;
 	private $request;
@@ -16,7 +16,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	function __construct($db,$config) 
 	{
 		$this->solr_base_url = $config->getSearch('solr_base_url');
-		$this->solr_indexer_url = $config->getSearch('solr_indexer_url');
+		$this->solr_update_url = $this->solr_base_url.'/update';
 		$this->solr_version = $config->getSearch('solr_version');
 
 		// n.b. will NOT use db
@@ -512,8 +512,19 @@ EOD;
 		return $dom->saveXML();
 	}
 
+	public function deleteCollectionIndexes($coll)
+	{
+		$start = Dase_Util::getTime();
+		$delete_doc = '<delete><query>c:'.$coll.'</query></delete>';
+		$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+		$end = Dase_Util::getTime();
+		$index_elapsed = round($end - $start,4);
+		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
+	}
+
 	//todo: make autocommit a config option
-	public function postToSolr($item,$freshness,$commit=true)
+	public function postToSolr($item,$freshness,$commit=false)
 	{
 		$start_check = Dase_Util::getTime();
 
@@ -527,7 +538,7 @@ EOD;
 		$start_get_doc = Dase_Util::getTime();
 		$check_elapsed = round($start_get_doc - $start_check,4);
 
-		Dase_Log::debug(LOG_FILE,'post to SOLR: '.$this->solr_indexer_url.' item '.$item->getUnique());
+		Dase_Log::debug(LOG_FILE,'post to SOLR: '.$this->solr_update_url.' item '.$item->getUnique());
 
 
 		$solr_doc = $this->getItemSolrDoc($item);
@@ -535,9 +546,9 @@ EOD;
 		$start_index = Dase_Util::getTime();
 		$get_doc_elapsed = round($start_index - $start_get_doc,4);
 
-		$resp = Dase_Http::post($this->solr_indexer_url,$solr_doc,null,null,'text/xml');
+		$resp = Dase_Http::post($this->solr_update_url,$solr_doc,null,null,'text/xml');
 		if ($commit) {
-			Dase_Http::post($this->solr_indexer_url,'<commit/>',null,null,'text/xml');
+			Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
 		}
 
 		$end = Dase_Util::getTime();
