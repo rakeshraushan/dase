@@ -65,7 +65,8 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		//remove all collection filters
 		$query_string = preg_replace('/(^|\?|&|&amp;)c=([^&]+)/i','',$query_string);
-		$query_string = preg_replace('/(^|\?|&|&amp;)collection=([^&]+)/i','',$query_string);
+		//$query_string = preg_replace('/(^|\?|&|&amp;)collection=([^&]+)/i','',$query_string);
+		$query_string = preg_replace('/(^|\?|&|&amp;)collection_ascii_id=([^&]+)/i','',$query_string);
 
 		//get rid of type limit
 		$query_string = preg_replace('/(^|\?|&|&amp;)type=([^&]+)/i','',$query_string);
@@ -75,9 +76,10 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$filter_query = '';
 
 		//collection= trumps any c=
-		$coll_filter = $request->get('collection');
+		$coll_filter = $request->get('collection_ascii_id');
 		if ($coll_filter) {
-			$filter_query = '&fq=collection:'.urlencode('"'.$coll_filter.'"');
+			//$filter_query = '&fq=collection:'.urlencode('"'.$coll_filter.'"');
+			$filter_query = '&fq=c:'.urlencode('"'.$coll_filter.'"');
 		} else {
 			$coll_filters = $request->get('c',true);
 			if (count($coll_filters) && $coll_filters[0]) {

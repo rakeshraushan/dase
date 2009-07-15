@@ -11,7 +11,7 @@
 	<h5>Search selected collection(s):</h5> 
 	<form id="homeSearchForm" method="get" action="search">
 		<div class="searchForm">
-			<input type="text" name="q" size="30" value="{$failed_query}"/>
+			<input type="text" name="q" size="30" value="{$failed_query|urldecode|htmlspecialchars}"/>
 			<input type="submit" value="Search" class="button"/>
 		</div>
 		<div>
