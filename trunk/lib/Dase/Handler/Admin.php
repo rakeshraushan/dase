@@ -7,6 +7,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'attributes' => 'attributes',
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
+		'commit' => 'commit',
 		'docs' => 'docs',
 		'item_fixer' => 'item_fixer',
 		'tools' => 'tools',
@@ -209,6 +210,14 @@ class Dase_Handler_Admin extends Dase_Handler
 			$tpl->assign('doc',$documenter);
 		}
 		$r->renderResponse($tpl->fetch('admin/docs.tpl'));
+	}
+
+	public function postToCommit($r)
+	{
+		$search_engine = Dase_SearchEngine::get($this->db,$this->config);
+		$params['msg'] = $search_engine->commit();
+		$tpl = new Dase_Template($r);
+		$r->renderRedirect('admin/tools',$params);
 	}
 
 	public function getCollectionForm($r)

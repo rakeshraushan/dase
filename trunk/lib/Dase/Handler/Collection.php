@@ -10,6 +10,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}/ingester' => 'ingester',
+		'{collection_ascii_id}/latest_index' => 'latest_index',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
 		'{collection_ascii_id}/admin_attributes' => 'admin_attributes',
 		'{collection_ascii_id}/admin_attribute_tallies' => 'admin_attribute_tallies',
@@ -122,6 +123,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->checkCache();
 		$sernums = $this->collection->getSerialNumbers();
 		$r->renderResponse(join('|',$sernums));
+	}
+
+	public function getLatestIndex($r)
+	{
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$r->renderResponse($search->getLatestTimestamp($this->collection->ascii_id));
 	}
 
 	public function getItemsTxt($r) 

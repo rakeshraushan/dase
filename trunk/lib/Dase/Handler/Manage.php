@@ -11,6 +11,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}/defined_values' => 'attribute_defined_values',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
+		'{collection_ascii_id}/diagnostics' => 'diagnostics',
 		'{collection_ascii_id}/item_type_form' => 'item_type_form',
 		'{collection_ascii_id}/item_type/{type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/item_type/{type_ascii_id}/attributes' => 'item_type_attributes',
@@ -240,6 +241,19 @@ class Dase_Handler_Manage extends Dase_Handler
 		$tpl->assign('collection',$this->collection);
 		$tpl->assign('item_types',$this->collection->getItemTypes());
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
+	}
+
+	public function getDiagnostics($r)
+	{
+		$tpl = new Dase_Template($r);
+		$tpl->assign('collection',$this->collection);
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
+		if (!$latest) {
+			$latest = 'no search indexes!';
+		}
+		$tpl->assign('latest',$latest);
+		$r->renderResponse($tpl->fetch('manage/diagnostics.tpl'));
 	}
 
 	public function getItemType($r)

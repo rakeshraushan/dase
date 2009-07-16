@@ -24,7 +24,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$atom_author = $this->getAuthorName();
 		//should be exception??
 		if (!$atom_author || $atom_author != $user->eid) {
-			$r->renderError(401,'users do not match');
+			//$r->renderError(401,'users do not match');
 		}
 		$ascii_id = $this->getAsciiId();
 		$set = Dase_DBO_Tag::get($db,$ascii_id,$user->eid);
@@ -59,7 +59,9 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 			$scheme = str_replace('http://daseproject.org/category/','',$category['scheme']);
 			$tag_cat->scheme = $scheme;
 			if ('utexas/courses' == $scheme) {
-				$tag_cat->insert();
+				if (!$tag_cat->findOne()) {
+					$tag_cat->insert();
+				}
 			}
 		}
 		return $set;

@@ -33,7 +33,8 @@
 		</li>
 	</ul>
 	<ul>
-		<form method="post" action="admin/item_fixer">
+		<li>
+		<form class="adminForm" method="post" action="admin/item_fixer">
 			<select name="collection_ascii_id">
 				<option value="">select one:</option>
 				{foreach item=c from=$collections}
@@ -42,6 +43,13 @@
 			</select>
 			<input type="submit" value="fix items">
 		</form>
+		</li>
+		<li>
+		<form class="adminForm" method="post" action="admin/commit">
+			<input type="submit" value="commit index updates">
+		</form>
+		</li>
+	</ul>
 {/block} 
 
 
