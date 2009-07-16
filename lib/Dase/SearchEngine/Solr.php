@@ -374,15 +374,40 @@ EOD;
 
 	public function buildItemSetIndex($item_array,$freshness)
 	{
+		foreach ($item_array as $item) {
+			$this->postToSolr($item,$freshness);
+		}
+		return $this->commit();
 	}	
 
-	public function deleteItemIndex($item_unique)
+	public function deleteItemIndex($item)
 	{
+		$start = Dase_Util::getTime();
+		$delete_doc = '<delete><id>'.$item->getUnique().'</id></delete>';
+		$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+		$end = Dase_Util::getTime();
+		$index_elapsed = round($end - $start,4);
+		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
 	}	
 
 	public function getIndexedTimestamp($item)
 	{
 		$url = $this->solr_base_url."/select/?q=_id:".$item->getUnique()."&version=".$this->solr_version;
+		$res = file_get_contents($url);
+		$dom = new DOMDocument('1.0','utf-8');
+		$dom->loadXml($res);
+		foreach ($dom->getElementsByTagName('date') as $el) {
+			if ('timestamp' == $el->getAttribute('name')) {
+				return $el->nodeValue;
+			}
+		}
+	}
+
+	public function getLatestTimestamp($coll) 
+	{
+		$url = $this->solr_base_url."/select/?q=c:".$coll."&start=0&max=1&sort=timestamp+desc&version=".$this->solr_version;
+		Dase_Log::debug(LOG_FILE,'query SOLR: '.$url);
 		$res = file_get_contents($url);
 		$dom = new DOMDocument('1.0','utf-8');
 		$dom->loadXml($res);
@@ -521,6 +546,11 @@ EOD;
 		$end = Dase_Util::getTime();
 		$index_elapsed = round($end - $start,4);
 		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
+	}
+
+	public function commit()
+	{
+		return Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
 	}
 
 	//todo: make autocommit a config option

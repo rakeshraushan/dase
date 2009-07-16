@@ -92,6 +92,11 @@
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
 				</a>
 				</li>
+				<li class="diagnostics-tab">
+				<a href="manage/{$collection->ascii_id}/diagnostics">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics</sup>
+				</a>
+				</li>
 				<li class="managers-tab">
 				<a href="manage/{$collection->ascii_id}/managers">
 					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
@@ -125,6 +130,10 @@
 				<li class="item_types-tab">
 				<a href="manage/{$collection->ascii_id}/item_types">
 					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
+				</a>
+				<li class="diagnostics-tab">
+				<a href="manage/{$collection->ascii_id}/diagnostics">
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics</sup>
 				</a>
 				</li>
 				<li class="managers-tab">

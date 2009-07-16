@@ -20,9 +20,10 @@ class Dase_DocStore
 	}
 
 	//must be overridden:
-	public function storeItem($item,$freshness=0) {}
+	public function commit() {}
 	public function getItem($item_unique,$app_root,$as_feed=false){}
 	public function getTimestamp($item_unique){}
+	public function storeItem($item,$freshness=0) {}
 
 }
 

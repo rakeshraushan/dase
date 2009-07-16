@@ -40,6 +40,10 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
 	}
 
+	public function commit()
+	{
+		return Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+	}
 
 	public function getTimestamp($item_unique)
 	{

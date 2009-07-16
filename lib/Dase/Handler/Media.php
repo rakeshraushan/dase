@@ -24,9 +24,8 @@ class Dase_Handler_Media extends Dase_Handler
 			$this->size = $r->get('size');
 			if ('thumbnail' != $this->size && 'viewitem' != $this->size) {
 				//anything other than thumbnail requires eid
-				if (!$r->checkUrlAuth()) { //allows url-based auth
-					$user = $r->getUser();
-				}
+				//this automatically check url_auth, too
+				$user = $r->getUser();
 			}
 		} 
 		/*

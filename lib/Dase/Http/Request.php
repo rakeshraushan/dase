@@ -604,6 +604,11 @@ class Dase_Http_Request
 				$params['target'] = $this->getUrl();
 				$this->renderRedirect('login/form',$params);
 			} else {
+				//last chance, check url auth but it 
+				//ONLY works to override cookie auth
+				if ('cookie' == $auth && $this->checkUrlAuth()) {
+					return $this->null_user;
+				}
 				$this->renderError(401,'unauthorized');
 			}
 		}
