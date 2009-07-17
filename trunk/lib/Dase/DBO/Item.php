@@ -25,47 +25,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $item->findOne();
 	}
 
-	public function flushAtom()
-	{
-		$prefix = $this->db->table_prefix;
-		$dbh = $this->db->getDbh();
-		//todo: make sure item->id is an integer
-		$sql = "
-			DELETE
-			FROM {$prefix}item_as_atom 
-			WHERE item_id = $this->id
-			";
-		$dbh->query($sql);
-	}
-
-	public function saveAtom()
-	{
-		$app_root = '{APP_ROOT}';
-		$db = $this->db;
-		$atom = new Dase_DBO_ItemAsAtom($db);
-		$atom->item_id = $this->id;
-		$atom->app_root = $app_root;
-		if ($atom->findOne()) {
-			$entry = new Dase_Atom_Entry_Item;
-			$entry = $this->injectAtomEntryData($entry,$app_root);
-			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
-			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
-			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-			$atom->update();
-		} else {
-			$c = $this->getCollection();
-			$entry = new Dase_Atom_Entry_Item;
-			$entry = $this->injectAtomEntryData($entry,$app_root);
-			$atom->item_type_ascii_id = $this->getItemType()->ascii_id;
-			$atom->relative_url = 'item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
-			$atom->updated = date(DATE_ATOM);
-			$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-			$atom->insert();
-		}
-		return $atom;
-	}
-
 	public function saveAtomFile($path_to_media)
 	{
 		$subdir = Dase_Util::getSubdir($this->serial_number);
@@ -93,6 +52,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_DBO_Item::get($db,$coll,$sernum);
 	}
 
+	public static function getByUnique($db,$unique)
+	{
+		$sections = explode('/',$unique);
+		$sernum = array_pop($sections);
+		$coll = array_pop($sections);
+		//will return false if no such item
+		return Dase_DBO_Item::get($db,$coll,$sernum);
+	}
+
 	public function deleteSearchIndex()
 	{
 		$engine = Dase_SearchEngine::get($this->db,$this->config);
@@ -100,30 +68,29 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $engine->deleteItemIndex($this->getUnique());
 	}
 
-	public function buildSearchIndex($freshness=0)
+	public function buildSearchIndex($freshness=0,$commit=true)
 	{
 		$engine = Dase_SearchEngine::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
-		return $engine->buildItemIndex($this,$freshness);
+		return $engine->buildItemIndex($this,$freshness,$commit);
 	}
 
-	public function store()
+	public function store($freshness=0)
 	{
 		$ds = Dase_DocStore::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"saved as document: " . $this->serial_number);
-		return $ds->storeItem($this);
+		return $ds->storeItem($this,$freshness);
 	}
 
-	public function retrieveAtomDoc($app_root)
+	public function retrieveAtomDoc($app_root,$as_feed=false)
 	{
 		$ds = Dase_DocStore::get($this->db,$this->config);
-		return $ds->getItem($this->getUnique(),$app_root);
+		return $ds->getItem($this->getUnique(),$app_root,$as_feed);
 	}
 
 	public function getRawMetadata()
 	{
 		$db = $this->db;
-		$c = $this->getCollection();
 		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
@@ -420,11 +387,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$v->value_text = $value_text;
 		$v->update();
 		$this->buildSearchIndex();
-
-		//experiment:
-		//$this->flushAtom();
-
-		$this->saveAtom();
 	}
 
 	function removeMetadata($value_id,$eid)
@@ -462,7 +424,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->value_text = trim($value_text);
 				$v->insert();
 			}
-			$this->saveAtom();
+			$this->buildSearchIndex();
 		}
 	}
 
@@ -489,8 +451,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$v->modifier = $modifier;
 			$v->insert();
 			return $v;
-			//too expensive:
-			//$this->saveAtom();
 		} else {
 			//simply returns false if no such attribute
 			Dase_Log::debug(LOG_FILE,'[WARNING] no such attribute '.$att_ascii_id);
@@ -517,7 +477,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$doomed->delete();
 			}
 		}
-		$this->saveAtom();
+		//for expunges ,so do not bother
+		//$this->buildSearchIndex();
 	}
 
 	function deleteAdminValues()
@@ -549,17 +510,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteContent();
 		$this->deleteComments();
 		$this->deleteTagItems();
-		$this->deleteItemAsAtom();
 		$this->delete();
-		$this->getCollection()->updateItemCount();
-	}
 
-	function deleteItemAsAtom()
-	{
-		$atom = Dase_DBO_ItemAsAtom::getByItem($this);
-		if ($atom) {
-			$atom->delete();
-		}
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds->deleteItem($this);
+
+		$this->getCollection()->updateItemCount();
 	}
 
 	function deleteContent()
@@ -656,7 +612,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $text;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root,$authorize_links=false)
 	{
 		if (!$this->id) { return false; }
 
@@ -706,6 +662,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
 				'edit','application/atom+xml');
 			$entry->addLink(
+				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
+				'http://daseproject.org/relation/authorized','application/atom+xml');
+			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
 				'http://daseproject.org/relation/edit-content');
 			$entry->addLink(
@@ -720,8 +679,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'application/json');
 		} else {
 			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom',
-				'edit','application/atom+xml');
+				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom','edit','application/atom+xml');
+			$entry->addLink(
+				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/authorized.atom','http://daseproject.org/relation/authorized','application/atom+xml');
 			$entry->addLink(
 				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');
@@ -754,20 +714,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//allows us to replace all if/when necessary :(
 		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 
+
+		//set collection category
+
 		$entry->addCategory($this->item_type->ascii_id,
 			'http://daseproject.org/category/item_type',$this->item_type->name);
-		//if ($this->collection) {
-		if ($this->getCollection()) {
-			$collection_name = $this->collection->collection_name;
+		if (isset($GLOBALS['app_data']['collections'][$this->p_collection_ascii_id])) {
+			$collection_name = $GLOBALS['app_data']['collections'][$this->p_collection_ascii_id];
+			$entry->addCategory($this->p_collection_ascii_id,'http://daseproject.org/category/collection',$collection_name);
 		} else {
-			//not sure why this is ever run???
-			//$collection_name = '';
-			if (isset($GLOBALS['app_data']['collections'][$this->p_collection_ascii_id])) {
-				$collection_name = $GLOBALS['app_data']['collections'][$this->p_collection_ascii_id];
-			}
+			$entry->addCategory($this->p_collection_ascii_id,'http://daseproject.org/category/collection');
 		}
-		$entry->addCategory($this->p_collection_ascii_id,
-			'http://daseproject.org/category/collection',$collection_name);
 		$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
 		$entry->addCategory($this->serial_number,'http://daseproject.org/category/serial_number');
 
@@ -881,8 +838,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		$enc = $this->getEnclosure();
 		if ($enc) {
-			//$entry->addLink($this->getMediaUrl($enc->size,$app_root),'enclosure',$enc->mime_type,$enc->file_size);
-			$entry->addLink($enc->getLink($app_root,$this->config->getSecret('media')),'enclosure',$enc->mime_type,$enc->file_size);
+			if ($authorize_links) {
+				$entry->addLink($enc->getLink($app_root,$this->config->getSecret('media')),'enclosure',$enc->mime_type,$enc->file_size);
+			} else {
+				$entry->addLink($enc->getLink($app_root),'enclosure',$enc->mime_type,$enc->file_size);
+			}
 		}
 
 		/* edit-media link */
@@ -901,7 +861,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_thumbnail->setAttribute('height',$med->height);
 			} else {
 				$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-				$media_content->setAttribute('url',$med->getLink($app_root,$this->config->getAuth('token')));
+				if ($authorize_links) {
+					$media_content->setAttribute('url',$med->getLink($app_root,$this->config->getAuth('token')));
+				} else {
+					$media_content->setAttribute('url',$med->getLink($app_root));
+				}
 				if ($med->width && $med->height) {
 					$media_content->setAttribute('width',$med->width);
 					$media_content->setAttribute('height',$med->height);
@@ -934,44 +898,25 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function asAtom($app_root)
 	{
-		$feed = new Dase_Atom_Feed;
-		$this->injectAtomFeedData($feed,$app_root);
-		$feed->setFeedType('item');
-		//todo: this needs to be passed in?
-		$feed->addCategory('browse',"http://daseproject.org/category/tag_type",'browse');
-		$entry = $feed->addItemEntry($this,$app_root); //checks cache 
-		//for single item view, add collection name as cat label
-		$collection = $this->getCollection();
-		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
-		if ($coll_cat) {
-			$coll_cat->setAttribute('label',$collection->collection_name);
-		}
+		return $this->retrieveAtomDoc($app_root,true);
 		//add comments
+		/** need to ADD THIS IN!!!!
 		foreach ($this->getComments() as $comment) {
 			$comment_entry = $feed->addEntry('comment');
 			$comment->injectAtomEntryData($comment_entry,$app_root);
 		}
-		return $feed->asXml();
+		 */
 	}
 
-	function asAtomEntry($app_root="{APP_ROOT}")
+	function asAtomEntry($app_root="{APP_ROOT}",$authorize_links=false)
 	{
-		$atom = Dase_DBO_ItemAsAtom::getByItem($this);
-		if (!$atom) {
-			$atom = $this->saveAtom();
+		if ($authorize_links) {
+			$entry = new Dase_Atom_Entry_Item;
+			$entry = $this->injectAtomEntryData($entry,$app_root,true);
+			return $entry->asXml();
+		} else {
+			return $this->retrieveAtomDoc($app_root);
 		}
-		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($atom->getConvertedXml($app_root));
-		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
-		$root = $e->item(0);
-		$entry = new Dase_Atom_Entry_Item($dom,$root);
-		//for single item view, add collection name as cat label
-		$collection = $this->getCollection();
-		$coll_cat = $entry->getCategoryNode('http://daseproject.org/category/collection',$collection->ascii_id);
-		if ($coll_cat) {
-			$coll_cat->setAttribute('label',$collection->collection_name);
-		}
-		return $entry->asXml($entry->root); //leaves off xml declaration
 	}
 
 	/** experimental */
@@ -1128,7 +1073,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content->updated = date(DATE_ATOM);
 		$content->updated_by_eid = $eid;
 		$res = $content->insert();
-		$this->saveAtom();
+		$this->buildSearchIndex();
 		return $res;
 	}
 
@@ -1143,7 +1088,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$note->updated = date(DATE_ATOM);
 		$note->updated_by_eid = $eid;
 		$res = $note->insert();
-		$this->saveAtom();
+		$this->buildSearchIndex();
 		return $res;
 	}
 

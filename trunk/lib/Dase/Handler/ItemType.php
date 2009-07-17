@@ -7,6 +7,7 @@ class Dase_Handler_ItemType extends Dase_Handler
 		'/' => 'index',
 		'{collection_ascii_id}/{item_type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}' => 'item',
+		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}/authorized' => 'authorized',
 		'{collection_ascii_id}/{item_type_ascii_id}/item/{serial_number}/content' => 'content',
 		//usually retrieved as app:categories
 		'{collection_ascii_id}/{item_type_ascii_id}/items' => 'item_type_items',
@@ -69,6 +70,16 @@ class Dase_Handler_ItemType extends Dase_Handler
 		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
 		if ($item) {
 			$r->renderResponse($item->asAtomEntry($r->app_root));
+		} else {
+			$r->renderError(404);
+		}
+	}
+
+	public function getAuthorizedAtom($r)
+	{
+		$item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
+		if ($item) {
+			$r->renderResponse($item->asAtomEntry($r->app_root,$r->token));
 		} else {
 			$r->renderError(404);
 		}

@@ -4,6 +4,8 @@ class Dase_Handler_Item extends Dase_Handler
 {
 	public $resource_map = array( 
 		'{collection_ascii_id}/{serial_number}' => 'item',
+		//includes authorized urls on media
+		'{collection_ascii_id}/{serial_number}/authorized' => 'authorized',
 		'{collection_ascii_id}/{serial_number}/indexer' => 'indexer',
 		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
 		'{collection_ascii_id}/{serial_number}/input_template' => 'input_template',
@@ -85,16 +87,27 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function getItemAtom($r)
 	{
-		/*
 		$user = $r->getUser('http');
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		 */
 		if ('feed' == $r->get('type')) {
 			$r->renderResponse($this->item->asAtom($r->app_root));
 		} else {
 			$r->renderResponse($this->item->asAtomEntry($r->app_root));
+		}
+	}
+
+	public function getAuthorizedAtom($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		if ('feed' == $r->get('type')) {
+			$r->renderResponse($this->item->asAtom($r->app_root,$r->token));
+		} else {
+			$r->renderResponse($this->item->asAtomEntry($r->app_root,$r->token));
 		}
 	}
 
@@ -358,7 +371,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
 			$this->item->expireCaches($r->getCache());
-			$this->item->saveAtom();
+			$this->item->buildSearchIndex();
 			if (!$type) {
 				$type = 'default/none';
 			}

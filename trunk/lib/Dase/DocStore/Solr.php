@@ -12,13 +12,15 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		$this->solr_update_url = $this->solr_base_url.'/update';;
 		$this->solr_version = $config->getSearch('solr_version');
 		$this->db = $db;
+		$this->config = $config;
 	}
 
 	public function storeItem($item,$freshness=0)
 	{
 		//use search engine class
 		$engine = new Dase_SearchEngine_Solr($this->db,$this->config);
-		return $engine->buildItemIndex($item,$freshness);
+		//always commits
+		return $engine->buildItemIndex($item,$freshness,true);
 	}
 
 	public function deleteItem($item)
@@ -59,31 +61,59 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		}
 	}
 
-	public function getItem($item_unique,$app_root,$as_feed = false)
+	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
 	{
 		$entry = '';
 		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
 		Dase_Log::debug(LOG_FILE,'SOLR ITEM RETRIEVE: '.$url);
 		$res = file_get_contents($url);
 
-		//see raw solr response
-		//header('Content-type: application/xml');
-		//print $res; exit;
-
-		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($res);
-		foreach ($dom->getElementsByTagName('arr') as $el) {
-			if ('atom' == $el->getAttribute('name')) {
-				foreach ($el->getElementsByTagName('str') as $at_el) {
-					$entry = Dase_Util::unhtmlspecialchars($at_el->nodeValue);
+		$reader = new XMLReader();
+		$reader->XML($res);
+		while ($reader->read()) {
+			//get total number found
+			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
+				$total = $reader->getAttribute('numFound');
+			}
+			//get entries
+			if ($reader->localName == "arr" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('atom' == $reader->getAttribute('name')) {
+					//individual atom entries
+					while ($reader->read()) {
+						//there will only be one
+						if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+							$reader->read();
+							$entry = $reader->value;
+							break;
+						}
+					}
+					break;
 				}
 			}
 		}
+		$reader->close();
+
+		//automatically regenerate missing item from db
+		if (0 == $total) {
+			if ($restore) {
+				$item = Dase_DBO_Item::getByUnique($this->db,$item_unique);
+				if ($item) {
+					$this->storeItem($item);
+					return $this->getItem($item_unique,$app_root,$as_feed,false);
+				}
+			} else {
+				return false;
+			}
+		}
+
+		$entry = Dase_Util::unhtmlspecialchars($entry);
 		$entry = str_replace('{APP_ROOT}',$app_root,$entry);
+		/*
 		$added = <<<EOD
 <d:extension xmlns:d="http://daseproject.org/ns/1.0">here it is</d:extension>
 EOD;
 		$entry = str_replace('<author>',$added."\n  <author>",$entry);
+		 */
 
 		if ($as_feed) {
 			$updated = date(DATE_ATOM);
