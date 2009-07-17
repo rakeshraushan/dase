@@ -901,7 +901,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_thumbnail->setAttribute('height',$med->height);
 			} else {
 				$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-				$media_content->setAttribute('url',$med->getLink($app_root,$this->config->getSecret('media')));
+				$media_content->setAttribute('url',$med->getLink($app_root,$this->config->getAuth('token')));
 				if ($med->width && $med->height) {
 					$media_content->setAttribute('width',$med->width);
 					$media_content->setAttribute('height',$med->height);

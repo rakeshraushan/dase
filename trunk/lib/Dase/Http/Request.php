@@ -113,18 +113,17 @@ class Dase_Http_Request
 
 	public function checkUrlAuth()
 	{
-		$expires = $this->get('auth_expires');
-		$token = $this->get('auth_token');
-		$serviceuser = $this->get('auth_serviceuser');
+		$url = $this->app_root.'/'.$this->getPath(false);
+		$expires = $this->get('expires');
+		$auth_token = $this->get('auth_token');
 
-		if (!$expires || !$token || !$serviceuser) {
+		if (!$expires || !$auth_token ) {
 			return false;
 		}
 		if (time() > $expires) {
 			return false;
 		}
-		$serviceuser_key = md5($this->service_token.$serviceuser);
-		if ($token == md5($serviceuser_key.$expires)) {
+		if ($auth_token == md5($url.$expires.$this->token)) {
 			return true;
 		}
 		return false;
