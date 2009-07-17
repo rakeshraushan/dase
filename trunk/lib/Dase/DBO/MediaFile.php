@@ -49,8 +49,15 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		}
 	}
 
-	function getLink($app_root) {
-		return "$app_root/media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
+	function getLink($app_root,$secure_key = '') {
+		if ($secure_key) {
+			$url = "$app_root/media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
+			$expires = time() + (60*60);
+			$auth_token = md5($url.$expires.$secure_key);
+			return "$app_root/media/{$this->p_collection_ascii_id}/$this->size/$this->filename?auth_token=$auth_token&amp;expires=$expires";
+		} else {
+			return "$app_root/media/{$this->p_collection_ascii_id}/$this->size/$this->filename";
+		}
 	}
 
 	function getRelativeLink() {

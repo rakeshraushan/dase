@@ -236,28 +236,12 @@ class Dase_Atom_Feed extends Dase_Atom
 		return $entry;
 	}
 
-	function addItemEntryByItemId($db,$item_id,$app_root)
+	function addItemEntryByItemUnique($db,$item_unique,$config,$app_root)
 	{
-		//ItemAsAtom cache always uses {APP_ROOT}
-		$atom = new Dase_DBO_ItemAsAtom($db);
-		$atom->item_id = $item_id;
-		$atom->app_root = '{APP_ROOT}';
-		if (!$atom->findOne()) {
-			$item = new Dase_DBO_Item($db);
-			if ($item->load($item_id)) {
-				$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,'{APP_ROOT}');
-				$atom = new Dase_DBO_ItemAsAtom($item->db);
-				$atom->item_id = $item->id;
-				$atom->app_root = '{APP_ROOT}';
-				$atom->item_type_ascii_id = $item->getItemType()->ascii_id;
-				$atom->relative_url = 'item/'.$item->p_collection_ascii_id.'/'.$item->serial_number;
-				$atom->updated = date(DATE_ATOM);
-				$atom->xml = $entry->asXml($entry->root); //so we don't get xml declaration
-				$atom->insert();
-			}
-		}
 		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($atom->getConvertedXml($app_root));
+		$ds = Dase_DocStore::get($db,$config);
+		$xml = $ds->getItem($item_unique,$app_root);
+		$dom->loadXml($xml);
 		$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 		$root = $e->item(0);
 		$root = $this->dom->importNode($root,true);

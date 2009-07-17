@@ -29,8 +29,11 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		return $tag;
 	}
 
-	function persist()
+	function persist($no_auto_db_check=false)
    	{
+		if ($no_auto_db_check && $this->p_collection_ascii_id && $this->p_serial_number) {
+			return;
+		}
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
 		$sql = "

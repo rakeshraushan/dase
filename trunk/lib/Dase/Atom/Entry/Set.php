@@ -24,12 +24,11 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$atom_author = $this->getAuthorName();
 		//should be exception??
 		if (!$atom_author || $atom_author != $user->eid) {
-			//$r->renderError(401,'users do not match');
+			$r->renderError(401,'users do not match');
 		}
 		$ascii_id = $this->getAsciiId();
 		$set = Dase_DBO_Tag::get($db,$ascii_id,$user->eid);
 		if (!$set) { return; }
-
 		$cats = $this->getCategoriesByScheme('http://daseproject.org/category/visibility');
 		if (count($cats)) {
 			$vis = $cats[0]['term'];
