@@ -81,7 +81,7 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		}
 		$entry = str_replace('{APP_ROOT}',$app_root,$entry);
 		$added = <<<EOD
-<d:extension>here it is</d:extension>
+<d:extension xmlns:d="http://daseproject.org/ns/1.0">here it is</d:extension>
 EOD;
 		$entry = str_replace('<author>',$added."\n  <author>",$entry);
 

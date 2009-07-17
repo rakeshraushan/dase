@@ -114,6 +114,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $ds->storeItem($this);
 	}
 
+	public function retrieveAtomDoc($app_root)
+	{
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		return $ds->getItem($this->getUnique(),$app_root);
+	}
+
 	public function getRawMetadata()
 	{
 		$db = $this->db;
@@ -334,6 +340,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $m->findOne();
 	}
 
+	//only need to do this when you don't already have a media_file object
 	public function getMediaUrl($size,$app_root='')
 	{  //size really means type here
 		$db = $this->db;
@@ -874,7 +881,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		$enc = $this->getEnclosure();
 		if ($enc) {
-			$entry->addLink($app_root.$this->getMediaUrl($enc->size),'enclosure',$enc->mime_type,$enc->file_size);
+			//$entry->addLink($this->getMediaUrl($enc->size,$app_root),'enclosure',$enc->mime_type,$enc->file_size);
+			$entry->addLink($enc->getLink($app_root,$this->config->getSecret('media')),'enclosure',$enc->mime_type,$enc->file_size);
 		}
 
 		/* edit-media link */
@@ -893,7 +901,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_thumbnail->setAttribute('height',$med->height);
 			} else {
 				$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-				$media_content->setAttribute('url',$med->getLink($app_root));
+				$media_content->setAttribute('url',$med->getLink($app_root,$this->config->getSecret('media')));
 				if ($med->width && $med->height) {
 					$media_content->setAttribute('width',$med->width);
 					$media_content->setAttribute('height',$med->height);

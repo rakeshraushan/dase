@@ -34,6 +34,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addAuthor();
 
 		if ($category) {
+			$scheme = '';
 			$parts = explode('}',$category);
 			if (1 == count($parts)) {
 				$term = $parts[0];
@@ -403,7 +404,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$setnum=0;
 		foreach($this->getTagItems() as $tag_item) {
 			//for speed & efficiency
-			$entry = $feed->addItemEntryByItemId($this->db,$tag_item->item_id,$app_root);
+			//$entry = $feed->addItemEntryByItemId($this->db,$tag_item->item_id,$app_root);
+
+			//using Solr
+			$tag_item->persist(true);
+			$item_unique = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
+			$entry = $feed->addItemEntryByItemUnique($this->db,$item_unique,$this->config,$app_root);
+
 
 			//	$entry = $feed->addEntry();
 			//	$item->injectAtomEntryData($entry,$app_root);
