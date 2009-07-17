@@ -9,8 +9,8 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	private $start;
 	private $request;
 	public static $specialchars = array(
-			'+','-','&&','||','!','(',')','{','}','[',']','^','"','~','*','?',':','\\'
-		); //note the last one is a single backslash!
+		'+','-','&&','||','!','(',')','{','}','[',']','^','"','~','*','?',':','\\'
+	); //note the last one is a single backslash!
 
 
 	function __construct($db,$config) 
@@ -18,6 +18,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$this->solr_base_url = $config->getSearch('solr_base_url');
 		$this->solr_update_url = $this->solr_base_url.'/update';
 		$this->solr_version = $config->getSearch('solr_version');
+		$this->config = $config;
 
 		// n.b. will NOT use db
 	}
@@ -126,17 +127,55 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 	public function getResultsAsAtom() 
 	{
-		//probably ought to use XMLReader for speed
 		$app_root = $this->request->app_root;
-		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($this->_getSearchResults());
-		$facets = array();
+		//use XMLReader for speed
+
 		$total = 0;
-		foreach ($dom->getElementsByTagName('result') as $el) {
-			if ('response' == $el->getAttribute('name')) {
-				$total = $el->getAttribute('numFound');
+		$coll_tallies = array();
+		$entries = array();
+
+		$reader = new XMLReader();
+		$reader->XML($this->_getSearchResults());
+		while ($reader->read()) {
+			//get total number found
+			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
+				$total = $reader->getAttribute('numFound');
+			}
+			//get entries
+			if ($reader->localName == "arr" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('atom' == $reader->getAttribute('name')) {
+					//individual atom entries
+					while ($reader->read()) {
+						//there will only be one
+						if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+							$reader->read();
+							$entries[] = $reader->value;
+							break;
+						}
+					}
+				}
+			}
+			//get collection tallies
+			if ($reader->localName == "lst" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('collection' == $reader->getAttribute('name')) {
+					while ($reader->read()) {
+						if ($reader->localName == "int" && $reader->nodeType == XMLReader::ELEMENT) {
+							$tally['collection_name'] = $reader->getAttribute('name');
+							$tally['coll'] = array_search($tally['collection_name'],$GLOBALS['app_data']['collections']);
+							//advance reader
+							$reader->read();
+							$tally['count'] = $reader->value;
+							if ($tally['count']) {
+								$coll_tallies[] = $tally;
+							}
+							$tally = array();
+						} 
+					}
+				}
 			}
 		}
+		$reader->close();
+
 		$url = $this->_cleanUpUrl($this->request->getUrl());
 		$grid_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=grid';
 		$list_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=list';
@@ -190,27 +229,19 @@ EOD;
 		}
 
 		$tallied = array();
-		foreach ($dom->getElementsByTagName('lst') as $el) {
-			if ('collection' == $el->getAttribute('name')) {
-				foreach ($el->getElementsByTagName('int') as $coll) {
-					$count = $coll->nodeValue;
-					if ($count) {
-						$cname = $coll->getAttribute('name');
-						$tallied[$cname]=1;
-						$cname_specialchars = htmlspecialchars($cname);
-						$encoded_query = urlencode($query).'&amp;collection='.urlencode($cname);
-						$feed .= "  <link rel=\"http://daseproject.org/relation/single_collection_search\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"q=$encoded_query\"/>\n";
-					}
-				}
-			}
+		foreach ($coll_tallies as $tally) {
+			$count = $tally['count'];
+			$cname = $tally['collection_name'];
+			$cname_specialchars = htmlspecialchars($cname);
+			$coll = $tally['coll'];
+			$encoded_query = $query.'&amp;c='.$coll;
+			$feed .= "  <link rel=\"http://daseproject.org/relation/single_collection_search\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"q=$encoded_query\"/>\n";
 		}
 
-		if (1 == count($tallied)) {
-			$coll = array_search($cname,$GLOBALS['app_data']['collections']);
+		if (1 == count($coll_tallies)) {
 			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"$app_root/collection/$coll\"/>\n";
 			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname_specialchars attributes\" href=\"$app_root/collection/$coll/attributes.json\"/>\n";
 		}
-
 
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->request->url);
@@ -222,21 +253,16 @@ EOD;
 		$item_request_url = htmlspecialchars($item_request_url);
 
 		$num = 0;
-		foreach ($dom->getElementsByTagName('arr') as $el) {
-			if ('atom' == $el->getAttribute('name')) {
-				//individual atom entries
-				foreach ($el->getElementsByTagName('str') as $at_el) { // there will only be ONE
-					$num++;
-					$setnum = $num + $this->start;
-					$entry = Dase_Util::unhtmlspecialchars($at_el->nodeValue);
-					$added = <<<EOD
+		foreach ($entries as $entry_txt) {
+			$num++;
+			$setnum = $num + $this->start;
+			$entry = Dase_Util::unhtmlspecialchars($entry_txt);
+			$added = <<<EOD
 <category term="$setnum" scheme="http://daseproject.org/category/position"/>
   <link rel="http://daseproject.org/relation/search-item" href="{$item_request_url}&amp;num={$setnum}"/>
 EOD;
-					$entry = str_replace('<author>',$added."\n  <author>",$entry);
-					$feed .= $entry;
-				}
-			}
+			$entry = str_replace('<author>',$added."\n  <author>",$entry);
+			$feed .= $entry;
 		}
 		$feed .= "</feed>";
 		$feed = str_replace('{APP_ROOT}',$app_root,$feed);
@@ -367,9 +393,9 @@ EOD;
 		return $feed;
 	}
 
-	public function buildItemIndex($item,$freshness)
+	public function buildItemIndex($item,$freshness,$commit=false)
 	{
-		return $this->postToSolr($item,$freshness);
+		return $this->postToSolr($item,$freshness,$commit);
 	}	
 
 	public function buildItemSetIndex($item_array,$freshness)
