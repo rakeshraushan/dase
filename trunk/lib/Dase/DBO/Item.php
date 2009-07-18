@@ -661,9 +661,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
 				'edit','application/atom+xml');
-			$entry->addLink(
-				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
-				'http://daseproject.org/relation/authorized','application/atom+xml');
+			if ($authorize_links) {
+				$entry->addLink(
+					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
+					'http://daseproject.org/relation/cached','application/atom+xml');
+			} else {
+				$entry->addLink(
+					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
+					'http://daseproject.org/relation/authorized','application/atom+xml');
+			}
 			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
 				'http://daseproject.org/relation/edit-content');
@@ -680,8 +686,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		} else {
 			$entry->addLink(
 				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom','edit','application/atom+xml');
-			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/authorized.atom','http://daseproject.org/relation/authorized','application/atom+xml');
+			if ($authorized_links) {
+				$entry->addLink(
+					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.atom','http://daseproject.org/relation/cached','application/atom+xml');
+			} else {
+				$entry->addLink(
+					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'/authorized.atom','http://daseproject.org/relation/authorized','application/atom+xml');
+			}
 			$entry->addLink(
 				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$type->ascii_id.'/item/'.$this->serial_number.'.json',
 				'http://daseproject.org/relation/edit','application/json');

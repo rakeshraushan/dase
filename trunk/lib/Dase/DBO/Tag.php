@@ -373,7 +373,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return Dase_Json::get($json_tag);
 	}
 
-	function asAtom($app_root)
+	function asAtom($app_root,$authorized_links=false)
 	{
 		$this->user || $this->getUser(); 
 		$feed = new Dase_Atom_Feed;
@@ -407,7 +407,15 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			//using Solr
 			$tag_item->persist(true);
 			$item_unique = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
-			$entry = $feed->addItemEntryByItemUnique($this->db,$item_unique,$this->config,$app_root);
+
+			if ($authorized_links) {
+				//fresh, not from cache
+				$item = $tag_item->getItem();
+				$entry = $feed->addEntry();
+				$entry = $item->injectAtomEntryData($entry,$app_root,true);
+			} else {
+				$entry = $feed->addItemEntryByItemUnique($this->db,$item_unique,$this->config,$app_root);
+			}
 
 			if ($entry) {
 				$setnum++;
@@ -451,6 +459,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$entry->setUpdated($updated);
 		$entry->addAuthor($user->eid);
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'.atom','self');
+		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/authorized.atom','http://daseproject.org/relation/authorized');
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.atom','edit' );
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id.'/entry.json','http://daseproject.org/relation/edit','application/json');
 		$entry->addLink($app_root.'/tag/'.$user->eid.'/'.$this->ascii_id,'alternate');
