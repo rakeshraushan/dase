@@ -6,6 +6,7 @@ class Dase_Handler_Tag extends Dase_Handler
 	public $resource_map = array( 
 		'{tag_id}' => 'tag',
 		'{eid}/{tag_ascii_id}' => 'tag',
+		'{eid}/{tag_ascii_id}/authorized' => 'authorized',
 		'{eid}/{tag_ascii_id}/download' => 'tag_zip_archive',
 		'{eid}/{tag_ascii_id}/entry' => 'tag_entry', 
 		'{eid}/{tag_ascii_id}/background' => 'background',
@@ -98,6 +99,22 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderResponse($this->tag->asAtomEntry($r->app_root));
 		} else {
 			$r->renderResponse($this->tag->asAtom($r->app_root));
+		}
+	}
+
+	public function getAuthorizedAtom($r)
+	{
+		$u = $r->getUser('http');
+		if (!$u->can('read',$this->tag)) {
+			$r->renderError(401,'user '.$u->eid.' is not authorized to read tag');
+		}
+		if (!$r->get('nocache')) {
+			$r->checkCache();
+		}
+		if ('entry' == $r->get('type')) {
+			$r->renderResponse($this->tag->asAtomEntry($r->app_root));
+		} else {
+			$r->renderResponse($this->tag->asAtom($r->app_root,true));
 		}
 	}
 
