@@ -134,7 +134,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $entry;
 	}
 
-	function getDisplayValues($coll = null,$limit=2000,$filter_key='',$filter_value='')
+	function getDisplayValues($coll = null,$limit=1000,$filter_key='',$filter_value='')
 	{
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
@@ -151,6 +151,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if ($filter_key && $filter_value) {
 			$filter_sql = "AND item_id IN (SELECT item_id FROM {$prefix}value v,{$prefix}attribute a WHERE v.value_text='$filter_value' and a.ascii_id = '$filter_key' and v.attribute_id = a.id)";
 		}
+		$limit_sql = '';
 		if ($limit) {
 			$limit_sql = "LIMIT $limit";
 		}

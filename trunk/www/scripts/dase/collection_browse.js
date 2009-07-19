@@ -42,8 +42,6 @@ Dase.processAtts = function(json) {
 	var ul = h.add('ul',{'id':'attList'});
 	for (var i=0;i<json.length;i++) {
 		var att = json[i];
-
-
 		var li = ul.add('li');
 		var a = li.add('a');
 		a.set('href','attribute/'+att.collection+'/'+att.ascii_id+'/values.json');
@@ -56,10 +54,11 @@ Dase.processAtts = function(json) {
 	return h.getString();
 }
 
-Dase.processVals = function(json) {
+Dase.processVals = function(json,url) {
 	h = new Dase.htmlbuilder('div');
 	h.add('h4',null,'Select '+json.att_name+' Value:');
 	var ul = h.add('ul',{'id':'valList'});
+	var total = json.values.length;
 	for (var i=0;i<json.values.length;i++) {
 		var val = json.values[i];
 		var li = ul.add('li');
@@ -69,6 +68,14 @@ Dase.processVals = function(json) {
 		a.add('span',null,val.v);
 		a.add('span',{'class':'tally'},'('+val.t+')');
 	}
+	if (1000 == total) {
+		var extra_li = ul.add('li');
+		var get_more_link = extra_li.add('a',null,'GET ALL VALUES');
+		get_more_link.set('href',url);
+		get_more_link.set('class','modify');
+		get_more_link.set('id','getAllValues');
+	}
+
 	return h.getString();
 }
 
@@ -95,7 +102,7 @@ Dase.bindGetValues = function(coll) {
 			att_link.onclick = function() {
 				var att_name = this.getElementsByTagName('span')[0].innerHTML;
 				var att_ascii = this.className.split(" ")[1];
-				Dase.getAttributeValues(this.href);	
+				Dase.getAttributeValues(this.href,1000);	
 				Dase.removeClass(Dase.$('valColumn'),'hide');
 				window.scroll(0,0);
 				for (var j=0;j<atts.length;j++) {
@@ -108,11 +115,20 @@ Dase.bindGetValues = function(coll) {
 	}
 };
 
-Dase.getAttributeValues = function(url) {
+Dase.getAttributeValues = function(url,limit) {
 	Dase.$('valColumn').innerHTML = 'loading...';
 	Dase.getJSON(url,function(json) {
-			Dase.$('valColumn').innerHTML = Dase.processVals(json);
-			});
+			Dase.$('valColumn').innerHTML = Dase.processVals(json,url);
+			var more_link = Dase.$('getAllValues');
+			//allows user to get more than 1000 vlaues
+			if (more_link) {
+				Dase.$('getAllValues').onclick = function() {
+					Dase.getAttributeValues(this.href,5000);
+					Dase.removeClass(Dase.$('valColumn'),'hide');
+					return false;
+				}
+			}
+			},null,'limit='+limit);
 };
 
 Dase.getAttributeTallies = function(url) {
