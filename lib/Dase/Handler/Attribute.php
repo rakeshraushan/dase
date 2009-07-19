@@ -51,9 +51,9 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$attr = Dase_DBO_Attribute::get($this->db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
 		if (0 == $attr->collection_id) {
 			//since it is admin att we need to be able to limit to items in this coll
-			$values_array = $attr->getDisplayValues($this->collection->ascii_id);
+			$values_array = $attr->getDisplayValues($this->collection->ascii_id,$r->get('limit'));
 		} else {
-			$values_array = $attr->getDisplayValues();
+			$values_array = $attr->getDisplayValues(null,$r->get('limit'));
 		}
 		$result['att_name'] = $attr->attribute_name;
 		$result['att_ascii'] = $attr->ascii_id;
