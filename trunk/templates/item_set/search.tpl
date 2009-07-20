@@ -31,8 +31,11 @@
 		<h3 class="searchEcho">Search Results {$start+1} - {$end} of {$items->count}  
 			<span id="displaySelect">[ 
 				<a href="{$items->gridLink}">grid</a> | 
-				<a href="{$items->listLink}">list</a> | 
+				<a href="{$items->listLink}">list</a> 
+				<!--
+				| 
 				<a href="#" id="startSlideshow">slideshow</a> 
+				-->
 				]<span></h3>
 		{else}
 		<h3 class="searchEcho">Search Results: 0 items found</h3>

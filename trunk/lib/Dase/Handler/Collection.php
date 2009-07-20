@@ -688,12 +688,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$c = $this->collection;
 		$attributes = new Dase_DBO_Attribute($this->db);
 		$attributes->collection_id = 0;
-		if ($r->has('sort')) {
-			$so = $r->get('sort');
-		} else {
-			$so = 'sort_order';
-		}
-		$attributes->orderBy($so);
+		$attributes->orderBy('attribute_name');
 		$att_array = array();
 		foreach($attributes->find() as $att) {
 			$att_array[] =

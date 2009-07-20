@@ -29,7 +29,7 @@ Dase.getAttributes = function(url,sort) {
 			Dase.$('attColumn').innerHTML = Dase.processAtts(json);
 			Dase.getAttributeTallies(url.replace(/attributes/,'attribute_tallies'));
 			Dase.bindGetValues(Dase.$('collectionAsciiId').innerHTML);
-			Dase.initAttSort();
+			Dase.initAttSort(url);
 			},null,params);
 	var val_coll = Dase.$('valColumn');
 	val_coll.className = 'hide';
@@ -79,15 +79,15 @@ Dase.processVals = function(json,url) {
 	return h.getString();
 }
 
-Dase.initAttSort = function() {
+Dase.initAttSort = function(url) {
 	link = Dase.$('attSorter');
 	link.onclick = function() {
 		if (Dase.attsort) {
-			Dase.getAttributes(Dase.$('collectionAtts').href);
+			Dase.getAttributes(url);
 			Dase.attsort = 0;
 			return false;
 		} else {
-			Dase.getAttributes(Dase.$('collectionAtts').href,'attribute_name');
+			Dase.getAttributes(url,'attribute_name');
 			Dase.attsort = 1;
 			return false;
 		}

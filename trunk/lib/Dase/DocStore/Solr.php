@@ -61,6 +61,12 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		}
 	}
 
+	public function getItemJson($item_unique,$app_root)
+	{
+		$feed = Dase_Atom_Feed::load($this->getItem($item_unique,$app_root,true));
+		return $feed->asJson();
+	}
+
 	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
 	{
 		$entry = '';
@@ -76,18 +82,10 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 				$total = $reader->getAttribute('numFound');
 			}
 			//get entries
-			if ($reader->localName == "arr" && $reader->nodeType == XMLReader::ELEMENT) {
-				if ('atom' == $reader->getAttribute('name')) {
-					//individual atom entries
-					while ($reader->read()) {
-						//there will only be one
-						if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
-							$reader->read();
-							$entry = $reader->value;
-							break;
-						}
-					}
-					break;
+			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('_atom' == $reader->getAttribute('name')) {
+					$reader->read();
+					$entry = $reader->value;
 				}
 			}
 		}

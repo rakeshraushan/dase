@@ -75,7 +75,7 @@ class Dase_Handler_Tag extends Dase_Handler
 				}
 				 */
 				$fn = MEDIA_DIR."/tmp/".$u->eid.'-'.$tag->ascii_id.'-'.$size.'-'.$item->serial_number;
-				file_put_contents($fn,file_get_contents($item->getMediaUrl($size,$r->app_root)));
+				file_put_contents($fn,file_get_contents($item->getMediaUrl($size,$r->app_root,$this->config->getAuth('token'))));
 				if (filesize($fn)) {
 					$zip->addFile($fn,$u->eid.'-'.$tag->ascii_id.'/'.$size.'/'.$item->serial_number.'.jpg');
 				}
