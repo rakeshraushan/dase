@@ -258,7 +258,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT * FROM {$prefix}media_file
 			WHERE item_id = ?
-			ORDER BY file_size DESC 
+			ORDER BY file_size ASC 
 			";
 		$st = Dase_DBO::query($this->db,$sql,array($this->id));
 		while ($m = $st->fetch()) {
@@ -267,9 +267,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'/'.$m['size'].'/'.$m['filename'];
 			$this->_media[$m['size']] = $m;
 		}
-		$maybe_enc = array_shift($this->_media);
-		if ($maybe_enc['file_size'] > 1000000) {
-			$this->_media['enclosure'] = $maybe_enc;
+		//last media bigger than 1 M
+		if ($m['file_size'] > 1000000) {
+			$this->_media['enclosure'] = $m;
 		}
 		return $this->_media;
 	}
@@ -282,7 +282,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$url = $app_root.$m['url'];
 			if ($token) {
 				$expires = time() + (60*60); 
-				$auth_token = md5($url.$expires.$secure_key);
+				$auth_token = md5($url.$expires.$token);
 				$url = $url.'?auth_token='.$auth_token.'&'.'expires='.$expires;
 			}
 			return $url;

@@ -13,6 +13,7 @@ class Dase_Atom
 	protected $updated_is_set;
 	protected $links = array(); //links cache
 	public static $ns = array(
+		'ae' => 'http://purl.org/atom/ext/',
 		'app' => 'http://www.w3.org/2007/app',
 		'atom' => 'http://www.w3.org/2005/Atom',
 		'dc' => 'http://purl.org/dc/elements/1.1/',

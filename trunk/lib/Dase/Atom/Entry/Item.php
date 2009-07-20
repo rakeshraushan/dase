@@ -479,18 +479,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 			$item->setItemType($item_type['term']);
 		}
 
-		$content = new Dase_DBO_Content($db);
-		$atom_content = $this->getContent();
-		if ($atom_content) {
-			$content->text = $atom_content;
-			$content->type = $this->getContentType();
-			$content->item_id = $item->id;
-			$content->p_collection_ascii_id = $c->ascii_id;
-			$content->p_serial_number = $item->serial_number;
-			$content->updated = date(DATE_ATOM);
-			$content->updated_by_eid = $created_by_eid;
-			$content->insert();
+		//content
+		if ($this->getContent()) {
+			$item->setContent($this->getContent(),$eid,$this->getContentType());
 		}
+
 		//$item->setValue('title',$this->getTitle());
 		//$item->setValue('description',$this->getSummary());
 
@@ -585,6 +578,26 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		$item->buildSearchIndex();
 		return $item;
+	}
+
+
+	//todo: pass in @rel for these:
+
+	function setInlineFeed($feed){
+		$link = $this->addLink($feed->getId(),'http://daseproject.org/relation/order_items','application/atom+xml');
+		$inline = $this->addChildElement($link,'ae:inline','',Dase_Atom::$ns['ae']);
+		$inline->appendChild($this->dom->importNode($feed->root,true));
+	}
+
+	function getInlineFeed(){
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if($el->getAttribute('rel') == 'http://daseproject.org/relation/order_items'){
+				$dom = new DOMDocument('1.0','utf-8');
+				$dom->appendChild($dom->importNode($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'feed')->item(0),true));
+				return new Dase_Atom_Feed($dom);
+			}
+		}
+		return false;
 	}
 
 	function __get($var) 

@@ -363,6 +363,11 @@ EOD;
 		$search_request_url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$search_request_url);
 		$search_request_url = htmlspecialchars($search_request_url);
 
+		foreach ($dom->getElementsByTagName('date') as $el) {
+			if ('timestamp' == $el->getAttribute('name')) {
+				$timestamp = $el->nodeValue;
+			}
+		}
 
 		foreach ($dom->getElementsByTagName('str') as $at_el) {
 			if ('_atom' == $at_el->getAttribute('name')) {
@@ -371,6 +376,7 @@ EOD;
 				$added = <<<EOD
   <link rel="up" href="{$search_request_url}"/>
   <category term="$num" scheme="http://daseproject.org/category/position"/>
+  <category term="$timestamp" scheme="http://daseproject.org/category/indexed_timestamp"/>
 EOD;
 				$entry = str_replace('<author>',$added."\n  <author>",$entry);
 				$feed .= $entry;
@@ -454,6 +460,14 @@ EOD;
 		$updated->appendChild($dom->createTextNode($item->updated));
 		$updated->setAttribute('name','_updated');
 
+		$item_id = $doc->appendChild($dom->createElement('field'));
+		$item_id->appendChild($dom->createTextNode($item->id));
+		$item_id->setAttribute('name','_item_id');
+
+		$serial_number = $doc->appendChild($dom->createElement('field'));
+		$serial_number->appendChild($dom->createTextNode($item->serial_number));
+		$serial_number->setAttribute('name','_serial_number');
+
 		$c = $doc->appendChild($dom->createElement('field'));
 		$c->appendChild($dom->createTextNode($item->p_collection_ascii_id));
 		$c->setAttribute('name','c');
@@ -485,6 +499,10 @@ EOD;
 				$search_text[] = $contents->text;
 			}
 		}
+
+		$search_text[] = $item->id;
+		$search_text[] = $item->serial_number;
+
 		$att_names = array();
 		$metadata_array = array();
 		foreach ($item->getMetadata(true) as $meta) {

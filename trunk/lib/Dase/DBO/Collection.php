@@ -390,6 +390,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($limit && is_numeric($limit)) {
 			$item->setLimit($limit);
 		}
+		//note: MUST clone items 
 		return $item->find();
 	}
 
