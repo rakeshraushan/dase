@@ -22,6 +22,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
 		'{collection_ascii_id}/{serial_number}/service' => 'service',
 		'{collection_ascii_id}/{serial_number}/solr' => 'solr',
+		'{collection_ascii_id}/{serial_number}/solr_response' => 'solr_response',
 		'{collection_ascii_id}/{serial_number}/status' => 'status',
 		'{collection_ascii_id}/{serial_number}/item_type' => 'item_type',
 		'{collection_ascii_id}/{serial_number}/tags' => 'tags',
@@ -268,22 +269,29 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($solr->getItemSolrDoc($this->item));
 	}
 
-	/* displays Atom doc FROM Solr */
-	public function getSolrAtom($r)
+	public function getSolrResponseXml($r)
 	{
-		/*
-			$user = $r->getUser();
+		$user = $r->getUser();
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		 */
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		$r->renderResponse($ds->getSolrResponse($this->item->getUnique()));
+	}
+
+	/* displays Atom doc FROM Solr */
+	public function getSolrAtom($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
 		$r->checkCache();
 		if ('entry' == $r->get('format')) {
 			$as_feed = false;
 		} else {
 			$as_feed = true;
 		}
-
 		$ds = Dase_DocStore::get($this->db,$this->config);
 		$r->renderResponse($ds->getItem($this->item->getUnique(),$r->app_root,$as_feed));
 	}

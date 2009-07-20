@@ -67,6 +67,12 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		return $feed->asJson();
 	}
 
+	public function getSolrResponse($item_unique)
+	{
+		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
+		return file_get_contents($url);
+	}
+
 	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
 	{
 		$entry = '';
@@ -88,6 +94,12 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 					$entry = $reader->value;
 				}
 			}
+			if ($reader->localName == "date" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('timestamp' == $reader->getAttribute('name')) {
+					$reader->read();
+					$timestamp = $reader->value;
+				}
+			}
 		}
 		$reader->close();
 
@@ -106,12 +118,10 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 
 		$entry = Dase_Util::unhtmlspecialchars($entry);
 		$entry = str_replace('{APP_ROOT}',$app_root,$entry);
-		/*
 		$added = <<<EOD
-<d:extension xmlns:d="http://daseproject.org/ns/1.0">here it is</d:extension>
+<category term="$timestamp" scheme="http://daseproject.org/category/indexed_timestamp"/>
 EOD;
 		$entry = str_replace('<author>',$added."\n  <author>",$entry);
-		 */
 
 		if ($as_feed) {
 			$updated = date(DATE_ATOM);
