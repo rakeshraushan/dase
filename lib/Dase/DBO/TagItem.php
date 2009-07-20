@@ -70,7 +70,8 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 
 		//$feed->addCategory($tag->type,"http://daseproject.org/category/tag_type",$tag->type);
 		$feed->addCategory('set',"http://daseproject.org/category/tag_type");
-		$feed->addLink($tag->getUrl($app_root),"http://daseproject.org/relation/feed-link");
+		//$feed->addLink($tag->getUrl($app_root),"http://daseproject.org/relation/feed-link");
+		$feed->addLink($tag->getUrl($app_root),"up");
 		$tag_item_id_array = $tag->getTagItemIds();
 		$position = array_search($this->id,$tag_item_id_array) + 1;
 		$feed->addCategory($position,"http://daseproject.org/category/position");
@@ -100,6 +101,7 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$feed->setFeedType('tagitem');
 		//tag name goes in subtitle, so doesn't need to be in category
 		$feed->setSubtitle($tag->name.' '.$position.' of '.count($tag_item_id_array));
+		//regenerated!!! (should cache)
 		$entry = $item->injectAtomEntryData($feed->addEntry(),$app_root);
 		//very strange to use summary for annotation (?)
 		$entry->setSummary($this->annotation);

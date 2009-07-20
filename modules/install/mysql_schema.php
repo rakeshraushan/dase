@@ -127,8 +127,14 @@ CREATE TABLE `{$table_prefix}item` (
 `created_by_eid` varchar(50) default NULL,
 `status` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
+`comments_updated` varchar(50) default NULL,
+`comments_count` integer default NULL,
+`content_length` integer default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
+`item_type_ascii_id` varchar(200) default NULL,
+`item_type_name` varchar(200) default NULL,
+`collection_name` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

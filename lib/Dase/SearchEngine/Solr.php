@@ -142,17 +142,10 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 				$total = $reader->getAttribute('numFound');
 			}
 			//get entries
-			if ($reader->localName == "arr" && $reader->nodeType == XMLReader::ELEMENT) {
-				if ('atom' == $reader->getAttribute('name')) {
-					//individual atom entries
-					while ($reader->read()) {
-						//there will only be one
-						if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
-							$reader->read();
-							$entries[] = $reader->value;
-							break;
-						}
-					}
+			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('_atom' == $reader->getAttribute('name')) {
+					$reader->read();
+					$entries[] = $reader->value;
 				}
 			}
 			//get collection tallies
@@ -274,9 +267,6 @@ EOD;
 		$app_root = $this->request->app_root;
 		$dom = new DOMDocument('1.0','utf-8');
 
-		//print($this->_getSearchResults());
-		//exit;
-
 		$dom->loadXml($this->_getSearchResults());
 		$url = $this->_cleanUpUrl($this->request->getUrl());
 
@@ -374,18 +364,16 @@ EOD;
 		$search_request_url = htmlspecialchars($search_request_url);
 
 
-		foreach ($dom->getElementsByTagName('arr') as $el) {
-			if ('atom' == $el->getAttribute('name')) {
+		foreach ($dom->getElementsByTagName('str') as $at_el) {
+			if ('_atom' == $at_el->getAttribute('name')) {
 				//individual atom entries
-				foreach ($el->getElementsByTagName('str') as $at_el) { // there will only be ONE
-					$entry = Dase_Util::unhtmlspecialchars($at_el->nodeValue);
-					$added = <<<EOD
+				$entry = Dase_Util::unhtmlspecialchars($at_el->nodeValue);
+				$added = <<<EOD
   <link rel="up" href="{$search_request_url}"/>
   <category term="$num" scheme="http://daseproject.org/category/position"/>
 EOD;
-					$entry = str_replace('<author>',$added."\n  <author>",$entry);
-					$feed .= $entry;
-				}
+				$entry = str_replace('<author>',$added."\n  <author>",$entry);
+				$feed .= $entry;
 			}
 		}
 		$feed .= "</feed>";
@@ -461,30 +449,31 @@ EOD;
 		$id = $doc->appendChild($dom->createElement('field'));
 		$id->appendChild($dom->createTextNode($item->p_collection_ascii_id.'/'.$item->serial_number));
 		$id->setAttribute('name','_id');
-		$col_obj = $item->getCollection();
-		if (!$item->p_collection_ascii_id) {
-			$item->p_collection_ascii_id = $col_obj->ascii_id;
-			$item->update();
-		}
+
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->updated));
 		$updated->setAttribute('name','_updated');
+
 		$c = $doc->appendChild($dom->createElement('field'));
-		$c->appendChild($dom->createTextNode($col_obj->ascii_id));
+		$c->appendChild($dom->createTextNode($item->p_collection_ascii_id));
 		$c->setAttribute('name','c');
+
 		$coll = $doc->appendChild($dom->createElement('field'));
-		$coll->appendChild($dom->createTextNode($col_obj->collection_name));
+		$coll->appendChild($dom->createTextNode($item->collection_name));
 		$coll->setAttribute('name','collection');
-		$it_obj = $item->getItemType();
+
 		$it = $doc->appendChild($dom->createElement('field'));
-		$it->appendChild($dom->createTextNode($it_obj->ascii_id));
+		$it->appendChild($dom->createTextNode($item->item_type_ascii_id));
 		$it->setAttribute('name','item_type');
+
 		$it_name = $doc->appendChild($dom->createElement('field'));
-		$it_name->appendChild($dom->createTextNode($it_obj->name));
+		$it_name->appendChild($dom->createTextNode($item->item_type_name));
 		$it_name->setAttribute('name','item_type_name');
+
 		$search_text = array();
 		$admin_search_text = array();
 		$contents = $item->getContents();
+		//won't run if !$item->content_length
 		if ($contents && $contents->text) {
 			$content = $doc->appendChild($dom->createElement('field'));
 			$content->appendChild($dom->createTextNode($contents->text));
@@ -498,11 +487,10 @@ EOD;
 		}
 		$att_names = array();
 		$metadata_array = array();
-		foreach ($item->getRawMetadata() as $meta) {
+		foreach ($item->getMetadata(true) as $meta) {
 			$metadata_array[$meta['id']]['metadata'] = $meta;
-			if (!isset($metadata_array[$meta['id']]['modifier'])) {
-				$metadata_array[$meta['id']]['modifier']=array();
-			}
+
+			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
 				$admin_search_text[] = $meta['value_text'];
 			} else {
@@ -525,6 +513,16 @@ EOD;
 				$att_names[$meta['ascii_id']] = $meta['attribute_name'];
 				$meta['ascii_id'] = 'do_not_store_'.$meta['ascii_id'];
 			}
+
+			if ($meta['modifier']) {
+				$search_text[] = $meta['modifier'];
+				if ($meta['modifier_type']) {
+					$field = $doc->appendChild($dom->createElement('field'));
+					$field->appendChild($dom->createTextNode($meta['modifier']));
+					$field->setAttribute('name',$meta['modifier_type']);
+				}
+			}
+
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			//attribute ascii_ids
@@ -534,18 +532,9 @@ EOD;
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			$field->setAttribute('name',$meta['attribute_name']);
 		}
-		foreach ($metadata_array as $m_id => $set) {
-			if (count($set['modifier'])) {
-				foreach ($set['modifier'] as $mod) {
-					$field = $doc->appendChild($dom->createElement('field'));
-					$field->appendChild($dom->createTextNode('('.$set['metadata']['value_text'].') '.$mod['value_text']));
-					$field->setAttribute('name',$mod['ascii_id']);
-				}
-			}
-		}
 
 		$field = $doc->appendChild($dom->createElement('field'));
-		$field->appendChild($dom->createTextNode(join("\n",$search_text)));
+		$field->appendChild($dom->createTextNode(join(" ",$search_text)));
 		$field->setAttribute('name','_search_text');
 
 		if (count($admin_search_text)) {
@@ -553,12 +542,15 @@ EOD;
 			$field->appendChild($dom->createTextNode(join("\n",$admin_search_text)));
 			$field->setAttribute('name','admin');
 		}
+
 		$entry = new Dase_Atom_Entry_Item;
 		$entry = $item->injectAtomEntryData($entry,'{APP_ROOT}');
+
+		//atom entry version
 		$atom_str = $entry->asXml($entry->root);
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
-		$field->setAttribute('name','atom');
+		$field->setAttribute('name','_atom');
 		$dom->formatOutput = true;
 		return $dom->saveXML();
 	}
@@ -598,6 +590,8 @@ EOD;
 
 
 		$solr_doc = $this->getItemSolrDoc($item);
+
+		//return $solr_doc;
 
 		$start_index = Dase_Util::getTime();
 		$get_doc_elapsed = round($start_index - $start_get_doc,4);

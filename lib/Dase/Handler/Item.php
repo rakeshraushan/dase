@@ -200,7 +200,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		if ($r->has('display')) {
-			$meta = $this->item->getMetadata($r->get('display'));
+			$meta = $this->item->getMetadata($r->app_root,$r->get('display'));
 			if (isset($meta[0]) && isset($meta[0]['value_text'])) {
 				$r->renderResponse($meta[0]['value_text']);
 			} else {

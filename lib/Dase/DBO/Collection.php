@@ -540,19 +540,25 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			}
 			$item->status = 'public';
 			$item->item_type_id = 0;
+			$item->item_type_ascii_id = 'default';
+			$item->item_type_name = 'default';
 			$item->created = date(DATE_ATOM);
 			$item->updated = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
 			$item->p_collection_ascii_id = $this->ascii_id;
+			$item->collection_name = $this->collection_name;
 			$item->insert();
 			$this->updateItemCount();
 			return $item;
 		} else {
 			$item->status = 'public';
 			$item->item_type_id = 0;
+			$item->item_type_ascii_id = 'default';
+			$item->item_type_name = 'default';
 			$item->created = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
 			$item->p_collection_ascii_id = $this->ascii_id;
+			$item->collection_name = $this->collection_name;
 			$item->insert();
 			$item->serial_number = sprintf("%09d",$item->id);
 			$item->updated = date(DATE_ATOM);

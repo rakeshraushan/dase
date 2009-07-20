@@ -110,8 +110,14 @@ CREATE TABLE {$table_prefix}item (
     item_type_id integer DEFAULT 0,
     created character varying(50) DEFAULT 0,
     updated character varying(50) DEFAULT 0,
+    comments_updated character varying(50) DEFAULT 0,
+    comments_count integer,
+    content_length integer,
     status character varying(50),
     p_collection_ascii_id character varying(200),
+    collection_name character varying(200),
+    item_type_ascii_id character varying(200),
+    item_type_name character varying(200),
     created_by_eid character varying(50)
 );
 
