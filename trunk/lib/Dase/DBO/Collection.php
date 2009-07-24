@@ -625,7 +625,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	}
 
 	public  function xmlDump() {
+
 		$db = $this->db;
+
+		$admin_atts = new Dase_DBO_Attribute($db);
+		$admin_atts->collection_id = 0;
+		foreach ($admin_atts->find() as $aa) {
+			$aa = clone($aa);
+			$attribute_lookup[$aa->id] = $aa;
+		}
+
 		$prefix = $db->table_prefix;
 		$writer = new XMLWriter();
 		$writer->openMemory();
@@ -638,6 +647,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$attribute->collection_id = $this->id;
 		foreach($attribute->find() as $att) {
 			$att = clone($att);
+			$attribute_lookup[$att->id] = $att;
 			$writer->startElement('att');
 			$writer->writeAttribute('id',$att->ascii_id);
 			$writer->writeAttribute('name',$att->attribute_name);
@@ -652,6 +662,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$item_type->collection_id = $this->id;
 		foreach($item_type->find() as $itype) {
 			$itype = clone($itype);
+			$item_type_lookup[$itype->id] = $itype;
 			$writer->startElement('item_type');
 			$writer->writeAttribute('id',$itype->ascii_id);
 			$writer->writeAttribute('name',$itype->name);
@@ -664,15 +675,111 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			}
 			$writer->endElement();
 		}
+		$i=0;
 		$sql = "
 			SELECT *
 			FROM {$prefix}item
 			WHERE collection_id = $this->id	
 			";
-		foreach (Dase_DBO::query($db,$sql) as $row) {
+		foreach (Dase_DBO::query($db,$sql) as $item) {
 			$writer->startElement('item');
-			$writer->writeAttribute('sernum',$row['serial_number']);
+			$writer->writeAttribute('sernum',$item['serial_number']);
+			$writer->writeAttribute('type',$item['item_type_ascii_id']);
+			$writer->writeAttribute('created',$item['created']);
+			$writer->writeAttribute('updated',$item['updated']);
+			$writer->writeAttribute('status',$item['status']);
+
+			/** metadata **/
+
+			$sql = "
+				SELECT * 
+				FROM {$prefix}value v
+				WHERE v.item_id = {$item['id']} 
+			";
+			foreach (Dase_DBO::query($db,$sql) as $val) {
+				//in case orphaned value
+				if (isset($attribute_lookup[$val['attribute_id']])) {
+					$att = $attribute_lookup[$val['attribute_id']];
+					$writer->startElement('meta');
+					$writer->writeAttribute('att',$att->ascii_id);
+					if ($val['modifier']) {
+						$writer->writeAttribute('mod',$val['modifier']);
+					}
+					if ($val['url']) {
+						$writer->writeAttribute('url',$val['url']);
+					}
+					$writer->text($val['value_text']);
+					$writer->endElement();
+				} else {
+					$writer->startElement('orphan');
+					$writer->writeAttribute('attribute_id',$att->id);
+					if ($val['modifier']) {
+						$writer->writeAttribute('mod',$val['modifier']);
+					}
+					if ($val['url']) {
+						$writer->writeAttribute('url',$val['url']);
+					}
+					$writer->text($val['value_text']);
+					$writer->endElement();
+				}
+			}
+
+			/** comments **/
+
+			if ($item['comments_count']) {
+				$sql = "
+					SELECT * 
+					FROM {$prefix}comment
+					WHERE comment.item_id = {$item['id']} 
+				";
+				foreach (Dase_DBO::query($db,$sql) as $comment) {
+					$writer->startElement('comment');
+					$writer->writeAttribute('type',$comment['type']);
+					$writer->writeAttribute('updated',$comment['updated']);
+					$writer->writeAttribute('eid',$comment['updated_by_eid']);
+					$writer->text($comment['text']);
+					$writer->endElement();
+				}
+			}
+
+			/** content **/
+
+			if ($item['content_length']) {
+				$sql = "
+					SELECT * 
+					FROM {$prefix}content
+					WHERE content.item_id = {$item['id']} 
+				";
+				foreach (Dase_DBO::query($db,$sql) as $content) {
+					$writer->startElement('content');
+					$writer->writeAttribute('type',$content['type']);
+					$writer->writeAttribute('updated',$content['updated']);
+					$writer->writeAttribute('eid',$content['updated_by_eid']);
+					$writer->text($content['text']);
+					$writer->endElement();
+				}
+			}
+
+
+			/** media **/
+
+			$sql = "
+				SELECT * 
+				FROM {$prefix}media_file
+				WHERE media_file.item_id = {$item['id']} 
+			";
+			foreach (Dase_DBO::query($db,$sql) as $mf) {
+				$writer->startElement('media');
+				$writer->writeAttribute('filename',$mf['filename']);
+				$writer->writeAttribute('size',$mf['size']);
+				$writer->writeAttribute('mime',$mf['mime_type']);
+				$writer->writeAttribute('w',$mf['width']);
+				$writer->writeAttribute('h',$mf['height']);
+				$writer->writeAttribute('len',$mf['file_size']);
+				$writer->endElement();
+			}
 			$writer->endElement();
+			error_log($i++);
 		}
 		/*
 		$item = new Dase_DBO_Item($this->db);
