@@ -138,35 +138,12 @@ CREATE TABLE `{$table_prefix}item` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}item_as_atom` (
-`id` int(11) NOT NULL auto_increment,
-`item_id` integer default NULL,
-`xml` text default NULL,
-`app_root` varchar(200) default NULL,
-`updated` varchar(50) default NULL,
-`relative_url` varchar(200) default NULL,
-`item_type_ascii_id` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}item_type` (
 `id` int(11) NOT NULL auto_increment,
 `collection_id` integer default NULL,
 `description` varchar(2000) default NULL,
 `ascii_id` varchar(200) default NULL,
 `name` varchar(200) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}job_queue` (
-`id` int(11) NOT NULL auto_increment,
-`method` varchar(100) default NULL,
-`dase_user_eid` varchar(100) default NULL,
-`created` varchar(50) default NULL,
-`run` varchar(50) default NULL,
-`completed` varchar(50) default NULL,
-`args` varchar(5000) default NULL,
-`msg` varchar(2000) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

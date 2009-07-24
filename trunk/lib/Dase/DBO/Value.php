@@ -5,6 +5,7 @@ require_once 'Dase/DBO/Autogen/Value.php';
 class Dase_DBO_Value extends Dase_DBO_Autogen_Value 
 {
 	public $attribute =  null;
+	public $item =  null;
 
 	public function getAttribute()
 	{
@@ -14,6 +15,16 @@ class Dase_DBO_Value extends Dase_DBO_Autogen_Value
 			$this->attribute = $att;
 		}
 		return $this->attribute;
+	}
+
+	public function getItem()
+	{
+		if (!$this->item) {
+			$item = new Dase_DBO_Item($this->db);
+			$item->load($this->item_id);
+			$this->item = $item;
+		}
+		return $this->item;
 	}
 }
 

@@ -431,7 +431,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	public function buildSearchIndex()
 	{
 		$prefix = $this->db->table_prefix;
-		$dbh = $db->getDbh();
+		$db = $this->db;
+		$dbh = $this->db->getDbh();
 		//todo: make sure this->id is an integer
 		$db->query("DELETE FROM {$prefix}search_table WHERE collection_id = $this->id");
 		$db->query("DELETE FROM {$prefix}admin_search_table WHERE collection_id = $this->id");
@@ -453,8 +454,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			while ($value_text = $st->fetchColumn()) {
 				$composite_value_text .= $value_text . " ";
 			}
-			foreach ($item->getContents() as $c) {
-				$composite_value_text .= $c->text . " ";
+			$content_obj = $item->getContents();
+			if ($content_obj) {
+				$composite_value_text .= $content_obj->text . " ";
 			}
 			$search_table = new Dase_DBO_SearchTable($this->db);
 			$search_table->value_text = $composite_value_text;
@@ -621,4 +623,103 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		return $svc->asXml();
 	}
+
+	public  function xmlDump() {
+		$db = $this->db;
+		$prefix = $db->table_prefix;
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('archive');
+		$writer->writeAttribute('name',$this->collection_name);
+		$writer->writeAttribute('id',$this->ascii_id);
+		$attribute = new Dase_DBO_Attribute($this->db);
+		$attribute->collection_id = $this->id;
+		foreach($attribute->find() as $att) {
+			$att = clone($att);
+			$writer->startElement('att');
+			$writer->writeAttribute('id',$att->ascii_id);
+			$writer->writeAttribute('name',$att->attribute_name);
+			foreach ($att->getDefinedValues() as $df) {
+				$writer->startElement('val');
+				$writer->text($df);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$item_type = new Dase_DBO_ItemType($this->db);
+		$item_type->collection_id = $this->id;
+		foreach($item_type->find() as $itype) {
+			$itype = clone($itype);
+			$writer->startElement('item_type');
+			$writer->writeAttribute('id',$itype->ascii_id);
+			$writer->writeAttribute('name',$itype->name);
+			foreach ($itype->getAttributes() as $att) {
+				$att = clone($att);
+				$writer->startElement('att');
+				$writer->writeAttribute('id',$att->ascii_id);
+				$writer->writeAttribute('name',$att->attribute_name);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$sql = "
+			SELECT *
+			FROM {$prefix}item
+			WHERE collection_id = $this->id	
+			";
+		foreach (Dase_DBO::query($db,$sql) as $row) {
+			$writer->startElement('item');
+			$writer->writeAttribute('sernum',$row['serial_number']);
+			$writer->endElement();
+		}
+		/*
+		$item = new Dase_DBO_Item($this->db);
+		$item->collection_id = $this->id;
+		foreach($item->find() as $it) {
+			$it = clone($it);
+			$writer->startElement('item');
+			$writer->writeAttribute('sernum',$it->serial_number);
+			$it->getItemType();
+			if (isset($it->item_type->name)) {
+				$writer->writeAttribute('type',$it->item_type->name);
+			}
+			$value = new Dase_DBO_Value($this->db);
+			$value->item_id = $it->id;
+			foreach($value->find() as $val) {
+				$val = clone($val);
+				$writer->startElement('meta');
+				$val->getAttribute();
+				$writer->writeAttribute('aid',$val->attribute->ascii_id);
+				if ($val->modifier) {
+					$writer->writeAttribute('mod',$val->modifier);
+				}
+				if ($val->url) {
+				$writer->writeAttribute('url',$val->url);
+				}
+				$writer->text($val->value_text);
+				$writer->endElement();
+			}
+			$media_file = new Dase_DBO_MediaFile($this->db);
+			$media_file->item_id = $it->id;
+			foreach($media_file->find() as $mf) {
+				$mf = clone($mf);
+				$writer->startElement('media');
+				$writer->writeAttribute('filename',$mf->filename);
+				$writer->writeAttribute('size',$mf->size);
+				$writer->writeAttribute('mime',$mf->mime_type);
+				$writer->writeAttribute('w',$mf->width);
+				$writer->writeAttribute('h',$mf->height);
+				$writer->writeAttribute('len',$mf->file_size);
+				$writer->endElement();
+			}
+			$writer->endElement();
+		}
+		$writer->endElement();
+		 */
+		$writer->endDocument();
+		return $writer->flush(true);
+	}
+
 }
