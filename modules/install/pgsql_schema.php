@@ -127,33 +127,12 @@ CREATE TABLE {$table_prefix}input_template (
     attribute_id integer
 );
 
-CREATE TABLE {$table_prefix}item_as_atom (
-    id serial NOT NULL,
-    item_id integer,
-    item_type_ascii_id character varying(200),
-    relative_url character varying(200),
-    app_root character varying(200),
-    xml text,
-    updated character varying(50)
-);
-
 CREATE TABLE {$table_prefix}item_type (
     id serial NOT NULL,
     collection_id integer DEFAULT 0 NOT NULL,
     name character varying(200),
     ascii_id character varying(200) NOT NULL,
     description character varying(2000)
-);
-
-CREATE TABLE {$table_prefix}job_queue (
-    id serial NOT NULL,
-    method character varying(100),
-    dase_user_eid character varying(100),
-    created character varying(50),
-    run character varying(50),
-    completed character varying(50),
-    args character varying(5000),
-    msg character varying(2000)
 );
 
 CREATE TABLE {$table_prefix}media_file (
@@ -354,12 +333,6 @@ CREATE SEQUENCE {$table_prefix}item_type_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}job_queue_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}media_file_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -472,10 +445,6 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}item_type 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_type_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}job_queue 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}job_queue_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}media_file 

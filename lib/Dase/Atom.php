@@ -1,4 +1,7 @@
 <?php
+
+class Dase_Atom_Exception extends Exception {}
+
 class Dase_Atom
 {
 	//these need to be public

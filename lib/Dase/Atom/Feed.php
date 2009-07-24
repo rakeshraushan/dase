@@ -140,6 +140,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		if (!@ $dom->loadXML($xml)) {
 			$entry = new Dase_Atom_Feed;
 			$entry->setTitle($xml);
+			print $entry->asXml();exit;
 			return $entry;
 		}
 		return self::_init($dom);
@@ -462,8 +463,10 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 		if (!$this->feedtype) {
 			$this->feedtype = $this->getFeedType();
+			if (!$this->feedtype) {
+				throw new Dase_Atom_Exception('cannot get feedtype');
+			}
 		}
-		$entries = array();
 		$class = self::$types_map[$this->feedtype]['entry'];
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
 			foreach ($entry_dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {

@@ -115,6 +115,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	{
 		Dase_Log::debug(LOG_FILE,'SOLR SEARCH: '.$this->solr_search_url);
 		$res = file_get_contents($this->solr_search_url);
+		if (false === $res) {
+			throw new Dase_SearchEngine_Exception('no search result returned');
+		}
 
 		//view solr document itself
 		if ($this->request->get('solr')) {
@@ -135,7 +138,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$entries = array();
 
 		$reader = new XMLReader();
-		$reader->XML($this->_getSearchResults());
+		if (false === $reader->XML($this->_getSearchResults())) {
+			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+		}
 		while ($reader->read()) {
 			//get total number found
 			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
@@ -408,7 +413,7 @@ EOD;
 		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
 		$end = Dase_Util::getTime();
 		$index_elapsed = round($end - $start,4);
-		return $resp.' deleted '.$coll.' index: '.$index_elapsed;
+		return $resp.' deleted '.$item->serial_number.' index: '.$index_elapsed;
 	}	
 
 	public function getIndexedTimestamp($item)

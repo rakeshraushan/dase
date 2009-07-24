@@ -71,7 +71,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		$engine = Dase_SearchEngine::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"deleted index for " . $this->serial_number);
-		return $engine->deleteItemIndex($this->getUnique());
+		return $engine->deleteItemIndex($this);
 	}
 
 	public function buildSearchIndex($freshness=0,$commit=true)
@@ -110,7 +110,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.id as att_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type
+			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type,a.html_input_type
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id
@@ -118,6 +118,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			";
 		$st = Dase_DBO::query($db,$sql,array($this->id));
 		while ($row = $st->fetch()) {
+			$row['edit-id'] =  '/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id'];
 			$metadata[] = $row;
 		}
 		$this->_metadata = $metadata;
@@ -466,15 +467,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->deleteSearchIndex();
-		$this->deleteContent();
-		$this->deleteComments();
-		$this->deleteTagItems();
+		//$this->deleteContent();
+		//$this->deleteComments();
+		//$this->deleteTagItems();
 		$this->delete();
 
-		$ds = Dase_DocStore::get($this->db,$this->config);
-		$ds->deleteItem($this);
+		//$ds = Dase_DocStore::get($this->db,$this->config);
+		//$ds->deleteItem($this);
 
-		$this->getCollection()->updateItemCount();
+		//$this->getCollection()->updateItemCount();
 	}
 
 	function deleteContent()
@@ -513,7 +514,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
 			if ($path_to_media) {
-				$doomed->moveFileToDeleted($path_to_media);
+			//	$doomed->moveFileToDeleted($path_to_media);
 			}
 			$doomed->delete();
 		}
@@ -985,9 +986,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$c['eid'] = $c_obj->updated_by_eid;
 			$c['text'] = $c_obj->text;
 			$c['url'] = $this->getUrl($app_root).'/comments/'.$c_obj->id;
-			$comments[] = $c;
+			$com[] = $c;
 		}
-		return Dase_Json::get($comments);
+		return Dase_Json::get($com);
 	}
 
 	public function getContentJson()
