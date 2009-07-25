@@ -1,1 +1,1 @@
-  * establish convention for non-public attributes like tmp'_' or x'_'
+  * establish convention for non-public attributes like tmp*_ or x*_
