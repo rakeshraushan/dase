@@ -1,3 +1,5 @@
 #summary for development notes, ideas, etc.
 
   * establish convention for non-public attributes like tmp`_` or x`_`
+  * xmldump will *not* include value revision hostory
+  * user sets (tags) need to be dumped separately from collections, prob w/ users
