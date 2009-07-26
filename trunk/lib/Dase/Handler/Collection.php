@@ -22,9 +22,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items' => 'items',
 		'{collection_ascii_id}/items/{start}:{end}' => 'items_by_range',
 		'{collection_ascii_id}/item_types' => 'item_types',
-		'{collection_ascii_id}/item_types/service' => 'item_types_service',
-		'{collection_ascii_id}/item_type_relation/{item_type_relation_ascii_id}' => 'item_type_relation',
-		'{collection_ascii_id}/item_type_relations' => 'item_type_relations',
 		//todo implement:
 		'{collection_ascii_id}/items/recent' => 'recent_items',
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
@@ -777,12 +774,6 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
 		$r->renderResponse($this->collection->getAtompubServiceDoc($r->app_root));
-	}
-
-	public function getItemTypesService($r)
-	{
-		$r->response_mime_type = 'application/atomsvc+xml';
-		$r->renderResponse($this->collection->getItemTypesAtompubServiceDoc($r->app_root));
 	}
 }
 

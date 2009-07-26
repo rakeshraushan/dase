@@ -236,6 +236,7 @@ class Dase_Handler_User extends Dase_Handler
 		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor();
 		foreach ($items->find() as $item) {
+			$item = clone($item);
 			$item->injectAtomEntryData($feed->addEntry('item'),$r->app_root);
 		}
 		$r->renderResponse($feed->asXml());
@@ -257,6 +258,7 @@ class Dase_Handler_User extends Dase_Handler
 		$items->setLimit($limit);
 		$recent = array();
 		foreach ($items->find() as $item) {
+			$item = clone($item);
 			$recent['a'.$item->serial_number]['title'] = $item->getTitle();
 			$recent['a'.$item->serial_number]['thumbnail_href'] = $item->getMediaUrl('thumbnail',$r->app_root);
 			$recent['a'.$item->serial_number]['item_record_href'] = $item->getUrl($r->app_root);

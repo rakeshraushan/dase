@@ -607,22 +607,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $svc->asXml();
 	}
 
-	public function getItemTypesAtompubServiceDoc($app_root) 
-	{
-		$svc = new Dase_Atom_Service;	
-		$ws = $svc->addWorkspace($this->collection_name.' Item Types Workspace');
-		$item_types_repos = $app_root.'/collection/'.$this->ascii_id.'/item_types.atom';
-		$coll = $ws->addCollection($item_types_repos,$this->collection_name.' Item Types');
-		$coll->addAccept('application/atom+xml;type=entry')
-			->addCategorySet()
-			->addCategory('item_type','http://daseproject.org/category/entrytype');
-		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
-		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
-		}
-		return $svc->asXml();
-	}
-
 	public  function xmlDump() {
 
 		$db = $this->db;
