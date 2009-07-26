@@ -73,5 +73,37 @@ class Dase_Handler_Attribute extends Dase_Handler
 		}
 		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val,$r->app_root));
 	}
+
+	public function getAttributeValuesJson($r)
+	{
+		$coll = $r->get('collection_ascii_id');
+		$att_ascii = $r->get('att_ascii_id');
+		$prefix = TABLE_PREFIX;
+		$sql = "
+			SELECT v.value_text,i.serial_number
+			FROM {$prefix}value v,{$prefix}item i, {$prefix}attribute a 
+			WHERE i.p_collection_ascii_id = ?
+			AND a.ascii_id = ?
+			AND v.attribute_id = a.id
+			AND v.item_id = i.id
+			";
+		if ($r->get('public_only')) {
+			$sql .= " AND i.status = 'public' ";
+		}
+		$data = array();
+		foreach (Dase_DBO::query($this->db,$sql,array($it_ascii,$coll,$att_ascii)) as $row) {
+			$item_url = $r->app_root.'/item/'.$coll.'/'.$row['serial_number'];
+			$data[$item_url] = $row['value_text'];
+		}
+		if (count($data)) {
+			asort($data);
+			$r->renderResponse(Dase_Json::get($data));
+		} else {
+			$r->renderError('404','no values');
+		}
+
+	}
+
+
 }
 

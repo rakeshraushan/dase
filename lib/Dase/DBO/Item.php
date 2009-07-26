@@ -611,60 +611,31 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//link to item metadata json, used for editing metadata
 		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
 
-		/* edit, dase/edit (json), service, and attributes (json) links
-		 * for item.  If item has a type, that is the parent (atompub) collection
-		 * otherwise, the collection is the parent (atompub) collection
-		 */
-
-		if ('default' == $this->item_type_ascii_id) {
+		$entry->addLink(
+			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
+			'edit','application/atom+xml');
+		if ($authorize_links) {
 			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
-				'edit','application/atom+xml');
-			if ($authorize_links) {
-				$entry->addLink(
-					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
-					'http://daseproject.org/relation/cached','application/atom+xml');
-			} else {
-				$entry->addLink(
-					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
-					'http://daseproject.org/relation/authorized','application/atom+xml');
-			}
-			$entry->addLink(
-				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
-				'http://daseproject.org/relation/edit-content');
-			$entry->addLink(
-				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.json',
-				'http://daseproject.org/relation/edit','application/json');
-			$entry->addLink(
-				$app_root.'/collection/'.$this->p_collection_ascii_id.'/service',
-				'service','application/atomsvc+xml');
-			$entry->addLink(
-				$app_root.'/collection/'.$this->p_collection_ascii_id.'/attributes.json',
-				'http://daseproject.org/relation/attributes',
-				'application/json');
+				'http://daseproject.org/relation/cached','application/atom+xml');
 		} else {
 			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/item/'.$this->serial_number.'.atom','edit','application/atom+xml');
-			if ($authorize_links) {
-				$entry->addLink(
-					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/item/'.$this->serial_number.'.atom','http://daseproject.org/relation/cached','application/atom+xml');
-			} else {
-				$entry->addLink(
-					$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/item/'.$this->serial_number.'/authorized.atom','http://daseproject.org/relation/authorized','application/atom+xml');
-			}
-			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/item/'.$this->serial_number.'.json',
-				'http://daseproject.org/relation/edit','application/json');
-			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/item/'.$this->serial_number.'/content',
-				'http://daseproject.org/relation/edit-content');
-			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/service',
-				'service','application/atomsvc+xml','',$this->item_type_name.' Item Type Service Doc' );
-			$entry->addLink(
-				$app_root.'/item_type/'.$this->p_collection_ascii_id.'/'.$this->item_type_ascii_id.'/attributes.json',
-				'http://daseproject.org/relation/attributes','application/json','',$this->item_type_name.' Attributes' );
+				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
+				'http://daseproject.org/relation/authorized','application/atom+xml');
 		}
+		$entry->addLink(
+			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
+			'http://daseproject.org/relation/edit-content');
+		$entry->addLink(
+			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.json',
+			'http://daseproject.org/relation/edit','application/json');
+		$entry->addLink(
+			$app_root.'/collection/'.$this->p_collection_ascii_id.'/service',
+			'service','application/atomsvc+xml');
+		$entry->addLink(
+			$app_root.'/collection/'.$this->p_collection_ascii_id.'/attributes.json',
+			'http://daseproject.org/relation/attributes',
+			'application/json');
 
 		/**** COMMENT LINK (threading extension) **********/
 
