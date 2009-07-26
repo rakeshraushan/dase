@@ -306,14 +306,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $hash;
 	}
 
-	/**  note: this returns an array of arrays
-		NOT an array of manager objects
+	/**  note: this returns an array of manager (stdClass) objects
 	 */
 	function getManagers()
 	{
 		$prefix = $this->db->table_prefix;
 		$sql = "
-			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,u.name 
+			SELECT m.dase_user_eid,m.auth_level,m.expiration,m.created,m.created_by_eid,u.name 
 			FROM {$prefix}collection_manager m,{$prefix}dase_user u 
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
@@ -641,8 +640,18 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$writer->setIndent(true);
 		$writer->startDocument('1.0','UTF-8');
 		$writer->startElement('archive');
+		$writer->writeAttribute('archived_date',date(DATE_ATOM));
 		$writer->writeAttribute('name',$this->collection_name);
 		$writer->writeAttribute('id',$this->ascii_id);
+		$writer->writeAttribute('created',$this->created);
+		$writer->writeAttribute('item_count',$this->item_count);
+		$writer->writeAttribute('is_public',$this->is_public);
+		$writer->writeAttribute('visibility',$this->visibility);
+		if ($this->description) {
+			$writer->startElement('description');
+			$writer->text($this->description);
+			$writer->endElement();
+		}
 		$attribute = new Dase_DBO_Attribute($this->db);
 		$attribute->collection_id = $this->id;
 		foreach($attribute->find() as $att) {
@@ -651,6 +660,27 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$writer->startElement('att');
 			$writer->writeAttribute('id',$att->ascii_id);
 			$writer->writeAttribute('name',$att->attribute_name);
+			$writer->writeAttribute('sort_order',$att->sort_order);
+			$writer->writeAttribute('in_basic_search',$att->in_basic_search);
+			$writer->writeAttribute('is_on_list_display',$att->is_on_list_display);
+			$writer->writeAttribute('is_repeatable',$att->is_repeatable);
+			$writer->writeAttribute('is_required',$att->is_required);
+			$writer->writeAttribute('is_public',$att->is_public);
+			if ($att->usage_notes) {
+				$writer->writeAttribute('usage_notes',$att->usage_notes);
+			}
+			if ($att->mapped_admin_att_id) {
+				$mapped = $attribute_lookup[$att->mapped_admin_att_id];
+				$writer->writeAttribute('mapped_admin_att',$mapped->ascii_id);
+			}
+			$writer->writeAttribute('updated',$att->updated);
+			$writer->writeAttribute('html_input_type',$att->html_input_type);
+			if ($att->modifier_type) {
+				$writer->writeAttribute('modifier_type',$att->modifier_type);
+			}
+			if ($att->modifier_defined_list) {
+				$writer->writeAttribute('modifier_defined_list',$att->modifier_defined_list);
+			}
 			foreach ($att->getDefinedValues() as $df) {
 				$writer->startElement('val');
 				$writer->text($df);
@@ -673,6 +703,16 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				$writer->writeAttribute('name',$att->attribute_name);
 				$writer->endElement();
 			}
+			$writer->endElement();
+		}
+		foreach($this->getManagers() as $manager) {
+			$writer->startElement('manager');
+			$writer->writeAttribute('eid',$manager->dase_user_eid);
+			$writer->writeAttribute('auth_level',$manager->auth_level);
+			$writer->writeAttribute('created',$manager->created);
+			$writer->writeAttribute('expiration',$manager->expiration);
+			$writer->writeAttribute('created_by',$manager->created_by_eid);
+			$writer->text($manager->name);
 			$writer->endElement();
 		}
 		$i=0;
@@ -779,52 +819,8 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 				$writer->endElement();
 			}
 			$writer->endElement();
-			error_log($i++);
+			error_log(++$i.' of '.$this->item_count.' ('.$this->collection_name.')');
 		}
-		/*
-		$item = new Dase_DBO_Item($this->db);
-		$item->collection_id = $this->id;
-		foreach($item->find() as $it) {
-			$it = clone($it);
-			$writer->startElement('item');
-			$writer->writeAttribute('sernum',$it->serial_number);
-			$it->getItemType();
-			if (isset($it->item_type->name)) {
-				$writer->writeAttribute('type',$it->item_type->name);
-			}
-			$value = new Dase_DBO_Value($this->db);
-			$value->item_id = $it->id;
-			foreach($value->find() as $val) {
-				$val = clone($val);
-				$writer->startElement('meta');
-				$val->getAttribute();
-				$writer->writeAttribute('aid',$val->attribute->ascii_id);
-				if ($val->modifier) {
-					$writer->writeAttribute('mod',$val->modifier);
-				}
-				if ($val->url) {
-				$writer->writeAttribute('url',$val->url);
-				}
-				$writer->text($val->value_text);
-				$writer->endElement();
-			}
-			$media_file = new Dase_DBO_MediaFile($this->db);
-			$media_file->item_id = $it->id;
-			foreach($media_file->find() as $mf) {
-				$mf = clone($mf);
-				$writer->startElement('media');
-				$writer->writeAttribute('filename',$mf->filename);
-				$writer->writeAttribute('size',$mf->size);
-				$writer->writeAttribute('mime',$mf->mime_type);
-				$writer->writeAttribute('w',$mf->width);
-				$writer->writeAttribute('h',$mf->height);
-				$writer->writeAttribute('len',$mf->file_size);
-				$writer->endElement();
-			}
-			$writer->endElement();
-		}
-		$writer->endElement();
-		 */
 		$writer->endDocument();
 		return $writer->flush(true);
 	}

@@ -170,6 +170,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$this->delete();
 	}
 
+	function getCategories()
+	{
+		$cat = new Dase_DBO_TagCategory($this->db);
+		$cat->tag_id = $this->id;
+		return $cat->find();
+	}
+
 	function updateItemCount()
 	{
 		$tag_items = new Dase_DBO_TagItem($this->db);

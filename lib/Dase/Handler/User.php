@@ -82,6 +82,11 @@ class Dase_Handler_User extends Dase_Handler
 		$r->renderResponse($this->user->getTagsAsAtom($r->app_root));
 	}
 
+	public function getSetsXml($r)
+	{
+		$r->renderResponse($this->user->dumpSetsXml());
+	}
+
 	public function postToRecentSearches($r) {
 		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);

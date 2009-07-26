@@ -22,8 +22,11 @@ CREATE TABLE {$table_prefix}attribute (
     is_on_list_display boolean DEFAULT true,
     is_public boolean DEFAULT true,
     mapped_admin_att_id integer DEFAULT 0,
+    is_repeatable integer DEFAULT 1,
+    is_required integer DEFAULT 0,
     updated character varying(50),
     modifier character varying(200),
+    modifier_defined_list text,
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
