@@ -159,19 +159,4 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 		}
 		$this->delete();
 	}
-	
-	public function getAtompubServiceDoc($app_root) 
-	{
-		$c = $this->getCollection();
-		$svc = new Dase_Atom_Service;	
-		$ws = $svc->addWorkspace($this->name.' Item Type Workspace');
-		$coll = $ws->addCollection($app_root.'/item_type/'.$c->ascii_id.'/'.$this->ascii_id.'.atom',$this->name.' Items');
-		$coll->addAccept('application/atom+xml;type=entry');
-		$coll->addCategorySet()->addCategory('item','http://daseproject.org/category/entrytype');
-		$atts = $coll->addCategorySet('yes','http://daseproject.org/category/metadata');
-		foreach ($this->getAttributes() as $att) {
-			$atts->addCategory($att->ascii_id,'',$att->attribute_name);
-		}
-		return $svc->asXml();
-	}
 }
