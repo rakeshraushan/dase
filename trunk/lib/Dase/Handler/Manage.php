@@ -332,22 +332,6 @@ class Dase_Handler_Manage extends Dase_Handler
 	public function getItemTypeAttributesJson($r)
 	{
 		$type = Dase_DBO_ItemType::get($this->db,$this->collection->ascii_id,$r->get('type_ascii_id'));
-		/*
-		$set = array();
-		foreach ($type->getAttributes() as $att) {
-			$a['attribute_name'] = $att->attribute_name;
-			$a['id'] = $att->id;
-			$a['collection_ascii_id'] = $this->collection->ascii_id;
-			$a['item_type_ascii'] = $type->ascii_id;
-			$a['att_ascii_id'] = $att->ascii_id;
-			$a['input_type'] = $att->html_input_type;
-			$a['values'] = $att->getFormValues();
-			//simply in order to sort:
-			$set[strtolower($att->attribute_name)] = $a;
-		}
-		ksort($set);
-		$r->renderResponse(Dase_Json::get($set));
-		 */
 		$r->renderResponse($type->getAttributesJson($this->collection->ascii_id,$r->app_root));
 	}
 

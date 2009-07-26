@@ -17,6 +17,8 @@ CREATE TABLE `{$table_prefix}attribute` (
 `is_public` boolean default NULL,
 `is_on_list_display` boolean default NULL,
 `in_basic_search` boolean default NULL,
+`is_repeatable` boolean default 1,
+`is_required` boolean default 0,
 `mapped_admin_att_id` integer default NULL,
 `sort_order` integer default NULL,
 `collection_id` integer default NULL,
@@ -26,6 +28,7 @@ CREATE TABLE `{$table_prefix}attribute` (
 `attribute_name` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
 `modifier_type` varchar(200) default NULL,
+`modifier_defined_list` text default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

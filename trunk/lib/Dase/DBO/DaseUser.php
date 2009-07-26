@@ -112,7 +112,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	public static function listAsAtom($db,$app_root,$limit=100)
 	{
-		
+
 		$users = new Dase_DBO_DaseUser($db);
 		if ($limit) {
 			$users->setLimit($limit);
@@ -357,7 +357,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				'user' == $collection->visibility || 
 				'public' == $collection->visibility
 			) {
-			return true;
+				return true;
 			}
 		}
 		if ('write' == $auth_level) {
@@ -365,7 +365,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				'user' == $collection->visibility || 
 				'public' == $collection->visibility
 			) {
-			return true;
+				return true;
 			}
 		}
 		$cm = new Dase_DBO_CollectionManager($this->db); 
@@ -488,6 +488,75 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$coll->addAccept('application/atom+xml;type=entry');
 		$coll->addCategorySet()->addCategory('set','http://daseproject.org/category/entrytype');
 		return $svc->asXml();
+	}
+
+	public function dumpSetsXml()
+	{
+		$prefix = $this->db->table_prefix;
+		$writer = new XMLWriter();
+		$writer->openMemory();
+		$writer->setIndent(true);
+		$writer->startDocument('1.0','UTF-8');
+		$writer->startElement('user_sets');
+		$writer->writeAttribute('archived_date',date(DATE_ATOM));
+		$writer->writeAttribute('eid',$this->eid);
+		$writer->writeAttribute('name',$this->name);
+		$sets = new Dase_DBO_Tag($this->db);
+		$sets->dase_user_id = $this->id;
+		$total_sets = $sets->findCount();
+		$set_count = 0;
+		foreach($sets->find() as $set) {
+			$set = clone($set);
+			$tag_items = new Dase_DBO_TagItem($this->db);
+			$tag_items->tag_id = $set->id;
+			if ($tag_items->findCount()) {
+				$set_count++;
+				$set = clone($set);
+				$writer->startElement('set');
+				$writer->writeAttribute('ascii_id',$set->ascii_id);
+				$writer->writeAttribute('name',$set->name);
+				$writer->writeAttribute('eid',$set->eid);
+				$writer->writeAttribute('created',$set->created);
+				$writer->writeAttribute('updated',$set->updated);
+				$writer->writeAttribute('visibility',$set->visibility);
+				$writer->writeAttribute('item_count',$set->item_count);
+				if ($set->description) {
+					$writer->startElement('description');
+					$writer->text($set->description);
+					$writer->endElement();
+				}
+				foreach ($set->getCategories() as $cat) {
+					$cat = clone($cat);
+					$writer->startElement('category');
+					$writer->writeAttribute('scheme',$cat->scheme);
+					$writer->writeAttribute('term',$cat->term);
+					$writer->writeAttribute('label',$cat->label);
+					$writer->endElement();
+				}
+				$item_count = 0;
+				foreach ($set->getTagItems() as $tag_item) {
+					$tag_item = clone($tag_item);
+					$item_count++;
+					$writer->startElement('item');
+					$writer->writeAttribute('sort_order',$tag_item->sort_order);
+					$writer->writeAttribute('item_unique',$tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number);
+					if ($tag_item->annotation) {
+						$writer->startElement('annotation');
+						$writer->text($tag_item->annotation);
+						$writer->endElement();
+					}
+					$writer->endElement();
+					error_log ('user '.$this->eid.' set number '.$set_count.' of '.$total_sets.' item number '.$item_count);
+				}
+				$writer->endElement();
+			}
+		}
+		$writer->endDocument();
+		if ($set_count) {
+			return $writer->flush(true);
+		} else {
+			return false;
+		}
 	}
 
 }
