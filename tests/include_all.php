@@ -67,7 +67,6 @@ include_once 'Dase/Atom/Service/Media.php';
 include_once 'Dase/Atom/Service/Collection.php';
 include_once 'Dase/Atom/Service/Workspace.php';
 include_once 'Dase/Atom/Service/CategorySet.php';
-include_once 'Dase/Atom/Exception.php';
 include_once 'Dase/Log.php';
 include_once 'Dase/File.php';
 include_once 'Dase/File/Audio.php';

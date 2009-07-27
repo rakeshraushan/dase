@@ -27,7 +27,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 	{
 		//public ONLY!!!!!!
 		$feed = new Dase_Atom_Feed;
-		$feed->setTitle('public sets');
 		$feed->setId($app_root.'/sets');
 		$feed->setFeedType('sets');
 		$feed->setUpdated(date(DATE_ATOM));
@@ -45,34 +44,19 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			} else {
 				return $feed->asXml();
 			}
-			/************** to be replaced **********
-			$prefix = $db->table_prefix;
-			$sql = "
-				SELECT tc.tag_id 
-				FROM {$prefix}category_scheme cs,{$prefix}category c, {$prefix}tag_category tc 
-				WHERE cs.uri = ?
-				AND cs.id = c.scheme_id
-				AND c.term = ?	
-				AND tc.category_id = c.id
-				";
-			foreach (Dase_DBO::query($db,$sql,array($scheme,$term)) as $row) {
-				$tag = new Dase_DBO_Tag($this->db);
-				$tag->load($row['tag_id']);
-				if ($tag->ascii_id) { //compat
-					$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
-					$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
-				}
-			}
-			***************/
 			/***************newly refactored*******************/
 
 			 	$tag_cat = new Dase_DBO_TagCategory($db);
 				$tag_cat->term = $term;
 				$tag_cat->scheme = $scheme;
 				$in_set = array();
+				$category_label = $term;
 				foreach ($tag_cat->find() as $tc) {
 					$in_set[] = $tc->tag_id;
+					$category_label = $tc->label;
 				}
+				$feed->setTitle('Sets for '.$category_label);
+				
 
 				$tags = new Dase_DBO_Tag($db);
 				$tags->is_public = true;
@@ -91,6 +75,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			 /*********************************************/
 
 		} else {
+			$feed->setTitle('All Public Sets');
 			$tags = new Dase_DBO_Tag($db);
 			$tags->is_public = true;
 			$tags->orderBy('updated DESC');
@@ -107,6 +92,25 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		}
 		$feed->sortByTitle();
 		return $feed->asXml();
+	}
+
+	public static function getTagCategoriesByScheme($db,$app_root,$scheme)
+	{
+		$cats = new Dase_Atom_Categories();
+		$cats->setScheme('http://daseproject.org/category/'.$scheme);
+
+		$prefix = $db->table_prefix;
+		$sql = "
+			SELECT term, label 
+			FROM {$prefix}tag_category 
+			WHERE scheme = ?
+			GROUP BY term, label
+			ORDER BY label
+			";
+		foreach (Dase_DBO::query($db,$sql,array($scheme)) as $row) { 
+			$cats->addCategory($row['term'],'',$row['label']);
+		}
+		return $cats->asXml();
 	}
 
 	public static function create($db,$tag_name,$user)
@@ -370,7 +374,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$json_item['collection_name'] = $collection_lookup[$item->collection_id]['collection_name'];
 
 			foreach ($item->getMedia() as $m) {
-				$json_item['media'][$m->size] = $app_root.'/media/'.$item->collection->ascii_id.'/'.$m->size.'/'.$m->filename;
+				$json_item['media'][$m['size']] = $app_root.$m['url'];
 			}
 			foreach($item->getMetadata() as $meta){
 				$json_item['metadata'][$meta['attribute_name']] = $meta['value_text'];

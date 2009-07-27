@@ -973,6 +973,20 @@ form#ingestCollectionForm label {
 
 /************ MISCELLANEOUS STYLES ***************/
 
+table.userSets td {
+	padding: 1em;
+	vertical-align: top;
+}
+
+table.userSets td.filters a {
+	color: #111;
+	font-size: 9px;
+}
+
+table.userSets td.filters {
+	background-color: #9dbda9;
+}
+
 div.login {
 	font-size: .9em;
 	color: #fff;

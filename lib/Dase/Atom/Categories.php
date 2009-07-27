@@ -70,7 +70,7 @@ class Dase_Atom_Categories extends Dase_Atom
 		return $this->root->getAttribute('scheme');
 	}
 
-	function getCategories($cascade_root_scheme=true) {
+	function getAll($cascade_root_scheme=true) {
 		$default_scheme = $this->getScheme();
 		$categories = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $cat) {

@@ -7,11 +7,30 @@ class Dase_Handler_Tags extends Dase_Handler
 		'/' => 'tags',
 		'service' => 'service',
 		'search' => 'search',
+		//categories by scheme:
+		'{seg1}' => 'categories',
+		'{seg1}/{seg2}' => 'categories',
+		'{seg1}/{seg2}/{seg3}' => 'categories',
+		'{seg1}/{seg2}/{seg3}/{seg4}' => 'categories',
 	);
 
 	protected function setup($r)
 	{
 	}	
+
+	private function _getUri($r)
+	{
+		if ($r->has('uri')) {
+			return $r->get('uri');
+		}
+		$uri_parts = array();
+		foreach (array(1,2,3,4) as $i)  {
+			if ($r->has('seg'.(string) $i)) {
+				$uri_parts[] = $r->get('seg'.(string) $i);
+			}       
+		}
+		return join('/',$uri_parts);
+	}
 
 	public function postToTags($r)
 	{
@@ -48,10 +67,22 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	}
 
+	public function getCategoriesCats($r)
+	{
+		$scheme_uri = $this->_getUri($r);
+		$r->renderResponse(Dase_DBO_Tag::getTagCategoriesByScheme($this->db,$r->app_root,$scheme_uri));
+	}
+
 	public function getTags($r)
 	{
 		$tpl = new Dase_Template($r);
-		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/tags.atom');
+		$courses = Dase_Atom_Categories::load(file_get_contents($r->app_root.'/sets/utexas/courses.cats'));
+		$tpl->assign('courses',$courses);
+		if ($r->has('category')) {
+			$feed = Dase_Atom_Feed::retrieve($r->app_root.'/tags.atom?category='.$r->get('category'));
+		} else {
+			$feed = Dase_Atom_Feed::retrieve($r->app_root.'/tags.atom');
+		}
 		$tpl->assign('sets',$feed);
 		$r->renderResponse($tpl->fetch('tags/list.tpl'));
 	}
