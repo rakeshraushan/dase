@@ -74,6 +74,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val,$r->app_root));
 	}
 
+	/* from item types handler
 	public function getAttributeValuesJson($r)
 	{
 		$coll = $r->get('collection_ascii_id');
@@ -103,7 +104,7 @@ class Dase_Handler_Attribute extends Dase_Handler
 		}
 
 	}
-
+	 */
 
 }
 

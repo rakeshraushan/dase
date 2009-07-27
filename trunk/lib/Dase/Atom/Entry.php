@@ -513,4 +513,26 @@ class Dase_Atom_Entry extends Dase_Atom
 	{
 		return Dase_Json::get($this->asArray());
 	}
+
+
+	//todo: pass in @rel for these:
+
+	function setInlineFeed($feed,$rel){
+		$link = $this->addLink($feed->getId(),$rel,'application/atom+xml');
+		$inline = $this->addChildElement($link,'ae:inline','',Dase_Atom::$ns['ae']);
+		$inline->appendChild($this->dom->importNode($feed->root,true));
+	}
+
+	function getInlineFeed($rel){
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			//if($el->getAttribute('rel') == 'http://daseproject.org/relation/order_items'){
+			if ($el->getAttribute('rel') == $rel){
+				$dom = new DOMDocument('1.0','utf-8');
+				$dom->appendChild($dom->importNode($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'feed')->item(0),true));
+				return new Dase_Atom_Feed($dom);
+			}
+		}
+		return false;
+	}
+
 }

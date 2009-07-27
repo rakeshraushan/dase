@@ -580,26 +580,6 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $item;
 	}
 
-
-	//todo: pass in @rel for these:
-
-	function setInlineFeed($feed){
-		$link = $this->addLink($feed->getId(),'http://daseproject.org/relation/order_items','application/atom+xml');
-		$inline = $this->addChildElement($link,'ae:inline','',Dase_Atom::$ns['ae']);
-		$inline->appendChild($this->dom->importNode($feed->root,true));
-	}
-
-	function getInlineFeed(){
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if($el->getAttribute('rel') == 'http://daseproject.org/relation/order_items'){
-				$dom = new DOMDocument('1.0','utf-8');
-				$dom->appendChild($dom->importNode($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'feed')->item(0),true));
-				return new Dase_Atom_Feed($dom);
-			}
-		}
-		return false;
-	}
-
 	function __get($var) 
 	{
 		//allows smarty to invoke function as if getter
