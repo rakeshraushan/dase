@@ -9,7 +9,7 @@
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 	<h1>Public User Sets</h1>
 	<table class="userSets"><tr>
-			<td>
+			<td class="setList">
 				<h2>{$sets->title}</h2>
 				<ul>
 					{foreach item=set from=$sets->entries}

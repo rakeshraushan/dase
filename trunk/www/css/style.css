@@ -980,11 +980,21 @@ table.userSets td {
 
 table.userSets td.filters a {
 	color: #111;
-	font-size: 9px;
+	line-height: 1.8em;
+}
+
+table.userSets td.filters a:hover {
+	color: #611;
+	text-decoration: underline;
+}
+
+table.userSets td.list {
+	width: 58%;
 }
 
 table.userSets td.filters {
 	background-color: #9dbda9;
+	width: 38%;
 }
 
 div.login {
