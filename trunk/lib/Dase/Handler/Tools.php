@@ -48,6 +48,6 @@ class Dase_Handler_Tools extends Dase_Handler
 		$url = 'http://quickdraw.laits.utexas.edu/dase1/media/keanepj/text/000598739.txt';
 		//$url = 'http://harpo.laits.utexas.edu:5984/test/1c919eeb2a40d850ec57b47334ba4f5c/study_set.atom';
 		//$url = 'http://harpo.laits.utexas.edu:1978/one';
-		$r->renderResponse(Dase_Http::get($url,'pkeane','opendata'));
+		$r->renderResponse(Dase_Http::get($url,'xxxx','xxx'));
 	}
 }

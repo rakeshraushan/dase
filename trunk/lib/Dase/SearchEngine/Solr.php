@@ -71,6 +71,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		//get rid of type limit
 		$query_string = preg_replace('/(^|\?|&|&amp;)type=([^&]+)/i','',$query_string);
+		$query_string = preg_replace('/(^|\?|&|&amp;)format=([^&]+)/i','',$query_string);
 
 		$collection_param = '';
 		$sort_param = '';
@@ -97,13 +98,13 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$sort_param = '&sort=_updated+desc';
 		}
 
-		/*
+		//if there is no q param, use the collection 
+		//filter as q to get (all) by collection
 		if (!$request->get('q')) { //empty q param
-			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]+)/i','uuuuuuuuuuuuuuuuuuuuuu',$query_string);
+			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]*)/i','',$query_string);
+			$query_string = preg_replace('/fq=/i','q=',$filter_query);
+			$filter_query='';
 		}
-		print $request->get('q');
-		exit;
-		 */
 
 		$this->solr_search_url = 
 			$this->solr_base_url
@@ -122,9 +123,10 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	private function _getSearchResults() 
 	{
 		Dase_Log::debug(LOG_FILE,'SOLR SEARCH: '.$this->solr_search_url);
-		$res = file_get_contents($this->solr_search_url);
-		if (false === $res) {
-			throw new Dase_SearchEngine_Exception('no search result returned');
+		list($http_code,$res) = Dase_Http::get($this->solr_search_url,null,null);
+		if ('4' == substr($http_code,0,1) || '5' == substr($http_code,0,1)) {
+			//throw new Dase_SearchEngine_Exception('no search result returned');
+			return '<error/>';
 		}
 
 		//view solr document itself

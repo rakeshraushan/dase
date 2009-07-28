@@ -334,9 +334,9 @@ Dase.placeCollectionManageLink = function(eid) {
 		Dase.removeClass(manageLink,'hide');
 		//set menu link
 		if (manageLinkHeader && auth_info.collection_ascii_id) {
-			manageLinkHeader.setAttribute('href','manage/'+auth_info.collection_ascii_id);
-			manageLinkHeader.innerHTML = '[manage collection]';
-			Dase.removeClass(manageLinkHeader,'hide');
+		//	manageLinkHeader.setAttribute('href','manage/'+auth_info.collection_ascii_id);
+		//	manageLinkHeader.innerHTML = '[manage collection]';
+		//	Dase.removeClass(manageLinkHeader,'hide');
 		}
 	}
 };
