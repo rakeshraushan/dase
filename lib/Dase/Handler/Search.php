@@ -146,11 +146,10 @@ class Dase_Handler_Search extends Dase_Handler
 			$r->renderRedirect($r->app_root.'/'.$url.'&num=1');
 		}
 		if (0 == $count) {
-			if ($feed->getCollection()) {
-				$node = $feed->getCollection();
+			if ($r->has('collection_ascii_id')) {
 				$params['msg'] = 'no items found';
 				$params['failed_query'] = $feed->getQuery();
-				$r->renderRedirect($node['href'],$params);
+				$r->renderRedirect($r->app_root.'/collection/'.$r->get('collection_ascii_id'),$params);
 			} else {
 				$params['msg'] = 'no items found';
 				$params['failed_query'] = $feed->getQuery();

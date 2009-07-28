@@ -61,7 +61,8 @@ Class Dase_Http
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
-		return $result;
+		// returns status code && response body
+		return array($info['http_code'],$result);
 	}
 }
 
