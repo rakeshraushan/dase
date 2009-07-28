@@ -97,11 +97,13 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$sort_param = '&sort=_updated+desc';
 		}
 
+		/*
 		if (!$request->get('q')) { //empty q param
 			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]+)/i','uuuuuuuuuuuuuuuuuuuuuu',$query_string);
 		}
 		print $request->get('q');
 		exit;
+		 */
 
 		$this->solr_search_url = 
 			$this->solr_base_url
