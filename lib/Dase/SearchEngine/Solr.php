@@ -97,6 +97,12 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$sort_param = '&sort=_updated+desc';
 		}
 
+		if (!$request->get('q')) { //empty q param
+			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]+)/i','uuuuuuuuuuuuuuuuuuuuuu',$query_string);
+		}
+		print $request->get('q');
+		exit;
+
 		$this->solr_search_url = 
 			$this->solr_base_url
 			.'/select/?'.$query_string
@@ -527,7 +533,7 @@ EOD;
 				$field->appendChild($dom->createTextNode($meta['attribute_name']));
 				$field->setAttribute('name','metadata_link_attribute_'.$meta['id']);
 				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode('http://daseproject.org/relation/metadata-link/'.$col_obj->ascii_id.'/'.$meta['ascii_id']));
+				$field->appendChild($dom->createTextNode('http://daseproject.org/relation/metadata-link/'.$item->p_collection_ascii_id.'/'.$meta['ascii_id']));
 				$field->setAttribute('name','metadata_link_rel_'.$meta['id']);
 				$field = $doc->appendChild($dom->createElement('field'));
 				$field->appendChild($dom->createTextNode($meta['value_text']));
