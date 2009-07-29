@@ -132,7 +132,7 @@
 					{/foreach}
 					{/foreach}
 				</dl>
-				
+
 				<div>
 					<a href="#" class="toggle" id="toggle_adminMetadata">show/hide admin metadata</a>
 				</div>
@@ -154,12 +154,12 @@
 				<div id="metadataLinks">
 					<h3>linked metadata</h3>
 					<dl>
-					{foreach item=set key=att_ascii_id from=$item->entry->metadataLinks}
-					<dt>{$set.attribute_name}</dt>
-					{foreach item=value from=$set.values}
-					<dd><a href="{$value.url}">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
-					{/foreach}
-					{/foreach}
+						{foreach item=set key=att_ascii_id from=$item->entry->metadataLinks}
+						<dt>{$set.attribute_name}</dt>
+						{foreach item=value from=$set.values}
+						<dd><a href="{$value.url}">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
+						{/foreach}
+						{/foreach}
 					</dl>
 				</div>
 				{/if}
@@ -187,6 +187,12 @@
 			</td>
 		</tr>
 	</table>
+	<div id="saveToSetFormHolder">
+		<form id="saveToForm" method="post" action="save">	
+			<div id="saveChecked"></div>
+			<input type="hidden" id="item_unique" name="item_unique" value="{$item->collectionAsciiId}/{$item->entry->serialNumber}">
+		</form>
+	</div>
 </div> 
 {if 'set' == $item->tagType}
 <div class="tagAdmin">

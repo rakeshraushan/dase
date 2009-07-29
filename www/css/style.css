@@ -138,6 +138,8 @@ a.edit { color: #00c; }
 a.current { color: #00c; font-weight: bold;}
 .modify {color: #00c;}
 a.modify {color: #00c;}
+.updating {color: #00c;}
+a.updating {color: #00c;}
 
 /********* STANDARD STYLES *******************/
 #contentHeader h1,
@@ -514,6 +516,9 @@ div#tdiv label {
 	color: #666;
 }
 
+div#saveToSetFormHolder {
+	padding-bottom: 20px;
+}
 
 /*****  ITEM SET DISPLAY PAGE **************/
 
@@ -977,6 +982,13 @@ table.userSets td {
 	padding: 1em;
 	vertical-align: top;
 }
+
+table.userSets td.filters a.outbound {
+	color: #cc5500;
+	color: #882200;
+	line-height: 1.8em;
+}
+
 
 table.userSets td.filters a {
 	color: #111;

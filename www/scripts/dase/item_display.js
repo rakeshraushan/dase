@@ -22,8 +22,55 @@ Dase.pageInitUser = function(eid) {
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
 		Dase.initReindexItem();
+		Dase.initSaveItemTo();
 	}
 	return;
+};
+
+Dase.initSaveItemTo = function() {
+	var user = Dase.user;
+	//save to select menu
+	var h = new Dase.htmlbuilder;
+	var sel = h.add('select',{'id':'saveToSelect','name':'collection_ascii_id'});
+	sel.add('option',{'value':''},'save item to...');
+	for (var n in user.tags) {
+		var tag = user.tags[n];
+		if ('admin' != tag.type) {
+			var opt = sel.add('option',{'value':tag.ascii_id});
+			opt.setText(tag.name+' ('+tag.item_count+')');
+		}
+	}
+	var inp = h.add('input',{'type':'submit','value':'add'});
+	if (Dase.$('saveChecked')) {
+		h.attach(Dase.$('saveChecked'));
+	}
+
+	var form = Dase.$('saveToForm');
+	if (!form) return;
+	form.onsubmit = function() {
+		var saveToSelect = Dase.$('saveToSelect');
+		var tag_ascii_id = saveToSelect.options[saveToSelect.options.selectedIndex].value;
+		var item_uniques_array = [];
+		if (!tag_ascii_id) {
+			alert('Please select a user collection/slideshow/cart to save items to.');
+			return false;
+		}
+		var data = {};
+		data.item_uniques = Dase.$('item_unique').value; 
+		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
+		function(resp) { 
+			alert(resp); 
+			Dase.initUser();
+			//Dase.initSaveTo();
+		},
+		//should *always* handle errors w/ an error callback:
+		function(resp) {
+			alert('Our sincerest apologies.  An error has occurred');
+		});
+		return false;
+	};
+	//why this?
+	//Dase.initCreateNewSet();
 };
 
 Dase.recordItemView = function(eid) {
@@ -191,6 +238,7 @@ Dase.initNotes = function() {
 	Dase.getNotes();
 	var notes = Dase.$('notes');
 	var notes_link = Dase.$('notesLink');
+	if (!notes) return;
 	if (!notes_link) return;
 	var notesForm = Dase.$('notesForm');
 	notes_link.onclick = function() {
@@ -201,10 +249,11 @@ Dase.initNotes = function() {
 		return false;
 	};
 	notesForm.onsubmit = function() {
+		notes.innerHTML = '<h3 class="updating">updating...</h3>';
+		Dase.toggle(notesForm);
 		var note = Dase.$('note').value;
 		Dase.ajax(document.notes_form.action,'POST',
 		function(resp) { 
-			Dase.toggle(notesForm);
 			Dase.getNotes();
 		},note);
 		return false;

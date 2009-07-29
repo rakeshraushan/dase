@@ -268,10 +268,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'/'.$m['size'].'/'.$m['filename'];
 			$this->_media[$m['size']] = $m;
 		}
-		//last media bigger than 1 M
-		if ($m['file_size'] > 1000000) {
-			$this->_media['enclosure'] = $m;
-		}
+		//last, biggest media 
+		$this->_media['enclosure'] = $m;
 		return $this->_media;
 	}
 
@@ -950,6 +948,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$comments->item_id = $this->id;
 		$comments->updated_by_eid = $eid;
 		$comments->orderBy('updated DESC');
+		$com = array();
 		foreach ($comments->find() as $c_obj) {
 			$c['id'] = $c_obj->id;
 			//$c['updated'] = $c_obj->updated;

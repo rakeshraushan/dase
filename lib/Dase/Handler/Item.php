@@ -303,11 +303,16 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot read this item');
 		}
 		//auth: anyone can post to an item they can read
-		$bits = $r->getBody();
-		$this->item->addComment($bits,$user->eid);
-		//comments should NOT be globally searchable
-		//$this->item->buildSearchIndex();
-		$r->renderResponse('added comment: '.$bits);
+		$bits = trim(strip_tags($r->getBody()));
+		
+		if ($bits) {
+			$this->item->addComment($bits,$user->eid);
+			//comments should NOT be globally searchable
+			//$this->item->buildSearchIndex();
+			$r->renderResponse('added comment: '.$bits);
+		} else {
+			$r->renderResponse('no comment');
+		}
 	}
 
 	/** this is used to UPDATE an item's content */
