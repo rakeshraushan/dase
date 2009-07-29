@@ -468,6 +468,7 @@ class Dase_Atom_Feed extends Dase_Atom
 			}
 		}
 		$class = self::$types_map[$this->feedtype]['entry'];
+		$entries = array();
 		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry') as $entry_dom) {
 			foreach ($entry_dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
 				if ('http://daseproject.org/category/entrytype' == $el->getAttribute('scheme')) {
