@@ -40,6 +40,11 @@ class Dase_Handler_Search extends Dase_Handler
 		} else {
 			$this->num = 0;
 		}
+		if ($r->has('sort')) {
+			$this->sort = $r->get('sort');
+		} else {
+			$this->sort = '';
+		}
 	}
 
 	/** this should be used sparingly, since it is a sledgehammer */
@@ -65,7 +70,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = Dase_SearchEngine::get($this->db,$this->config);
-		$search->prepareSearch($r,$this->start,$this->max,$this->num);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
 	}
@@ -80,18 +85,10 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public function getSearchUris($r)
 	{
-		$r->checkCache();
-		$search = new Dase_Search($r,$this->db,$this->config);
-		$sernums = $search->getResult()->getResultSetUris($r->app_root,$this->db);
-		$r->renderResponse(join("\n",$sernums));
 	}
 
 	public function getSearchCsv($r)
 	{
-		$r->checkCache();
-		$search = new Dase_Search($r,$this->db,$this->config);
-		$sernums = $search->getResult()->getResultSetCsv($this->db);
-		$r->renderResponse(join(",",$sernums));
 	}
 
 	public function getSearchItemAtom($r)
@@ -99,7 +96,7 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$search = Dase_SearchEngine::get($this->db,$this->config);
 		$this->max =1;
-		$search->prepareSearch($r,$this->start,$this->max,$this->num);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsItemAtom();
 		$r->renderResponse($atom_feed);
 	}

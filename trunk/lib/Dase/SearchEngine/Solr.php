@@ -40,6 +40,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		//omit sort param
 		$url = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$url);
 
+
 		//last param only PHP >= 5.2.3
 		//$url = htmlspecialchars($url,ENT_COMPAT,'UTF-8',false);
 		//beware double encoding
@@ -48,12 +49,13 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		return $url;
 	}
 
-	public function prepareSearch($request,$start,$max,$num=0)
+	public function prepareSearch($request,$start,$max,$num=0,$sort='')
 	{
 		$this->request = $request;
 		$this->start = $start;
 		$this->max = $max;
 		$this->num = $num;
+		$this->sort = $sort;
 
 		if ($num) {
 			$start = $num-1;
@@ -185,8 +187,8 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$reader->close();
 
 		$url = $this->_cleanUpUrl($this->request->getUrl());
-		$grid_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=grid';
-		$list_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=list';
+		$grid_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=grid&amp;sort='.$this->sort;
+		$list_url = $url.'&amp;start='.$this->start.'&amp;max='.$this->max.'&amp;display=list&amp;sort='.$this->sort;
 
 		$id = $app_root.'/search/'.md5($url);
 		$updated = date(DATE_ATOM);
@@ -219,14 +221,14 @@ EOD;
 		//next link
 		$next = $this->start + $this->max;
 		if ($next <= $total) {
-			$next_url = $url.'&amp;start='.$next.'&amp;max='.$this->max;
+			$next_url = $url.'&amp;start='.$next.'&amp;max='.$this->max.'&amp;sort='.$this->sort;
 			$feed .= "  <link rel=\"next\" href=\"$next_url\"/>";
 		}
 
 		//previous link
 		$previous = $this->start - $this->max;
 		if ($previous > 0) {
-			$previous_url = $url.'&amp;start='.$previous.'&amp;max='.$this->max;
+			$previous_url = $url.'&amp;start='.$previous.'&amp;max='.$this->max.'&amp;sort='.$this->sort;
 			$feed .= "  <link rel=\"previous\" href=\"$previous_url\"/>";
 		}
 
