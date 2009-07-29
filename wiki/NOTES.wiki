@@ -4,3 +4,6 @@
   * xmldump will *not* include value revision hostory
   * user sets (tags) need to be dumped separately from collections, prob w/ users
   * change 'tag' to 'set' throughout codebase
+  * start using meta element in head for page data a la twitter
+  * Implement PPD token for added security
+  * fancy-up set downloader w/ stuart's code
