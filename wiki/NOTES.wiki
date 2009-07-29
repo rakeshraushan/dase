@@ -8,3 +8,4 @@
   * Implement PPD token for added security
   * fancy-up set downloader w/ stuart's code
   * implement db-backed config so users can switch off and on modules 
+  * add indexes to db schemas
