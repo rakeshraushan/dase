@@ -9,3 +9,4 @@
   * fancy-up set downloader w/ stuart's code
   * implement db-backed config so users can switch off and on modules 
   * add indexes to db schemas
+  * clean up dase courses: "delete from tag_category where id NOT IN (select tag_category.id from tag,tag_category where tag_category.tag_id = tag.id)"
