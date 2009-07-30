@@ -144,7 +144,6 @@
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
 					<!-- fix this! i-->
-					<dd><a href="search?{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a></dd>
 					<dd><a href="search?c={$item->collectionAsciiId}&amp;q={$ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text}</a></dd>
 					{/foreach}
 					{/foreach}
