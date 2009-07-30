@@ -126,9 +126,8 @@
 					{foreach item=set key=att_ascii_id from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<!-- note solr escaping (bad!!! breaks other engines)-->
 					<dd><a 
-						href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|solr_escape|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
+						href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
 					{/foreach}
 					{/foreach}
 				</dl>
