@@ -128,6 +128,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		list($http_code,$res) = Dase_Http::get($this->solr_search_url,null,null);
 		if ('4' == substr($http_code,0,1) || '5' == substr($http_code,0,1)) {
 			//throw new Dase_SearchEngine_Exception('no search result returned');
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR :'.$res);
 			return '<error/>';
 		}
 

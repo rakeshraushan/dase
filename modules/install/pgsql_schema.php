@@ -248,6 +248,8 @@ CREATE TABLE {$table_prefix}value_revision_history (
     added_text text,
     item_serial_number character varying(200),
     attribute_name character varying(200),
+    added_modifier character varying(2000),
+    deleted_modifier character varying(2000),
     collection_ascii_id character varying(200),
     "timestamp" character varying(50)
 );
