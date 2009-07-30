@@ -28,7 +28,8 @@
 			<a href="{$items->gridLink}">grid</a> | 
 			<a href="{$items->listLink}">list</a> | 
 			<a href="#" id="startSlideshow">slideshow</a> 
-			| <a href="{$items->dataLink}">data</a>
+			<!-- | <a href="{$items->dataLink}">data</a>-->
+			| <a href="tag/{$items->eid}/{$items->asciiId}/download">download</a>
 			]<span></h2>
 			<h3>{$items->subtitle}</h3>
 			{if $items->count}
@@ -127,9 +128,6 @@
 				{/if}
 				</p>
 			</form>
-			<p>
-			<h4><a href="tag/{$items->eid}/{$items->asciiId}/download">download this set</a></h4>
-			</p>
 		</div>
 		{/if}
 		{/block}

@@ -262,6 +262,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			ORDER BY file_size ASC 
 			";
 		$st = Dase_DBO::query($this->db,$sql,array($this->id));
+		$last = null;
 		while ($m = $st->fetch()) {
 			$m['url'] = 
 				'/media/'.$m['p_collection_ascii_id'].
@@ -270,7 +271,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$last = $m;
 		}
 		//last, biggest media 
-		$this->_media['enclosure'] = $last;
+		if ($last) {
+			$this->_media['enclosure'] = $last;
+		}
 		return $this->_media;
 	}
 

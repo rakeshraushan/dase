@@ -54,7 +54,7 @@ class Dase_Log
 		$log = Dase_Log::getInstance();
 		$log->setLogFile($log_file);
 		@unlink($log_file);
-		return $this->_write("---- dase log ----\n\n");
+		return $log->_write("---- dase log ----\n\n");
 	}
 
 	public static function readLastLine($log_file)
