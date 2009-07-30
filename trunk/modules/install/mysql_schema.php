@@ -270,6 +270,8 @@ CREATE TABLE `{$table_prefix}value_revision_history` (
 `collection_ascii_id` varchar(200) default NULL,
 `attribute_name` varchar(200) default NULL,
 `item_serial_number` varchar(200) default NULL,
+`added_modifier` varchar(2000) default NULL,
+`deleted_modifier` varchar(2000) default NULL,
 `dase_user_eid` varchar(20) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
