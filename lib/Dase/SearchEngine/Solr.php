@@ -520,10 +520,7 @@ EOD;
 		$search_text[] = $item->id;
 		$search_text[] = $item->serial_number;
 
-		$att_names = array();
-		$metadata_array = array();
 		foreach ($item->getMetadata(true) as $meta) {
-			$metadata_array[$meta['id']]['metadata'] = $meta;
 
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
@@ -531,24 +528,12 @@ EOD;
 			} else {
 				$search_text[] = $meta['value_text'];
 			}
+
 			if ($meta['url']) {
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['url']));
-				$field->setAttribute('name','metadata_link_url_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['attribute_name']));
-				$field->setAttribute('name','metadata_link_attribute_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode('http://daseproject.org/relation/metadata-link/'.$item->p_collection_ascii_id.'/'.$meta['ascii_id']));
-				$field->setAttribute('name','metadata_link_rel_'.$meta['id']);
-				$field = $doc->appendChild($dom->createElement('field'));
-				$field->appendChild($dom->createTextNode($meta['value_text']));
-				$field->setAttribute('name','metadata_link_title_'.$meta['id']);
-				//attribute name lookup array before 'do_not_store' change
-				$att_names[$meta['ascii_id']] = $meta['attribute_name'];
-				$meta['ascii_id'] = 'do_not_store_'.$meta['ascii_id'];
+				$search_text[] = $meta['url'];
 			}
 
+			//allows filtering on mod (e.g. role:painter)
 			if ($meta['modifier']) {
 				$search_text[] = $meta['modifier'];
 				if ($meta['modifier_type']) {
@@ -557,6 +542,8 @@ EOD;
 					$field->setAttribute('name',$meta['modifier_type']);
 				}
 			}
+
+			//allows fielded search:
 
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));

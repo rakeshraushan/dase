@@ -267,9 +267,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				'/media/'.$m['p_collection_ascii_id'].
 				'/'.$m['size'].'/'.$m['filename'];
 			$this->_media[$m['size']] = $m;
+			$last = $m;
 		}
 		//last, biggest media 
-		$this->_media['enclosure'] = $m;
+		$this->_media['enclosure'] = $last;
 		return $this->_media;
 	}
 
@@ -795,20 +796,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$media_thumbnail->setAttribute('width',$med['width']);
 				$media_thumbnail->setAttribute('height',$med['height']);
 			} else {
-				$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-				if ($authorize_links) {
-					$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root,$token));
-				} else {
-					$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root));
+				if ($size != 'enclosure') {
+					$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
+					if ($authorize_links) {
+						$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root,$token));
+					} else {
+						$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root));
+					}
+					if ($med['width'] && $med['height']) {
+						$media_content->setAttribute('width',$med['width']);
+						$media_content->setAttribute('height',$med['height']);
+					}
+					$media_content->setAttribute('fileSize',$med['file_size']);
+					$media_content->setAttribute('type',$med['mime_type']);
+					$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
+					$media_category->appendChild($entry->dom->createTextNode($size));
 				}
-				if ($med['width'] && $med['height']) {
-					$media_content->setAttribute('width',$med['width']);
-					$media_content->setAttribute('height',$med['height']);
-				}
-				$media_content->setAttribute('fileSize',$med['file_size']);
-				$media_content->setAttribute('type',$med['mime_type']);
-				$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
-				$media_category->appendChild($entry->dom->createTextNode($size));
 			}
 		}
 		return $entry;

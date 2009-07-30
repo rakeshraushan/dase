@@ -283,13 +283,19 @@ http://wiki.apache.org/solr/SchemaXml
 	  <!-- DASe -->
 
 	  <!-- 
-	  underscore so these will NOT collide w/ attribute ascii ids
+	  underscore so these will NOT collide w/ attribute ascii ids will NOT be used in 
+	  search query so under score OK
 	  -->
 	  <field name="_id" type="string" indexed="true" stored="true" required="true"/>
 	  <field name="_search_text" type="text" indexed="true" stored="false" multiValued="false"/>
+	  <field name="_atom" type="text" indexed="false" stored="true" multiValued="false"/>
+	  <field name="_item_id" type="text" indexed="true" stored="true" multiValued="false"/>
+	  <field name="_serial_number" type="text" indexed="true" stored="true" multiValued="false"/>
 
-
-	  <!-- not that the following field names CANNOT be used as att_ascii_id or Att Name -->
+	  <!-- 
+	  note that the following field names CANNOT be used as att_ascii_id or Att Name 
+	  not underscore since they may be used in search query
+	  -->
 
 	  <field name="item_type" type="string" indexed="true" stored="true" required="false"/>
 	  <field name="item_type_name" type="text" indexed="true" stored="true" required="false"/>
@@ -308,10 +314,7 @@ http://wiki.apache.org/solr/SchemaXml
 	  -->
 	  <field name="timestamp" type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 
-	  <dynamicField name="metadata_link_title_*" type="text" stored="true" indexed="true" multiValued="false"/>
-	  <dynamicField name="do_not_store_*" type="text" stored="false" indexed="false" multiValued="true"/>
-
-	  <!-- filterable field cannot be tokenized , so use string (I think) -->
+	  <!-- filterable field cannot be tokenized , so use string -->
 	  <dynamicField name="*" type="string" stored="true" indexed="true" multiValued="true"/>
 
 	</fields>
