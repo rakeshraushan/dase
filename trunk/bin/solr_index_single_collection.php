@@ -8,6 +8,8 @@ $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
 
 $colls = array(
 
+	'vrc',
+	'classics',
 	'aem246',
 	'akohl',
 	'amazonian_survey',
@@ -35,7 +37,6 @@ $colls = array(
 	'chinese_412l',
 	'chinese_506',
 	'chinese_507',
-	'classics',
 	'cms3457',
 	'cola_pubs',
 	'constitution',
@@ -152,7 +153,6 @@ $colls = array(
 	'utunes',
 	'video_catalog',
 	'video_production',
-	'vrc',
 	'vvaliav',
 	'waller_creek',
 	'wileydc',
@@ -171,7 +171,7 @@ foreach ($colls as $coll) {
 		foreach ($c->getItems() as $item) {
 			$item = clone($item);
 			$i++;
-			if (0 == $i%100) {
+			if (0 == $i%500) {
 				//commit every 100 items
 				print "\nCOMITTING CHANGES\n";
 				print $c->collection_name.':'.$item->serial_number.':'.$item->buildSearchIndex(0,true);
