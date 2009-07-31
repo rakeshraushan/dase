@@ -108,6 +108,15 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$filter_query='';
 		}
 
+		//allows for case-insensitive wildcards
+		//see: http://mail-archives.apache.org/mod_mbox/lucene-solr-user/200608.mbox/%3CPine.LNX.4.58.0608181231380.1336@hal.rescomp.berkeley.edu%3E
+		if (false === strpos($query_string,':') && 
+			false === strpos($query_string,' OR ') &&
+			(false !== strpos($query_string,'*') || false !== strpos($query_string,'?') 
+		) {
+			$query_string = strtolower($query_string);
+		}
+
 		$this->solr_search_url = 
 			$this->solr_base_url
 			.'/select/?'.$query_string
