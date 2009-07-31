@@ -49,6 +49,11 @@
 			<input type="submit" value="commit index updates">
 		</form>
 		</li>
+		<li>
+		<form class="adminForm" method="post" action="admin/set_log_permission">
+			<input type="submit" value="set_log_permission">
+		</form>
+		</li>
 	</ul>
 {/block} 
 

@@ -464,7 +464,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.atom';
 			file_put_contents($filename,$this->asAtom('http://daseproject.org/deleted/'));
 		}
-		
+
 		$this->deleteMedia($path_to_media);
 		$this->deleteValues();
 		$this->deleteAdminValues();
@@ -516,7 +516,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
 			if ($path_to_media) {
-			//	$doomed->moveFileToDeleted($path_to_media);
+				//	$doomed->moveFileToDeleted($path_to_media);
 			}
 			$doomed->delete();
 		}
@@ -574,182 +574,191 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $text;
 	}
 
-	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root,$authorize_links=false)
+	public function getEnclosure()
 	{
-		if (!$this->id) { return false; }
-
-		/* namespaces */
-
-		$d = Dase_Atom::$ns['d'];
-		$thr = Dase_Atom::$ns['thr'];
-
-		/* resources */
-
-		$base_url = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
-
-		/* standard atom stuff */
-
-		$entry->setId($base_url);
-
-		$entry->addAuthor($this->created_by_eid);
-		//todo: I think this can be simplified when DASe 1.0 is retired
-		if (is_numeric($this->updated)) {
-			$entry->setUpdated(date(DATE_ATOM,$this->updated));
-		} else {
-			$entry->setUpdated($this->updated);
+		$media = $this->getMedia();
+		if (isset($media['enclosure'])) {
+			return $media['enclosure'];
 		}
-		if (is_numeric($this->created)) {
-			$entry->setPublished(date(DATE_ATOM,$this->created));
-		} else {
-			$entry->setPublished($this->created);
-		}
+	}
 
-		//atompub
-		$entry->setEdited($entry->getUpdated());
 
-		//alternate link
-		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number,'alternate');
+		function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root,$authorize_links=false)
+		{
+			if (!$this->id) { return false; }
 
-		//link to item metadata json, used for editing metadata
-		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
+			/* namespaces */
 
-		$entry->addLink(
-			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
-			'edit','application/atom+xml');
-		if ($authorize_links) {
+			$d = Dase_Atom::$ns['d'];
+			$thr = Dase_Atom::$ns['thr'];
+
+			/* resources */
+
+			$base_url = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
+
+			/* standard atom stuff */
+
+			$entry->setId($base_url);
+
+			$entry->addAuthor($this->created_by_eid);
+			//todo: I think this can be simplified when DASe 1.0 is retired
+			if (is_numeric($this->updated)) {
+				$entry->setUpdated(date(DATE_ATOM,$this->updated));
+			} else {
+				$entry->setUpdated($this->updated);
+			}
+			if (is_numeric($this->created)) {
+				$entry->setPublished(date(DATE_ATOM,$this->created));
+			} else {
+				$entry->setPublished($this->created);
+			}
+
+			//atompub
+			$entry->setEdited($entry->getUpdated());
+
+			//alternate link
+			$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number,'alternate');
+
+			//link to item metadata json, used for editing metadata
+			$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
+
 			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
-				'http://daseproject.org/relation/cached','application/atom+xml');
-		} else {
+				'edit','application/atom+xml');
+			if ($authorize_links) {
+				$entry->addLink(
+					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
+					'http://daseproject.org/relation/cached','application/atom+xml');
+			} else {
+				$entry->addLink(
+					$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
+					'http://daseproject.org/relation/authorized','application/atom+xml');
+			}
 			$entry->addLink(
-				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/authorized.atom',
-				'http://daseproject.org/relation/authorized','application/atom+xml');
-		}
-		$entry->addLink(
-			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
-			'http://daseproject.org/relation/edit-content');
-		$entry->addLink(
-			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.json',
-			'http://daseproject.org/relation/edit','application/json');
-		$entry->addLink(
-			$app_root.'/collection/'.$this->p_collection_ascii_id.'/service',
-			'service','application/atomsvc+xml');
-		$entry->addLink(
-			$app_root.'/collection/'.$this->p_collection_ascii_id.'/attributes.json',
-			'http://daseproject.org/relation/attributes',
-			'application/json');
+				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/content',
+				'http://daseproject.org/relation/edit-content');
+			$entry->addLink(
+				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.json',
+				'http://daseproject.org/relation/edit','application/json');
+			$entry->addLink(
+				$app_root.'/collection/'.$this->p_collection_ascii_id.'/service',
+				'service','application/atomsvc+xml');
+			$entry->addLink(
+				$app_root.'/collection/'.$this->p_collection_ascii_id.'/attributes.json',
+				'http://daseproject.org/relation/attributes',
+				'application/json');
 
-		/**** COMMENT LINK (threading extension) **********/
+			/**** COMMENT LINK (threading extension) **********/
 
-		$replies = $entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments','replies' );
-		if ($this->comments_count) {
-			//lookup
-			$replies->setAttributeNS($thr,'thr:count',$this->comments_count);
-			//lookup
-			$replies->setAttributeNS($thr,'thr:updated',$this->comments_updated);
-		}
+			$replies = $entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments','replies' );
+			if ($this->comments_count) {
+				//lookup
+				$replies->setAttributeNS($thr,'thr:count',$this->comments_count);
+				//lookup
+				$replies->setAttributeNS($thr,'thr:updated',$this->comments_updated);
+			}
 
-		/* dase categories */
+			/* dase categories */
 
-		$entry->setEntrytype('item');
+			$entry->setEntrytype('item');
 
-		//allows us to replace all if/when necessary :(
-		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
+			//allows us to replace all if/when necessary :(
+			$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 
-		$entry->addCategory($this->item_type_ascii_id,'http://daseproject.org/category/item_type',$this->item_type_name);
-		$entry->addCategory($this->p_collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
-		$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
-		$entry->addCategory($this->serial_number,'http://daseproject.org/category/serial_number');
+			$entry->addCategory($this->item_type_ascii_id,'http://daseproject.org/category/item_type',$this->item_type_name);
+			$entry->addCategory($this->p_collection_ascii_id,'http://daseproject.org/category/collection',$this->collection_name);
+			$entry->addCategory($this->id,'http://daseproject.org/category/item_id');
+			$entry->addCategory($this->serial_number,'http://daseproject.org/category/serial_number');
 
-		if ($this->status) {
-			$entry->addCategory($this->status,'http://daseproject.org/category/status');
-		} else {
-			$entry->addCategory('public','http://daseproject.org/category/status');
-		}
+			if ($this->status) {
+				$entry->addCategory($this->status,'http://daseproject.org/category/status');
+			} else {
+				$entry->addCategory('public','http://daseproject.org/category/status');
+			}
 
-		/********* METADATA **********/
+			/********* METADATA **********/
 
-		$item_metadata = $this->getMetadata(true);
-		foreach ($item_metadata as $row) {
-			if ($row['url']) { //create metadata LINK
-				$metadata_link = $entry->addLink(
-					$row['url'],
-					'http://daseproject.org/relation/metadata-link/'.
-					$this->p_collection_ascii_id.'/'.$row['ascii_id'],
-					'',
-					'',
-					$row['value_text']
-				);
-				$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
-				$metadata_link->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
-				if ($row['modifier']) {
-					$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
-					if ($row['modifier_type']) {
-						$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
-					}
-				}
-			} 
-		}
-		foreach ($item_metadata as $row) {
-			if ($row['url']) { 
-				//already made metadata links
-			} else { //create metadata CATEGORY
-				if (0 == $row['collection_id']) {
-					$meta = $entry->addCategory(
-						$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
-						$row['attribute_name'],$row['value_text']);
-				} else {
-					if ($row['is_public']) {
-						$meta = $entry->addCategory(
-							$row['ascii_id'],'http://daseproject.org/category/metadata',
-							$row['attribute_name'],$row['value_text']);
-						$meta->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
-					} else {
-						$meta = $entry->addCategory(
-							$row['ascii_id'],'http://daseproject.org/category/private_metadata',
-							$row['attribute_name'],$row['value_text']);
-						$meta->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
-					}
-					if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
-						$entry->setTitle($row['value_text']);
-					}
-					if ('rights' == $row['ascii_id']) {
-						$entry->setRights($row['value_text']);
-					}
+			$item_metadata = $this->getMetadata(true);
+			foreach ($item_metadata as $row) {
+				if ($row['url']) { //create metadata LINK
+					$metadata_link = $entry->addLink(
+						$row['url'],
+						'http://daseproject.org/relation/metadata-link/'.
+						$this->p_collection_ascii_id.'/'.$row['ascii_id'],
+						'',
+						'',
+						$row['value_text']
+					);
+					$metadata_link->setAttributeNS($d,'d:attribute',$row['attribute_name']);
+					$metadata_link->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
 					if ($row['modifier']) {
-						$meta->setAttributeNS($d,'d:mod',$row['modifier']);
+						$metadata_link->setAttributeNS($d,'d:mod',$row['modifier']);
 						if ($row['modifier_type']) {
-							$meta->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+							$metadata_link->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+						}
+					}
+				} 
+			}
+			foreach ($item_metadata as $row) {
+				if ($row['url']) { 
+					//already made metadata links
+				} else { //create metadata CATEGORY
+					if (0 == $row['collection_id']) {
+						$meta = $entry->addCategory(
+							$row['ascii_id'],'http://daseproject.org/category/admin_metadata',
+							$row['attribute_name'],$row['value_text']);
+					} else {
+						if ($row['is_public']) {
+							$meta = $entry->addCategory(
+								$row['ascii_id'],'http://daseproject.org/category/metadata',
+								$row['attribute_name'],$row['value_text']);
+							$meta->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
+						} else {
+							$meta = $entry->addCategory(
+								$row['ascii_id'],'http://daseproject.org/category/private_metadata',
+								$row['attribute_name'],$row['value_text']);
+							$meta->setAttributeNS($d,'d:edit-id',$app_root.$row['edit-id']);
+						}
+						if ('title' == $row['ascii_id'] || 'Title' == $row['attribute_name']) {
+							$entry->setTitle($row['value_text']);
+						}
+						if ('rights' == $row['ascii_id']) {
+							$entry->setRights($row['value_text']);
+						}
+						if ($row['modifier']) {
+							$meta->setAttributeNS($d,'d:mod',$row['modifier']);
+							if ($row['modifier_type']) {
+								$meta->setAttributeNS($d,'d:modtype',$row['modifier_type']);
+							}
 						}
 					}
 				}
 			}
-		}
 
-		//this will only "take" if there is not already a title
-		$entry->setTitle($this->serial_number);
+			//this will only "take" if there is not already a title
+			$entry->setTitle($this->serial_number);
 
-		/********* CONTENT **********/
+			/********* CONTENT **********/
 
-		$thumb_url = $this->getMediaUrl('thumbnail',$app_root);
-		$viewitem_url = $this->getMediaUrl('viewitem',$app_root);
+			$thumb_url = $this->getMediaUrl('thumbnail',$app_root);
+			$viewitem_url = $this->getMediaUrl('viewitem',$app_root);
 
-		if ($this->content_length) {
-			$content = $this->getContents();
-			if ($content && $content->text) {
-				if (!$content->type) {
-					$content->type = 'text';
-				}
-				if ('application/json' == $content->type) {
-					$entry->setExternalContent($base_url.'/content','application/json');
+			if ($this->content_length) {
+				$content = $this->getContents();
+				if ($content && $content->text) {
+					if (!$content->type) {
+						$content->type = 'text';
+					}
+					if ('application/json' == $content->type) {
+						$entry->setExternalContent($base_url.'/content','application/json');
+					} else {
+						$entry->setContent($content->text,$content->type);
+					}
+					/* put thumbnail in summary */
+					if ($thumb_url) {
+						$entry->setThumbnail($app_root.$thumb_url);	
+					}
 				} else {
-					$entry->setContent($content->text,$content->type);
-				}
-				/* put thumbnail in summary */
-				if ($thumb_url) {
-					$entry->setThumbnail($app_root.$thumb_url);	
-				}
-			} else {
 			/** skip splash for now 
 			$list = '';
 			foreach ($item_metadata as $row) {
@@ -767,349 +776,349 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				";
 			$entry->setContent($splash,'html');
 			 */
-			}
-		}
-
-		/*******  MEDIA  ***********/
-
-		$item_media = $this->getMedia();
-		$token = $this->config->getAuth('token');
-
-		if (isset($item_media['enclosure'])) {
-			$enc = $item_media['enclosure'];
-			if ($authorize_links) {
-				$entry->addLink($this->getMediaUrl('enclosure',$app_root,$token),'enclosure',$enc['mime_type'],$enc['file_size']);
-			} else {
-				$entry->addLink($this->getMediaUrl('enclosure',$app_root),'enclosure',$enc['mime_type'],$enc['file_size']);
-			}
-		}
-
-		/* edit-media link */
-
-		$entry->addLink($this->getEditMediaUrl($app_root),'edit-media');
-		$media_url = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/media';
-		$entry->addLink($media_url,'http://daseproject.org/relation/add-media');
-
-		/* media rss ext */
-
-		foreach ($this->getMedia() as $size => $med) {
-			if ('thumbnail' == $size) {
-				$media_thumbnail = $entry->addElement('media:thumbnail','',Dase_Atom::$ns['media']);
-				$media_thumbnail->setAttribute('url',$app_root.$med['url']);
-				$media_thumbnail->setAttribute('width',$med['width']);
-				$media_thumbnail->setAttribute('height',$med['height']);
-			} else {
-				if ($size != 'enclosure') {
-					$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
-					if ($authorize_links) {
-						$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root,$token));
-					} else {
-						$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root));
-					}
-					if ($med['width'] && $med['height']) {
-						$media_content->setAttribute('width',$med['width']);
-						$media_content->setAttribute('height',$med['height']);
-					}
-					$media_content->setAttribute('fileSize',$med['file_size']);
-					$media_content->setAttribute('type',$med['mime_type']);
-					$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
-					$media_category->appendChild($entry->dom->createTextNode($size));
 				}
 			}
+
+			/*******  MEDIA  ***********/
+
+			$item_media = $this->getMedia();
+			$token = $this->config->getAuth('token');
+
+			if (isset($item_media['enclosure'])) {
+				$enc = $item_media['enclosure'];
+				if ($authorize_links) {
+					$entry->addLink($this->getMediaUrl('enclosure',$app_root,$token),'enclosure',$enc['mime_type'],$enc['file_size']);
+				} else {
+					$entry->addLink($this->getMediaUrl('enclosure',$app_root),'enclosure',$enc['mime_type'],$enc['file_size']);
+				}
+			}
+
+			/* edit-media link */
+
+			$entry->addLink($this->getEditMediaUrl($app_root),'edit-media');
+			$media_url = $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/media';
+			$entry->addLink($media_url,'http://daseproject.org/relation/add-media');
+
+			/* media rss ext */
+
+			foreach ($this->getMedia() as $size => $med) {
+				if ('thumbnail' == $size) {
+					$media_thumbnail = $entry->addElement('media:thumbnail','',Dase_Atom::$ns['media']);
+					$media_thumbnail->setAttribute('url',$app_root.$med['url']);
+					$media_thumbnail->setAttribute('width',$med['width']);
+					$media_thumbnail->setAttribute('height',$med['height']);
+				} else {
+					if ($size != 'enclosure') {
+						$media_content = $entry->addElement('media:content','',Dase_Atom::$ns['media']);
+						if ($authorize_links) {
+							$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root,$token));
+						} else {
+							$media_content->setAttribute('url',$this->getMediaUrl($size,$app_root));
+						}
+						if ($med['width'] && $med['height']) {
+							$media_content->setAttribute('width',$med['width']);
+							$media_content->setAttribute('height',$med['height']);
+						}
+						$media_content->setAttribute('fileSize',$med['file_size']);
+						$media_content->setAttribute('type',$med['mime_type']);
+						$media_category = $media_content->appendChild($entry->dom->createElement('media:category'));
+						$media_category->appendChild($entry->dom->createTextNode($size));
+					}
+				}
+			}
+			return $entry;
 		}
-		return $entry;
-	}
 
-	function injectAtomFeedData(Dase_Atom_Feed $feed,$app_root)
-	{
-		if (!$this->id) { return false; }
-		$c = $this->getCollection();
-		if (is_numeric($this->updated)) {
-			$updated = date(DATE_ATOM,$this->updated);
-		} else {
-			$updated = $this->updated;
+		function injectAtomFeedData(Dase_Atom_Feed $feed,$app_root)
+		{
+			if (!$this->id) { return false; }
+			$c = $this->getCollection();
+			if (is_numeric($this->updated)) {
+				$updated = date(DATE_ATOM,$this->updated);
+			} else {
+				$updated = $this->updated;
+			}
+			$feed->setUpdated($updated);
+			$feed->setTitle($this->getTitle());
+			$feed->setId('tag:daseproject.org,2008:'.Dase_Util::getUniqueName());
+			$feed->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom','self' );
+			$feed->addAuthor();
+			return $feed;
 		}
-		$feed->setUpdated($updated);
-		$feed->setTitle($this->getTitle());
-		$feed->setId('tag:daseproject.org,2008:'.Dase_Util::getUniqueName());
-		$feed->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom','self' );
-		$feed->addAuthor();
-		return $feed;
-	}
 
-	function asAtom($app_root)
-	{
-		return $this->retrieveAtomDoc($app_root,true);
-	}
-
-	function asAtomEntry($app_root="{APP_ROOT}",$authorize_links=false)
-	{
-		if ($authorize_links) {
-			$entry = new Dase_Atom_Entry_Item;
-			$entry = $this->injectAtomEntryData($entry,$app_root,true);
-			return $entry->asXml();
-		} else {
-			return $this->retrieveAtomDoc($app_root);
+		function asAtom($app_root)
+		{
+			return $this->retrieveAtomDoc($app_root,true);
 		}
-	}
 
-	/** experimental */
-	function asAtomJson($app_root)
-	{
-		$entry = new Dase_Atom_Entry;
-		$this->injectAtomEntryData($entry,$app_root);
-		return $entry->asJson();
-	}
-
-	function mediaAsAtomFeed($app_root) 
-	{
-		$feed = new Dase_Atom_Feed;
-		$this->injectAtomFeedData($feed,$app_root);
-		foreach ($this->getMedia('updated DESC') as $m) {
-			$entry = $feed->addEntry();
-			$m->injectAtomEntryData($entry,$app_root);
+		function asAtomEntry($app_root="{APP_ROOT}",$authorize_links=false)
+		{
+			if ($authorize_links) {
+				$entry = new Dase_Atom_Entry_Item;
+				$entry = $this->injectAtomEntryData($entry,$app_root,true);
+				return $entry->asXml();
+			} else {
+				return $this->retrieveAtomDoc($app_root);
+			}
 		}
-		return $feed->asXml();
-	}	
 
-	public function getUrl($app_root) 
-	{
-		return $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
-	}
-
-	public function getUnique() 
-	{
-		if (!$this->p_collection_ascii_id) {
-			$this->p_collection_ascii_id = $this->getCollection()->ascii_id;
-			$this->update();
+		/** experimental */
+		function asAtomJson($app_root)
+		{
+			$entry = new Dase_Atom_Entry;
+			$this->injectAtomEntryData($entry,$app_root);
+			return $entry->asJson();
 		}
-		return $this->p_collection_ascii_id.'/'.$this->serial_number;
-	}
 
-	public function getEditMediaUrl($app_root='')
-	{
-		return $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
-	}
+		function mediaAsAtomFeed($app_root) 
+		{
+			$feed = new Dase_Atom_Feed;
+			$this->injectAtomFeedData($feed,$app_root);
+			foreach ($this->getMedia('updated DESC') as $m) {
+				$entry = $feed->addEntry();
+				$m->injectAtomEntryData($entry,$app_root);
+			}
+			return $feed->asXml();
+		}	
 
-	public function getAtomPubServiceDoc($app_root) {
-		$c = $this->getCollection();
-		$app = new Dase_Atom_Service;
-		$workspace = $app->addWorkspace($c->collection_name.' Item '.$this->serial_number.' Workspace');
-		$media_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/media.atom',$c->collection_name.' Item '.$this->serial_number.' Media'); 
-		foreach(Dase_Media::getAcceptedTypes() as $type) {
-			$media_coll->addAccept($type);
+		public function getUrl($app_root) 
+		{
+			return $app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
 		}
-		$comments_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
-		$comments_coll->addAccept('text/plain');
-		$comments_coll->addAccept('text/html');
-		$comments_coll->addAccept('application/xhtml+xml');
-		$metadata_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.atom',$c->collection_name.' Item '.$this->serial_number.' Metadata'); 
-		$metadata_coll->addAccept('application/x-www-form-urlencoded');
-		$metadata_coll->addAccept('application/json');
-		return $app->asXml();
-	}
 
-	public function statusAsJson()
-	{
-		$labels['public'] = "Public";
-		$labels['draft'] = "Draft (Admin View Only)";
-		$labels['delete'] = "Marked for Deletion";
-		$labels['archive'] = "In Deep Storage";
+		public function getUnique() 
+		{
+			if (!$this->p_collection_ascii_id) {
+				$this->p_collection_ascii_id = $this->getCollection()->ascii_id;
+				$this->update();
+			}
+			return $this->p_collection_ascii_id.'/'.$this->serial_number;
+		}
 
-		$status['term'] = $this->status;
-		$status['label'] = $labels[$this->status];
+		public function getEditMediaUrl($app_root='')
+		{
+			return $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
+		}
 
-		return Dase_Json::get($status);
-	}
+		public function getAtomPubServiceDoc($app_root) {
+			$c = $this->getCollection();
+			$app = new Dase_Atom_Service;
+			$workspace = $app->addWorkspace($c->collection_name.' Item '.$this->serial_number.' Workspace');
+			$media_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/media.atom',$c->collection_name.' Item '.$this->serial_number.' Media'); 
+			foreach(Dase_Media::getAcceptedTypes() as $type) {
+				$media_coll->addAccept($type);
+			}
+			$comments_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/comments.atom',$c->collection_name.' Item '.$this->serial_number.' Comments'); 
+			$comments_coll->addAccept('text/plain');
+			$comments_coll->addAccept('text/html');
+			$comments_coll->addAccept('application/xhtml+xml');
+			$metadata_coll = $workspace->addCollection($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.atom',$c->collection_name.' Item '.$this->serial_number.' Metadata'); 
+			$metadata_coll->addAccept('application/x-www-form-urlencoded');
+			$metadata_coll->addAccept('application/json');
+			return $app->asXml();
+		}
 
-	public function getContents()
-	{
-		if ($this->content_length) {
+		public function statusAsJson()
+		{
+			$labels['public'] = "Public";
+			$labels['draft'] = "Draft (Admin View Only)";
+			$labels['delete'] = "Marked for Deletion";
+			$labels['archive'] = "In Deep Storage";
+
+			$status['term'] = $this->status;
+			$status['label'] = $labels[$this->status];
+
+			return Dase_Json::get($status);
+		}
+
+		public function getContents()
+		{
+			if ($this->content_length) {
+				$db = $this->db;
+				$contents = new Dase_DBO_Content($db);
+				$contents->item_id = $this->id;
+				$contents->orderBy('updated DESC');
+				if ($contents->findOne()) {
+					$this->_content = $contents;
+				}
+				return $contents;
+			} else {
+				return false;
+			}
+		}
+
+		public function getContentRevisions()
+		{
 			$db = $this->db;
 			$contents = new Dase_DBO_Content($db);
 			$contents->item_id = $this->id;
 			$contents->orderBy('updated DESC');
-			if ($contents->findOne()) {
-				$this->_content = $contents;
+			return $contents->find();
+		}
+
+		public function getCommentsJson($app_root,$eid='')
+		{
+			$db = $this->db;
+			$comments = new Dase_DBO_Comment($db);
+			$comments->item_id = $this->id;
+			$comments->updated_by_eid = $eid;
+			$comments->orderBy('updated DESC');
+			$com = array();
+			foreach ($comments->find() as $c_obj) {
+				$c['id'] = $c_obj->id;
+				//$c['updated'] = $c_obj->updated;
+				$c['updated'] = date('D M j, Y \a\t g:ia',strtotime($c_obj->updated));
+				$c['eid'] = $c_obj->updated_by_eid;
+				$c['text'] = $c_obj->text;
+				$c['url'] = $this->getUrl($app_root).'/comments/'.$c_obj->id;
+				$com[] = $c;
 			}
-			return $contents;
-		} else {
-			return false;
+			return Dase_Json::get($com);
 		}
-	}
 
-	public function getContentRevisions()
-	{
-		$db = $this->db;
-		$contents = new Dase_DBO_Content($db);
-		$contents->item_id = $this->id;
-		$contents->orderBy('updated DESC');
-		return $contents->find();
-	}
-
-	public function getCommentsJson($app_root,$eid='')
-	{
-		$db = $this->db;
-		$comments = new Dase_DBO_Comment($db);
-		$comments->item_id = $this->id;
-		$comments->updated_by_eid = $eid;
-		$comments->orderBy('updated DESC');
-		$com = array();
-		foreach ($comments->find() as $c_obj) {
-			$c['id'] = $c_obj->id;
-			//$c['updated'] = $c_obj->updated;
-			$c['updated'] = date('D M j, Y \a\t g:ia',strtotime($c_obj->updated));
-			$c['eid'] = $c_obj->updated_by_eid;
-			$c['text'] = $c_obj->text;
-			$c['url'] = $this->getUrl($app_root).'/comments/'.$c_obj->id;
-			$com[] = $c;
+		public function getContentJson()
+		{
+			$c_obj = $this->getContents();
+			$content = array();
+			if ($c_obj) {
+				$content['latest']['text'] = $c_obj->text;
+				$content['latest']['date'] = $c_obj->updated;
+			} else {
+				$content['latest']['text'] = '';
+				$content['latest']['date'] = ''; 
+			}
+			return Dase_Json::get($content);
 		}
-		return Dase_Json::get($com);
-	}
 
-	public function getContentJson()
-	{
-		$c_obj = $this->getContents();
-		$content = array();
-		if ($c_obj) {
-			$content['latest']['text'] = $c_obj->text;
-			$content['latest']['date'] = $c_obj->updated;
-		} else {
-			$content['latest']['text'] = '';
-			$content['latest']['date'] = ''; 
+		public function setContent($text,$eid,$type="text")
+		{
+			$content = new Dase_DBO_Content($this->db);
+			$content->item_id = $this->id;
+			//todo: security! filter input....
+			$content->text = $text;
+			$content->type = $type;
+			$content->p_collection_ascii_id = $this->p_collection_ascii_id;
+			$content->p_serial_number = $this->serial_number;
+			$content->updated = date(DATE_ATOM);
+			$content->updated_by_eid = $eid;
+			$res = $content->insert();
+
+			$this->content_length = strlen($content->text);
+			$this->update();
+
+			$this->buildSearchIndex();
+			return $res;
 		}
-		return Dase_Json::get($content);
-	}
 
-	public function setContent($text,$eid,$type="text")
-	{
-		$content = new Dase_DBO_Content($this->db);
-		$content->item_id = $this->id;
-		//todo: security! filter input....
-		$content->text = $text;
-		$content->type = $type;
-		$content->p_collection_ascii_id = $this->p_collection_ascii_id;
-		$content->p_serial_number = $this->serial_number;
-		$content->updated = date(DATE_ATOM);
-		$content->updated_by_eid = $eid;
-		$res = $content->insert();
-
-		$this->content_length = strlen($content->text);
-		$this->update();
-
-		$this->buildSearchIndex();
-		return $res;
-	}
-
-	public function addComment($text,$eid)
-	{
-		$note = new Dase_DBO_Comment($this->db);
-		$note->item_id = $this->id;
-		//todo: security! filter input....
-		$note->text = $text;
-		$note->p_collection_ascii_id = $this->p_collection_ascii_id;
-		$note->p_serial_number = $this->serial_number;
-		$note->updated = date(DATE_ATOM);
-		$note->updated_by_eid = $eid;
-		$res = $note->insert();
-		//denormalization
-		$this->comments_count = $this->comments_count+1;
-		$this->comments_updated = $note->updated;
-		$this->update();
-		$this->buildSearchIndex();
-		return $res;
-	}
-
-	public function getTags()
-	{
-		$tags = array();
-		$tag_item = new Dase_DBO_TagItem($this->db);
-		$tag_item->item_id = $this->id;
-		foreach ($tag_item->find() as $ti) {
-			$tags[] = $ti->getTag();
+		public function addComment($text,$eid)
+		{
+			$note = new Dase_DBO_Comment($this->db);
+			$note->item_id = $this->id;
+			//todo: security! filter input....
+			$note->text = $text;
+			$note->p_collection_ascii_id = $this->p_collection_ascii_id;
+			$note->p_serial_number = $this->serial_number;
+			$note->updated = date(DATE_ATOM);
+			$note->updated_by_eid = $eid;
+			$res = $note->insert();
+			//denormalization
+			$this->comments_count = $this->comments_count+1;
+			$this->comments_updated = $note->updated;
+			$this->update();
+			$this->buildSearchIndex();
+			return $res;
 		}
-		if (count($tags)) {
-			return $tags;
-		} else {
-			return false;
-		}
-	}
 
-	public static function sortIdArrayByUpdated($db,$item_ids)
-	{
-		$sortable_array = array();
-		$prefix = $db->table_prefix;
-		$dbh = $db->getDbh();
-		$sql = "
-			SELECT updated 
-			FROM {$prefix}item i
-			WHERE i.id = ? 
-			";
-		$sth = $dbh->prepare($sql);
-		foreach ($item_ids as $item_id) {
-			$sth->execute(array($item_id));
-			$updated = $sth->fetchColumn();
-			$sortable_array[$item_id] = $updated;
+		public function getTags()
+		{
+			$tags = array();
+			$tag_item = new Dase_DBO_TagItem($this->db);
+			$tag_item->item_id = $this->id;
+			foreach ($tag_item->find() as $ti) {
+				$tags[] = $ti->getTag();
+			}
+			if (count($tags)) {
+				return $tags;
+			} else {
+				return false;
+			}
 		}
-		if (is_array($sortable_array)) {
-			arsort($sortable_array);
-			return array_keys($sortable_array);
-		}
-	}
 
-	public static function sortIdArray($db,$sort,$item_ids)
-	{
-		$sortable_array = array();
-		$test_att = new Dase_DBO_Attribute($db);
-		$test_att->ascii_id = $sort;
-		if (!$test_att->findOne()) {
-			return $item_ids;
+		public static function sortIdArrayByUpdated($db,$item_ids)
+		{
+			$sortable_array = array();
+			$prefix = $db->table_prefix;
+			$dbh = $db->getDbh();
+			$sql = "
+				SELECT updated 
+				FROM {$prefix}item i
+				WHERE i.id = ? 
+				";
+			$sth = $dbh->prepare($sql);
+			foreach ($item_ids as $item_id) {
+				$sth->execute(array($item_id));
+				$updated = $sth->fetchColumn();
+				$sortable_array[$item_id] = $updated;
+			}
+			if (is_array($sortable_array)) {
+				arsort($sortable_array);
+				return array_keys($sortable_array);
+			}
 		}
-		$prefix = $db->table_prefix;
-		$dbh = $db->getDbh();
-		$sql = "
-			SELECT v.value_text
-			FROM {$prefix}attribute a, {$prefix}value v
-			WHERE v.item_id = ?
-			AND v.attribute_id = a.id
-			AND a.ascii_id = ?
-			LIMIT 1
-			";
-		$sth = $dbh->prepare($sql);
-		foreach ($item_ids as $item_id) {
-			$sth->execute(array($item_id,$sort));
-			$vt = $sth->fetchColumn();
-			$value_text = $vt ? $vt : 99999999;
-			$sortable_array[$item_id] = $value_text;
-		}
-		if (is_array($sortable_array)) {
-			asort($sortable_array);
-			return array_keys($sortable_array);
-		}
-	}
 
-	/** expires any cache that might hold stale metadata */
-	public function expireCaches($cache)
-	{
-		//more will (perhaps) go here
-		//
-		// attributes json (includes tallies)
-		$cache_id = "get|collection/".$this->p_collection_ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
-		$cache->expire($cache_id);
-	
-	}
+		public static function sortIdArray($db,$sort,$item_ids)
+		{
+			$sortable_array = array();
+			$test_att = new Dase_DBO_Attribute($db);
+			$test_att->ascii_id = $sort;
+			if (!$test_att->findOne()) {
+				return $item_ids;
+			}
+			$prefix = $db->table_prefix;
+			$dbh = $db->getDbh();
+			$sql = "
+				SELECT v.value_text
+				FROM {$prefix}attribute a, {$prefix}value v
+				WHERE v.item_id = ?
+				AND v.attribute_id = a.id
+				AND a.ascii_id = ?
+				LIMIT 1
+				";
+			$sth = $dbh->prepare($sql);
+			foreach ($item_ids as $item_id) {
+				$sth->execute(array($item_id,$sort));
+				$vt = $sth->fetchColumn();
+				$value_text = $vt ? $vt : 99999999;
+				$sortable_array[$item_id] = $value_text;
+			}
+			if (is_array($sortable_array)) {
+				asort($sortable_array);
+				return array_keys($sortable_array);
+			}
+		}
 
-	public function mapConfiguredAdminAtts()
-	{
-		$c = $this->getCollection();
-		foreach ($c->getAttributes() as $att) {
-			if ($att->mapped_admin_att_id) {
-				foreach ($this->getAdminMetadata() as $row) {
-					if ($att->mapped_admin_att_id == $row['att_id']) {
-						$this->setValue($att->ascii_id,$row['value_text']);
+		/** expires any cache that might hold stale metadata */
+		public function expireCaches($cache)
+		{
+			//more will (perhaps) go here
+			//
+			// attributes json (includes tallies)
+			$cache_id = "get|collection/".$this->p_collection_ascii_id."/attributes/public/tallies|json|cache_buster=stripped&format=json";
+			$cache->expire($cache_id);
+
+		}
+
+		public function mapConfiguredAdminAtts()
+		{
+			$c = $this->getCollection();
+			foreach ($c->getAttributes() as $att) {
+				if ($att->mapped_admin_att_id) {
+					foreach ($this->getAdminMetadata() as $row) {
+						if ($att->mapped_admin_att_id == $row['att_id']) {
+							$this->setValue($att->ascii_id,$row['value_text']);
+						}
 					}
 				}
 			}
 		}
 	}
-}
