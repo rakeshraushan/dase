@@ -8,6 +8,7 @@ $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
 
 $colls = array(
 
+	'american_west',
 	'vrc',
 	'classics',
 	'aem246',
@@ -15,7 +16,6 @@ $colls = array(
 	'amazonian_survey',
 	'american_photography',
 	'american_politics',
-	'american_west',
 	'ancient_meso',
 	'anthropology',
 	'arabic_dialects',

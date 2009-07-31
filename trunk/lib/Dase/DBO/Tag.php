@@ -23,6 +23,35 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tags;
 	}
 
+	public static function searchTagsAtom($db,$app_root,$q)
+	{
+		//looks for q in title
+		//public ONLY!!!!!!
+		$feed = new Dase_Atom_Feed;
+		$feed->setId($app_root.'/sets');
+		$feed->setFeedType('sets');
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+
+		$feed->setTitle('Public Sets search: '.$q);
+		$tags = new Dase_DBO_Tag($db);
+		$tags->is_public = true;
+		$tags->addWhere('name',"%$q%",$db->getCaseInsensitiveLikeOp());
+		$tags->orderBy('updated DESC');
+		foreach ($tags->find() as $tag) {
+			$tag = clone $tag;
+			if (!$tag->item_count) {
+				$tag->updateItemCount();
+			}
+			if ($tag->ascii_id) { //compat: make sure tag has ascii_id
+				$entry = $tag->injectAtomEntryData($feed->addEntry('set'),null,$app_root);
+				$entry->addCategory($tag->item_count,"http://daseproject.org/category/item_count");
+			}
+		}
+		$feed->sortByTitle();
+		return $feed->asXml();
+	}
+
 	public static function listAsFeed($db,$app_root,$category='')
 	{
 		//public ONLY!!!!!!

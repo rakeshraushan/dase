@@ -914,6 +914,11 @@ a#slideshowExit {
  * #F0FFF5
  */
 
+#setlist h2 {
+	color: #009;
+	font-weight: bold;
+}
+
 #setlist h3 {
 	background-color: #90a497;
 	color: #000;
@@ -935,6 +940,10 @@ a#slideshowExit {
 
 #setlist p.current {
 	color: #888;
+}
+
+#setlist p.filterform {
+	margin-top: 40px;
 }
 
 /*********** FORM STYLES *********************/

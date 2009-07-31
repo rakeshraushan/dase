@@ -113,6 +113,7 @@ class Dase_Handler_User extends Dase_Handler
 	}
 
 	public function postToRecentViews($r) {
+		//todo: seems like big slowdown here:
 		$this->user->expireDataCache($r->getCache());
 		$recent = new Dase_DBO_RecentView($this->db);
 		$recent->url= rawurldecode(str_replace($r->app_root.'/','',$r->get('url')));
