@@ -54,6 +54,10 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,'user does not have download privileges');
 		}
 
+		if ($tag->item_count > 30) {
+			$params['msg'] = 'Sorry, only sets of 30 or fewer items may be downloaded.  Please split into multiple sets.';
+			$r->renderRedirect('tag/'.$u->eid.'/'.$this->tag->ascii_id,$params);
+		}
 		//ZIP stuff
 		$zip = new ZipArchive();
 		$filename = MEDIA_DIR."/tmp/".$u->eid."-".$tag->ascii_id.".zip";
