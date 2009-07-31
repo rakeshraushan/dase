@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!--  
+This is the Solr schema file. This file should be named "schema.xml" and
+should be in the conf directory under the solr home
+(i.e. ./solr/conf/schema.xml by default) 
+or located where the classloader for the Solr webapp can find it.
+
+This example schema is the recommended starting point for users.
+It should be kept correct and concise, usable out-of-the-box.
+
+For more information, on how to customize this file, please see
+http://wiki.apache.org/solr/SchemaXml
+-->
 
 <schema name="example" version="1.1">
+  <!-- attribute "name" is the name of this schema and is only used for display purposes.
+  Applications should change this to reflect the nature of the search collection.
+  version="1.1" is Solr's version number for the schema syntax and semantics.  It should
+  not normally be changed by applications.
+  1.0: multiValued attribute did not exist, all fields are multiValued by nature
+  1.1: multiValued attribute introduced, false by default -->
+
   <types>
 	<!-- field type definitions. The "name" attribute is
 	just a label to be used by field definitions.  The "class"
@@ -132,24 +168,32 @@
 		enablePositionIncrements=true ensures that a 'gap' is left to
 		allow for accurate phrase queries.
 		-->
+		<!--
 		<filter class="solr.StopFilterFactory"
 		  ignoreCase="true"
 		  words="stopwords.txt"
 		  enablePositionIncrements="true"
 		  />
+		-->
 		<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
 		<filter class="solr.LowerCaseFilterFactory"/>
+		<!--
 		<filter class="solr.EnglishPorterFilterFactory" protected="protwords.txt"/>
 		<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+		-->
 	  </analyzer>
 	  <analyzer type="query">
 		<tokenizer class="solr.WhitespaceTokenizerFactory"/>
+		<!--
 		<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
 		<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+		-->
 		<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
 		<filter class="solr.LowerCaseFilterFactory"/>
+		<!--
 		<filter class="solr.EnglishPorterFilterFactory" protected="protwords.txt"/>
 		<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+		-->
 	  </analyzer>
 	</fieldType>
 
@@ -239,11 +283,6 @@
 	  best performance.
 	  -->
 
-	  <!--
-	  <field name="features" type="text" indexed="true" stored="true" multiValued="true"/>
-	  -->
-
-
 	  <!-- DASe -->
 
 	  <!-- 
@@ -278,8 +317,7 @@
 	  -->
 	  <field name="timestamp" type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 
-	  <!-- filterable field cannot be tokenized , so use string -->
-	  <dynamicField name="*" type="string" stored="true" indexed="true" multiValued="true"/>
+	  <dynamicField name="*" type="text" stored="true" indexed="true" multiValued="true"/>
 
 	</fields>
 

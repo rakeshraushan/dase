@@ -89,9 +89,19 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public function getSearchAtom($r) 
 	{
-		$term = $r->get('category');
-		$uri = $r->get('scheme');
-		//need to write sql here
+		$r->renderResponse(Dase_DBO_Tag::searchTagsAtom($this->db,$r->app_root,$r->get('q')));
+	}
+
+	public function getSearch($r) 
+	{
+
+		$tpl = new Dase_Template($r);
+		$courses = Dase_Atom_Categories::load(file_get_contents($r->app_root.'/sets/utexas/courses.cats'));
+		$tpl->assign('courses',$courses);
+		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/tags/search.atom?q='.$r->get('q'));
+		$tpl->assign('sets',$feed);
+		$tpl->assign('q',$r->get('q'));
+		$r->renderResponse($tpl->fetch('tags/list.tpl'));
 	}
 }
 

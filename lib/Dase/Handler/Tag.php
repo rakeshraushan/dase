@@ -226,7 +226,12 @@ class Dase_Handler_Tag extends Dase_Handler
 	public function getTagItemAtom($r)
 	{
 		$tag_item = new Dase_DBO_TagItem($this->db);
-		$tag_item->load($r->get('tag_item_id'));
+		if (!$tag_item->load($r->get('tag_item_id'))) {
+			$r->renderAtomError(404);
+		}
+		if (!$tag_item->getItem()) {
+			$r->renderAtomError(404);
+		} 
 		if ($tag_item->tag_id != $this->tag->id) {
 			$r->renderAtomError(404);
 		} 

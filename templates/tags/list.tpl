@@ -23,7 +23,7 @@
 				<h2>filter by course</h2>
 				<ul>
 					<li>
-					<a href="sets">View All (no filter)</a>
+					<a href="sets">VIEW ALL (no filter)</a>
 					</li>
 					{foreach item=course from=$courses->all}
 					{if $course.term != $course.label}
@@ -34,6 +34,12 @@
 					{/foreach}
 				</ul>
 				<h3>Faculty members can assign a set to a particular course through <a href="http://courses.utexas.edu" class="outbound">Blackboard</a></h3>
+				<p class="filterform">
+				<form action="sets/search" method="get">
+					<input type="text" name="q" value={$q}>
+					<input type="submit" value="&lt;&lt; filter by phrase-in-title">
+				</form>
+				</p>
 			</td>
 	</tr></table>
 </div>
