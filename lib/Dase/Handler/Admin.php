@@ -222,7 +222,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function postToSetLogPermission($r)
 	{
-		if (chmod(LOG_FILE,0644)) {
+		if (chmod(LOG_FILE,0664)) {
 			$params['msg'] = 'set OK';
 		} else {
 			$params['msg'] = 'no go';
