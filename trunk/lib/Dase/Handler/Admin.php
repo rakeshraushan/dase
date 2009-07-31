@@ -8,6 +8,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'collection/form' => 'collection_form',
 		'collections' => 'collections',
 		'commit' => 'commit',
+		'set_log_permission' => 'set_log_permission',
 		'docs' => 'docs',
 		'item_fixer' => 'item_fixer',
 		'tools' => 'tools',
@@ -216,9 +217,19 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$search_engine = Dase_SearchEngine::get($this->db,$this->config);
 		$params['msg'] = $search_engine->commit();
-		$tpl = new Dase_Template($r);
 		$r->renderRedirect('admin/tools',$params);
 	}
+
+	public function postToSetLogPermission($r)
+	{
+		if (chmod(LOG_FILE,0775)) {
+			$params['msg'] = 'set OK';
+		} else {
+			$params['msg'] = 'no go';
+		}
+		$r->renderRedirect('admin/tools',$params);
+	}
+
 
 	public function getCollectionForm($r)
 	{
