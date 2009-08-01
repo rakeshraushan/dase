@@ -516,7 +516,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$mf->item_id = $this->id;
 		foreach ($mf->find() as $doomed) {
 			if ($path_to_media) {
-				//	$doomed->moveFileToDeleted($path_to_media);
+				$doomed->moveFileToDeleted($path_to_media);
 			}
 			$doomed->delete();
 		}
