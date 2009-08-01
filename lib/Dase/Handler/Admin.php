@@ -62,7 +62,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	public function getModules($r)
 	{
 		$tpl = new Dase_Template($r);
-		$dir = new DirectoryIterator($r->base_path.'/modules');
+		$dir = new DirectoryIterator(BASE_PATH.'/modules');
 		$mods = array();
 		foreach ($dir as $file) {
 			if ( $file->isDir() && false === strpos($file->getFilename(),'.')) {
@@ -174,13 +174,14 @@ class Dase_Handler_Admin extends Dase_Handler
 		// indicating that a bytecode cache is removing comments
 
 		$tpl = new Dase_Template($r);
-		$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($r->base_path.'/lib'));
+		$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH.'/lib'));
 		foreach ($dir as $file) {
 			$matches = array();
 			if ( 
 				false === strpos($file->getPathname(),'smarty') &&
 				false === strpos($file->getPathname(),'Smarty') &&
 				false === strpos($file->getPathname(),'getid3') &&
+				false === strpos($file->getPathname(),'markdown') &&
 				false === strpos($file->getPathname(),'htaccess') &&
 				false === strpos($file->getPathname(),'svn') &&
 				'.' != array_shift(str_split($file->getFilename())) &&
@@ -188,7 +189,8 @@ class Dase_Handler_Admin extends Dase_Handler
 			) {
 				try {
 					$filepath = $file->getPathname();
-					include_once $filepath;
+					//causes seg fault AND we don't need it
+					//include_once $filepath;
 				} catch(Exception $e) {
 					print $e->getMessage() . "\n";
 				}
