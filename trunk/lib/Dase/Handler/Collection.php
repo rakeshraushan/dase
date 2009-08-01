@@ -475,7 +475,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 		file_put_contents($new_file,file_get_contents($url));
 		try {
-			$file = Dase_File::newFile($this->db,$new_file,null,null,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,null,null,BASE_PATH);
 			//$media_file = $file->addToCollection($item,true,MEDIA_DIR); //check for dups
 			//accept dups
 			$media_file = $file->addToCollection($item,false,MEDIA_DIR); //check for dups
