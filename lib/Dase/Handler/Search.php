@@ -7,9 +7,6 @@ class Dase_Handler_Search extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'search',
 		'item' => 'search_item',
-		'recent' => 'recent',
-		'delete_recent' => 'delete_recent', //so we can use post as well
-		'{md5_hash}' => 'search_cache',
 	);
 
 	protected function setup($r)
@@ -47,25 +44,6 @@ class Dase_Handler_Search extends Dase_Handler
 		}
 	}
 
-	/** this should be used sparingly, since it is a sledgehammer */
-	public function deleteRecent($r)
-	{
-		if (!$r->getUser('http')) {
-			$r->renderError(401,'cannot delete recent searches');
-		}
-		$count = Dase_DBO_SearchCache::deleteRecent($this->db,$r);
-		$r->renderResponse($count." cached searches deleted");
-	}
-
-	public function postToDeleteRecent($r)
-	{
-		$this->deleteRecent($this->db,$r);
-	}
-
-	public function getSearchByHash($r)
-	{
-	}
-
 	public function getSearchAtom($r)
 	{
 		$r->checkCache();
@@ -81,14 +59,6 @@ class Dase_Handler_Search extends Dase_Handler
 		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
 		$r->renderResponse($feed->asJson());
-	}
-
-	public function getSearchUris($r)
-	{
-	}
-
-	public function getSearchCsv($r)
-	{
 	}
 
 	public function getSearchItemAtom($r)

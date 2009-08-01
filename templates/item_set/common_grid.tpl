@@ -14,7 +14,7 @@
 		</div>
 		<div class="image">
 			<a href="{$it->itemLink}">
-				<img alt="no image" src="{$it->thumbnailLink}"/>
+				<img alt="image" src="{$it->thumbnailLink}"/>
 			</a>
 		</div>
 		<div class="spacer"></div>
