@@ -70,7 +70,12 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 	public function getSolrResponse($item_unique)
 	{
 		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
-		return file_get_contents($url);
+		list($http_code,$res) = Dase_Http::get($url,null,null);
+		if ('4' == substr($http_code,0,1) || '5' == substr($http_code,0,1)) {
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR :'.$res);
+			return '<error/>';
+		}
+		return $res;
 	}
 
 	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
