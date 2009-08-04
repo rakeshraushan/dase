@@ -8,6 +8,7 @@ $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
 
 $colls = array(
 
+	'keanepj',
 	'american_west',
 	'vrc',
 	'classics',
@@ -85,7 +86,6 @@ $colls = array(
 	'jm3832',
 	'jr34487',
 	'json_lists',
-	'keanepj',
 	'kerkhoff',
 	'landmarks',
 	'leoshkoj',

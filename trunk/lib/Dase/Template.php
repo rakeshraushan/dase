@@ -124,7 +124,6 @@ function _smarty_solr_escape($string)
 {
 	// solr specials: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
 	$pattern= '/(\+|-|"|~|\(|\)|&&|\?|}|{|:|\[|\]|!)/';
-	//$pattern= '/(\+|"|~)/';
 	return preg_replace($pattern,'\\\$1',$string);
 
 }
