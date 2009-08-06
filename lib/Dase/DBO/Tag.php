@@ -430,6 +430,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
+		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.json','alternate','application/json','','slideshow');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
 		if ($this->is_public) {
