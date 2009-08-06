@@ -11,6 +11,12 @@
 	<table class="userSets"><tr>
 			<td class="setList">
 				<h2>{$sets->title}</h2>
+				<p class="filterform">
+				<form action="sets/search" method="get">
+					<input type="text" name="q" value={$q}>
+					<input type="submit" value="search by phrase-in-title">
+				</form>
+				</p>
 				<ul>
 					{foreach item=set from=$sets->entries}
 					<li>
@@ -20,7 +26,8 @@
 				</ul>
 			</td>
 			<td class="filters">
-				<h2>filter by course</h2>
+				<h2>Public Sets Grouped by Course Name</h2>
+				<h3>Faculty members can assign a set to a particular course through <a href="http://courses.utexas.edu" class="outbound">Blackboard</a></h3>
 				<ul>
 					<li>
 					<a href="sets">VIEW ALL (no filter)</a>
@@ -33,13 +40,6 @@
 					{/if}
 					{/foreach}
 				</ul>
-				<h3>Faculty members can assign a set to a particular course through <a href="http://courses.utexas.edu" class="outbound">Blackboard</a></h3>
-				<p class="filterform">
-				<form action="sets/search" method="get">
-					<input type="text" name="q" value={$q}>
-					<input type="submit" value="&lt;&lt; filter by phrase-in-title">
-				</form>
-				</p>
 			</td>
 	</tr></table>
 </div>
