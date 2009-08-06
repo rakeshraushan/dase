@@ -186,7 +186,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 	public function postToCreateAdmin($r) 
 	{
 		$resp = array();
-		$superusers = $this->config->getSuperusers();
+		$superusers = $r->superusers;
 		$u = clone $r->getUser('none');
 		$u->eid = array_shift(array_keys($superusers));
 		if ($u->findOne()) {
