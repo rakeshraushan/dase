@@ -207,6 +207,15 @@ class Dase_DBO implements IteratorAggregate
 		return false;
 	}
 
+	function findAll()
+	{
+		$iter = $this->find();
+		if ($iter) {
+			return $iter->fetchAll();
+		}
+		return false;
+	}
+
 	function find()
 	{
 		//finds matches based on set fields (omitting 'id')
