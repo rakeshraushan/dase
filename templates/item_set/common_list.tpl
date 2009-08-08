@@ -36,7 +36,7 @@
 					<ul>
 						{foreach item=value from=$set.values}
 						<li>
-						<a href="search?{$it->collectionAsciiId}.{$ascii_id}={$value.text|escape:'url'}">{$value.text}</a>
+						<a href="search?c={$it->collectionAsciiId}&amp;q={$ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a>
 						</li>
 						{/foreach}
 					</ul>
