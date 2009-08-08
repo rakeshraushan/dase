@@ -209,11 +209,16 @@ class Dase_DBO implements IteratorAggregate
 
 	function findAll()
 	{
+		$set = array();
 		$iter = $this->find();
-		if ($iter) {
-			return $iter->fetchAll();
+		foreach ($iter as $it) {
+			$set[] = clone($it);
 		}
-		return false;
+		if (count($set)) {
+			return $set;
+		} else {
+			return false;
+		}
 	}
 
 	function find()

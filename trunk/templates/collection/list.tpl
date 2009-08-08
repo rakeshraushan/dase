@@ -28,8 +28,5 @@
 			<li id="specialAccessLabel" class="hide"><h4>Special Access Collections</h4></li>
 		</ul>
 	</form>
-	<h4>
-		<a href="tags">Browse Public User Sets</a>
-	</h4>
 </div>
 {/block}
