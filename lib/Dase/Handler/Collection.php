@@ -5,6 +5,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	public $collection;
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
+		'{collection_ascii_id}/commit' => 'commit',
 		'{collection_ascii_id}/entry' => 'entry',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
@@ -350,6 +351,20 @@ class Dase_Handler_Collection extends Dase_Handler
 			$this->_newAtomAttribute($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
+		}
+	}
+
+	public function postToCommit($r) 
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->collection)) {
+			$r->renderError(401,'no go unauthorized');
+		}
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		if ('ok' == $ds->commit()) {
+			$r->renderOk('commit successful');
+		} else {
+			$r->renderError(400,'did not commit');
 		}
 	}
 
