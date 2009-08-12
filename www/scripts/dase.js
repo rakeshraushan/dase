@@ -2,7 +2,10 @@ var Dase = {};
 Dase.user = {};
 
 //note: since modules create a module-specific base href, we need to strip module/<mod_name>
-Dase.base_href = document.getElementsByTagName('base')[0].href.replace(/\/modules\/[^/]*/,'');
+var base = document.getElementsByTagName('base');
+if (base.length) {
+	Dase.base_href = base[0].href.replace(/\/modules\/[^/]*/,'');
+}
 
 /* from DOM Scripting p. 103 */
 Dase.addLoadEvent = function(func) {
@@ -184,9 +187,11 @@ Dase.logoff = function() {
 Dase.getEid = function() {
 	var base = Dase.base_href;
 	var d = new Date();
+	if (!base) return;
 	var cookiename = base.substr(7,base.length-8).replace(/\/|\./g,'_') + '_' + 'DASE_USER';
 	//adapted from rhino 5th ed. p 460
 	var allcookies = document.cookie;
+	if (!allcookies) return;
 	var pos = allcookies.indexOf(cookiename + "=");
 	if (pos != -1) {
 		var start = pos + cookiename.length + 1;
@@ -644,17 +649,12 @@ Dase.initCreateNewSet = function() {
 	var createNewSetLink = Dase.$('createNewSet');
 	if (createNewSetLink) {
 		createNewSetLink.onclick = function() {
-			var tag = {};
-			tag.tag_name = prompt("Enter name of set","");
-			HTTP.post(Dase.base_href + 'tags',tag,
-			function(resp) { 
+			tag_name = prompt("Enter name of set","");
+			Dase.ajax(Dase.base_href+'tags','POST',function(resp) { 
 				Dase.initUser(); 
 				Dase.initSaveTo();
 				alert(resp);
-			},
-			function(code,resp) {
-				alert(resp);
-			});
+			},tag_name);
 			return false;
 		};
 	}
