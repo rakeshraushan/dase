@@ -11,7 +11,9 @@ Dase.pageInit = function() {
 			}
 		}
 		var content_headers = {
-			'Content-Type':'text/plain',
+			'Content-Type':'text/plain'
+			//dig, ie haes trailing comma
+			//'Content-Type':'text/plain',
 		}
 		var pref_set = prefs.join('|');
 		url = Dase.$('settings-link').href+'/preferred';
