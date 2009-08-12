@@ -34,7 +34,7 @@ class Dase_Handler_Tags extends Dase_Handler
 
 	public function postToTags($r)
 	{
-		$tag_name = $r->get('tag_name');
+		$tag_name = $r->getBody();
 		//todo: make this work w/ cookie OR http auth??
 		$user = $r->getUser();
 		$tag = Dase_DBO_Tag::create($this->db,$tag_name,$user);
