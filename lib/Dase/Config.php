@@ -106,7 +106,7 @@ class Dase_Config {
 				return false;
 			}
 		} else {
-			return $this->conf['app'];
+			return $this->conf['local'];
 		}
 	}
 
