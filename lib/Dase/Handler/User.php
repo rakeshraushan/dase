@@ -300,7 +300,7 @@ class Dase_Handler_User extends Dase_Handler
 		$tag->type = 'cart';
 		if ($tag->findOne()) {
 			$tag_item = new Dase_DBO_TagItem($this->db);
-			$item_uniq = str_replace($r->app_root.'/','',$r->get('item_unique'));
+			$item_uniq = str_replace($r->app_root.'/','',$r->getBody());
 			list($coll,$sernum) = explode('/',$item_uniq);
 
 			//todo: compat 

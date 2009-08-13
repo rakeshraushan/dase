@@ -25,27 +25,29 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 	private function _cleanUpUrl($url)
 	{
+		$url = Dase_Util::unhtmlspecialchars($url);
+
 		//omit start param 
-		$url = preg_replace('/(\?|&|&amp;)start=[0-9]+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)start=[0-9]*/i','',$url);
 
 		//omit format param 
-		$url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)format=\w*/i','',$url);
 
 		//omit max param 
-		$url = preg_replace('/(\?|&|&amp;)max=[0-9]+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)max=[0-9]*/i','',$url);
 
 		//omit num param
-		$url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)num=\w*/i','',$url);
 
 		//omit sort param
-		$url = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$url);
+		$url = preg_replace('/(\?|&|&amp;)sort=\w*/i','',$url);
 
 
 		//last param only PHP >= 5.2.3
 		//$url = htmlspecialchars($url,ENT_COMPAT,'UTF-8',false);
 		//beware double encoding
+		$url = Dase_Util::unhtmlspecialchars($url);
 		$url = htmlspecialchars($url,ENT_COMPAT,'UTF-8');
-
 		return $url;
 	}
 
@@ -75,6 +77,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$query_string = preg_replace('/(^|\?|&|&amp;)type=([^&]+)/i','',$query_string);
 		$query_string = preg_replace('/(^|\?|&|&amp;)format=([^&]+)/i','',$query_string);
 
+		//omit start
+		$query_string = preg_replace('/(\?|&|&amp;)start=\w*/i','',$query_string);
+
 		$collection_param = '';
 		$sort_param = '';
 		$filter_query = '';
@@ -98,6 +103,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$query_string = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$query_string);
 		} else {
 			$sort_param = '&sort=_updated+desc';
+			$query_string = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$query_string);
 		}
 
 		//if there is no q param, use the collection 
@@ -209,6 +215,10 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
 		$query = htmlspecialchars(urlencode($matches[2]));
 
+		if (!$total) {
+			Dase_Log::debug(FAILED_SEARCH_LOG,$query);
+		}
+
 		$feed = <<<EOD
 <feed xmlns="http://www.w3.org/2005/Atom"
 	  xmlns:thr="http://purl.org/syndication/thread/1.0">
@@ -234,20 +244,20 @@ EOD;
 		$next = $this->start + $this->max;
 		if ($next <= $total) {
 			$next_url = $url.'&amp;start='.$next.'&amp;max='.$this->max.'&amp;sort='.$this->sort;
-			$feed .= "  <link rel=\"next\" href=\"$next_url\"/>";
+			$feed .= "\n  <link rel=\"next\" href=\"$next_url\"/>";
 		}
 
 		//previous link
 		$previous = $this->start - $this->max;
-		if ($previous > 0) {
+		if ($previous >= 0) {
 			$previous_url = $url.'&amp;start='.$previous.'&amp;max='.$this->max.'&amp;sort='.$this->sort;
-			$feed .= "  <link rel=\"previous\" href=\"$previous_url\"/>";
+			$feed .= "\n  <link rel=\"previous\" href=\"$previous_url\"/>";
 		}
 
 		//collection fq
 		//this will allow us to create search filters on page forms 
 		foreach ($this->coll_filters as $c) {
-			$feed .= "  <category term=\"$c\" scheme=\"http://daseproject.org/category/collection_filter\"/>\n";
+			$feed .= "\n  <category term=\"$c\" scheme=\"http://daseproject.org/category/collection_filter\"/>\n";
 		}
 
 		$tallied = array();
@@ -270,7 +280,7 @@ EOD;
 		$item_request_url = str_replace('search','search/item',$item_request_url);
 
 		//omit format param 
-		$item_request_url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$item_request_url);
+		$item_request_url = preg_replace('/(\?|&|&amp;)format=\w*/i','',$item_request_url);
 
 		$item_request_url = htmlspecialchars($item_request_url);
 

@@ -17,6 +17,8 @@ define('CONVERT',$config->getAppSettings('convert'));
 
 //log file
 define('LOG_FILE',$config->getLogDir().'/dase.log');
+define('FAILED_SEARCH_LOG',$config->getLogDir().'/failed_searches.log');
+define('DEBUG_LOG',$config->getLogDir().'/debug.log');
 
 //log level
 define('LOG_LEVEL',Dase_Log::DEBUG);

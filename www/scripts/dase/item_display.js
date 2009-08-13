@@ -55,18 +55,13 @@ Dase.initSaveItemTo = function() {
 			alert('Please select a user collection/slideshow/cart to save items to.');
 			return false;
 		}
-		var data = {};
-		data.item_uniques = Dase.$('item_unique').value; 
-		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
+		item_unique = Dase.$('item_unique').value; 
+		Dase.ajax(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,'POST',
 		function(resp) { 
 			alert(resp); 
 			Dase.initUser();
 			//Dase.initSaveTo();
-		},
-		//should *always* handle errors w/ an error callback:
-		function(resp) {
-			alert('Our sincerest apologies.  An error has occurred');
-		});
+		},item_unique);
 		return false;
 	};
 	//why this?
