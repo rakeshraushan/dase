@@ -41,7 +41,7 @@ define('MAIN_TITLE',$config->getAppSettings('main_title'));
 
 //custom page logo
 define('PAGE_LOGO_LINK_TARGET',$config->getLocalSettings('page_logo_link_target'));
-define('PAGE_LOGO_SRC',$config->getLocalSettings('page_log_src'));
+define('PAGE_LOGO_SRC',$config->getLocalSettings('page_logo_src'));
 
 //timer
 define('START_TIME',Dase_Util::getTime());

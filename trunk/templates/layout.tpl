@@ -55,26 +55,26 @@
 			<h1 class="alert">The optimal DASe experience requires Javascript!</h1>
 		</noscript>
 
-		<div id="logoffControl" class="login hide">
-			<span id="userName"></span> 
-			|
-			<a href="settings" class="edit" id="settings-link">settings</a> 
-			|
-			<a href="logoff" class="edit" id="logoff-link">logout</a>
-			<div id="eid" class="pagedata"></div>
-		</div>
-
-		<div id="loginControl" class="login hide">
-			<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
-		</div>
-
-		{if $page_logo_src}
-		<div id="pageLogo">
-			<a href="{$page_logo_link_target}"><img src="{$page_logo_src}" alt="page logo"></a>
-		</div>
-		{/if}
-
 		<div id="header">
+			<div id="logoffControl" class="login hide">
+				<span id="userName"></span> 
+				|
+				<a href="settings" class="edit" id="settings-link">settings</a> 
+				|
+				<a href="logoff" class="edit" id="logoff-link">logout</a>
+				<div id="eid" class="pagedata"></div>
+			</div>
+
+			<div id="loginControl" class="login hide">
+				<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
+			</div>
+
+			{if $page_logo_src}
+			<div id="pageLogo">
+				<a href="{$page_logo_link_target}"><img src="{$page_logo_src}" alt="page logo"></a>
+			</div>
+			{/if}
+
 			{$main_title}
 		</div>
 
