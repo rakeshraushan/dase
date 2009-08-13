@@ -9,8 +9,8 @@ class Dase_Handler_Admin extends Dase_Handler
 		'collections' => 'collections',
 		'commit' => 'commit',
 		'set_log_permission' => 'set_log_permission',
+		'failed_searches' => 'failed_searches',
 		'docs' => 'docs',
-		'item_fixer' => 'item_fixer',
 		'tools' => 'tools',
 		'eid/{eid}' => 'ut_person',
 		'log' => 'log',
@@ -40,23 +40,13 @@ class Dase_Handler_Admin extends Dase_Handler
 		$r->renderResponse('cache deleted '.$num.' files removed');
 	}
 
-	/** web hook */
-	public function postToItemFixer($r) 
+	public function getFailedSearches($r)
 	{
-		$collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
-		if ($collection) {
-			$i = 0;
-			foreach ($collection->getItems() as $item) {
-				$item->flushAtom();
-				if (!$item->p_collection_ascii_id) {
-					$item->p_collection_ascii_id = $collection->ascii_id;
-					if ($item->update()) {
-						$i++;
-					}
-				}
-			}
+		if (file_exists(FAILED_SEARCH_LOG)) {
+			$r->renderResponse(file_get_contents(FAILED_SEARCH_LOG));
+		} else {
+			$r->renderError(404);
 		}
-		$r->renderResponse("updated $i items in $collection->collection_name");
 	}
 
 	public function getModules($r)
@@ -224,10 +214,11 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function postToSetLogPermission($r)
 	{
-		if (chmod(LOG_FILE,0664)) {
-			$params['msg'] = 'set OK';
-		} else {
-			$params['msg'] = 'no go';
+		$logs = array(LOG_FILE,FAILED_SEARCH_LOG,DEBUG_LOG);
+		foreach ($logs as $log) {
+			if (file_exists($log)) {
+				chmod($log,0664);
+			}
 		}
 		$r->renderRedirect('admin/tools',$params);
 	}
