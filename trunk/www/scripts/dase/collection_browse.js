@@ -2,7 +2,9 @@ Dase.pageInit = function() {
 	if (Dase.$('browseColumns')) {
 		var atts_link = Dase.$('collectionAtts');
 		Dase.getAttributes(atts_link.href);
-		var cats = Dase.$('catColumn').getElementsByTagName('a');
+		var cat_col= Dase.$('catColumn');
+		if (!cat_col) return;
+		var cats = cat_col.getElementsByTagName('a');
 		for (var i=0;i<cats.length;i++) {
 			var cat = cats[i];
 			cat.onclick = function() {

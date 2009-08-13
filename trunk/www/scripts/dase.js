@@ -788,14 +788,13 @@ Dase.initAddToCart = function() {
 			anchors[i].onclick = function(e) {
 				this.innerHTML = '(remove)';
 				Dase.removeClass(this.parentNode.getElementsByTagName('span')[0],'hide');
-				var item = {};
-				item.item_unique = this.href;
-				HTTP.post(Dase.base_href + 'user/' + Dase.user.eid + "/cart",item,
+				item_unique = this.href;
+				Dase.ajax(Dase.base_href + 'user/' + Dase.user.eid + "/cart",'POST',
 				function(resp) { 
 					//alert(resp);
 					Dase.initUser(); 
 					Dase.initSaveTo();
-				});
+				},item_unique);
 				return false;
 			};
 			Dase.removeClass(anchors[i],'hide');
@@ -900,18 +899,12 @@ Dase.initSaveTo = function() {
 			alert('Please select a user collection/slideshow/cart to save items to.');
 			return false;
 		}
-		var data = {};
-		data.item_uniques = item_uniques_array;
-		HTTP.post(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,data,
+		Dase.ajax(Dase.base_href + 'tag/' + Dase.user.eid + "/"+tag_ascii_id,'POST',
 		function(resp) { 
 			alert(resp); 
 			Dase.initUser();
 			Dase.initSaveTo();
-		},
-		//should *always* handle errors w/ an error callback:
-		function(resp) {
-			alert('Our sincerest apologies.  An error has occurred');
-		});
+		},item_uniques_array.join(','));
 		return false;
 	};
 };

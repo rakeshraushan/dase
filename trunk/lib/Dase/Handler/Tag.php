@@ -329,7 +329,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401);
 		}
-		$item_uniques_array = explode(',',$r->get('item_uniques'));
+		$item_uniques_array = explode(',',$r->getBody());
 		$num = count($item_uniques_array);
 		foreach ($item_uniques_array as $item_unique) {
 			$tag->addItem($item_unique);
