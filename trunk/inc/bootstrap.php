@@ -21,7 +21,7 @@ define('FAILED_SEARCH_LOG',$config->getLogDir().'/failed_searches.log');
 define('DEBUG_LOG',$config->getLogDir().'/debug.log');
 
 //log level
-define('LOG_LEVEL',Dase_Log::DEBUG);
+define('LOG_LEVEL',$config->getAppSettings('log_level'));
 
 //media directory
 define('MEDIA_DIR',$config->getMediaDir());

@@ -216,7 +216,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$query = htmlspecialchars(urlencode($matches[2]));
 
 		if (!$total) {
-			Dase_Log::debug(FAILED_SEARCH_LOG,$query);
+			Dase_Log::info(FAILED_SEARCH_LOG,$query);
 		}
 
 		$feed = <<<EOD

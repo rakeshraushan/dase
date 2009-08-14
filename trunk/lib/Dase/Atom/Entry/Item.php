@@ -51,7 +51,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($elem) {
 			return $elem->getAttribute('url');
 		} else {
-			return 'www/images/laits_colors.jpg';
+			return 'www/images/default.gif';
 		}
 	}
 
@@ -61,7 +61,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if ($elem) {
 			return $elem->getAttribute('url');
 		} else {
-			return 'www/images/laits_colors.jpg';
+			return 'www/images/default.gif';
 		}
 	}
 
