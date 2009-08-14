@@ -16,6 +16,11 @@ $conf['app']['main_title'] = "My DASe Archive";
 //$conf['app']['media_dir'] = '/usr/local/dase/media';
 //$conf['app']['log_dir'] = '/usr/local/dase/log';
 
+// 1 OFF 
+// 2 INFO 
+// 3 DEBUG 
+$conf['app']['log_level'] = 2;
+
 //path to imagemagick convert
 $conf['app']['convert'] = '/usr/bin/convert';
 

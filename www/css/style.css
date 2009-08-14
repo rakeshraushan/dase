@@ -1157,3 +1157,13 @@ ul#menuGrayed  li  {
 display:inline;
 }
 #menuGrayed li a.main { border: 1px solid #aaa; border-left: 18px solid #aaa; background-color: #ffffff; }
+
+dl#faq dt {
+	font-weight: bold;
+	color: #009;
+	margin: 10px 0;
+}
+
+dl#faq dd {
+	width: 60%;
+}

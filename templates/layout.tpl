@@ -126,7 +126,7 @@
 
 		<div id="footer">
 			<a href="manage" class="hide manage" id="manageLink"></a> |
-			<a href="apps/help" id="helpModule">FAQ</a> | 
+			<a href="help" id="helpModule">FAQ</a> | 
 			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
 			<a href="copyright">Copyright/Usage Statement</a> | 
 			<a href="resources">Resources</a> | 
