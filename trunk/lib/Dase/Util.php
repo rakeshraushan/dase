@@ -9,6 +9,21 @@ Class Dase_Util
 		return $ver[0] . $ver[1] . $ver[2];
 	}
 
+	//from http://us3.php.net/readfile
+	public static function readfileChunked ($filename) {
+		$chunksize = 1*(1024*1024); // how many bytes per chunk
+		$buffer = '';
+		$handle = fopen($filename, 'rb');
+		if ($handle === false) {
+			return false;
+		}
+		while (!feof($handle)) {
+			$buffer = fread($handle, $chunksize);
+			print $buffer;
+		}
+		return fclose($handle);
+	} 
+
 	//todo: work on this:
 	public static function isUrl($str)
 	{
