@@ -429,84 +429,13 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function buildSearchIndex()
 	{
-		$prefix = $this->db->table_prefix;
-		$db = $this->db;
-		$dbh = $this->db->getDbh();
-		//todo: make sure this->id is an integer
-		$db->query("DELETE FROM {$prefix}search_table WHERE collection_id = $this->id");
-		$db->query("DELETE FROM {$prefix}admin_search_table WHERE collection_id = $this->id");
-		$items = new Dase_DBO_Item($this->db);
-		$items->collection_id = $this->id;
-		foreach ($items->find() as $item) {
-			//search table
-			$composite_value_text = '';
-			//NOTE: '= true' works for mysql AND postgres!
-			$sql = "
-				SELECT value_text
-				FROM {$prefix}value v
-				WHERE item_id = ?
-				AND v.value_text != ''
-				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where a.in_basic_search = true)
-				";
-			$st = $dbh->prepare($sql);
-			$st->execute(array($item->id));
-			while ($value_text = $st->fetchColumn()) {
-				$composite_value_text .= $value_text . " ";
-			}
-			$content_obj = $item->getContents();
-			if ($content_obj) {
-				$composite_value_text .= $content_obj->text . " ";
-			}
-			$search_table = new Dase_DBO_SearchTable($this->db);
-			$search_table->value_text = $composite_value_text;
-			$search_table->item_id = $item->id;
-			$search_table->collection_id = $this->id;
-			//$search_table->collection_ascii_id = $this->ascii_id;
-			$search_table->updated = date(DATE_ATOM);
-			$search_table->insert();
-
-			//admin search table
-			$composite_value_text = '';
-			$sql = "
-				SELECT value_text
-				FROM {$prefix}value
-				WHERE item_id = ?
-				";
-			$st = $dbh->prepare($sql);
-			$st->execute(array($item->id));
-			while ($value_text = $st->fetchColumn()) {
-				$composite_value_text .= $value_text . " ";
-			}
-			$search_table = new Dase_DBO_AdminSearchTable($this->db);
-			$search_table->value_text = $composite_value_text;
-			$search_table->item_id = $item->id;
-			$search_table->collection_id = $this->id;
-			$search_table->collection_ascii_id = $this->ascii_id;
-			$search_table->updated = date(DATE_ATOM);
-			$search_table->insert();
-		}
-		return true;
-	}
-
-	function getSearchIndexArray()
-	{
-		$search_index_array = array();
-		$prefix = $this->db->table_prefix;
 		foreach ($this->getItems() as $item) {
-			$composite_value_text = '';
-			$sql = "
-				SELECT value_text
-				FROM {$prefix}value v
-				WHERE v.item_id = $item->id
-				AND v.value_text != ''
-				AND v.attribute_id in (SELECT id FROM {$prefix}attribute a where collection_id != 0)
-				";
-			foreach (Dase_DBO::query($this->db,$sql) as $row) {
-				$composite_value_text .= " ".$row['value_text'];
-			}
-			$search_index_array[$item->serial_number] = $composite_value_text;
+			$item = clone($item);
+			//don't commit
+			$item->buildSearchIndex(0,false);
 		}
-		return $search_index_array;
+		//now commit
+		$item->buildSearchIndex(0,true);
 	}
 
 	public function getItemsByAttAsAtom($attribute_ascii_id,$app_root)
