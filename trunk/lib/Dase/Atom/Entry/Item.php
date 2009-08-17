@@ -524,6 +524,9 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
 		if (!$c) { return; }
 		$item = Dase_DBO_Item::get($db,$c->ascii_id,$sernum);
+		if (!$item) {
+			$c->createNewItem($sernum);
+		}
 		$item->updated = date(DATE_ATOM);
 
 		//1. status
