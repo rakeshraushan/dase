@@ -26,6 +26,11 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $this->getLink('http://daseproject.org/relation/search-item');
 	}
 
+	function getEditAnnotationLink()
+	{
+		return $this->getLink('http://daseproject.org/relation/edit-annotation');
+	}
+
 	function getAttributesLink()
 	{
 		return $this->getLink('http://daseproject.org/relation/attributes');

@@ -12,7 +12,9 @@
 			<a href="{$it->itemLink}">
 				<img alt="image" id="thumb{$it->serial_number}" src="{$it->thumbnailLink}"/>
 			</a>
+			<!--
 			<a href="{$it->viewitemLink}" class="zoomer" id="zoom{$it->serial_number}">[+]</a>
+			-->
 		</div>
 		<div class="spacer"></div>
 		{if "" != $sort}
@@ -23,6 +25,7 @@
 		{if $it->summary}
 		<p class="thumbAnnotation">{$it->summary}</p>
 		{/if}
+
 	</td>
 	<td class="metadata">
 		<div class="cartAdd">

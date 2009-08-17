@@ -10,7 +10,7 @@
 	<h3>sets</h3>
 	<ul>
 		{foreach item=tag from=$tags}
-		<li>{$tag.name} ({$tag.count} items)</li>
+		<li>{$tag.name} ({$tag.item_count} items)</li>
 		{/foreach}
 	</ul>
 	<h3>collections</h3>
