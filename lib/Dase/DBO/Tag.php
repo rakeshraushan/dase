@@ -429,7 +429,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id,'alternate');
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/list','alternate','text/html','','list');
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/grid','alternate','text/html','','grid');
-		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/data','alternate','text/html','','data');
 		$feed->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'.json','alternate','application/json','','slideshow');
 
 		$feed->addCategory($this->type,"http://daseproject.org/category/tag_type",$this->type);
@@ -462,7 +461,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$setnum++;
 				$entry->addCategory($setnum,'http://daseproject.org/category/position');
 				$entry->addCategory($tag_item->id,'http://daseproject.org/category/tag_item_id');
-				$entry->addLink($app_root.'/tag/' . $this->user->eid . '/' . $this->ascii_id . '/' . $tag_item->id,"http://daseproject.org/relation/search-item");
+				$entry->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/'.$tag_item->id,"http://daseproject.org/relation/search-item");
+				$entry->addLink($app_root.'/tag/'.$this->user->eid.'/'.$this->ascii_id.'/'.$tag_item->id.'/annotation',"http://daseproject.org/relation/edit-annotation");
 				if ($tag_item->annotation) {
 					$entry->setSummary($tag_item->annotation);
 				}

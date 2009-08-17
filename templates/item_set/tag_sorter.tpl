@@ -21,38 +21,34 @@
 	<table id="sorter">
 		<form method="post" id="sortForm" action="tag/{$tag_feed->eid}/{$tag_feed->asciiId}/sorter">
 			<tr>
-				<td>List Order</td>
-				<td> </td>
+				<td></td>
+				<td class="position">
+					<input type="submit" value="update sort order">
+				</td>
 				<td> </td>
 				<td>Title</td>
-				<td>
-					<input type="submit" value="update sort order"/>
-				</td>
 			</tr>
 			{foreach key=j item=it from=$tag_feed->entries}
 			<tr id="row{$it->position}">
-				<td><input type="text" id="input_{$it->tagItemId}" name="sort_item[{$it->tagItemId}]" class="{$it->position}" value="{$it->position}" size="2"/></td>
-				<td>
-					<a href="#" class="topper" id="{$it->tagItemId}"><div class="tiny">top</div><img src="www/images/tango-icons/go-up.png"/></a>
+				<td class="arrow">
+					<a href="#" class="topper" id="{$it->tagItemId}"><div class="tiny">top</div><img src="www/images/tango-icons/go-up.png"></a>
 				</td>
+				<td class="position"><input type="text" id="input_{$it->tagItemId}" name="sort_item[{$it->tagItemId}]" class="{$it->position}" value="{$it->position}" size="2"/></td>
 				<td class="sortImage">
 					<img alt="" src="{$it->thumbnailLink}"/>
 				</td>
-				<td>
-					{$it->title|truncate:80:"..."}
-				</td>
-				<td>
+				<td class="title">
+					{$it->_title}
 				</td>
 			</tr>
 			{/foreach}
 			<tr>
 				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td>
-					<input type="submit" value="update sort order"/>
+				<td class="position">
+					<input type="submit" value="update sort order">
 				</td>
+				<td></td>
+				<td></td>
 			</tr>
 		</form>
 	</table>

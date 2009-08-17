@@ -4,7 +4,7 @@ Dase.pageInit = function() {
 	if (Dase.initSearchSorting) {
 		Dase.initSearchSorting();
 	}
-	Dase.initZoomer();
+//	Dase.initZoomer();
 }
 
 Dase.initBulkEditLink = function() {

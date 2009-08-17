@@ -5,6 +5,10 @@
 <script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
 {/block}
 
+{block name="head-meta"}
+<meta name="set_owner" contents="{$items->authorName}">
+{/block}
+
 {block name="title"}Item Set{/block}
 
 {block name="content"}
@@ -15,7 +19,8 @@
 		<h4>
 
 			{if 1 == $is_admin}
-			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">slide sorter</a>
+			<a href="tag/{$items->eid}/{$items->asciiId}/annotate">annotate slides</a> |
+			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">sort slides</a>
 			{/if}
 			{if $bulkedit}
 			| <a href="collection/{$items->collectionAsciiId}/attributes" id="bulkEditor">bulk editor</a>

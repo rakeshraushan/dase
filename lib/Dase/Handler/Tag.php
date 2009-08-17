@@ -14,7 +14,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
-		'{eid}/{tag_ascii_id}/data' => 'tag_data',
+		'{eid}/{tag_ascii_id}/annotate' => 'tag_annotate',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
 		'{eid}/{tag_ascii_id}/expunger' => 'tag_expunger',
@@ -151,11 +151,11 @@ class Dase_Handler_Tag extends Dase_Handler
 		$this->getTag($r,'grid');
 	}
 
-	public function getTagData($r)
+	public function getTagAnnotate($r)
 	{
 		$u = $r->getUser();
-		if (!$u->can('read',$this->tag)) {
-			$r->renderError(401,$u->eid .' is not authorized to read this resource.');
+		if (!$u->can('write',$this->tag)) {
+			$r->renderError(401,$u->eid .' is not authorized to write this resource');
 		}
 		$r->checkCache();
 		$t = new Dase_Template($r);
@@ -164,7 +164,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$t->assign('json_url',$json_url);
 		$feed_url = $r->app_root.'/tag/'.$this->tag->id.'.atom';
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$u->getHttpPassword()));
-		$r->renderResponse($t->fetch('item_set/data.tpl'));
+		$r->renderResponse($t->fetch('item_set/annotate.tpl'));
 	}
 
 	public function getTag($r,$display='')
@@ -302,6 +302,21 @@ class Dase_Handler_Tag extends Dase_Handler
 		} else {
 			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'?nocache=1');
 		}
+	}
+
+	public function putAnnotation($r) 
+	{
+		$u = $r->getUser();
+		$tag = $this->tag;
+		if (!$u->can('write',$tag)) {
+			$r->renderError(401);
+		}
+		$tag_item = new Dase_DBO_TagItem($this->db);
+		$tag_item->load($r->get('tag_item_id'));
+		$tag_item->annotation = $r->getBody();
+		$tag_item->updated = date(DATE_ATOM);
+		$tag_item->update();
+		$r->renderResponse($tag_item->annotation);
 	}
 
 	public function postToAnnotation($r) 
