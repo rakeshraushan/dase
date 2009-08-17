@@ -33,7 +33,7 @@ class Dase_Handler_Item extends Dase_Handler
 	{
 		//do we really want to hit db w/ every request?
 		$this->item = Dase_DBO_Item::get($this->db,$r->get('collection_ascii_id'),$r->get('serial_number'));
-		if (!$this->item) {
+		if (!$this->item && 'put' != $r->method) {
 			$r->renderError(404);
 		}
 
@@ -481,7 +481,7 @@ class Dase_Handler_Item extends Dase_Handler
 	public function putItem($r)
 	{
 		$user = $r->getUser('http');
-		if (!$user->can('write',$this->item)) {
+		if ($this->item && !$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot update item');
 		}
 		$content_type = $r->getContentType();

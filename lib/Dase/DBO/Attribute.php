@@ -371,11 +371,36 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	public function resort($target = 0) 
 	{
+		if ($this->sort_order == $target) {
+			return;
+		}
+		if ($this->sort_order > $target) {
+			//moving earlier in list, target is accurate
+		} else {
+			//moving later in list, target is too big by one 
+			$target = $target-1;	
+		}
+		$this->sort_order = $target;
+		$this->fixBools();
+		$this->update();
+		$coll = $this->getCollection(); 
+		foreach ($coll->getAttributes() as $att) {
+			$new_sort_order++;
+			if ($att->ascii_id != $this->ascii_id) {
+				if ($new_sort_order == $target) {
+					$att->sort_order = $new_sort_order + 1;
+				} else {
+					$att->sort_order = $new_sort_order;
+				}
+				$att->fixBools();
+				$att->update();
+			}
+		}
+		/*
 		$seen  = false;
 		$new_sort_order = 0;
 		$coll = $this->getCollection(); 
 		foreach ($coll->getAttributes() as $att) {
-			//Dase_Log::debug(LOG_FILE,'----------------'.$target);
 			$new_sort_order++;
 			if ($new_sort_order == $target) {
 				$this->sort_order = $new_sort_order;
@@ -387,7 +412,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				//skip
 			} else {
 				if ($seen) {
-					$new_sort_order++;
+			//		$new_sort_order++;
 				}
 				$att->sort_order = $new_sort_order;
 				$att->fixBools();
@@ -399,6 +424,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$this->fixBools();
 			$this->update();
 		}
+		 */
 	}
 }
 

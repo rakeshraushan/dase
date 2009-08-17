@@ -325,7 +325,7 @@ class Dase_Atom
 		}
 
 		//check cache
-		if ($this->links[$rel][$title] || 0 === $this->links[$rel][$title]) {
+		if (isset($this->links[$rel]) && ($this->links[$rel][$title] || 0 === $this->links[$rel][$title])) {
 			return $this->links[$rel][$title];
 		}
 
