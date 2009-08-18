@@ -1180,7 +1180,7 @@ table#annotate td {
 
 table#annotate td.annotation {
 	padding: 12px;
-	width: 20%;
+	min-width: 280px;
 }
 
 table#annotate p.highlight {

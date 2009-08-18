@@ -33,13 +33,13 @@
 		{foreach item=it from=$items->entries}
 		<tr>
 			<td class="annotation">
-				<h3>Annotation</h3>
+				<h3>Slide Caption</h3>
 				<p class="annotation" id="{$it->tagItemId}_annotation">{$it->summary}</p>
 				<form class="hide" id="{$it->tagItemId}_form" action="{$it->editAnnotationLink}" method="post">
 					<p><textarea name="annotation">{$it->summary}</textarea></p>
 					<input type="submit" value="save">
 				</form>
-				<a href="#" id="{$it->tagItemId}" class="toggleForm">[{if $it->summary}edit{else}add annotation{/if}]</a>
+				<a href="#" id="{$it->tagItemId}" class="toggleForm">[{if $it->summary}edit{else}add caption{/if}]</a>
 			</td>
 			<th>
 				<img src="{$it->viewitemLink}"/>
