@@ -17,17 +17,29 @@
 		</h4>
 	</div>
 	<h1>{$items->title}</h1>
+	<h4>set slideshow background color</h4>
+	<form action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
+		<p>
+		<select name="background" class="{$items->background}">
+			<option>select a color:</option>
+			<option class="black" {if "black" == $items->background}selected="selected"{/if}>black</option>
+			<option class="white" {if "white" == $items->background}selected="selected"{/if}>white</option>
+		</select>
+		<input type="hidden" name="display" value="{$display}">
+		<input type="submit" value="save">
+		</p>
+	</form>
 	<table id="annotate">
 		{foreach item=it from=$items->entries}
 		<tr>
 			<td class="annotation">
 				<h3>Annotation</h3>
-				<a href="#" id="{$it->tagItemId}" class="toggleForm">add/edit annotation</a>
+				<p class="annotation" id="{$it->tagItemId}_annotation">{$it->summary}</p>
 				<form class="hide" id="{$it->tagItemId}_form" action="{$it->editAnnotationLink}" method="post">
 					<p><textarea name="annotation">{$it->summary}</textarea></p>
 					<input type="submit" value="save">
 				</form>
-				<p class="annotation" id="{$it->tagItemId}_annotation">{$it->summary}</p>
+				<a href="#" id="{$it->tagItemId}" class="toggleForm">[{if $it->summary}edit{else}add annotation{/if}]</a>
 			</td>
 			<th>
 				<img src="data:image/png;base64,{$it->viewitemBase64}"/>
