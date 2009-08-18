@@ -192,17 +192,4 @@
 		</form>
 	</div>
 </div> 
-{if 'set' == $item->tagType}
-<div class="tagAdmin">
-	{if $item->entry->summary}
-	<h3>Annotation</h3>
-	<p class="annotation" id="annotationText">{$item->entry->summary}</p>
-	{/if}
-	<form class="hide" id="setAnnotationForm" action="{$item->self|replace:'.atom':'/annotation'}" method="post">
-		<p><textarea name="annotation">{$item->entry->summary}</textarea></p>
-		<input type="submit" value="save">
-	</form>
-	<a href="#" class="hide modify" id="annotationToggle">add/update annotation</a>
-</div>
-{/if}
 {/block} 

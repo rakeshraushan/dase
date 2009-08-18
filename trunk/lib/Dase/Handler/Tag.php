@@ -277,11 +277,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			$r->renderError(401,'not authorized to set background');
 		}
 		$this->tag->setBackground($r->get('background'));
-		if ('list' == $r->get('display')) {
-			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
-		} else {
-			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'?nocache=1');
-		}
+		$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/annotate');
 	}
 
 	public function postToVisibility($r)
@@ -317,21 +313,6 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag_item->updated = date(DATE_ATOM);
 		$tag_item->update();
 		$r->renderResponse($tag_item->annotation);
-	}
-
-	public function postToAnnotation($r) 
-	{
-		$u = $r->getUser();
-		$tag = $this->tag;
-		if (!$u->can('write',$tag)) {
-			$r->renderError(401);
-		}
-		$tag_item = new Dase_DBO_TagItem($this->db);
-		$tag_item->load($r->get('tag_item_id'));
-		$tag_item->annotation = $r->get('annotation');
-		$tag_item->updated = date(DATE_ATOM);
-		$tag_item->update();
-		$r->renderRedirect('tag/item/'.$tag->id.'/'.$tag_item->id);
 	}
 
 	public function postToTag($r) 

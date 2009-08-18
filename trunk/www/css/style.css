@@ -761,15 +761,6 @@ div.widget {
 	color: #669;
 }
 
-.tagAdmin {
-	background-color:#b5becd;
-	padding:10px 15px 15px 30px;
-}
-
-.tagAdmin form {
-	margin-bottom: 15px;
-}
-
 .slideshowAdmin {
 	background-color:#b5becd;
 	padding:10px 15px 15px 30px;
@@ -1171,25 +1162,45 @@ dl#faq dd {
 	width: 60%;
 }
 
-table#annotate td.annotation {
+a.toggleForm {
+	color: #900;
+	font-weight: bold;
+	font-size: 9px;
+}
+
+table#annotate td {
 	vertical-align: top;
+}
+
+table#annotate td.annotation {
 	padding: 12px;
 	width: 20%;
 }
+
+table#annotate p.highlight {
+	padding: 4px;
+	background-color: #ffe;
+}
+
+table#annotate td.annotation form {
+	margin-bottom: 12px;
+}
+
+table#annotate td.annotation h3 {
+	color: #666;
+}
+
 table#annotate td.annotation textarea {
 	font-size: 15px;
 	margin-top: 12px;
-	padding: 8px;
+	padding: 2px;
 	width: 90%;
 	height: 5em;
 }
 
 p.annotation {
 	font-size: 15px;
-	color: #006;
-	margin-top: 12px;
-	padding: 10px;
+	margin-right: 5px;
 	width: 90%;
-	min-height: 5em;
 }
 

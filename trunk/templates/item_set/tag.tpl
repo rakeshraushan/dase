@@ -108,18 +108,6 @@
 		</div>
 		{if 1 == $is_admin}
 		<div class="{$items->tagType|lower|default:'set'}Admin">
-			<h4>set slideshow background color</h4>
-			<form action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
-				<p>
-				<select name="background" class="{$items->background}">
-					<option>select a color:</option>
-					<option class="black" {if "black" == $items->background}selected="selected"{/if}>black</option>
-					<option class="white" {if "white" == $items->background}selected="selected"{/if}>white</option>
-				</select>
-				<input type="hidden" name="display" value="{$display}">
-				<input type="submit" value="save">
-				</p>
-			</form>
 			<form action="tag/{$items->eid}/{$items->asciiId}/visibility" method="post">
 				<p>
 				{if 1 == $is_public}
