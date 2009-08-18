@@ -42,7 +42,7 @@
 				<a href="#" id="{$it->tagItemId}" class="toggleForm">[{if $it->summary}edit{else}add annotation{/if}]</a>
 			</td>
 			<th>
-				<img src="data:image/png;base64,{$it->viewitemBase64}"/>
+				<img src="{$it->viewitemLink}"/>
 				<h3>{$it->collection}</h3>
 			</th>
 			<td>
