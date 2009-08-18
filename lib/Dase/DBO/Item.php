@@ -110,7 +110,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$sql = "
 			SELECT a.ascii_id, a.id as att_id, a.attribute_name,
 			v.value_text,a.collection_id, v.id, 
-			a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type,a.html_input_type
+			a.in_basic_search,a.is_on_list_display, a.is_public,v.url,v.modifier,a.modifier_type,a.html_input_type
 			FROM {$prefix}attribute a, {$prefix}value v
 			WHERE v.item_id = ?
 			AND v.attribute_id = a.id

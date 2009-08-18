@@ -548,7 +548,9 @@ EOD;
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
 				$admin_search_text[] = $meta['value_text'];
 			} else {
-				$search_text[] = $meta['value_text'];
+				if ($meta['in_basic_search']) {
+					$search_text[] = $meta['value_text'];
+				}
 			}
 
 			if ($meta['url']) {
