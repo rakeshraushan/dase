@@ -10,7 +10,7 @@
 	<div id="displaySettings">
 		<form action="user/{$user->eid}/display" method="post">
 			<p class="current">currently: {$user->max_items} items in {$user->display} format</p>
-			<input type="submit" value="display"/>
+			<span class="label">Display</span>
 			<select name="max">
 				<option value="15" {if 15 == $user->max_items}selected="selected"{/if}>15 items</option>
 				<option value="30" {if 30 == $user->max_items || !$user->max_items}selected="selected"{/if}>30 items</option>
@@ -26,6 +26,7 @@
 				<option value="grid" {if "grid" == $user->display}selected="selected"{/if}> in grid layout</option>
 				<option value="list" {if "list" == $user->display}selected="selected"{/if}>in list layout</option>
 			</select>
+			<input type="submit" value="save settings"/>
 		</form>
 	</div>
 	{if $user->isManager()}
