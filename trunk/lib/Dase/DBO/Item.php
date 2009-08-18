@@ -405,14 +405,28 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$att = Dase_DBO_Attribute::findOrCreateAdmin($this->db,$att_ascii_id);
 		}
 		if ($att) {
-			$v = new Dase_DBO_Value($this->db);
-			$v->item_id = $this->id;
-			$v->attribute_id = $att->id;
-			$v->value_text = trim($value_text);
-			$v->url = $url;
-			$v->modifier = $modifier;
-			$v->insert();
-			return $v;
+			if ('listbox' == $att->html_input_type) {
+				//never includes url or modifier
+				$pattern = '/[\n;]/';
+				$prepared_string = preg_replace($pattern,'%',trim($value_text));
+				$values_array = explode('%',$prepared_string);
+				foreach ($values_array as $val_txt) {
+					$v = new Dase_DBO_Value($this->db);
+					$v->item_id = $this->id;
+					$v->attribute_id = $att->id;
+					$v->value_text = $val_txt;
+					$v->insert();
+				}
+			} else {
+				$v = new Dase_DBO_Value($this->db);
+				$v->item_id = $this->id;
+				$v->attribute_id = $att->id;
+				$v->value_text = trim($value_text);
+				$v->url = $url;
+				$v->modifier = $modifier;
+				$v->insert();
+				return $v;
+			}
 		} else {
 			//simply returns false if no such attribute
 			Dase_Log::debug(LOG_FILE,'[WARNING] no such attribute '.$att_ascii_id);
