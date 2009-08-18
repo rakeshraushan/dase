@@ -33,7 +33,7 @@ Dase.pageInitUser = function() {
 				if (resp) {
 					my_toggle.innerHTML = '[edit]';
 				} else {
-					my_toggle.innerHTML = '[add annotation]';
+					my_toggle.innerHTML = '[add caption]';
 				}
 			},this.annotation.value,Dase.user.eid,Dase.user.htpasswd);
 			return false;

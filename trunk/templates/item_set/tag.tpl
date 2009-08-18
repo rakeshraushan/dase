@@ -19,7 +19,7 @@
 		<h4>
 
 			{if 1 == $is_admin}
-			<a href="tag/{$items->eid}/{$items->asciiId}/annotate">annotate slides</a> |
+			<a href="tag/{$items->eid}/{$items->asciiId}/annotate">add slide captions</a> |
 			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">sort slides</a>
 			{/if}
 			{if $bulkedit}
