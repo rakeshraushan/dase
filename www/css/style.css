@@ -735,15 +735,14 @@ div.widget {
 }
 
 #removeFromSet {
-	color: #930;
 }
 
 #setExpungerButton {
-	color: #900;
 }
 
 #removeFromSet:hover, #setExpungerButton:hover {
-	color: red;
+	background-color: red;
+	color: white;
 }
 
 #attributesForm {
@@ -838,6 +837,18 @@ div#slideshowControls a {
 	font-size: 1.4em;
 	font-weight: bold;
 	color: inherit;
+}
+
+div#bgColor {
+	position: fixed;
+	bottom: 3em;
+	right: 1em;
+	color: #999;
+}
+
+div#bgColor a {
+	font-weight: bold;
+	color: #999;
 }
 
 div#slideshowSizes {
@@ -1180,7 +1191,7 @@ table#annotate td {
 
 table#annotate td.annotation {
 	padding: 12px;
-	min-width: 280px;
+	min-width: 240px;
 }
 
 table#annotate p.highlight {
