@@ -1,5 +1,6 @@
 Dase.slideshow = {};
 Dase.slideshow.NAME = "Dase Default Slideshow";
+Dase.slideshow.colors = {'black':'black','white':'white'};
 Dase.slideshow.sizes = ['medium','large','full','small','viewitem','thumbnail'];
 Dase.slideshow.start = function(url,username,htpasswd) {
 	Dase.slideshow.defaultSize = 'medium';
@@ -7,15 +8,16 @@ Dase.slideshow.start = function(url,username,htpasswd) {
 	slides = [];
 	var rendering_func = function(json) {
 		document.body.innerHTML = '';
-		if (json.background) {
-			document.body.className = json.background;
-		} else {
-			document.body.className = 'black';
-		}
+//		if (json.background) {
+//			document.body.className = json.background;
+//		} else {
+	    document.body.className = 'black';
+//		}
 		var title_el = Dase.createElem(document.body,json.name,'h1',null,'slideshowTitle');
 		Dase.createElem(document.body,'[x]','a',null,'slideshowExit').href = window.location;;
 		var tally = Dase.createElem(title_el,null,'span',null,'num_of_num');
 		var sizes = Dase.createElem(document.body,null,'div',null,'slideshowSizes');
+		var bgcolor = Dase.createElem(document.body,null,'div',null,'bgColor');
 		var controls = Dase.createElem(document.body,null,'div',null,'slideshowControls');
 		var prev = Dase.createElem(controls,'< prev','a');
 		prev.href = '#';
@@ -66,6 +68,21 @@ Dase.slideshow.viewSlide = function(slides,num,img,annotation,prev,next) {
 	if (slides[num]['annotation']) {
 		annotation.innerHTML = slides[num]['annotation'];
 	}
+	var colors = Dase.$('bgColor');
+	colors.innerHTML = null;
+	//bar = Dase.createElem(colors,'background: ','span');
+	var bar;
+	for (color in Dase.slideshow.colors) {
+		var color_link = Dase.createElem(colors,color,'a');
+		color_link.href = '#';
+		color_link.color = color;
+		color_link.onclick = function() {
+			document.body.className = this.color;
+			return false;
+		};
+		bar = Dase.createElem(colors,' | ','span');
+	}
+	bar.style.display = 'none';
 	for (size in slides[num]['media']) {
 		if (size != 'thumbnail' && size != 'viewitem') {
 			var size_link = Dase.createElem(sizes,size,'a');
@@ -78,7 +95,7 @@ Dase.slideshow.viewSlide = function(slides,num,img,annotation,prev,next) {
 				img.src =this.href;
 				return false;
 			}
-			Dase.createElem(sizes,' | ','span');
+			bar = Dase.createElem(sizes,' | ','span');
 			if (size_link.size == Dase.slideshow.defaultSize) {
 				size_link.className = 'currentSize';
 			} else {
@@ -86,6 +103,7 @@ Dase.slideshow.viewSlide = function(slides,num,img,annotation,prev,next) {
 			}
 		}
 	}
+	bar.style.display = 'none';
 	prev.onclick = function() {
 		if (0 == num) {
 			prev_num = slides.length - 1;

@@ -74,12 +74,9 @@
 				</form>
 			</div>
 			<div class="widget">
-				<!-- why "get"?????? -->
 				<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
-					<p>
 					<input type="hidden" name="submit_confirm" value="are you sure?">
 					<input type="submit" id="setExpungerButton" value="delete set">
-					</p>
 				</form>
 			</div>
 			{/if}

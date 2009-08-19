@@ -17,6 +17,7 @@
 		</h4>
 	</div>
 	<h1>{$items->title}</h1>
+	<!--
 	<h4>set slideshow background color</h4>
 	<form action="tag/{$items->eid}/{$items->asciiId}/background" method="post">
 		<p>
@@ -29,6 +30,7 @@
 		<input type="submit" value="save">
 		</p>
 	</form>
+	-->
 	<table id="annotate">
 		{foreach item=it from=$items->entries}
 		<tr>
