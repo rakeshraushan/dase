@@ -13,7 +13,7 @@ if ($coll_ascii_id) {
 }
 foreach ($coll->find() as $c) {
 	$start = Dase_Util::getTime();
-	print "working on " . $c->collection_name . "(".$c->item_count." items)".\n";
+	print "working on " . $c->collection_name . "(".$c->item_count." items)\n";
 	$c->buildSearchIndex();
 	$end = Dase_Util::getTime();
 	$total = $end - $start;
