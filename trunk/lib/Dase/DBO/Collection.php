@@ -429,6 +429,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function buildSearchIndex()
 	{
+		$item = null;
 		foreach ($this->getItems() as $item) {
 			$item = clone($item);
 			//don't commit
