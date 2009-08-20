@@ -20,6 +20,8 @@ class Dase
 			foreach ($c->find() as $coll) {
 				$colls[$coll->ascii_id] = $coll->collection_name;
 				$acl[$coll->ascii_id] = $coll->visibility;
+				//backwards compat
+				$acl[$coll->ascii_id.'_collection'] = $coll->visibility;
 			}
 			$app_data['collections'] = $colls;
 			$app_data['media_acl'] = $acl;
