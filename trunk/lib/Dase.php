@@ -16,10 +16,13 @@ class Dase
 		if (!$serialized_app_data) {
 			$c = new Dase_DBO_Collection($db);
 			$colls = array();
+			$acl = array();
 			foreach ($c->find() as $coll) {
 				$colls[$coll->ascii_id] = $coll->collection_name;
+				$acl[$coll->ascii_id] = $coll->is_public;
 			}
 			$app_data['collections'] = $colls;
+			$app_data['acl'] = $acl;
 			$cache->setData('app_data',serialize($app_data));
 		} else {
 			$app_data = unserialize($serialized_app_data);

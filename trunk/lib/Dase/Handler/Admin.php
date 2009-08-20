@@ -23,6 +23,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'users' => 'users',
 		'cache' => 'cache',
 		'db' => 'db_schema',
+		'app_data' => 'app_data',
 	);
 
 	public function setup($r)
@@ -32,6 +33,11 @@ class Dase_Handler_Admin extends Dase_Handler
 		if ( 'modules' != $r->resource && !$this->user->is_superuser) {
 			$r->renderError(401);
 		}
+	}
+
+	public function getAppData($r)
+	{
+		$r->renderResponse(print_r($GLOBALS['app_data'],1));
 	}
 
 	public function deleteCache($r)
