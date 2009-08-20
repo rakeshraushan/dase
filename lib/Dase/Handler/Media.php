@@ -21,10 +21,14 @@ class Dase_Handler_Media extends Dase_Handler
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
 		//prob should use Dase_Acl:
-		$is_public = $GLOBALS['app_data']['acl'][$this->collection_ascii_id];
+		if ('public' == $GLOBALS['app_data']['media_acl'][$this->collection_ascii_id]) {
+			$media_public = true;
+		} else {
+			$media_public = false;
+		}
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
-			if ('thumbnail' != $this->size && 'viewitem' != $this->size && !$is_public) {
+			if ('thumbnail' != $this->size && 'viewitem' != $this->size && !$media_public) {
 				//anything other than thumbnail requires eid
 				//this automatically check url_auth, too
 				$user = $r->getUser();
