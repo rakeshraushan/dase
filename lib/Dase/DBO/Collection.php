@@ -435,7 +435,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->buildSearchIndex(0,false);
 		}
 		//now commit
-		$item->buildSearchIndex(0,true);
+		if ($item) {
+			$item->buildSearchIndex(0,true);
+		}
 	}
 
 	public function getItemsByAttAsAtom($attribute_ascii_id,$app_root)
