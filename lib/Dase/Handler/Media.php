@@ -23,7 +23,7 @@ class Dase_Handler_Media extends Dase_Handler
 		$is_public = $GLOBALS['app_data']['acl'][$this->collection_ascii_id];
 		if ($r->has('size')) {
 			$this->size = $r->get('size');
-			if ('thumbnail' != $this->size && 'viewitem' != $this->size && !$is_public) {
+			if ('thumbnail' != $this->size && 'viewitem' != $this->size ) {
 				//anything other than thumbnail requires eid
 				//this automatically check url_auth, too
 				$user = $r->getUser();
