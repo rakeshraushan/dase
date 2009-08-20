@@ -28,7 +28,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items/by/md5/{md5}' => 'items_by_md5',
 		'{collection_ascii_id}/items/by/att/{att_ascii_id}' => 'items_by_att',
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
-		'{collection_ascii_id}/items/marked/to_be_deleted' => 'items_marked_to_be_deleted',
+		'{collection_ascii_id}/deletions' => 'items_marked_to_be_deleted',
 		'{collection_ascii_id}/managers' => 'managers',
 		'{collection_ascii_id}/manager/{eid}' => 'manager',
 	);
@@ -243,6 +243,32 @@ class Dase_Handler_Collection extends Dase_Handler
 			}
 		}
 		$r->renderResponse(Dase_Json::get($items));
+	}
+
+	public function getItemsMarkedToBeDeleted($r) 
+	{
+		$tpl = new Dase_Template($r);
+		$url = str_replace('.html','',$r->url);
+		$tpl->assign('items',Dase_Atom_Feed::retrieve($r->app_root.'/'.$url.'.atom'));
+		$r->renderResponse($tpl->fetch('item_set/deletions.tpl'));
+	}
+
+
+	public function getItemsMarkedToBeDeletedAtom($r) 
+	{
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle($this->collection->collection_name.' items to be deleted');
+		$feed->setId(Dase_Atom::getNewId());
+		$items = new Dase_DBO_Item($this->db);
+		$items->collection_id = $this->collection->id;
+		$items->status = 'delete';
+		foreach ($items->find() as $item) {
+			$item = clone($item);
+			$entry = $feed->addEntry();
+			$entry->addLink($r->app_root.'/item/'.$this->collection->ascii_id.'/'.$item->serial_number,"http://daseproject.org/relation/search-item");
+			$item->injectAtomEntryData($entry,$r->app_root);
+		}
+		$r->renderResponse($feed->asXml());
 	}
 
 	public function getItemsMarkedToBeDeletedTxt($r) 

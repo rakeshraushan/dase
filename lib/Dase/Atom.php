@@ -41,6 +41,11 @@ class Dase_Atom
 		}
 	}
 
+	public static function getNewId()
+	{
+		return 'tag:daseproject.org,'.date('Y').':'.Dase_Util::getUniqueName();
+	}
+
 	//convenience method for atom elements
 	function addElement($tagname,$text='',$ns='') 
 	{
