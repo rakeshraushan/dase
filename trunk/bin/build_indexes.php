@@ -4,15 +4,18 @@ include 'config.php';
 
 //this script rebuilds search indexes
 
-$coll_ascii_id = 'vrc';
+$coll_ascii_id = 'keanepj';
 
-$coll = new Dase_DBO_Collection;
+$coll = new Dase_DBO_Collection($db);
+$coll->orderBy('item_count ASC');
 if ($coll_ascii_id) {
 	$coll->ascii_id = $coll_ascii_id;
 }
 foreach ($coll->find() as $c) {
-	Dase_Timer::start(true);
+	$start = Dase_Util::getTime();
 	print "working on " . $c->collection_name . "\n";
 	$c->buildSearchIndex();
-	print (Dase_Timer::getElapsed() . " seconds\n");
+	$end = Dase_Util::getTime();
+	$total = $end - $start;
+	print ($total . " seconds\n");
 }

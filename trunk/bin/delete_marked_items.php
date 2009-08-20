@@ -17,7 +17,7 @@ if ('Y' == $resp || 'y' == $resp) {
 	$user = trim(fgets(STDIN)); 
 	echo 'Password: ';
 	$pass = preg_replace('/\r?\n$/', '', `stty -echo; head -n1 ; stty echo`);
-	$lines = file_get_contents(APP_ROOT.'/collection/'.$coll.'/items/marked/to_be_deleted.uris');
+	$lines = file_get_contents(APP_ROOT.'/collection/'.$coll.'/deletions.uris');
 	$i = 0;
 	foreach (explode("\n",$lines) as $line) {
 		$line = trim($line);
@@ -35,7 +35,7 @@ if ('Y' == $resp || 'y' == $resp) {
 
 function getMarkedCount($coll)
 {
-	$set = file_get_contents(APP_ROOT.'/collection/'.$coll.'/items/marked/to_be_deleted.uris');
+	$set = file_get_contents(APP_ROOT.'/collection/'.$coll.'/deletions.uris');
 	$count = preg_match_all("/\n/",$set,$matches);
 	return $count;
 }

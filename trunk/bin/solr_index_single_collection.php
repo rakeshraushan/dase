@@ -161,6 +161,8 @@ $colls = array(
 	'zamora',
 );
 
+$colls = array('keanepj');
+
 $i = 0;
 
 foreach ($colls as $coll) {
