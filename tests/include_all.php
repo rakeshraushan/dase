@@ -45,7 +45,6 @@ include_once 'Dase/DBO/Subscription.php';
 include_once 'Dase/DBO/AttributeItemType.php';
 include_once 'Dase/DBO/MediaFile.php';
 include_once 'Dase/DBO/Content.php';
-include_once 'Dase/Acl.php';
 include_once 'Dase/Atom.php';
 include_once 'Dase/Atom/Entry.php';
 include_once 'Dase/Atom/Entry/Set.php';

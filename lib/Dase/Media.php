@@ -9,6 +9,36 @@ Class Dase_Media
 		'video/*',
 	);
 
+	public static $sizes = array(
+		'aiff' => 2,
+		'archive' => 1,
+		'atom' => 0,
+		'css' => 1,
+		'deleted' => 1,
+		'doc' => 1,
+		'full' => 1,
+		'gif' => 1,
+		'html' => 1,
+		'jpeg' => 1,
+		'large' => 1,
+		'medium' => 1,
+		'mp3' => 2,
+		'pdf' => 1,
+		'png' => 1,
+		'quicktime' => 2,
+		'quicktime_stream' => 2,
+		'raw' => 2,
+		'small' => 1,
+		'text' => 1,
+		'thumbnail' => 0,
+		'tiff' => 2,
+		'uploaded_files' => 2,
+		'viewitem' => 1,
+		'wav' => 2,
+		'xml' => 1,
+		'xsl' => 1,
+	);
+
 	function __construct() {}
 
 	/** 

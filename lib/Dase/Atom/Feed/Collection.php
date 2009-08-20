@@ -56,7 +56,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 			} else {
 				if (mkdir("$coll_media_dir")) {
 					chmod("$coll_media_dir",0775);
-					foreach (Dase_Acl::$sizes as $size => $access_level) {
+					foreach (Dase_Media::$sizes as $size => $access_level) {
 						mkdir("$coll_media_dir/$size");
 						Dase_Log::info(LOG_FILE,'created directory '.$coll_media_dir.'/'.$size);
 						chmod("$coll_media_dir/$size",0775);

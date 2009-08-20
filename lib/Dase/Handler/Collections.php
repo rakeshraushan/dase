@@ -59,11 +59,6 @@ class Dase_Handler_Collections extends Dase_Handler
 		$r->renderResponse(Dase_DBO_Collection::listAsJson($this->db));
 	}
 
-	public function getAclJson($r) 
-	{
-		$r->renderResponse(Dase_Json::get(Dase_Acl::generate($this->db)));
-	}
-
 	public function getCollectionsAtom($r) 
 	{
 		if ($r->get('get_all')) {

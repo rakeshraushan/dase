@@ -20,8 +20,8 @@ class Dase_Handler_Media extends Dase_Handler
 		//note: this handler (for GETs) needs to be fast
 		$this->collection_ascii_id = $r->get('collection_ascii_id');
 		$this->serial_number = $r->get('serial_number');
-		//prob should use Dase_Acl:
-		if ('public' == $GLOBALS['app_data']['media_acl'][$this->collection_ascii_id]) {
+		$media_acl = $GLOBALS['app_data']['media_acl'];
+		if (isset($media_acl[$this->collection_ascii_id]) && 'public' == $media_acl[$this->collection_ascii_id]) {
 			$media_public = true;
 		} else {
 			$media_public = false;
@@ -34,20 +34,6 @@ class Dase_Handler_Media extends Dase_Handler
 				$user = $r->getUser();
 			}
 		} 
-		/*
-		if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,null,MEDIA_DIR)) {
-			if (!$path) {
-				$this->user = $r->getUser();
-				if (!$this->user) {
-					$r->renderError(401,'cannot access media');
-				}
-				if (!Dase_Acl::check($this->db,$this->collection_ascii_id,$this->size,$this->user->eid,MEDIA_DIR)) {
-					$r->renderError(401,'cannot access media');
-				}
-			}
-			//get coll path to media!!!!!!!!
-		}
-		 */
 	}
 
 	public function getMediaFileTxt($r)
