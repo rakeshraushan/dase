@@ -544,9 +544,9 @@ class Dase_Http_Request
 		}
 	}
 
-	public function initUser($db)
+	public function initUser($db,$config)
 	{
-		$this->null_user = new Dase_DBO_DaseUser($db);
+		$this->null_user = Dase_User::get($db,$config);
 	}
 
 	public function setUser($user)
