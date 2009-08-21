@@ -8,32 +8,13 @@ class Dase
 	{
 		$db = new Dase_DB($config);
 
-		$cache = Dase_Cache::get(CACHE_TYPE);
-
-		//refreshed once per hour
-		//do not forget to expunge when necessary
-		$serialized_app_data = $cache->getData('app_data',3600);
-		if (!$serialized_app_data) {
-			$c = new Dase_DBO_Collection($db);
-			$colls = array();
-			$acl = array();
-			foreach ($c->find() as $coll) {
-				$colls[$coll->ascii_id] = $coll->collection_name;
-				$acl[$coll->ascii_id] = $coll->visibility;
-				//backwards compat
-				$acl[$coll->ascii_id.'_collection'] = $coll->visibility;
-			}
-			$app_data['collections'] = $colls;
-			$app_data['media_acl'] = $acl;
-			$cache->setData('app_data',serialize($app_data));
-		} else {
-			$app_data = unserialize($serialized_app_data);
+		if (file_exists(BASE_PATH.'/inc/local_bootstrap.php')) {
+			//allows db & config enabled bootstrap
+			include BASE_PATH.'/inc/local_bootstrap.php';
 		}
 
-		$GLOBALS['app_data'] = $app_data;
-
 		$r = new Dase_Http_Request($config->getAppSettings('default_handler'));
-		$r->initUser($db);
+		$r->initUser($db,$config);
 		$r->initCache(Dase_Cache::get(CACHE_TYPE));
 		$r->initCookie($config->getAuth('token'));
 		$r->initAuth($config->getAuth());

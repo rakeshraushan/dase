@@ -16,6 +16,8 @@ $conf['app']['main_title'] = "My DASe Archive";
 //$conf['app']['media_dir'] = '/usr/local/dase/media';
 //$conf['app']['log_dir'] = '/usr/local/dase/log';
 
+$conf['app']['user_table'] = 'dase_user';
+
 // 1 OFF 
 // 2 INFO 
 // 3 DEBUG 
