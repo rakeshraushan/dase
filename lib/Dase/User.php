@@ -15,9 +15,7 @@ Class Dase_User
 
 	public static function get($db,$config)
 	{
-		$parts = explode('_',$config->getAppSettings('user_table')); 
-		array_walk($parts, create_function('&$str', '$str = ucfirst($str);'));
-		$class_name = 'Dase_DBO_'.join('',$parts);
+		$class_name = 'Dase_DBO_'.Dase_Util::camelize($config->getAppSettings('user_table')); 
 
 		if (class_exists($class_name)) {
 			return new $class_name($db);
