@@ -1,18 +1,7 @@
 <html>
 	<head>
-		<style type="text/css">
-			{literal}
-			#content {
-				margin: 10px auto;
-				width: 70%;
-			}
-			dt {
-				font-weight: bold;
-				color: #006;
-				margin: 10px 5px;
-			}
-			{/literal}
-		</style>
+		{block name="head"}{/block}
+		<link rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
 	<body>
 		<h1>Sample DASe Module</h1>

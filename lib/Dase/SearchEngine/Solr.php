@@ -213,7 +213,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		//todo: probably the q param
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
-		$query = htmlspecialchars(urlencode($matches[2]));
+		if (isset($matches[2])) {
+			$query = htmlspecialchars(urlencode($matches[2]));
+		}
 
 		if (!$total) {
 			Dase_Log::info(FAILED_SEARCH_LOG,$query);
