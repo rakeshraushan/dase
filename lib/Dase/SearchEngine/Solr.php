@@ -579,6 +579,13 @@ EOD;
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			$field->setAttribute('name',$meta['attribute_name']);
+
+			//allows fielded exact search:
+			$field = $doc->appendChild($dom->createElement('field'));
+			$field->appendChild($dom->createTextNode($meta['value_text']));
+			//attribute ascii_ids
+			$field->setAttribute('name','_'.$meta['ascii_id']);
+
 		}
 
 		$field = $doc->appendChild($dom->createElement('field'));

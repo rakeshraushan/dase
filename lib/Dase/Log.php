@@ -77,7 +77,7 @@ class Dase_Log
 			return false;
 		}
 
-		$filehandle = fopen($this->log_file, 'a');
+		$filehandle = @fopen($this->log_file, 'a');
 
 		if (!is_resource($filehandle)) {
 			return false;
