@@ -292,10 +292,10 @@ http://wiki.apache.org/solr/SchemaXml
 	  -->
 	  <field name="timestamp" type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 
-	  <dynamicField name="*" type="text" stored="true" indexed="true" multiValued="true"/>
+	  <!-- allows attribute_ascii_id preceded by '@' perform exact search (beware special chars)-->
+	  <dynamicField name="@*" type="string" stored="true" indexed="true" multiValued="true"/>
 
-	  <!-- allows attribute_ascii_id preceded by '=' perform exact search (beware special chars)-->
-	  <dynamicField name="=*" type="string" stored="true" indexed="true" multiValued="true"/>
+	  <dynamicField name="*" type="text" stored="true" indexed="true" multiValued="true"/>
 
 	</fields>
 
