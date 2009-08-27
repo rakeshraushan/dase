@@ -212,6 +212,8 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$updated = date(DATE_ATOM);
 
 		//todo: probably the q param
+		//note: bug -- this chops off last part of query
+		//echo if it contains an ampersand
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
 		if (isset($matches[2])) {
 			$query = htmlspecialchars(urlencode($matches[2]));
@@ -610,11 +612,11 @@ EOD;
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			$field->setAttribute('name',$meta['attribute_name']);
 
-			//allows fielded exact search:
+			//allows fielded exact search -- precede att_ascii_id w/ @:
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			//attribute ascii_ids
-			$field->setAttribute('name','='.$meta['ascii_id']);
+			$field->setAttribute('name','@'.$meta['ascii_id']);
 
 		}
 
