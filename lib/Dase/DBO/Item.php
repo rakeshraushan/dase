@@ -98,6 +98,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $ds->getItem($this->getUnique(),$app_root,$as_feed);
 	}
 
+	public function retrieveJsonDoc($app_root)
+	{
+		$ds = Dase_DocStore::get($this->db,$this->config);
+		return $ds->getItemJson($this->getUnique(),$app_root);
+	}
+
 	private function _getMetadata()
 	{
 		if (count($this->_metadata)) {
@@ -255,7 +261,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return $this->_media;
 		}
 		$prefix = $this->db->table_prefix;
-		$metadata = array();
 		$sql = "
 			SELECT * FROM {$prefix}media_file
 			WHERE item_id = ?
@@ -865,6 +870,20 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return $this->retrieveAtomDoc($app_root,true);
 		}
 
+		function asJson($app_root)
+		{
+			return $this->retrieveJsonDoc($app_root);
+		}
+
+		/** experimental */
+		function asAtomJson($app_root)
+		{
+			$entry = new Dase_Atom_Entry;
+			$this->injectAtomEntryData($entry,$app_root);
+			return $entry->asJson();
+		}
+
+
 		function asAtomEntry($app_root="{APP_ROOT}",$authorize_links=false)
 		{
 			if ($authorize_links) {
@@ -874,14 +893,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			} else {
 				return $this->retrieveAtomDoc($app_root);
 			}
-		}
-
-		/** experimental */
-		function asAtomJson($app_root)
-		{
-			$entry = new Dase_Atom_Entry;
-			$this->injectAtomEntryData($entry,$app_root);
-			return $entry->asJson();
 		}
 
 		function mediaAsAtomFeed($app_root) 

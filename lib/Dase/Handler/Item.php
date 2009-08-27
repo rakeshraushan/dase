@@ -86,19 +86,6 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->mediaAsAtomFeed($r->app_root));
 	}
 
-	public function getItemAtom($r)
-	{
-		$user = $r->getUser('http');
-		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'user cannot read this item');
-		}
-		if ('feed' == $r->get('type')) {
-			$r->renderResponse($this->item->asAtom($r->app_root));
-		} else {
-			$r->renderResponse($this->item->asAtomEntry($r->app_root));
-		}
-	}
-
 	public function getAuthorizedAtom($r)
 	{
 		$user = $r->getUser('http');
@@ -161,7 +148,21 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$r->renderResponse($this->item->asAtomJson($r->app_root));
+		$r->renderResponse($this->item->asJson($r->app_root));
+	//	$r->renderResponse($this->item->asAtomJson($r->app_root));
+	}
+
+	public function getItemAtom($r)
+	{
+		$user = $r->getUser('http');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
+		}
+		if ('feed' == $r->get('type')) {
+			$r->renderResponse($this->item->asAtom($r->app_root));
+		} else {
+			$r->renderResponse($this->item->asAtomEntry($r->app_root));
+		}
 	}
 
 	public function getItem($r)

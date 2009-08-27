@@ -266,6 +266,7 @@ http://wiki.apache.org/solr/SchemaXml
 	  <field name="_id" type="string" indexed="true" stored="true" required="true"/>
 	  <field name="_search_text" type="text" indexed="true" stored="false" multiValued="false"/>
 	  <field name="_atom" type="text" indexed="false" stored="true" multiValued="false"/>
+	  <field name="_json" type="text" indexed="false" stored="true" multiValued="false"/>
 	  <field name="_item_id" type="text" indexed="true" stored="true" multiValued="false"/>
 	  <field name="_serial_number" type="text" indexed="true" stored="true" multiValued="false"/>
 
@@ -293,8 +294,8 @@ http://wiki.apache.org/solr/SchemaXml
 
 	  <dynamicField name="*" type="text" stored="true" indexed="true" multiValued="true"/>
 
-	  <!-- allows attribute_ascii_id preceded by '_' perform exact search (beware special chars)-->
-	  <dynamicField name="_*" type="string" stored="true" indexed="true" multiValued="true"/>
+	  <!-- allows attribute_ascii_id preceded by '=' perform exact search (beware special chars)-->
+	  <dynamicField name="=*" type="string" stored="true" indexed="true" multiValued="true"/>
 
 	</fields>
 
