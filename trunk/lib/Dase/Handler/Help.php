@@ -23,9 +23,9 @@ class Dase_Handler_Help extends Dase_Handler
 		$search_result = Dase_Atom_Feed::retrieve($r->app_root.'/search.atom?c=dase_help&q=@identifier:"'.$ident.'"&limit=100');
 		foreach ($search_result->entries as $e) {
 			$meta = $e->getMetadata('answer');
+			$r->renderResponse($meta['text']);
 		}
-		$r->renderResponse($meta['text']);
-		$r->renderResponse($search_result->asXml());
+		$r->renderError(401);
 	}
 }
 
