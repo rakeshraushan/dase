@@ -61,7 +61,7 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		}
 	}
 
-	public function getItemJson($item_unique,$app_root)
+	public function getItemAtomJson($item_unique,$app_root)
 	{
 		$feed = Dase_Atom_Feed::load($this->getItem($item_unique,$app_root,true));
 		return $feed->asJson();
@@ -78,6 +78,30 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		return $res;
 	}
 
+	public function getItemJson($item_unique,$app_root)
+	{
+		$entry = '';
+		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
+		Dase_Log::debug(LOG_FILE,'SOLR ITEM RETRIEVE: '.$url);
+		$res = file_get_contents($url);
+
+		$reader = new XMLReader();
+		$reader->XML($res);
+		while ($reader->read()) {
+			//get json 
+			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('_json' == $reader->getAttribute('name')) {
+					$reader->read();
+					$json = $reader->value;
+				}
+			}
+		}
+		$reader->close();
+		$json = str_replace('{APP_ROOT}',$app_root,$json);
+		return $json;
+	}
+
+	//auto-generates and inserts in store if item missing
 	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
 	{
 		$entry = '';

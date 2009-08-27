@@ -483,6 +483,7 @@ EOD;
 	{
 		$dom = new DOMDocument();
 
+		$json_doc = array();
 		if ($wrap_in_add_tag) {
 			$root_el = $dom->createElement('add');
 			$root = $dom->appendChild($root_el);
@@ -497,45 +498,68 @@ EOD;
 		$id->appendChild($dom->createTextNode($item->p_collection_ascii_id.'/'.$item->serial_number));
 		$id->setAttribute('name','_id');
 
+		$json_doc['_id'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
+
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->updated));
 		$updated->setAttribute('name','_updated');
+
+		$json_doc['_updated'] = $item->updated;
 
 		$item_id = $doc->appendChild($dom->createElement('field'));
 		$item_id->appendChild($dom->createTextNode($item->id));
 		$item_id->setAttribute('name','_item_id');
 
+		$json_doc['_item_id'] = $item->id;
+
 		$serial_number = $doc->appendChild($dom->createElement('field'));
 		$serial_number->appendChild($dom->createTextNode($item->serial_number));
 		$serial_number->setAttribute('name','_serial_number');
+
+		$json_doc['_serial_number'] = $item->serial_number;
 
 		$c = $doc->appendChild($dom->createElement('field'));
 		$c->appendChild($dom->createTextNode($item->p_collection_ascii_id));
 		$c->setAttribute('name','c');
 
+		$json_doc['c'] = $item->p_collection_ascii_id;
+
 		$coll = $doc->appendChild($dom->createElement('field'));
 		$coll->appendChild($dom->createTextNode($item->collection_name));
 		$coll->setAttribute('name','collection');
+
+		$json_doc['collection'] = $item->collection_name;
 
 		$it = $doc->appendChild($dom->createElement('field'));
 		$it->appendChild($dom->createTextNode($item->item_type_ascii_id));
 		$it->setAttribute('name','item_type');
 
+		$json_doc['item_type'] = $item->item_type_ascii_id;
+
 		$it_name = $doc->appendChild($dom->createElement('field'));
 		$it_name->appendChild($dom->createTextNode($item->item_type_name));
 		$it_name->setAttribute('name','item_type_name');
+
+		$json_doc['item_type_name'] = $item->item_type_name;
 
 		$search_text = array();
 		$admin_search_text = array();
 		$contents = $item->getContents();
 		//won't run if !$item->content_length
 		if ($contents && $contents->text) {
+
 			$content = $doc->appendChild($dom->createElement('field'));
 			$content->appendChild($dom->createTextNode($contents->text));
 			$content->setAttribute('name','content');
+
+			$json_doc['content'] = $contents->text;
+
 			$content_type = $doc->appendChild($dom->createElement('field'));
 			$content_type->appendChild($dom->createTextNode($contents->type));
 			$content_type->setAttribute('name','content_type');
+
+			$json_doc['content_type'] = $contents->type;
+
 			if ('text' === $contents->type) {
 				$search_text[] = $contents->text;
 			}
@@ -544,7 +568,13 @@ EOD;
 		$search_text[] = $item->id;
 		$search_text[] = $item->serial_number;
 
+		$json_doc['media'] = $item->getMedia();
+
+		$json_doc['metadata'] = array();
+
 		foreach ($item->getMetadata(true) as $meta) {
+
+			$json_doc['metadata'][$meta['ascii_id']][] = $meta;
 
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
@@ -584,7 +614,7 @@ EOD;
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			//attribute ascii_ids
-			$field->setAttribute('name','_'.$meta['ascii_id']);
+			$field->setAttribute('name','='.$meta['ascii_id']);
 
 		}
 
@@ -606,6 +636,12 @@ EOD;
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
 		$field->setAttribute('name','_atom');
+
+		$field = $doc->appendChild($dom->createElement('field'));
+		//$field->appendChild($dom->createTextNode(htmlspecialchars(Dase_Json::get($json_doc))));
+		$field->appendChild($dom->createTextNode(Dase_Json::get($json_doc)));
+		$field->setAttribute('name','_json');
+
 		$dom->formatOutput = true;
 		return $dom->saveXML();
 	}
