@@ -1,0 +1,221 @@
+/* CSS Document */
+
+body {
+
+background-color:#FFFFFF;
+font-family:sans-serif;
+font-size:95%;
+
+}
+
+#content {
+
+width:760px;
+margin-left:auto;
+margin-right:auto;
+
+}
+
+#headBanner {
+
+float:left;
+width:760px;
+height:38px;
+
+}
+
+#logo {
+width:760px;
+height:90px;
+}
+
+#navigation {
+
+/*float:left;*/
+width:800px;
+height:24px;
+font-family:Garamond, Georgia, "Times New Roman", Times, serif;
+font-weight:bold;
+/*text-align:left;*/
+color:#932A18;
+font-size:115%;
+padding: 8px;
+
+}
+
+
+a.nav { color:#3C4C28; text-decoration:none;}
+a.nav:link { color:#3C4C28;}
+a.nav:visited { color:#3C4C28;}
+a.nav:hover { color:#932A18; text-decoration:underline;}
+
+p {
+
+font-size:90%;
+color:#333333;
+}
+
+#navhrindex {
+
+float:left;
+width:800px;
+height:6px;
+background-image:url("../images/nav_hr.jpg");
+background-repeat:no-repeat;
+
+}
+
+#navhr {
+
+float:left;
+width:800px;
+height:6px;
+background-image:url("../images/nav_hr.jpg");
+background-repeat:no-repeat;
+
+}
+
+
+#navline {
+float:left;
+width:7px;
+height:400px;
+vertical-align:top;
+background-image:url("../images/nav_line.jpg");
+background-repeat:no-repeat;
+
+}
+
+#ltmain {
+
+float:left;
+width:173px;
+height:400px;
+padding-left:10px;
+
+}
+
+#main {
+
+float:left;
+width:580px;
+height:400px;
+padding-left:10px;
+
+}
+
+#maincontrib {
+
+float:left;
+width:580px;
+height:auto;
+
+}
+
+#maincontribtit {
+
+float:left;
+width:580px;
+height:70px;
+padding-left:10px;
+
+}
+
+#mainform {
+
+float:left;
+width:430px;
+height:auto;
+text-align:right;
+
+}
+
+#maindetail {
+
+float:left;
+width:580px;
+height:400px;
+
+}
+
+#mainresourcetit {
+
+float:left;
+width:580px;
+height:30px;
+padding-left:10px;
+
+}
+
+
+#mainimg {
+
+float:left;
+width:170px;
+height:368px;
+padding-left:10px;
+
+}
+
+#mainmeta {
+
+float:left;
+width:380px;
+height:368px;
+padding-left:10px;
+
+}
+
+#mainrestit {
+
+float:left;
+width:580px;
+height:30px;
+padding-left:10px;
+
+}
+
+#mainlist {
+
+float:left;
+width:580px;
+height:auto;
+padding-left:10px;
+
+}
+
+#footer {
+
+float:left;
+width:800px;
+height:20px;
+text-align:center;
+
+}
+
+h3 {
+
+color:#932A18;
+line-height: 150%;
+
+}
+
+.pagetitle {
+
+font-size:125%;
+font-weight:bold;
+color:#932A18;
+
+}
+
+.tabletitle {
+
+font-size:20;
+font-weight:bold;
+color:#932A18;
+
+}
+
+div.clear{
+ clear:both;
+}
