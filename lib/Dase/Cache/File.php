@@ -116,9 +116,9 @@ class Dase_Cache_File extends Dase_Cache
 		$temp = $filepath.'-temp';
 		//avoids race condition
 		if ($data) {
-			file_put_contents($temp,$data);
-			rename($temp,$filepath);
-			chmod($filepath,0770);
+			@file_put_contents($temp,$data);
+			@rename($temp,$filepath);
+			@chmod($filepath,0770);
 		}
 		return $filepath;
 	}
