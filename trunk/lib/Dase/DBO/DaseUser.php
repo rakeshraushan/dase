@@ -243,6 +243,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 		$user_data = array();
 		//todo: is this is taking too long:
+		$user_data[$this->eid]['dbname'] = $this->db->getDbName();
 		$user_data[$this->eid]['cart_count'] = $this->initCart();
 		$user_data[$this->eid]['tags'] = $this->getTags();
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword($auth_config['token']);

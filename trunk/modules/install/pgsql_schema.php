@@ -2,15 +2,6 @@
 
 $query =<<<EOF
 
-CREATE TABLE {$table_prefix}admin_search_table (
-    id serial NOT NULL,
-    item_id integer,
-    collection_id integer,
-    value_text text,
-    status_id integer,
-    updated character varying(50)
-);
-
 CREATE TABLE {$table_prefix}attribute (
     id serial NOT NULL,
     ascii_id character varying(200),
@@ -175,37 +166,6 @@ CREATE TABLE {$table_prefix}recent_view (
     "timestamp" character varying(50)
 );
 
-CREATE TABLE {$table_prefix}search_cache (
-    id serial NOT NULL,
-    query character varying(2000),
-    dase_user_id integer,
-    attribute_id integer,
-    collection_id_string character varying(2000),
-    refine character varying(2000),
-    item_id_string text,
-    exact_search integer,
-    is_stale boolean DEFAULT false,
-    sort_by integer,
-    cb_id integer,
-    search_md5 character varying(40),
-    "timestamp" character varying(50)
-);
-
-CREATE TABLE {$table_prefix}search_table (
-    id serial NOT NULL,
-    item_id integer NOT NULL,
-    collection_id integer NOT NULL,
-    value_text text,
-    status_id integer,
-    updated character varying(50)
-);
-
-CREATE TABLE {$table_prefix}subscription (
-    id serial NOT NULL,
-    dase_user_id integer,
-    tag_id integer
-);
-
 CREATE TABLE {$table_prefix}tag (
     id serial NOT NULL,
     name character varying(200),
@@ -255,12 +215,6 @@ CREATE TABLE {$table_prefix}value_revision_history (
 );
 
 CREATE SEQUENCE {$table_prefix}tag_category_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}admin_search_table_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -320,12 +274,6 @@ CREATE SEQUENCE {$table_prefix}item_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}item_as_atom_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}input_template_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -356,24 +304,6 @@ CREATE SEQUENCE {$table_prefix}recent_view_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}search_cache_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}search_table_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}subscription_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}tag_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -398,10 +328,6 @@ EOF;
 $query .= "
 ALTER TABLE {$table_prefix}tag_category 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_category_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}admin_search_table 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}admin_search_table_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}attribute 
@@ -440,10 +366,6 @@ ALTER TABLE {$table_prefix}item
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_seq'::text);
 ";
 $query .= "
-ALTER TABLE {$table_prefix}item_as_atom 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}item_as_atom_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}input_template 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text);
 ";
@@ -462,18 +384,6 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}tag_item_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}recent_view 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}recent_view_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}search_cache 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}search_cache_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}search_table 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}search_table_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}subscription 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}subscription_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}tag 

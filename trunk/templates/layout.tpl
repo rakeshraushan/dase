@@ -74,8 +74,8 @@
 			<div id="loginControl" class="login hide">
 				<div>Got a UT EID? <a href="login/form" class="alert">login!</a></div>
 			</div>
-
 			{$main_title}
+			<span id="dbName"></span>
 		</div>
 
 		<div id="sidebar">

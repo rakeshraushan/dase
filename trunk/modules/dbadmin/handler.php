@@ -10,7 +10,6 @@ class Dase_ModuleHandler_Dbadmin extends Dase_Handler {
 
 	public function setup($r)
 	{
-		$this->db = $r->retrieve('db');
 	}
 
 	public function getInfo($r) 
