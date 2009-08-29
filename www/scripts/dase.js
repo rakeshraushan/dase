@@ -227,6 +227,7 @@ Dase.initUser = function() {
 	Dase.getJSON(url,function(json){
 		for (var eid in json) {
 			Dase.user.eid = eid;
+			Dase.dbname = json[eid].dbname;
 			Dase.user.htpasswd = json[eid].htpasswd;
 			Dase.user.name = json[eid].name;
 			Dase.user.tags = json[eid].tags;
@@ -241,6 +242,9 @@ Dase.initUser = function() {
 			Dase.user.token_date = json[eid].token_date;
 			//whether or not ot display editing controls
 			Dase.user.controls = json[eid].controls;
+			if ('dase_prod' != Dase.dbname) {
+				Dase.placeDbName(Dase.dbname);
+			}
 			Dase.placeUserName(eid);
 			Dase.placeUserTags(Dase.user);
 			Dase.placeRecentViews(Dase.user);
@@ -279,6 +283,13 @@ Dase.initLogoff = function() {
 		Dase.logoff();
 		return false;
 	};
+};
+
+Dase.placeDbName = function(dbname) {
+	var el = Dase.$('dbName');
+	if (el) {
+		el.innerHTML = dbname;
+	}
 };
 
 Dase.placeUserName = function(eid) {

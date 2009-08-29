@@ -232,9 +232,15 @@ class Dase_Http_Request
 		$out .= '[remote_addr] '.$env['remote_addr']."\n";
 		$out .= '[http_user_agent] '.$env['http_user_agent']."\n";
 		$out .= '[app_root] '.$env['app_root']."\n";
-		$out .= '[format] '.$env['format']."\n";
-		$out .= '[module] '.$env['module']."\n"; 
-		$out .= '[handler] '.$env['handler']."\n"; 
+		if (isset($env['format'])) {
+			$out .= '[format] '.$env['format']."\n";
+		}
+		if (isset($env['module'])){
+			$out .= '[module] '.$env['module']."\n";
+		}
+		if (isset($env['handler'])) {
+			$out .= '[handler] '.$env['handler']."\n";
+		}
 		$out .= "\n-----------------------------------\n";
 		return $out;
 	}

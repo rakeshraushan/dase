@@ -2,16 +2,6 @@
 
 $query =<<<EOF
 
-CREATE TABLE `{$table_prefix}admin_search_table` (
-`id` int(11) NOT NULL auto_increment,
-`status_id` integer default NULL,
-`collection_id` integer default NULL,
-`item_id` integer default NULL,
-`value_text` text default NULL,
-`updated` varchar(50) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}attribute` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` boolean default NULL,
@@ -174,40 +164,6 @@ CREATE TABLE `{$table_prefix}recent_view` (
 `timestamp` varchar(50) default NULL,
 `type` varchar(20) default NULL,
 `count` int(11) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}search_cache` (
-`id` int(11) NOT NULL auto_increment,
-`is_stale` boolean default NULL,
-`cb_id` integer default NULL,
-`sort_by` integer default NULL,
-`exact_search` integer default NULL,
-`attribute_id` integer default NULL,
-`dase_user_id` integer default NULL,
-`item_id_string` text default NULL,
-`timestamp` varchar(50) default NULL,
-`search_md5` varchar(40) default NULL,
-`refine` varchar(2000) default NULL,
-`collection_id_string` varchar(2000) default NULL,
-`query` varchar(2000) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}search_table` (
-`id` int(11) NOT NULL auto_increment,
-`status_id` integer default NULL,
-`collection_id` integer default NULL,
-`item_id` integer default NULL,
-`value_text` text default NULL,
-`updated` varchar(50) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE `{$table_prefix}subscription` (
-`id` int(11) NOT NULL auto_increment,
-`tag_id` integer default NULL,
-`dase_user_id` integer default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
