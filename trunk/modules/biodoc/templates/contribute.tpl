@@ -1,6 +1,46 @@
 {extends file="layout.tpl"}
 
 {block name="main"}
-Welcome to Bio-DOC: a clearinghouse for quality, rich-media resources for teaching and learning for the Biological Sciences. You'll find animations, videos, interactive exercises, and much more as well as direct links to the source of the material. University students and professors have reviewed all of the resources for instructional quality. Bio-DOC is a work in progress. In future versions you'll be able to rate resources, conduct a detailed search, and create your own resource collections. And we'll be continuing to add more resources to the site. If you have a resource that you would like Bio-DOC to include and link to, see the "Contribute" page. 
+
+<div class="pagetitle">Contribute</div>
+<p>
+If you have an online resource you would like to contribute to Biology Digital Online Content, please use the form below:
+</p>
+<div class="contribute_content">
+	<form action="{$module_root}emailer" method="post">
+		<label>Title:</label>
+		<input type="text" size="35" name="txtTitle">
+		<label>Type:</label>
+		<input type="text" size="35" name="txtType">
+		<label>Description:</label><textarea rows="4" name="txtDescription" cols="27"></textarea>
+		<label>Unit:</label>
+		<input type="text" size="35" name="txtUnit">
+		<label>Topic:</label> 
+		<input type="text" size="35" name="txtTopic">
+		<label>Keywords:</label>
+		<input type="text" size="35" name="txtKeywords">
+		<label>Format:</label>
+		<input type="text" size="35" name="txtFormat">
+		<label>Required Plug-in:</label>
+		<input type="text" size="35" name="txtPlugin">
+		<label>Size:</label> 
+		<input type="text" size="35" name="txtSize">
+		<label>Duration:</label>
+		<input type="text" size="35" name="txtDuration">
+		<label>URL:</label>
+		<input type="text" size="35" name="txtURL">
+		<label>Name:</label>
+		<input type="text" size="35" name="txtName">
+		<label>Affiliation:</label>
+		<input type="text" size="35" name="txtAffiliation">
+		<label>Email:</label>
+		<input type="text" size="35" name="txtEmail">
+		<label>Acknowledgements:</label>
+		<input type="text" size="35" name="txtAcknowledgements">
+		<p>
+		<input type="submit" value="submit">
+		</p>
+	</form>
+</div>
 {/block}
 

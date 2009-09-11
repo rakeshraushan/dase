@@ -6,8 +6,8 @@
 <script type="text/javascript" src="{$module_root}js/autosuggest.js"></script> 
 <script type="text/javascript" src="{$module_root}js/biodoc.js"></script> 
 {block name="head-js"} {/block}
-<link rel="stylesheet" type="text/css" href="{$module_root}css/biodoc.css">
 <link rel="topics" type="text/css" href="{$app_root}attribute/biodoc/unit/values.json?limit=1000">
+<link rel="stylesheet" type="text/css" href="{$module_root}css/biodoc.css">
 {block name="head-css"} {/block}
 {/block}
 
@@ -57,6 +57,7 @@
 	</div>
 
 	<div id="maincontent">
+		{if $msg}<h3 class="alert">{$msg}</h3>{/if}
 		{block name="main"}testing main{/block}
 	</div>
 </div>

@@ -22,7 +22,7 @@ class Dase_Handler_Tools extends Dase_Handler
 			$entry = Dase_Atom_Entry::retrieve($r->get('url'),$user->eid,$user->getHttpPassword());
 			$t->assign('url',$r->get('url'));
 			$t->assign('entry',$entry);
-			$t->assign('atom_doc',$entry->asXml());
+			$t->assign('atom_doc',$entry->asXml($entry->root));
 		} else {
 			$t->assign('url',$r->app_root."/service");
 		}	

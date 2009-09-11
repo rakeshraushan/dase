@@ -1,6 +1,10 @@
 {extends file="layout.tpl"}
 
 {block name="main"}
-Welcome to Bio-DOC: a clearinghouse for quality, rich-media resources for teaching and learning for the Biological Sciences. You'll find animations, videos, interactive exercises, and much more as well as direct links to the source of the material. University students and professors have reviewed all of the resources for instructional quality. Bio-DOC is a work in progress. In future versions you'll be able to rate resources, conduct a detailed search, and create your own resource collections. And we'll be continuing to add more resources to the site. If you have a resource that you would like Bio-DOC to include and link to, see the "Contribute" page. 
+Bio-DOC was conceived by two Biological Sciences faculty members in the College of Natural Sciences at the University of Texas at Austin: Dr. K Sata
+Sathasivan, Senior Lecturer and Dr. Daniel Bolnick, Assistant Professor.
+Development of Bio-DOC is made possible by the <a href="http://www.utexas.edu/academic/cit/fasttex/index.html">~FAST Tex</a> program in the
+Division of Instructional Innovation and Assessment funded by the Information Technology Fee, a student-supported resource.
+The students who have developed the site are Sumit Srivastava, Anthony Maggio, and Sivaramakrishnan Radhakrishnan.
 {/block}
 
