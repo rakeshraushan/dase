@@ -6,7 +6,7 @@ include 'config.php';
 //$action = "count";
 $action = "delete";
 
-$coll = 'diia_image';
+$coll = 'vrc_works_test';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
