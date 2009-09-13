@@ -17,6 +17,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
 		//used for put and delete
 		'{collection_ascii_id}/{serial_number}/metadata/title' => 'title',
+		'{collection_ascii_id}/{serial_number}/metadata/links' => 'metadata_links',
 		'{collection_ascii_id}/{serial_number}/metadata/{value_id}' => 'metadata_value',
 		'{collection_ascii_id}/{serial_number}/comments' => 'comments',
 		'{collection_ascii_id}/{serial_number}/content' => 'content',
@@ -443,6 +444,44 @@ class Dase_Handler_Item extends Dase_Handler
 		$value_id = $r->get('value_id');
 		$this->item->updateMetadata($value_id,htmlspecialchars($value_text),$user->eid);
 		$r->renderResponse($value_text);
+	}
+
+	/** for adding metadata link(s) */
+	public function postToMetadataLinks($r)
+	{
+		$user = $r->getUser('http');
+		if ($this->item && !$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot update item');
+		}
+		$content_type = $r->getContentType();
+		if ('application/atom+xml;type=entry' == $content_type ||
+			'application/atom+xml' == $content_type
+		) {
+			$raw_input = $r->getBody();
+			$client_md5 = $r->getHeader('Content-MD5');
+			//if Content-MD5 header isn't set, we just won't check
+			if ($client_md5 && md5($raw_input) != $client_md5) {
+				$r->renderError(412,'md5 does not match');
+			}
+			try {
+				$item_entry = Dase_Atom_Entry::load($raw_input,'item');
+			} catch(Exception $e) {
+				Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
+				$r->renderError(400,'bad xml');
+			}
+			if ('item' != $item_entry->entrytype) {
+				//$item_entry->setEntryType('item');
+				$r->renderError(400,'must be an item entry');
+			}
+			$item = $item_entry->addLinks($this->db,$r);
+			if ($item) {
+				$r->renderOk('item has been updated');
+			} else {
+				$r->renderError(500,'item not updated');
+			}
+		} else {
+			$r->renderError(415,'cannot accept '.$content_type);
+		}
 	}
 
 	public function putTitle($r)

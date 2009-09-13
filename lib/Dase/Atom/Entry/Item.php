@@ -530,7 +530,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		if (!$c) { return; }
 		$item = Dase_DBO_Item::get($db,$c->ascii_id,$sernum);
 		if (!$item) {
-			$c->createNewItem($sernum);
+			$item = $c->createNewItem($sernum);
 		}
 		$item->updated = date(DATE_ATOM);
 
@@ -582,6 +582,35 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//3.5 content!
 		if ($this->getContent()) {
 			$item->setContent($this->getContent(),$eid,$this->getContentType());
+		}
+
+		$item->buildSearchIndex();
+		return $item;
+	}
+
+	function addLinks($db,$r) 
+	{
+		$eid = $r->getUser()->eid;
+		$sernum = $this->getSerialNumber();
+
+		$c = Dase_DBO_Collection::get($db,$r->get('collection_ascii_id'));
+		if (!$c) { return; }
+
+		$item = Dase_DBO_Item::get($db,$c->ascii_id,$sernum);
+		if (!$item) { return; }
+
+		$item->updated = date(DATE_ATOM);
+		$item->update();
+
+		foreach ($this->getMetadataLinks() as $att => $keyval) {
+			foreach ($keyval['values'] as $v) {
+				if (trim($v['text'])) {
+					//check that it's proper collection
+					if ($c->ascii_id = $v['coll']) {
+						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod']);
+					}
+				}
+			}
 		}
 
 		$item->buildSearchIndex();

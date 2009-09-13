@@ -150,7 +150,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($coll = null,$limit=1000,$filter_key='',$filter_value='')
+	function getDisplayValues($coll = null,$limit=10000,$filter_key='',$filter_value='')
 	{
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
