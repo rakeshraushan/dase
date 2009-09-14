@@ -19,7 +19,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 		$html = "<html><body>";
 		$fix_needed = 0;
 		if (!is_writeable(CACHE_DIR)) {
-			$html .= "<h3>".$config->getCacheDir()." must be writeable by the web server.</h3>";
+			$html .= "<h3>".$this->config->getCacheDir()." must be writeable by the web server.</h3>";
 			$fix_needed = 1;
 		}
 		if (!is_writeable(LOG_FILE)) {
@@ -27,7 +27,7 @@ class Dase_ModuleHandler_Install extends Dase_Handler {
 			$fix_needed = 1;
 		}
 		if (!is_writeable(MEDIA_DIR)) {
-			$html .= "<h3>".$config->getMediaDir()." must be writeable by the web server.</h3>";
+			$html .= "<h3>".$this->config->getMediaDir()." must be writeable by the web server.</h3>";
 			$fix_needed = 1;
 		}
 
