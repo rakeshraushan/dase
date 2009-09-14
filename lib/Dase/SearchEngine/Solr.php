@@ -387,7 +387,7 @@ EOD;
 						$tallied[$cname]=1;
 						$cname_specialchars = htmlspecialchars($cname);
 						$encoded_query = urlencode($query).'&amp;collection='.urlencode($cname);
-						$feed .= "  <link rel=\"http://daseproject.org/relation/single_collection_search\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"q=$encoded_query\"/>\n";
+						$feed .= "\n <link rel=\"http://daseproject.org/relation/single_collection_search\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"q=$encoded_query\"/>\n";
 					}
 				}
 			}

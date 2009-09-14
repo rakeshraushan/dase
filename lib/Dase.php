@@ -6,7 +6,12 @@ class Dase
 {
 	public static function run($config)
 	{
-		$db = new Dase_DB($config);
+		try {
+			$db = new Dase_DB($config);
+		} catch (PDOException $e) {
+			echo 'No database connection.  Has DASe been installed?';
+			return;
+		}
 
 		if (file_exists(BASE_PATH.'/inc/local_bootstrap.php')) {
 			//allows db & config enabled bootstrap
