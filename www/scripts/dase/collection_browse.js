@@ -104,7 +104,7 @@ Dase.bindGetValues = function(coll) {
 			att_link.onclick = function() {
 				var att_name = this.getElementsByTagName('span')[0].innerHTML;
 				var att_ascii = this.className.split(" ")[1];
-				Dase.getAttributeValues(this.href,1000);	
+				Dase.getAttributeValues(this.href,10000);	
 				Dase.removeClass(Dase.$('valColumn'),'hide');
 				window.scroll(0,0);
 				for (var j=0;j<atts.length;j++) {
