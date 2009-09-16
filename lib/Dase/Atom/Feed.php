@@ -444,6 +444,26 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	}
 
+    public function sortBySortOrder(){
+        $entries_deep = array();
+        foreach ($this->getEntries() as $entry){
+            foreach ($entry->getCategories() as $cat){
+                if($cat['scheme'] == 'http://daseproject.org/category/sort_order'){
+                    $entries_deep[$cat['term']][] = $entry;
+                }
+            }
+        }
+        ksort($entries_deep);
+        ksort($entries_deep);
+        foreach ($entries_deep as $k => $set) {
+            foreach ($set as $e) {
+                $entries[] = $e;
+            }
+        }
+        $this->_entries = $entries;
+        return $this;
+    }
+
 	public static function _sortByEntryPublished($a,$b)
 	{
 		$at = $a->getPublished();
