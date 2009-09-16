@@ -16,7 +16,7 @@ CREATE TABLE {$table_prefix}attribute (
     is_repeatable integer DEFAULT 1,
     is_required integer DEFAULT 0,
     updated character varying(50),
-    modifier character varying(200),
+    modifier_type character varying(200),
     modifier_defined_list text,
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
