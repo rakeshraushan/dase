@@ -7,6 +7,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'search',
 		'item' => 'search_item',
+		'md5' => 'search_md5',
 	);
 
 	protected function setup($r)
@@ -42,6 +43,19 @@ class Dase_Handler_Search extends Dase_Handler
 		} else {
 			$this->sort = '';
 		}
+	}
+
+	public function getSearchMd5($r)
+	{
+		$file = new Dase_DBO_MediaFile($this->db);
+		$file->md5 = $r->get('q');
+		$res = "files matching $file->md5\n"; 
+		foreach ($file->find() as $mf) {
+			$item = new Dase_DBO_Item($this->db);
+			$item->load($mf->item_id);
+			$res .= $item->getUrl($r->app_root)."\n";
+		}
+		$r->renderResponse($res);
 	}
 
 	public function getSearchAtom($r)
