@@ -24,7 +24,8 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$c = $this->getCollection();
 		$dest = $path_to_media.'/'.$c->ascii_id.'/deleted/'.$this->filename; 
 		$src = $this->getLocalPath($path_to_media);
-		if (copy($src,$dest)) {
+
+		if (if (file_exists($src)) && copy($src,$dest)) {
 			@unlink($src);
 		}
 	}
