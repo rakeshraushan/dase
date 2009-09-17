@@ -630,9 +630,13 @@ class Dase_Handler_Item extends Dase_Handler
 		$bits = $r->getBody();
 
 		$slug_name = '';
-		if ( $r->slug ) {
+		if ( $r->http_title ) {
+			$item->setValue('title',$r->http_title);
+			$orig_name = $r->http_title;
+		}
+		elseif ( $r->slug ) {
 			$item->setValue('title',$r->slug);
-			$slug_name = $r->slug;
+			$orig_name = $r->slug;
 		}
 
 		$upload_dir = MEDIA_DIR.'/'.$coll->ascii_id.'/uploaded_files';
@@ -654,7 +658,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($this->db,$new_file,$content_type,$slug_name,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,$content_type,$orig_name,$r->base_path);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original

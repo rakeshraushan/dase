@@ -57,6 +57,7 @@ class Dase_Http_Request
 		$env['query_string'] =	$_SERVER['QUERY_STRING'];
 		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
 		$env['slug'] = isset($_SERVER['HTTP_SLUG']) ? $_SERVER['HTTP_SLUG'] : '';
+		$env['http_title'] = isset($_SERVER['HTTP_TITLE']) ? $_SERVER['HTTP_TITLE'] : '';
 		$env['remote_addr'] = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 		$env['http_user_agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$env['app_root'] = trim($env['protocol'].'://'.$env['http_host'].dirname($env['script_name']),'/');
