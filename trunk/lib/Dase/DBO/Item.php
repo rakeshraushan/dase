@@ -17,7 +17,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	{
 		if ($this->_build_index) {
 			Dase_Log::debug(LOG_FILE,'item reindexing from destructor');
-			$freshnesss = $this->index_settings['freshness'];
+			$freshness = $this->index_settings['freshness'];
 			$commit = $this->index_settings['commit'];
 			$this->_buildSearchIndex($freshness, $commit);
 		}
