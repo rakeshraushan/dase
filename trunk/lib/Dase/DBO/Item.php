@@ -16,15 +16,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if (!$collection_ascii_id || !$serial_number) {
 			throw new Exception('missing information');
 		}
-		$c = Dase_DBO_Collection::get($db,$collection_ascii_id);
-		if (!$c) {
-			return false;
-		}
 		$item = new Dase_DBO_Item($db);
-		$item->collection_id = $c->id;
+		$item->p_collection_ascii_id = $collection_ascii_id;
 		$item->serial_number = $serial_number;
 		if ($item->findOne()) {
-			$item->_collection = $c;
 			return $item;
 		} else {
 			return false;
