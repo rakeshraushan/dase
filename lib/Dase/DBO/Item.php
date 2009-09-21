@@ -5,11 +5,22 @@ require_once 'Dase/DBO/Autogen/Item.php';
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
+	private $_build_index = false;
 	private $_collection = null;
 	private $_content = null;
+	private $_index_settings = array();
 	private $_item_type = null;
 	private $_media = array();
 	private $_metadata = array();
+
+	public function __destruct() 
+	{
+		if ($this->_build_index) {
+			$freshnesss = $this->index_settings['freshness'];
+			$commit = $this->index_settings['commit'];
+			$this->_buildSearchIndex($freshness, $commit);
+		}
+	}
 
 	public static function get($db,$collection_ascii_id,$serial_number)
 	{
@@ -70,6 +81,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	}
 
 	public function buildSearchIndex($freshness=0,$commit=true)
+	{
+		$this->_build_index = true;
+
+		//todo: last one wins on setting -- think about
+		$this->_index_settings['freshness'] = $freshness;
+		$this->_index_settings['commit'] = $commit;
+	}
+
+	public function _buildSearchIndex($freshness=0,$commit=true)
 	{
 		//refresh
 		$this->_metadata = array();

@@ -629,7 +629,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		$bits = $r->getBody();
 
-		$slug_name = '';
+		$orig_name = '';
 		if ( $r->http_title ) {
 			$item->setValue('title',$r->http_title);
 			$orig_name = $r->http_title;
