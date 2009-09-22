@@ -588,7 +588,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		//the last 'settings' and 'commit' params win.  Here we allow
 		// the client to add 'no_commit=1' to trigger no commit
 		// this is prob. heinously unRESTful
-		if ($r->('no_commit')) {
+		if ('1' == $r->get('no_commit')) {
 			$item->buildSearchIndex(0,false);
 		} else {
 			$item->buildSearchIndex();
