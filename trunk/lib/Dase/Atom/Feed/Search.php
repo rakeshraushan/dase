@@ -62,24 +62,13 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 			$res['ascii_id'] = array_pop(explode('/',$res['href']));
 			return $res;
 		}
-		/*
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('http://daseproject.org/relation/collection' == $el->getAttribute('rel')) {
-				$res['href'] = $el->getAttribute('href');
-				$res['title'] = $el->getAttribute('title');
-				$res['ascii_id'] = array_pop(explode('/',$res['href']));
-				return $res;
-			}
-		}
-		 */
 	}
 
 	function getCollectionFilters()
 	{
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/collection_filter' == $el->getAttribute('scheme')) {
-				$colls[] = $el->getAttribute('term');
-			}
+		$colls = array();
+		foreach ($this->getXpath("atom:category[@scheme='http://daseproject.org/category/collection_filter']") as $node) {
+			$colls[] = $node->getAttribute('term');
 		}
 		return $colls;
 	}
@@ -90,26 +79,17 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/collection/attributes']") as $node) {
 			return $node->getAttribute('href');
 		}
-		/*
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('http://daseproject.org/relation/collection/attributes' == $el->getAttribute('rel')) {
-				return $el->getAttribute('href');
-			}
-		}
-		 */
 	}
 
 	function getSearchTallies()
 	{
 		$tallied = array();
 		$single_coll = array();
-		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
-			if ('http://daseproject.org/relation/single_collection_search' == $el->getAttribute('rel')) {
-				$single_coll['href'] = $el->getAttribute('href');
-				$single_coll['title'] = $el->getAttribute('title');
-				$single_coll['count'] = $el->getAttributeNS(Dase_Atom::$ns['thr'],'count');
-				$tallied[] = $single_coll;
-			}
+		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/single_collection_search") as $node) {
+			$single_coll['href'] = $node->getAttribute('href');
+			$single_coll['title'] = $node->getAttribute('title');
+			$single_coll['count'] = $node->getAttributeNS(Dase_Atom::$ns['thr'],'count');
+			$tallied[] = $single_coll;
 		}
 		return $tallied;
 	}
@@ -146,5 +126,4 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		}
 		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
 	}
-
 }

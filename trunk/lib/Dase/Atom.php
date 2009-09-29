@@ -15,6 +15,7 @@ class Dase_Atom
 	protected $title_is_set;
 	protected $updated_is_set;
 	protected $links = array(); //links cache
+	protected $xpath_obj;
 	public static $ns = array(
 		'ae' => 'http://purl.org/atom/ext/',
 		'app' => 'http://www.w3.org/2007/app',
@@ -401,16 +402,27 @@ class Dase_Atom
 		}
 	}
 
+	private function _initXpath() {
+		if ($this->xpath_obj) {
+			return $this->xpath_obj;
+		} else {
+			if ('DOMDocument' != get_class($this->dom)) {
+				$c = get_class($this->dom);
+				throw new Dase_Atom_Exception("xpath must be performed on DOMDocument, not $c");
+			}
+			$x = new DomXPath($this->dom);
+			foreach (Dase_Atom::$ns as $k => $v) {
+				$x->registerNamespace($k,$v);
+			}
+			$this->xpath_obj = $x;
+			return $this->xpath_obj;
+		}
+
+	}
+
 	function getXpathValue($xpath,$context_node = null) 
 	{
-		if ('DOMDocument' != get_class($this->dom)) {
-			$c = get_class($this->dom);
-			throw new Dase_Atom_Exception("xpath must be performed on DOMDocument, not $c");
-		}
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
+		$x = $this->_initXpath();
 		if ($context_node) {
 			$it = $x->query($xpath,$context_node)->item(0);
 		} else {
@@ -424,14 +436,7 @@ class Dase_Atom
 	/** client must evaluate resulting DOMNodeList */
 	function getXpath($xpath,$context_node = null) 
 	{
-		if ('DOMDocument' != get_class($this->dom)) {
-			$c = get_class($this->dom);
-			throw new Dase_Atom_Exception("xpath must be performed on DOMDocument, not $c");
-		}
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
+		$x = $this->_initXpath();
 		if ($context_node) {
 			return $x->query($xpath,$context_node);
 		} else {
