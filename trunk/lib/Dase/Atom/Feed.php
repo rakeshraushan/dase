@@ -308,19 +308,11 @@ class Dase_Atom_Feed extends Dase_Atom
 
 	function getOpensearchTotal()
 	{
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
 		return $this->getXpathValue("opensearch:totalResults");
 	}
 
 	function getQuery()
 	{
-		$x = new DomXPath($this->dom);
-		foreach (Dase_Atom::$ns as $k => $v) {
-			$x->registerNamespace($k,$v);
-		}
 		return $this->getXpathValue("opensearch:Query/@searchTerms");
 	}
 
