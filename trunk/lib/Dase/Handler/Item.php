@@ -379,7 +379,7 @@ class Dase_Handler_Item extends Dase_Handler
 				}
 			}
 		}
-		$this->item->buildSearchIndex();
+		$this->item->buildSearchIndex(0,true,true);
 		$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
 	}
 
@@ -393,7 +393,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
 			$this->item->expireCaches($r->getCache());
-			$this->item->buildSearchIndex();
+			$this->item->buildSearchIndex(0,true,true);
 			if (!$type) {
 				$type = 'default/none';
 			}
@@ -413,7 +413,7 @@ class Dase_Handler_Item extends Dase_Handler
 				$this->item->setValue($att_ascii,$val);
 			}
 		}
-		$this->item->buildSearchIndex();
+		$this->item->buildSearchIndex(0,true,true);
 		$r->renderResponse('added metadata (unless null)');
 	}
 
@@ -607,7 +607,7 @@ class Dase_Handler_Item extends Dase_Handler
 				Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
-			$item->buildSearchIndex();
+			$item->buildSearchIndex(0,true,true);
 			$r->renderOk();
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
@@ -713,7 +713,9 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'cannot index this item');
 		}
 
-		$resp = $this->item->buildSearchIndex();
+		//force indexing & commit
+		$resp = $this->item->buildSearchIndex(0,true,true);
+
 		//should use HTTP status code instead
 		if ('ok' == substr($resp,0,2)) {
 			$r->renderOk('indexed item');

@@ -81,13 +81,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $engine->deleteItemIndex($this);
 	}
 
-	public function buildSearchIndex($freshness=0,$commit=true)
+	public function buildSearchIndex($freshness=0,$commit=true,$force=false)
 	{
 		$this->_build_index = true;
 
 		//todo: last one wins on setting -- think about
 		$this->_index_settings['freshness'] = $freshness;
 		$this->_index_settings['commit'] = $commit;
+
+		if ($force) {
+			Dase_Log::debug(LOG_FILE,'item reindexing forced');
+			$this->_build_index = false;
+			return $this->_buildSearchIndex($freshness,$commit);
+		}
 	}
 
 	public function _buildSearchIndex($freshness=0,$commit=true)
