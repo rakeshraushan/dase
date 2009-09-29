@@ -45,11 +45,9 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 	function getCollectionAsciiId()
 	{
 		if (!$this->_collectionAsciiId) {
-			foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-				if ('http://daseproject.org/category/collection' == $el->getAttribute('scheme')) {
-					$this->_collectionAsciiId = $el->getAttribute('term');
-					break;
-				}
+			foreach ($this->getXpath("atom:category[@scheme='http://daseproject.org/category/collection']") as $node) {
+				$this->_collectionAsciiId = $node->getAttribute('term');
+				break;
 			}
 		}
 		return $this->_collectionAsciiId;
@@ -60,11 +58,9 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		if ($this->_tagType) {
 			return $this->_tagType;
 		}
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/tag_type' == $el->getAttribute('scheme')) {
-				$this->_tagType = $el->getAttribute('term');
-				return $el->getAttribute('term');
-			}
+		foreach ($this->getXpath("atom:category[@scheme='http://daseproject.org/category/tag_type']") as $node) {
+			$this->_tagType = $node->getAttribute('term');
+			return $this->_tagType;
 		}
 	}
 
@@ -73,11 +69,9 @@ class Dase_Atom_Feed_Tag extends Dase_Atom_Feed
 		if ($this->_background) {
 			return $this->_background;
 		}
-		foreach ($this->dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
-			if ('http://daseproject.org/category/background' == $el->getAttribute('scheme')) {
-				$this->_background = $el->getAttribute('term');
-				return $el->getAttribute('term');
-			}
+		foreach ($this->getXpath("atom:category[@scheme='http://daseproject.org/category/background']") as $node) {
+			$this->_background = $node->getAttribute('term');
+			return $this->_background;
 		}
 	}
 
