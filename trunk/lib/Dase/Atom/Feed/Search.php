@@ -56,6 +56,13 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 	/** for single collection searches only */
 	function getCollection()
 	{
+		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/collection']") as $node) {
+			$res['href'] = $node->getAttribute('href');
+			$res['title'] = $node->getAttribute('title');
+			$res['ascii_id'] = array_pop(explode('/',$res['href']));
+			return $res;
+		}
+		/*
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ('http://daseproject.org/relation/collection' == $el->getAttribute('rel')) {
 				$res['href'] = $el->getAttribute('href');
@@ -64,6 +71,7 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 				return $res;
 			}
 		}
+		 */
 	}
 
 	function getCollectionFilters()
@@ -79,11 +87,16 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 	/** for single collection searches only */
 	function getAttributesLink()
 	{
+		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/collection/attributes']") as $node) {
+			return $node->getAttribute('href');
+		}
+		/*
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
 			if ('http://daseproject.org/relation/collection/attributes' == $el->getAttribute('rel')) {
 				return $el->getAttribute('href');
 			}
 		}
+		 */
 	}
 
 	function getSearchTallies()
