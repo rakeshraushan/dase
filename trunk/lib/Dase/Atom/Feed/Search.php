@@ -85,7 +85,7 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 	{
 		$tallied = array();
 		$single_coll = array();
-		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/single_collection_search") as $node) {
+		foreach ($this->getXpath("atom:link[@rel='http://daseproject.org/relation/single_collection_search']") as $node) {
 			$single_coll['href'] = $node->getAttribute('href');
 			$single_coll['title'] = $node->getAttribute('title');
 			$single_coll['count'] = $node->getAttributeNS(Dase_Atom::$ns['thr'],'count');
