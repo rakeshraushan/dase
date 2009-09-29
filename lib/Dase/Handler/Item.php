@@ -168,6 +168,11 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 	}
 
+	public function headItem($r) 
+	{
+		exit();
+	}
+
 	public function getItem($r)
 	{
 		$user = $r->getUser();
