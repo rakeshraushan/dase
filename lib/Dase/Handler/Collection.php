@@ -87,6 +87,17 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	}
 
+	public function getAttributesUris($r) 
+	{
+		$coll = $this->collection->ascii_id;
+		$output = '';
+		foreach ($this->collection->getAttributes() as $att) {
+			$output .= $r->app_root.'/attribute/'.$coll.'/'.$att->ascii_id;
+			$output .= "\n";
+		}
+		$r->renderResponse($output);
+	}
+
 	public function getItemTypesJson($r)
 	{
 		$types = array();
