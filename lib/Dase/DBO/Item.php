@@ -324,6 +324,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return count($this->getMedia());
 	}
 
+	/** now, this does not auto-create */
 	function setItemType($type_ascii_id='')
 	{
 		if (!$type_ascii_id || 'none' == $type_ascii_id || 'default' == $type_ascii_id) {
