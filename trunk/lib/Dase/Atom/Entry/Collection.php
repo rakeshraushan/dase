@@ -63,7 +63,12 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 					$a->html_input_type = 'textarea';
 				}
 				$a->updated = date(DATE_ATOM);
-				$a->insert();
+				if ($a->insert()) {
+					Dase_Log::debug(LOG_FILE,'created att '.$att);
+				} else {
+					Dase_Log::debug(LOG_FILE,'problem creating '.$att);
+				}
+
 			}
 			$cm = new Dase_DBO_CollectionManager($db);
 			$cm->collection_ascii_id = $ascii_id;
