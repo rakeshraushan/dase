@@ -60,7 +60,7 @@
 						{/if}
 					</span>
 				</label>
-				<textarea type="text" name="usage_notes" >{$att->usage_notes}</textarea>
+				<textarea name="usage_notes" >{$att->usage_notes}</textarea>
 				</p>
 				<p>
 				<label for="sort_order">Sort Order</label>
@@ -104,6 +104,17 @@
 				<input type="text" name="modifier_type" value="{$att->modifier_type}"/>
 				</p>
 				<p>
+				<label for="modifier_defined_list">Modifier Defined List (comma separated)
+					<br/>
+					<span class="current">
+						{if $att->modifier_defined_list}
+						[{$att->modifier_defined_list}]
+						{/if}
+					</span>
+				</label>
+				<textarea name="modifier_defined_list">{$att->modifier_defined_list}</textarea>
+				</p>
+				<p>
 				<label for="mapped_admin_att">Mapped Admin Attribute</label>
 				<select name="mapped_admin_att_id">
 					<option value="">Select an Admin Attribute to Map</option>
@@ -140,6 +151,25 @@
 				<span class="checkmark">&#10003;</span>
 				{/if}
 				</p>
+
+				<p>
+				<input type="checkbox" 
+				{if 1 == $att->is_repeatable}checked="checked"{/if} name="is_repeatable"> Is Repeatable 
+				{if
+				$att->is_repeatable} 
+				<span class="checkmark">&#10003;</span>
+				{/if}
+				</p>
+
+				<p>
+				<input type="checkbox" 
+				{if 1 == $att->is_required}checked="checked"{/if} name="is_required"> Is Required 
+				{if
+				$att->is_required} 
+				<span class="checkmark">&#10003;</span>
+				{/if}
+				</p>
+
 				<p>
 				{if $att->ascii_id}
 				<input type="submit" value="update"/>

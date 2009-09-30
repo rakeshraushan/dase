@@ -95,6 +95,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$att->is_public = 1;
 		$att->in_basic_search = 1;
 		$att->is_on_list_display = 1;
+		$att->is_repeatable = 1;
 
 		$tpl = new Dase_Template($r);
 		$tpl->assign('admin_atts',$this->collection->getAdminAttributes());
@@ -141,6 +142,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$att->attribute_name = $r->get('attribute_name');
 		$att->modifier_type = $r->get('modifier_type');
 		$att->usage_notes = $r->get('usage_notes');
+		$att->modifier_defined_list = $r->get('modifier_defined_list');
 		$att->mapped_admin_att_id = $r->get('mapped_admin_att_id') ? $r->get('mapped_admin_att_id') : 0;
 		if ($r->has('is_on_list_display')) {
 			$att->is_on_list_display = 1;
@@ -157,6 +159,16 @@ class Dase_Handler_Manage extends Dase_Handler
 		} else {
 			$att->is_public = 0;
 		}
+		if ($r->has('is_repeatable')) {
+			$att->is_repeatable = 1;
+		} else {
+			$att->is_repeatable = 0;
+		}
+		if ($r->has('is_required')) {
+			$att->is_required = 1;
+		} else {
+			$att->is_required = 0;
+		}
 		$att->html_input_type = $r->get('input_type');
 		$att->update();
 		$att->resort($r->get('sort'));
@@ -172,6 +184,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->collection->ascii_id,$att_ascii_id);
 		$att->attribute_name = $r->get('attribute_name');
 		$att->usage_notes = $r->get('usage_notes');
+		$att->modifier_defined_list = $r->get('modifier_defined_list');
 		if ($r->has('is_on_list_display')) {
 			$att->is_on_list_display = 1;
 		} else {
@@ -186,6 +199,16 @@ class Dase_Handler_Manage extends Dase_Handler
 			$att->is_public = 1;
 		} else {
 			$att->is_public = 0;
+		}
+		if ($r->has('is_repeatable')) {
+			$att->is_repeatable = 1;
+		} else {
+			$att->is_repeatable = 0;
+		}
+		if ($r->has('is_required')) {
+			$att->is_required = 1;
+		} else {
+			$att->is_required = 0;
 		}
 		$att->html_input_type = $r->get('input_type');
 		$att->update();
