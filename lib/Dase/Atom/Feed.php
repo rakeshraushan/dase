@@ -446,7 +446,6 @@ class Dase_Atom_Feed extends Dase_Atom
             }
         }
         ksort($entries_deep);
-        ksort($entries_deep);
         foreach ($entries_deep as $k => $set) {
             foreach ($set as $e) {
                 $entries[] = $e;

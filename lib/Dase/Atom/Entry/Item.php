@@ -596,6 +596,30 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		return $item;
 	}
 
+	function addMetadataLink($href,$rel='',$type='',$length='',$title='',$dattribute='') 
+	{
+		$link = $this->addElement('link');
+		//a felicitous attribute order
+		if ($rel) {
+			$link->setAttribute('rel',$rel);
+		}
+		if ($title) {
+			$link->setAttribute('title',$title);
+		}
+		$link->setAttribute('href',$href);
+		if ($type) {
+			$link->setAttribute('type',$type);
+		}
+		if ($length) {
+			$link->setAttribute('length',$length);
+		}
+		if ($dattribute){
+			$link->setAttributeNS(Dase_Atom::$ns['d'],'d:attribute',$dattribute);
+		}
+		return $link;
+	}
+
+
 	function addLinks($db,$r) 
 	{
 		$eid = $r->getUser()->eid;

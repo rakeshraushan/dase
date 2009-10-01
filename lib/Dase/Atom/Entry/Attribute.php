@@ -54,9 +54,12 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 
 	function getUsageNotes()
 	{
-		foreach ($this->getXpath("atom:category[@scheme='http://daseproject.org/category/usage_notes']") as $node) {
-			return $node->getAttribute('term');
-		}
+		return $this->getSummary();
+	}
+
+	function setUsageNotes($text)
+	{
+		$this->setSummary($text);
 	}
 
 	function getHtmlInputType()

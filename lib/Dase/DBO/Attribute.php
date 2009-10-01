@@ -125,6 +125,14 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
 			$entry->addLink($url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
 		}
+		if ($this->modifier_type){
+			$entry->addCategory($this->modifier_type,'http://daseproject.org/category/modifier_type');
+		}
+		if ($this->modifier_defined_list){
+			$entry->addCategory($this->modifier_defined_list,'http://daseproject.org/category/modifier_defined_list');
+		}
+		$entry->setSummary($this->usage_notes);
+		$entry->addCategory($this->sort_order,'http://daseproject.org/category/sort_order');
 		//compat
 		if (is_numeric($this->updated)) {
 			$updated = date(DATE_ATOM,$this->updated);
