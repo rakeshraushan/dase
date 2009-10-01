@@ -726,6 +726,9 @@ class Dase_Handler_Collection extends Dase_Handler
 					'sort_order' => $att->sort_order,
 					'href' => $att->getUrl($c->ascii_id,$r->app_root),
 					'collection' => $r->get('collection_ascii_id')
+					'modifier_type' => $att->modifier_type,
+					'values' => $att->getFormValues(),
+					'usage_notes' => $att->usage_notes,
 				);
 		}
 		$r->renderResponse(Dase_Json::get($att_array),$r);

@@ -6,7 +6,7 @@ include 'config.php';
 //$action = "count";
 $action = "delete";
 
-$coll = 'vrc_works';
+$coll = 'japanese_grammer_video';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

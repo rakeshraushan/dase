@@ -101,5 +101,4 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		$entry->setSummary($this->annotation);
 		return $feed->asXml();
 	}
-
 }
