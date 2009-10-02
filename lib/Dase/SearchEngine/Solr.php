@@ -307,6 +307,7 @@ EOD;
 
 	public function getResultsAsJson() 
 	{
+		$app_root = $this->request->app_root;
 		$total = '';
 		$entries = array();
 
@@ -328,7 +329,7 @@ EOD;
 			}
 		}
 		$reader->close();
-		$json = "{\n\"total\":$total,\n\"results\":[";
+		$json = "{\n\"app_root\":$app_root,\n\"total\":$total,\n\"results\":[";
 		foreach ($entries as $entry) {
 			$json .= $entry.",\n";
 		}
