@@ -725,7 +725,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'input_type' => $att->html_input_type,
 					'sort_order' => $att->sort_order,
 					'href' => $att->getUrl($c->ascii_id,$r->app_root),
-					'collection' => $r->get('collection_ascii_id')
+					'collection' => $c->ascii_id,
 					'modifier_type' => $att->modifier_type,
 					'values' => $att->getFormValues(),
 					'usage_notes' => $att->usage_notes,
