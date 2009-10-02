@@ -161,7 +161,7 @@ $colls = array(
 	'zamora',
 );
 
-$colls = array('keanepj','japanese_grammar');
+$colls = array('test','japanese_grammar');
 
 $i = 0;
 
