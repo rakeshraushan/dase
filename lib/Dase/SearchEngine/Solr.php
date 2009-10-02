@@ -328,9 +328,7 @@ EOD;
 			}
 		}
 		$reader->close();
-		$json = "{\"solr_search_url\":$this->solr_search_url,
-			\"total\":$total,
-			\"results\":[";
+		$json = "{\n\"total\":$total,\n\"results\":[";
 		foreach ($entries as $entry) {
 			$json .= $entry.",\n";
 		}
