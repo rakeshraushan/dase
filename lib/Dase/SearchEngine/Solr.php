@@ -305,6 +305,37 @@ EOD;
 		return $feed;
 	}
 
+	public function getResultsAsJson() 
+	{
+		$total = '';
+		$entries = array();
+
+		$reader = new XMLReader();
+		if (false === $reader->XML($this->_getSearchResults())) {
+			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+		}
+		while ($reader->read()) {
+			//get total number found
+			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
+				$total = $reader->getAttribute('numFound');
+			}
+			//get entries
+			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('_json' == $reader->getAttribute('name')) {
+					$reader->read();
+					$entries[] = $reader->value;
+				}
+			}
+		}
+		$reader->close();
+		$json = "{\"total\":$total,\"results\":[";
+		foreach ($entries as $entry) {
+			$json .= $entry.",";
+		}
+		$json .= ']}';
+		return $json;
+	}
+
 	public function getResultsAsItemAtom() 
 	{
 		$app_root = $this->request->app_root;
@@ -570,13 +601,20 @@ EOD;
 		$search_text[] = $item->id;
 		$search_text[] = $item->serial_number;
 
-		$json_doc['media'] = $item->getMedia();
+		$json_doc['media'] = array();
+
+		foreach ($item->getMedia() as $sz => $info) {
+			$json_doc['media'][$sz] = $info['url'];
+		}
 
 		$json_doc['metadata'] = array();
 
 		foreach ($item->getMetadata(true) as $meta) {
 
-			$json_doc['metadata'][$meta['ascii_id']][] = $meta;
+			//no admin metadata in json
+			if ($meta['value_text'] && $meta['collection_id']) {
+				$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
+			}
 
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {

@@ -70,9 +70,15 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchJson($r)
 	{
 		$r->checkCache();
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$r->renderResponse($search->getResultsAsJson());
+		/*
+		$r->checkCache();
 		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
 		$r->renderResponse($feed->asJson());
+		 */
 	}
 
 	public function getSearchItemAtom($r)
