@@ -338,7 +338,7 @@ EOD;
 		$json .= ']}';
 		 */
 
-		$json = "{\"app_root\":$app_root,\"total\":$total,\"results\":[";
+		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"results\":[";
 		foreach ($entries as $entry) {
 			$json .= $entry.",";
 		}
