@@ -25,8 +25,23 @@ class Dase_DBO_CollectionManager extends Dase_DBO_Autogen_CollectionManager
 		}
 	}
 
-	public static function listAsAtom($db,$coll_ascii_id,$eid)
+	public static function listAsAtom($db,$app_root)
 	{
+		$cm = new Dase_DBO_CollectionManager($db);
+		$cms = $cm->find();
+		$feed = new Dase_Atom_Feed;
+		$feed->setTitle('DASe Collection Managers');
+		$feed->setId($app_root.'/admin/managers');
+		//fix to be latest update
+		$feed->setUpdated(date(DATE_ATOM));
+		$feed->addAuthor();
+		$feed->addLink($app_root.'/admin/managers.atom','self');
+		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
+		foreach ($cms as $manager) {
+			$entry = $feed->addEntry();
+			$manager->injectAtomEntryData($entry,$app_root);
+		}
+		return $feed->asXml();
 	}
 
 	function asAtom($app_root) 
@@ -38,8 +53,8 @@ class Dase_DBO_CollectionManager extends Dase_DBO_Autogen_CollectionManager
 
 	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
 	{
-		$entry->setTitle('Collection Manager '.$this->dase_user_eid);
-		$entry->setId($app_root.'/collection/'.$this->collection_ascii_id.'/manager/'.$this->dase_user_eid);
+		$entry->setTitle('Collection Manager '.$this->collection_ascii_id.'/'.$this->dase_user_eid);
+		$entry->setId($app_root.'/manager/'.$this->collection_ascii_id.'/'.$this->dase_user_eid);
 		$entry->addCategory('collection_manager','http://daseproject.org/category/entrytype');
 		$entry->setUpdated($this->created);
 		$entry->addAuthor($this->created_by_eid);

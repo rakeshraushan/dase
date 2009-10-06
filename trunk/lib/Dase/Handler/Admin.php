@@ -15,6 +15,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'eid/{eid}' => 'ut_person',
 		'log' => 'log',
 		'manager/email' => 'manager_email',
+		'managers' => 'managers',
 		'modules' => 'modules',
 		'name/{lastname}' => 'ut_person',
 		'palette' => 'palette',
@@ -135,6 +136,11 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl->assign('tags',$user->getTags(true));
 		$tpl->assign('collections',$user->getCollections());
 		$r->renderResponse($tpl->fetch('admin/user.tpl'));
+	}
+
+	public function getManagersAtom($r)
+	{
+		$r->renderResponse(Dase_DBO_CollectionManager::listAsAtom($this->db,$r->app_root));
 	}
 
 	public function getManagerEmail($r) 

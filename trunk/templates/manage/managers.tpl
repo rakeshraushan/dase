@@ -40,9 +40,9 @@
 				<td>
 					<select name="auth_level">
 						<option value="">select one:</option>
-						<option value="none">read</option>
-						<option value="metadata">write</option>
-						<option value="superuser">admin</option>
+						<option value="read">read</option>
+						<option value="write">write</option>
+						<option value="admin">admin</option>
 					</select>
 				</td>
 				<td>expiration control</td>

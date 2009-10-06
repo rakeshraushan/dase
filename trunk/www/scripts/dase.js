@@ -344,7 +344,7 @@ Dase.placeCollectionManageLink = function(eid) {
 	var manageLink = Dase.$('manageLink');
 	var manageLinkHeader = Dase.$('manageLinkHeader');
 	//set footer link
-	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser') {
+	if (auth_info.auth_level == 'write' || auth_info.auth_level == 'admin') {
 		manageLink.setAttribute('href','manage/'+auth_info.collection_ascii_id);
 		manageLink.innerHTML = 'Manage '+auth_info.collection_name;
 		Dase.removeClass(manageLink,'hide');
