@@ -60,6 +60,10 @@
 			</td>
 		</tr>
 		<tr>
+			<th>Admin Notes</th>
+			<td class="data">{$collection->admin_notes}</td>
+		</tr>
+		<tr>
 			<th>Created</th>
 			<td class="data">{$collection->created}</td>
 		</tr>

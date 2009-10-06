@@ -379,7 +379,7 @@ class Dase_Handler_Item extends Dase_Handler
 				}
 			}
 		}
-		$this->item->buildSearchIndex(0,true,true);
+		$this->item->buildSearchIndex();
 		$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
 	}
 
@@ -393,7 +393,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item->setItemType($r->get('item_type'))) {
 			$type = $this->item->getItemType()->name;
 			$this->item->expireCaches($r->getCache());
-			$this->item->buildSearchIndex(0,true,true);
+			$this->item->buildSearchIndex();
 			if (!$type) {
 				$type = 'default/none';
 			}
@@ -413,7 +413,7 @@ class Dase_Handler_Item extends Dase_Handler
 				$this->item->setValue($att_ascii,$val);
 			}
 		}
-		$this->item->buildSearchIndex(0,true,true);
+		$this->item->buildSearchIndex();
 		$r->renderResponse('added metadata (unless null)');
 	}
 
@@ -596,7 +596,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 			file_put_contents($new_file,file_get_contents($url));
 			try {
-				$file = Dase_File::newFile($this->db,$new_file,$content_type,null,$r->base_path);
+				$file = Dase_File::newFile($this->db,$new_file,$content_type,null,BASE_PATH);
 				//since we are swapping in:
 				$item->deleteAdminValues();
 				//note: this deletes ALL media!!!
@@ -607,7 +607,7 @@ class Dase_Handler_Item extends Dase_Handler
 				Dase_Log::debug(LOG_FILE,'item handler error: '.$e->getMessage());
 				$r->renderError(500,'could not ingest file ('.$e->getMessage().')');
 			}
-			$item->buildSearchIndex(0,true,true);
+			$item->buildSearchIndex();
 			$r->renderOk();
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
@@ -663,7 +663,7 @@ class Dase_Handler_Item extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($this->db,$new_file,$content_type,$orig_name,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,$content_type,$orig_name,BASE_PATH);
 
 			//this'll create thumbnail, viewitem, and any derivatives
 			//then return the Dase_DBO_MediaFile for the original
@@ -714,7 +714,7 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 
 		//force indexing & commit
-		$resp = $this->item->buildSearchIndex(0,true,true);
+		$resp = $this->item->buildSearchIndex();
 
 		//should use HTTP status code instead
 		if ('ok' == substr($resp,0,2)) {

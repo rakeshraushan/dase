@@ -36,6 +36,7 @@ CREATE TABLE {$table_prefix}collection (
     created character varying(50),
     updated character varying(50),
     visibility character varying(50),
+    admin_notes text,
     item_count integer DEFAULT 0
 );
 

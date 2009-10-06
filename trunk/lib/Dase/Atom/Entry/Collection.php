@@ -37,6 +37,17 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		$c->is_public = 0;
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
+
+		$content = $this->getContent();
+		if ($content) {
+			$c->description = $content;
+		}
+
+		$summary = $this->getSummary();
+		if ($summary) {
+			$c->admin_notes = $summary;
+		}
+
 		if ($c->insert()) {
 			$cache = Dase_Cache::get(CACHE_TYPE);
 			$cache->expire('app_data');

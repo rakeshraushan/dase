@@ -472,15 +472,15 @@ EOD;
 		return $feed;
 	}
 
-	public function buildItemIndex($item,$freshness,$commit=false)
+	public function buildItemIndex($item,$commit=true)
 	{
-		return $this->postToSolr($item,$freshness,$commit);
+		return $this->postToSolr($item,$commit);
 	}	
 
-	public function buildItemSetIndex($item_array,$freshness)
+	public function buildItemSetIndex($item_array)
 	{
 		foreach ($item_array as $item) {
-			$this->postToSolr($item,$freshness);
+			$this->postToSolr($item,false);
 		}
 		return $this->commit();
 	}	
@@ -714,16 +714,9 @@ EOD;
 	}
 
 	//todo: make autocommit a config option
-	public function postToSolr($item,$freshness,$commit=false)
+	public function postToSolr($item,$commit=true)
 	{
 		$start_check = Dase_Util::getTime();
-
-		if ($freshness) {
-			$indexed = $this->getIndexedTimestamp($item);
-			if ($indexed > date(DATE_ATOM,time()-$freshness)) {
-				return "fresh! not indexed";
-			}
-		}
 
 		$start_get_doc = Dase_Util::getTime();
 		$check_elapsed = round($start_get_doc - $start_check,4);

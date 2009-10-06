@@ -5,23 +5,11 @@ require_once 'Dase/DBO/Autogen/Item.php';
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
-	private $_build_index = false;
 	private $_collection = null;
 	private $_content = null;
-	private $_index_settings = array();
 	private $_item_type = null;
 	private $_media = array();
 	private $_metadata = array();
-
-	public function __destruct() 
-	{
-		if ($this->_build_index) {
-			Dase_Log::debug(LOG_FILE,'item reindexing from destructor');
-			$freshness = $this->index_settings['freshness'];
-			$commit = $this->index_settings['commit'];
-			$this->_buildSearchIndex($freshness, $commit);
-		}
-	}
 
 	public static function get($db,$collection_ascii_id,$serial_number)
 	{
@@ -81,37 +69,18 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $engine->deleteItemIndex($this);
 	}
 
-	public function buildSearchIndex($freshness=0,$commit=true,$force=false)
+	public function buildSearchIndex($commit=true)
 	{
-		$this->_build_index = true;
-
-		//todo: last one wins on setting -- think about
-		$this->_index_settings['freshness'] = $freshness;
-		$this->_index_settings['commit'] = $commit;
-
-		if ($force) {
-			Dase_Log::debug(LOG_FILE,'item reindexing forced');
-			$this->_build_index = false;
-			return $this->_buildSearchIndex($freshness,$commit);
-		}
-	}
-
-	public function _buildSearchIndex($freshness=0,$commit=true)
-	{
-		//refresh
-		$this->_metadata = array();
-		$this->_getMetadata();
-
 		$engine = Dase_SearchEngine::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
-		return $engine->buildItemIndex($this,$freshness,$commit);
+		return $engine->buildItemIndex($this,$commit);
 	}
 
-	public function store($freshness=0)
+	public function store()
 	{
 		$ds = Dase_DocStore::get($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"saved as document: " . $this->serial_number);
-		return $ds->storeItem($this,$freshness);
+		return $ds->storeItem($this);
 	}
 
 	public function retrieveAtomDoc($app_root,$as_feed=false)
@@ -349,7 +318,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function updateMetadata($value_id,$value_text,$eid,$modifier='')
+	function updateMetadata($value_id,$value_text,$eid,$modifier='',$index=true)
 	{
 		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
@@ -376,10 +345,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->insert();
 		$v->value_text = $value_text;
 		$v->update();
-		$this->buildSearchIndex();
+		if ($index) {
+			$this->buildSearchIndex();
+		}
 	}
 
-	function removeMetadata($value_id,$eid)
+	function removeMetadata($value_id,$eid,$index=true)
 	{
 		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
@@ -395,11 +366,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->timestamp = date(DATE_ATOM);
 		$rev->insert();
 		$v->delete();
-		$this->buildSearchIndex();
+		if ($index) {
+			$this->buildSearchIndex();
+		}
 	}
 
 	/** simple convenience method */
-	function updateTitle($value_text,$eid)
+	function updateTitle($value_text,$eid,$index=true)
 	{
 		//todo: set value revision history as well (using eid)
 		$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,'title');
@@ -414,11 +387,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->value_text = trim($value_text);
 				$v->insert();
 			}
-			$this->buildSearchIndex();
+			if ($index) {
+				$this->buildSearchIndex();
+			}
 		}
 	}
 
-	function setValue($att_ascii_id,$value_text,$url='',$modifier='')
+	function setValue($att_ascii_id,$value_text,$url='',$modifier='',$index=false)
 	{
 		//todo: this needs work -- no need to 'new' an att
 		//todo: set value revision history as well
@@ -453,7 +428,13 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->url = $url;
 				$v->modifier = $modifier;
 				$v->insert();
+				if ($index) {
+					$this->buildSearchIndex();
+				}
 				return $v;
+			}
+			if ($index) {
+				$this->buildSearchIndex();
 			}
 		} else {
 			//simply returns false if no such attribute
@@ -462,14 +443,14 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	function setValueLink($att_ascii_id,$value_text,$url,$modifier='')
+	function setValueLink($att_ascii_id,$value_text,$url,$modifier='',$index=true)
 	{
-		return $this->setValue($att_ascii_id,$value_text,$url,$modifier);
+		return $this->setValue($att_ascii_id,$value_text,$url,$modifier,$index);
 	}
 
 
 	/** deletes non-admin values including those with urls (metadata-links) */
-	function deleteValues()
+	function deleteValues($index=false)
 	{
 		//should sanity check and archive values
 		$admin_ids = Dase_DBO_Attribute::listAdminAttIds($this->db);
@@ -481,8 +462,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$doomed->delete();
 			}
 		}
-		//for expunges ,so do not bother
-		//$this->buildSearchIndex();
+		if ($index) {
+			$this->buildSearchIndex();
+		}
 	}
 
 	function deleteAdminValues()
@@ -522,12 +504,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//$this->getCollection()->updateItemCount();
 	}
 
-	function deleteContent()
+	function deleteContent($index=false)
 	{
 		$co = new Dase_DBO_Content($this->db);
 		$co->item_id = $this->id;
 		foreach ($co->find() as $doomed) {
 			$doomed->delete();
+		}
+		if ($index) {
+			$this->buildSearchIndex();
 		}
 	}
 
@@ -1038,7 +1023,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($content);
 	}
 
-	public function setContent($text,$eid,$type="text")
+	public function setContent($text,$eid,$type="text",$index=true)
 	{
 		$content = new Dase_DBO_Content($this->db);
 		$content->item_id = $this->id;
@@ -1054,7 +1039,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->content_length = strlen($content->text);
 		$this->update();
 
-		$this->buildSearchIndex();
+		if ($index) {
+			$this->buildSearchIndex();
+		}
 		return $res;
 	}
 
