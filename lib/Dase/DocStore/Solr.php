@@ -15,12 +15,12 @@ Class Dase_DocStore_Solr extends Dase_DocStore
 		$this->config = $config;
 	}
 
-	public function storeItem($item,$freshness=0)
+	public function storeItem($item)
 	{
 		//use search engine class
 		$engine = new Dase_SearchEngine_Solr($this->db,$this->config);
 		//always commits
-		return $engine->buildItemIndex($item,$freshness,true);
+		return $engine->buildItemIndex($item);
 	}
 
 	public function deleteItem($item)

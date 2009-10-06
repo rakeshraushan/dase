@@ -127,7 +127,7 @@ class Dase_Handler_Media extends Dase_Handler
 		@ chmod( $new_file,0644);
 
 		try {
-			$file = Dase_File::newFile($this->db,$new_file,$content_type,null,$r->base_path);
+			$file = Dase_File::newFile($this->db,$new_file,$content_type,null,BASE_PATH);
 			//since we are swapping in:
 			$item->deleteAdminValues();
 			//note: this deletes ALL media!!!

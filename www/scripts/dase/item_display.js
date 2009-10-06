@@ -578,11 +578,13 @@ Dase.initGetInputForm = function(form) {
 
 		var input_form = Dase.$('ajaxFormHolder').getElementsByTagName('form')[1];
 		input_form.onsubmit = function() {
+			Dase.addClass(Dase.$('pageReloader'),'hide');
 			var content_headers = {
 				'Content-Type':'application/x-www-form-urlencoded'
 			}
 			Dase.loadingMsg(true);
 			Dase.ajax(this.action,'post',function() { 
+				Dase.removeClass(Dase.$('pageReloader'),'hide');
 				Dase.getJSON(Dase.base_href+'item/'+Dase.$('collSer').innerHTML+'/metadata',function(meta) {
 					var h = new Dase.htmlbuilder;
 					var seen;

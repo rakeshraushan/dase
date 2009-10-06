@@ -18,9 +18,9 @@ class Dase_SearchEngine
 	}
 
 	//must be overridden:
-	public function buildItemIndex($item,$freshness) {}	
+	public function buildItemIndex($item) {}	
 	public function deleteItemIndex($item) {}	
-	public function buildItemSetIndex($item_array,$freshness) {}	
+	public function buildItemSetIndex($item_array) {}	
 	public function commit() {}
 	public function getIndexedTimestamp($item) {}
 	public function getResultsAsAtom(){} 

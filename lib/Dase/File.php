@@ -236,6 +236,7 @@ abstract class Dase_File
 		}
 	}
 
+	/** will be invoked by subclass */
 	function makeThumbnail($item,$path_to_media)
 	{
 		$size = $this->size;
@@ -257,6 +258,7 @@ abstract class Dase_File
 		Dase_Log::info(LOG_FILE,"created $media_file->size $media_file->filename");
 	}
 
+	/** will be invoked by subclass */
 	function makeViewitem($item,$path_to_media)
 	{
 		$size = $this->size;

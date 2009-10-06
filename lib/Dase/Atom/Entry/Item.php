@@ -563,7 +563,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		foreach ($this->getMetadata(null,true) as $att => $keyval) {
 			foreach ($keyval['values'] as $v) {
 				if (trim($v['text'])) {
-					$val = $item->setValue($att,$v['text'],null,$v['mod']);
+					$val = $item->setValue($att,$v['text'],null,$v['mod'],false);
 				}
 			}
 		}
@@ -573,7 +573,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (trim($v['text'])) {
 					//check that it's proper collection
 					if ($c->ascii_id = $v['coll']) {
-						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod']);
+						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod'],false);
 					}
 				}
 			}
@@ -581,15 +581,12 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 		//3.5 content!
 		if ($this->getContent()) {
-			$item->setContent($this->getContent(),$eid,$this->getContentType());
+			$item->setContent($this->getContent(),$eid,$this->getContentType(),false);
 		}
 
-		//since buildIndex gets saved until item destruction,
-		//the last 'settings' and 'commit' params win.  Here we allow
-		// the client to add 'no_commit=1' to trigger no commit
-		// this is prob. heinously unRESTful
+		//Here we allow the client to add 'no_commit=1' to trigger no commit
 		if ('1' == $r->get('no_commit')) {
-			$item->buildSearchIndex(0,false);
+			$item->buildSearchIndex(false);
 		} else {
 			$item->buildSearchIndex();
 		}

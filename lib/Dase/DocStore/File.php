@@ -9,15 +9,8 @@ Class Dase_DocStore_File extends Dase_DocStore
 		$this->doc_root = $config->getMediaDir();
 	}
 
-	public function storeItem($item,$freshness=0)
+	public function storeItem($item)
 	{
-		if ($freshness) {
-			$indexed = $this->getTimestamp($item->getUnique());
-			if ($indexed > date(DATE_ATOM,time()-$freshness)) {
-				return "fresh! not stored";
-			}
-		}
-
 		$entry = $item->injectAtomEntryData(new Dase_Atom_Entry_Item,'{APP_ROOT}');
 		$item_xml = $entry->asXml($entry->root); //so we don't get xml declaration
 

@@ -39,6 +39,7 @@ CREATE TABLE `{$table_prefix}collection` (
 `description` varchar(2000) default NULL,
 `collection_name` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
+`admin_notes` text default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

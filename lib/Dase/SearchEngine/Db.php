@@ -6,7 +6,7 @@ Class Dase_SearchEngine_Db extends Dase_SearchEngine
 		$this->request = $request;
 	}
 
-	public function buildItemIndex($item,$freshness)
+	public function buildItemIndex($item)
 	{
 	}	
 
@@ -14,7 +14,7 @@ Class Dase_SearchEngine_Db extends Dase_SearchEngine
 	{
 	}	
 
-	public function deleteItemIndex($item,$freshness)
+	public function deleteItemIndex($item)
 	{
 	}	
 

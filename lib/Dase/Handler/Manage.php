@@ -111,7 +111,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$manager = new Dase_DBO_CollectionManager($this->db);
 		if ($r->get('manager_eid') == $this->user->eid) {
-			$r->renderError('400','cannot delete yourself');
+			$r->renderError('400','existential crisis: cannot delete yourself');
 		}
 		$manager->dase_user_eid = $r->get('manager_eid');
 		$manager->collection_ascii_id = $this->collection->ascii_id;
@@ -447,7 +447,7 @@ class Dase_Handler_Manage extends Dase_Handler
 				$item->setValue('title',$name);
 			}
 
-			$file = Dase_File::newFile($this->db,$path,$type,$name,$r->base_path);
+			$file = Dase_File::newFile($this->db,$path,$type,$name,BASE_PATH);
 			//this'll create thumbnail, viewitem, and any derivatives
 			$media_file = $file->addToCollection($item,false,MEDIA_DIR);
 			$item->setItemType($r->get('item_type'));

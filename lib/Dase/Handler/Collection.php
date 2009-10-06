@@ -30,7 +30,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/items/that/lack_media' => 'items_that_lack_media',
 		'{collection_ascii_id}/deletions' => 'items_marked_to_be_deleted',
 		'{collection_ascii_id}/managers' => 'managers',
-		'{collection_ascii_id}/manager/{eid}' => 'manager',
 	);
 
 	protected function setup($r)

@@ -191,21 +191,31 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$entry->setId($app_root.'/collection/'.$this->ascii_id);
 		$entry->setTitle($this->collection_name);
 		$entry->setEntryType('collection');
+		if ($this->description) {
+			$entry->setContent($this->description);
+		} else {
+			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
+		}
+		if ($this->admin_notes) {
+			$entry->setSummary($this->admin_notes);
+		}
 		$entry->addLink($app_root.'/collection/'.$this->ascii_id.'.atom','self');
 		$entry->addLink($app_root.'/collection/'.$this->ascii_id);
-		if ($this->is_public) {
-			$pub = "public";
-		} else {
-			$pub = "private";
-		}
 		foreach ($this->getAttributes() as $a) {
 			$entry->addCategory($a->ascii_id,"http://daseproject.org/category/attribute",$a->attribute_name);
 		}
 		foreach ($this->getItemTypes() as $item_type) {
 			$entry->addCategory($item_type->ascii_id,"http://daseproject.org/category/item_type",$item_type->name);
 		}
-		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
+
+		if ($this->is_public) {
+			$pub = "public";
+		} else {
+			$pub = "private";
+		}
 		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+
+		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory($this->item_count,"http://daseproject.org/category/item_count");
 		return $entry->asXml();
 	}
@@ -259,7 +269,14 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		foreach ($cs as $coll) {
 			$entry = $feed->addEntry();
 			$entry->setTitle($coll->collection_name);
-			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
+			if ($coll->description) {
+				$entry->setContent($coll->description);
+			} else {
+				$entry->setContent(str_replace('_collection','',$coll->ascii_id));
+			}
+			if ($coll->admin_notes) {
+				$entry->setSummary($coll->admin_notes);
+			}
 			$entry->setId($coll->getUrl($app_root));
 			$entry->setUpdated($coll->created);
 			$entry->setEntryType('collection');
@@ -566,6 +583,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		if ($this->description) {
 			$writer->startElement('description');
 			$writer->text($this->description);
+			$writer->endElement();
+		}
+		if ($this->admin_notes) {
+			$writer->startElement('admin_notes');
+			$writer->text($this->admin_notes);
 			$writer->endElement();
 		}
 		$attribute = new Dase_DBO_Attribute($this->db);
