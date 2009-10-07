@@ -1,3 +1,4 @@
+<code>
 <entry xmlns="http://www.w3.org/2005/Atom">
   <category term="item" scheme="http://daseproject.org/category/entrytype"/>
   <id>http://dasebeta.laits.utexas.edu/item/vrc/06-02075</id>
@@ -68,3 +69,4 @@
     <media:category>full</media:category>
   </media:content>
 </entry>
+</code>
