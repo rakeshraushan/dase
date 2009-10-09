@@ -13,7 +13,7 @@ Dase.pageInitUser = function(eid) {
 		return;
 	};
 	var controls = Dase.$('adminPageControls');
-	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'superuser' || auth_info.auth_level == 'write')
+	if (auth_info.auth_level == 'manager' || auth_info.auth_level == 'admin' || auth_info.auth_level == 'write')
 	{
 		Dase.removeClass(controls,'hide');
 		Dase.initEditMetadata();

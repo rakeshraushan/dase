@@ -188,19 +188,29 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function asAtomEntry($app_root)
 	{
 		$entry = new Dase_Atom_Entry();
-		$entry->setId($app_root.'/collection/'.$this->ascii_id);
+		return $this->injectAtomEntryData($entry,$app_root)->asXml();
+	}
+
+	function injectAtomEntryData(Dase_Atom_Entry $entry,$app_root)
+	{
+		$url = $this->getUrl($this->ascii_id,$app_root);
 		$entry->setTitle($this->collection_name);
-		$entry->setEntryType('collection');
+		$entry->setId($url);
+		$entry->setUpdated($this->updated);
+		$entry->addAuthor();
+		$entry->addLink($url.'.atom');
+		$entry->addLink($url.'.atom','edit');
+		$entry->addCategory('collection','http://daseproject.org/category/entrytype');
 		if ($this->description) {
-			$entry->setContent($this->description);
+			$entry->setSummary($this->description);
 		} else {
-			$entry->setContent(str_replace('_collection','',$coll->ascii_id));
+			$entry->setSummary(str_replace('_collection','',$this->ascii_id));
 		}
+
 		if ($this->admin_notes) {
-			$entry->setSummary($this->admin_notes);
+			$entry->setContent($this->admin_notes);
 		}
-		$entry->addLink($app_root.'/collection/'.$this->ascii_id.'.atom','self');
-		$entry->addLink($app_root.'/collection/'.$this->ascii_id);
+
 		foreach ($this->getAttributes() as $a) {
 			$entry->addCategory($a->ascii_id,"http://daseproject.org/category/attribute",$a->attribute_name);
 		}
@@ -213,11 +223,15 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		} else {
 			$pub = "private";
 		}
-		$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+		$entry->addCategory($pub,"http://daseproject.org/category/status");
 
+		if (!$this->visibility) {
+			$this->visibility = 'user';
+		}
+		$entry->addCategory($this->visibility,"http://daseproject.org/category/visibility");
 		$entry->addCategory($app_root,"http://daseproject.org/category/base_url");
 		$entry->addCategory($this->item_count,"http://daseproject.org/category/item_count");
-		return $entry->asXml();
+		return $entry;
 	}
 
 	static function listAsArray($db,$public_only = false)
@@ -267,30 +281,9 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->addLink($app_root.'/collections.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
 		foreach ($cs as $coll) {
-			$entry = $feed->addEntry();
-			$entry->setTitle($coll->collection_name);
-			if ($coll->description) {
-				$entry->setContent($coll->description);
-			} else {
-				$entry->setContent(str_replace('_collection','',$coll->ascii_id));
-			}
-			if ($coll->admin_notes) {
-				$entry->setSummary($coll->admin_notes);
-			}
-			$entry->setId($coll->getUrl($app_root));
-			$entry->setUpdated($coll->created);
-			$entry->setEntryType('collection');
-			$entry->addLink($coll->getUrl($app_root).'.atom','self');
-			$entry->addLink($coll->getUrl($app_root),'alternate');
-			if ($coll->is_public) {
-				$pub = "public";
-			} else {
-				$pub = "private";
-			}
-			$entry->addCategory($coll->item_count,"http://daseproject.org/category/item_count");
-			$entry->addCategory($pub,"http://daseproject.org/category/visibility");
+			$coll->injectAtomEntryData($feed->addEntry(),$app_root);
 		}
-		return $feed->asXML();
+		return $feed->asXml();
 	}
 
 	static function getLastCreated($db)
