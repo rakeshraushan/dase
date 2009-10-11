@@ -6,6 +6,7 @@ class Dase
 {
 	public static function run($config)
 	{
+		//sets up db object, does NOT try to connect
 		$db = new Dase_DB($config);
 
 		if (
