@@ -18,6 +18,7 @@ abstract class Dase_File
 		'text/html' => array('size' => 'html', 'ext' => 'html','class'=>'Dase_File_Text'),
 		'text/plain' => array('size' => 'text', 'ext' => 'txt','class'=>'Dase_File_Text'),
 		'text/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
+		'video/mp4' => array('size' => 'mp4', 'ext' => 'mp4','class'=>'Dase_File_Video'),
 		'video/quicktime' => array('size' => 'quicktime', 'ext' => 'mov','class'=>'Dase_File_Video'),
 	);
 

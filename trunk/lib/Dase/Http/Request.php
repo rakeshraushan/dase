@@ -14,6 +14,7 @@ class Dase_Http_Request
 		'json' =>'application/json',
 		'mov' =>'video/quicktime',
 		'mp3' =>'audio/mpeg',
+		'mp4' =>'video/mp4',
 		'png' =>'image/png',
 		'pdf' =>'application/pdf',
 		'txt' =>'text/plain',
