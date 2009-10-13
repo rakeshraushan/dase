@@ -330,15 +330,7 @@ EOD;
 		}
 		$reader->close();
 
-		/*
-		$json = "{\n\"app_root\":$app_root,\n\"total\":$total,\n\"results\":[";
-		foreach ($entries as $entry) {
-			$json .= $entry.",\n";
-		}
-		$json .= ']}';
-		 */
-
-		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"results\":[";
+		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"items\":[";
 		foreach ($entries as $entry) {
 			$json .= $entry.",";
 		}
