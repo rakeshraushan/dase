@@ -8,9 +8,10 @@ class Dase_Handler_Search extends Dase_Handler
 		'/' => 'search',
 		'item' => 'search_item',
 		'md5' => 'search_md5',
+		//'{collection_ascii_id}' => 'search_collection'
 	);
 
-	protected function setup($r)
+	public function setup($r)
 	{
 		//setting $r allows app cache-ability
 		//but...breaks intermediate caching (work on that)
