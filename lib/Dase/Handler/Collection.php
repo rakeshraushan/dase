@@ -10,6 +10,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
 		'{collection_ascii_id}/ping' => 'ping',
+		'{collection_ascii_id}/search' => 'search',
+		'{collection_ascii_id}/search/item' => 'search_item',
 		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/latest_index' => 'latest_index',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
@@ -56,6 +58,47 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		 */
 	}
+
+	public function getSearch($r) 
+	{
+		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
+		$search_handler->setup($r);
+		$r->set('collection_ascii_id',$this->collection->ascii_id);
+		$search_handler->getSearch($r);
+	}
+
+	public function getSearchAtom($r) 
+	{
+		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
+		$search_handler->setup($r);
+		$r->set('collection_ascii_id',$this->collection->ascii_id);
+		$search_handler->getSearchAtom($r);
+	}
+
+	public function getSearchItem($r) 
+	{
+		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
+		$search_handler->setup($r);
+		$r->set('collection_ascii_id',$this->collection->ascii_id);
+		$search_handler->getSearchItem($r);
+	}
+
+	public function getSearchItemAtom($r) 
+	{
+		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
+		$search_handler->setup($r);
+		$r->set('collection_ascii_id',$this->collection->ascii_id);
+		$search_handler->getSearchItemAtom($r);
+	}
+
+	public function getSearchJson($r) 
+	{
+		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
+		$search_handler->setup($r);
+		$r->set('collection_ascii_id',$this->collection->ascii_id);
+		$search_handler->getSearchJson($r);
+	}
+
 
 	public function getManagersJson($r)
 	{

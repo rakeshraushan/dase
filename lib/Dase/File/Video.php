@@ -1,6 +1,6 @@
 <?php
 
-include 'getid3/getid3.php';
+include_once 'getid3/getid3.php';
 
 class Dase_File_Video extends Dase_File
 {
