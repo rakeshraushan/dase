@@ -193,6 +193,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$st->execute(array($this->id));
 		$display_values_array = array();
 		while ($row = $st->fetch()) {
+			//returns value and count (tally)
 			$display_values_array[] = array(
 				'v' => $row[0],
 				't' => $row[1]
