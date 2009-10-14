@@ -21,13 +21,13 @@ $total = $res->total;
 
 <body>
 
-<h1>My Favorites (<?= $total ?> items found)</h1>
+<h1>My Favorites (<?php echo $total; ?> items found)</h1>
 
 <ul>
 
 <?php foreach ($res->items as $item) { ?>
 
-<li><img src="<?= $app_root ?>/<?= $item->media->thumbnail ?>"><?= $item->metadata->description[0] ?></li>
+<li><img src="<?php echo $app_root; ?>/<?php echo $item->media->thumbnail; ?>"><?php echo $item->metadata->description[0]; ?></li>
 
 <?php } ?>
 
