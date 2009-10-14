@@ -472,7 +472,8 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 				if (trim($v['text'])) {
 					//check that it's proper collection
 					if ($c->ascii_id = $v['coll']) {
-						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod']);
+						//don't index just yet (the false param)
+						$val = $item->setValueLink($att,$v['text'],$v['url'],$v['mod'],false);
 					}
 				}
 			}
