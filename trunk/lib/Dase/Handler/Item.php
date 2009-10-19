@@ -407,14 +407,28 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot post to metadata');
 		}
-		$att_ascii = $r->get('ascii_id');
-		foreach ($r->get('value',true) as $val) {
-			if ($val) {
-				$this->item->setValue($att_ascii,$val);
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' == $content_type) {
+			$att_ascii = $r->get('ascii_id');
+			foreach ($r->get('value',true) as $val) {
+				if ($val) {
+					$this->item->setValue($att_ascii,$val);
+				}
 			}
+			$this->item->buildSearchIndex();
+			$r->renderResponse('added metadata (unless null)');
 		}
-		$this->item->buildSearchIndex();
-		$r->renderResponse('added metadata (unless null)');
+		//json should be simple object keyvals
+		if ('application/json' == $content_type) {
+			$json = $r->getBody();
+			$metadata_array = Dase_Json:toPhp($json);
+			foreach ($metadata_array as $att => $val) {
+				$this->item->setValue($att,$val);
+			}
+			$this->item->buildSearchIndex();
+			$r->renderResponse('added json metadata (unless null)');
+		}
+		$r->renderError(415,'cannot accept '.$content_type);
 	}
 
 	public function getMetadataValue($r)
