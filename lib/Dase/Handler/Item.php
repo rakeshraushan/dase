@@ -421,7 +421,7 @@ class Dase_Handler_Item extends Dase_Handler
 		//json should be simple object keyvals
 		if ('application/json' == $content_type) {
 			$json = $r->getBody();
-			$metadata_array = Dase_Json:toPhp($json);
+			$metadata_array = Dase_Json::toPhp($json);
 			foreach ($metadata_array as $att => $val) {
 				$this->item->setValue($att,$val);
 			}
