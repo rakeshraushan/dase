@@ -60,8 +60,14 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Admin Notes</th>
-			<td class="data">{$collection->admin_notes}</td>
+			<th>Admin Notes
+				<div class="current">
+				{$collection->admin_notes}
+				</div>
+			</th>
+			<td class="data">
+				<textarea name="admin_notes" cols="40" rows="4">{$collection->admin_notes}</textarea>
+			</td>
 		</tr>
 		<tr>
 			<th>Created</th>
