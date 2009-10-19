@@ -403,12 +403,12 @@ class Dase_Handler_Item extends Dase_Handler
 
 	public function postToMetadata($r)
 	{
-		$user = $r->getUser();
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot post to metadata');
-		}
 		$content_type = $r->getContentType();
 		if ('application/x-www-form-urlencoded' == $content_type) {
+			$user = $r->getUser();
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot post to metadata');
+			}
 			$att_ascii = $r->get('ascii_id');
 			foreach ($r->get('value',true) as $val) {
 				if ($val) {
@@ -420,6 +420,10 @@ class Dase_Handler_Item extends Dase_Handler
 		}
 		//json should be simple object keyvals
 		if ('application/json' == $content_type) {
+			$user = $r->getUser('http');
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot post to metadata');
+			}
 			$json = $r->getBody();
 			$metadata_array = Dase_Json::toPhp($json);
 			foreach ($metadata_array as $att => $val) {
