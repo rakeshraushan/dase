@@ -106,6 +106,12 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$ext = Dase_File::$types_map[$this->mime_type]['ext'];
 		$edit_media_url = $app_root.'/media/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number;
 		$entry->addLink($edit_media_url,'edit-media');
+
+		//to which we can post form-encoded or json metadata pairs:
+		$entry->addLink(
+			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'/metadata',
+			'http://daseproject.org/relation/edit-metadata');
+
 		$entry->setMediaContent($this->getLink($app_root),$this->mime_type);
 		$media_group = $entry->addElement('media:group',null,Dase_Atom::$ns['media']);
 		//todo: beef up w/ bitrate, samplingrate, etc.

@@ -652,10 +652,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addLink(
 			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
 			'edit','application/atom+xml');
-		//to which we can post form-encoded or json metadatat pairs:
-		$entry->addLink(
-			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata',
-			'http://daseproject.org/relation/edit-metadata');
 		if ($authorize_links) {
 			$entry->addLink(
 				$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
