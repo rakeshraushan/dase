@@ -361,6 +361,19 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 	}
 
+	public function getItemsByMd5($r) 
+	{
+		$file = new Dase_DBO_MediaFile($this->db);
+		$file->md5 = $r->get('md5');
+		$file->p_collection_ascii_id = $this->collection->ascii_id;
+		if ($file->findOne()) {
+			$r->renderResponse($file->p_serial_number.' is a duplicate');
+		} else {
+			//$r->renderError(404,'no item with checksum '.$r->get('md5'));
+			$r->renderError(404);
+		}
+	}
+
 	public function getItemsByAttAtom($r)
 	{
 		$r->renderResponse($this->collection->getItemsByAttAsAtom($r->get('att_ascii_id'),$r->app_root));

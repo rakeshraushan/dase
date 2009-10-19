@@ -117,6 +117,11 @@ table.dataDisplay {
 	background-color: #f4f6fc;
 }
 
+table.dataDisplay  th {
+	text-align: center;
+	width: 20%;
+}
+
 table.dataDisplay  td {
 	text-align: center;
 	border: 1px solid #c4cddc;
