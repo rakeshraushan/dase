@@ -87,6 +87,7 @@ class Dase_Handler_Tag extends Dase_Handler
 			}
 		}
 		$zip->close();
+		//todo: need to set a cron job to garbage collect the set in media/tmp
 		$r->serveFile($filename,'application/zip',true);
 	}
 
