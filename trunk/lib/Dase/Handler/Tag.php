@@ -266,8 +266,10 @@ class Dase_Handler_Tag extends Dase_Handler
 			foreach ($r->get('value',true) as $val) {
 				$item->setValue($att_ascii,$val);
 			}
-			$item->buildSearchIndex();
+			//do not commit
+			$item->buildSearchIndex(false);
 		}
+		Dase_SearchEngine::get($this->db,$this->config)->commit();
 		$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
 	}
 
