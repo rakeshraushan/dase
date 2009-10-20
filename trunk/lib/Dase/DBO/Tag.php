@@ -442,11 +442,15 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 		/*  TO DO categories: admin_coll_id, updated, created, master_item, etc */
 		$setnum=0;
+		$collections_array = array();
 		foreach($this->getTagItems() as $tag_item) {
 
 			//using Solr
 			$tag_item->persist(true);
 			$item_unique = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
+
+			//lets us determine if tag includes items in only one collection
+			$collections_array[$tag_item->p_collection_ascii_id] = 1;
 
 			if ($authorized_links) {
 				//fresh, not from cache
@@ -472,6 +476,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$this->resortTagItems();
 				$this->updateItemCount();
 			}
+		}
+		if (1 == count($collections_array)) {
+			$coll = array_pop(array_keys($collections_array));
+			$feed->addCategory($coll,"http://daseproject.org/category/collection");
 		}
 		return $feed->asXml();
 	}

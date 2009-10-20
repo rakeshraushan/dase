@@ -395,7 +395,7 @@ div#adminStatusControls {
 }
 
 #ajaxFormHolder {
-	background-color: #ffc;
+	background-color: #ede4d4;
 	border: 1px solid #999;
 	-moz-border-radius: 5px;
 	padding: 8px 10px;
@@ -497,7 +497,7 @@ span#itemType {
 div#tdiv {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
-	background-color: #ffd;
+	background-color: #eee;
 	border: 1px solid #aa8;
 	margin-top: 20px;
 	padding: 10px;
