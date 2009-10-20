@@ -114,6 +114,13 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+	function getThumbnailDimension($dimension)
+	{
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'thumbnail') as $el) {
+			return $el->getAttribute($dimension);
+		}
+	}
+
 	function getMedia() {
 		$media_array = array();
 		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['media'],'content') as $el) {
@@ -321,6 +328,19 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 		}
 	}
 
+    function removeMetadataLinkByRel($rel){
+        foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+            if (0 === strpos($el->getAttribute('rel'),'http://daseproject.org/relation/metadata-link')) {
+                if(strpos($el->getAttribute('rel'),$rel) !== false){
+                    $doomed[] = $el;
+                }
+            }
+        }
+        foreach($doomed as $goner){
+            $this->root->removeChild($goner);
+        }
+    }
+
 	function getMetadata($att = '',$include_private_metadata=false) 
 	{
 		if (count($this->_metadata)) {
@@ -409,6 +429,42 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 					$metadata[$att_ascii_id][] = $el->nodeValue;
 				}
 		}
+		if ($att) {
+			//any easy way to get one value
+			if (isset($metadata[$att]) && count($metadata[$att])) {
+				return $metadata[$att][0];
+			} else {
+				return false;
+			}
+		}
+		return $metadata;
+	}
+
+	function getAllMetadata($att = '') 
+	{
+		$metadata = array();
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'category') as $el) {
+			if ('http://daseproject.org/category/metadata' == $el->getAttribute('scheme')) {
+				$att_ascii_id = $el->getAttribute('term');
+				$metadata[$att_ascii_id][] = $el->nodeValue;
+			}
+			if ('http://daseproject.org/category/private_metadata' == $el->getAttribute('scheme')) {
+					$att_ascii_id = $el->getAttribute('term');
+					$metadata[$att_ascii_id][] = $el->nodeValue;
+				}
+		}
+		$count = 0;
+		foreach ($this->root->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'link') as $el) {
+			if (strstr($el->getAttribute('rel'),'http://daseproject.org/relation/metadata-link') !== false) {
+				$rel = $el->getAttribute('rel');
+				$att_ascii_id = substr($rel,strrpos($rel,'/')+1);
+				$metadata[$att_ascii_id][$count]['text'] = $el->getAttribute('title');
+				$metadata[$att_ascii_id][$count]['url'] = $el->getAttribute('href');
+				$count++;
+			}
+		}
+				
+
 		if ($att) {
 			//any easy way to get one value
 			if (isset($metadata[$att]) && count($metadata[$att])) {

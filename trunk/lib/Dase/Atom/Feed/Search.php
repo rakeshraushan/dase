@@ -117,4 +117,20 @@ class Dase_Atom_Feed_Search extends Dase_Atom_Feed
 		}
 		return new Dase_Atom_Entry_Item($this->dom,$this->entry_dom);
 	}
+
+	public function sortByThumbnail($dimension)
+	{
+		$sizes = array(); 
+		foreach($this->entries as $entry){
+			$sizes[$entry->getThumbnailDimension($dimension)][] = $entry;
+		}
+		ksort($sizes);
+		foreach ($sizes as $k => $set) {
+			foreach ($set as $e) {
+				$entries[] = $e;
+			}
+		}
+		$this->_entries = $entries;
+		return $this;
+	}
 }
