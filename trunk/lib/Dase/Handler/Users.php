@@ -10,7 +10,7 @@ class Dase_Handler_Users extends Dase_Handler
 
 	protected function setup($r)
 	{
-		$this->user = $r->getUser('http');
+		$this->user = $r->getUser('service');
 		if (!$this->user->isManager()) {
 			$r->renderError(401);
 		}
