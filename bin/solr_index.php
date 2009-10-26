@@ -2,7 +2,6 @@
 
 include 'config.php';
 
-$solr_url = 'harpo.laits.utexas.edu:8080/solr/update';
 $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
 
 $cs = new Dase_DBO_Collection($db);

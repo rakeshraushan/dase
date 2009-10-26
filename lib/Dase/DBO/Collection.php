@@ -396,6 +396,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	{
 		$item = new Dase_DBO_Item($this->db);
 		$item->collection_id = $this->id;
+
+		//reverse chronological so we can get "recent" w/ limit param
+		$item->orderBy('updated DESC');
+
 		if ($limit && is_numeric($limit)) {
 			$item->setLimit($limit);
 		}
