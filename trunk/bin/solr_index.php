@@ -3,13 +3,18 @@
 include 'config.php';
 
 $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
+//$limit = 0;
+$limit = 15;
+
+if ($limit) {
+	print "\nCurrently set to index most recent $limit items\n";
+}
 
 $cs = new Dase_DBO_Collection($db);
 foreach ($cs->find() as $c) {
 	$c = clone($c);
 	$colls[] = $c->ascii_id;
 }
-
 
 //can enter collections on command line
 if (isset($argv[1])) {
