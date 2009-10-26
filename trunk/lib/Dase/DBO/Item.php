@@ -903,6 +903,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
+	/** todo this does NOT work */
 	function mediaAsAtomFeed($app_root) 
 	{
 		$feed = new Dase_Atom_Feed;
