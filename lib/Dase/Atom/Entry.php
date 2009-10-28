@@ -102,9 +102,14 @@ class Dase_Atom_Entry extends Dase_Atom
 		//reader object
 		$dom = new DOMDocument('1.0','utf-8');
 		if (is_file($xml)) {
-			$dom->load($xml);
+			if (!$dom->load($xml)) {
+				throw new Dase_Atom_Exception('bad xml');
+			}
 		} else {
-			$dom->loadXml($xml);
+			if (!$dom->loadXml($xml)) {
+				Dase_Log::debug(LOG_FILE,"bad xml:\n ".$xml);
+				throw new Dase_Atom_Exception('bad xml -- see log');
+			}
 		}
 		$root = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'*')->item(0);
 		if ('entry' != $root->localName) {
