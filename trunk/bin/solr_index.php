@@ -31,7 +31,7 @@ foreach ($colls as $coll) {
 	$c = Dase_DBO_Collection::get($db,$coll);
 
 	if ($c) {
-		foreach ($c->getItems() as $item) {
+		foreach ($c->getItems($limit) as $item) {
 			$i++;
 			$item = clone($item);
 			print $c->collection_name.':'.$item->serial_number.':'.$item->buildSearchIndex(false);
