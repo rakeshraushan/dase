@@ -65,7 +65,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 	function getHtmlInputType()
 	{
 		foreach ($this->getCategories() as $c) {
-			if ('http://daseproject.org/category/attribute/html_input_type' == $c['scheme']) {
+			if ('http://daseproject.org/category/html_input_type' == $c['scheme']) {
 				return $c['term'];
 			}
 		}
@@ -76,7 +76,7 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 	function getDefinedValues() {
 		$defined = array();
 		foreach ($this->getCategories() as $c) {
-			if ('http://daseproject.org/category/attribute/defined_value' == $c['scheme']) {
+			if ('http://daseproject.org/category/defined_value' == $c['scheme']) {
 				$defined[] = $c['term'];
 			}
 		}

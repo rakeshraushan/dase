@@ -26,6 +26,18 @@ Dase.initBulkEditLink = function() {
 				sel.add('option',{'value':att.ascii_id},att.attribute_name);
 			}
 			h.add('div',{'id':'addMetadataFormTarget'});
+			//test....
+			h.add('h1',null,'Bulk Set Status');
+			var href = Dase.getLinkByRel('set_item_status');
+			var form = h.add('form',{'action':href,'method':'post'});
+			var sel = form.add('select',{'name':'status'});
+			sel.add('option',{'value':''},'select status');
+			sel.add('option',{'value':'public'},'public');
+			sel.add('option',{'value':'draft'},'draft');
+			sel.add('option',{'value':'delete'},'delete');
+			sel.add('option',{'value':'archive'},'archive');
+			var button = form.add('input',{'type':'submit','value':'set status'});
+			//...end test
 			h.attach(mform);
 			var getForm = Dase.$('getInputForm');
 			Dase.initGetInputForm(getForm);

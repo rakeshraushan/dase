@@ -9,6 +9,10 @@
 <meta name="set_owner" contents="{$items->authorName}">
 {/block}
 
+{block name="head-links"}
+<link rel="set_item_status" href="tag/{$items->authorName}/{$items->asciiId}/item_status">
+{/block}
+
 {block name="title"}Item Set{/block}
 
 {block name="content"}
