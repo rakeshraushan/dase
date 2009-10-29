@@ -16,6 +16,17 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 		}
 	}
 
+	public function setItemStatus($status) 
+	{
+		if (in_array($status,array('public','draft','delete','archive'))) {
+			$item = $this->getItem();
+			if ($item) {
+				$item->status = $status;
+				$item->update();
+			}
+		}
+	}
+
 	function getTag()
 	{
 		$tag = new Dase_DBO_Tag($this->db);

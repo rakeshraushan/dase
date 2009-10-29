@@ -255,6 +255,14 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $tag_item->find();
 	}
 
+	public function setItemsStatus($status) 
+	{
+		foreach ($this->getTagItems() as $ti) {
+			$tag_item = clone $ti;
+			$tag_item->setItemStatus($status);
+		}
+	}
+
 	function resortTagItems($dir='DESC')
 	{
 		$tag_item = new Dase_DBO_TagItem($this->db);

@@ -122,6 +122,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		foreach ($this->getItemTypes() as $type) {
 			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/parent_item_type',$type->name);
 		}
+		//allows posting
 		if (in_array($this->html_input_type,array('checkbox','select','radio'))) {
 			$entry->addLink($url.'/defined','http://daseproject.org/relation/defined_values','application/atomcat+xml');
 		}
@@ -130,6 +131,9 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		}
 		if ($this->modifier_defined_list){
 			$entry->addCategory($this->modifier_defined_list,'http://daseproject.org/category/modifier_defined_list');
+		}
+		foreach ($this->getDefinedValues() as $val) {
+			$entry->addCategory($val,'http://daseproject.org/category/defined_value');
 		}
 		$entry->setSummary($this->usage_notes);
 		$entry->addCategory($this->sort_order,'http://daseproject.org/category/sort_order');
@@ -258,6 +262,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$dvs = new Dase_DBO_DefinedValue($this->db);
 		$dvs->attribute_id = $this->id;
 		foreach ($dvs->find() as $dv) {
+			$dv = clone $dv;
 			$defined[] = $dv->value_text;
 		}
 		return $defined;

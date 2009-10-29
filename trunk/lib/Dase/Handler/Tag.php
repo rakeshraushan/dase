@@ -12,6 +12,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/background' => 'background',
 		'{eid}/{tag_ascii_id}/visibility' => 'visibility',
 		'{eid}/{tag_ascii_id}/metadata' => 'metadata',
+		'{eid}/{tag_ascii_id}/item_status' => 'item_status',
 		'{eid}/{tag_ascii_id}/list' => 'tag_list',
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
 		'{eid}/{tag_ascii_id}/annotate' => 'tag_annotate',
@@ -296,6 +297,21 @@ class Dase_Handler_Tag extends Dase_Handler
 			$this->tag->is_public = 0;
 		}
 		$this->tag->update();
+		if ('list' == $r->get('display')) {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
+		} else {
+			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'?nocache=1');
+		}
+	}
+
+	/** bulk item status set */
+	public function postToItemStatus($r)
+	{
+		$user = $r->getUser();
+		if (!$user->can('write',$this->tag)) {
+			$r->renderError(401);
+		}
+		$this->tag->setItemsStatus($r->get('status'));
 		if ('list' == $r->get('display')) {
 			$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list?nocache=1');
 		} else {
