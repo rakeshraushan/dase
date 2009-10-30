@@ -646,8 +646,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//alternate link
 		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number,'alternate');
 
+		//the following 2 links should be unified
+
 		//link to item metadata json, used for editing metadata
-		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json','http://daseproject.org/relation/metadata','application/json');
+		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json',
+			'http://daseproject.org/relation/metadata','application/json');
+
+		//to which we can post form-encoded or json metadata pairs:
+		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json',
+			'http://daseproject.org/relation/edit-metadata');
 
 		$entry->addLink(
 			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'.atom',
