@@ -555,8 +555,11 @@ class Dase_Handler_Item extends Dase_Handler
 		if ($this->item && !$user->can('write',$this->item)) {
 			$r->renderError(401,'cannot update item');
 		}
-		if (!$this->item && !$user->can('write',$this->item->getCollection())) {
-			$r->renderError(401,'cannot update collection');
+		if (!$this->item) {
+			$collection = Dase_DBO_Collection::get($this->db,$r->get('collection_ascii_id'));
+			if (!$user->can('write',$collection)) {
+				$r->renderError(401,'cannot update collection');
+			}
 		}
 		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
