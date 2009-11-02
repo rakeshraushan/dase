@@ -424,12 +424,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($tpl->fetch('collection/browse.tpl'));
 	}
 
-	public function getItemTypeRelationAtom($r) 
-	{
-		$itr = Dase_DBO_ItemTypeRelation::get($this->db,$r->get('collection_ascii_id'),$r->get('item_type_relation_ascii_id'));
-		$r->renderResponse($itr->asAtomEntry($r->app_root));
-	}
-
 	public function postToAttributes($r) 
 	{
 		$user = $r->getUser('http');
@@ -471,22 +465,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ('application/atom+xml;type=entry' == $content_type ||
 		'application/atom+xml' == $content_type ) {
 			$this->_newAtomItemType($r);
-		} else {
-			$r->renderError(415,'cannot accept '.$content_type);
-		}
-	}
-
-	public function postToItemTypeRelations($r) 
-	{
-		$user = $r->getUser('http');
-		if (!$user->can('write',$this->collection)) {
-			$r->renderError(401,'no go unauthorized');
-		}
-		$content_type = $r->getContentType();
-
-		if ('application/atom+xml;type=entry' == $content_type ||
-		'application/atom+xml' == $content_type ) {
-			$this->_newAtomItemTypeRelation($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
@@ -683,35 +661,6 @@ class Dase_Handler_Collection extends Dase_Handler
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
 			header("Location: ".$r->app_root."/item_type/".$r->get('collection_ascii_id')."/".$item_type->ascii_id.'.atom');
 			echo $type->asAtomEntry($this->collection->ascii_id,$r->app_root);
-			exit;
-		} catch (Dase_Exception $e) {
-			$r->renderError(409,$e->getMessage());
-		}
-	}
-
-	private function _newAtomItemTypeRelation($r)
-	{
-		$raw_input = $r->getBody();
-		$client_md5 = $r->getHeader('Content-MD5');
-		//if Content-MD5 header isn't set, we just won't check
-		if ($client_md5 && md5($raw_input) != $client_md5) {
-			$r->renderError(412,'md5 does not match');
-		}
-		try {
-			$entry = Dase_Atom_Entry::load($raw_input);
-		} catch(Exception $e) {
-			Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
-			$r->renderError(400,'bad xml');
-		}
-		if ('item_type_relation' != $entry->entrytype) {
-			$r->renderError(400,'must be an item type relation entry');
-		}
-		try {
-			$itr = $entry->insert($this->db,$r,$this->collection);
-			header("HTTP/1.1 201 Created");
-			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");
-			header("Location: ".$r->app_root."/collection/".$r->get('collection_ascii_id')."/item_type_relation/".$itr->ascii_id.'.atom');
-			echo $itr->asAtomEntry($r->app_root);
 			exit;
 		} catch (Dase_Exception $e) {
 			$r->renderError(409,$e->getMessage());
