@@ -427,7 +427,13 @@ class Dase_Handler_Item extends Dase_Handler
 			$json = $r->getBody();
 			$metadata_array = Dase_Json::toPhp($json);
 			foreach ($metadata_array as $att => $val) {
-				$this->item->setValue($att,$val);
+				if (is_array($val)) {
+					foreach ($val as $v) {
+						$this->item->setValue($att,$v);
+					}
+				} else {
+					$this->item->setValue($att,$val);
+				}
 			}
 			$this->item->buildSearchIndex();
 			$r->renderResponse('added json metadata (unless null)');

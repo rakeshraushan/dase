@@ -3,8 +3,8 @@
 include 'config.php';
 
 $solr_url = 'quickdraw.laits.utexas.edu:8080/solr/update';
-//$limit = 0;
-$limit = 15;
+$limit = 0;
+//$limit = 15;
 
 if ($limit) {
 	print "\nCurrently set to index most recent $limit items\n";
