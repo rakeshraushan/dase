@@ -418,7 +418,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$v->item_id = $this->id;
 					$v->attribute_id = $att->id;
 					$v->value_text = $val_txt;
-					$v->insert();
+					if (!$v->findOne()) {
+						$v->insert();
+					}
 				}
 			} else {
 				$v = new Dase_DBO_Value($this->db);
@@ -427,7 +429,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->value_text = trim($value_text);
 				$v->url = $url;
 				$v->modifier = $modifier;
-				$v->insert();
+				if (!$v->findOne()) {
+					$v->insert();
+				}
 				if ($index) {
 					$this->buildSearchIndex();
 				}
@@ -652,7 +656,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata.json',
 			'http://daseproject.org/relation/metadata','application/json');
 
-		//to which we can post form-encoded or json metadata pairs:
+		//to which we can POST form-encoded or json metadata pairs:
 		$entry->addLink($app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata',
 			'http://daseproject.org/relation/edit-metadata');
 
