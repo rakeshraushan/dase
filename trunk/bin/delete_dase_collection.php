@@ -6,7 +6,7 @@ include 'config.php';
 //$action = "count";
 $action = "delete";
 
-$coll = 'waller';
+$coll = 'test';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
