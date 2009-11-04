@@ -621,7 +621,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$ext = array_pop(explode('.',$url));
 			$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
 			if (!file_exists($upload_dir)) {
-				$r->renderError(401,'missing upload directory');
+				$r->renderError(500,'missing upload directory');
 			}
 			$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 			file_put_contents($new_file,file_get_contents($url));
@@ -677,7 +677,7 @@ class Dase_Handler_Item extends Dase_Handler
 		$upload_dir = MEDIA_DIR.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
 			Dase_Log::debug(LOG_FILE,'missing upload directory '.$upload_dir);
-			$r->renderError(401,'missing upload directory '.$upload_dir);
+			$r->renderError(500,'missing upload directory '.$upload_dir);
 		}
 
 		$new_file = $upload_dir.'/'.$item->serial_number;
