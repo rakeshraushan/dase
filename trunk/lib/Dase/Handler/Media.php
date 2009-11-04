@@ -116,7 +116,7 @@ class Dase_Handler_Media extends Dase_Handler
 		$bits = $r->getBody();
 		$upload_dir = MEDIA_DIR.'/'.$coll->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$r->renderError(401,'missing upload directory '.$upload_dir);
+			$r->renderError(500,'missing upload directory '.$upload_dir);
 		}
 
 		$new_file = $upload_dir.'/'.$item->serial_number;

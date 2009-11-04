@@ -553,7 +553,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$ext = array_pop(explode('.',$url));
 		$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
 		if (!file_exists($upload_dir)) {
-			$r->renderError(401,'missing upload directory');
+			$r->renderError(500,'missing upload directory');
 		}
 		$item = $this->collection->createNewItem(null,$eid);
 		$item->setValue('title',urldecode($filename));
