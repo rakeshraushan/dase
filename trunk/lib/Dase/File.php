@@ -170,7 +170,12 @@ abstract class Dase_File
 			$media_file->insert();
 			//will only insert item metadata when attribute name matches 'admin_'+att_name
 			foreach ($metadata as $term => $text) {
-				$item->setValue('admin_'.$term,$text);
+				//catches UTF8 errors in exif/iptc data
+				try {
+					$item->setValue('admin_'.$term,$text);
+				} catch (Exception $e) {
+					Dase_Log::debug(LOG_FILE,"could not write admin $term: $text ERROR: ".$e->getMessage());
+				}
 			}
 		}
 		return $media_file;

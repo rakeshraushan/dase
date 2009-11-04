@@ -684,6 +684,7 @@ class Dase_Handler_Item extends Dase_Handler
 
 		$ifp = @ fopen( $new_file, 'wb' );
 		if (!$ifp) {
+			Dase_Log::debug(LOG_FILE,'cannot write file '.$new_file);
 			$r->renderError(500,'cannot write file '.$new_file);
 		}
 
