@@ -329,7 +329,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		$tag_item->annotation = $r->getBody();
-		$tag_item->updated = date(DATE_ATOM);
+		->updated = date(DATE_ATOM);
 		$tag_item->update();
 		$r->renderResponse($tag_item->annotation);
 	}
@@ -377,6 +377,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		//move some of this into model
 		$tag = $this->tag;
 		$u = $r->getUser();
+		Dase_Log::info(LOG_FILE,"$u->eid ($u->name) is fixing to delete a bunch of items from $tag->ascii_id");
 		$u->expireDataCache($r->getCache());
 		if (!$u->can('write',$tag)) {
 			$r->renderError(401,'user does not have write privileges');
