@@ -329,7 +329,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->load($r->get('tag_item_id'));
 		$tag_item->annotation = $r->getBody();
-		->updated = date(DATE_ATOM);
+		$tag_item->updated = date(DATE_ATOM);
 		$tag_item->update();
 		$r->renderResponse($tag_item->annotation);
 	}
