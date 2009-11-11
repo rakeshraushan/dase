@@ -367,6 +367,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_item->p_collection_ascii_id = $coll;
 		$tag_item->p_serial_number = $sernum;
 		if ($tag_item->findOne()) {
+			$log_text = "removing $item_unique from set $this->eid/$this->ascii_id";
+			Dase_Log::info(LOG_FILE,$log_text);
 			$tag_item->delete();
 			//this is too expensive when many items are being removed in one request
 			if ($update_count) {
