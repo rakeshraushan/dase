@@ -6,7 +6,7 @@
 {/block}
 
 {block name="head-meta"}
-<meta name="set_owner" contents="{$items->authorName}">
+<meta name="set_owner" content="{$items->authorName}">
 {/block}
 
 {block name="head-links"}
@@ -32,6 +32,7 @@
 		</h4>
 	</div>
 	{/if}
+	<!-- note feed->count simply counts entries -->
 	<h2>{$items->title} (<span {if 'cart' == $items->tagType}id="cartCount"{/if}>{$items->count}</span> items) 
 		<span id="displaySelect"> [ 
 			<a href="{$items->gridLink}">grid</a> | 
@@ -39,7 +40,7 @@
 			<a href="#" id="startSlideshow">slideshow</a> 
 			<!-- | <a href="{$items->dataLink}">data</a>-->
 			| <a href="tag/{$items->eid}/{$items->asciiId}/download">download</a>
-			]<span></h2>
+			]</span></h2>
 			<h3>{$items->subtitle}</h3>
 			{if $items->count}
 			<div id="ajaxFormHolder" class="hide">
@@ -65,8 +66,10 @@
 			{if 'cart' == $items->tagType}
 			<div class="widget">
 				<form method="post" id="cartEmptyForm" action="user/{$items->eid}/cart/emptier">
+					<p>
 					<input type="hidden" name="submit_confirm" value="are you sure you want to empty your cart?">
 					<input type="submit" id="cartEmptyButton" value="empty cart">
+					</p>
 				</form>
 			</div>
 			{else}
@@ -79,8 +82,10 @@
 			</div>
 			<div class="widget">
 				<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
+					<p>
 					<input type="hidden" name="submit_confirm" value="are you sure?">
 					<input type="submit" id="setExpungerButton" value="delete set">
+					</p>
 				</form>
 			</div>
 			{/if}
@@ -90,8 +95,10 @@
 			{if 'cart' != $items->tagType}
 			<div class="widget">
 				<form method="post" id="setExpungerForm" action="tag/{$items->eid}/{$items->asciiId}/expunger">
+					<p>
 					<input type="hidden" name="submit_confirm" value="are you sure?">
 					<input type="submit" id="setExpungerButton" value="delete set">
+					</p>
 				</form>
 			</div>
 			{/if}
@@ -110,17 +117,19 @@
 		{if 1 == $is_admin}
 		<div class="{$items->tagType|lower|default:'set'}Admin">
 			<form action="tag/{$items->eid}/{$items->asciiId}/visibility" method="post">
-				<p>
 				{if 1 == $is_public}
 				<h5>This set is PUBLIC</h5>
+				<p>
 				<input type="hidden" name="visibility" value="private">
 				<input type="submit" value="make private">
+				</p>
 				{else}
 				<h5>This set is PRIVATE</h5>
+				<p>
 				<input type="hidden" name="visibility" value="public">
 				<input type="submit" value="make public">
-				{/if}
 				</p>
+				{/if}
 			</form>
 		</div>
 		{/if}
