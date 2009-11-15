@@ -73,6 +73,9 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		//$query_string = preg_replace('/(^|\?|&|&amp;)collection=([^&]+)/i','',$query_string);
 		$query_string = preg_replace('/(^|\?|&|&amp;)collection_ascii_id=([^&]+)/i','',$query_string);
 
+		//remove item_type filter
+		$query_string = preg_replace('/(^|\?|&|&amp;)item_type=([^&]+)/i','',$query_string);
+
 		//get rid of type limit
 		$query_string = preg_replace('/(^|\?|&|&amp;)type=([^&]+)/i','',$query_string);
 		$query_string = preg_replace('/(^|\?|&|&amp;)format=([^&]+)/i','',$query_string);
@@ -112,6 +115,10 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]*)/i','',$query_string);
 			$query_string = preg_replace('/fq=/i','q=',$filter_query);
 			$filter_query='';
+		}
+
+		if ($request->get('item_type') && 'none' != $request->get('item_type')) {
+			$query_string = preg_replace('/(^|\?|&|&amp;)q=/i','q=item_type:'.$request->get('item_type').'+',$query_string);
 		}
 
 		//allows for case-insensitive wildcards

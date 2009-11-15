@@ -8,6 +8,7 @@
 {block name="title"}DASe: {$collection->name|escape}{/block} 
 {block name="servicedoc"}
 <link rel="service" type="application/atomsvc+xml" href="collection/{$collection->asciiId}/service">
+<link rel="item_types" type="application/json" href="collection/{$collection->asciiId}/item_types.json">
 {/block} 
 
 {block name="content"}
@@ -23,9 +24,9 @@
 			<h3 class="utilLabel">Search:</h3>
 			<input type="text" id="queryInput" name="q" size="30" value="{$failed_query|urldecode}">
 			<input type="hidden" name="collection_ascii_id" value="{$collection->asciiId}">
-			<!--
-			<select id="attributesSelect" class="hide"></select>
-			-->
+			<select id="itemTypeSelect" name="item_type" class="hide">
+				<!-- ajaxily filled w/ item type options -->
+			</select>
 			<input type="submit" value="go" class="button">
 		</div>
 	</form>

@@ -2,6 +2,7 @@ Dase.pageInit = function() {
 	if (Dase.$('browseColumns')) {
 		var atts_link = Dase.$('collectionAtts');
 		Dase.getAttributes(atts_link.href);
+		Dase.getItemTypes();
 		var cat_col= Dase.$('catColumn');
 		if (!cat_col) return;
 		var cats = cat_col.getElementsByTagName('a');
@@ -18,6 +19,27 @@ Dase.pageInit = function() {
 			};
 		}
 	}
+};
+
+Dase.getItemTypes = function() {
+	var qi = Dase.$('queryInput');
+	var re = /item_type:\w+/;
+	var found = re.exec(qi.value);
+	var it_ascii = '';
+	if (found) {
+		qi.value = qi.value.replace(found+' ','');
+		qi.value = qi.value.replace(found,'');
+		var str = new String(found);
+		it_ascii = str.replace('item_type:','');
+	}
+	var url = Dase.getLinkByRel('item_types');
+	var target = Dase.$('itemTypeSelect');
+	Dase.getJSON(url,function(json) {
+		if (json.length > 1) {
+			target.innerHTML = Dase.processItemTypes(json,it_ascii);
+			Dase.removeClass(target,'hide');
+		}
+	});
 };
 
 Dase.getAttributes = function(url,sort) {
@@ -52,6 +74,19 @@ Dase.processAtts = function(json) {
 		a.add('span',{'class':'att_name'},att.attribute_name);
 		/* NOTE: adding &nbsp; was necessary for IE7 here */
 		a.add('span',{'class':'tally','id':'tally-'+att.ascii_id},'&nbsp;');
+	}
+	return h.getString();
+}
+
+Dase.processItemTypes = function(json,it_ascii) {
+	h = new Dase.htmlbuilder();
+	h.add('option',name,'limit by item type:');
+	for (var i=0;i<json.length;i++) {
+		var it = json[i];
+		opt = h.add('option',{'value':it.ascii_id},it.name);
+		if (it_ascii && it.ascii_id == it_ascii) {
+			opt.set('selected','selected');
+		}
 	}
 	return h.getString();
 }

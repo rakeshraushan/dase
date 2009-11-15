@@ -731,6 +731,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					'href' => $att->getUrl($c->ascii_id,$r->app_root),
 					'collection' => $c->ascii_id,
 					'modifier_type' => $att->modifier_type,
+					'modifier_defined_list' => $att->modifier_defined_list,
 					'values' => $att->getFormValues(),
 					'usage_notes' => $att->usage_notes,
 				);
