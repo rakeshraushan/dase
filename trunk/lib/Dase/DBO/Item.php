@@ -492,20 +492,19 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.atom';
 			file_put_contents($filename,$this->asAtom('http://daseproject.org/deleted/'));
 		}
+		$c = $this->getCollection();
+		$sernum = $this->serial_number;
 
 		$this->deleteMedia($path_to_media);
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->deleteSearchIndex();
-		//$this->deleteContent();
-		//$this->deleteComments();
-		//$this->deleteTagItems();
+		$this->deleteContent();
+		$this->deleteComments();
+		$this->deleteTagItems();
 		$this->delete();
-
-		//$ds = Dase_DocStore::get($this->db,$this->config);
-		//$ds->deleteItem($this);
-
-		//$this->getCollection()->updateItemCount();
+		$c->updateItemCount();
+		return "expunged item ".$sernum;
 	}
 
 	function deleteContent($index=false)
