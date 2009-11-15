@@ -119,6 +119,16 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$entry->addLink($url.'.atom','edit');
 		$entry->addCategory('attribute','http://daseproject.org/category/entrytype');
 		$entry->addCategory($this->html_input_type,'http://daseproject.org/category/html_input_type');
+
+		$entry->addCategory($this->is_repeatable,'http://daseproject.org/category/repeatable');
+		$entry->addCategory($this->is_required,'http://daseproject.org/category/required');
+		if(!$this->is_on_list_display){
+			$entry->addCategory('0','http://daseproject.org/category/list_display');
+		}
+		else{
+			$entry->addCategory('1','http://daseproject.org/category/list_display');
+		}
+
 		foreach ($this->getItemTypes() as $type) {
 			$entry->addCategory($type->ascii_id,'http://daseproject.org/category/parent_item_type',$type->name);
 		}

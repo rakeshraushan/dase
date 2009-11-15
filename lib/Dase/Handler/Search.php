@@ -134,10 +134,14 @@ class Dase_Handler_Search extends Dase_Handler
 			$r->renderRedirect($r->app_root.'/'.$url.'&num=1');
 		}
 		if (0 == $count) {
-			if ($r->has('collection_ascii_id')) {
+			$coll = $r->get('collection_ascii_id');
+			if (!$coll) {
+				$coll = $r->get('c');
+			}
+			if ($coll) {
 				$params['msg'] = 'no items found';
 				$params['failed_query'] = $feed->getQuery();
-				$r->renderRedirect($r->app_root.'/collection/'.$r->get('collection_ascii_id'),$params);
+				$r->renderRedirect($r->app_root.'/collection/'.$coll,$params);
 			} else {
 				$params['msg'] = 'no items found';
 				$params['failed_query'] = $feed->getQuery();

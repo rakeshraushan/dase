@@ -210,40 +210,6 @@ if ('delete' == $action) {
 }
 
 if ('count' == $action) {
-	$sql = "SELECT count(id) 
-		FROM search_table 
-		WHERE collection_id = $c->id";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	$count = $sth->fetchColumn();
-	print "search table: $count\n";
-} elseif ('delete' == $action) {
-	print "search tables\n";
-	$sql = "DELETE from search_table 
-		WHERE collection_id = $c->id
-		";
-	$count = $dbh->exec($sql);
-	print "deleted $count search tables\n";
-}
-
-if ('count' == $action) {
-	$sql = "SELECT count(id) 
-		FROM admin_search_table 
-		WHERE collection_id = $c->id";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	$count = $sth->fetchColumn();
-	print "admin search table: $count\n";
-} elseif ('delete' == $action) {
-	print "admin search tables\n";
-	$sql = "DELETE from admin_search_table
-		WHERE collection_id = $c->id
-		";
-	$count = $dbh->exec($sql);
-	print "deleted $count admin search table\n";
-}
-
-if ('count' == $action) {
 	$sql = "SELECT count(*) from tag_item 
 		WHERE p_collection_ascii_id = '".$c->ascii_id."'";
 	$sth = $dbh->prepare($sql);
