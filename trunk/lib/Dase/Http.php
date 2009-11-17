@@ -51,12 +51,14 @@ Class Dase_Http
 		}
 	}
 
-	public static function get($url,$user,$pass)
+	public static function get($url,$user='',$pass='')
 	{
 		//todo: error handling
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pass);
+		if ($user && $pass) {
+			curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pass);
+		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);

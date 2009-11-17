@@ -19,8 +19,40 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$this->solr_update_url = $this->solr_base_url.'/update';
 		$this->solr_version = $config->getSearch('solr_version');
 		$this->config = $config;
+		$this->db = $db; // used to scrub 
+	}
 
-		// n.b. will NOT use db
+	public function scrubIndex($collection_ascii_id)
+	{
+		$this->solr_search_url = 
+			$this->solr_base_url
+			.'/select/?q=c:'
+			.$collection_ascii_id
+			.'&version='
+			.$this->solr_version
+			.'&rows=99999999&start=0';
+		$res = $this->_getSearchResults();
+		$sx = simplexml_load_string($res);
+		$num = 0;
+		foreach ($sx->result as $result) {
+			foreach ($result->doc as $doc) {
+				foreach ($doc->str as $str) {
+					if ('_id' == $str['name']) {
+						$unique = (String) $str;
+						if (Dase_DBO_Item::getByUnique($this->db,$unique)) {
+							//print "FOUND $unique\n";
+						} else {
+							$num++;
+							$delete_doc = '<delete><id>'.$unique.'</id></delete>';
+							$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+							//print "SCRUBBED $unique\n";
+						}
+					}
+				}
+			}
+		}
+		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+		return "scrubbed $num records";
 	}
 
 	private function _cleanUpUrl($url)
@@ -157,7 +189,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		}
 
 		//view solr document itself
-		if ($this->request->get('solr')) {
+		if ($this->request && $this->request->get('solr')) {
 			$this->request->response_mime_type = 'application/xml';
 			$this->request->renderResponse($res);
 		}
