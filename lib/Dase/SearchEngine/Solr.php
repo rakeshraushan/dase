@@ -22,37 +22,53 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$this->db = $db; // used to scrub 
 	}
 
-	public function scrubIndex($collection_ascii_id)
+	public function scrubIndex($collection_ascii_id,$display=true)
 	{
-		$this->solr_search_url = 
-			$this->solr_base_url
-			.'/select/?q=c:'
-			.$collection_ascii_id
-			.'&version='
-			.$this->solr_version
-			.'&rows=99999999&start=0';
-		$res = $this->_getSearchResults();
-		$sx = simplexml_load_string($res);
-		$num = 0;
-		foreach ($sx->result as $result) {
-			foreach ($result->doc as $doc) {
-				foreach ($doc->str as $str) {
-					if ('_id' == $str['name']) {
-						$unique = (String) $str;
-						if (Dase_DBO_Item::getByUnique($this->db,$unique)) {
-							//print "FOUND $unique\n";
-						} else {
-							$num++;
-							$delete_doc = '<delete><id>'.$unique.'</id></delete>';
-							$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
-							//print "SCRUBBED $unique\n";
+		$j = 0;
+		for ($i=0;$i<999999;$i++) {
+			if (0 === $i%100) {
+				$this->solr_search_url = 
+					$this->solr_base_url
+					.'/select/?q=c:'
+					.$collection_ascii_id
+					.'&version='
+					.$this->solr_version
+					.'&rows=100&start='.$i;
+				$res = $this->_getSearchResults();
+				$sx = simplexml_load_string($res);
+				$num = 0;
+				foreach ($sx->result as $result) {
+					if (count($result->doc)) {
+						foreach ($result->doc as $doc) {
+							foreach ($doc->str as $str) {
+								if ('_id' == $str['name']) {
+									$j++;
+									if ($display) {
+										print "START $i ($j) ";
+									}
+									$unique = (String) $str;
+									if (Dase_DBO_Item::getByUnique($this->db,$unique)) {
+										if ($display) {
+											print "FOUND $unique\n";
+										}
+									} else {
+										$num++;
+										$delete_doc = '<delete><id>'.$unique.'</id></delete>';
+										$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
+										if ($display) {
+											print "SCRUBBED $unique\n";
+										}
+									}
+								}
+							}
 						}
+					} else {
+						Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
+						return "scrubbed $num records";
 					}
 				}
 			}
 		}
-		Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
-		return "scrubbed $num records";
 	}
 
 	private function _cleanUpUrl($url)
