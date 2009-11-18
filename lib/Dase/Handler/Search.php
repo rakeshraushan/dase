@@ -136,7 +136,12 @@ class Dase_Handler_Search extends Dase_Handler
 		if (0 == $count) {
 			$coll = $r->get('collection_ascii_id');
 			if (!$coll) {
-				$coll = $r->get('c');
+				//won't go back to collection page unless
+				//just one collection is being searched
+				$coll_array = $r->get('c',true);
+				if (1 == count($coll_array)) {
+					$coll = $coll_array[0];
+				}
 			}
 			if ($coll) {
 				$params['msg'] = 'no items found';
