@@ -108,6 +108,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		$this->sort = $sort;
 
 		if ($num) {
+			//num is used to access a specific item
 			$start = $num-1;
 		}
 
@@ -385,7 +386,7 @@ EOD;
 		}
 		$reader->close();
 
-		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"items\":[";
+		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
 		foreach ($entries as $entry) {
 			$json .= $entry.",";
 		}
