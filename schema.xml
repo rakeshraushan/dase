@@ -161,12 +161,16 @@ http://wiki.apache.org/solr/SchemaXml
 	<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
 	  <analyzer type="index">
 		<tokenizer class="solr.StandardTokenizerFactory"/>
+		<!--commenting this out should allow better (less magic) matching
 		<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+		-->
 		<filter class="solr.LowerCaseFilterFactory"/>
 	  </analyzer>
 	  <analyzer type="query">
 		<tokenizer class="solr.StandardTokenizerFactory"/>
+		<!--commenting this out should allow better (less magic) matching
 		<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+		-->
 		<filter class="solr.LowerCaseFilterFactory"/>
 	  </analyzer>
 	</fieldType>
