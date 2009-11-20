@@ -80,7 +80,7 @@ Dase.processAtts = function(json) {
 
 Dase.processItemTypes = function(json,it_ascii) {
 	h = new Dase.htmlbuilder();
-	h.add('option',name,'limit by item type:');
+	h.add('option',{'value':""},'limit by item type:');
 	for (var i=0;i<json.length;i++) {
 		var it = json[i];
 		opt = h.add('option',{'value':it.ascii_id},it.name);
