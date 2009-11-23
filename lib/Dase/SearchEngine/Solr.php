@@ -151,11 +151,19 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		$sort = $request->get('sort');
 		if ($sort) {
-			$sort_param = '&sort='.$sort.'+asc';
-			$query_string = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$query_string);
+			if (
+				'desc' === strtolower(trim(substr($sort,-5))) ||
+				'asc' === strtolower(trim(substr($sort,-4)))
+			) {	
+				//nothin'
+			} else {
+				$sort = $sort.' asc';
+			}
+			$sort_param = '&sort='.urlencode($sort);
+			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		} else {
 			$sort_param = '&sort=_updated+desc';
-			$query_string = preg_replace('/(\?|&|&amp;)sort=\w+/i','',$query_string);
+			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		}
 
 		//if there is no q param, use the collection 
