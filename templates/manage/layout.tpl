@@ -94,7 +94,7 @@
 				</li>
 				<li class="diagnostics-tab">
 				<a href="manage/{$collection->ascii_id}/diagnostics">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics/Tools</sup>
 				</a>
 				</li>
 				<li class="managers-tab">
@@ -133,7 +133,7 @@
 				</a>
 				<li class="diagnostics-tab">
 				<a href="manage/{$collection->ascii_id}/diagnostics">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Diagnostics/Tools</sup>
 				</a>
 				</li>
 				<li class="managers-tab">
