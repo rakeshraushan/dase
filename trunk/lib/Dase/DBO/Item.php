@@ -418,9 +418,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$v->item_id = $this->id;
 					$v->attribute_id = $att->id;
 					$v->value_text = $val_txt;
-					if (!$v->findOne()) {
-						$v->insert();
-					}
+					//note: NO duplicate detection
+					$v->insert();
 				}
 			} else {
 				$v = new Dase_DBO_Value($this->db);
@@ -429,9 +428,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->value_text = trim($value_text);
 				$v->url = $url;
 				$v->modifier = $modifier;
-				if (!$v->findOne()) {
-					$v->insert();
-				}
+				//note: NO duplicate detection
+				$v->insert();
 				if ($index) {
 					$this->buildSearchIndex();
 				}
