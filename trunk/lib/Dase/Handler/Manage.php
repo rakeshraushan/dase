@@ -11,6 +11,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/attribute/{att_ascii_id}/defined_values' => 'attribute_defined_values',
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
+		'{collection_ascii_id}/index_update' => 'index_update',
 		'{collection_ascii_id}/diagnostics' => 'diagnostics',
 		'{collection_ascii_id}/item_type_form' => 'item_type_form',
 		'{collection_ascii_id}/item_type/{type_ascii_id}' => 'item_type',
@@ -274,10 +275,24 @@ class Dase_Handler_Manage extends Dase_Handler
 		$search = Dase_SearchEngine::get($this->db,$this->config);
 		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
 		if (!$latest) {
-			$latest = 'no search indexes!';
+			$latest = '0000-00-00';
 		}
-		$tpl->assign('latest',$latest);
+		$not_yet = $this->collection->getItemsUpdatedSince($latest);
+		$unindexed_count = count($not_yet);
+		$tpl->assign('unindexed_count',$unindexed_count);
 		$r->renderResponse($tpl->fetch('manage/diagnostics.tpl'));
+	}
+
+	public function postToIndexUpdate($r)
+	{
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
+		if (!$latest) {
+			$latest = '0000-00-00';
+		}
+		$count_indexed = $this->collection->buildSearchIndex($latest);
+		$params['msg'] = "$count_indexed items were updated";
+		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/diagnostics',$params);
 	}
 
 	public function getItemType($r)

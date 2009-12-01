@@ -13,7 +13,6 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/search' => 'search',
 		'{collection_ascii_id}/search/item' => 'search_item',
 		'{collection_ascii_id}/ingester' => 'ingester',
-		'{collection_ascii_id}/latest_index' => 'latest_index',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
 		'{collection_ascii_id}/admin_attributes' => 'admin_attributes',
 		'{collection_ascii_id}/admin_attribute_tallies' => 'admin_attribute_tallies',
