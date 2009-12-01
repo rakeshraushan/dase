@@ -278,10 +278,11 @@ class Dase_Handler_Manage extends Dase_Handler
 			$latest = '0000-00-00';
 		}
 
-		//$latest = date(DATE_ATOM,strtotime($latest));
+		$latest_adjusted = date(DATE_ATOM,strtotime($latest)-120);
 		$not_yet = $this->collection->getItemsUpdatedSince($latest);
 		$unindexed_count = count($not_yet);
 		$tpl->assign('unindexed_count',$unindexed_count);
+		$tpl->assign('latest_adjusted',$latest_adjusted);
 		$r->renderResponse($tpl->fetch('manage/diagnostics.tpl'));
 	}
 
