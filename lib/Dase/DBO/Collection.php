@@ -461,7 +461,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 
 	public function buildSearchIndex($since)
 	{
-		$set = $this->getItemsUpdatedSince($since,1000);
+		$set = $this->getItemsUpdatedSince($since);
 		$item = null;
 		foreach ($set as $item) {
 			$item->buildSearchIndex(false);
