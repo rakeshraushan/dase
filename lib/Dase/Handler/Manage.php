@@ -277,6 +277,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		if (!$latest) {
 			$latest = '0000-00-00';
 		}
+		echo $latest;exit;
 		$not_yet = $this->collection->getItemsUpdatedSince($latest);
 		$unindexed_count = count($not_yet);
 		$tpl->assign('unindexed_count',$unindexed_count);
