@@ -167,6 +167,24 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $feed->asXml();
 	}
 
+	function getItemsUpdatedSince($datetime,$limit=100)
+	{
+		//normalize timezone
+		$datetime = date(DATE_ATOM,strtotime($datetime));
+		$set = array();
+		$items = new Dase_DBO_Item($this->db);
+		$items->collection_id = $this->id;
+		$items->addWhere('updated',$datetime,'>');
+		$items->orderBy('updated DESC');
+		if ($limit && is_numeric($limit)) {
+			$items->setLimit($limit);
+		}
+		foreach ($items->find() as $item) {
+			$set[] = clone $item;
+		}
+		return $set;
+	}
+
 	function getItemsBySerialNumberRangeAsAtom($app_root,$start,$end)
 	{
 		$feed = $this->getBaseAtomFeed($app_root);
@@ -441,18 +459,18 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $res;
 	}
 
-	public function buildSearchIndex()
+	public function buildSearchIndex($since)
 	{
+		$set = $this->getItemsUpdatedSince($since,1000);
 		$item = null;
-		foreach ($this->getItems() as $item) {
-			$item = clone($item);
-			//don't commit
-			$item->buildSearchIndex(0,false);
+		foreach ($set as $item) {
+			$item->buildSearchIndex(false);
 		}
 		//now commit
 		if ($item) {
-			$item->buildSearchIndex(0,true);
+			$item->buildSearchIndex(true);
 		}
+		return count($set);
 	}
 
 	public function getItemsByAttAsAtom($attribute_ascii_id,$app_root)

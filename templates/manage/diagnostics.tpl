@@ -11,8 +11,10 @@
 	<h1>Diagnostics for {$collection->collection_name}</h1>
 </div>
 <div id="collectionData">
-	<h2>latest search index timestamp</h2>
-	<h3>{$latest}</h3>
+	<h3>{$unindexed_count} items need to be indexed</h3>
+	<form action="{$app_root}manage/{$collection->ascii_id}/index_update" method="post">
+		<input type="submit" value="update search index">
+	</form>
 	<div class="spacer"></div>
 </div>
 {/block} 
