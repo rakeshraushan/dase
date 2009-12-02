@@ -170,6 +170,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 	function getItemsUpdatedSince($datetime,$limit=100)
 	{
 		//normalize timezone and make allowance for clock drift
+		//note: if more than 30 second drift, records could fall through cracks
 		$datetime = date(DATE_ATOM,strtotime($datetime)-30);
 		$set = array();
 		$items = new Dase_DBO_Item($this->db);
