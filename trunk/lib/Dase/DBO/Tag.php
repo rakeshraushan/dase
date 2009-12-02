@@ -482,9 +482,11 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				}
 			} else {
 				//remove tag_item
-				$tag_item->delete();;
-				$this->resortTagItems();
-				$this->updateItemCount();
+				$log_text = "SMOKING GUN Ann Johns mystery: tried removing $item_unique from set $this->eid/$this->ascii_id";
+				Dase_Log::info(LOG_FILE,$log_text);
+				//$tag_item->delete();;
+				//$this->resortTagItems();
+				//$this->updateItemCount();
 			}
 		}
 		if (1 == count($collections_array)) {

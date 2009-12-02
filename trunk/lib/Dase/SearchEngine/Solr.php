@@ -166,17 +166,17 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		}
 
-		//if there is no q param, use the collection 
-		//filter as q to get (all) by collection
-		if (!$request->get('q')) { //empty q param
-			$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]*)/i','',$query_string);
-			$query_string = preg_replace('/fq=/i','q=',$filter_query);
-			$filter_query='';
-		}
-
 		if ($request->get('item_type') && 'none' != $request->get('item_type')) {
 			$query_string = preg_replace('/(^|\?|&|&amp;)q=/i','q=item_type:'.$request->get('item_type').'+',$query_string);
-		}
+		} elseif 
+			//if there is no q param, use the collection 
+			//filter as q to get (all) by collection
+			(!$request->get('q')) { //empty q param
+				$query_string = preg_replace('/(^|\?|&|&amp;)q=([^&]*)/i','',$query_string);
+				$query_string = preg_replace('/fq=/i','q=',$filter_query);
+				$filter_query='';
+			}
+
 
 		//allows for case-insensitive wildcards
 		//see: http://mail-archives.apache.org/mod_mbox/lucene-solr-user/200608.mbox/%3CPine.LNX.4.58.0608181231380.1336@hal.rescomp.berkeley.edu%3E
