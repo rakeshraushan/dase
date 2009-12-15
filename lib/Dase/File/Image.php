@@ -11,13 +11,6 @@ class Dase_File_Image extends Dase_File
 
 	function addToCollection($item,$check_for_dups,$path_to_media)
 	{
-		//check for multi-layered tiff
-		if ('image/tiff' == $this->mime_type ){
-			$image = new Imagick($this->filepath);
-			if ($image->getNumberImages() > 1) {
-				throw new Exception("Error: ".$title." appears to be a multi-layered tiff");
-			}
-		}
 		$media_file = parent::addToCollection($item,$check_for_dups,$path_to_media);
 		$rotate = 0;
 		if (isset($this->metadata['exif_orientation'])) {
