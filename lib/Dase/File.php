@@ -111,13 +111,6 @@ abstract class Dase_File
 	public function addToCollection($item,$check_for_dups,$path_to_media)
 	{
 		$c = $item->getCollection();
-		//check for multi-layered tiff
-		if ('image/tiff' == $this->mime_type ){
-			$image = new Imagick($this->filepath);
-			if ($image->getNumberImages() > 1) {
-				throw new Exception("Error: ".$title." appears to be a multi-layered tiff");
-			}
-		}
 		$metadata = $this->getMetadata();
 
 		//prevents 2 files in same collection w/ same md5
