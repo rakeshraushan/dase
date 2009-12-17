@@ -410,12 +410,15 @@ class Dase_Handler_Manage extends Dase_Handler
 			$params['msg'] = 'You must enter an EID';
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/managers',$params);
 		}
-		if (!Dase_DBO_DaseUser::get($this->db,$r->get('dase_user_eid'))) {
-			$params['msg'] = 'User '.$r->get('dase_user_eid').' does not yet exist';
+
+		$eid = strtolower($r->get('dase_user_eid'));
+
+		if (!Dase_DBO_DaseUser::get($this->db,$eid)) {
+			$params['msg'] = 'User '.$eid.' does not yet exist';
 			$r->renderRedirect('manage/'.$this->collection->ascii_id.'/managers',$params);
 		}
 		$mgr = new Dase_DBO_CollectionManager($this->db);
-		$mgr->dase_user_eid = $r->get('dase_user_eid');
+		$mgr->dase_user_eid = $eid;
 		$mgr->auth_level = $r->get('auth_level');
 		$mgr->collection_ascii_id = $this->collection->ascii_id;
 		$mgr->created = date(DATE_ATOM);

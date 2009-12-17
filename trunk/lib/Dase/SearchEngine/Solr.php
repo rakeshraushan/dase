@@ -162,7 +162,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 			$sort_param = '&sort='.urlencode($sort);
 			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		} else {
-			$sort_param = '&sort=_updated+desc';
+			$sort_param = '&sort=_created+desc';
 			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		}
 
@@ -599,6 +599,12 @@ EOD;
 		$id->setAttribute('name','_id');
 
 		$json_doc['_id'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
+
+		$updated = $doc->appendChild($dom->createElement('field'));
+		$updated->appendChild($dom->createTextNode($item->created));
+		$updated->setAttribute('name','_created');
+
+		$json_doc['_created'] = $item->created;
 
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->updated));

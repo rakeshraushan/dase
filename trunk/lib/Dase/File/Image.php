@@ -152,7 +152,9 @@ class Dase_File_Image extends Dase_File
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
-		$results = exec(CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail");
+		$command = CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '100x100 >' -colorspace RGB $thumbnail";
+		$exec_output = array();
+		$results = exec($command,$exec_output);
 		if (!file_exists($thumbnail)) {
 			Dase_Log::info(LOG_FILE,"failed to write $thumbnail");
 		}
@@ -185,7 +187,9 @@ class Dase_File_Image extends Dase_File
 		if (!file_exists($subdir_path)) {
 			mkdir($subdir_path);
 		}
-		$results = exec(CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem");
+		$command = CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '400x400 >' -colorspace RGB $viewitem";
+		$exec_output = array();
+		$results = exec($command,$exec_output);
 		if (!file_exists($viewitem)) {
 			Dase_Log::info(LOG_FILE,"failed to write $viewitem");
 		}
@@ -244,7 +248,8 @@ class Dase_File_Image extends Dase_File
 				mkdir($subdir_path);
 			}
 			$command = CONVERT." \"$this->filepath\" -format jpeg -rotate $rotate -resize '$size_info[geometry] >' -colorspace RGB $newimage";
-			$results = exec($command);
+			$exec_output = array();
+			$results = exec($command,$exec_output);
 			if (!file_exists($newimage)) {
 				Dase_Log::debug(LOG_FILE,"failed to write $size image");
 				Dase_Log::debug(LOG_FILE,"UNSUCCESSFUL: $command");
