@@ -203,7 +203,7 @@ CREATE TABLE `{$table_prefix}tag_item` (
 `tag_id` integer default NULL,
 `updated` varchar(50) default NULL,
 `p_collection_ascii_id` varchar(200) default NULL,
-`p_serial_number` varchar(20) default NULL,
+`p_serial_number` varchar(200) default NULL,
 `size` varchar(200) default NULL,
 `annotation` varchar(2000) default NULL,
 PRIMARY KEY (`id`)

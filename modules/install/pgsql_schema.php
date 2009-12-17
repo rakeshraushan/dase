@@ -152,7 +152,7 @@ CREATE TABLE {$table_prefix}tag_item (
     annotation character varying(2000),
     sort_order integer,
     size character varying(200),
-    p_serial_number character varying(20) DEFAULT 0,
+    p_serial_number character varying(200) DEFAULT 0,
     p_collection_ascii_id character varying(200) DEFAULT 0,
     updated character varying(50)
 );
