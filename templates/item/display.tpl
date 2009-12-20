@@ -138,6 +138,8 @@
 				<dl id="adminMetadata" class="{$item->collectionAsciiId} hide">
 					<dt>Serial Number</dt>
 					<dd>{$item->entry->serialNumber}</dd>
+					<dt>Created</dt>
+					<dd>{$item->entry->published}</dd>
 					<dt>Updated</dt>
 					<dd>{$item->entry->updated}</dd>
 					{foreach item=set key=ascii_id from=$item->entry->adminMetadata}
@@ -182,6 +184,9 @@
 					href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?type=feed&amp;auth=cookie"
 					class="atomlogo"><img
 					src="www/images/atom.jpg" alt="atom logo"></a> 
+				<p>
+				<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}">permalink</a> 
+				</p>
 			</td>
 		</tr>
 	</table>
