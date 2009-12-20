@@ -636,6 +636,10 @@ EOD;
 
 		$json_doc['collection'] = $item->collection_name;
 
+		$media_count = $doc->appendChild($dom->createElement('field'));
+		$media_count->appendChild($dom->createTextNode($item->getMediaCount()));
+		$media_count->setAttribute('name','_media_count');
+
 		$it = $doc->appendChild($dom->createElement('field'));
 		$it->appendChild($dom->createTextNode($item->item_type_ascii_id));
 		$it->setAttribute('name','item_type');
