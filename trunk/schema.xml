@@ -273,6 +273,7 @@ http://wiki.apache.org/solr/SchemaXml
 	  <field name="_json" type="text" indexed="false" stored="true" multiValued="false"/>
 	  <field name="_item_id" type="text" indexed="true" stored="true" multiValued="false"/>
 	  <field name="_serial_number" type="text" indexed="true" stored="true" multiValued="false"/>
+	  <field name="_media_count" type="text" indexed="true" stored="true" multiValued="false"/>
 
 	  <!-- 
 	  note that the following field names CANNOT be used as att_ascii_id or Att Name 

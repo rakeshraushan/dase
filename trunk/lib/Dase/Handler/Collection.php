@@ -218,8 +218,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
 		}
+		if ($r->has('count')) {
+			$count = $r->get('count');
+		} else {
+			$count = 0;
+		}
 		foreach ($this->collection->getItems() as $item) {
-			if (!$item->getMediaCount()) {
+			if ($item->getMediaCount() <= $count) {
 				$i++;
 				$output .= $item->serial_number; 
 				//pass in 'display' params to view att value
@@ -246,8 +251,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
 		}
+		if ($r->has('count')) {
+			$count = $r->get('count');
+		} else {
+			$count = 0;
+		}
 		foreach ($this->collection->getItems() as $item) {
-			if (!$item->getMediaCount()) {
+			if ($item->getMediaCount() <= $count) {
 				$i++;
 				//pass in 'display' params to view att value
 				foreach ($r->get('display',true) as $member) {
@@ -279,8 +289,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($r->has('limit')) {
 			$limit = $r->get('limit');
 		}
+		if ($r->has('count')) {
+			$count = $r->get('count');
+		} else {
+			$count = 0;
+		}
 		foreach ($this->collection->getItems() as $item) {
-			if (!$item->getMediaCount()) {
+			if ($item->getMediaCount() <= $count) {
 				$i++;
 				$edit = $item->getUrl($r->app_root); 
 				$edit_media = $item->getEditMediaUrl($r->app_root); 
