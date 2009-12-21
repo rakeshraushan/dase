@@ -68,6 +68,19 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->renderResponse($atom_feed);
 	}
 
+	public function getSearchTxt($r)
+	{
+		$this->getSearchUris($r);
+	}
+
+	public function getSearchUris($r)
+	{
+		$r->checkCache();
+		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$r->renderResponse($search->getResultsAsUris());
+	}
+
 	public function getSearchJson($r)
 	{
 		$r->checkCache();

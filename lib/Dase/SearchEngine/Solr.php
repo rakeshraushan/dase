@@ -369,6 +369,34 @@ EOD;
 		return $feed;
 	}
 
+	public function getResultsAsUris() 
+	{
+		$app_root = $this->request->app_root;
+		$ids = array();
+
+		$reader = new XMLReader();
+		if (false === $reader->XML($this->_getSearchResults())) {
+			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+		}
+		while ($reader->read()) {
+			//get entries
+			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
+				if ('_id' == $reader->getAttribute('name')) {
+					$reader->read();
+					$ids[] = $reader->value;
+				}
+			}
+		}
+		$reader->close();
+
+		$uris = '';
+		foreach ($ids as $id) {
+			$uris .= $app_root.'/item/'.$id."\n";
+		}
+
+		return $uris;
+	}
+
 	public function getResultsAsJson() 
 	{
 		$app_root = $this->request->app_root;
