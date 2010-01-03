@@ -46,10 +46,12 @@ Class Dase_Media
 	 * from php port of Mimeparse
 	 * Python code (http://code.google.com/p/mimeparse/)
 	 * @author Joe Gregario, Andrew "Venom" K.
+	 *
+	 * patched (changed split to explode) by Patrick Hochstenbach
 	 */
 	public static function parseMimeType($mime_type)
 	{
-		$parts = split(";", $mime_type);
+		$parts = explode(";", $mime_type);
 		$params = array();
 		foreach ($parts as $i=>$param) {
 			if (strpos($param, '=') !== false) {
