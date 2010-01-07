@@ -86,7 +86,12 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$search = Dase_SearchEngine::get($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
-		$r->renderResponse($search->getResultsAsJson());
+		if($r->get('callback')){
+			$r->renderResponse($r->get('callback').'('.$search->getResultsAsJson().');');
+		}
+		else{
+			$r->renderResponse($search->getResultsAsJson());
+		}
 		/*
 		$r->checkCache();
 		$feed_url = $r->app_root.'/'.$r->url.'&format=atom';
