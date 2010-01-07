@@ -166,6 +166,23 @@ class Dase_Atom_Entry extends Dase_Atom
 		}
 	}
 
+	public function delete($user,$pwd)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $this->getEditLink());
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pwd);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		$info = curl_getinfo($ch);
+		curl_close($ch);  
+		if ('200' == $info['http_code']) {
+			return 'ok';
+		} else {
+			return $result;
+		}
+	}
+
 	public function postToUrl($url,$user,$pwd,$slug='')
 	{
 		$ch = curl_init();
