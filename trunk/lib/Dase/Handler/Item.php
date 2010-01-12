@@ -383,22 +383,42 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
 	}
 
-	/** this is used to UPDATE an item's type (comes from a form)*/
+	/** this is used to UPDATE an item's type */
 	public function postToItemType($r)
 	{
-		$user = $r->getUser();
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot write to this item');
-		}
-		if ($this->item->setItemType($r->get('item_type'))) {
-			$type = $this->item->getItemType()->name;
-			$this->item->expireCaches($r->getCache());
-			$this->item->buildSearchIndex();
-			if (!$type) {
-				$type = 'default/none';
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' == $content_type) {
+			$user = $r->getUser();
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot write to this item');
 			}
-			$r->renderResponse("item type is now $type");
+			if ($this->item->setItemType($r->get('item_type'))) {
+				$type = $this->item->getItemType()->name;
+				$this->item->expireCaches($r->getCache());
+				$this->item->buildSearchIndex();
+				if (!$type) {
+					$type = 'default/none';
+				}
+				$r->renderResponse("item type is now $type");
+			}
 		}
+		if ('text/plain' == $content_type) {
+			$user = $r->getUser('http');
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot post to item type');
+			}
+			$item_type = trim($r->getBody());
+			if ($this->item->setItemType($item_type)) {
+				$type = $this->item->getItemType()->name;
+				$this->item->expireCaches($r->getCache());
+				$this->item->buildSearchIndex();
+				if (!$type) {
+					$type = 'default/none';
+				}
+				$r->renderResponse("item type is now $type");
+			}
+		}
+		$r->renderError(415,'cannot accept '.$content_type);
 	}
 
 	public function postToMetadata($r)
