@@ -166,7 +166,7 @@
 
 				{if 'text' == $item->entry->contentType && $item->entry->content}
 				<div id="itemContent">
-					{$item->entry->content|markdown}
+					{$item->entry->content|nl2br|markdown}
 				</div>
 				{/if}
 
