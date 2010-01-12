@@ -1058,6 +1058,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content->item_id = $this->id;
 		//todo: security! filter input....
 		$content->text = $text;
+		if ('text/plain' == $type) {
+			$type = 'text';
+		}
+		if ('text/html' == $type) {
+			$type = 'html';
+		}
+		if ('application/xhtml+xml' == $type) {
+			$type = 'xhtml';
+		}
 		$content->type = $type;
 		$content->p_collection_ascii_id = $this->p_collection_ascii_id;
 		$content->p_serial_number = $this->serial_number;
