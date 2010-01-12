@@ -114,7 +114,7 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 
 		//link to the owning dase item using iana registered 'up' rel value
 		$entry->addLink(
-			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number,
+			$app_root.'/item/'.$this->p_collection_ascii_id.'/'.$this->p_serial_number.'.atom',
 			'up');
 
 		$entry->setMediaContent($this->getLink($app_root),$this->mime_type);
