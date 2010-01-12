@@ -300,6 +300,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$this->item_type_id = 0;
 			$this->item_type_ascii_id = 'default';
 			$this->item_type_name = 'default';
+			$this->updated = date(DATE_ATOM);
 			$this->update();
 			return true;
 		}
@@ -310,6 +311,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$this->item_type_id = $type->id;
 			$this->item_type_ascii_id = $type->ascii_id;
 			$this->item_type_name = $type->name;
+			$this->updated = date(DATE_ATOM);
 			$this->update();
 			$this->_item_type = $type;
 			return true;
