@@ -508,6 +508,7 @@ Dase.initSetItemType = function()
 				data.types = json;
 				var h = new Dase.htmlbuilder;
 				h.add('h1',null,'Set Item Type '+data.current);
+				//hmm URL construction instead of HATEAOS
 				var form = h.add('form',{'action':'item/'+data.coll_ser+'/item_type','method':'post','id':'itemTypeForm'});
 				var select = form.add('select',{'name':'item_type'});
 				select.add('option',null,'select one:');
