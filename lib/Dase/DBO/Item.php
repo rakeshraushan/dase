@@ -346,6 +346,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$v->value_text = $value_text;
 		$v->update();
 		if ($index) {
+			$this->updated = date(DATE_ATOM);
+			$this->update();
 			$this->buildSearchIndex();
 		}
 	}
@@ -367,6 +369,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$rev->insert();
 		$v->delete();
 		if ($index) {
+			$this->updated = date(DATE_ATOM);
+			$this->update();
 			$this->buildSearchIndex();
 		}
 	}
@@ -388,6 +392,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->insert();
 			}
 			if ($index) {
+				$this->updated = date(DATE_ATOM);
+				$this->update();
 				$this->buildSearchIndex();
 			}
 		}
@@ -431,11 +437,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				//note: NO duplicate detection
 				$v->insert();
 				if ($index) {
+					$this->updated = date(DATE_ATOM);
+					$this->update();
 					$this->buildSearchIndex();
 				}
 				return $v;
 			}
 			if ($index) {
+				$this->updated = date(DATE_ATOM);
+				$this->update();
 				$this->buildSearchIndex();
 			}
 		} else {
@@ -465,6 +475,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			}
 		}
 		if ($index) {
+			$this->updated = date(DATE_ATOM);
+			$this->update();
 			$this->buildSearchIndex();
 		}
 	}
@@ -513,6 +525,8 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$doomed->delete();
 		}
 		if ($index) {
+			$this->updated = date(DATE_ATOM);
+			$this->update();
 			$this->buildSearchIndex();
 		}
 	}
@@ -1045,6 +1059,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$content->updated_by_eid = $eid;
 		$res = $content->insert();
 
+		$this->updated = date(DATE_ATOM);
 		$this->content_length = strlen($content->text);
 		$this->update();
 
