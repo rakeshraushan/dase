@@ -416,6 +416,8 @@ class Dase_Handler_Item extends Dase_Handler
 					$type = 'default/none';
 				}
 				$r->renderResponse("item type is now $type");
+			} else {
+				$r->renderError(415,'could not set item type to '.$item_type);
 			}
 		}
 		$r->renderError(415,'cannot accept '.$content_type);
