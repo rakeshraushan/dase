@@ -15,6 +15,8 @@ class Dase_Http_Request
 		'mov' =>'video/quicktime',
 		'mp3' =>'audio/mpeg',
 		'mp4' =>'video/mp4',
+		'oga' => 'audio/ogg',
+		'ogv' => 'video/ogg',
 		'png' =>'image/png',
 		'pdf' =>'application/pdf',
 		'txt' =>'text/plain',

@@ -9,6 +9,7 @@ abstract class Dase_File
 		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
 		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'audio/ogg' => array('size' => 'oga', 'ext' => 'oga','class'=>'Dase_File_Audio'),
 		'image/gif' => array('size' => 'gif', 'ext' => 'gif','class'=>'Dase_File_Image'),
 		'image/jpeg' => array('size' => 'jpeg', 'ext' => 'jpg','class'=>'Dase_File_Image'),
 		'image/png' => array('size' => 'png', 'ext' => 'png','class'=>'Dase_File_Image'),
@@ -19,6 +20,7 @@ abstract class Dase_File
 		'text/plain' => array('size' => 'text', 'ext' => 'txt','class'=>'Dase_File_Text'),
 		'text/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
 		'video/mp4' => array('size' => 'mp4', 'ext' => 'mp4','class'=>'Dase_File_Video'),
+		'video/ogg' => array('size' => 'ogv', 'ext' => 'ogv','class'=>'Dase_File_Video'),
 		'video/quicktime' => array('size' => 'quicktime', 'ext' => 'mov','class'=>'Dase_File_Video'),
 	);
 

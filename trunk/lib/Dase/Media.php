@@ -24,6 +24,8 @@ Class Dase_Media
 		'medium' => 1,
 		'mp3' => 2,
 		'mp4' => 2,
+		'oga' => 2,
+		'ogv' => 2,
 		'pdf' => 1,
 		'png' => 1,
 		'quicktime' => 2,
