@@ -71,6 +71,17 @@ class Dase_Handler_User extends Dase_Handler
 		}
 	}
 
+	public function getUserAuthorizationsJson($r) 
+	{
+		if ($r->has('collection_ascii_id')) {
+			$coll = $r->get('collection_ascii_id');
+			$data = $this->user->getCollections();
+			$r->renderResponse(Dase_Json::get($data[$coll]));
+		} else {
+			$r->renderResponse(Dase_Json::get($this->user->getCollections()));
+		}
+	}
+
 	public function getService($r)
 	{
 		$r->response_mime_type = 'application/atomsvc+xml';
