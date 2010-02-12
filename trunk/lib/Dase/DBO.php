@@ -212,7 +212,7 @@ class Dase_DBO implements IteratorAggregate
 		$set = array();
 		$iter = $this->find();
 		foreach ($iter as $it) {
-			$set[] = clone($it);
+			$set[$it->id] = clone($it);
 		}
 		if (count($set)) {
 			return $set;

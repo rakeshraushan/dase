@@ -598,6 +598,9 @@ class Dase_Http_Request
 		if ($eid) {
 			$u = clone $this->null_user;
 			$this->user = $u->retrieveByEid($eid);
+		}
+
+		if ($eid && $this->user) {
 			if (isset($this->serviceusers[$eid])) {
 				$this->user->is_serviceuser = true;
 			}
