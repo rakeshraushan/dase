@@ -18,7 +18,8 @@ class Dase
 			include BASE_PATH.'/inc/local_bootstrap.php';
 		}
 
-		$r = new Dase_Http_Request($config->getAppSettings('default_handler'));
+		$r = new Dase_Http_Request();
+		$r->checkHandler($config->getAppSettings('default_handler'));
 		$r->initUser($db,$config);
 		$r->initCache(Dase_Cache::get(CACHE_TYPE));
 		$r->initCookie($config->getAuth('token'));
