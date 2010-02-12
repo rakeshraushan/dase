@@ -44,21 +44,21 @@ class Dase_Http_Request
 	private $url_params = array();
 	private $user;
 
-	public function __construct($default_handler)
+	public function __construct()
 	{
 		$env['protocol'] = isset($_SERVER['HTTPS']) ? 'https' : 'http'; 
-		$env['method'] = strtolower($_SERVER['REQUEST_METHOD']);
+		$env['method'] = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
 		$env['_get'] = $_GET;
 		$env['_post'] = $_POST;
 		$env['_cookie'] = $_COOKIE;
 		$env['_files'] = $_FILES;
 		$env['htuser'] = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
 		$env['htpass'] = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
-		$env['request_uri'] = $_SERVER['REQUEST_URI'];
-		$env['http_host'] =	$_SERVER['HTTP_HOST'];
-		$env['server_addr'] = $_SERVER['SERVER_ADDR'];
-		$env['query_string'] =	$_SERVER['QUERY_STRING'];
-		$env['script_name'] = $_SERVER['SCRIPT_NAME'];
+		$env['request_uri'] = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+		$env['http_host'] =	isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+		$env['server_addr'] = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '';
+		$env['query_string'] =	isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+		$env['script_name'] = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
 		$env['slug'] = isset($_SERVER['HTTP_SLUG']) ? $_SERVER['HTTP_SLUG'] : '';
 		$env['http_title'] = isset($_SERVER['HTTP_TITLE']) ? $_SERVER['HTTP_TITLE'] : '';
 		$env['remote_addr'] = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
@@ -79,12 +79,6 @@ class Dase_Http_Request
 		$env['content_type'] = $this->getContentType();
 		$this->env = $env;
 
-		//some work in the constructor
-		if (!$env['handler']) {
-			$this->renderRedirect($default_handler);
-		} else {
-			$this->default_handler = $default_handler;
-		}
 	}
 
 	public function __get( $var )
@@ -102,6 +96,15 @@ class Dase_Http_Request
 		$method = 'get'.ucfirst($var);
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
+		}
+	}
+
+	public function checkHandler($default_handler) 
+	{
+		if (!$this->env['handler']) {
+			$this->renderRedirect($default_handler);
+		} else {
+			$this->default_handler = $default_handler;
 		}
 	}
 
