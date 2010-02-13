@@ -52,6 +52,7 @@ $conf['request_handler']['install'] = 'install';
 
 //cache can be file or memcached (only 'file' is implemented) 
 $conf['cache']['type'] = 'file';
+//config defines a reasonable default
 //$conf['cache']['dir'] = '/usr/local/dase/cache';
 
 //search engine

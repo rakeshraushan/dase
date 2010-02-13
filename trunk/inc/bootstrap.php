@@ -29,9 +29,10 @@ define('MEDIA_DIR',$config->getMediaDir());
 //db table prefix
 define('TABLE_PREFIX',$config->getDb('table_prefix'));
 
-//cache directory & type
-define('CACHE_DIR',$config->getCacheDir());
+//cache type
 define('CACHE_TYPE',$config->getCacheType());
+
+define('SMARTY_CACHE_DIR',$config->getCacheDir());
 
 //max items diplayed per page
 define('MAX_ITEMS',$config->getAppSettings('max_items'));

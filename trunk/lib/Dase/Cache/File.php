@@ -9,9 +9,9 @@ class Dase_Cache_File extends Dase_Cache
 	private $tempfilename;
 	private $ttl;
 
-	function __construct($ttl=10)
+	function __construct($config,$ttl=10)
 	{
-		$this->cache_dir = CACHE_DIR;
+		$this->cache_dir = $config->getCacheDir();
 		$this->ttl = $ttl;
 		$this->_initDir();
 	}

@@ -46,7 +46,7 @@ class Dase_Atom_Feed_Collection extends Dase_Atom_Feed
 		$c->created = date(DATE_ATOM);
 		$c->updated = date(DATE_ATOM);
 		if ($c->insert()) {
-			$cache = Dase_Cache::get(CACHE_TYPE);
+			$cache = $r->getCache();
 			$cache->expire('app_data');
 			Dase_Log::info(LOG_FILE,'created collection '.$c->collection_name);
 			$coll_media_dir =  MEDIA_DIR.'/'.$ascii_id;

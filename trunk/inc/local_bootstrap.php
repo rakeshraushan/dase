@@ -4,7 +4,7 @@
  * assume the existence of $db and $config objects
  */
 
-$cache = Dase_Cache::get(CACHE_TYPE);
+$cache = Dase_Cache::get($config);
 
 //refreshed once per hour
 //do not forget to expunge when necessary
