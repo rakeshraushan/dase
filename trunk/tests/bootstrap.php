@@ -12,7 +12,7 @@ ini_set('include_path',BASE_PATH.'/lib');
 
 function __autoload($class_name) {
 	$class_name = str_replace('_','/',$class_name).'.php';
-	include ($class_name);
+	@include ($class_name);
 }
 
 define('START_TIME',Dase_Util::getTime());
