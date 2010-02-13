@@ -25,7 +25,7 @@ class Dase_Template {
 
 		require_once 'smarty/libs/Smarty.class.php';
 		$this->smarty = new Smarty();
-		$this->smarty->compile_dir = CACHE_DIR; 
+		$this->smarty->compile_dir = SMARTY_CACHE_DIR; 
 		$this->smarty->compile_id = $request->module ? $request->module : 'smarty';
 		if ($use_module_template_dir) {
 			$this->smarty->template_dir = BASE_PATH.'/modules/'.$request->module.'/templates';

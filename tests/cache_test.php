@@ -1,28 +1,24 @@
 <?php
-ini_set('display_errors',1);
-error_reporting(E_ALL);
-ini_set('include_path','.:'.dirname(__FILE__).'/../lib');
+
+require_once('bootstrap.php');
 require_once('simpletest/autorun.php');
-require_once('Dase/Cache.php');
-require_once('Dase/Cache/File.php');
-require_once('Dase/Config.php');
 
 
 class TestOfCache extends UnitTestCase {
 
 	function setUp() {
-		$c = new Dase_Config(dirname(__FILE__).'/..');
+		$c = new Dase_Config(BASE_PATH);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get('file',$c->getCacheDir());
+		$cache = Dase_Cache::get($c);
 		$cache->expunge();
 	}
 
 	function tearDown() {
-		$c = new Dase_Config(dirname(__FILE__).'/..');
+		$c = new Dase_Config(BASE_PATH);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get('file',$c->getCacheDir());
+		$cache = Dase_Cache::get($c);
 		$cache->expunge();
 	}
 
@@ -30,10 +26,10 @@ class TestOfCache extends UnitTestCase {
 	 * from command line.  It passes on web
 	 */
 	function testDataIsCached() {
-		$c = new Dase_Config(dirname(__FILE__).'/..');
+		$c = new Dase_Config(BASE_PATH);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get('file',$c->getCacheDir());
+		$cache = Dase_Cache::get($c);
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
 		$this->assertTrue('hello world' == $cache->getData('my_cache_file'));
@@ -43,10 +39,10 @@ class TestOfCache extends UnitTestCase {
 	 */
 	/*
 	function testDataIsExpired() {
-		$c = new Dase_Config(dirname(__FILE__).'/..');
+		$c = new Dase_Config(BASE_PATH);
 		$c->load('inc/config.php');
 		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get('file',$c->getCacheDir());
+		$cache = Dase_Cache::get($c);
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
 		$this->dump('pausing for 2 seconds...');

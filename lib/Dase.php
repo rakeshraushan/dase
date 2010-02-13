@@ -21,7 +21,7 @@ class Dase
 		$r = new Dase_Http_Request();
 		$r->checkHandler($config->getAppSettings('default_handler'));
 		$r->initUser($db,$config);
-		$r->initCache(Dase_Cache::get(CACHE_TYPE));
+		$r->initCache(Dase_Cache::get($config));
 		$r->initCookie($config->getAuth('token'));
 		$r->initAuth($config->getAuth());
 		$r->initPlugin($config->getCustomHandlers());

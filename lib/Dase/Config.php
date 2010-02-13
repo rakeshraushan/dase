@@ -33,6 +33,8 @@ class Dase_Config {
 	{
 		if (isset($this->conf['cache']['type'])) {
 			return $this->conf['cache']['type'];
+		} else {
+			throw new Dase_Config_Exception('no cache type defined');
 		}
 	}
 

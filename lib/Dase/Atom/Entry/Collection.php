@@ -49,7 +49,7 @@ class Dase_Atom_Entry_Collection extends Dase_Atom_Entry
 		}
 
 		if ($c->insert()) {
-			$cache = Dase_Cache::get(CACHE_TYPE);
+			$cache = $r->getCache();
 			$cache->expire('app_data');
 			Dase_Log::info(LOG_FILE,'created collection '.$c->collection_name);
 			if (mkdir("$coll_media_dir")) {
