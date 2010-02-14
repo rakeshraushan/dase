@@ -470,14 +470,16 @@ class Dase_Handler_User extends Dase_Handler
 	public function postToControls($r)
 	{
 		$u = $this->user;
-		//we will use the 'cb' column for controls show/hide for compat
 		if ($r->has('controls')) {
-			$u->cb = $r->get('controls');
-			if (!$u->has_access_exception) {
-				$u->has_access_exception = 0;
+			$controls_status = $r->get('controls');
+			if ('hide' == $controls_status || 'show' == $controls_status) {
+				$u->controls_status = $controls_status;
+				if (!$u->has_access_exception) {
+					$u->has_access_exception = 0;
+				}
+				$u->update();
+				$u->expireDataCache($r->getCache());
 			}
-			$u->update();
-			$u->expireDataCache($r->getCache());
 		}
 		$r->renderRedirect("user/$u->eid/settings");
 	}

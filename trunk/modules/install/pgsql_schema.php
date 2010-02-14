@@ -77,19 +77,13 @@ CREATE TABLE {$table_prefix}dase_user (
     eid character varying(255),
     name character varying(200),
     has_access_exception boolean DEFAULT false,
-    cb character varying(200),
-    last_cb_access character varying(50),
+    controls_status character varying(200),
     display character varying(20),
     max_items integer,
-    last_item character varying(2000),
-    last_action character varying(2000),
-    current_search_cache_id integer,
     current_collections character varying(2000),
-    backtrack character varying(2000),
     service_key_md5 character varying(200),
     created character varying(50) DEFAULT 0,
     updated character varying(50) DEFAULT 0,
-    template_composite character varying(2000)
 );
 
 CREATE TABLE {$table_prefix}defined_value (

@@ -33,10 +33,10 @@
 	<h3>Managed Collections</h3>
 	<div id="managedCollections">
 		<form action="user/{$user->eid}/controls" method="post">
-			<p class="current">currently: {$user->cb|default:'show'} editing controls</p>
+			<p class="current">currently: {$user->controls_status|default:'show'} editing controls</p>
 			<select name="controls">
-				<option value="show" {if "show" == $user->cb}selected="selected"{/if}>show editing controls</option>
-				<option value="hide" {if "hide" == $user->cb}selected="selected"{/if}>hide editing controls</option>
+				<option value="show" {if "show" == $user->controls_status}selected="selected"{/if}>show editing controls</option>
+				<option value="hide" {if "hide" == $user->controls_status}selected="selected"{/if}>hide editing controls</option>
 			</select>
 			<input type="submit" value="save"/>
 		</form>
