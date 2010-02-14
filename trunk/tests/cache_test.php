@@ -17,7 +17,7 @@ class TestOfCache extends UnitTestCase {
 		$cache = Dase_Cache::get($c);
 		$cache->setData('my_cache_file','hello world');
 		$data = $cache->getData('my_cache_file');
-		$this->assertTrue('hello world' == $cache->getData('my_cache_file'));
+		$this->assertTrue('hello world' == $data);
 	}
 
 	/* NOTE: this is purposely slow
