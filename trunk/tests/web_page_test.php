@@ -13,8 +13,8 @@ class WebPageTest extends WebTestCase {
 			return;
 		}
 		$app_root = str_replace('/tests','',$r->app_root);
-        $this->get($app_root.'/collections');
-        $this->assertTitle('DASe Login');
+        $this->get($app_root.'/test');
+        $this->assertTitle('DASe Test Page');
     }
 }
 

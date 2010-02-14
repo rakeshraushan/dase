@@ -6,21 +6,6 @@ require_once('simpletest/autorun.php');
 
 class TestOfCache extends UnitTestCase {
 
-	function setUp() {
-		$c = new Dase_Config(BASE_PATH);
-		$c->load('inc/config.php');
-		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get($c);
-		$cache->expunge();
-	}
-
-	function tearDown() {
-		$c = new Dase_Config(BASE_PATH);
-		$c->load('inc/config.php');
-		$c->load('inc/local_config.php');
-		$cache = Dase_Cache::get($c);
-		$cache->expunge();
-	}
 
 	/* NOTE: timestamp weirdness makes this fail
 	 * from command line.  It passes on web
