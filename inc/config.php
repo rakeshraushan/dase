@@ -8,6 +8,10 @@ $conf['db']['user'] = 'username';
 $conf['db']['pass'] = 'password';
 $conf['db']['table_prefix'] = '';
 
+//used by a test case 
+//do not change or override
+$conf['app']['test'] = "dase";
+
 $conf['app']['main_title'] = "My DASe Archive";
 
 //must be apache writeable
