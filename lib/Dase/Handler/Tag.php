@@ -188,7 +188,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		$t->assign('feed_url',$feed_url);
 		$t->assign('items',Dase_Atom_Feed::retrieve($feed_url,$u->eid,$u->getHttpPassword()));
-		if ($u->can('admin',$this->tag) && 'hide' != $u->cb) {
+		if ($u->can('admin',$this->tag) && 'hide' != $u->controls_status) {
 			$t->assign('bulkedit',1);
 		}
 		if ($this->tag->is_public) {

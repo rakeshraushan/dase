@@ -263,14 +263,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		// this is all stuff that the client should be managing
 		//
 		$user_data[$this->eid]['current_collections'] = $this->current_collections;
-		$user_data[$this->eid]['backtrack'] = $this->backtrack;
-		$user_data[$this->eid]['current_search_cache_id'] = $this->current_search_cache_id;
 		$user_data[$this->eid]['display'] = $this->display;
-		$user_data[$this->eid]['last_action'] = $this->last_actionSearches;
-		$user_data[$this->eid]['last_item'] = $this->last_item;
 		$user_data[$this->eid]['max_items'] = $this->max_items;
-		$user_data[$this->eid]['controls'] = $this->cb;
-		$user_data[$this->eid]['template_composite'] = $this->template_composite;
+		$user_data[$this->eid]['controls'] = $this->controls_status;
 		$user_data[$this->eid]['token_date'] = date('Ymd',time());
 		return $user_data;
 	}

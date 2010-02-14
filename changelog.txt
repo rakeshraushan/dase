@@ -1,0 +1,19 @@
+2010-02-14
+
+changes to the dase_user table:
+
+changed column 'cb' to 'controls_status'
+dropped six columns
+
+SQL:
+
+ALTER TABLE `dase_user` CHANGE `cb` `controls_status` VARCHAR( 200 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL 
+
+ALTER TABLE `dase_user`
+  DROP `current_search_cache_id`,
+  DROP `template_composite`,
+  DROP `backtrack`,
+  DROP `last_action`,
+  DROP `last_item`,
+  DROP `last_cb_access`;
+
