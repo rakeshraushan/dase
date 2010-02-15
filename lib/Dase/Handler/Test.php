@@ -25,7 +25,8 @@ class Dase_Handler_Test extends Dase_Handler
 		$cache = Dase_Cache::get($this->config);
 		$cache->setData('my_cache_file','hello world cached');
 		$data = $cache->getData('my_cache_file');
-		$r->renderResponse('cached data: '.$data);
+		$ip = $_SERVER['SERVER_ADDR'];
+		$r->renderResponse('cached data: '.$data." ($ip)");
 	}
 
 
