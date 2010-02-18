@@ -1,8 +1,8 @@
 {extends file="layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
-<script type="text/javascript" src="www/scripts/dase/collection_browse.js"></script>
+<script type="text/javascript" src="www/js/dase/htmlbuilder.js"></script>
+<script type="text/javascript" src="www/js/dase/collection_browse.js"></script>
 {/block}
 
 {block name="title"}DASe: {$collection->name|escape}{/block} 

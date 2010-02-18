@@ -1,7 +1,7 @@
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/item_type_form.js"></script>
+<script type="text/javascript" src="www/js/dase/item_type_form.js"></script>
 {/block}
 
 {block name="head-links}

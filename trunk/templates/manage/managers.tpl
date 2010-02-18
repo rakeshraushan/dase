@@ -1,7 +1,7 @@
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/managers.js"></script>
+<script type="text/javascript" src="www/js/dase/managers.js"></script>
 {/block}
 
 {block name="content"}

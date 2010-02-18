@@ -3,9 +3,9 @@
 {block name="title"}Item Set{/block}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/annotate_slides.js"></script>
-<script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
-<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
+<script type="text/javascript" src="www/js/dase/annotate_slides.js"></script>
+<script type="text/javascript" src="www/js/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/js/dase/slideshow.js"></script>
 {/block}
 
 {block name="content"}

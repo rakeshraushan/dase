@@ -20,12 +20,12 @@
 		{block name="head-links"}{/block}
 		<link rel="shortcut icon" href="www/images/favicon.ico"/>
 
-		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
-		<script type="text/javascript" src="www/scripts/http.js"></script>
-		<script type="text/javascript" src="www/scripts/json2.js"></script>
-		<script type="text/javascript" src="www/scripts/dase.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/atompub.js"></script>
+		<script type="text/javascript" src="www/js/webtoolkit.base64.js"></script>
+		<script type="text/javascript" src="www/js/http.js"></script>
+		<script type="text/javascript" src="www/js/json2.js"></script>
+		<script type="text/javascript" src="www/js/dase.js"></script>
+		<script type="text/javascript" src="www/js/dase/htmlbuilder.js"></script>
+		<script type="text/javascript" src="www/js/dase/atompub.js"></script>
 		{block name="head"}{/block}
 
 

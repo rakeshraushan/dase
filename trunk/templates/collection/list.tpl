@@ -2,7 +2,7 @@
 {block name="title"}DASe: Collections List{/block} 
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/collection_list.js"></script>
+<script type="text/javascript" src="www/js/dase/collection_list.js"></script>
 {/block}
 
 {block name="content"}

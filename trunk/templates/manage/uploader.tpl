@@ -1,7 +1,7 @@
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/uploader.js"></script>
+<script type="text/javascript" src="www/js/dase/uploader.js"></script>
 {/block}
 
 {block name="title"}DASe: Create New Item{/block} 
