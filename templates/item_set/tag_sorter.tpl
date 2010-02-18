@@ -1,7 +1,7 @@
 {extends file="layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/tag_sorter.js"></script>
+<script type="text/javascript" src="www/js/dase/tag_sorter.js"></script>
 {/block}
 
 {block name="title"}Item Set{/block}

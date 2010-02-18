@@ -8,10 +8,10 @@
 {/block}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/search_sorting.js"></script>
-<script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
-<script type="text/javascript" src="www/scripts/dase/search_result.js"></script>
-<script type="text/javascript" src="www/scripts/dase/slideshow.js"></script>
+<script type="text/javascript" src="www/js/dase/search_sorting.js"></script>
+<script type="text/javascript" src="www/js/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/js/dase/search_result.js"></script>
+<script type="text/javascript" src="www/js/dase/slideshow.js"></script>
 {/block}
 
 {block name="content"}

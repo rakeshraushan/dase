@@ -27,10 +27,10 @@
 		<link rel="service" type="application/atomsvc+xml" href="service">
 		{block name="servicedoc"}{/block}
 
-		<script type="text/javascript" src="www/scripts/webtoolkit.base64.js"></script>
-		<script type="text/javascript" src="www/scripts/json2.js"></script>
-		<script type="text/javascript" src="www/scripts/dase.js"></script>
-		<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
+		<script type="text/javascript" src="www/js/webtoolkit.base64.js"></script>
+		<script type="text/javascript" src="www/js/json2.js"></script>
+		<script type="text/javascript" src="www/js/dase.js"></script>
+		<script type="text/javascript" src="www/js/dase/htmlbuilder.js"></script>
 		{block name="head"}{/block}
 
 

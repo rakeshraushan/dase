@@ -1,8 +1,8 @@
 {extends file="tools/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/htmlbuilder.js"></script>
-<script type="text/javascript" src="www/scripts/dase/demo.js"></script>
+<script type="text/javascript" src="www/js/dase/htmlbuilder.js"></script>
+<script type="text/javascript" src="www/js/dase/demo.js"></script>
 {/block}
 
 {block name="title"}DASe Tools{/block} 

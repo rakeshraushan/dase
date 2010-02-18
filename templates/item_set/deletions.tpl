@@ -3,7 +3,7 @@
 {block name="title"}Item Set{/block}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/item_set_display.js"></script>
+<script type="text/javascript" src="www/js/dase/item_set_display.js"></script>
 {/block}
 
 {block name="content"}

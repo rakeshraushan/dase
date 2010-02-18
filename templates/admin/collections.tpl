@@ -1,7 +1,7 @@
 {extends file="admin/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/admin_collections_list.js"></script>
+<script type="text/javascript" src="www/js/dase/admin_collections_list.js"></script>
 {/block}
 
 {block name="content"}

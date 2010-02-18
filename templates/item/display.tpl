@@ -19,9 +19,9 @@
 {/block}
 
 {block name="head"}
-<script type="text/javascript" src="www/scripts/dase/form.js"></script>
-<script type="text/javascript" src="www/scripts/dase/item_display.js"></script>
-<script type="text/javascript" src="www/scripts/dase/atompub.js"></script>
+<script type="text/javascript" src="www/js/dase/form.js"></script>
+<script type="text/javascript" src="www/js/dase/item_display.js"></script>
+<script type="text/javascript" src="www/js/dase/atompub.js"></script>
 {/block}
 {block name="title"}View Item{/block}
 {block name="content"}
