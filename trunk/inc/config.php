@@ -12,6 +12,9 @@ $conf['db']['table_prefix'] = '';
 //do not change or override
 $conf['app']['test'] = "dase";
 
+//force https
+$conf['app']['force_https'] = false;
+
 $conf['app']['main_title'] = "My DASe Archive";
 
 //must be apache writeable
