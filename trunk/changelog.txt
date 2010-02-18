@@ -1,3 +1,9 @@
+2010-02-18
+
+added force_https config option
+moved www/scripts to www/js
+got rid of showdown.js
+
 2010-02-14
 
 changes to the dase_user table:

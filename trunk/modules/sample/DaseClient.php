@@ -28,7 +28,7 @@ class DaseClient
 	 *
 	 */
 
-	public function __construct($collection_ascii_id,$return_php=true,$dase_url='http://dasebeta.laits.utexas.edu',$username='',$password='')
+	public function __construct($collection_ascii_id,$return_php=true,$dase_url='http://dase.laits.utexas.edu',$username='',$password='')
 	{
 		$this->dase_url = $dase_url;
 		$this->coll = $collection_ascii_id;
