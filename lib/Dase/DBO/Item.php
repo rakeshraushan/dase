@@ -64,34 +64,34 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function deleteSearchIndex()
 	{
-		$engine = Dase_SearchEngine::get($this->db,$this->config);
+		$solr = new Dase_Solr_Search($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"deleted index for " . $this->serial_number);
-		return $engine->deleteItemIndex($this);
+		return $solr->deleteItemIndex($this);
 	}
 
 	public function buildSearchIndex($commit=true)
 	{
-		$engine = Dase_SearchEngine::get($this->db,$this->config);
+		$solr = new Dase_Solr_Search($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
-		return $engine->buildItemIndex($this,$commit);
+		return $solr->buildItemIndex($this,$commit);
 	}
 
 	public function store()
 	{
-		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds = new Dase_Solr_DocStore($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"saved as document: " . $this->serial_number);
 		return $ds->storeItem($this);
 	}
 
 	public function retrieveAtomDoc($app_root,$as_feed=false)
 	{
-		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds = new Dase_Solr_DocStore($this->db,$this->config);
 		return $ds->getItem($this->getUnique(),$app_root,$as_feed);
 	}
 
 	public function retrieveJsonDoc($app_root)
 	{
-		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds = new Dase_Solr_DocStore($this->db,$this->config);
 		return $ds->getItemJson($this->getUnique(),$app_root);
 	}
 

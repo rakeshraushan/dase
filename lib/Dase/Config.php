@@ -134,17 +134,6 @@ class Dase_Config {
 		}
 	}
 
-	public function getDocStore($setting='') 
-	{
-		if ($setting) {
-			if (isset($this->conf['docstore'][$setting])) {
-				return $this->conf['docstore'][$setting];
-			}
-		} else {
-			return $this->conf['docstore'];
-		}
-	}
-
 	public function getAuth($setting='') 
 	{
 		if ($setting) {
