@@ -24,10 +24,4 @@ $conf['auth']['ppd_token'] = "ppd";
 $conf['auth']['service_token'] = "service";
 $conf['auth']['serviceuser']['test'] = 'ok';
 
-$conf['search']['engine'] = 'solr';
 $conf['search']['solr_base_url'] = 'http://www.example.com:8080/solr';
-$conf['search']['solr_version'] = '2.2';
-
-$conf['docstore']['type'] = 'solr';
-$conf['docstore']['solr_base_url'] = $conf['search']['solr_base_url'];
-$conf['docstore']['solr_version'] = $conf['search']['solr_version'];
