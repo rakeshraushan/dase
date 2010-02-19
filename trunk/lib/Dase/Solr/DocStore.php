@@ -1,26 +1,25 @@
 <?php
-Class Dase_DocStore_Solr extends Dase_DocStore
+Class Dase_Solr_DocStore 
 {
 	private $solr_base_url;
 	private $solr_update_url;
-	private $solr_version;
+	private $solr_version = '2.2';
 
 
 	function __construct($db,$config) 
 	{
 		$this->solr_base_url = $config->getSearch('solr_base_url');
 		$this->solr_update_url = $this->solr_base_url.'/update';;
-		$this->solr_version = $config->getSearch('solr_version');
 		$this->db = $db;
 		$this->config = $config;
 	}
 
 	public function storeItem($item)
 	{
-		//use search engine class
-		$engine = new Dase_SearchEngine_Solr($this->db,$this->config);
+		//use solr search
+		$solr = new Dase_Solr_Search($this->db,$this->config);
 		//always commits
-		return $engine->buildItemIndex($item);
+		return $solr->buildItemIndex($item);
 	}
 
 	public function deleteItem($item)

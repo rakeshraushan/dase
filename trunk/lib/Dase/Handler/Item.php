@@ -274,7 +274,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$solr = Dase_SearchEngine::get($this->db,$this->config);
+		$solr = new Dase_Solr_Search($this->db,$this->config);
 		$r->renderResponse($solr->getItemSolrDoc($this->item));
 	}
 
@@ -284,7 +284,7 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds = new Dase_Solr_DocStore($this->db,$this->config);
 		$r->renderResponse($ds->getSolrResponse($this->item->getUnique()));
 	}
 
@@ -301,7 +301,7 @@ class Dase_Handler_Item extends Dase_Handler
 		} else {
 			$as_feed = true;
 		}
-		$ds = Dase_DocStore::get($this->db,$this->config);
+		$ds = new Dase_Solr_DocStore($this->db,$this->config);
 		$r->renderResponse($ds->getItem($this->item->getUnique(),$r->app_root,$as_feed));
 	}
 

@@ -270,7 +270,8 @@ class Dase_Handler_Tag extends Dase_Handler
 			//do not commit
 			$item->buildSearchIndex(false);
 		}
-		Dase_SearchEngine::get($this->db,$this->config)->commit();
+		$solr = new Dase_Solr_Search($this->db,$this->config);
+		$solr->commit();
 		$r->renderRedirect('tag/'.$user->eid.'/'.$this->tag->ascii_id.'/list');
 	}
 

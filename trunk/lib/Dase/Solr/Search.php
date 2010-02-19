@@ -1,11 +1,11 @@
 <?php
-Class Dase_SearchEngine_Solr extends Dase_SearchEngine
+Class Dase_Solr_Search
 {
 	private $coll_filters = array();
 	private $max;
 	private $solr_base_url;
 	private $solr_update_url;
-	private $solr_version;
+	private $solr_version = '2.2';
 	private $start;
 	private $request;
 	public static $specialchars = array(
@@ -17,7 +17,6 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 	{
 		$this->solr_base_url = $config->getSearch('solr_base_url');
 		$this->solr_update_url = $this->solr_base_url.'/update';
-		$this->solr_version = $config->getSearch('solr_version');
 		$this->config = $config;
 		$this->db = $db; // used to scrub 
 	}
@@ -208,7 +207,6 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 		Dase_Log::debug(LOG_FILE,'SOLR SEARCH: '.$this->solr_search_url);
 		list($http_code,$res) = Dase_Http::get($this->solr_search_url,null,null);
 		if ('4' == substr($http_code,0,1) || '5' == substr($http_code,0,1)) {
-			//throw new Dase_SearchEngine_Exception('no search result returned');
 			Dase_Log::debug(LOG_FILE,'SOLR ERROR :'.$res);
 			return '<error/>';
 		}
@@ -233,7 +231,7 @@ Class Dase_SearchEngine_Solr extends Dase_SearchEngine
 
 		$reader = new XMLReader();
 		if (false === $reader->XML($this->_getSearchResults())) {
-			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR : error reading search engine xml');
 		}
 		while ($reader->read()) {
 			//get total number found
@@ -376,7 +374,7 @@ EOD;
 
 		$reader = new XMLReader();
 		if (false === $reader->XML($this->_getSearchResults())) {
-			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR : error reading search engine xml');
 		}
 		while ($reader->read()) {
 			//get entries
@@ -405,7 +403,7 @@ EOD;
 
 		$reader = new XMLReader();
 		if (false === $reader->XML($this->_getSearchResults())) {
-			throw new Dase_SearchEngine_Exception('error reading search engine xml');
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR : error reading search engine xml');
 		}
 		while ($reader->read()) {
 			//get total number found

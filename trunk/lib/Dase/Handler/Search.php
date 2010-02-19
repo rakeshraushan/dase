@@ -62,7 +62,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchAtom($r)
 	{
 		$r->checkCache();
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
@@ -76,7 +76,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchUris($r)
 	{
 		$r->checkCache();
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$r->renderResponse($search->getResultsAsUris());
 	}
@@ -84,7 +84,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchJson($r)
 	{
 		$r->checkCache();
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		if($r->get('callback')){
 			$r->renderResponse($r->get('callback').'('.$search->getResultsAsJson().');');
@@ -103,7 +103,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchItemAtom($r)
 	{
 		$r->checkCache();
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$this->max =1;
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsItemAtom();

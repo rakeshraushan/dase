@@ -272,7 +272,7 @@ class Dase_Handler_Manage extends Dase_Handler
 	{
 		$tpl = new Dase_Template($r);
 		$tpl->assign('collection',$this->collection);
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
 		if (!$latest) {
 			$latest = '0000-00-00';
@@ -288,7 +288,7 @@ class Dase_Handler_Manage extends Dase_Handler
 
 	public function postToIndexUpdate($r)
 	{
-		$search = Dase_SearchEngine::get($this->db,$this->config);
+		$search = new Dase_Solr_Search($this->db,$this->config);
 		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
 		if (!$latest) {
 			$latest = '0000-00-00';
