@@ -3,6 +3,7 @@
 added force_https config option
 moved www/scripts to www/js
 got rid of showdown.js
+moved abstract SearchEngine and DocStore classes to Solr class
 
 2010-02-14
 
