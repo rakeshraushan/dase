@@ -5,5 +5,5 @@ steps for using DASe as a lightweight framework:
 3. delete all files under lib/Dase/DBO
 4. delete all files under template
 5. set db configs in inc/local_config.php
-7. run bin/class_gen.php to create models (assuming db tables are already in place)
-8. go nuts
+6. run bin/class_gen.php to create models (assuming db tables are already in place)
+7. go nuts

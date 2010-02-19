@@ -232,7 +232,7 @@ class Dase_Atom_Feed extends Dase_Atom
 	function addItemEntryByItemUnique($db,$item_unique,$config,$app_root)
 	{
 		$dom = new DOMDocument('1.0','utf-8');
-		$ds = new Dase_Solr_DocStore($item->db,$item->config);
+		$ds = new Dase_Solr_DocStore($db,$config);
 		$xml = $ds->getItem($item_unique,$app_root);
 		if ($xml) {
 			$dom->loadXml($xml);
