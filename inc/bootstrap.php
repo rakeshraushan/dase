@@ -12,12 +12,14 @@ $config = new Dase_Config(BASE_PATH);
 $config->load('inc/config.php');
 $config->load('inc/local_config.php');
 
+/*
 if ($config->getAppSettings('force_https')) {
 	if ('on' != $_SERVER['HTTPS']) {
 		$secure_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		header("Location:$secure_url");
 	}
 }
+ */
 
 //imagemagick
 define('CONVERT',$config->getAppSettings('convert'));
