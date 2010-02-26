@@ -22,7 +22,7 @@ if (isset($argv[1])) {
 	$colls = $argv;
 }
 
-$engine = new Dase_Solr_SearchEngine($db,$config);
+$engine = new Dase_Solr_Search($db,$config);
 
 $i = 0;
 
