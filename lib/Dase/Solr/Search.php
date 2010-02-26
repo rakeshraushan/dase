@@ -196,7 +196,7 @@ Class Dase_Solr_Search
 			.'&rows='.$max
 			.'&start='.$start
 			.'&facet=true'
-			.'&facet.field=collection'
+			.'&facet.field=c'
 			.$collection_param
 			.$sort_param;
 
@@ -250,8 +250,8 @@ Class Dase_Solr_Search
 				if ('collection' == $reader->getAttribute('name')) {
 					while ($reader->read()) {
 						if ($reader->localName == "int" && $reader->nodeType == XMLReader::ELEMENT) {
-							$tally['collection_name'] = $reader->getAttribute('name');
-							$tally['coll'] = array_search($tally['collection_name'],$GLOBALS['app_data']['collections']);
+							$tally['coll'] = $reader->getAttribute('name');
+							$tally['collection_name'] = $GLOBALS['app_data']['collections'][$tally['coll']];
 							//advance reader
 							$reader->read();
 							$tally['count'] = $reader->value;
