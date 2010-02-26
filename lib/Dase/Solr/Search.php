@@ -247,7 +247,7 @@ Class Dase_Solr_Search
 			}
 			//get collection tallies
 			if ($reader->localName == "lst" && $reader->nodeType == XMLReader::ELEMENT) {
-				if ('collection' == $reader->getAttribute('name')) {
+				if ('c' == $reader->getAttribute('name')) {
 					while ($reader->read()) {
 						if ($reader->localName == "int" && $reader->nodeType == XMLReader::ELEMENT) {
 							$tally['coll'] = $reader->getAttribute('name');
