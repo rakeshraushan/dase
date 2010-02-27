@@ -158,7 +158,13 @@ Class Dase_Solr_Search
 			} else {
 				$sort = $sort.' asc';
 			}
-			$sort_param = '&sort='.urlencode($sort);
+			if (0 === strpos($sort,'_')) {
+				$sort_param = '&sort='.urlencode($sort);
+			} else {
+				//searches on the 'exact' string (non-tokenized)
+				$sort_param = '&sort=@'.urlencode($sort);
+			}
+
 			$query_string = preg_replace('/(\?|&|&amp;)sort=([^&]*)/i','',$query_string);
 		} else {
 			$sort_param = '&sort=_created+desc';
