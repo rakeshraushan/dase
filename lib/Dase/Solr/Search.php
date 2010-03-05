@@ -427,12 +427,7 @@ EOD;
 		$reader->close();
 
 		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
-		foreach ($entries as $entry) {
-			$json .= $entry.",";
-		}
-		$json .= ']}';
-
-		return $json;
+		return $json . join(',',$entries).']}';
 	}
 
 	public function getResultsAsItemAtom() 
