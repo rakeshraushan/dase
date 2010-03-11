@@ -286,12 +286,18 @@ class Dase_Http_Request
 	{
 		//cache buster deals w/ aggressive browser caching.  Not to be used on server (so normalized).
 		$query_string = preg_replace("!cache_buster=[0-9]*!i",'cache_buster=stripped',$this->query_string);
+		//allows us to pass in a ttl 
+		$query_string = preg_replace("!(&|\?)ttl=[0-9]*!i",'',$query_string);
 		Dase_Log::debug(LOG_FILE,'cache id is '. $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string);
 		return $this->method.'|'.$this->path.'|'.$this->format.'|'.$query_string;
 	}
 
 	public function checkCache($ttl=null)
 	{
+		//so you can pass in 'ttl' query param
+		if ($this->get('ttl')) {
+			$ttl = $this->get('ttl');
+		}
 		$content = $this->cache->getData($this->getCacheId(),$ttl);
 		if ($content) {
 			$this->renderResponse($content,false);
