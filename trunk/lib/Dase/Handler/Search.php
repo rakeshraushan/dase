@@ -13,13 +13,6 @@ class Dase_Handler_Search extends Dase_Handler
 
 	public function setup($r)
 	{
-		//setting $r allows app cache-ability
-		//but...breaks intermediate caching (work on that)
-		if ($r->getCookie('max')) {
-			$r->set('max',$r->getCookie('max'));
-			$r->setQueryStringParam('max',$r->getCookie('max'));
-		}
-
 		if ($r->getCookie('display')) {
 			$r->set('display',$r->getCookie('display'));
 		}
@@ -27,7 +20,17 @@ class Dase_Handler_Search extends Dase_Handler
 		if ($r->has('max')) {
 			$this->max = $r->get('max');
 		} else {
-			$this->max = MAX_ITEMS;
+			//setting $r allows app cache-ability
+			//but...breaks intermediate caching (work on that)
+			if ($r->getCookie('max')) {
+				//necessary???
+				$r->set('max',$r->getCookie('max'));
+				//for app cache:
+				$r->setQueryStringParam('max',$r->getCookie('max'));
+				$this->max = $r->getCookie('max');
+			} else {
+				$this->max = MAX_ITEMS;
+			}
 		}
 		if ($r->has('start')) {
 			$this->start = $r->get('start');
