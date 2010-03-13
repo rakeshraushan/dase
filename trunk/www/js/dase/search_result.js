@@ -5,8 +5,8 @@ Dase.pageInitUser = function(eid) {
 };
 
 Dase.recordSearchView = function(eid) {
-	pageurl = 'http://'+encodeURIComponent(location.href.replace('http://',''));
-	title = encodeURIComponent(Dase.getMeta('item-title'));
+	var pageurl = encodeURIComponent(location.href.replace(Dase.base_href,''));
+	var title = encodeURIComponent(Dase.getMeta('item-title'));
 	var content_headers = {
 		'Content-Type':'application/x-www-form-urlencoded'
 	}
