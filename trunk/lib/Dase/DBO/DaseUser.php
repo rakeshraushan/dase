@@ -356,6 +356,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				return true;
 			}
 		}
+		/** this seems wrong (too permissive!)
 		if ('write' == $auth_level) {
 			if (
 				'user' == $collection->visibility || 
@@ -364,6 +365,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 				return true;
 			}
 		}
+		 */
 		$cm = new Dase_DBO_CollectionManager($this->db); 
 		$cm->collection_ascii_id = $collection->ascii_id;
 		//todo: need to account for case here!
