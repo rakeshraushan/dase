@@ -197,8 +197,8 @@ class Dase_Handler_Item extends Dase_Handler
 	public function getMetadataJson($r)
 	{
 		$user = $r->getUser();
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'user cannot write this item');
+		if (!$user->can('read',$this->item)) {
+			$r->renderError(401,'user cannot read this item');
 		}
 		$r->renderResponse($this->item->getMetadataJson($r->app_root));
 	}
