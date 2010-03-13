@@ -608,6 +608,7 @@ EOD;
 
 	public function getItemSolrDoc($item,$wrap_in_add_tag=true)
 	{
+		//used to create an xml doc
 		$dom = new DOMDocument();
 
 		$json_doc = array();
