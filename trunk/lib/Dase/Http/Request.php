@@ -117,22 +117,21 @@ class Dase_Http_Request
 
 	public function initDefaultHandler() 
 	{
-		$default_handler = $this->config->getAppSettings('default_handler');
-
 		//for simple (single) handler
 		$handler_file = BASE_PATH.'/handler.php';
 		if (file_exists($handler_file)) {
 			include_once "$handler_file";
-			$classname = 'Dase_Handler_'.Dase_Util::camelize($default_handler);
 			//do not autoload -- want only handler.php class
-			if (class_exists($classname,false)) { 
-				$this->env['handler'] = $default_handler;
+			if (class_exists('Dase_Handler_Default',false)) { 
+				$this->env['handler'] = 'default';
 				$this->env['handler_path'] = '';
 				return;
 			} else {
 				//fall through
 			}
 		}
+
+		$default_handler = $this->config->getAppSettings('default_handler');
 
 		//when root of app is requested 
 		if (!$this->env['handler']) {
