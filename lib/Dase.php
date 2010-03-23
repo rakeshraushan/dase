@@ -12,16 +12,9 @@ class Dase
 		$GLOBALS['app_data'] = self::initGlobalData($db,$config);
 
 		$r = new Dase_Http_Request();
-		$r->checkHandler($config->getAppSettings('default_handler'));
-		$r->initUser($db,$config);
-		$r->initCache(Dase_Cache::get($config));
-		$r->initCookie($config->getAuth('token'));
-		$r->initAuth($config->getAuth());
-		$r->initPlugin($config->getCustomHandlers());
-		$r->logRequest();
+		$r->init($db,$config);
 
-		$handler = $r->getHandlerObject($db,$config);
-		$handler->dispatch($r);
+		$r->getHandlerObject()->dispatch($r);
 	}
 
 	public static function initGlobalData($db,$config)

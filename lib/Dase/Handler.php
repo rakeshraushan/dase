@@ -20,7 +20,6 @@ class Dase_Handler {
 
 	public function dispatch($r)
 	{
-		
 		//if it is a module subclass, append the module resource map
 		if (isset($this->module_resource_map)) {
 			$this->resource_map = array_merge($this->resource_map,$this->module_resource_map);
@@ -28,7 +27,7 @@ class Dase_Handler {
 
 		foreach ($this->resource_map as $uri_template => $resource) {
 			//first, translate resource map uri template to a regex
-			$uri_template = trim($r->handler.'/'.$uri_template,'/');
+			$uri_template = trim($r->handler_path.'/'.$uri_template,'/');
 			$uri_regex = $uri_template;
 
 			//skip regex template stuff if uri_template is a plain string

@@ -28,6 +28,8 @@ class Dase_Http_Request
 
 	private $auth_config;
 	private $cache;
+	private $config;
+	private $db;
 	private $default_handler;
 	private $eid_is_serviceuser;
 	private $eid_is_superuser;
@@ -36,7 +38,6 @@ class Dase_Http_Request
 
 	//members are variables 'set'
 	private $members = array();
-
 	private $null_user;
 	private $params;
 	private $serviceusers = array();
@@ -69,6 +70,7 @@ class Dase_Http_Request
 		$env['format'] = $this->getFormat();
 		$env['module'] = $this->getModule(); 
 		$env['handler'] = $this->getHandler(); 
+		$env['handler_path'] = $env['handler'];
 		$env['path'] = $this->getPath();
 		if ($env['module']) {
 			$env['module_root'] = $env['app_root'].'/modules/'.$env['module'];
@@ -79,6 +81,20 @@ class Dase_Http_Request
 		$env['content_type'] = $this->getContentType();
 		$this->env = $env;
 
+	}
+
+	public function init($db,$config)
+	{
+		$this->db = $db;
+		$this->config = $config;
+
+		$this->initDefaultHandler();
+		$this->initUser();
+		$this->initCache();
+		$this->initCookie();
+		$this->initAuth();
+		$this->initPlugin();
+		$this->logRequest();
 	}
 
 	public function __get( $var )
@@ -99,8 +115,26 @@ class Dase_Http_Request
 		}
 	}
 
-	public function checkHandler($default_handler) 
+	public function initDefaultHandler() 
 	{
+		$default_handler = $this->config->getAppSettings('default_handler');
+
+		//for simple (single) handler
+		$handler_file = BASE_PATH.'/handler.php';
+		if (file_exists($handler_file)) {
+			include_once "$handler_file";
+			$classname = 'Dase_Handler_'.Dase_Util::camelize($default_handler);
+			//do not autoload -- want only handler.php class
+			if (class_exists($classname,false)) { 
+				$this->env['handler'] = $default_handler;
+				$this->env['handler_path'] = '';
+				return;
+			} else {
+				//fall through
+			}
+		}
+
+		//when root of app is requested 
 		if (!$this->env['handler']) {
 			$this->renderRedirect($default_handler);
 		} else {
@@ -108,8 +142,9 @@ class Dase_Http_Request
 		}
 	}
 
-	public function initAuth($auth_config)
+	public function initAuth()
 	{
+		$auth_config = $this->config->getAuth();
 		$this->token = $auth_config['token'];
 		$this->ppd_token = $auth_config['ppd_token'];
 		$this->service_token = $auth_config['service_token'];
@@ -161,8 +196,9 @@ class Dase_Http_Request
 		return file_get_contents("php://input");
 	}
 
-	public function initPlugin($custom_handlers)
+	public function initPlugin()
 	{
+		$custom_handlers = $this->config->getCustomHandlers();
 		if ($this->module) { 
 			return; 
 		}
@@ -204,14 +240,14 @@ class Dase_Http_Request
 		return $classname;
 	}
 
-	public function getHandlerObject($db,$config)
+	public function getHandlerObject()
 	{
-		$classname = $this->initModule($config);
+		$classname = $this->initModule($this->config);
 		if (!$classname) {
 			$classname = 'Dase_Handler_'.Dase_Util::camelize($this->handler);
 		}
 		if (class_exists($classname,true)) {
-			return new $classname($db,$config);
+			return new $classname($this->db,$this->config);
 		} else {
 			Dase_Log::info(LOG_FILE,'no such handler class '.$classname.' redirecting');
 			$this->renderRedirect($this->default_handler);
@@ -252,8 +288,9 @@ class Dase_Http_Request
 		return $out;
 	}
 
-	public function initCookie($token)
+	public function initCookie()
 	{
+		$token = $this->config->getAuth('token');
 		$this->http_cookie = new Dase_Http_Cookie($this->app_root,$this->module,$token);
 	}
 
@@ -272,9 +309,9 @@ class Dase_Http_Request
 		$this->http_cookie->clear();
 	}
 
-	public function initCache($cache)
+	public function initCache()
 	{
-		$this->cache = $cache;
+		$this->cache = Dase_Cache::get($this->config);
 	}
 
 	public function getCache()
@@ -563,9 +600,9 @@ class Dase_Http_Request
 		}
 	}
 
-	public function initUser($db,$config)
+	public function initUser()
 	{
-		$this->null_user = Dase_User::get($db,$config);
+		$this->null_user = Dase_User::get($this->db,$this->config);
 	}
 
 	public function setUser($user)

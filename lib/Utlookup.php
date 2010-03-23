@@ -38,6 +38,8 @@ class Utlookup
 					foreach ($attributes as $label => $att) {
 						if (isset($entry_array[$i][$att])) {
 							$person[$label] = $entry_array[$i][$att][0];
+						} else {
+							$person[$label] = '';
 						}
 					}
 				}
