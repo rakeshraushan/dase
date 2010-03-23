@@ -38,6 +38,8 @@ $conf['app']['max_items'] = 30;
 
 //handler that gets invoked when APP_ROOT is requested
 //$conf['default_handler'] = 'collections';
+//n.b. if default handler class is declared in 
+//handler.php in base dir it'll be the ONLY handler
 $conf['app']['default_handler'] = 'install';
 
 //eid & admin password
