@@ -441,6 +441,7 @@ class Dase_Http_Request
 		}
 		$base = trim(dirname($this->env['script_name']),'/');
 		$path= preg_replace("!$base!",'',$path,1);
+		$path= str_replace("index.php",'',$path);
 		$path= trim($path, '/');
 		/* Remove the query_string from the URL */
 		if ( strpos($path, '?') !== FALSE ) {

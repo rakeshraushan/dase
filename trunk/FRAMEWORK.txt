@@ -8,6 +8,4 @@ steps for using DASe as a lightweight framework:
 6. in lib/Dase.php comment out line setting app_data
 7. run bin/class_gen.php to create models (assuming db tables are already in place)
 8. in order to use ONE handler for whole app: 
-	- create a file 'handler.php' in base dir
-	- declare handler class based on default handler name
-	- e.g. id default_handler is my_app, declare class Dase_Handler_MyApp
+	- create a file 'handler.php' in base dir class: Dase_Handler_Default
