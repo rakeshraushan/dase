@@ -426,7 +426,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					$v->item_id = $this->id;
 					$v->attribute_id = $att->id;
 					$v->value_text = $val_txt;
-					//note: NO duplicate detection
+					//note: duplicate detection
+					//added 4/9/2010
+					if (!$v->findOne()) {
+						$v->insert();
+					}
 					$v->insert();
 				}
 			} else {
@@ -436,8 +440,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				$v->value_text = trim($value_text);
 				$v->url = $url;
 				$v->modifier = $modifier;
-				//note: NO duplicate detection
-				$v->insert();
+				//note: duplicate detection
+				//added 4/9/2010
+				if (!$v->findOne()) {
+					$v->insert();
+				}
 				if ($index) {
 					$this->updated = date(DATE_ATOM);
 					$this->update();
