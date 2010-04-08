@@ -31,8 +31,8 @@ Dase.setTypeAtts = function(form) {
 								Dase.setTypeAtts(atts_form);
 							}
 						});
-						return false;
 					}
+					return false;
 				};
 			}
 		}
