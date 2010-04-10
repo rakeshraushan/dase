@@ -4,11 +4,11 @@
 		<base href="{$module_root}"/>
 		<title>JSON Editor</title>
 		<link rel="stylesheet" type="text/css" href="{$module_root}/css/style.css">
-		<script src="{$app_root}www/scripts/webtoolkit.base64.js"></script>
-		<script src="{$app_root}www/scripts/json2.js"></script>
-		<script src="{$app_root}www/scripts/dase.js"></script>
-		<script src="{$module_root}/scripts/JSONeditor.js"></script>
-		<script src="{$module_root}/scripts/dase_json.js"></script>
+		<script src="{$app_root}www/js/webtoolkit.base64.js"></script>
+		<script src="{$app_root}www/js/json2.js"></script>
+		<script src="{$app_root}www/js/dase.js"></script>
+		<script src="{$module_root}js/JSONeditor.js"></script>
+		<script src="{$module_root}js/dase_json.js"></script>
 	</head>
 	<body>
 		<h1 id="documentTitle">JSON Editor</h1>
