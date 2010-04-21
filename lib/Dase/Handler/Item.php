@@ -149,10 +149,8 @@ class Dase_Handler_Item extends Dase_Handler
 		if (!$user->can('read',$this->item)) {
 			$r->renderError(401,'user cannot read this item');
 		}
-		//json in solr is really for json search results
-		//use atom json for single items
-		//$r->renderResponse($this->item->asJson($r->app_root));
-		$r->renderResponse($this->item->asAtomJson($r->app_root));
+		$r->renderResponse($this->item->asJson($r->app_root));
+		//$r->renderResponse($this->item->asAtomJson($r->app_root));
 	}
 
 	public function getItemAtom($r)
