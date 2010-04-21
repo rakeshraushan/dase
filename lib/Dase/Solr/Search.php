@@ -716,6 +716,7 @@ EOD;
 		$json_doc['links']['metadata'] =  '/item/'.$item->getUnique().'/metadata';
 		$json_doc['links']['item_type'] =  '/item/'.$item->getUnique().'/item_type';
 		$json_doc['links']['media'] =  '/item/'.$item->getUnique().'/media';
+		$json_doc['links']['edit-media'] = '/media/'.$item->getUnique();
 		$json_doc['links']['content'] =  '/item/'.$item->getUnique().'/content';
 		$json_doc['links']['comments'] =  '/item/'.$item->getUnique().'/comments';
 		$json_doc['links']['status'] =  '/item/'.$item->getUnique().'/status';
