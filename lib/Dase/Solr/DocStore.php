@@ -96,6 +96,7 @@ Class Dase_Solr_DocStore
 			}
 		}
 		$reader->close();
+		$json = str_replace('_app_root','app_root',$json);
 		$json = str_replace('{APP_ROOT}',$app_root,$json);
 		return $json;
 	}

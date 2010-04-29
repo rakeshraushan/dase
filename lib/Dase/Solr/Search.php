@@ -626,6 +626,9 @@ EOD;
 		$id->appendChild($dom->createTextNode($item->p_collection_ascii_id.'/'.$item->serial_number));
 		$id->setAttribute('name','_id');
 
+		//for transformation later
+		$json_doc['_app_root'] = '{APP_ROOT}'; 
+
 		$json_doc['_id'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
 
 		$updated = $doc->appendChild($dom->createElement('field'));
@@ -713,13 +716,19 @@ EOD;
 		}
 
 		$json_doc['links'] = array();
-		$json_doc['links']['metadata'] =  '/item/'.$item->getUnique().'/metadata';
+		$json_doc['links']['comments'] =  '/item/'.$item->getUnique().'/comments';
+		$json_doc['links']['content'] =  '/item/'.$item->getUnique().'/content';
+		$json_doc['links']['edit'] = '/media/'.$item->getUnique().'.json';
+		$json_doc['links']['edit-media'] = '/media/'.$item->getUnique();
 		$json_doc['links']['item_type'] =  '/item/'.$item->getUnique().'/item_type';
 		$json_doc['links']['media'] =  '/item/'.$item->getUnique().'/media';
-		$json_doc['links']['edit-media'] = '/media/'.$item->getUnique();
-		$json_doc['links']['content'] =  '/item/'.$item->getUnique().'/content';
-		$json_doc['links']['comments'] =  '/item/'.$item->getUnique().'/comments';
+		$json_doc['links']['metadata'] =  '/item/'.$item->getUnique().'/metadata';
 		$json_doc['links']['status'] =  '/item/'.$item->getUnique().'/status';
+
+		$json_doc['alternate'] = array();
+		$json_doc['alternate']['html'] =  '/item/'.$item->getUnique().'.html';
+		$json_doc['alternate']['atom'] =  '/item/'.$item->getUnique().'.atom';
+		$json_doc['alternate']['json'] =  '/item/'.$item->getUnique().'.json';
 
 		$json_doc['metadata'] = array();
 
