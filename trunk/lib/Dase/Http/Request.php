@@ -567,6 +567,7 @@ class Dase_Http_Request
 					//like search?q=horse&q=red & green
 					//we still have $k left over from last list ($k,$v) = explode... 
 					if (isset($k)) {
+						//gets the last one
 						$last = array_pop($url_params[$k]);
 						$url_params[$k][] = $last.'&'.$pair;
 					}

@@ -155,10 +155,11 @@ Dase.pageReload = function(msg) {
 	var curr = window.location.href;
 	if (msg) {
 		parts = curr.split('?');
-		curr = parts[0]+'?msg='+msg;
+		//will ge repeated on multiple reloads
 		if (parts[1]) {
-			var part = parts[1].replace(/msg=[^&]*&?/,'');
-			curr += '&'+part;
+			curr += '&ttl=1&msg='+msg;
+		} else {
+			curr += '?msg='+msg;
 		}
 	} 
 	window.location.href = curr;

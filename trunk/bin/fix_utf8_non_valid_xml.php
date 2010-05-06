@@ -5,9 +5,9 @@ include 'config.php';
 //this script replaces characters which are valid utf8
 //but invalid in XML (there are just a few)
 
-$ascii_id = 'test';
+$ascii_id = 'vrc';
 
-$c = Dase_DBO_Collection::get($ascii_id);
+$c = Dase_DBO_Collection::get($db,$ascii_id);
 
 foreach($c->getItems() as $item) {
 	foreach ($item->getValues() as $value) {

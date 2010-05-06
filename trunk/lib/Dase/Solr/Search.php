@@ -449,7 +449,7 @@ EOD;
 		$updated = date(DATE_ATOM);
 
 		//todo: probably the q param
-		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
+		preg_match('/.*(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
 
 		//solr escaped " fix
 		$query = stripslashes(htmlspecialchars($matches[2]));
