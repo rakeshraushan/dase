@@ -213,17 +213,12 @@ Dase.initItemStatusForm = function(form) {
 	form.onsubmit = function() {
 		Dase.$('updateMsg').innerHTML = "updating status...";
 		Dase.getJSON(edit_url,function(json){
-			atom_json = json;
-			var target_scheme = 'http://daseproject.org/category/status';
-			for (var i=0;i<atom_json.category.length;i++) {
-				var cat = atom_json.category[i];
-				if (cat.scheme == target_scheme) {
-					atom_json.category[i].term = form.status.options[form.status.selectedIndex].value;
-				}
-			}
-			Dase.atompub.putJson(Dase.atompub.getEditLink(),atom_json,function(resp) {
-				Dase.pageReload(resp+' ('+Dase.atompub.getDate()+')');
-			},Dase.user.eid,Dase.user.htpasswd);
+			var status_link = json.app_root+json.links.status;
+			var category = form.status.options[form.status.selectedIndex].value;
+			Dase.ajax(status_link,'PUT',function(resp) {
+				//Dase.pageReload(resp+' '+Dase.atompub.getDate());
+				Dase.pageReload('status updated');
+			},category,Dase.user.eid,Dase.user.htpasswd);
 		},Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	};

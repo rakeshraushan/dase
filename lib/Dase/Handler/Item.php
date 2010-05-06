@@ -262,6 +262,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(406,'not an acceptable status string');
 		}
 		$this->item->update();
+		$this->item->buildSearchIndex();
 		$r->renderResponse('status updated');
 	}
 
