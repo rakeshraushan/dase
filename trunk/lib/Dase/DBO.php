@@ -207,7 +207,7 @@ class Dase_DBO implements IteratorAggregate
 		return false;
 	}
 
-	function findAll()
+	function findAll($return_empty_array=false)
 	{
 		$set = array();
 		$iter = $this->find();
@@ -217,6 +217,9 @@ class Dase_DBO implements IteratorAggregate
 		if (count($set)) {
 			return $set;
 		} else {
+			if ($return_empty_array) {
+				return $set;
+			}
 			return false;
 		}
 	}
