@@ -258,6 +258,11 @@ label {
 	font-weight: bold;
 }
 
+form a.checked {
+	color: #900;
+}
+
+
 div#browseColumns a#toggleAttributeEditForm {
 	font-size: .9em;
 	font-weight: normal;

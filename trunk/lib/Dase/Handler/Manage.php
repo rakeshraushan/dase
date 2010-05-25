@@ -12,7 +12,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		'{collection_ascii_id}/attributes' => 'attributes',
 		'{collection_ascii_id}/item_types' => 'item_types',
 		'{collection_ascii_id}/index_update' => 'index_update',
-		'{collection_ascii_id}/diagnostics' => 'diagnostics',
+		'{collection_ascii_id}/delete_items' => 'delete_items',
 		'{collection_ascii_id}/item_type_form' => 'item_type_form',
 		'{collection_ascii_id}/item_type/{type_ascii_id}' => 'item_type',
 		'{collection_ascii_id}/item_type/{type_ascii_id}/attributes' => 'item_type_attributes',
@@ -268,34 +268,20 @@ class Dase_Handler_Manage extends Dase_Handler
 		$r->renderResponse($tpl->fetch('manage/item_type_form.tpl'));
 	}
 
-	public function getDiagnostics($r)
+	public function getDeleteItems($r)
 	{
 		$tpl = new Dase_Template($r);
+		$items = new Dase_DBO_Item($this->db);
+		$items->collection_id = $this->collection->id;
+		$items->status = 'delete';
+		$doomed = array();
+		foreach ($items->find() as $item) {
+			$doomed[] = $item->getUrl($r->app_root);
+		}
 		$tpl->assign('collection',$this->collection);
-		$search = new Dase_Solr_Search($this->db,$this->config);
-		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
-		if (!$latest) {
-			$latest = '0000-00-00';
-		}
+		$tpl->assign('doomed',$doomed);
+		$r->renderResponse($tpl->fetch('manage/delete_items.tpl'));
 
-		$latest_adjusted = date(DATE_ATOM,strtotime($latest)-30);
-		$not_yet = $this->collection->getItemsUpdatedSince($latest);
-		$unindexed_count = count($not_yet);
-		$tpl->assign('unindexed_count',$unindexed_count);
-		$tpl->assign('latest_adjusted',$latest_adjusted);
-		$r->renderResponse($tpl->fetch('manage/diagnostics.tpl'));
-	}
-
-	public function postToIndexUpdate($r)
-	{
-		$search = new Dase_Solr_Search($this->db,$this->config);
-		$latest = $search->getLatestTimestamp($this->collection->ascii_id);
-		if (!$latest) {
-			$latest = '0000-00-00';
-		}
-		$count_indexed = $this->collection->buildSearchIndex($latest);
-		$params['msg'] = "$count_indexed items were updated";
-		$r->renderRedirect('manage/'.$this->collection->ascii_id.'/diagnostics',$params);
 	}
 
 	public function getItemType($r)
