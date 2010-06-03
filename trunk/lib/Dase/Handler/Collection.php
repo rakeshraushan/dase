@@ -697,9 +697,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		$sernum = Dase_Util::makeSerialNumber($slug);
 		try {
 			$item = $this->collection->createNewItem($sernum,$user->eid);
-			$title = $slug ? $slug : $item->serial_number;
-			$item->setValue('title',$title);
-			$item->setContent($json,$user->eid,'application/json');
+			$item_data = Dase_Json::toPhp($json);
+			$metadata = $item_data['metadata'];
+			foreach ($metadata as $key => $vals) {
+				foreach ($vals as $val) {
+					$item->setValue($key,$val);
+				}
+			}
 			$item->buildSearchIndex();
 			header("HTTP/1.1 201 Created");
 			header("Content-Type: application/atom+xml;type=entry;charset='utf-8'");

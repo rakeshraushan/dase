@@ -295,6 +295,13 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $current;
 	}
 
+	function getValues() 
+	{
+		$vals = new Dase_DBO_Value($this->db);
+		$vals->attribute_id = $this->id;
+		return $vals->findAll(1);
+	}
+
 	function getItemTypes()
 	{
 		$item_types = array();
