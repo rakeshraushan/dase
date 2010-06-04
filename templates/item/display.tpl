@@ -85,9 +85,11 @@
 				<div class="controlsContainer">
 					<div id="pageReloader" class="hide"><a href="#" id="pageReloaderLink">close [X]</a></div>
 					<div id="adminPageControls" class="hide">
+						<!--
 						<a href="{$app_root}tools/demo?url={$item->entry->editLink|escape:'url'}" 
 							id="editLink">poster</a>
 						|
+						-->
 						<a href="{$item->entry->metadataLink}" 
 							id="editMetadataLink">edit</a>
 						|
@@ -99,9 +101,11 @@
 						<a href="{$item->entry->attributesLink}" 
 							id="addMetadataLink">add metadata</a>
 						|
+						<!--
 						<a href="{$item->entry->editContentLink}" 
 							id="addContentLink">edit content</a>
 						|
+						-->
 						<a href="collection/{$item->collectionAsciiId}/item_types" 
 							id="setItemTypeLink">set item type</a>
 						|
