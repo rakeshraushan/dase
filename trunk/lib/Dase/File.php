@@ -253,6 +253,7 @@ abstract class Dase_File
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'thumbnail';
+		$media_file->file_size = filesize($target);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
@@ -275,6 +276,7 @@ abstract class Dase_File
 		$media_file->height = 80;
 		$media_file->mime_type = 'image/jpeg';
 		$media_file->size = 'viewitem';
+		$media_file->file_size = filesize($target);
 		$media_file->p_collection_ascii_id = $collection->ascii_id;
 		$media_file->p_serial_number = $item->serial_number;
 		$media_file->insert();
