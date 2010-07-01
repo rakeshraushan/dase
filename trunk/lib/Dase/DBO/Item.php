@@ -354,6 +354,22 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
+	function removeKeyval($att_ascii_id,$value_text,$eid)
+	{
+		$c = $this->getCollection();
+		$att = Dase_DBO_Attribute::get($this->db,$c->ascii_id,$att_ascii_id);
+		if ($att) {
+			$val = new Dase_DBO_Value($this->db);
+			$val->item_id = $this->id;
+			$val->attribute_id = $att->id;
+			$val->value_text = $value_text;
+			if ($val->findOne()) {
+				$this->removeMetadata($val->id,$eid);
+				return true;
+			}
+		}
+	}
+
 	function removeMetadata($value_id,$eid,$index=true)
 	{
 		$v = new Dase_DBO_Value($this->db);

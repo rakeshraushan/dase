@@ -412,6 +412,10 @@ div#adminStatusControls {
 	margin-bottom: 10px;
 }
 
+#ajaxFormHolder form {
+	margin-bottom: 10px;
+}
+
 #updateMsg {
 	color: #00c;
 	font-weight: bold;

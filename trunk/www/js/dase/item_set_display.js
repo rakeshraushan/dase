@@ -1,11 +1,27 @@
 Dase.pageInit = function() {
 	Dase.initSlideshowLink();
 	Dase.initBulkEditLink();
+	Dase.getItemUniques();
 	if (Dase.initSearchSorting) {
 		Dase.initSearchSorting();
 	}
 //	Dase.initZoomer();
 }
+
+Dase.getItemUniques = function() {
+	Dase.set_uniques = [];
+	var itemSet =Dase.$('itemSet');
+	if (itemSet) {
+		var set = itemSet.getElementsByTagName('input');
+		for (var i=0;i<set.length;i++) {
+			if ('item_unique[]' == set[i].getAttribute('name')) {
+				var uniq = set[i].getAttribute('value');
+				Dase.set_uniques[Dase.set_uniques.length] = uniq;
+			}
+		}
+	}
+};
+
 
 Dase.initBulkEditLink = function() {
 	var belink = Dase.$('bulkEditor');
@@ -16,36 +32,93 @@ Dase.initBulkEditLink = function() {
 		if (Dase.toggle(mform)) {
 			mform.innerHTML = '<h1 class="loading">Loading...</h1>';
 			Dase.getJSON(this.href, function(atts){
-			h = new Dase.htmlbuilder;
-			h.add('h1',null,'Add Metadata');
-			var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
-			var sel = form.add('select',{'name':'att_ascii_id'});
-			sel.add('option',{'value':''},'select an attribute');
-			for (var i=0;i<atts.length;i++) {
-				var att = atts[i];
-				sel.add('option',{'value':att.ascii_id},att.attribute_name);
-			}
-			h.add('div',{'id':'addMetadataFormTarget'});
-			//test....
-			h.add('h1',null,'Bulk Set Status');
-			var href = Dase.getLinkByRel('set_item_status');
-			var form = h.add('form',{'action':href,'method':'post'});
-			var sel = form.add('select',{'name':'status'});
-			sel.add('option',{'value':''},'select status');
-			sel.add('option',{'value':'public'},'public');
-			sel.add('option',{'value':'draft'},'draft');
-			sel.add('option',{'value':'delete'},'delete');
-			sel.add('option',{'value':'archive'},'archive');
-			var button = form.add('input',{'type':'submit','value':'set status'});
-			//...end test
-			h.attach(mform);
-			var getForm = Dase.$('getInputForm');
-			Dase.initGetInputForm(getForm);
-		},null,'sort=attribute_name');
-	}
-	return  false;
+				h = new Dase.htmlbuilder;
+				h.add('h1',null,'Add Metadata');
+				var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
+				var sel = form.add('select',{'name':'att_ascii_id'});
+				sel.add('option',{'value':''},'select an attribute');
+				for (var i=0;i<atts.length;i++) {
+					var att = atts[i];
+					sel.add('option',{'value':att.ascii_id},att.attribute_name);
+				}
+				h.add('div',{'id':'addMetadataFormTarget'});
+				//test....
+				h.add('h1',null,'Bulk Set Status');
+				var href = Dase.getLinkByRel('set_item_status');
+				var form = h.add('form',{'action':href,'method':'post'});
+				var sel = form.add('select',{'name':'status'});
+				sel.add('option',{'value':''},'select status');
+				sel.add('option',{'value':'public'},'public');
+				sel.add('option',{'value':'draft'},'draft');
+				sel.add('option',{'value':'delete'},'delete');
+				sel.add('option',{'value':'archive'},'archive');
+				var button = form.add('input',{'type':'submit','value':'set status'});
+				//...end test
+				//h.attach(mform);
+				//var getForm = Dase.$('getInputForm');
+				//Dase.initGetInputForm(getForm);
+
+				//bulk delete common
+				h.add('div',{'id':'bulkDeleteAttVals'});
+				h.add('h1',null,'Bulk Delete Common Metadata');
+				var form = h.add('form',{'action':href,'method':'post','id':'bulk_delete_common'});
+				var sel = form.add('select',{'name':'keyval','id':'common_kv'});
+				sel.add('option',{'value':''},'select metadata to delete');
+				var button = form.add('input',{'type':'submit','value':'delete metadata'});
+
+
+				//setup
+				h.attach(mform);
+				var getForm = Dase.$('getInputForm');
+				Dase.initGetInputForm(getForm);
+
+				var bulkDeleteForm = Dase.$('bulkDeleteAttVals');
+				Dase.initBulkDeleteForm(bulkDeleteForm);
+
+			},null,'sort=attribute_name');
+		}
+		return  false;
+	};
 };
-}
+
+Dase.initBulkDeleteForm = function(form) {
+	var url = Dase.getLinkByRel('common_keyvals');
+	Dase.getJSON(url,function(resp) {
+		h = new Dase.htmlbuilder;
+		h.add('option',null,'select an attribute/value pair');
+		for (n in resp) {
+			h.add('option',null,n);
+		}
+		h.attach(Dase.$('common_kv'));
+		var form = Dase.$('bulk_delete_common');
+		form.onsubmit = function() {
+			var kv = this.keyval.options[this.keyval.selectedIndex].value;
+			if (confirm('are you sure you wish to delete\n\n'+kv+'\n\nin all of all items in this set?')) {
+				var doomed = JSON.stringify(resp[kv]);
+				Dase.deleteKeyvalFromSetItems(doomed);
+			}
+			return false;
+		};
+	});
+};
+
+Dase.deleteKeyvalFromSetItems = function(doomed) {
+	var msg = Dase.$('ajaxMsg');
+	msg.innerHTML = 'updating '+Dase.set_uniques.length+" items";
+	Dase.toggle(msg);
+	for (k in Dase.set_uniques) {
+		var uniq = Dase.set_uniques[k];
+		var url = Dase.base_href+'item/'+uniq+'/keyval_remover';
+		Dase.ajax(url,'POST',
+		function(resp) { 
+			if (1 == Dase.set_uniques.length-k) {
+				Dase.pageReload();
+			}
+		},doomed,null,null,null,function(resp) {
+			//alert('error '+resp);
+		});
+	}
+};
 
 Dase.initGetInputForm = function(form) {
 	coll = Dase.$('collectionAsciiId').innerHTML;
@@ -66,7 +139,7 @@ Dase.initGetInputForm = function(form) {
 	});
 	return false;
 }
-}
+};
 
 Dase.getInputForm = function(resp) {
 	var vals = resp.values;

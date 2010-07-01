@@ -15,6 +15,8 @@ class Dase_Handler_Item extends Dase_Handler
 		//used for get and post
 		//also atom categories PUT
 		'{collection_ascii_id}/{serial_number}/metadata' => 'metadata',
+		//used (w/ POST) to delete a key-val pair
+		'{collection_ascii_id}/{serial_number}/keyval_remover' => 'keyval_remover',
 		//used for put and delete
 		'{collection_ascii_id}/{serial_number}/metadata/title' => 'title',
 		'{collection_ascii_id}/{serial_number}/metadata/links' => 'metadata_links',
@@ -40,6 +42,22 @@ class Dase_Handler_Item extends Dase_Handler
 
 		//all auth happens in individual methods
 	}	
+
+	public function postToKeyvalRemover($r) {
+		//cookie user, since not really a web service
+		$user = $r->getUser();
+		$keyval = trim($r->getBody());
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		$set = Dase_Json::toPhp($keyval);
+		$att_ascii = $set[0];
+		$value_text = $set[1];
+		if ($this->item->removeKeyval($att_ascii,$value_text,$user->eid)) {
+			$r->renderResponse('deleted '.$keyval);
+		}
+		$r->renderResponse('could not delete '.$keyval);
+	}
 
 	public function getInputTemplate($r) 
 	{

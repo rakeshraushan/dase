@@ -17,6 +17,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		'{eid}/{tag_ascii_id}/grid' => 'tag_grid',
 		'{eid}/{tag_ascii_id}/annotate' => 'tag_annotate',
 		'{eid}/{tag_ascii_id}/item_uniques' => 'item_uniques',
+		'{eid}/{tag_ascii_id}/common_keyvals' => 'common_keyvals',
 		'{eid}/{tag_ascii_id}/sorter' => 'tag_sorter',
 		'{eid}/{tag_ascii_id}/expunger' => 'tag_expunger',
 		//for set delete:
@@ -106,6 +107,35 @@ class Dase_Handler_Tag extends Dase_Handler
 		} else {
 			$r->renderResponse($this->tag->asAtom($r->app_root));
 		}
+	}
+
+	public function getCommonKeyvalsJson($r) 
+	{
+		$set = array();
+		$common = array();
+		foreach ($this->tag->getTagItems() as $ti) {
+			$item = $ti->getItem();
+			if (!isset($set[$item->serial_number])) {
+				$set[$item->serial_number] = array();
+			}
+			$meta = $item->getMetadata();
+			foreach ($meta as $m) {
+				$set[$item->serial_number][$m['attribute_name'].' : '.$m['value_text']] = array( $m['ascii_id'],$m['value_text'] );
+			}
+		$last = $set[$item->serial_number];
+		}
+		//foreach keyval in the last item
+		foreach ($last as $ascii_plus_val => $keyval) {
+			$common[$ascii_plus_val] = $keyval;
+
+			//iterate through all items checking for same keyval
+			foreach ($set as $sernum => $metas) {
+				if (!isset($metas[$ascii_plus_val])) {
+					unset($common[$ascii_plus_val]);
+				}
+			}
+		}
+		$r->renderResponse(Dase_Json::get($common));
 	}
 
 	public function getAuthorizedAtom($r)

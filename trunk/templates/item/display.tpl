@@ -130,8 +130,14 @@
 					{foreach item=set key=att_ascii_id from=$item->entry->metadata}
 					<dt>{$set.attribute_name}</dt>
 					{foreach item=value from=$set.values}
-					<dd><a 
-						href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a></dd>
+					<dd>
+					{if 'content' == $att_ascii_id}
+					<!-- call your att 'content' and you get markdown :-) -->
+					<a href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text|nl2br|markdown} {if $value.mod}({$value.mod}){/if}</a>
+					{else}
+					<a href="search?c={$item->collectionAsciiId}&amp;q={$att_ascii_id}:&quot;{$value.text|escape:'url'}&quot;">{$value.text} {if $value.mod}({$value.mod}){/if}</a>
+					{/if}
+					</dd>
 					{/foreach}
 					{/foreach}
 				</dl>
