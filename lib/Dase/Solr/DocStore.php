@@ -104,6 +104,7 @@ Class Dase_Solr_DocStore
 	//auto-generates and inserts in store if item missing
 	public function getItem($item_unique,$app_root,$as_feed=false,$restore=true)
 	{
+		$timestamp = '';
 		$entry = '';
 		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
 		Dase_Log::debug(LOG_FILE,'SOLR ITEM RETRIEVE: '.$url);

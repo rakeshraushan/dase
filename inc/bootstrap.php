@@ -23,13 +23,9 @@ define('DEBUG_LOG',$config->getLogDir().'/debug.log');
 //log level
 define('LOG_LEVEL',$config->getAppSettings('log_level'));
 
-Dase_Log::info(DEBUG_LOG,'in bootstrap');
 if ($config->getAppSettings('force_https')) {
-	Dase_Log::info(DEBUG_LOG,'force https is on');
 	if ('on' != $_SERVER['HTTPS']) {
-		Dase_Log::info(DEBUG_LOG,'server https is NOT on');
 		$secure_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		Dase_Log::info(DEBUG_LOG,'301ing to '.$secure_url);
 		header("Location:$secure_url");
 	}
 }
