@@ -34,7 +34,7 @@ Dase.initBulkEditLink = function() {
 			Dase.getJSON(this.href, function(atts){
 				h = new Dase.htmlbuilder;
 				h.add('h1',null,'Add Metadata');
-				var form = h.add('form',{'action':'sss','method':'get','id':'getInputForm'});
+				var form = h.add('form',{'action':'auto','method':'get','id':'getInputForm'});
 				var sel = form.add('select',{'name':'att_ascii_id'});
 				sel.add('option',{'value':''},'select an attribute');
 				for (var i=0;i<atts.length;i++) {
@@ -184,10 +184,12 @@ Dase.getInputForm = function(resp) {
 		form.add('input',{'type':'text','name':'value','disabled':'disabled'});
 		break;
 		case 'text_with_menu':
-		form.add('input',{'type':'text','name':'blank','id':'autofill_target'});
-		var sel = form.add('p').add('select',{'name':'value','id':'select_autofill'});
+		form.add('input',{'type':'text','name':'value','id':'autofill_target'});
+		var sel = form.add('p').add('select',{'name':'value_source','id':'select_autofill'});
 		sel.add('option',{'value':''},'select one:');
-		for (var i=0;i<vals.length;i++) {
+		//not sure why this broke??
+		//for (var i=0;i<vals.length;i++) {
+		for (var i in vals) {
 			var v = vals[i];
 			sel.add('option',{'value':v},v);
 		}

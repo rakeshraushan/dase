@@ -419,6 +419,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function setValue($att_ascii_id,$value_text,$url='',$modifier='',$index=false)
 	{
+		if (!trim($att_ascii_id) || !trim($value_text)) {
+			return false;
+		}
 		//todo: this needs work -- no need to 'new' an att
 		//todo: set value revision history as well
 		$att = new Dase_DBO_Attribute($this->db);
