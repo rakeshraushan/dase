@@ -115,14 +115,16 @@ class Dase_Handler_Tag extends Dase_Handler
 		$common = array();
 		foreach ($this->tag->getTagItems() as $ti) {
 			$item = $ti->getItem();
-			if (!isset($set[$item->serial_number])) {
-				$set[$item->serial_number] = array();
+			if ($item) {
+				if (!isset($set[$item->serial_number])) {
+					$set[$item->serial_number] = array();
+				}
+				$meta = $item->getMetadata();
+				foreach ($meta as $m) {
+					$set[$item->serial_number][$m['attribute_name'].' : '.$m['value_text']] = array( $m['ascii_id'],$m['value_text'] );
+				}
+				$last = $set[$item->serial_number];
 			}
-			$meta = $item->getMetadata();
-			foreach ($meta as $m) {
-				$set[$item->serial_number][$m['attribute_name'].' : '.$m['value_text']] = array( $m['ascii_id'],$m['value_text'] );
-			}
-		$last = $set[$item->serial_number];
 		}
 		//foreach keyval in the last item
 		foreach ($last as $ascii_plus_val => $keyval) {
@@ -294,11 +296,13 @@ class Dase_Handler_Tag extends Dase_Handler
 		$att_ascii = $r->get('ascii_id');
 		foreach ($this->tag->getTagItems() as $tag_item) {
 			$item = $tag_item->getItem();
-			foreach ($r->get('value',true) as $val) {
-				$item->setValue($att_ascii,$val);
+			if ($item) {
+				foreach ($r->get('value',true) as $val) {
+					$item->setValue($att_ascii,$val);
+				}
+				//do not commit
+				$item->buildSearchIndex(false);
 			}
-			//do not commit
-			$item->buildSearchIndex(false);
 		}
 		$solr = new Dase_Solr_Search($this->db,$this->config);
 		$solr->commit();

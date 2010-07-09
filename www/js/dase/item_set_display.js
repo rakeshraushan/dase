@@ -42,7 +42,8 @@ Dase.initBulkEditLink = function() {
 					sel.add('option',{'value':att.ascii_id},att.attribute_name);
 				}
 				h.add('div',{'id':'addMetadataFormTarget'});
-				//test....
+
+				//bulk set status
 				h.add('h1',null,'Bulk Set Status');
 				var href = Dase.getLinkByRel('set_item_status');
 				var form = h.add('form',{'action':href,'method':'post'});
@@ -53,17 +54,13 @@ Dase.initBulkEditLink = function() {
 				sel.add('option',{'value':'delete'},'delete');
 				sel.add('option',{'value':'archive'},'archive');
 				var button = form.add('input',{'type':'submit','value':'set status'});
-				//...end test
-				//h.attach(mform);
-				//var getForm = Dase.$('getInputForm');
-				//Dase.initGetInputForm(getForm);
 
 				//bulk delete common
 				h.add('div',{'id':'bulkDeleteAttVals'});
 				h.add('h1',null,'Bulk Delete Common Metadata');
 				var form = h.add('form',{'action':href,'method':'post','id':'bulk_delete_common'});
 				var sel = form.add('select',{'name':'keyval','id':'common_kv'});
-				sel.add('option',{'value':''},'select metadata to delete');
+				sel.add('option',{'value':''},'retrieving data...');
 				var button = form.add('input',{'type':'submit','value':'delete metadata'});
 
 
@@ -105,16 +102,22 @@ Dase.initBulkDeleteForm = function(form) {
 Dase.deleteKeyvalFromSetItems = function(doomed) {
 	var msg = Dase.$('ajaxMsg');
 	msg.innerHTML = 'updating '+Dase.set_uniques.length+" items";
+	//msg.innerHTML = '<span id="processing_count"></span> items to process';
 	Dase.toggle(msg);
+	//Dase.countdown('processing_count',Dase.set_uniques.length,300);
+	Dase.ajaxResponses = 0;
 	for (k in Dase.set_uniques) {
 		var uniq = Dase.set_uniques[k];
 		var url = Dase.base_href+'item/'+uniq+'/keyval_remover';
 		Dase.ajax(url,'POST',
 		function(resp) { 
-			if (1 == Dase.set_uniques.length-k) {
+			Dase.ajaxResponses += 1;
+			msg.innerHTML = 'processed '+Dase.ajaxResponses+' items';
+			if (Dase.ajaxResponses == Dase.set_uniques.length) {
 				Dase.pageReload();
 			}
 		},doomed,null,null,null,function(resp) {
+			Dase.ajaxResponses += 1;
 			//alert('error '+resp);
 		});
 	}
@@ -130,12 +133,42 @@ Dase.initGetInputForm = function(form) {
 			resp.html_input_type = 'text';
 		}
 		Dase.$('addMetadataFormTarget').innerHTML = Dase.getInputForm(resp);
+		//for dynamic quick menu
 		var select_autofill = Dase.$('select_autofill');
 		if  (select_autofill) {
 			select_autofill.onchange = function() {
 				Dase.$('autofill_target').value = this.options[this.selectedIndex].value;
 			}
 		}
+		//using jQuery for its form serialization function
+		//Dase.$('#addMetadataForm').onsubmit = null;
+		jQuery('#addMetadataForm').submit(function() {
+			var msg = Dase.$('ajaxMsg');
+			msg.innerHTML = 'updating '+Dase.set_uniques.length+" items";
+			Dase.toggle(msg);
+			//Dase.countdown('processing_count',Dase.set_uniques.length,300);
+			var data = jQuery(this).serialize();
+			var content_headers = {
+				'Content-Type':'application/x-www-form-urlencoded'
+			}
+			Dase.ajaxResponses = 0;
+			for (k in Dase.set_uniques) {
+				var uniq = Dase.set_uniques[k];
+				var url = Dase.base_href+'item/'+uniq+'/metadata';
+				Dase.ajax(url,'POST',
+				function(resp) { 
+					Dase.ajaxResponses += 1;
+					msg.innerHTML = 'processed '+Dase.ajaxResponses+' items';
+					if (Dase.ajaxResponses == Dase.set_uniques.length) {
+						Dase.pageReload();
+					}
+				},data,null,null,content_headers,function(resp) {
+					Dase.ajaxResponses += 1;
+					//alert('error '+resp);
+				});
+			}
+			return false;
+		});
 	});
 	return false;
 }
@@ -143,8 +176,9 @@ Dase.initGetInputForm = function(form) {
 
 Dase.getInputForm = function(resp) {
 	var vals = resp.values;
-	var form = new Dase.htmlbuilder('form',{'method':'post'});
-	form.set('action','tag/'+resp.eid_ascii+'/metadata');
+	var form = new Dase.htmlbuilder('form',{'method':'get','id':'addMetadataForm'});
+	//posts metadata to tag
+	form.set('action','tag/'+resp.eid_ascii);
 	form.add('input',{'type':'hidden','name':'ascii_id','value':resp.ascii_id});
 	switch(resp.html_input_type) {
 		case 'text':

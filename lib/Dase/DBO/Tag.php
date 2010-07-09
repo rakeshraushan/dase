@@ -338,6 +338,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 		//todo: compat (but handy anyway)
 		$item = Dase_DBO_Item::get($this->db,$coll,$sernum);
+		if (!$item) { return; }
 		$tag_item->item_id = $item->id;
 
 		$tag_item->p_collection_ascii_id = $coll;
