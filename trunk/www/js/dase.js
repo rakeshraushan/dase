@@ -151,6 +151,15 @@ Dase.highlight = function(target,time,cname) {
 	},time);
 }
 
+Dase.countdown = function(element_id,num,interval) {
+	if (!interval) { interval = 800; }
+function show(j) { return (function(){ Dase.$(element_id).innerHTML=num-j; })};
+for (var i = 0; i <= num; i += 1) {
+	var ref = show(i);
+	setTimeout(ref,i*interval);
+}
+};
+
 Dase.pageReload = function(msg) {
 	var curr = window.location.href;
 	if (msg) {

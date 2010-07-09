@@ -1,6 +1,8 @@
 {extends file="layout.tpl"}
 
 {block name="head"}
+<script type="text/javascript" src="www/js/jquery.js"></script>
+<script type="text/javascript" src="www/js/jquery-ui.js"></script>
 <script type="text/javascript" src="www/js/dase/item_set_display.js"></script>
 <script type="text/javascript" src="www/js/dase/slideshow.js"></script>
 {/block}
