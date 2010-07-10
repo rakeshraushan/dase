@@ -10,6 +10,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
 		'{collection_ascii_id}/ping' => 'ping',
+		'{collection_ascii_id}/profile' => 'profile',
 		'{collection_ascii_id}/search' => 'search',
 		'{collection_ascii_id}/search/item' => 'search_item',
 		'{collection_ascii_id}/ingester' => 'ingester',
@@ -137,6 +138,26 @@ class Dase_Handler_Collection extends Dase_Handler
 			$output .= "\n";
 		}
 		$r->renderResponse($output);
+	}
+
+	public function getProfileJson($r)
+	{
+		$profile = array();
+		$profile['id'] = $this->collection->ascii_id;
+		$profile['name'] = $this->collection->collection_name;
+		$item_types = array();
+		$item_types['none'] = 'default/none';
+		foreach ($this->collection->getItemTypes() as $it) {
+			$item_types[$it->ascii_id] = $it->name;
+		}
+		$profile['item_types'] = $item_types;
+		$attributes = array();
+		foreach ($this->collection->getAttributes('ascii_id') as $att) {
+			$att = clone($att);
+			$attributes[$att->ascii_id] = $att->attribute_name;
+		}
+		$profile['attributes'] = $attributes;
+		$r->renderResponse(Dase_Json::get($profile));
 	}
 
 	public function getItemTypesJson($r)

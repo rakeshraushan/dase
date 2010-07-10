@@ -724,7 +724,7 @@ EOD;
 		$json_doc['links']['media'] =  '/item/'.$item->getUnique().'/media';
 		$json_doc['links']['metadata'] =  '/item/'.$item->getUnique().'/metadata';
 		$json_doc['links']['status'] =  '/item/'.$item->getUnique().'/status';
-
+		$json_doc['links']['profile'] = '/collection/'.$item->p_collection_ascii_id.'/profile.json';
 		$json_doc['alternate'] = array();
 		$json_doc['alternate']['html'] =  '/item/'.$item->getUnique().'.html';
 		$json_doc['alternate']['atom'] =  '/item/'.$item->getUnique().'.atom';
