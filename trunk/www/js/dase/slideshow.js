@@ -26,7 +26,9 @@ Dase.slideshow.start = function(url,username,htpasswd) {
 			//preload 20 medium images
 			if (i < 20) {
 				var imgObj = new Image();
-				imgObj.src = json.items[i].media.medium;
+				if (json.items[i].media && json.items[i].media.medium) {
+					imgObj.src = json.items[i].media.medium;
+				}
 			}
 			slides[slides.length] = json.items[i];
 		}

@@ -152,7 +152,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$profile['item_types'] = $item_types;
 		$attributes = array();
-		foreach ($this->collection->getAttributes('ascii_id') as $att) {
+		foreach ($this->collection->getAttributes('attribute_name') as $att) {
 			$att = clone($att);
 			$attributes[$att->ascii_id] = $att->attribute_name;
 		}
