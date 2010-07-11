@@ -266,22 +266,24 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->statusAsJson());
 	}
 
-	public function putStatus($r)
+	public function postToStatus($r)
 	{
-		$user = $r->getUser();
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot write for put');
+		$content_type = $r->getContentType();
+		if ('application/x-www-form-urlencoded' == $content_type) {
+			$user = $r->getUser();
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot write to this item');
+			}
+			if (in_array($r->get('status'),array('public','draft','delete','archive'))) {
+				$this->item->status = $r->get('status');
+			} else {
+				$r->renderError(406,'not an acceptable status string');
+			}
+			$this->item->update();
+			$this->item->buildSearchIndex();
+			$r->renderResponse('status updated. now '.$r->get('status'));
 		}
-		$status = trim($r->getBody());
-
-		if (in_array($status,array('public','draft','delete','archive'))) {
-			$this->item->status = $status;
-		} else {
-			$r->renderError(406,'not an acceptable status string');
-		}
-		$this->item->update();
-		$this->item->buildSearchIndex();
-		$r->renderResponse('status updated');
+		$r->renderError(415,'cannot accept '.$content_type);
 	}
 
 	/** displays the doc as POSTed to Solr */

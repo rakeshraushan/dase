@@ -413,9 +413,12 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$json_item['title'] = $item->getTitle();
 			$json_item['collection_name'] = $collection_lookup[$item->collection_id]['collection_name'];
 
+			$json_item['media'] = array();
 			foreach ($item->getMedia() as $m) {
 				$json_item['media'][$m['size']] = $app_root.$m['url'];
 			}
+
+			$json_item['metadata'] = array();
 			foreach($item->getMetadata() as $meta){
 				$json_item['metadata'][$meta['attribute_name']] = $meta['value_text'];
 			}

@@ -162,7 +162,6 @@ Dase.initAddAnnotation = function() {
 Dase.initSetItemStatus = function() {
 	var status_link = Dase.$('setItemStatusLink');
 	var status_form = Dase.$('ajaxFormHolder');
-	var coll = Dase.$('collectionAsciiId').innerHTML;
 	if (!status_link || !status_form) return;
 	status_link.onclick = function() {
 		Dase.addClass(Dase.$('adminPageControls'),'hide');
@@ -175,7 +174,7 @@ Dase.initSetItemStatus = function() {
 			var status = Dase.$('itemStatus').innerHTML;
 			var h = new Dase.htmlbuilder;
 			h.add('h1',null,'Item Status ('+status+')');
-			var form = h.add('form',{'id':'itemStatusForm'});
+			var form = h.add('form',{'method':'post','action':status_link.href,'id':'itemStatusForm'});
 			var sel = form.add('select',{'name':'status'});
 			sel.add('option',null,'select status:');
 			sel.add('option',{'value':'public'},'public');
@@ -186,7 +185,7 @@ Dase.initSetItemStatus = function() {
 			form.add('span',null,' ');
 			form.add('span',{'id':'updateMsg'});
 			h.attach(status_form);
-			Dase.initItemStatusForm(Dase.$('itemStatusForm'));
+			Dase.initItemStatusForm();
 		}
 		return false;
 	};
@@ -207,21 +206,22 @@ Dase.initReindexItem = function() {
 
 };
 
-Dase.initItemStatusForm = function(form) {
-	var edit_url = Dase.atompub.getJsonEditLink();
-	var atom_json;
+Dase.initItemStatusForm = function() {
+	var form = Dase.$('itemStatusForm');
 	form.onsubmit = function() {
 		Dase.$('updateMsg').innerHTML = "updating status...";
-		Dase.getJSON(edit_url,function(json){
-			var status_link = json.app_root+json.links.status;
-			var category = form.status.options[form.status.selectedIndex].value;
-			Dase.ajax(status_link,'PUT',function(resp) {
-				//Dase.pageReload(resp+' '+Dase.atompub.getDate());
-				Dase.pageReload('status updated');
-			},category,Dase.user.eid,Dase.user.htpasswd);
-		},Dase.user.eid,Dase.user.htpasswd);
+		var data = jQuery(this).serialize();
+		var content_headers = {
+			'Content-Type':'application/x-www-form-urlencoded'
+		}
+		Dase.ajax(form.action,'POST',
+		function(resp) { 
+			Dase.pageReload('status updated');
+		},data,null,null,content_headers,function(resp) {
+			//alert('error '+resp);
+		});
 		return false;
-	};
+	}
 };
 
 Dase.initNotes = function() {

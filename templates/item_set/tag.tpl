@@ -12,7 +12,6 @@
 {/block}
 
 {block name="head-links"}
-<link rel="set_item_status" href="tag/{$items->authorName}/{$items->asciiId}/item_status">
 <link rel="common_keyvals" href="tag/{$items->authorName}/{$items->asciiId}/common_keyvals.json">
 {/block}
 
@@ -30,7 +29,7 @@
 			<a href="tag/{$items->eid}/{$items->asciiId}/sorter">sort slides</a>
 			{/if}
 			{if $bulkedit}
-			| <a href="collection/{$items->collectionAsciiId}/attributes" id="bulkEditor">bulk editor</a>
+			| <a href="collection/{$items->collectionAsciiId}/profile" id="bulkEditor">bulk editor</a>
 			{/if}
 		</h4>
 	</div>

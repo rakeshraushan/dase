@@ -152,6 +152,17 @@ class Dase_Http_Request
 		$this->auth_config = $auth_config;
 	}
 
+	public function isXhr()
+	{
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+			'xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function checkUrlAuth()
 	{
 		$url = $this->app_root.'/'.$this->getPath(false);
