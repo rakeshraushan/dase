@@ -12,6 +12,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		'{collection_ascii_id}/ping' => 'ping',
 		'{collection_ascii_id}/profile' => 'profile',
 		'{collection_ascii_id}/search' => 'search',
+		'{collection_ascii_id}/media' => 'media_urls',
 		'{collection_ascii_id}/search/item' => 'search_item',
 		'{collection_ascii_id}/ingester' => 'ingester',
 		'{collection_ascii_id}/serial_numbers' => 'serial_numbers',
@@ -106,6 +107,25 @@ class Dase_Handler_Collection extends Dase_Handler
 			$managers[$obj->dase_user_eid] = $obj->auth_level;
 		}
 		$r->renderResponse(Dase_Json::get($managers));
+	}
+
+	public function getMediaUrls($r)
+	{
+		$limit = $r->get('limit');
+		if (!$limit) {
+			$limit = 200;
+		}
+		$set = array();
+		$tpl = new Dase_Template($r);
+		foreach ($this->collection->getItems($limit) as $item) {
+			$item = clone($item);
+			$enclosure_url = $item->getEnclosure();
+			$set[$r->app_root.$enclosure_url['url']] = $item->getTitle();
+		}	
+		asort($set);
+		$tpl->assign('collection',$this->collection);
+		$tpl->assign('media_links',$set);
+		$r->renderResponse($tpl->fetch('collection/media.tpl'));
 	}
 
 	public function getArchiveUris($r)

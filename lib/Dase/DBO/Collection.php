@@ -144,7 +144,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->addLink($this->getUrl($app_root).'/service','service','application/atomsvc+xml',null,'AtomPub Service Document');
 		$feed->setFeedType('item_types');
 		foreach ($this->getItemTypes() as $it) {
-			$it->injectAtomEntryData($feed->addEntry(),$app_root);
+			$it->injectAtomEntryData($feed->addEntry(),$this->ascii_id,$app_root);
 		}
 		return $feed;
 	}

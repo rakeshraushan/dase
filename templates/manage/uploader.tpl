@@ -26,7 +26,7 @@
 		<select name="item_type">
 			<option value="default">Select an Item Type (optional):</option>
 			{foreach item=t from=$item_types}
-			<option ="{$t->ascii_id}">{$t->name}</option>
+			<option value="{$t->ascii_id}">{$t->name}</option>
 			{/foreach}
 			<option ="default">none (default)</option>
 		</select>
