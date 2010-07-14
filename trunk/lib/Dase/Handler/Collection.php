@@ -183,7 +183,8 @@ class Dase_Handler_Collection extends Dase_Handler
 	public function getItemTypesJson($r)
 	{
 		$types = array();
-		$default['ascii_id'] = 'none';
+		//$default['ascii_id'] = 'none';
+		$default['ascii_id'] = 'default';
 		$default['name'] = 'default/none';
 		$types[] = $default;
 		foreach ($this->collection->getItemTypes() as $it) {
