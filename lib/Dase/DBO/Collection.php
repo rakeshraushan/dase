@@ -277,6 +277,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			foreach ($c as $k => $v) {
 				$coll_array[$k] = $v;
 			}
+			$coll_array['title'] = $c->collection_name;
 			$result[] = $coll_array;
 		}
 		return Dase_Json::get($result);
