@@ -266,9 +266,33 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$this->_media[$m['size']] = $m;
 			$last = $m;
 		}
+
 		//last, biggest media 
 		if ($last) {
 			$this->_media['enclosure'] = $last;
+		}
+
+		//auto-set thumbnail && viewitem
+		if (!isset($this->_media['thumbnail'])) {
+			$m['url'] = 
+				'/media/'.$this->p_collection_ascii_id.
+				'/thumbnail/_default.jpg';
+			$m['height'] = 60;
+			$m['width'] = 60;
+			$m['mime_type'] = 'image/jpeg';
+			$m['file_size'] = '1118';
+			$this->_media['thumbnail'] = $m;
+		}
+
+		if (!isset($this->_media['viewitem'])) {
+			$m['url'] = 
+				'/media/'.$this->p_collection_ascii_id.
+				'/viewitem/_default.jpg';
+			$m['height'] = 60;
+			$m['width'] = 60;
+			$m['mime_type'] = 'image/jpeg';
+			$m['file_size'] = '1118';
+			$this->_media['viewitem'] = $m;
 		}
 		return $this->_media;
 	}
