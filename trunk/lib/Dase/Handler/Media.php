@@ -43,6 +43,9 @@ class Dase_Handler_Media extends Dase_Handler
 
 	public function getMediaFileJpg($r)
 	{
+		if ('_default' == $this->serial_number) {
+			$r->serveFile(BASE_PATH.'/www/images/default.jpg',$r->response_mime_type);
+		}
 		$r->serveFile($this->_getFilePath($this->collection_ascii_id,$this->serial_number,$this->size,$r->format),$r->response_mime_type);
 	}
 
