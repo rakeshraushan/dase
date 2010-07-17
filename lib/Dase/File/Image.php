@@ -128,7 +128,11 @@ class Dase_File_Image extends Dase_File
 		//	$exif_table['ImageNumber'] = 'exif_imagenumber';
 			$exif_table['OwnerName'] = 'exif_ownername';
 			$exif_metadata = array();
-			$exif = exif_read_data($this->filepath);
+			try {
+				$exif = exif_read_data($this->filepath);
+			} catch(Exception $e) {
+				Dase_Log::debug(LOG_FILE,'exif error: '.$e->getMessage());
+			}
 			if (is_array($exif)) {
 				foreach ($exif as $k => $val) {
 					if (isset($exif_table[$k]) && $val) {
