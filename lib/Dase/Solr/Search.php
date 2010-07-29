@@ -735,7 +735,8 @@ EOD;
 		foreach ($item->getMetadata(true) as $meta) {
 
 			//no admin metadata in json
-			if ($meta['value_text'] && $meta['collection_id']) {
+			//if ($meta['value_text'] && $meta['collection_id']) {
+			if ($meta['value_text']) {
 				$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
 			}
 
