@@ -12,6 +12,7 @@ class Dase_Http_Request
 		'html' =>'text/html',
 		'jpg' =>'image/jpeg',
 		'json' =>'application/json',
+		'kml' =>'application/vnd.google-earth.kml+xml',
 		'mov' =>'video/quicktime',
 		'mp3' =>'audio/mpeg',
 		'mp4' =>'video/mp4',
