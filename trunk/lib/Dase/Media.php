@@ -3,6 +3,9 @@ Class Dase_Media
 {
 	public static $media_types = array(
 		'application/pdf',
+		'application/json',
+		'application/atom+xml',
+		'application/vnd.google-earth.kml+xml',
 		'audio/*',
 		'image/*',
 		'text/*',
@@ -20,6 +23,7 @@ Class Dase_Media
 		'gif' => 1,
 		'html' => 1,
 		'jpeg' => 1,
+		'kml' => 1,
 		'large' => 1,
 		'medium' => 1,
 		'mp3' => 2,
