@@ -56,7 +56,12 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getCollectionsJson($r) 
 	{
-		$r->renderResponse(Dase_DBO_Collection::listAsJson($this->db));
+		if ($r->get('get_all')) {
+			$public_only = false;
+		} else {
+			$public_only = true;
+		}
+		$r->renderResponse(Dase_DBO_Collection::listAsJson($this->db,$public_only,$r->app_root));
 	}
 
 	public function getCollectionsAtom($r) 
@@ -78,9 +83,12 @@ class Dase_Handler_Collections extends Dase_Handler
 		if (!$c->findCount() && $user && $user->is_superuser) {
 			$r->renderRedirect('admin');
 		}
-		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/collections.atom');
 		$tpl = new Dase_Template($r);
-		$tpl->assign('collections',$feed);
+		//$feed = Dase_Atom_Feed::retrieve($r->app_root.'/collections.atom');
+		//$tpl->assign('collections',$feed);
+		$res = Dase_Http::get($r->app_root.'/collections.json');
+		$collections = Dase_Json::toPhp($res[1]);
+		$tpl->assign('collections',$collections);
 		$r->renderResponse($tpl->fetch('collection/list.tpl'));
 	}
 }

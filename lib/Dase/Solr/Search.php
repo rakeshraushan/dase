@@ -627,33 +627,34 @@ EOD;
 		$id->setAttribute('name','_id');
 
 		//for transformation later
-		$json_doc['_app_root'] = '{APP_ROOT}'; 
+		$json_doc['app_root'] = '{APP_ROOT}'; 
 
-		$json_doc['_id'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
+		$json_doc['id'] = '{APP_ROOT}/'.$item->p_collection_ascii_id.'/'.$item->serial_number;
+		$json_doc['item_unique'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
 
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->created));
 		$updated->setAttribute('name','_created');
 
-		$json_doc['_created'] = $item->created;
+		$json_doc['created'] = $item->created;
 
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->updated));
 		$updated->setAttribute('name','_updated');
 
-		$json_doc['_updated'] = $item->updated;
+		$json_doc['updated'] = $item->updated;
 
 		$item_id = $doc->appendChild($dom->createElement('field'));
 		$item_id->appendChild($dom->createTextNode($item->id));
 		$item_id->setAttribute('name','_item_id');
 
-		$json_doc['_item_id'] = $item->id;
+		$json_doc['item_id'] = $item->id;
 
 		$serial_number = $doc->appendChild($dom->createElement('field'));
 		$serial_number->appendChild($dom->createTextNode($item->serial_number));
 		$serial_number->setAttribute('name','_serial_number');
 
-		$json_doc['_serial_number'] = $item->serial_number;
+		$json_doc['serial_number'] = $item->serial_number;
 
 		$c = $doc->appendChild($dom->createElement('field'));
 		$c->appendChild($dom->createTextNode($item->p_collection_ascii_id));

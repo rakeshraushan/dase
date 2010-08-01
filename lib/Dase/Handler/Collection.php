@@ -60,6 +60,11 @@ class Dase_Handler_Collection extends Dase_Handler
 		 */
 	}
 
+	public function getCollectionJson($r)
+	{
+		$r->renderResponse($this->collection->asJson($r->app_root));
+	}
+
 	public function getSearch($r) 
 	{
 		$search_handler = new Dase_Handler_Search($this->db,$this->config); 
