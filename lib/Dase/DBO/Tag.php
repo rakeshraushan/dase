@@ -384,7 +384,9 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$collection_lookup = Dase_DBO_Collection::getLookupArray($this->db);
 		$json_tag;
 		$eid = $this->getUser()->eid;
+		$json_tag['id'] = $this->getUrl($app_root);
 		$json_tag['uri'] = $this->getUrl($app_root);
+		$json_tag['links'] = array('self'=>$this->getUrl($app_root));
 		if ($this->created) {
 			$json_tag['updated'] = $this->created;
 		} else {
@@ -403,6 +405,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				continue;
 			}
 			$json_item = array();
+			$json_item['id'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
+			$json_item['links'] = array(); 
+			$json_item['links']['self'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
+			$json_item['links']['related'] = $item->getUrl($app_root); 
 			$json_item['url'] = $app_root.'/tag/'.$eid.'/'.$this->ascii_id.'/'.$tag_item->id; 
 			$json_item['sort_order'] = $tag_item->sort_order;
 			//make sure p_ values are always populated!
