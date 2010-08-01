@@ -192,10 +192,6 @@
 					</form>
 				</div>
 				<ul id="notes"><li>&nbsp;</li></ul>
-				<a
-					href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}.atom?type=feed&amp;auth=cookie"
-					class="atomlogo"><img
-					src="www/images/atom.jpg" alt="atom logo"></a> 
 				<p>
 				<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}">permalink</a> 
 				</p>

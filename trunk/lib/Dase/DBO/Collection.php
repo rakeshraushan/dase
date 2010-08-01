@@ -253,7 +253,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $entry;
 	}
 
-	static function listAsArray($db,$public_only = false)
+	static function listAsJson($db,$public_only = false,$app_root)
 	{
 		$colls = new Dase_DBO_Collection($db);
 		$colls->orderBy('collection_name');
@@ -261,26 +261,28 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$colls->is_public = 1;
 		} 
 		foreach ($colls->find() as $c) {
-			$result[] = clone($c);
-		}
-		return $result;
-	}
-
-	static function listAsJson($db,$public_only = false)
-	{
-		$colls = new Dase_DBO_Collection($db);
-		$colls->orderBy('collection_name');
-		if ($public_only) {
-			$colls->is_public = 1;
-		} 
-		foreach ($colls->find() as $c) {
+			$coll_array = array();
+			$coll_array['id'] = $app_root.'/collection/'.$c->ascii_id;
 			foreach ($c as $k => $v) {
 				$coll_array[$k] = $v;
 			}
+			$coll_array['links'] = array('alternate' => $app_root.'/collection/'.$c->ascii_id);
 			$coll_array['title'] = $c->collection_name;
 			$result[] = $coll_array;
 		}
 		return Dase_Json::get($result);
+	}
+
+	function asJson($app_root)
+	{
+		$coll_array = array();
+		$coll_array['id'] = $app_root.'/collection/'.$this->ascii_id;
+		foreach ($this as $k => $v) {
+			$coll_array[$k] = $v;
+		}
+		$coll_array['links'] = array('alternate' => $app_root.'/collection/'.$this->ascii_id);
+		$coll_array['title'] = $this->collection_name;
+		return Dase_Json::get($coll_array);
 	}
 
 	static function listAsAtom($db,$app_root,$public_only = false)
