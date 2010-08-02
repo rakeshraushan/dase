@@ -427,7 +427,8 @@ EOD;
 		$reader->close();
 
 		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
-		return $json . join(',',$entries).']}';
+		$json .= join(',',$entries).']}';
+		return str_replace('{APP_ROOT}',$app_root,$json);
 	}
 
 	public function getResultsAsItemAtom() 
