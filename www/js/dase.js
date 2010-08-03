@@ -161,17 +161,10 @@ for (var i = 0; i <= num; i += 1) {
 };
 
 Dase.pageReload = function(msg) {
-	var curr = window.location.href;
 	if (msg) {
-		parts = curr.split('?');
-		//will ge repeated on multiple reloads
-		if (parts[1]) {
-			curr += '&ttl=1&msg='+msg;
-		} else {
-			curr += '?msg='+msg;
-		}
+		alert(msg);
 	} 
-	window.location.href = curr;
+	window.location.reload();
 }
 
 Dase.truncate = function(str,len) {

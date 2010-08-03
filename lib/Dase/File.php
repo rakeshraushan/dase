@@ -8,6 +8,7 @@ abstract class Dase_File
 		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
 		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
 		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'audio/x-mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/ogg' => array('size' => 'oga', 'ext' => 'oga','class'=>'Dase_File_Audio'),
 		'image/gif' => array('size' => 'gif', 'ext' => 'gif','class'=>'Dase_File_Image'),

@@ -690,20 +690,47 @@ class Dase_Handler_Item extends Dase_Handler
 	 */
 	public function postToMedia($r) 
 	{
-		$user = $r->getUser('service');
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot post media to this item');
-		}
 		$item = $this->item;
 		$coll = $item->getCollection();
 		if(!isset($_SERVER['CONTENT_LENGTH']) || !isset($_SERVER['CONTENT_TYPE'])) {
 			$r->renderError(411,'missing content length');
 		}
-		$content_type = Dase_Media::isAcceptable($r->getContentType());
-		if (!$content_type) {
-			$r->renderError(415,'not an accepted media type');
+
+		$content_type = $r->getContentType();
+		if ('multipart/form-data' == $content_type) {
+			$user = $r->getUser();
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot post media to this item');
+			}
+			foreach ($r->_files as $k => $v) {
+				$input_name = $k;
+				break; //just get the first one
+			}
+			if ($input_name && is_file($r->_files[$input_name]['tmp_name'])) {
+				$name = $r->_files[$input_name]['name'];
+				$path = $r->_files[$input_name]['tmp_name'];
+				$type = $r->_files[$input_name]['type'];
+				if (!Dase_Media::isAcceptable($type)) {
+					Dase_Log::debug(LOG_FILE,$type.' is not a supported media type');
+					$r->renderError(415,'unsupported media type: '.$type);
+				}
+				if (!is_uploaded_file($path)) {
+					$r->renderError(400,'no go upload');
+				}
+				$bits = file_get_contents($path);
+				$content_type = $type;
+			}
+		} else {
+			$user = $r->getUser('service');
+			if (!$user->can('write',$this->item)) {
+				$r->renderError(401,'cannot post media to this item');
+			}
+			$content_type = Dase_Media::isAcceptable($content_type);
+			if (!$content_type) {
+				$r->renderError(415,'not an accepted media type');
+			}
+			$bits = $r->getBody();
 		}
-		$bits = $r->getBody();
 
 		$orig_name = '';
 		if ( $r->http_title ) {
@@ -752,6 +779,11 @@ class Dase_Handler_Item extends Dase_Handler
 
 		//delete uploaded file
 		unlink($new_file);
+
+		if ($r->get('page_link')) {
+			$r->renderRedirect($r->get('page_link').'#'.time());
+		}
+
 		//the returned atom entry links to derivs!
 		$mle_url = $r->app_root .'/media/'.$media_file->p_collection_ascii_id.'/'.$media_file->p_serial_number.'.atom';
 		header("Location:". $mle_url,TRUE,201);
