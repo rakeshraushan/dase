@@ -252,6 +252,19 @@ class Dase_Handler_Collection extends Dase_Handler
 		$r->renderResponse($output);
 	}
 
+	public function getItemsJson($r) 
+	{
+		$items = array();
+		foreach ($this->collection->getItems() as $item) {
+			$items[] = $item->asJson($r->app_root); 
+		}
+		$coll_url = $this->collection->getUrl($r->app_root);
+		$updated = $this->collection->updated;
+		$json = "{\"id\":\"$coll_url\",\"updated\":\"$updated\",\"items\":[";
+		$json .= join(',',$items).']}';
+		$r->renderResponse($json);
+	}
+
 	public function getItemsByRangeAtom($r)
 	{
 		$r->renderResponse($this->collection->getItemsBySerialNumberRangeAsAtom($r->app_root,$r->get('start'),$r->get('end')));
