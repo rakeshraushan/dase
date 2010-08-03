@@ -111,6 +111,9 @@
 						<a href="collection/{$item->collectionAsciiId}/item_types" 
 							id="setItemTypeLink">set item type</a>
 						|
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/media" 
+							id="uploadMediaLink">upload media</a>
+						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
 							id="setItemStatusLink">set status (<span id="itemStatus">{$item->entry->status}</span>)</a>
 						|

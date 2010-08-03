@@ -23,6 +23,7 @@ Dase.pageInitUser = function(eid) {
 		Dase.initSetItemStatus();
 		Dase.initReindexItem();
 		Dase.initSaveItemTo();
+		Dase.initUploadMedia();
 	}
 	return;
 };
@@ -159,6 +160,35 @@ Dase.initAddAnnotation = function() {
 	};
 };
 
+Dase.initUploadMedia = function() {
+	var upload_link = Dase.$('uploadMediaLink');
+	var upload_form = Dase.$('ajaxFormHolder');
+	if (!upload_link || !upload_form) return;
+	upload_link.onclick = function() {
+		Dase.addClass(Dase.$('adminPageControls'),'hide');
+		Dase.removeClass(Dase.$('pageReloader'),'hide');
+		Dase.$('pageReloaderLink').onclick = function() {
+			Dase.pageReload();
+			return false;
+		}
+		if (Dase.toggle(upload_form)) {
+			var h = new Dase.htmlbuilder;
+			h.add('h1',null,'Upload Media File');
+			var form = h.add('form',{'id':'media_upload','action':upload_link.href,'method':'post','enctype':'multipart/form-data'});
+			form.add('p').add('input',{'type':'file','name':'myfile'});
+			form.add('p').add('input',{'type':'submit','value':'upload file'});
+			form.add('p').add('input',{'type':'hidden','name':'page_link','value':window.location.href});
+			h.attach(upload_form);
+			Dase.$('media_upload').onsubmit = function() {
+				if (!confirm('**ALERT**\n\nThis action will remove existing media from this item.\n\nIs that OK?')) {
+					return false;
+				}
+			};
+		}
+		return false;
+	};
+};
+
 Dase.initSetItemStatus = function() {
 	var status_link = Dase.$('setItemStatusLink');
 	var status_form = Dase.$('ajaxFormHolder');
@@ -216,7 +246,8 @@ Dase.initItemStatusForm = function() {
 		}
 		Dase.ajax(form.action,'POST',
 		function(resp) { 
-			Dase.pageReload('status updated');
+			alert(resp);
+			Dase.pageReload();
 		},data,null,null,content_headers,function(resp) {
 			//alert('error '+resp);
 		});
