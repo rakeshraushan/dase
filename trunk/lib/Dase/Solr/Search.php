@@ -737,11 +737,21 @@ EOD;
 
 		foreach ($item->getMetadata(true) as $meta) {
 
-			$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
-			$json_doc['metadata_extended'][$meta['ascii_id']]['label'] = $meta['attribute_name'];
-			if (!isset($json_doc['metadata_extended'][$meta['ascii_id']]['values'])) {
-				$json_doc['metadata_extended'][$meta['ascii_id']]['values'] = array();
+			if (0 == $meta['collection_id']) {
+				//admin metadata 
+				$json_doc[$meta['ascii_id']] = $meta['value_text'];
+			} else {
+				$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
+				$json_doc['metadata_extended'][$meta['ascii_id']]['label'] = $meta['attribute_name'];
+				if (!isset($json_doc['metadata_extended'][$meta['ascii_id']]['values'])) {
+					$json_doc['metadata_extended'][$meta['ascii_id']]['values'] = array();
+				}
+				$value_set = array();
+				$value_set['text'] = $meta['value_text'];
+				$value_set['url'] = $meta['url'];
+				$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
 			}
+
 
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
@@ -752,14 +762,10 @@ EOD;
 				}
 			}
 
-			$value_set = array();
-			$value_set['text'] = $meta['value_text'];
 			if ($meta['url']) {
 				$search_text[] = $meta['url'];
-				$value_set['url'] = $meta['url'];
 
 			}
-			$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
 
 			//allows filtering on mod (e.g. role:painter)
 			if ($meta['modifier']) {
