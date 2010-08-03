@@ -748,7 +748,9 @@ EOD;
 				}
 				$value_set = array();
 				$value_set['text'] = $meta['value_text'];
-				$value_set['url'] = $meta['url'];
+				if ($meta['url']) {
+					$value_set['url'] = $meta['url'];
+				}
 				$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
 			}
 
