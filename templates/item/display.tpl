@@ -119,6 +119,8 @@
 						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/indexer" 
 							id="reindexLink">reindex</a>
+						|
+						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}">permalink</a> 
 					</div>
 				</div>
 
@@ -195,9 +197,6 @@
 					</form>
 				</div>
 				<ul id="notes"><li>&nbsp;</li></ul>
-				<p>
-				<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}">permalink</a> 
-				</p>
 			</td>
 		</tr>
 	</table>
