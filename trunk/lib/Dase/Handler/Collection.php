@@ -626,6 +626,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		$eid = $r->getUser('http')->eid;
 		$json = $r->getBody();
 		$set_data = Dase_Json::toPhp($json);
+		$num = 0;
 		foreach ($set_data['items'] as $set_item) {
 			$url = $set_item['media']['enclosure'];
 			if ($url) {
@@ -649,6 +650,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					$media_file = $file->addToCollection($item,false,MEDIA_DIR); //check for dups
 					$item->mapConfiguredAdminAtts();
 					$item->buildSearchIndex();
+					$num++;
 				} catch(Exception $e) {
 					Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
 					$item->expunge();
@@ -656,7 +658,7 @@ class Dase_Handler_Collection extends Dase_Handler
 				}
 			}
 		}
-		$r->renderResponse('done');
+		$r->renderResponse('ingested '.$num.' items');
 	}
 
 	private function _newUriMediaResource($r)

@@ -335,6 +335,10 @@ li.note h3 span.username {
 	font-weight: bold;
 }
 
+div.notesForm {
+	margin-top: 20px;
+}
+
 a#notesLink {
 	text-decoration: underline;
 }
