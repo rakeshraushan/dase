@@ -1,7 +1,7 @@
 Dase.pageInit = function() {
 	if (Dase.$('browseColumns')) {
 		var atts_link = Dase.$('collectionAtts');
-		Dase.getAttributes(atts_link.href);
+		Dase.getAttributes(atts_link.href,'sort_order');
 		Dase.getItemTypes();
 		var cat_col= Dase.$('catColumn');
 		if (!cat_col) return;
@@ -9,7 +9,7 @@ Dase.pageInit = function() {
 		for (var i=0;i<cats.length;i++) {
 			var cat = cats[i];
 			cat.onclick = function() {
-				Dase.getAttributes(this.href);
+				Dase.getAttributes(this.href,'sort_order');
 				var cts = Dase.$('catColumn').getElementsByTagName('a');
 				for (var j=0;j<cts.length;j++) {
 					Dase.removeClass(cts[j],'spill');
@@ -120,7 +120,7 @@ Dase.initAttSort = function(url) {
 	link = Dase.$('attSorter');
 	link.onclick = function() {
 		if (Dase.attsort) {
-			Dase.getAttributes(url);
+			Dase.getAttributes(url,'sort_order');
 			Dase.attsort = 0;
 			return false;
 		} else {

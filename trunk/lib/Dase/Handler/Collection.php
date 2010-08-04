@@ -835,7 +835,8 @@ class Dase_Handler_Collection extends Dase_Handler
 		if ($r->has('sort')) {
 			$so = $r->get('sort');
 		} else {
-			$so = 'sort_order';
+			//$so = 'sort_order';
+			$so = 'attribute_name';
 		}
 		$attributes->orderBy($so);
 		//$attributes->orderBy('attribute_name');
