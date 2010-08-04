@@ -614,9 +614,49 @@ class Dase_Handler_Collection extends Dase_Handler
 			$this->_newAtomItem($r,true);
 		} elseif ('text/uri-list' == $content_type ) {
 			$this->_newUriMediaResource($r);
+		} elseif ('application/json' == $content_type ) {
+			$this->_newJsonMediaResource($r);
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
+	}
+
+	private function _newJsonMediaResource($r)
+	{
+		$eid = $r->getUser('http')->eid;
+		$json = $r->getBody();
+		$set_data = Dase_Json::toPhp($json);
+		foreach ($set_data['items'] as $set_item) {
+			$url = $set_item['media']['enclosure'];
+			if ($url) {
+				$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
+				if (!file_exists($upload_dir)) {
+					$r->renderError(500,'missing upload directory');
+				}
+				$item = $this->collection->createNewItem(null,$eid);
+				foreach ($set_item['metadata'] as $att => $val_set) {
+					foreach ($val_set as $val) {
+						$item->setValue($att,$val);
+					}
+				}
+				//todo: just jpeg for now!!!
+				$new_file = $upload_dir.'/'.$item->serial_number.'.jpg';
+				file_put_contents($new_file,file_get_contents($url));
+				try {
+					$file = Dase_File::newFile($this->db,$new_file,null,null,BASE_PATH);
+					//$media_file = $file->addToCollection($item,true,MEDIA_DIR); //check for dups
+					//accept dups
+					$media_file = $file->addToCollection($item,false,MEDIA_DIR); //check for dups
+					$item->mapConfiguredAdminAtts();
+					$item->buildSearchIndex();
+				} catch(Exception $e) {
+					Dase_Log::debug(LOG_FILE,'coll handler error: '.$e->getMessage());
+					$item->expunge();
+					$r->renderError(409,'could not ingest uri resource ('.$e->getMessage().')');
+				}
+			}
+		}
+		$r->renderResponse('done');
 	}
 
 	private function _newUriMediaResource($r)
