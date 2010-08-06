@@ -640,7 +640,7 @@ class Dase_Handler_Collection extends Dase_Handler
 					$url = $set_item['app_root'].$url;
 				}
 				$mime = $set_item['enclosure']['type'];
-				$ext = Dase_File::getExtension($mime_type);
+				$ext = Dase_File::getExtension($mime);
 				if (!$ext) {
 					continue;
 				}
