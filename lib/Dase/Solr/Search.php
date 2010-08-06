@@ -714,7 +714,20 @@ EOD;
 		$json_doc['media'] = array();
 
 		foreach ($item->getMedia() as $sz => $info) {
-			$json_doc['media'][$sz] = $info['url'];
+			if ('enclosure' == $sz) {
+				$json_doc['enclosure']["href"] = $info['url'];
+				$json_doc['enclosure']["type"] = $info['mime_type'];
+				$json_doc['enclosure']["length"] = $info['file_size'];
+				if ($info['height'] && $info['width']) {
+					$json_doc['enclosure']["height"] = $info['height'];
+					$json_doc['enclosure']["width"] = $info['width'];
+				}
+				if ($info['md5']) {
+					$json_doc['enclosure']["md5"] = $info['md5'];
+				}
+			} else {
+				$json_doc['media'][$sz] = $info['url'];
+			}
 		}
 
 		$json_doc['links'] = array();
