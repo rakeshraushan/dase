@@ -61,7 +61,7 @@ abstract class Dase_File
 	static function getExtension($mime_type)
 	{
 		if (isset(Dase_File::$types_map[$mime_type])) {
-			return Dase_File:$types_map[$mime_type]['ext'];
+			return Dase_File::$types_map[$mime_type]['ext'];
 		} else {
 			return false;
 		}
