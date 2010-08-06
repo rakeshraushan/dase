@@ -5,6 +5,7 @@ abstract class Dase_File
 	public static $types_map = array(
 		'application/msword' => array('size' => 'doc', 'ext' => 'doc','class'=>'Dase_File_Doc'),
 		'application/pdf' => array('size' => 'pdf', 'ext' => 'pdf','class'=>'Dase_File_Pdf'),
+		'application/vnd.google-earth.kml+xml' => array('size' => 'kml', 'ext' => 'kml','class'=>'Dase_File_Text'),
 		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
 		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
 		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),

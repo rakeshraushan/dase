@@ -83,7 +83,6 @@ Class Dase_Solr_DocStore
 		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
 		Dase_Log::debug(LOG_FILE,'SOLR ITEM RETRIEVE: '.$url);
 		$res = file_get_contents($url);
-
 		$reader = new XMLReader();
 		$reader->XML($res);
 		while ($reader->read()) {
