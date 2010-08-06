@@ -628,8 +628,16 @@ class Dase_Handler_Collection extends Dase_Handler
 		$set_data = Dase_Json::toPhp($json);
 		$num = 0;
 		foreach ($set_data['items'] as $set_item) {
-			$url = $set_item['media']['enclosure'];
-			if ($url) {
+			if (isset($set_item['enclosure'])) {
+				$url = $set_item['enclosure']['href'];
+				if ('/' == substr($url,0,1)) {
+					$url = $set_item['app_root'].$url;
+				}
+				$mime = $set_item['enclosure']['type'];
+				$ext = Dase_File::getExtension($mime_type);
+				if (!$ext) {
+					continue;
+				}
 				$upload_dir = MEDIA_DIR.'/'.$this->collection->ascii_id.'/uploaded_files';
 				if (!file_exists($upload_dir)) {
 					$r->renderError(500,'missing upload directory');
@@ -640,8 +648,7 @@ class Dase_Handler_Collection extends Dase_Handler
 						$item->setValue($att,$val);
 					}
 				}
-				//todo: just jpeg for now!!!
-				$new_file = $upload_dir.'/'.$item->serial_number.'.jpg';
+				$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 				file_put_contents($new_file,file_get_contents($url));
 				try {
 					$file = Dase_File::newFile($this->db,$new_file,null,null,BASE_PATH);
