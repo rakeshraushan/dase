@@ -629,7 +629,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		//single item or set
 		if (!isset($set_data['items'])) {
 			$set = array();
-			$set['items'] = $set_data;
+			$set['items'] = array($set_data);
 			$set_data = $set;
 		}
 		$num = 0;
