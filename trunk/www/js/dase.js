@@ -596,8 +596,9 @@ Dase.placeUserTags = function(user) {
 	// user sets menu 
 	var h = new Dase.htmlbuilder;
 	var li = h.add('li').add('a',{'href':'new','id':'createNewSet','class':'edit'},'create new set');
-	for (var n in user.tags) {
-		var tag = user.tags[n];
+	for (var i in user.tags) {
+	//for (var i=0;i<user.tags.length;i++) {
+		var tag = user.tags[i];
 		if ('set' == tag.type || 'slideshow' == tag.type) {
 			var li = h.add('li');
 			var a = li.add('a');
@@ -611,8 +612,9 @@ Dase.placeUserTags = function(user) {
 	var h = new Dase.htmlbuilder;
 	var sel = h.add('select',{'id':'saveToSelect','name':'collection_ascii_id'});
 	sel.add('option',{'value':''},'save checked items to...');
-	for (var n in user.tags) {
-		var tag = user.tags[n];
+	//for (var n in user.tags) {
+	for (var i=0;i<user.tags.length;i++) {
+		var tag = user.tags[i];
 		if ('admin' != tag.type) {
 			var opt = sel.add('option',{'value':tag.ascii_id});
 			opt.setText(tag.name+' ('+tag.item_count+')');

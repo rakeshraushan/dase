@@ -34,6 +34,7 @@ Class Dase_Http
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
 		curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pass);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,false);
 		if ($mime_type) {
 			$headers  = array(
 				"Content-Type: $mime_type"

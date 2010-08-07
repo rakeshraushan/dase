@@ -83,6 +83,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 		$set->dase_user_id = $user->id;
 		$set->name = $this->getTitle();
 		$set->is_public = 0;
+		$set->item_count = 0;
 		$set->type= 'set';
 		$set->created = date(DATE_ATOM);
 		$set->updated = date(DATE_ATOM);
