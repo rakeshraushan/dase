@@ -133,7 +133,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		$tpl = new Dase_Template($r);
 		$tpl->assign('user',$user);
 		$tpl->assign('htpass',$user->getHttpPassword($r->getAuthToken()));
-		$tpl->assign('tags',$user->getTags(true));
+		$tpl->assign('tags',$user->getTags());
 		$tpl->assign('collections',$user->getCollections());
 		$r->renderResponse($tpl->fetch('admin/user.tpl'));
 	}

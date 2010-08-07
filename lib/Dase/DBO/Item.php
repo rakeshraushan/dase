@@ -474,7 +474,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 					if (!$v->findOne()) {
 						$v->insert();
 					}
-					$v->insert();
 				}
 			} else {
 				$v = new Dase_DBO_Value($this->db);

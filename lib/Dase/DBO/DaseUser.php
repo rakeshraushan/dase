@@ -68,10 +68,8 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 			$tag->name = 'My Cart';
 			$tag->ascii_id = 'cart';
 			$tag->created = date(DATE_ATOM);
-			$tag->insert();
-		}
-		if (!$tag->item_count) {
 			$tag->item_count = 0;
+			$tag->insert();
 		}
 		return $tag->item_count;
 	}
@@ -151,16 +149,14 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $entry->asXML();
 	}
 
-	public function getTags($update_count = false)
+	public function getTags()
 	{
-		$tag_array = array();
-		foreach (Dase_DBO_Tag::getByUser($this) as $row) {
-			if (!$row['item_count'] || 'null' == $row['item_count']) {
-				$row['item_count'] = 0;
-			}
-			$tag_array[] = $row;
+		$tags = new Dase_DBO_Tag($this->db);
+		$tags->dase_user_id = $this->id;
+		$tags->orderBy('name');
+		foreach ($tags->find() as $tag) {
+			$tag_array[] = $tag->asArray();
 		}
-		uasort($tag_array, array('Dase_Util','sortByTagName'));
 		return $tag_array;
 	}
 
@@ -452,8 +448,6 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 
 	function getTagsAsAtom($app_root)
 	{
-		//todo: look at Dase_DBO_Tag::getByUser and maybe merge them
-		//that one uses arrays, this, objects (so we get the 'inject...' method)
 		$feed = new Dase_Atom_Feed;
 		$feed->setTitle($this->eid.' sets');
 		$feed->setId($app_root.'/user/'.$this->eid.'/sets');

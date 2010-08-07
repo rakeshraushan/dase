@@ -6,23 +6,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 {
 	private $user;
 
-	public static function getByUser($user)
-	{
-		$prefix = $user->db->table_prefix;
-		$sql = "
-			SELECT * 
-			FROM {$prefix}tag 
-			WHERE dase_user_id = ?
-			";
-		$tags = array();
-		foreach (Dase_DBO::query($user->db,$sql,array($user->id))->fetchAll() as $row) { 
-			if ($row['ascii_id']) { //compat: skip tags w/o ascii_id
-				$tags[] = $row;
-			}
-		}
-		return $tags;
-	}
-
 	public static function searchTagsAtom($db,$app_root,$q)
 	{
 		//looks for q in title
@@ -144,6 +127,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 	public static function create($db,$tag_name,$user)
 	{
+		if (!$tag_name) { return false; }
 		$tag = new Dase_DBO_Tag($db);
 		$tag->ascii_id = Dase_Util::dirify($tag_name);
 		$tag->dase_user_id = $user->id;
@@ -154,6 +138,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			$tag->type = 'set';
 			$tag->background = 'white';
 			$tag->is_public = 0;
+			$tag->item_count = 0;
 			$tag->eid = $user->eid;
 			$tag->created = date(DATE_ATOM);
 			$tag->insert();
