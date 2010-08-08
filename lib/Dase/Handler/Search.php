@@ -8,6 +8,7 @@ class Dase_Handler_Search extends Dase_Handler
 		'/' => 'search',
 		'item' => 'search_item',
 		'md5' => 'search_md5',
+		'{att}/{val}' => 'att_val',
 		//'{collection_ascii_id}' => 'search_collection'
 	);
 
@@ -60,6 +61,13 @@ class Dase_Handler_Search extends Dase_Handler
 			$res .= $item->getUrl($r->app_root)."\n";
 		}
 		$r->renderResponse($res);
+	}
+
+	public function getAttVal($r)
+	{
+		$att = urlencode($r->get('att'));
+		$val = urlencode($r->get('val'));
+		$r->renderRedirect($r->app_root.'/search?q='.$att.':'.$val);
 	}
 
 	public function getSearchAtom($r)
