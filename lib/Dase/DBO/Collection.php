@@ -38,6 +38,10 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		return $app_root.'/collection/' . $this->ascii_id;
 	}
 
+	public function getMediaUrl($app_root) {
+		return $app_root.'/media/' . $this->ascii_id;
+	}
+
 	public function createAscii() {
 		if (!$this->collection_name) {
 			return false;

@@ -64,10 +64,10 @@ class Dase_Handler_User extends Dase_Handler
 		$r->response_mime_type = 'text/plain';
 		if ($r->has('collection_ascii_id')) {
 			$coll = $r->get('collection_ascii_id');
-			$data = $this->user->getCollections();
+			$data = $this->user->getCollections($r->app_root);
 			$r->renderResponse(Dase_Json::get($data[$coll]));
 		} else {
-			$r->renderResponse(Dase_Json::get($this->user->getCollections()));
+			$r->renderResponse(Dase_Json::get($this->user->getCollections($r->app_root)));
 		}
 	}
 
@@ -75,10 +75,10 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		if ($r->has('collection_ascii_id')) {
 			$coll = $r->get('collection_ascii_id');
-			$data = $this->user->getCollections();
+			$data = $this->user->getCollections($r->app_root);
 			$r->renderResponse(Dase_Json::get($data[$coll]));
 		} else {
-			$r->renderResponse(Dase_Json::get($this->user->getCollections()));
+			$r->renderResponse(Dase_Json::get($this->user->getCollections($r->app_root)));
 		}
 	}
 
@@ -291,7 +291,7 @@ class Dase_Handler_User extends Dase_Handler
 		$data = $cache->getData($cache_id,3000);
 		if (!$data) {
 			$u = $r->getUser();
-			$data = $u->getDataJson($r->getAuthConfig());
+			$data = $u->getDataJson($r->getAuthConfig(),$r->app_root);
 			$cache->setData($cache_id,$data);
 		}
 		$r->renderResponse($data);
@@ -412,7 +412,7 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$t = new Dase_Template($r);
-		$u->collections = $u->getCollections();
+		$u->collections = $u->getCollections($r->app_root);
 		$t->assign('user',$u);
 		$t->assign('http_password',$u->getHttpPassword());
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);

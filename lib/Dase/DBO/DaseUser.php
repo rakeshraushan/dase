@@ -160,7 +160,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $tag_array;
 	}
 
-	public function getCollections()
+	public function getCollections($app_root)
 	{
 		$cm = new Dase_DBO_CollectionManager($this->db);
 		$cm->dase_user_eid = $this->eid;
@@ -182,12 +182,16 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 					$auth_level = '';
 				}
 				$user_colls[$c->ascii_id] =  array(
-					'id' => $c->id,
+					'id' => $c->getUrl($app_root),
 					'collection_name' => $c->collection_name,
 					'ascii_id' => $c->ascii_id,
 					'is_public' => $c->is_public,
 					'item_count' => $c->item_count,
-					'auth_level' => $auth_level
+					'auth_level' => $auth_level,
+					'links' => array(
+						'self' => $c->getUrl($app_root),
+						'media' => $c->getMediaUrl($app_root)
+					),
 				);
 			}
 		}
@@ -229,7 +233,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $recent_searches;
 	}
 
-	public function getData($auth_config)
+	public function getData($auth_config,$app_root)
 	{
 		if (!isset($auth_config['token']) || !isset($auth_config['ppd_token'])) {
 			throw new Dase_Exception('missing auth config data');
@@ -244,7 +248,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		$user_data[$this->eid]['tags'] = $this->getTags();
 		$user_data[$this->eid]['htpasswd'] = $this->getHttpPassword($auth_config['token']);
 		$user_data[$this->eid]['name'] = $this->name;
-		$user_data[$this->eid]['collections'] = $this->getCollections();
+		$user_data[$this->eid]['collections'] = $this->getCollections($app_root);
 		$user_data[$this->eid]['recent_views'] = $this->getRecentViews();
 		$user_data[$this->eid]['recent_searches'] = $this->getRecentSearches();
 		$user_data[$this->eid]['ppd'] = md5($this->eid.$auth_config['ppd_token']);
@@ -266,9 +270,9 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		return $user_data;
 	}
 
-	public function getDataJson($auth_config)
+	public function getDataJson($auth_config,$app_root)
 	{
-		return Dase_Json::get($this->getData($auth_config));
+		return Dase_Json::get($this->getData($auth_config,$app_root));
 	}
 
 	public function getCartArray()
