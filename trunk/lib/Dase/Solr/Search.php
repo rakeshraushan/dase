@@ -764,6 +764,9 @@ EOD;
 				if ($meta['url']) {
 					$value_set['url'] = $meta['url'];
 				}
+				if ($meta['edit-id']) {
+					$value_set['edit'] = $meta['edit-id'];
+				}
 				$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
 			}
 
