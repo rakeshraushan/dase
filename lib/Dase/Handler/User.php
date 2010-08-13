@@ -389,6 +389,9 @@ class Dase_Handler_User extends Dase_Handler
 			if ('list' == $u->display) {
 				$t->assign('display','list');
 			}
+			if ($u->can('admin',$tag) && 'hide' != $u->controls_status) {
+				$t->assign('bulkedit',1);
+			}
 			$r->renderResponse($t->fetch('item_set/tag.tpl'));
 		} else {
 			$r->renderError(404);
