@@ -100,7 +100,10 @@ class Dase_Handler_Tags extends Dase_Handler
 			AND t.ascii_id != 'cart'
 			ORDER BY t.eid, t.ascii_id, ti.sort_order";
 		$set = array();
-		foreach (Dase_DBO::query($this->db,$sql) as $row) {
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute();
+		foreach ($sth->fetchAll() as $row) {
 			if (!isset($set[$row['eid']][$row['ascii_id']])) {
 				$set[$row['eid']][$row['ascii_id']] = array();
 			}

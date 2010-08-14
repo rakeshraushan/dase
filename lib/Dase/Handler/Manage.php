@@ -457,7 +457,12 @@ class Dase_Handler_Manage extends Dase_Handler
 
 			$file = Dase_File::newFile($this->db,$path,$type,$name,BASE_PATH);
 			//this'll create thumbnail, viewitem, and any derivatives
-			$media_file = $file->addToCollection($item,false,MEDIA_DIR);
+			try {
+				$media_file = $file->addToCollection($item,true,MEDIA_DIR); //true means tets for dups
+			} catch(Exception $e) {
+				Dase_Log::debug(LOG_FILE,'add to collection error: '.$e->getMessage());
+				$r->renderError(409,$e->getMessage());
+			}
 			$item->setItemType($r->get('item_type'));
 			//here's where we map admin_att to real att
 			$item->mapConfiguredAdminAtts();

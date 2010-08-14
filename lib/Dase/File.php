@@ -140,10 +140,13 @@ abstract class Dase_File
 				LIMIT 1
 				";
 			$hash = $metadata['md5'];
-			$res = Dase_DBO::query($this->db,$sql,array($c->id,'admin_checksum',$hash),true)->fetch();
-			if ($res && $res->value_text) {
+			$dbh = $this->db->getDbh();
+			$sth = $dbh->prepare($sql);
+			$sth->execute(array($c->id,'admin_checksum',$hash));
+			$row = $sth->fetch();
+			if ($row && $row['value_text']) {
 				throw new Exception('duplicate file');
-			} 
+			}
 		}
 
 		$subdir =  Dase_Util::getSubdir($item->serial_number);

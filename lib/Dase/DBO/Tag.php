@@ -119,7 +119,10 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			GROUP BY term, label
 			ORDER BY label
 			";
-		foreach (Dase_DBO::query($db,$sql,array($scheme)) as $row) { 
+		$dbh = $db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($scheme));
+		foreach ($sth->fetchAll() as $row) { 
 			$cats->addCategory($row['term'],'',$row['label']);
 		}
 		return $cats->asXml();
