@@ -172,12 +172,11 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($coll = null,$limit=10000,$filter_key='',$filter_value='')
+	function getDisplayValues($coll=null,$limit=10000)
 	{
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
 		$admin_sql = '';
-		$filter_sql = '';
 		if (!$this->id) {
 			throw new Exception('attribute not instantiated/loaded'); 
 		}
@@ -185,9 +184,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		//todo: make sure $coll is a-z or '_'
 		if ($coll) {
 			$admin_sql = "AND item_id IN (SELECT id FROM {$prefix}item WHERE collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id = '$coll'))";
-		}
-		if ($filter_key && $filter_value) {
-			$filter_sql = "AND item_id IN (SELECT item_id FROM {$prefix}value v,{$prefix}attribute a WHERE v.value_text='$filter_value' and a.ascii_id = '$filter_key' and v.attribute_id = a.id)";
 		}
 		$limit_sql = '';
 		if ($limit) {
@@ -198,7 +194,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			FROM {$prefix}value
 			WHERE attribute_id = ?
 			$admin_sql
-			$filter_sql
 			GROUP BY value_text
 			ORDER BY value_text
 			$limit_sql;
@@ -373,33 +368,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	public function asJson() {
 		return Dase_Json::get($this->asArray());
-	}
-
-	public function valuesAsAtom($collection_ascii_id,$filter_key ='',$filter_value='',$app_root)
-	{
-		if (0 == $this->collection_id) {
-			//since it is admin att we need to be able to limit to items in this coll
-			$values_array = $this->getDisplayValues($collection_ascii_id,2000,$filter_key,$filter_value);
-		} else {
-			$values_array = $this->getDisplayValues(null,2000,$filter_key,$filter_value);
-		}
-		$feed = new Dase_Atom_Feed;
-		$feed->setId($app_root.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values');
-		$feed->setFeedType('attribute_values');
-		$feed->setTitle('values for '.$collection_ascii_id.'.'.$this->ascii_id);
-		//since we do not have a class for an attribute_value feed, stick ascii_id in subtitle
-		$feed->setSubtitle($this->ascii_id);
-		$feed->setUpdated(date(DATE_ATOM));
-		$feed->addAuthor();
-		$feed->addLink($app_root.'/attribute/'.$collection_ascii_id.'/'.$this->ascii_id.'/values.atom','self');
-		foreach ($values_array as $v) {
-			$entry = $feed->addEntry();
-			$entry->setId($app_root.'/'.$collection_ascii_id.'/'.$this->ascii_id.'/'.$v['v']);
-			$entry->addLink($app_root.'/search?'.$collection_ascii_id.'.'.$this->ascii_id.'='.$v['v']);
-			$entry->setUpdated(date(DATE_ATOM));
-			$entry->setTitle($v['v']);
-		}
-		return $feed->asXml();
 	}
 
 	public function fixBools()
