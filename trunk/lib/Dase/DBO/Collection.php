@@ -301,8 +301,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		$feed->setTitle('DASe Collections');
 		$feed->setId($app_root);
 		$feed->setFeedType('collection_list');
-		//todo:fix this to *not* simply be a time stamp
-		$feed->setUpdated(Dase_DBO_Collection::getLastCreated($db));
+		$feed->setUpdated(date(DATE_ATOM));
 		$feed->addAuthor('DASe (Digital Archive Services)','http://daseproject.org');
 		$feed->addLink($app_root.'/collections.atom','self');
 		$feed->addCategory($app_root,"http://daseproject.org/category/base_url");
@@ -310,22 +309,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$coll->injectAtomEntryData($feed->addEntry(),$app_root);
 		}
 		return $feed->asXml();
-	}
-
-	static function getLastCreated($db)
-	{
-		$prefix = $db->table_prefix;
-		$sql = "
-			SELECT created
-			FROM {$prefix}collection
-			ORDER BY created DESC
-			";
-		//returns first non-null created
-		foreach (Dase_DBO::query($db,$sql) as $row) {
-			if ($row['created']) {
-				return $row['created'];
-			}
-		}
 	}
 
 	static function getLookupArray($db)
@@ -353,7 +336,11 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			WHERE m.collection_ascii_id = ?
 			AND m.dase_user_eid = u.eid
 			ORDER BY m.dase_user_eid";
-		return Dase_DBO::query($this->db,$sql,array($this->ascii_id),true);
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->setFetchMode(PDO::FETCH_OBJ);
+		$sth->execute(array($this->ascii_id));
+		return $sth;
 	}
 
 	function getAttributes($sort = 'sort_order')
@@ -431,28 +418,6 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		//note: MUST clone items 
 		return $item->find();
-	}
-
-	function getItemIdRange($start,$count)
-	{
-		$prefix = $this->db->table_prefix;
-		$sql = "
-			SELECT id 
-			FROM {$prefix}item
-			WHERE collection_id = ?
-			ORDER BY updated DESC
-			";
-		$i = 0;
-		$total = 0;
-		$item_id_array = array();
-		foreach (Dase_DBO::query($this->db,$sql,array($this->id)) as $row) {
-			$i++;
-			if ($i >= $start && $count >= $total) {
-				$total++;
-				$item_id_array[] = $row['id'];
-			}
-		}
-		return $item_id_array;
 	}
 
 	function getItemTypes()
@@ -578,212 +543,4 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 		}
 		return $svc->asXml();
 	}
-
-	public  function xmlDump() {
-
-		$db = $this->db;
-
-		$admin_atts = new Dase_DBO_Attribute($db);
-		$admin_atts->collection_id = 0;
-		foreach ($admin_atts->find() as $aa) {
-			$aa = clone($aa);
-			$attribute_lookup[$aa->id] = $aa;
-		}
-
-		$prefix = $db->table_prefix;
-		$writer = new XMLWriter();
-		$writer->openMemory();
-		$writer->setIndent(true);
-		$writer->startDocument('1.0','UTF-8');
-		$writer->startElement('archive');
-		$writer->writeAttribute('archived_date',date(DATE_ATOM));
-		$writer->writeAttribute('name',$this->collection_name);
-		$writer->writeAttribute('id',$this->ascii_id);
-		$writer->writeAttribute('created',$this->created);
-		$writer->writeAttribute('item_count',$this->item_count);
-		$writer->writeAttribute('is_public',$this->is_public);
-		$writer->writeAttribute('visibility',$this->visibility);
-		if ($this->description) {
-			$writer->startElement('description');
-			$writer->text($this->description);
-			$writer->endElement();
-		}
-		if ($this->admin_notes) {
-			$writer->startElement('admin_notes');
-			$writer->text($this->admin_notes);
-			$writer->endElement();
-		}
-		$attribute = new Dase_DBO_Attribute($this->db);
-		$attribute->collection_id = $this->id;
-		foreach($attribute->find() as $att) {
-			$att = clone($att);
-			$attribute_lookup[$att->id] = $att;
-			$writer->startElement('att');
-			$writer->writeAttribute('id',$att->ascii_id);
-			$writer->writeAttribute('name',$att->attribute_name);
-			$writer->writeAttribute('sort_order',$att->sort_order);
-			$writer->writeAttribute('in_basic_search',$att->in_basic_search);
-			$writer->writeAttribute('is_on_list_display',$att->is_on_list_display);
-			$writer->writeAttribute('is_repeatable',$att->is_repeatable);
-			$writer->writeAttribute('is_required',$att->is_required);
-			$writer->writeAttribute('is_public',$att->is_public);
-			if ($att->usage_notes) {
-				$writer->writeAttribute('usage_notes',$att->usage_notes);
-			}
-			if ($att->mapped_admin_att_id) {
-				$mapped = $attribute_lookup[$att->mapped_admin_att_id];
-				$writer->writeAttribute('mapped_admin_att',$mapped->ascii_id);
-			}
-			$writer->writeAttribute('updated',$att->updated);
-			$writer->writeAttribute('html_input_type',$att->html_input_type);
-			if ($att->modifier_type) {
-				$writer->writeAttribute('modifier_type',$att->modifier_type);
-			}
-			if ($att->modifier_defined_list) {
-				$writer->writeAttribute('modifier_defined_list',$att->modifier_defined_list);
-			}
-			foreach ($att->getDefinedValues() as $df) {
-				$writer->startElement('val');
-				$writer->text($df);
-				$writer->endElement();
-			}
-			$writer->endElement();
-		}
-		$item_type = new Dase_DBO_ItemType($this->db);
-		$item_type->collection_id = $this->id;
-		foreach($item_type->find() as $itype) {
-			$itype = clone($itype);
-			$item_type_lookup[$itype->id] = $itype;
-			$writer->startElement('item_type');
-			$writer->writeAttribute('id',$itype->ascii_id);
-			$writer->writeAttribute('name',$itype->name);
-			foreach ($itype->getAttributes() as $att) {
-				$att = clone($att);
-				$writer->startElement('att');
-				$writer->writeAttribute('id',$att->ascii_id);
-				$writer->writeAttribute('name',$att->attribute_name);
-				$writer->endElement();
-			}
-			$writer->endElement();
-		}
-		foreach($this->getManagers() as $manager) {
-			$writer->startElement('manager');
-			$writer->writeAttribute('eid',$manager->dase_user_eid);
-			$writer->writeAttribute('auth_level',$manager->auth_level);
-			$writer->writeAttribute('created',$manager->created);
-			$writer->writeAttribute('expiration',$manager->expiration);
-			$writer->writeAttribute('created_by',$manager->created_by_eid);
-			$writer->text($manager->name);
-			$writer->endElement();
-		}
-		$i=0;
-		$sql = "
-			SELECT *
-			FROM {$prefix}item
-			WHERE collection_id = $this->id	
-			";
-		foreach (Dase_DBO::query($db,$sql) as $item) {
-			$writer->startElement('item');
-			$writer->writeAttribute('sernum',$item['serial_number']);
-			$writer->writeAttribute('type',$item['item_type_ascii_id']);
-			$writer->writeAttribute('created',$item['created']);
-			$writer->writeAttribute('updated',$item['updated']);
-			$writer->writeAttribute('status',$item['status']);
-
-			/** metadata **/
-
-			$sql = "
-				SELECT * 
-				FROM {$prefix}value v
-				WHERE v.item_id = {$item['id']} 
-			";
-			foreach (Dase_DBO::query($db,$sql) as $val) {
-				//in case orphaned value
-				if (isset($attribute_lookup[$val['attribute_id']])) {
-					$att = $attribute_lookup[$val['attribute_id']];
-					$writer->startElement('meta');
-					$writer->writeAttribute('att',$att->ascii_id);
-					if ($val['modifier']) {
-						$writer->writeAttribute('mod',$val['modifier']);
-					}
-					if ($val['url']) {
-						$writer->writeAttribute('url',$val['url']);
-					}
-					$writer->text($val['value_text']);
-					$writer->endElement();
-				} else {
-					$writer->startElement('orphan');
-					$writer->writeAttribute('attribute_id',$att->id);
-					if ($val['modifier']) {
-						$writer->writeAttribute('mod',$val['modifier']);
-					}
-					if ($val['url']) {
-						$writer->writeAttribute('url',$val['url']);
-					}
-					$writer->text($val['value_text']);
-					$writer->endElement();
-				}
-			}
-
-			/** comments **/
-
-			if ($item['comments_count']) {
-				$sql = "
-					SELECT * 
-					FROM {$prefix}comment
-					WHERE comment.item_id = {$item['id']} 
-				";
-				foreach (Dase_DBO::query($db,$sql) as $comment) {
-					$writer->startElement('comment');
-					$writer->writeAttribute('type',$comment['type']);
-					$writer->writeAttribute('updated',$comment['updated']);
-					$writer->writeAttribute('eid',$comment['updated_by_eid']);
-					$writer->text($comment['text']);
-					$writer->endElement();
-				}
-			}
-
-			/** content **/
-
-			if ($item['content_length']) {
-				$sql = "
-					SELECT * 
-					FROM {$prefix}content
-					WHERE content.item_id = {$item['id']} 
-				";
-				foreach (Dase_DBO::query($db,$sql) as $content) {
-					$writer->startElement('content');
-					$writer->writeAttribute('type',$content['type']);
-					$writer->writeAttribute('updated',$content['updated']);
-					$writer->writeAttribute('eid',$content['updated_by_eid']);
-					$writer->text($content['text']);
-					$writer->endElement();
-				}
-			}
-
-
-			/** media **/
-
-			$sql = "
-				SELECT * 
-				FROM {$prefix}media_file
-				WHERE media_file.item_id = {$item['id']} 
-			";
-			foreach (Dase_DBO::query($db,$sql) as $mf) {
-				$writer->startElement('media');
-				$writer->writeAttribute('filename',$mf['filename']);
-				$writer->writeAttribute('size',$mf['size']);
-				$writer->writeAttribute('mime',$mf['mime_type']);
-				$writer->writeAttribute('w',$mf['width']);
-				$writer->writeAttribute('h',$mf['height']);
-				$writer->writeAttribute('len',$mf['file_size']);
-				$writer->endElement();
-			}
-			$writer->endElement();
-			error_log(++$i.' of '.$this->item_count.' ('.$this->collection_name.')');
-		}
-		$writer->endDocument();
-		return $writer->flush(true);
-	}
-
 }
