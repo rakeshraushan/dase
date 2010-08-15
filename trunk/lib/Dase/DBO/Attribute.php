@@ -177,29 +177,33 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
 		$admin_sql = '';
-		if (!$this->id) {
-			throw new Exception('attribute not instantiated/loaded'); 
-		}
 		//presence of collection_id says it is an admin att
-		//todo: make sure $coll is a-z or '_'
 		if ($coll) {
-			$admin_sql = "AND item_id IN (SELECT id FROM {$prefix}item WHERE collection_id IN (SELECT id FROM {$prefix}collection WHERE ascii_id = '$coll'))";
-		}
-		$limit_sql = '';
-		if ($limit) {
-			$limit_sql = "LIMIT $limit";
-		}
-		$sql = "
-			SELECT value_text, count(value_text)
-			FROM {$prefix}value
-			WHERE attribute_id = ?
-			$admin_sql
-			GROUP BY value_text
-			ORDER BY value_text
-			$limit_sql;
+			$c = Dase_DBO_Collection::get($this->db,$coll);
+			$sql = "
+				SELECT value_text, count(value_text)
+				FROM {$prefix}value, {$prefix}item
+				WHERE value. attribute_id = ?
+				AND value.item_id = item.id
+				AND item.collection_id = ?
+				GROUP BY value_text
+				ORDER BY value_text
+				LIMIT ?
 			";
-		$st = $dbh->prepare($sql);
-		$st->execute(array($this->id));
+			$st = $dbh->prepare($sql);
+			$st->execute(array($this->id,$c->id,$limit));
+		} else {
+			$sql = "
+				SELECT value_text, count(value_text)
+				FROM {$prefix}value
+				WHERE attribute_id = ?
+				GROUP BY value_text
+				ORDER BY value_text
+				LIMIT ?
+			";
+			$st = $dbh->prepare($sql);
+			$st->execute(array($this->id,$limit));
+		}
 		$display_values_array = array();
 		while ($row = $st->fetch()) {
 			//returns value and count (tally)
@@ -411,35 +415,6 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				$att->update();
 			}
 		}
-		/*
-		$seen  = false;
-		$new_sort_order = 0;
-		$coll = $this->getCollection(); 
-		foreach ($coll->getAttributes() as $att) {
-			$new_sort_order++;
-			if ($new_sort_order == $target) {
-				$this->sort_order = $new_sort_order;
-				$this->fixBools();
-				$this->update();
-				$seen = true;
-			} 
-			if ($target && $att->ascii_id == $this->ascii_id) {
-				//skip
-			} else {
-				if ($seen) {
-			//		$new_sort_order++;
-				}
-				$att->sort_order = $new_sort_order;
-				$att->fixBools();
-				$att->update();
-			}
-		}
-		if ($target && !$seen) { //meaning target is last or higher
-			$this->sort_order = $new_sort_order;
-			$this->fixBools();
-			$this->update();
-		}
-		 */
 	}
 }
 
