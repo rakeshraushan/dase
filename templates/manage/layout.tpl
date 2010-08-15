@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>
 			{block name="title"}DASe: Digital Archive Services{/block}
 		</title>
@@ -10,15 +10,15 @@
 		The Digital Archive Services project 
 		is a lightweight digital content repository
 		created by the College of Liberal Arts at 
-		The University of Texas at Austin."/>
+		The University of Texas at Austin.">
 
-		<base href="{$app_root}"/>
+		<base href="{$app_root}">
 
-		<link rel="stylesheet" type="text/css" href="www/css/yui.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="www/css/manage.css"/>
+		<link rel="stylesheet" type="text/css" href="www/css/yui.css">
+		<link rel="stylesheet" type="text/css" href="www/css/style.css">
+		<link rel="stylesheet" type="text/css" href="www/css/manage.css">
 		{block name="head-links"}{/block}
-		<link rel="shortcut icon" href="www/images/favicon.ico"/>
+		<link rel="shortcut icon" href="www/images/favicon.ico">
 
 		<script type="text/javascript" src="www/js/webtoolkit.base64.js"></script>
 		<script type="text/javascript" src="www/js/http.js"></script>
@@ -39,7 +39,7 @@
 		</style>
 
 		<!--[if lt IE 8]>
-		<link rel="stylesheet" type="text/css" href="css/ie.css"/>
+		<link rel="stylesheet" type="text/css" href="css/ie.css">
 		<![endif]-->
 
 	</head>
@@ -74,37 +74,37 @@
 			<ul id="menu" class="hide">
 				<li>
 				<a href=".">
-					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Home/Search</sup>
+					<img alt="icon" src="www/images/tango-icons/go-home.png"><sup>Home/Search</sup>
 				</a>
 				</li>
 				<li class="settings-tab">
 				<a href="manage/{$collection->ascii_id}/settings">
-					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
+					<img alt="icon" src="www/images/tango-icons/emblem-system.png"><sup>Collection Settings</sup>
 				</a>
 				</li>
 				<li class="attributes-tab">
 				<a href="manage/{$collection->ascii_id}/attributes">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Attributes</sup>
 				</a>
 				</li>
 				<li class="item_types-tab">
 				<a href="manage/{$collection->ascii_id}/item_types">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Item Types</sup>
 				</a>
 				</li>
 				<li class="delete_items-tab">
 				<a href="manage/{$collection->ascii_id}/delete_items">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Delete Items</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Delete Items</sup>
 				</a>
 				</li>
 				<li class="managers-tab">
 				<a href="manage/{$collection->ascii_id}/managers">
-					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
+					<img alt="icon" src="www/images/tango-icons/contact-new.png"><sup>Users/Managers</sup>
 				</a>
 				</li>
 				<li class="uploader-tab">
 				<a href="manage/{$collection->ascii_id}/uploader">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
+					<img alt="icon" src="www/images/tango-icons/list-add.png"><sup>Create Item</sup>
 				</a>
 				</li>
 				{if $module_menu}
@@ -114,36 +114,36 @@
 			<ul id="menuGrayed">
 				<li>
 				<a href="collection/{$collection->ascii_id}">
-					<img alt="icon" src="www/images/tango-icons/go-home.png"/><sup>Home/Search</sup>
+					<img alt="icon" src="www/images/tango-icons/go-home.png"><sup>Home/Search</sup>
 				</a>
 				</li>
 				<li class="settings-tab">
 				<a href="manage/{$collection->ascii_id}/settings">
-					<img alt="icon" src="www/images/tango-icons/emblem-system.png"/><sup>Collection Settings</sup>
+					<img alt="icon" src="www/images/tango-icons/emblem-system.png"><sup>Collection Settings</sup>
 				</a>
 				</li>
 				<li class="attributes-tab">
 				<a href="manage/{$collection->ascii_id}/attributes">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Attributes</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Attributes</sup>
 				</a>
 				</li>
 				<li class="item_types-tab">
 				<a href="manage/{$collection->ascii_id}/item_types">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Item Types</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Item Types</sup>
 				</a>
 				<li class="delete_items-tab">
 				<a href="manage/{$collection->ascii_id}/delete_items">
-					<img alt="icon" src="www/images/tango-icons/preferences-system.png"/><sup>Delete Items</sup>
+					<img alt="icon" src="www/images/tango-icons/preferences-system.png"><sup>Delete Items</sup>
 				</a>
 				</li>
 				<li class="managers-tab">
 				<a href="manage/{$collection->ascii_id}/managers">
-					<img alt="icon" src="www/images/tango-icons/contact-new.png"/><sup>Users/Managers</sup>
+					<img alt="icon" src="www/images/tango-icons/contact-new.png"><sup>Users/Managers</sup>
 				</a>
 				</li>
 				<li class="uploader-tab">
 				<a href="manage/{$collection->ascii_id}/uploader">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"/><sup>Create Item</sup>
+					<img alt="icon" src="www/images/tango-icons/list-add.png"><sup>Create Item</sup>
 				</a>
 				</li>
 				{if $module_menu}
@@ -169,7 +169,7 @@
 			<a href="resources">Resources</a> | 
 			<a href="admin" class="hide" id="adminLink"></a> |
 			{$request->elapsed} seconds |
-			<img src="www/images/dasepowered.png" alt="DASePowered icon"/>
+			<img src="www/images/dasepowered.png" alt="DASePowered icon">
 		</div><!--closes footer-->
 		<div id="collectionAsciiId" class="pagedata">{$collection->ascii_id}</div>
 		<div id="debugData" class="pagedata"></div>

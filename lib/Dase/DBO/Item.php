@@ -100,7 +100,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		if (count($this->_metadata)) {
 			return $this->_metadata;
 		}
-		$db = $this->db;
 		$prefix = $this->db->table_prefix;
 		$metadata = array();
 		$bound_params = array();
@@ -113,8 +112,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND v.attribute_id = a.id
 			ORDER BY a.sort_order,v.value_text
 			";
-		$st = Dase_DBO::query($db,$sql,array($this->id));
-		while ($row = $st->fetch()) {
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id));
+		while ($row = $sth->fetch()) {
 			$row['edit-id'] =  '/item/'.$this->p_collection_ascii_id.'/'.$this->serial_number.'/metadata/'.$row['id'];
 			$metadata[] = $row;
 		}
@@ -192,7 +193,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function getValue($att_ascii_id)
 	{
-		$db = $this->db;
 		//only returns first found
 		$prefix = $this->db->table_prefix;
 		$sql = "
@@ -203,9 +203,12 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND a.ascii_id = ?
 			LIMIT 1
 			";
-		$res = Dase_DBO::query($db,$sql,array($this->id,$att_ascii_id),true)->fetch();
-		if ($res && $res->value_text) {
-			return $res->value_text;
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id,$att_ascii_id));
+		$res = $sth->fetch();
+		if ($res && $res['value_text']) {
+			return $res['value_text'];
 		} else {
 			return false;
 		}
@@ -257,9 +260,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			WHERE item_id = ?
 			ORDER BY file_size ASC 
 			";
-		$st = Dase_DBO::query($this->db,$sql,array($this->id));
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id));
 		$last = null;
-		while ($m = $st->fetch()) {
+		while ($m = $sth->fetch()) {
 			$m['url'] = 
 				'/media/'.$m['p_collection_ascii_id'].
 				'/'.$m['size'].'/'.$m['filename'];
@@ -617,7 +622,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getTitle()
 	{
-		$db = $this->db;
 		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
@@ -626,7 +630,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND a.ascii_id = 'title'
 			AND v.item_id = ? 
 			";
-		$title = Dase_DBO::query($db,$sql,array($this->id))->fetchColumn();
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id));
+		$title = $sth->fetchColumn();
 		if (!$title) {
 			$title = $this->serial_number;
 		}
@@ -635,7 +642,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getDescription()
 	{
-		$db = $this->db;
 		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
@@ -644,7 +650,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND a.ascii_id = 'description'
 			AND v.item_id = ? 
 			";
-		$description = Dase_DBO::query($db,$sql,array($this->id))->fetchColumn();
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id));
+		$description = $sth->fetchColumn();
 		if (!$description) {
 			$description = $this->getTitle();
 		}
@@ -653,8 +662,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	function getRights()
 	{
-		$db = $this->db;
-		$prefix = $db->table_prefix;
+		$prefix = $this->db->table_prefix;
 		$sql = "
 			SELECT v.value_text 
 			FROM {$prefix}attribute a, {$prefix}value v
@@ -662,7 +670,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			AND a.ascii_id = 'rights'
 			AND v.item_id = ? 
 			";
-		$text = Dase_DBO::query($db,$sql,array($this->id))->fetchColumn();
+		$dbh = $this->db->getDbh();
+		$sth = $dbh->prepare($sql);
+		$sth->execute(array($this->id));
+		$text = $sth->fetchColumn();
 		if (!$text) { $text = 'daseproject.org'; }
 		return $text;
 	}
