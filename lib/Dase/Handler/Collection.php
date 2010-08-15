@@ -901,23 +901,24 @@ class Dase_Handler_Collection extends Dase_Handler
 		//todo: work on cacheing here
 		//$r->checkCache(1500);
 		$c = $this->collection;
+		$dbh = $this->db->getDbh();
 		$sql = "
 			SELECT id, ascii_id
 			FROM {$prefix}attribute a
 			WHERE a.collection_id = ?
 			AND a.is_public = true;
 		";
-		$st = Dase_DBO::query($this->db,$sql,array($c->id));
+		$sth1 = $dbh->prepare($sql);
+		$sth1->execute(array($c->id));
 		$sql = "
 			SELECT count(DISTINCT value_text) 
 			FROM {$prefix}value 
 			WHERE attribute_id = ?";
-		$dbh = $this->db->getDbh();
-		$sth = $dbh->prepare($sql);
+		$sth2 = $dbh->prepare($sql);
 		$tallies = array();
-		while ($row = $st->fetch()) {
-			$sth->execute(array($row['id']));
-			$tallies[$row['ascii_id']] = $sth->fetchColumn();
+		while ($row = $sth1->fetch()) {
+			$sth2->execute(array($row['id']));
+			$tallies[$row['ascii_id']] = $sth2->fetchColumn();
 		}
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 0;
@@ -928,26 +929,26 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$prefix = $this->db->table_prefix;
 		$c = $this->collection;
+		$dbh = $this->db->getDbh();
 		$sql = "
 			SELECT id, ascii_id
 			FROM {$prefix}attribute a
 			WHERE a.collection_id = 0
 			";
-		$st = Dase_DBO::query($this->db,$sql);
+		$sth1 = $dbh->prepare($sql);
+		$sth1->execute();
 		$sql = "
 			SELECT count(DISTINCT value_text) 
-			FROM {$prefix}value v 
-			WHERE v.attribute_id = ? 
-			AND v.item_id IN
-			(SELECT id FROM {$prefix}item i
-			WHERE i.collection_id = $c->id)
+			FROM {$prefix}value v, {$prefix}item i
+			WHERE v.attribute_id = ?
+			AND v.item_id = i.id
+			AND i.collection_id = ? 
 			";
-		$dbh = $this->db->getDbh();
-		$sth = $dbh->prepare($sql);
+		$sth2 = $dbh->prepare($sql);
 		$tallies = array();
-		while ($row = $st->fetch()) {
-			$sth->execute(array($row['id']));
-			$tallies[$row['ascii_id']] = $sth->fetchColumn();
+		while ($row = $sth1->fetch()) {
+			$sth2->execute(array($row['id'],$c->id));
+			$tallies[$row['ascii_id']] = $sth2->fetchColumn();
 		}
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 1;
