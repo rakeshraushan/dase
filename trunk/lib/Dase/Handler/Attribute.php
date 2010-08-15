@@ -61,17 +61,5 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$result['values'] = $values_array;
 		$r->renderResponse(Dase_Json::get($result));
 	}
-
-	public function getAttributeValuesAtom($r) 
-	{
-		$attr = Dase_DBO_Attribute::get($this->db,$r->get('collection_ascii_id'),$r->get('att_ascii_id'));
-		$key = '';
-		$val = '';
-		if ($r->has('filter_key') && $r->has('filter_value')) {
-			$key = $r->get('filter_key');
-			$val = $r->get('filter_value');
-		}
-		$r->renderResponse($attr->valuesAsAtom($r->get('collection_ascii_id'),$key,$val,$r->app_root));
-	}
 }
 
