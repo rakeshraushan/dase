@@ -172,8 +172,11 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $st->fetchColumn();
 	}
 
-	function getDisplayValues($coll=null,$limit=10000)
+	function getDisplayValues($coll=null,$limit=1000)
 	{
+		if (!$limit) {
+			$limit = 10000;
+		}
 		$prefix = $this->db->table_prefix;
 		$dbh = $this->db->getDbh();
 		$admin_sql = '';
