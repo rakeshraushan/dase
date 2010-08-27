@@ -634,6 +634,12 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$num = 0;
 		foreach ($set_data['items'] as $set_item) {
+			$item = $this->collection->createNewItem(null,$eid);
+			foreach ($set_item['metadata'] as $att => $val_set) {
+				foreach ($val_set as $val) {
+					$item->setValue($att,$val);
+				}
+			}
 			if (isset($set_item['enclosure'])) {
 				$url = $set_item['enclosure']['href'];
 				if ('/' == substr($url,0,1)) {
@@ -648,19 +654,13 @@ class Dase_Handler_Collection extends Dase_Handler
 				if (!file_exists($upload_dir)) {
 					$r->renderError(500,'missing upload directory');
 				}
-				$item = $this->collection->createNewItem(null,$eid);
-				foreach ($set_item['metadata'] as $att => $val_set) {
-					foreach ($val_set as $val) {
-						$item->setValue($att,$val);
-					}
-				}
 				$new_file = $upload_dir.'/'.$item->serial_number.'.'.$ext;
 				file_put_contents($new_file,file_get_contents($url));
 				try {
 					$file = Dase_File::newFile($this->db,$new_file,null,null,BASE_PATH);
 					//$media_file = $file->addToCollection($item,true,MEDIA_DIR); //check for dups
 					//accept dups
-					$media_file = $file->addToCollection($item,false,MEDIA_DIR); //check for dups
+					$media_file = $file->addToCollection($item,false,MEDIA_DIR); 
 					$item->mapConfiguredAdminAtts();
 					$item->buildSearchIndex();
 					$num++;
