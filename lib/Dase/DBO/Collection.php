@@ -485,6 +485,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->updated = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
 			$item->p_collection_ascii_id = $this->ascii_id;
+			$item->p_remote_media_host = $this->remote_media_host;
 			$item->collection_name = $this->collection_name;
 			$item->insert();
 			$this->updateItemCount();
@@ -497,6 +498,7 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->created = date(DATE_ATOM);
 			$item->created_by_eid = $eid;
 			$item->p_collection_ascii_id = $this->ascii_id;
+			$item->p_remote_media_host = $this->remote_media_host;
 			$item->collection_name = $this->collection_name;
 			$item->insert();
 			$item->serial_number = sprintf("%09d",$item->id);
