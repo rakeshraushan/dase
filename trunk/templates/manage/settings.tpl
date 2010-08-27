@@ -60,6 +60,14 @@
 			</td>
 		</tr>
 		<tr>
+			<th>Remote Media Host 
+				<div class="current">
+				{$collection->remote_media_host}
+				</div>
+			</th>
+			<td class="data"><input type="text" name="remote_media_host" size="40" value="{$collection->remote_media_host}"/></td>
+		</tr>
+		<tr>
 			<th>Admin Notes
 				<div class="current">
 				{$collection->admin_notes}

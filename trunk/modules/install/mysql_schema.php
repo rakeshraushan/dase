@@ -38,6 +38,7 @@ CREATE TABLE `{$table_prefix}collection` (
 `created` varchar(50) default NULL,
 `description` varchar(2000) default NULL,
 `collection_name` varchar(200) default NULL,
+`remote_media_host` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
 `admin_notes` text default NULL,
 PRIMARY KEY (`id`)
@@ -123,6 +124,7 @@ CREATE TABLE `{$table_prefix}item` (
 `item_type_ascii_id` varchar(200) default NULL,
 `item_type_name` varchar(200) default NULL,
 `collection_name` varchar(200) default NULL,
+`p_remote_media_host` varchar(200) default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

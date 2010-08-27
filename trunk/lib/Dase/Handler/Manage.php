@@ -55,6 +55,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		} else {
 			$this->collection->is_public = 1;
 		}
+		$this->collection->remote_media_host = trim($r->get('remote_media_host'));
 		$this->collection->description = trim($r->get('description'));
 		$this->collection->admin_notes = trim($r->get('admin_notes'));
 		$this->collection->visibility = $r->get('visibility');

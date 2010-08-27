@@ -31,6 +31,7 @@ CREATE TABLE {$table_prefix}collection (
     id serial NOT NULL,
     ascii_id character varying(200),
     collection_name character varying(200),
+    remote_media_host character varying(200),
     description character varying(2000),
     is_public boolean,
     created character varying(50),
@@ -107,6 +108,7 @@ CREATE TABLE {$table_prefix}item (
     collection_name character varying(200),
     item_type_ascii_id character varying(200),
     item_type_name character varying(200),
+    p_remote_media_host character varying(200),
     created_by_eid character varying(50)
 );
 
