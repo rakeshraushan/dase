@@ -92,6 +92,16 @@ class Dase_Template {
 		return $ret;
 	}
 
+	public function init($handler)
+	{
+		//to set handler-wide templ vars
+		//in handler, define function initTemplate 
+		//which accepts $t (template) as parameter
+		//in resource function just run
+		//$t->init($this)
+		return $handler->initTemplate($this);
+	}
+
 	public function display($resource_name)
 	{
 		echo $this->fetch($resource_name);
