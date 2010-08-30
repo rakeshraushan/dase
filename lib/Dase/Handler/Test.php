@@ -13,10 +13,16 @@ class Dase_Handler_Test extends Dase_Handler
 	{
 	}	
 
+	public function initTemplate($t)
+	{
+		$t->assign('init','initialized!');
+	}
+
 	public function getIndex($r) 
 	{
-		$tpl = new Dase_Template($r);
-		$r->renderResponse($tpl->fetch('test/index.tpl'));
+		$t = new Dase_Template($r);
+		$t->init($this);
+		$r->renderResponse($t->fetch('test/index.tpl'));
 	}
 
 	public function getCache($r) 
