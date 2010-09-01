@@ -170,7 +170,6 @@ CREATE TABLE {$table_prefix}tag (
     dase_user_id integer,
     is_public boolean DEFAULT false,
     background character varying(20) DEFAULT 'white'::character varying,
-    admin_collection_id integer,
     ascii_id character varying(200),
     created character varying(50),
     updated character varying(50),
