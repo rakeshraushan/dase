@@ -168,7 +168,6 @@ CREATE TABLE `{$table_prefix}tag` (
 `id` int(11) NOT NULL auto_increment,
 `is_public` boolean default NULL,
 `item_count` integer default NULL,
-`admin_collection_id` integer default NULL,
 `dase_user_id` integer default NULL,
 `updated` varchar(50) default NULL,
 `visibility` varchar(50) default NULL,
