@@ -128,39 +128,6 @@ class Dase_Handler_Item extends Dase_Handler
 		$r->renderResponse($this->item->getAtomPubServiceDoc($r->app_root));
 	}
 
-	/** this is for ajax retrieval of content versions */
-	public function getContentJson($r)
-	{
-		$user = $r->getUser();
-		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'user cannot read this item');
-		}
-		$r->renderResponse($this->item->getContentJson(true));
-	}
-
-	/** this is for simply getting the content 
-	 * note that type MUST be a mime_type
-	 * */
-	public function getContent($r)
-	{
-		$user = $r->getUser();
-		if (!$user->can('read',$this->item)) {
-			$r->renderError(401,'user cannot read this item');
-		}
-		$cont = $this->item->getContents();	
-		if ('xhtml' == $cont->type) {
-			$mime_type = 'application/xhtml+xml';
-		} elseif ('html' == $cont->type) {
-			$mime_type = 'text/html';
-		} elseif ('text' == $cont->type) {
-			$mime_type = 'text/plain';
-		} else {
-			$mime_type = $cont->type;
-		}
-		$r->response_mime_type = $mime_type;
-		$r->renderResponse($cont->text);
-	}
-
 	public function getItemJson($r)
 	{
 		$user = $r->getUser();
@@ -340,38 +307,6 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderResponse('added comment: '.$bits);
 		} else {
 			$r->renderResponse('no comment');
-		}
-	}
-
-	/** this is used to UPDATE an item's content */
-	public function postToContent($r)
-	{
-		$user = $r->getUser();
-		$this->_updateContent($r,$user);
-	}
-
-	/** this is used to UPDATE an item's content */
-	public function putContent($r)
-	{
-		$user = $r->getUser('http');
-		$this->_updateContent($r,$user);
-	}
-
-	private function _updateContent($r,$user)
-	{
-		if (!$user->can('write',$this->item)) {
-			$r->renderError(401,'cannot write to this item');
-		}
-		$content_type = $r->getContentType();
-		if ('application/x-www-form-urlencoded' == $content_type) {
-			$content_type = 'text';
-			$content = $r->get('content');
-		} else {
-		//todo: filter this!
-			$content = $r->getBody();
-		}
-		if ($this->item->setContent($content,$user->eid,$content_type)) {
-			$r->renderResponse('content updated');
 		}
 	}
 

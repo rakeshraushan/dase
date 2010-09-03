@@ -18,7 +18,6 @@ Dase.pageInitUser = function(eid) {
 		Dase.removeClass(controls,'hide');
 		Dase.initEditMetadata();
 		Dase.initAddMetadata();
-		Dase.initAddContent();
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
 		Dase.initReindexItem();
@@ -472,41 +471,6 @@ Dase.initTemplateTextWithMenu = function(target) {
 	}
 };
 
-
-Dase.initAddContent = function()
-{
-	var clink = Dase.$('addContentLink');
-	var cform = Dase.$('ajaxFormHolder');
-	var coll = Dase.$('collectionAsciiId').innerHTML;
-	if (!clink || !cform) return;
-	clink.onclick = function() {
-		Dase.addClass(Dase.$('adminPageControls'),'hide');
-		Dase.removeClass(Dase.$('pageReloader'),'hide');
-		Dase.$('pageReloaderLink').onclick = function() {
-			Dase.pageReload();
-			return false;
-		}
-		if (Dase.toggle(cform)) {
-			cform.innerHTML = '<h1 class="loading">Loading...</h1>';
-			Dase.getJSON(this.href, function(content){
-				var coll_ser = Dase.$('collSer').innerHTML;
-				var h = new Dase.htmlbuilder;
-				h.add('h1',null,'Add/Edit Textual Content');
-				var form = h.add('form',{'action':'item/'+coll_ser+'/content','method':'post','id':'textualContentForm'});
-				if (content.latest.text) {
-					form.add('h4',null,'last updated '+content.latest.date);
-				}
-			form.add('p').add('textarea',{'cols':'50','rows':'15','name':'content'},content.latest.text+' ');
-			form.add('p').add('input',{'type':'submit','value':'update'});
-			h.attach(cform);
-			var contentForm = Dase.$('textualContentForm');
-			Dase.initContentForm(contentForm);
-		});
-	}
-	return false;
-};
-};
-
 Dase.initSetItemType = function()
 {
 	var type_link = Dase.$('setItemTypeLink');
@@ -562,24 +526,6 @@ Dase.initItemTypeForm = function(form) {
 		Dase.ajax(this.action,'post',function(resp) { 
 			Dase.pageReload(resp);
 		},Dase.form.serialize(this),null,null,content_headers); 
-		return false;
-	}
-};
-
-//for adding textual content (atom:content) 
-Dase.initContentForm = function(form) {
-	form.onsubmit = function() {
-		var content_headers = {
-			'Content-Type':'application/x-www-form-urlencoded'
-		}
-		var cont = Dase.$('itemContent');
-		if (cont) {
-			cont.innerHTML = "<h2>Loading content...</h2>";
-		}
-		Dase.ajax(this.action,'post',function(resp) { 
-			Dase.pageReload(resp);
-		},Dase.form.serialize(this),null,null,content_headers); 
-		Dase.toggle(Dase.$('ajaxFormHolder'));
 		return false;
 	}
 };

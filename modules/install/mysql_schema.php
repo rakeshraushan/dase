@@ -67,18 +67,6 @@ CREATE TABLE `{$table_prefix}comment` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}content` (
-`id` int(11) NOT NULL auto_increment,
-`item_id` integer default NULL,
-`text` text default NULL,
-`updated_by_eid` varchar(100) default NULL,
-`updated` varchar(100) default NULL,
-`p_serial_number` varchar(100) default NULL,
-`p_collection_ascii_id` varchar(100) default NULL,
-`type` varchar(100) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}dase_user` (
 `id` int(11) NOT NULL auto_increment,
 `has_access_exception` boolean default NULL,
@@ -101,13 +89,6 @@ CREATE TABLE `{$table_prefix}defined_value` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}input_template` (
-`id` int(11) NOT NULL auto_increment,
-`attribute_id` integer default NULL,
-`collection_manager_id` integer default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 CREATE TABLE `{$table_prefix}item` (
 `id` int(11) NOT NULL auto_increment,
 `item_type_id` integer default NULL,
@@ -118,7 +99,6 @@ CREATE TABLE `{$table_prefix}item` (
 `updated` varchar(50) default NULL,
 `comments_updated` varchar(50) default NULL,
 `comments_count` integer default NULL,
-`content_length` integer default NULL,
 `created` varchar(50) default NULL,
 `serial_number` varchar(200) default NULL,
 `item_type_ascii_id` varchar(200) default NULL,
