@@ -65,33 +65,6 @@ if ('count' == $action) {
 }
 
 if ('count' == $action) {
-	$sql = "SELECT count(in.id) from input_template in, attribute a
-		WHERE in.attribute_id = a.id 
-		AND	a.collection_id = $c->id
-		";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	$count = $sth->fetchColumn();
-	print "input templates: $count\n";
-} elseif ('delete' == $action) {
-	print "input template\n";
-	$id = null;
-	$sql = "SELECT in.id from input_template in, attribute a
-		WHERE in.attribute_id = a.id 
-		AND	a.collection_id = $c->id
-		";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	while ($id = $sth->fetchColumn()) {
-		$inp = new Dase_DBO_InputTemplate($db);
-		if ($inp->load($id)) {
-			$inp->delete();
-			print "deleted input\n";
-		}
-	}
-}
-
-if ('count' == $action) {
 	$sql = "SELECT count(id) from attribute a
 		WHERE a.collection_id = $c->id
 		";

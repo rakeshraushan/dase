@@ -354,26 +354,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
 		$att = $v->getAttribute();
-		$rev = new Dase_DBO_ValueRevisionHistory($this->db);
-		$rev->added_text = $value_text;
 		if ($modifier) {
 			// a bit of a hack. to delete modifier
 			// you need to pass in '_delete'
 			if ('_delete' == $modifier) {
-				$rev->added_modifier = '';
-				$rev->deleted_modifier = $v->modifier;
+				$v->modifier = '';
 			} else {
-				$rev->added_modifier = $modifier;
-				$rev->deleted_modifier = $v->modifier;
+				$v->modifier = $modifier;
 			}
 		}
-		$rev->attribute_name = $att->attribute_name;
-		$rev->collection_ascii_id = $this->p_collection_ascii_id;
-		$rev->dase_user_eid = $eid;
-		$rev->deleted_text = $v->value_text;
-		$rev->item_serial_number = $this->serial_number;
-		$rev->timestamp = date(DATE_ATOM);
-		$rev->insert();
 		$v->value_text = $value_text;
 		$v->update();
 		if ($index) {
@@ -404,16 +393,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$v = new Dase_DBO_Value($this->db);
 		$v->load($value_id);
 		$att = $v->getAttribute();
-		$rev = new Dase_DBO_ValueRevisionHistory($this->db);
-		$rev->added_text = '';
-		$rev->attribute_name = $att->attribute_name;
-		$rev->collection_ascii_id = $this->p_collection_ascii_id;
-		$rev->dase_user_eid = $eid;
-		$rev->deleted_text = $v->value_text;
-		$rev->deleted_modifier = $v->modifier;
-		$rev->item_serial_number = $this->serial_number;
-		$rev->timestamp = date(DATE_ATOM);
-		$rev->insert();
 		$v->delete();
 		if ($index) {
 			$this->updated = date(DATE_ATOM);
@@ -425,7 +404,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 	/** simple convenience method */
 	function updateTitle($value_text,$eid,$index=true)
 	{
-		//todo: set value revision history as well (using eid)
 		$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,'title');
 		if ($att) {
 			$v = new Dase_DBO_Value($this->db);
@@ -452,7 +430,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			return false;
 		}
 		//todo: this needs work -- no need to 'new' an att
-		//todo: set value revision history as well
 		$att = new Dase_DBO_Attribute($this->db);
 		$att->ascii_id = $att_ascii_id;
 		//allows for admin metadata, att_ascii for which
@@ -565,26 +542,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->deleteSearchIndex();
-		$this->deleteContent();
 		$this->deleteComments();
 		$this->deleteTagItems();
 		$this->delete();
 		$c->updateItemCount();
 		return "expunged item ".$sernum;
-	}
-
-	function deleteContent($index=false)
-	{
-		$co = new Dase_DBO_Content($this->db);
-		$co->item_id = $this->id;
-		foreach ($co->find() as $doomed) {
-			$doomed->delete();
-		}
-		if ($index) {
-			$this->updated = date(DATE_ATOM);
-			$this->update();
-			$this->buildSearchIndex();
-		}
 	}
 
 	function deleteComments()
@@ -853,47 +815,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		//this will only "take" if there is not already a title
 		$entry->setTitle($this->serial_number);
 
-		/********* CONTENT **********/
-
-		$thumb_url = $this->getMediaUrl('thumbnail',$app_root);
-		$viewitem_url = $this->getMediaUrl('viewitem',$app_root);
-
-		if ($this->content_length) {
-			$content = $this->getContents();
-			if ($content && $content->text) {
-				if (!$content->type) {
-					$content->type = 'text';
-				}
-				if ('application/json' == $content->type) {
-					$entry->setExternalContent($base_url.'/content','application/json');
-				} else {
-					$entry->setContent($content->text,$content->type);
-				}
-				/* put thumbnail in summary */
-				if ($thumb_url) {
-					$entry->setThumbnail($app_root.$thumb_url);	
-				}
-			} else {
-			/** skip splash for now 
-			$list = '';
-			foreach ($item_metadata as $row) {
-				$list .= "
-					<dt>{$row['attribute_name']}</dt>
-					<dd>{$row['value_text']}</dd>
-					";
-			}
-			$splash = "
-				<div id=\"splash\">
-				<img src=\"{$app_root}$thumb_url\"/>
-				<img src=\"{$app_root}$viewitem_url\"/>
-				<dl>$list</dl>
-				</div>
-				";
-			$entry->setContent($splash,'html');
-			 */
-			}
-		}
-
 		/*******  MEDIA  ***********/
 
 		$item_media = $this->getMedia();
@@ -1053,31 +974,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($status);
 	}
 
-	public function getContents()
-	{
-		if ($this->content_length) {
-			$db = $this->db;
-			$contents = new Dase_DBO_Content($db);
-			$contents->item_id = $this->id;
-			$contents->orderBy('updated DESC');
-			if ($contents->findOne()) {
-				$this->_content = $contents;
-			}
-			return $contents;
-		} else {
-			return false;
-		}
-	}
-
-	public function getContentRevisions()
-	{
-		$db = $this->db;
-		$contents = new Dase_DBO_Content($db);
-		$contents->item_id = $this->id;
-		$contents->orderBy('updated DESC');
-		return $contents->find();
-	}
-
 	public function getCommentsJson($app_root,$eid='')
 	{
 		$db = $this->db;
@@ -1096,52 +992,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$com[] = $c;
 		}
 		return Dase_Json::get($com);
-	}
-
-	public function getContentJson()
-	{
-		$c_obj = $this->getContents();
-		$content = array();
-		if ($c_obj) {
-			$content['latest']['text'] = $c_obj->text;
-			$content['latest']['date'] = $c_obj->updated;
-		} else {
-			$content['latest']['text'] = '';
-			$content['latest']['date'] = ''; 
-		}
-		return Dase_Json::get($content);
-	}
-
-	public function setContent($text,$eid,$type="text",$index=true)
-	{
-		$content = new Dase_DBO_Content($this->db);
-		$content->item_id = $this->id;
-		//todo: security! filter input....
-		$content->text = $text;
-		if ('text/plain' == $type) {
-			$type = 'text';
-		}
-		if ('text/html' == $type) {
-			$type = 'html';
-		}
-		if ('application/xhtml+xml' == $type) {
-			$type = 'xhtml';
-		}
-		$content->type = $type;
-		$content->p_collection_ascii_id = $this->p_collection_ascii_id;
-		$content->p_serial_number = $this->serial_number;
-		$content->updated = date(DATE_ATOM);
-		$content->updated_by_eid = $eid;
-		$res = $content->insert();
-
-		$this->updated = date(DATE_ATOM);
-		$this->content_length = strlen($content->text);
-		$this->update();
-
-		if ($index) {
-			$this->buildSearchIndex();
-		}
-		return $res;
 	}
 
 	public function addComment($text,$eid)

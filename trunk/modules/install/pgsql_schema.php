@@ -62,17 +62,6 @@ CREATE TABLE {$table_prefix}comment (
     updated_by_eid character varying(100)
 );
 
-CREATE TABLE {$table_prefix}content (
-    id serial NOT NULL,
-    text text,
-    "type" character varying(100),
-    item_id integer,
-    p_collection_ascii_id character varying(100),
-    p_serial_number character varying(100),
-    updated character varying(100),
-    updated_by_eid character varying(100)
-);
-
 CREATE TABLE {$table_prefix}dase_user (
     id serial NOT NULL,
     eid character varying(255),
@@ -102,7 +91,6 @@ CREATE TABLE {$table_prefix}item (
     updated character varying(50) DEFAULT 0,
     comments_updated character varying(50) DEFAULT 0,
     comments_count integer,
-    content_length integer,
     status character varying(50),
     p_collection_ascii_id character varying(200),
     collection_name character varying(200),
@@ -110,12 +98,6 @@ CREATE TABLE {$table_prefix}item (
     item_type_name character varying(200),
     p_remote_media_host character varying(200),
     created_by_eid character varying(50)
-);
-
-CREATE TABLE {$table_prefix}input_template (
-    id serial NOT NULL,
-    collection_manager_id integer,
-    attribute_id integer
 );
 
 CREATE TABLE {$table_prefix}item_type (
@@ -240,12 +222,6 @@ CREATE SEQUENCE {$table_prefix}collection_manager_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}content_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 CREATE SEQUENCE {$table_prefix}comment_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -265,12 +241,6 @@ CREATE SEQUENCE {$table_prefix}defined_value_seq
     CACHE 1;
 
 CREATE SEQUENCE {$table_prefix}item_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-CREATE SEQUENCE {$table_prefix}input_template_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -342,10 +312,6 @@ ALTER TABLE {$table_prefix}collection_manager
 ALTER id SET DEFAULT nextval('public.{$table_prefix}collection_manager_seq'::text);
 ";
 $query .= "
-ALTER TABLE {$table_prefix}content 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}content_seq'::text);
-";
-$query .= "
 ALTER TABLE {$table_prefix}comment 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}comment_seq'::text);
 ";
@@ -360,10 +326,6 @@ ALTER id SET DEFAULT nextval('public.{$table_prefix}defined_value_seq'::text);
 $query .= "
 ALTER TABLE {$table_prefix}item 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}item_seq'::text);
-";
-$query .= "
-ALTER TABLE {$table_prefix}input_template 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}input_template_seq'::text);
 ";
 $query .= "
 ALTER TABLE {$table_prefix}item_type 

@@ -687,26 +687,6 @@ EOD;
 
 		$search_text = array();
 		$admin_search_text = array();
-		$contents = $item->getContents();
-		//won't run if !$item->content_length
-		if ($contents && $contents->text) {
-
-			$content = $doc->appendChild($dom->createElement('field'));
-			$content->appendChild($dom->createTextNode($contents->text));
-			$content->setAttribute('name','content');
-
-			$json_doc['content'] = $contents->text;
-
-			$content_type = $doc->appendChild($dom->createElement('field'));
-			$content_type->appendChild($dom->createTextNode($contents->type));
-			$content_type->setAttribute('name','content_type');
-
-			$json_doc['content_type'] = $contents->type;
-
-			if ('text' === $contents->type) {
-				$search_text[] = $contents->text;
-			}
-		}
 
 		$search_text[] = $item->id;
 		$search_text[] = $item->serial_number;
@@ -732,7 +712,6 @@ EOD;
 
 		$json_doc['links'] = array();
 		$json_doc['links']['comments'] =  '/item/'.$item->getUnique().'/comments';
-		$json_doc['links']['content'] =  '/item/'.$item->getUnique().'/content';
 		$json_doc['links']['edit'] = '/item/'.$item->getUnique().'.json';
 		$json_doc['links']['edit-media'] = '/media/'.$item->getUnique();
 		$json_doc['links']['item_type'] =  '/item/'.$item->getUnique().'/item_type';
