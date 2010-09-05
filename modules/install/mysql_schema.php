@@ -18,6 +18,7 @@ CREATE TABLE `{$table_prefix}attribute` (
 `attribute_name` varchar(200) default NULL,
 `ascii_id` varchar(200) default NULL,
 `modifier_type` varchar(200) default NULL,
+`p_collection_ascii_id` varchar(100) default NULL,
 `modifier_defined_list` text default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -93,14 +94,14 @@ CREATE TABLE `{$table_prefix}item` (
 `id` int(11) NOT NULL auto_increment,
 `item_type_id` integer default NULL,
 `collection_id` integer default NULL,
-`p_collection_ascii_id` varchar(200) default NULL,
+`p_collection_ascii_id` varchar(100) default NULL,
 `created_by_eid` varchar(50) default NULL,
 `status` varchar(50) default NULL,
 `updated` varchar(50) default NULL,
 `comments_updated` varchar(50) default NULL,
 `comments_count` integer default NULL,
 `created` varchar(50) default NULL,
-`serial_number` varchar(200) default NULL,
+`serial_number` varchar(100) default NULL,
 `item_type_ascii_id` varchar(200) default NULL,
 `item_type_name` varchar(200) default NULL,
 `collection_name` varchar(200) default NULL,
@@ -125,8 +126,8 @@ CREATE TABLE `{$table_prefix}media_file` (
 `item_id` integer default NULL,
 `md5` varchar(200) default NULL,
 `updated` varchar(50) default NULL,
-`p_collection_ascii_id` varchar(200) default NULL,
-`p_serial_number` varchar(200) default NULL,
+`p_collection_ascii_id` varchar(100) default NULL,
+`p_serial_number` varchar(100) default NULL,
 `size` varchar(20) default NULL,
 `mime_type` varchar(200) default NULL,
 `filename` varchar(2000) default NULL,
@@ -194,19 +195,15 @@ CREATE TABLE `{$table_prefix}value` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `{$table_prefix}value_revision_history` (
-`id` int(11) NOT NULL auto_increment,
-`added_text` text default NULL,
-`deleted_text` text default NULL,
-`timestamp` varchar(50) default NULL,
-`collection_ascii_id` varchar(200) default NULL,
-`attribute_name` varchar(200) default NULL,
-`item_serial_number` varchar(200) default NULL,
-`added_modifier` varchar(2000) default NULL,
-`deleted_modifier` varchar(2000) default NULL,
-`dase_user_eid` varchar(20) default NULL,
-PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ALTER TABLE `collection` ADD INDEX `coll_ascii_idx` ( `ascii_id` );
+ALTER TABLE `value` ADD INDEX `val_item_id_idx` ( `item_id` );      
+ALTER TABLE `item` ADD INDEX `item_sernum_coll_idx` ( `serial_number`,`p_collection_ascii_id`);
+ALTER TABLE `media_file` ADD INDEX `media_item_id_idx` ( `item_id` ); 
+ALTER TABLE `attribute` ADD INDEX `att_coll_id_idx` ( `collection_id` );
+ALTER TABLE `comment` ADD INDEX `comment_item_id_idx` ( `item_id` ); 
+ALTER TABLE `defined_value` ADD INDEX `defined_value_att_id_idx` ( `attribute_id` );  
+ALTER TABLE `item` ADD INDEX `item_coll_id_idx` ( `collection_id` ); 
+ALTER TABLE `tag_item` ADD INDEX `tag_item_tag_id_idx` ( `tag_id` ); 
 
 EOF;
 

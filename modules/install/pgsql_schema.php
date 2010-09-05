@@ -18,6 +18,7 @@ CREATE TABLE {$table_prefix}attribute (
     updated character varying(50),
     modifier_type character varying(200),
     modifier_defined_list text,
+    p_collection_ascii_id character varying(100) DEFAULT 0,
     html_input_type character varying(50) DEFAULT 'text'::character varying
 );
 
@@ -84,7 +85,7 @@ CREATE TABLE {$table_prefix}defined_value (
 
 CREATE TABLE {$table_prefix}item (
     id serial NOT NULL,
-    serial_number character varying(200),
+    serial_number character varying(100),
     collection_id integer,
     item_type_id integer DEFAULT 0,
     created character varying(50) DEFAULT 0,
@@ -92,7 +93,7 @@ CREATE TABLE {$table_prefix}item (
     comments_updated character varying(50) DEFAULT 0,
     comments_count integer,
     status character varying(50),
-    p_collection_ascii_id character varying(200),
+    p_collection_ascii_id character varying(100),
     collection_name character varying(200),
     item_type_ascii_id character varying(200),
     item_type_name character varying(200),
@@ -116,8 +117,8 @@ CREATE TABLE {$table_prefix}media_file (
     width integer,
     mime_type character varying(200),
     size character varying(20),
-    p_serial_number character varying(200) DEFAULT 0,
-    p_collection_ascii_id character varying(200) DEFAULT 0,
+    p_serial_number character varying(100) DEFAULT 0,
+    p_collection_ascii_id character varying(100) DEFAULT 0,
     file_size integer,
     updated character varying(50),
     md5 character varying(200)
@@ -177,19 +178,6 @@ CREATE TABLE {$table_prefix}value (
     value_text text,
     url character varying(2000),
     modifier character varying(2000)
-);
-
-CREATE TABLE {$table_prefix}value_revision_history (
-    id serial NOT NULL,
-    dase_user_eid character varying(20),
-    deleted_text text,
-    added_text text,
-    item_serial_number character varying(200),
-    attribute_name character varying(200),
-    added_modifier character varying(2000),
-    deleted_modifier character varying(2000),
-    collection_ascii_id character varying(200),
-    "timestamp" character varying(50)
 );
 
 CREATE SEQUENCE {$table_prefix}tag_category_seq
@@ -282,12 +270,6 @@ CREATE SEQUENCE {$table_prefix}value_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE SEQUENCE {$table_prefix}value_revision_history_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
 EOF;
 
 
@@ -351,8 +333,3 @@ $query .= "
 ALTER TABLE {$table_prefix}value 
 ALTER id SET DEFAULT nextval('public.{$table_prefix}value_seq'::text);
 ";
-$query .= "
-ALTER TABLE {$table_prefix}value_revision_history 
-ALTER id SET DEFAULT nextval('public.{$table_prefix}value_revision_history_seq'::text);
-";
-

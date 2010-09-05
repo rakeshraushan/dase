@@ -6,7 +6,7 @@ include 'config.php';
 //$action = "count";
 $action = "delete";
 
-$coll = 'staging';
+$coll = 'cie';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
@@ -100,23 +100,6 @@ if ('count' == $action) {
 
 
 if ('count' == $action) {
-	$sql = "SELECT count(id) from content 
-		WHERE content.p_collection_ascii_id = '$c->ascii_id'
-		";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	$count = $sth->fetchColumn();
-	print "content: $count\n";
-} elseif ('delete' == $action) {
-	print "content\n";
-	$sql = "DELETE from content 
-		WHERE content.p_collection_ascii_id = '$c->ascii_id'
-		";
-	$count = $dbh->exec($sql);
-	print "deleted $count content\n";
-}
-
-if ('count' == $action) {
 	$sql = "SELECT count(id) from comment 
 		WHERE comment.p_collection_ascii_id = '$c->ascii_id'
 		";
@@ -195,23 +178,6 @@ if ('count' == $action) {
 		WHERE p_collection_ascii_id = '".$c->ascii_id."'";
 	$count = $dbh->exec($sql);
 	print "deleted $count tag items\n";
-}
-
-if ('count' == $action) {
-	$sql = "SELECT count(id) 
-		FROM value_revision_history v 
-		WHERE v.collection_ascii_id = '$c->ascii_id'";
-	$sth = $dbh->prepare($sql);
-	$sth->execute();
-	$count = $sth->fetchColumn();
-	print "revisions: $count\n";
-} elseif ('delete' == $action) {
-	print "rev history\n";
-	$sql = "DELETE 
-		FROM value_revision_history 
-		WHERE collection_ascii_id = '$c->ascii_id'";
-	$count = $dbh->exec($sql);
-	print "deleted $count revisions\n";
 }
 
 if ('delete' == $action) {
