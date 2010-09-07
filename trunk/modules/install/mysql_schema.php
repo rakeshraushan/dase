@@ -197,6 +197,7 @@ PRIMARY KEY (`id`)
 
 ALTER TABLE `collection` ADD INDEX `coll_ascii_idx` ( `ascii_id` );
 ALTER TABLE `value` ADD INDEX `val_item_id_idx` ( `item_id` );      
+ALTER TABLE `value` ADD INDEX `val_att_id_idx` ( `attribute_id` );      
 ALTER TABLE `item` ADD INDEX `item_sernum_coll_idx` ( `serial_number`,`p_collection_ascii_id`);
 ALTER TABLE `media_file` ADD INDEX `media_item_id_idx` ( `item_id` ); 
 ALTER TABLE `attribute` ADD INDEX `att_coll_id_idx` ( `collection_id` );
