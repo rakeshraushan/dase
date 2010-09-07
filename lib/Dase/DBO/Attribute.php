@@ -174,7 +174,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 
 	function getDisplayValues($coll=null,$limit=1000)
 	{
-		if (!$limit) {
+		if (!$limit || !is_int($limit)) {
 			$limit = 10000;
 		}
 		$prefix = $this->db->table_prefix;
@@ -191,10 +191,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				AND item.collection_id = ?
 				GROUP BY value_text
 				ORDER BY value_text
-				LIMIT ?
+				LIMIT $limit 
 			";
 			$st = $dbh->prepare($sql);
-			$st->execute(array($this->id,$c->id,$limit));
+			$st->execute(array($this->id,$c->id));
 		} else {
 			$sql = "
 				SELECT value_text, count(value_text)
@@ -202,10 +202,10 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				WHERE attribute_id = ?
 				GROUP BY value_text
 				ORDER BY value_text
-				LIMIT ?
+				LIMIT $limit 
 			";
 			$st = $dbh->prepare($sql);
-			$st->execute(array($this->id,$limit));
+			$st->execute(array($this->id));
 		}
 		$display_values_array = array();
 		while ($row = $st->fetch()) {
@@ -215,6 +215,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 				't' => $row[1]
 			);
 		}
+		//print_r($st->errorInfo()); exit;
 		$this->display_values = $display_values_array;
 		return $display_values_array;
 	}
