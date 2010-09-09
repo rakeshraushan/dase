@@ -12,6 +12,10 @@ $conf['db']['table_prefix'] = '';
 //do not change or override
 $conf['app']['test'] = "dase";
 
+//whether to initialize global data
+//this requires a live db connection
+$conf['app']['init_global_data'] = true;
+
 //force https
 $conf['app']['force_https'] = false;
 
