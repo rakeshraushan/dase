@@ -529,11 +529,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return "deleted admin metadata for " . $this->serial_number . "\n";
 	}
 
+	function saveCopy($path_to_media)
+	{
+		$now = time();
+		$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.'.$now.'.json';
+		file_put_contents($filename,$this->asJson('http://daseproject.org'));
+	}
+
 	function expunge($path_to_media='')
 	{
 		if ($path_to_media) {
-			$filename = $path_to_media.'/'.$this->p_collection_ascii_id.'/deleted/'.$this->serial_number.'.atom';
-			file_put_contents($filename,$this->asAtom('http://daseproject.org/deleted/'));
+			$this->saveCopy($path_to_media);
 		}
 		$c = $this->getCollection();
 		$sernum = $this->serial_number;
