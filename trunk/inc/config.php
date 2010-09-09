@@ -16,6 +16,10 @@ $conf['app']['test'] = "dase";
 //this requires a live db connection
 $conf['app']['init_global_data'] = true;
 
+//user for accessing another (usually main) dase instance
+$conf['app']['remote_url'] = "https://dase.laits.utexas.edu";
+$conf['app']['remote_upload_url'] = "https://daseupload.laits.utexas.edu";
+
 //force https
 $conf['app']['force_https'] = false;
 
