@@ -568,7 +568,7 @@ class Dase_Handler_Item extends Dase_Handler
 		} elseif('application/json' == $content_type) {
 			//todo: this only updates metadata, does nothing to media (prob OK)
 			$item_data = Dase_Json::toPhp($r->getBody());
-			if  (isset($item_data['serial_number']) && count($item_data['metadata'])) {
+			if  (isset($item_data['metadata']) && count($item_data['metadata'])) {
 				$this->item->deleteValues();
 				$metadata = $item_data['metadata'];
 				foreach ($metadata as $key => $vals) {
