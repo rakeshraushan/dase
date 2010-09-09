@@ -132,6 +132,11 @@ Class Dase_Util
 		return preg_replace('/__*/','_',$str);
 	}
 
+	public static function undirify($str)
+	{
+		return ucwords(preg_replace('/_/',' ',$str));
+	}
+
 	public static function makeSerialNumber($str)
 	{
 		if ($str) {
