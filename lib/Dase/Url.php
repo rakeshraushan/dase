@@ -2,16 +2,25 @@
 
 class Dase_Url 
 {
+	private $path;
+	private $root;
+	private $params = array();
 
-	public $root = 'https://dase.laits.utexas.edu';
-	public $params = array();
-
-	public function __construct($path,$root='') 
+	public function __construct($config,$path,$is_upload=false) 
 	{
-		$this->path = $path;
-		if ($root) {
-			$this->root = $root;
+		if ($is_upload) {
+			//upload server  is set to accept larger files
+			$root = $config->getAppSettings('remote_upload_url');
+		} else {
+			$root = $config->getAppSettings('remote_url');
 		}
+		$this->path = $path;
+	}
+
+	/* allows configured url to be overridden */
+	public function setRoot($root)
+	{
+		$this->root = $root;
 	}
 
 	public function set($key,$val) 

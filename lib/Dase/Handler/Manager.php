@@ -21,5 +21,21 @@ class Dase_Handler_Manager extends Dase_Handler
 			$r->renderError(404);
 		}
 	}
+
+	public function getManagerJson($r) 
+	{
+		$coll = $r->get('collection_ascii_id');
+		$eid = $r->get('eid');
+		$cm = Dase_DBO_CollectionManager::get($this->db,$coll,$eid);
+		$result = array();
+		if ($cm) {
+			$result['eid'] = $eid;
+			$result['collection_ascii_id'] = $coll;
+			$result['auth_level'] = $cm->auth_level;
+			$r->renderResponse(Dase_Json::get($result));
+		} else {
+			$r->renderError(404);
+		}
+	}
 }
 
