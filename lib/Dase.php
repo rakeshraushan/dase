@@ -9,7 +9,9 @@ class Dase
 		//sets up db object, does NOT try to connect
 		$db = new Dase_DB($config);
 
-		$GLOBALS['app_data'] = self::initGlobalData($db,$config);
+		if ($config->getAppSettings('init_global_data')) {
+			$GLOBALS['app_data'] = self::initGlobalData($db,$config);
+		}
 
 		$r = new Dase_Http_Request();
 		$r->init($db,$config);
