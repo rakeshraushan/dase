@@ -10,6 +10,7 @@ class Dase_DB {
 	private $pass;
 	public $table_prefix;
 	public $dbh;
+	public $config;
 
 	public function __construct($config)
 	{ 
