@@ -537,6 +537,8 @@ class Dase_Handler_Item extends Dase_Handler
 				$r->renderError(401,'cannot update collection');
 			}
 		}
+		//just in case, save a copy in 'deleted' media dir
+		$this->item->saveCopy(MEDIA_DIR);
 		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
@@ -563,6 +565,21 @@ class Dase_Handler_Item extends Dase_Handler
 			} else {
 				$r->renderError(500,'item not updated');
 			}
+		} elseif('application/json' == $content_type) {
+			//todo: this only updates metadata, does nothing to media (prob OK)
+			$item_data = Dase_Json::toPhp($r->getBody());
+			if  (isset($item_data['serial_number']) && count($item_data['metadata'])) {
+				$this->item->deleteValues();
+				$metadata = $item_data['metadata'];
+				foreach ($metadata as $key => $vals) {
+					foreach ($vals as $val) {
+						$this->item->setValue($key,$val);
+					}
+				}
+				$this->item->buildSearchIndex();
+				$r->renderOk('item has been updated');
+			}
+			$r->renderError(400,'must be a json item');
 		} else {
 			$r->renderError(415,'cannot accept '.$content_type);
 		}
