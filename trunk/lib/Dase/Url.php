@@ -10,9 +10,9 @@ class Dase_Url
 	{
 		if ($is_upload) {
 			//upload server  is set to accept larger files
-			$root = $config->getAppSettings('remote_upload_url');
+			$this->root = $config->getAppSettings('remote_upload_url');
 		} else {
-			$root = $config->getAppSettings('remote_url');
+			$this->root = $config->getAppSettings('remote_url');
 		}
 		$this->path = $path;
 	}
