@@ -893,9 +893,85 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $this->retrieveAtomDoc($app_root,true);
 	}
 
-	function asJson($app_root)
+	function XXasJson($app_root)
 	{
 		return $this->retrieveJsonDoc($app_root);
+	}
+
+
+	public function asJson($app_root)
+	{
+		$json_doc = array();
+		$json_doc['app_root'] = $app_root; 
+		$json_doc['id'] = $app_root.'/'.$this->p_collection_ascii_id.'/'.$this->serial_number;
+		$json_doc['item_unique'] = $this->p_collection_ascii_id.'/'.$this->serial_number;
+		$json_doc['created'] = $this->created;
+		$json_doc['updated'] = $this->updated;
+		$json_doc['item_id'] = $this->id;
+		$json_doc['serial_number'] = $this->serial_number;
+		$json_doc['c'] = $this->p_collection_ascii_id;
+		$json_doc['collection'] = $this->collection_name;
+		$json_doc['item_type'] = $this->item_type_ascii_id;
+		$json_doc['item_type_name'] = $this->item_type_name;
+		$json_doc['media'] = array();
+
+		foreach ($this->getMedia() as $sz => $info) {
+			if ('enclosure' == $sz) {
+				$json_doc['enclosure']["href"] = $info['url'];
+				$json_doc['enclosure']["type"] = $info['mime_type'];
+				$json_doc['enclosure']["length"] = $info['file_size'];
+				if ($info['height'] && $info['width']) {
+					$json_doc['enclosure']["height"] = $info['height'];
+					$json_doc['enclosure']["width"] = $info['width'];
+				}
+				if ($info['md5']) {
+					$json_doc['enclosure']["md5"] = $info['md5'];
+				}
+			} else {
+				$json_doc['media'][$sz] = $info['url'];
+			}
+		}
+
+		$json_doc['links'] = array();
+		$json_doc['links']['comments'] =  '/item/'.$this->getUnique().'/comments';
+		$json_doc['links']['edit'] = '/item/'.$this->getUnique().'.json';
+		$json_doc['links']['edit-media'] = '/media/'.$this->getUnique();
+		$json_doc['links']['item_type'] =  '/item/'.$this->getUnique().'/item_type';
+		$json_doc['links']['media'] =  '/item/'.$this->getUnique().'/media';
+		$json_doc['links']['metadata'] =  '/item/'.$this->getUnique().'/metadata';
+		$json_doc['links']['status'] =  '/item/'.$this->getUnique().'/status';
+		$json_doc['links']['profile'] = '/collection/'.$this->p_collection_ascii_id.'/profile.json';
+		$json_doc['alternate'] = array();
+		$json_doc['alternate']['html'] =  '/item/'.$this->getUnique().'.html';
+		$json_doc['alternate']['atom'] =  '/item/'.$this->getUnique().'.atom';
+		$json_doc['alternate']['json'] =  '/item/'.$this->getUnique().'.json';
+
+		$json_doc['metadata'] = array();
+		$json_doc['metadata_extended'] = array();
+
+		foreach ($this->getMetadata(true) as $meta) {
+
+			if (0 == $meta['collection_id']) {
+				//admin metadata 
+				$json_doc[$meta['ascii_id']] = $meta['value_text'];
+			} else {
+				$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
+				$json_doc['metadata_extended'][$meta['ascii_id']]['label'] = $meta['attribute_name'];
+				if (!isset($json_doc['metadata_extended'][$meta['ascii_id']]['values'])) {
+					$json_doc['metadata_extended'][$meta['ascii_id']]['values'] = array();
+				}
+				$value_set = array();
+				$value_set['text'] = $meta['value_text'];
+				if ($meta['url']) {
+					$value_set['url'] = $meta['url'];
+				}
+				if ($meta['edit-id']) {
+					$value_set['edit'] = $meta['edit-id'];
+				}
+				$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
+			}
+		}
+		return Dase_Json::get($json_doc);
 	}
 
 	/** experimental */
