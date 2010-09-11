@@ -73,7 +73,7 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchAtom($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Solr_Search($this->db,$this->config);
+		$search = new Dase_Solr($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
@@ -87,28 +87,49 @@ class Dase_Handler_Search extends Dase_Handler
 	public function getSearchUris($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Solr_Search($this->db,$this->config);
+		$search = new Dase_Solr($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
-		$r->renderResponse($search->getResultsAsUris());
+		$ids = $search->getResultsAsIds();
+		$uris = '';
+		foreach ($ids as $id) {
+			$uris .= $app_root.'/item/'.$id."\n";
+		}
+		$r->renderResponse($uris);
 	}
 
 	public function getSearchJson($r)
 	{
+		//move OUT of controller
 		$r->checkCache();
-		$search = new Dase_Solr_Search($this->db,$this->config);
+		$search = new Dase_Solr($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$ids = $search->getResultsAsIds();
+		//$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
+		//missing total
+		$json = "{\"app_root\":\"$r->app_root\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
+		$items = array();
+		foreach ($ids as $id) {
+			$docs = new Dase_DBO_ItemJson($this->db);
+			$docs->unique_id = $id;
+			if ($docs->findOne()) {
+				$items[] = $docs->document;
+			}
+		}
+		$json .= join(',',$items).']}';
+		$result = str_replace('{APP_ROOT}',$r->app_root,$json);
+
 		if($r->get('callback')){
-			$r->renderResponse($r->get('callback').'('.$search->getResultsAsJson().');');
+			$r->renderResponse($r->get('callback').'('.$result.');');
 		}
 		else{
-			$r->renderResponse($search->getResultsAsJson());
+			$r->renderResponse($result);
 		}
 	}
 
 	public function getSearchItemAtom($r)
 	{
 		$r->checkCache();
-		$search = new Dase_Solr_Search($this->db,$this->config);
+		$search = new Dase_Solr($this->db,$this->config);
 		$this->max =1;
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
 		$atom_feed = $search->getResultsAsItemAtom();

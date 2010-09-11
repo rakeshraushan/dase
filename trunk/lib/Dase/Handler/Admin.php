@@ -219,7 +219,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 	public function postToCommit($r)
 	{
-		$search_engine = new Dase_Solr_Search($this->db,$this->config);
+		$search_engine = new Dase_Solr($this->db,$this->config);
 		$params['msg'] = $search_engine->commit();
 		$r->renderRedirect('admin/tools',$params);
 	}

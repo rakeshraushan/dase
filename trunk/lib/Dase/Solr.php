@@ -1,5 +1,5 @@
 <?php
-Class Dase_Solr_Search
+Class Dase_Solr
 {
 	private $coll_filters = array();
 	private $max;
@@ -19,55 +19,6 @@ Class Dase_Solr_Search
 		$this->solr_update_url = $this->solr_base_url.'/update';
 		$this->config = $config;
 		$this->db = $db; // used to scrub 
-	}
-
-	public function scrubIndex($collection_ascii_id,$display=true)
-	{
-		$j = 0;
-		for ($i=0;$i<999999;$i++) {
-			if (0 === $i%100) {
-				$this->solr_search_url = 
-					$this->solr_base_url
-					.'/select/?q=c:'
-					.$collection_ascii_id
-					.'&version='
-					.$this->solr_version
-					.'&rows=100&start='.$i;
-				$res = $this->_getSearchResults();
-				$sx = simplexml_load_string($res);
-				$num = 0;
-				foreach ($sx->result as $result) {
-					if (count($result->doc)) {
-						foreach ($result->doc as $doc) {
-							foreach ($doc->str as $str) {
-								if ('_id' == $str['name']) {
-									$j++;
-									if ($display) {
-										print "START $i ($j) ";
-									}
-									$unique = (String) $str;
-									if (Dase_DBO_Item::getByUnique($this->db,$unique)) {
-										if ($display) {
-											print "FOUND $unique\n";
-										}
-									} else {
-										$num++;
-										$delete_doc = '<delete><id>'.$unique.'</id></delete>';
-										$resp = Dase_Http::post($this->solr_update_url,$delete_doc,null,null,'text/xml');
-										if ($display) {
-											print "SCRUBBED $unique\n";
-										}
-									}
-								}
-							}
-						}
-					} else {
-						Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
-						return "scrubbed $num records";
-					}
-				}
-			}
-		}
 	}
 
 	private function _cleanUpUrl($url)
@@ -110,7 +61,6 @@ Class Dase_Solr_Search
 			//num is used to access a specific item
 			$start = $num-1;
 		}
-
 
 		$query_string = $request->query_string;
 
@@ -373,11 +323,23 @@ EOD;
 		return $feed;
 	}
 
-	public function getResultsAsUris() 
+
+	public function getSolrResponse($item_unique)
+	{
+		$url = $this->solr_base_url."/select/?q=_id:".$item_unique."&version=".$this->solr_version;
+		list($http_code,$res) = Dase_Http::get($url,null,null);
+		if ('4' == substr($http_code,0,1) || '5' == substr($http_code,0,1)) {
+			Dase_Log::debug(LOG_FILE,'SOLR ERROR :'.$res);
+			return '<error/>';
+		}
+		return $res;
+	}
+
+
+	public function getResultsAsIds() 
 	{
 		$app_root = $this->request->app_root;
 		$ids = array();
-
 		$reader = new XMLReader();
 		if (false === $reader->XML($this->_getSearchResults())) {
 			Dase_Log::debug(LOG_FILE,'SOLR ERROR : error reading search engine xml');
@@ -392,43 +354,7 @@ EOD;
 			}
 		}
 		$reader->close();
-
-		$uris = '';
-		foreach ($ids as $id) {
-			$uris .= $app_root.'/item/'.$id."\n";
-		}
-
-		return $uris;
-	}
-
-	public function getResultsAsJson() 
-	{
-		$app_root = $this->request->app_root;
-		$total = '';
-		$entries = array();
-
-		$reader = new XMLReader();
-		if (false === $reader->XML($this->_getSearchResults())) {
-			Dase_Log::debug(LOG_FILE,'SOLR ERROR : error reading search engine xml');
-		}
-		while ($reader->read()) {
-			//get total number found
-			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
-				$total = $reader->getAttribute('numFound');
-			}
-			//get entries
-			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
-				if ('_json' == $reader->getAttribute('name')) {
-					$reader->read();
-					$entries[] = $reader->value;
-				}
-			}
-		}
-		$reader->close();
-
-		$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
-		$json .= join(',',$entries).']}';
-		return str_replace('{APP_ROOT}',$app_root,$json);
+		return $ids;
 	}
 
 	public function getResultsAsItemAtom() 
@@ -612,7 +538,6 @@ EOD;
 		//used to create an xml doc
 		$dom = new DOMDocument();
 
-		$json_doc = array();
 		if ($wrap_in_add_tag) {
 			$root_el = $dom->createElement('add');
 			$root = $dom->appendChild($root_el);
@@ -627,47 +552,29 @@ EOD;
 		$id->appendChild($dom->createTextNode($item->p_collection_ascii_id.'/'.$item->serial_number));
 		$id->setAttribute('name','_id');
 
-		//for transformation later
-		$json_doc['app_root'] = '{APP_ROOT}'; 
-
-		$json_doc['id'] = '{APP_ROOT}/'.$item->p_collection_ascii_id.'/'.$item->serial_number;
-		$json_doc['item_unique'] = $item->p_collection_ascii_id.'/'.$item->serial_number;
-
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->created));
 		$updated->setAttribute('name','_created');
-
-		$json_doc['created'] = $item->created;
 
 		$updated = $doc->appendChild($dom->createElement('field'));
 		$updated->appendChild($dom->createTextNode($item->updated));
 		$updated->setAttribute('name','_updated');
 
-		$json_doc['updated'] = $item->updated;
-
 		$item_id = $doc->appendChild($dom->createElement('field'));
 		$item_id->appendChild($dom->createTextNode($item->id));
 		$item_id->setAttribute('name','_item_id');
-
-		$json_doc['item_id'] = $item->id;
 
 		$serial_number = $doc->appendChild($dom->createElement('field'));
 		$serial_number->appendChild($dom->createTextNode($item->serial_number));
 		$serial_number->setAttribute('name','_serial_number');
 
-		$json_doc['serial_number'] = $item->serial_number;
-
 		$c = $doc->appendChild($dom->createElement('field'));
 		$c->appendChild($dom->createTextNode($item->p_collection_ascii_id));
 		$c->setAttribute('name','c');
 
-		$json_doc['c'] = $item->p_collection_ascii_id;
-
 		$coll = $doc->appendChild($dom->createElement('field'));
 		$coll->appendChild($dom->createTextNode($item->collection_name));
 		$coll->setAttribute('name','collection');
-
-		$json_doc['collection'] = $item->collection_name;
 
 		$media_count = $doc->appendChild($dom->createElement('field'));
 		$media_count->appendChild($dom->createTextNode($item->getMediaCount()));
@@ -677,13 +584,9 @@ EOD;
 		$it->appendChild($dom->createTextNode($item->item_type_ascii_id));
 		$it->setAttribute('name','item_type');
 
-		$json_doc['item_type'] = $item->item_type_ascii_id;
-
 		$it_name = $doc->appendChild($dom->createElement('field'));
 		$it_name->appendChild($dom->createTextNode($item->item_type_name));
 		$it_name->setAttribute('name','item_type_name');
-
-		$json_doc['item_type_name'] = $item->item_type_name;
 
 		$search_text = array();
 		$admin_search_text = array();
@@ -691,53 +594,11 @@ EOD;
 		$search_text[] = $item->id;
 		$search_text[] = $item->serial_number;
 
-		$json_doc['media'] = array();
-
-		foreach ($item->getMedia() as $sz => $info) {
-			if ('enclosure' == $sz) {
-				$json_doc['enclosure']["href"] = $info['url'];
-				$json_doc['enclosure']["type"] = $info['mime_type'];
-				$json_doc['enclosure']["length"] = $info['file_size'];
-				if ($info['height'] && $info['width']) {
-					$json_doc['enclosure']["height"] = $info['height'];
-					$json_doc['enclosure']["width"] = $info['width'];
-				}
-				if ($info['md5']) {
-					$json_doc['enclosure']["md5"] = $info['md5'];
-				}
-			} else {
-				$json_doc['media'][$sz] = $info['url'];
-			}
-		}
-
-		$json_doc['links'] = array();
-		$json_doc['links']['comments'] =  '/item/'.$item->getUnique().'/comments';
-		$json_doc['links']['edit'] = '/item/'.$item->getUnique().'.json';
-		$json_doc['links']['edit-media'] = '/media/'.$item->getUnique();
-		$json_doc['links']['item_type'] =  '/item/'.$item->getUnique().'/item_type';
-		$json_doc['links']['media'] =  '/item/'.$item->getUnique().'/media';
-		$json_doc['links']['metadata'] =  '/item/'.$item->getUnique().'/metadata';
-		$json_doc['links']['status'] =  '/item/'.$item->getUnique().'/status';
-		$json_doc['links']['profile'] = '/collection/'.$item->p_collection_ascii_id.'/profile.json';
-		$json_doc['alternate'] = array();
-		$json_doc['alternate']['html'] =  '/item/'.$item->getUnique().'.html';
-		$json_doc['alternate']['atom'] =  '/item/'.$item->getUnique().'.atom';
-		$json_doc['alternate']['json'] =  '/item/'.$item->getUnique().'.json';
-
-		$json_doc['metadata'] = array();
-		$json_doc['metadata_extended'] = array();
-
 		foreach ($item->getMetadata(true) as $meta) {
 
 			if (0 == $meta['collection_id']) {
 				//admin metadata 
-				$json_doc[$meta['ascii_id']] = $meta['value_text'];
 			} else {
-				$json_doc['metadata'][$meta['ascii_id']][] = $meta['value_text'];
-				$json_doc['metadata_extended'][$meta['ascii_id']]['label'] = $meta['attribute_name'];
-				if (!isset($json_doc['metadata_extended'][$meta['ascii_id']]['values'])) {
-					$json_doc['metadata_extended'][$meta['ascii_id']]['values'] = array();
-				}
 				$value_set = array();
 				$value_set['text'] = $meta['value_text'];
 				if ($meta['url']) {
@@ -746,9 +607,7 @@ EOD;
 				if ($meta['edit-id']) {
 					$value_set['edit'] = $meta['edit-id'];
 				}
-				$json_doc['metadata_extended'][$meta['ascii_id']]['values'][] = $value_set;
 			}
-
 
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
@@ -811,11 +670,6 @@ EOD;
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
 		$field->setAttribute('name','_atom');
-
-		$field = $doc->appendChild($dom->createElement('field'));
-		//$field->appendChild($dom->createTextNode(htmlspecialchars(Dase_Json::get($json_doc))));
-		$field->appendChild($dom->createTextNode(Dase_Json::get($json_doc)));
-		$field->setAttribute('name','_json');
 
 		$dom->formatOutput = true;
 		return $dom->saveXML();
