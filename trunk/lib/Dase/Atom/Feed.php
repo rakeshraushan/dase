@@ -229,7 +229,7 @@ class Dase_Atom_Feed extends Dase_Atom
 		}
 	}
 
-	function addItemEntryByItemUnique($db,$item_unique,$config,$app_root)
+	function addItemEntryByItemUnique($db,$item_unique,$app_root)
 	{
 		$dom = new DOMDocument('1.0','utf-8');
 		$doc = new Dase_DBO_ItemAtom($db);

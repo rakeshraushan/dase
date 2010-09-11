@@ -183,7 +183,7 @@ Class Dase_Solr
 
 		$total = 0;
 		$coll_tallies = array();
-		$entries = array();
+		$ids = array();
 
 		$reader = new XMLReader();
 		if (false === $reader->XML($this->_getSearchResults())) {
@@ -196,9 +196,9 @@ Class Dase_Solr
 			}
 			//get entries
 			if ($reader->localName == "str" && $reader->nodeType == XMLReader::ELEMENT) {
-				if ('_atom' == $reader->getAttribute('name')) {
+				if ('_id' == $reader->getAttribute('name')) {
 					$reader->read();
-					$entries[] = $reader->value;
+					$ids[] = $reader->value;
 				}
 			}
 			//get collection tallies
@@ -207,7 +207,7 @@ Class Dase_Solr
 					while ($reader->read()) {
 						if ($reader->localName == "int" && $reader->nodeType == XMLReader::ELEMENT) {
 							$tally['coll'] = $reader->getAttribute('name');
-							$tally['collection_name'] = $GLOBALS['app_data']['collections'][$tally['coll']];
+							@$tally['collection_name'] = $GLOBALS['app_data']['collections'][$tally['coll']];
 							//advance reader
 							$reader->read();
 							$tally['count'] = $reader->value;
@@ -232,6 +232,7 @@ Class Dase_Solr
 		//todo: probably the q param
 		//note: bug -- this chops off last part of query
 		//echo if it contains an ampersand
+		//$query = '';
 		preg_match('/(\?|&|&amp;)q=([^&]+)/i', urldecode($this->solr_search_url), $matches);
 		if (isset($matches[2])) {
 			$query = htmlspecialchars(urlencode($matches[2]));
@@ -307,10 +308,15 @@ EOD;
 		$item_request_url = htmlspecialchars($item_request_url);
 
 		$num = 0;
-		foreach ($entries as $entry_txt) {
+		//foreach ($entries as $entry_txt) {
+		foreach ($ids as $unique_id) {
+			$doc = new Dase_DBO_ItemAtom($this->db);
+			$doc->unique_id = $unique_id;
+			$doc->findOne();
 			$num++;
 			$setnum = $num + $this->start;
-			$entry = Dase_Util::unhtmlspecialchars($entry_txt);
+			//$entry = Dase_Util::unhtmlspecialchars($entry_txt);
+			$entry = $doc->doc;
 			$added = <<<EOD
 <category term="$setnum" scheme="http://daseproject.org/category/position"/>
   <link rel="http://daseproject.org/relation/search-item" href="{$item_request_url}&amp;num={$setnum}"/>
@@ -464,10 +470,12 @@ EOD;
 			}
 		}
 
-		foreach ($dom->getElementsByTagName('str') as $at_el) {
-			if ('_atom' == $at_el->getAttribute('name')) {
-				//individual atom entries
-				$entry = Dase_Util::unhtmlspecialchars($at_el->nodeValue);
+		foreach ($dom->getElementsByTagName('str') as $id_el) {
+			if ('_id' == $id_el->getAttribute('name')) {
+				$doc = new Dase_DBO_ItemAtom($this->db);
+				$doc->unique_id = $id_el->nodeValue;
+				$doc->findOne();
+				$entry = $doc->doc;
 				$added = <<<EOD
   <link rel="up" href="{$search_request_url}"/>
   <category term="$num" scheme="http://daseproject.org/category/position"/>
@@ -662,14 +670,15 @@ EOD;
 			$field->setAttribute('name','admin');
 		}
 
+		/*
 		$entry = new Dase_Atom_Entry_Item;
 		$entry = $item->injectAtomEntryData($entry,'{APP_ROOT}');
-
 		//atom entry version
 		$atom_str = $entry->asXml($entry->root);
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
 		$field->setAttribute('name','_atom');
+		 */
 
 		$dom->formatOutput = true;
 		return $dom->saveXML();
