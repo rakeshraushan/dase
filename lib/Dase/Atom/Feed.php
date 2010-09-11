@@ -216,8 +216,8 @@ class Dase_Atom_Feed extends Dase_Atom
 	function addItemEntry(Dase_DBO_Item $item,$app_root)
 	{
 		$dom = new DOMDocument('1.0','utf-8');
-		$ds = new Dase_Solr_DocStore($item->db,$item->config);
-		$xml = $ds->getItem($item->getUnique(),$app_root);
+		$xml = $item->asAtom($app_root);
+		$xml = str_replace('{APP_ROOT}',$app_root,$xml);
 		if ($xml) {
 			$dom->loadXml($xml);
 			$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
@@ -232,9 +232,11 @@ class Dase_Atom_Feed extends Dase_Atom
 	function addItemEntryByItemUnique($db,$item_unique,$config,$app_root)
 	{
 		$dom = new DOMDocument('1.0','utf-8');
-		$ds = new Dase_Solr_DocStore($db,$config);
-		$xml = $ds->getItem($item_unique,$app_root);
-		if ($xml) {
+		$doc = new Dase_DBO_ItemAtom($db);
+		$doc->unique_id = $item_unique;
+		if ($doc->findOne()) {
+			$xml = $doc->doc;
+			$xml = str_replace('{APP_ROOT}',$app_root,$xml);
 			$dom->loadXml($xml);
 			$e = $dom->getElementsByTagNameNS(Dase_Atom::$ns['atom'],'entry');
 			$root = $e->item(0);

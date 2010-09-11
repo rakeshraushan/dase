@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_TagCategory extends Dase_DBO
 {
 	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct($db,'tag_category', array('category_id','label','scheme','tag_id','term'));
+		parent::__construct($db,'tag_category', array('category_id','tag_id','scheme','label','term'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

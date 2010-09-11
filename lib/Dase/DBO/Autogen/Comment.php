@@ -13,7 +13,7 @@ class Dase_DBO_Autogen_Comment extends Dase_DBO
 {
 	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct($db,'comment', array('item_id','p_collection_ascii_id','p_serial_number','text','type','updated','updated_by_eid'));
+		parent::__construct($db,'comment', array('item_id','text','updated_by_eid','updated','p_serial_number','p_collection_ascii_id','type'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;

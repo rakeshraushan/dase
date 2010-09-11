@@ -3,10 +3,10 @@
 include 'config.php';
 
 
-//$action = "count";
+$action = "count";
 $action = "delete";
 
-$coll = 'audio_catalog';
+$coll = 'diia_image';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

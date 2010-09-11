@@ -64,35 +64,76 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 	public function deleteSearchIndex()
 	{
-		$solr = new Dase_Solr_Search($this->db,$this->config);
+		$solr = new Dase_Solr($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"deleted index for " . $this->serial_number);
 		return $solr->deleteItemIndex($this);
 	}
 
+	public function deleteDocs()
+	{
+		$doc = new Dase_DBO_ItemAtom($this->db);
+		$doc->unique_id = $this->getUnique();
+		if ($doc->findOne()) {
+			$doc->delete();
+		}
+		$doc = new Dase_DBO_ItemJson($this->db);
+		$doc->unique_id = $this->getUnique();
+		if ($doc->findOne()) {
+			$doc->delete();
+		}
+	}
+
 	public function buildSearchIndex($commit=true)
 	{
-		$solr = new Dase_Solr_Search($this->db,$this->config);
+		$this->storeDoc();
+		$solr = new Dase_Solr($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
 		return $solr->buildItemIndex($this,$commit);
 	}
 
-	public function store()
+	public function asAtom($app_root,$as_feed = false)
 	{
-		$ds = new Dase_Solr_DocStore($this->db,$this->config);
-		Dase_Log::debug(LOG_FILE,"saved as document: " . $this->serial_number);
-		return $ds->storeItem($this);
+		$doc = new Dase_DBO_ItemAtom($this->db);
+		$doc->unique_id = $this->getUnique();
+		if (!$doc->findOne()) {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $this->asJson($app_root);
+			$doc->insert();
+		}
+		$entry = str_replace('{APP_ROOT}',$app_root,$doc->doc);
+		if ($as_feed) {
+			$updated = date(DATE_ATOM);
+			$id = 'tag:daseproject.org,'.date("Y-m-d").':'.Dase_Util::getUniqueName();
+			$feed = <<<EOD
+<feed xmlns="http://www.w3.org/2005/Atom"
+	  xmlns:d="http://daseproject.org/ns/1.0">
+  <author>
+	<name>DASe (Digital Archive Services)</name>
+	<uri>http://daseproject.org</uri>
+	<email>admin@daseproject.org</email>
+  </author>
+  <title>DASe Item as Feed</title>
+  <updated>$updated</updated>
+  <category term="item" scheme="http://daseproject.org/category/feedtype"/>
+  <id>$id</id>
+  $entry
+</feed>
+EOD;
+			return $feed;
+		}
+		return $entry;
 	}
 
-	public function retrieveAtomDoc($app_root,$as_feed=false)
+	public function asJson($app_root)
 	{
-		$ds = new Dase_Solr_DocStore($this->db,$this->config);
-		return $ds->getItem($this->getUnique(),$app_root,$as_feed);
-	}
-
-	public function retrieveJsonDoc($app_root)
-	{
-		$ds = new Dase_Solr_DocStore($this->db,$this->config);
-		return $ds->getItemJson($this->getUnique(),$app_root);
+		$doc = new Dase_DBO_ItemJson($db);
+		$doc->unique_id = $this->getUnique();
+		if (!$doc->findOne()) {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $this->buildJson($app_root);
+			$doc->insert();
+		}
+		return $doc->document;
 	}
 
 	private function _getMetadata()
@@ -536,6 +577,35 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		file_put_contents($filename,$this->asJson('http://daseproject.org'));
 	}
 
+	function storeDoc($app_root="{APP_ROOT}")
+	{
+		$doc = new Dase_DBO_ItemJson($db);
+		$doc->unique_id = $c->ascii_id.'/'.$this->serial_number;
+		if ($doc->findOne()) {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $this->buildJson($app_root);
+			$doc->update();
+		} else {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $this->buildJson($app_root);
+			$doc->insert();
+		}
+
+		$entry = new Dase_Atom_Entry_Item;
+		$entry = $this->injectAtomEntryData($entry,$app_root);
+		$doc = new Dase_DBO_ItemAtom($db);
+		$doc->unique_id = $c->ascii_id.'/'.$this->serial_number;
+		if ($doc->findOne()) {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $entry->asXml();
+			$doc->update();
+		} else {
+			$doc->updated = date(DATE_ATOM);
+			$doc->document = $entry->asXml();
+			$doc->insert();
+		}
+	}
+
 	function expunge($path_to_media='')
 	{
 		if ($path_to_media) {
@@ -548,6 +618,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$this->deleteValues();
 		$this->deleteAdminValues();
 		$this->deleteSearchIndex();
+		$this->deleteDocs();
 		$this->deleteComments();
 		$this->deleteTagItems();
 		$this->delete();
@@ -888,18 +959,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return $feed;
 	}
 
-	function asAtom($app_root)
-	{
-		return $this->retrieveAtomDoc($app_root,true);
-	}
-
-	function XXasJson($app_root)
-	{
-		return $this->retrieveJsonDoc($app_root);
-	}
-
-
-	public function asJson($app_root)
+	public function buildJson($app_root)
 	{
 		$json_doc = array();
 		$json_doc['app_root'] = $app_root; 
@@ -974,15 +1034,6 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		return Dase_Json::get($json_doc);
 	}
 
-	/** experimental */
-	function asAtomJson($app_root)
-	{
-		$entry = new Dase_Atom_Entry;
-		$this->injectAtomEntryData($entry,$app_root);
-		return $entry->asJson();
-	}
-
-
 	function asAtomEntry($app_root="{APP_ROOT}",$authorize_links=false)
 	{
 		if ($authorize_links) {
@@ -990,7 +1041,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 			$entry = $this->injectAtomEntryData($entry,$app_root,true);
 			return $entry->asXml();
 		} else {
-			return $this->retrieveAtomDoc($app_root);
+			return $this->asAtom($app_root);
 		}
 	}
 

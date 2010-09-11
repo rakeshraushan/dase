@@ -224,7 +224,7 @@ class Dase_Handler_Collection extends Dase_Handler
 
 	public function getLatestIndex($r)
 	{
-		$search = new Dase_Solr_Search($this->db,$this->config);
+		$search = new Dase_Solr($this->db,$this->config);
 		$r->renderResponse($search->getLatestTimestamp($this->collection->ascii_id));
 	}
 
@@ -520,7 +520,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		if (!$user->can('write',$this->collection)) {
 			$r->renderError(401,'no go unauthorized');
 		}
-		$ds = new Dase_Solr_DocStore($this->db,$this->config);
+		$ds = new Dase_Solr($this->db,$this->config);
 		if ('ok' == $ds->commit()) {
 			$r->renderOk('commit successful');
 		} else {
