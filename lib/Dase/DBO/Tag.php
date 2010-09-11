@@ -453,7 +453,6 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$collections_array = array();
 		foreach($this->getTagItems() as $tag_item) {
 
-			//using Solr
 			$tag_item->persist(true);
 			$item_unique = $tag_item->p_collection_ascii_id.'/'.$tag_item->p_serial_number;
 
@@ -466,7 +465,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 				$entry = $feed->addEntry();
 				$entry = $item->injectAtomEntryData($entry,$app_root,true);
 			} else {
-				$entry = $feed->addItemEntryByItemUnique($this->db,$item_unique,$this->config,$app_root);
+				$entry = $feed->addItemEntryByItemUnique($this->db,$item_unique,$app_root);
 			}
 
 			if ($entry) {

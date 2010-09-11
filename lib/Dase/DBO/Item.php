@@ -97,7 +97,9 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		$doc->unique_id = $this->getUnique();
 		if (!$doc->findOne()) {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $this->asJson($app_root);
+			$entry = new Dase_Atom_Entry_Item;
+			$entry = $this->injectAtomEntryData($entry,$app_root);
+			$doc->doc = $entry->asXml();
 			$doc->insert();
 		}
 		$entry = str_replace('{APP_ROOT}',$app_root,$doc->doc);
@@ -126,14 +128,15 @@ EOD;
 
 	public function asJson($app_root)
 	{
-		$doc = new Dase_DBO_ItemJson($db);
+		$doc = new Dase_DBO_ItemJson($this->db);
 		$doc->unique_id = $this->getUnique();
 		if (!$doc->findOne()) {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $this->buildJson($app_root);
+			$doc->doc = $this->buildJson($app_root);
 			$doc->insert();
 		}
-		return $doc->document;
+		$item = str_replace('{APP_ROOT}',$app_root,$doc->doc);
+		return $item;
 	}
 
 	private function _getMetadata()
@@ -579,29 +582,30 @@ EOD;
 
 	function storeDoc($app_root="{APP_ROOT}")
 	{
-		$doc = new Dase_DBO_ItemJson($db);
-		$doc->unique_id = $c->ascii_id.'/'.$this->serial_number;
+		$doc = new Dase_DBO_ItemJson($this->db);
+		$doc->unique_id = $this->getUnique();
 		if ($doc->findOne()) {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $this->buildJson($app_root);
+			$doc->doc = $this->buildJson($app_root);
 			$doc->update();
 		} else {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $this->buildJson($app_root);
+			$doc->doc = $this->buildJson($app_root);
 			$doc->insert();
 		}
 
 		$entry = new Dase_Atom_Entry_Item;
 		$entry = $this->injectAtomEntryData($entry,$app_root);
-		$doc = new Dase_DBO_ItemAtom($db);
-		$doc->unique_id = $c->ascii_id.'/'.$this->serial_number;
+		$doc = new Dase_DBO_ItemAtom($this->db);
+		$doc->unique_id = $this->getUnique();
 		if ($doc->findOne()) {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $entry->asXml();
+			//passing in entry root prevent xml declaration
+			$doc->doc = $entry->asXml($entry->root);
 			$doc->update();
 		} else {
 			$doc->updated = date(DATE_ATOM);
-			$doc->document = $entry->asXml();
+			$doc->doc = $entry->asXml($entry->root);
 			$doc->insert();
 		}
 	}
