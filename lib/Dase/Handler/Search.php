@@ -112,7 +112,7 @@ class Dase_Handler_Search extends Dase_Handler
 			$docs = new Dase_DBO_ItemJson($this->db);
 			$docs->unique_id = $id;
 			if ($docs->findOne()) {
-				$items[] = $docs->document;
+				$items[] = $docs->doc;
 			}
 		}
 		$json .= join(',',$items).']}';
