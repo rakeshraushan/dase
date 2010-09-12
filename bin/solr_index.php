@@ -11,6 +11,7 @@ if ($limit) {
 }
 
 $cs = new Dase_DBO_Collection($db);
+$cs->orderBy('id DESC');
 foreach ($cs->find() as $c) {
 	$c = clone($c);
 	$colls[] = $c->ascii_id;
@@ -34,8 +35,9 @@ foreach ($colls as $coll) {
 		foreach ($c->getItems($limit) as $item) {
 			$i++;
 			$item = clone($item);
-			print $c->collection_name.':'.$item->serial_number.':'.$item->buildSearchIndex(false);
+			print $c->collection_name.':'.$item->serial_number.':'.$item->buildSearchIndex(false,false);
 			print " $i\n";
+			print " memory: ".memory_get_usage()."\n";
 		}
 		print "\ncommitting indexes for $c->collection_name ";
 		$engine->commit();
