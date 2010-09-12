@@ -83,9 +83,11 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		}
 	}
 
-	public function buildSearchIndex($commit=true)
+	public function buildSearchIndex($commit=true,$create_docs=true)
 	{
-		$this->storeDoc();
+		if ($create_docs) {
+			$this->storeDoc();
+		}
 		$solr = new Dase_Solr($this->db,$this->config);
 		Dase_Log::debug(LOG_FILE,"built indexes for " . $this->serial_number);
 		return $solr->buildItemIndex($this,$commit);
