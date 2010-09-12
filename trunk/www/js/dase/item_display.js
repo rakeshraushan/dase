@@ -245,7 +245,7 @@ Dase.initItemStatusForm = function() {
 		}
 		Dase.ajax(form.action,'POST',
 		function(resp) { 
-			alert(resp);
+			//alert(resp);
 			Dase.pageReload();
 		},data,null,null,content_headers,function(resp) {
 			//alert('error '+resp);
