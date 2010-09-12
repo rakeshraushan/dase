@@ -64,6 +64,12 @@ class Dase_Http_Response
 			$message = $status_code.' '.self::$codes[$status_code]; 
 			header("HTTP/1.1 $message");
 		}
+
+		//experimental 9/11/2010 don't allow caching (should prob. only
+		//have on when editing is happening ....
+		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+
 		header("Content-Type: ".$this->mime_type."; charset=utf-8");
 		echo $content;
 		exit;
