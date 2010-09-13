@@ -70,7 +70,11 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			}
 		}
 		//default
-		return 'text';
+		if (false === strpos($this->ascii_id,'admin_')) {
+			return 'text';
+		} else {
+			return 'no_edit';
+		}
 	}
 
 	function getDefinedValues() {
