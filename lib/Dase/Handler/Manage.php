@@ -237,11 +237,14 @@ class Dase_Handler_Manage extends Dase_Handler
 		$response['count'] = count($def_value_array);
 		$response['input'] = $att->html_input_type;
 		$response['defined'] = $def_value_array;
+		$sort_order = 0;
 		foreach ($def_value_array as $df_text) {
 			if (trim($df_text)) {
+				$sort_order++;
 				$def_value = new Dase_DBO_DefinedValue($this->db);
 				$def_value->value_text = htmlspecialchars(trim($df_text),ENT_NOQUOTES,'UTF-8');
 				$def_value->attribute_id = $att->id;
+				$def_value->sort_order = $sort_order;
 				$def_value->insert();
 			}
 		}

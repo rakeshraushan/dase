@@ -21,8 +21,10 @@ class Dase_Atom_Entry_Attribute extends Dase_Atom_Entry
 			$att->in_basic_search = 1;
 			$att->html_input_type = $this->getHtmlInputType();
 			$att->insert();
+			$sort_order = 0;
 			foreach ($this->getDefinedValues() as $dv) {
-				$att->addDefinedValue($dv);
+				$sort_order++;
+				$att->addDefinedValue($dv,$sort_order);
 			}
 			foreach ($this->getItemTypes() as $type) {
 				$att->addItemType($type);

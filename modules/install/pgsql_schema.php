@@ -80,6 +80,7 @@ CREATE TABLE {$table_prefix}dase_user (
 CREATE TABLE {$table_prefix}defined_value (
     id serial NOT NULL,
     attribute_id integer,
+    sort_order integer DEFAULT 999,
     value_text character varying(200)
 );
 
@@ -99,6 +100,20 @@ CREATE TABLE {$table_prefix}item (
     item_type_name character varying(200),
     p_remote_media_host character varying(200),
     created_by_eid character varying(50)
+);
+
+CREATE TABLE {$table_prefix}item_atom (
+    id serial NOT NULL,
+    unique_id character varying(201) NOT NULL,
+    doc text,
+    updated character varying(50)
+);
+
+CREATE TABLE {$table_prefix}item_json (
+    id serial NOT NULL,
+    unique_id character varying(201) NOT NULL,
+    doc text,
+    updated character varying(50)
 );
 
 CREATE TABLE {$table_prefix}item_type (

@@ -227,6 +227,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		if (in_array($this->html_input_type,array('radio','checkbox','select'))) {
 			$dv = new Dase_DBO_DefinedValue($this->db);
 			$dv->attribute_id = $this->id;
+			$dv->orderBy('sort_order');
 			foreach ($dv->find() as $defval) {
 				$values[] = $defval->value_text;
 			}
@@ -274,6 +275,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		$defined = array();
 		$dvs = new Dase_DBO_DefinedValue($this->db);
 		$dvs->attribute_id = $this->id;
+		$dvs->orderBy('sort_order');
 		foreach ($dvs->find() as $dv) {
 			$dv = clone $dv;
 			$defined[] = $dv->value_text;
@@ -281,10 +283,11 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 		return $defined;
 	}
 
-	function addDefinedValue($text) {
+	function addDefinedValue($text,$sort_order=999) {
 		$dv = new Dase_DBO_DefinedValue($this->db);
 		$dv->attribute_id = $this->id;
 		$dv->value_text = $text;
+		$dv->sort_order = $sort_order;
 		$dv->insert();
 	}
 
