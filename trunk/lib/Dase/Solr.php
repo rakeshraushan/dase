@@ -40,6 +40,9 @@ Class Dase_Solr
 		//omit sort param
 		$url = preg_replace('/(\?|&|&amp;)sort=\w*/i','',$url);
 
+		//omit uid param
+		//MAY NEED WORK ??
+		$url = preg_replace('/(\?|&|&amp;)uid=[^&]*/i','',$url);
 
 		//last param only PHP >= 5.2.3
 		//$url = htmlspecialchars($url,ENT_COMPAT,'UTF-8',false);
@@ -49,17 +52,18 @@ Class Dase_Solr
 		return $url;
 	}
 
-	public function prepareSearch($request,$start,$max,$num=0,$sort='')
+	public function prepareSearch($request,$start,$max,$num=0,$sort='',$uid='')
 	{
 		$this->request = $request;
 		$this->start = $start;
 		$this->max = $max;
 		$this->num = $num;
 		$this->sort = $sort;
+		$this->uid = $uid;
 
 		if ($num) {
 			//num is used to access a specific item
-			$start = $num-1;
+			//$start = $num-1;
 		}
 
 		$query_string = $request->query_string;
@@ -131,18 +135,6 @@ Class Dase_Solr
 				$query_string = preg_replace('/fq=/i','q=',$filter_query);
 				$filter_query='';
 			}
-
-
-		//allows for case-insensitive wildcards
-		//see: http://mail-archives.apache.org/mod_mbox/lucene-solr-user/200608.mbox/%3CPine.LNX.4.58.0608181231380.1336@hal.rescomp.berkeley.edu%3E
-		/*
-		if (false === strpos($query_string,':') && 
-			false === strpos($query_string,' OR ') &&
-			(false !== strpos($query_string,'*') || false !== strpos($query_string,'?')) 
-		) {
-			$query_string = strtolower($query_string);
-		}
-		 */
 
 		$this->solr_search_url = 
 			$this->solr_base_url
@@ -319,7 +311,7 @@ EOD;
 			$entry = $doc->doc;
 			$added = <<<EOD
 <category term="$setnum" scheme="http://daseproject.org/category/position"/>
-  <link rel="http://daseproject.org/relation/search-item" href="{$item_request_url}&amp;num={$setnum}"/>
+  <link rel="http://daseproject.org/relation/search-item" href="{$item_request_url}&amp;num={$setnum}&amp;uid={$unique_id}"/>
 EOD;
 			$entry = str_replace('<author>',$added."\n  <author>",$entry);
 			$feed .= $entry;
@@ -417,44 +409,35 @@ EOD;
 			$previous = $num - 1;
 		}
 
+		//todo: optimize!! no need to get results again
+		$ids = $this->getResultsAsIds();
+		$next_uid = '';
+		$prev_uid = '';
+		$key = array_search($this->uid,$ids);
+		if ($key+1 < $total) {
+			$next_uid = $ids[$key+1];
+		}
+		if ($key > 0) {
+			$prev_uid = $ids[$key-1];
+		}
+
+
 		//omit format param 
 		$item_request_url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$this->request->url);
 		//omit num param 
 		$item_request_url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$item_request_url);
+		//omit uid param 
+		$item_request_url = preg_replace('/(\?|&|&amp;)uid=[^&]*/i','',$item_request_url);
 		$item_request_url = htmlspecialchars($item_request_url);
 
-		$next_url = $item_request_url.'&amp;num='.$next;
-		$feed .= "\n  <link rel=\"next\" href=\"$next_url\"/>";
-
-		$previous_url = $item_request_url.'&amp;num='.$previous;
-		$feed .= "\n  <link rel=\"previous\" href=\"$previous_url\"/>";
-
-		//collection fq
-		//this will allow us to create search filters on page forms 
-		foreach ($this->coll_filters as $c) {
-			$feed .= "\n  <category term=\"$c\" scheme=\"http://daseproject.org/category/collection_filter\"/>\n";
+		if ($next_uid) {
+			$next_url = $item_request_url.'&amp;num='.$next.'&amp;uid='.$next_uid;
+			$feed .= "\n  <link rel=\"next\" href=\"$next_url\"/>";
 		}
 
-		$tallied = array();
-		foreach ($dom->getElementsByTagName('lst') as $el) {
-			if ('collection' == $el->getAttribute('name')) {
-				foreach ($el->getElementsByTagName('int') as $coll) {
-					$count = $coll->nodeValue;
-					if ($count) {
-						$cname = $coll->getAttribute('name');
-						$tallied[$cname]=1;
-						$cname_specialchars = htmlspecialchars($cname);
-						$encoded_query = urlencode($query).'&amp;collection='.urlencode($cname);
-						$feed .= "\n <link rel=\"http://daseproject.org/relation/single_collection_search\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"q=$encoded_query\"/>\n";
-					}
-				}
-			}
-		}
-
-		if (count($tallied)) {
-			$coll = array_search($cname,$GLOBALS['app_data']['collections']);
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection\" title=\"$cname_specialchars\" thr:count=\"$count\" href=\"$app_root/collection/$coll\"/>\n";
-			$feed .= "  <link rel=\"http://daseproject.org/relation/collection/attributes\" title=\"$cname_specialchars attributes\" href=\"$app_root/collection/$coll/attributes.json\"/>\n";
+		if ($prev_uid) {
+			$previous_url = $item_request_url.'&amp;num='.$previous.'&amp;uid='.$prev_uid;
+			$feed .= "\n  <link rel=\"previous\" href=\"$previous_url\"/>";
 		}
 
 		$search_request_url = str_replace('search/item','search',$this->request->url);
@@ -462,29 +445,20 @@ EOD;
 		$search_request_url = preg_replace('/(\?|&|&amp;)format=\w+/i','',$search_request_url);
 		//omit num param 
 		$search_request_url = preg_replace('/(\?|&|&amp;)num=\w+/i','',$search_request_url);
+		//omit uid param 
+		$search_request_url = preg_replace('/(\?|&|&amp;)uid=[^&]*/i','',$search_request_url);
 		$search_request_url = htmlspecialchars($search_request_url);
 
-		foreach ($dom->getElementsByTagName('date') as $el) {
-			if ('timestamp' == $el->getAttribute('name')) {
-				$timestamp = $el->nodeValue;
-			}
-		}
-
-		foreach ($dom->getElementsByTagName('str') as $id_el) {
-			if ('_id' == $id_el->getAttribute('name')) {
-				$doc = new Dase_DBO_ItemAtom($this->db);
-				$doc->unique_id = $id_el->nodeValue;
-				$doc->findOne();
-				$entry = $doc->doc;
-				$added = <<<EOD
+		$doc = new Dase_DBO_ItemAtom($this->db);
+		$doc->unique_id = $this->uid;
+		$doc->findOne();
+		$entry = $doc->doc;
+		$added = <<<EOD
   <link rel="up" href="{$search_request_url}"/>
   <category term="$num" scheme="http://daseproject.org/category/position"/>
-  <category term="$timestamp" scheme="http://daseproject.org/category/indexed_timestamp"/>
 EOD;
-				$entry = str_replace('<author>',$added."\n  <author>",$entry);
-				$feed .= $entry;
-			}
-		}
+		$entry = str_replace('<author>',$added."\n  <author>",$entry);
+		$feed .= $entry;
 		$feed .= "</feed>";
 		$feed = str_replace('{APP_ROOT}',$app_root,$feed);
 		return $feed;
@@ -514,19 +488,6 @@ EOD;
 		return $resp.' deleted '.$item->serial_number.' index: '.$index_elapsed;
 	}	
 
-	public function getIndexedTimestamp($item)
-	{
-		$url = $this->solr_base_url."/select/?q=_id:".$item->getUnique()."&version=".$this->solr_version;
-		$res = file_get_contents($url);
-		$dom = new DOMDocument('1.0','utf-8');
-		$dom->loadXml($res);
-		foreach ($dom->getElementsByTagName('date') as $el) {
-			if ('timestamp' == $el->getAttribute('name')) {
-				return $el->nodeValue;
-			}
-		}
-	}
-
 	public function getLatestTimestamp($coll) 
 	{
 		$url = $this->solr_base_url."/select/?q=c:".$coll."&start=0&max=1&sort=timestamp+desc&version=".$this->solr_version;
@@ -541,7 +502,7 @@ EOD;
 		}
 	}
 
-	public function getItemSolrDoc($item,$wrap_in_add_tag=true)
+	public function buildItemSolrDoc($item,$wrap_in_add_tag=true)
 	{
 		//used to create an xml doc
 		$dom = new DOMDocument();
@@ -603,7 +564,6 @@ EOD;
 		$search_text[] = $item->serial_number;
 
 		foreach ($item->getMetadata(true) as $meta) {
-
 			if (0 == $meta['collection_id']) {
 				//admin metadata 
 			} else {
@@ -616,7 +576,6 @@ EOD;
 					$value_set['edit'] = $meta['edit-id'];
 				}
 			}
-
 			//create "bags" for search text & admin text
 			if (0 === strpos($meta['ascii_id'],'admin_')) {
 				$admin_search_text[] = $meta['value_text'];
@@ -625,12 +584,9 @@ EOD;
 					$search_text[] = $meta['value_text'];
 				}
 			}
-
 			if ($meta['url']) {
 				$search_text[] = $meta['url'];
-
 			}
-
 			//allows filtering on mod (e.g. role:painter)
 			if ($meta['modifier']) {
 				$search_text[] = $meta['modifier'];
@@ -640,9 +596,7 @@ EOD;
 					$field->setAttribute('name',$meta['modifier_type']);
 				}
 			}
-
 			//allows fielded search:
-
 			$field = $doc->appendChild($dom->createElement('field'));
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			//attribute ascii_ids
@@ -657,9 +611,7 @@ EOD;
 			$field->appendChild($dom->createTextNode($meta['value_text']));
 			//attribute ascii_ids
 			$field->setAttribute('name','@'.$meta['ascii_id']);
-
 		}
-
 		$field = $doc->appendChild($dom->createElement('field'));
 		$field->appendChild($dom->createTextNode(join(" ",$search_text)));
 		$field->setAttribute('name','_search_text');
@@ -669,17 +621,6 @@ EOD;
 			$field->appendChild($dom->createTextNode(join("\n",$admin_search_text)));
 			$field->setAttribute('name','admin');
 		}
-
-		/*
-		$entry = new Dase_Atom_Entry_Item;
-		$entry = $item->injectAtomEntryData($entry,'{APP_ROOT}');
-		//atom entry version
-		$atom_str = $entry->asXml($entry->root);
-		$field = $doc->appendChild($dom->createElement('field'));
-		$field->appendChild($dom->createTextNode(htmlspecialchars($atom_str)));
-		$field->setAttribute('name','_atom');
-		 */
-
 		$dom->formatOutput = true;
 		return $dom->saveXML();
 	}
@@ -704,28 +645,19 @@ EOD;
 	public function postToSolr($item,$commit=true)
 	{
 		$start_check = Dase_Util::getTime();
-
 		$start_get_doc = Dase_Util::getTime();
 		$check_elapsed = round($start_get_doc - $start_check,4);
-
 		Dase_Log::debug(LOG_FILE,'post to SOLR: '.$this->solr_update_url.' item '.$item->getUnique());
-
-
-		$solr_doc = $this->getItemSolrDoc($item);
-
+		$solr_doc = $this->buildItemSolrDoc($item);
 		//return $solr_doc;
-
 		$start_index = Dase_Util::getTime();
 		$get_doc_elapsed = round($start_index - $start_get_doc,4);
-
 		$resp = Dase_Http::post($this->solr_update_url,$solr_doc,null,null,'text/xml');
 		if ($commit) {
 			Dase_Http::post($this->solr_update_url,'<commit/>',null,null,'text/xml');
 		}
-
 		$end = Dase_Util::getTime();
 		$index_elapsed = round($end - $start_index,4);
-
 		return $resp.' check: '.$check_elapsed.' get_doc: '.$get_doc_elapsed.' index: '.$index_elapsed;
 	}
 }

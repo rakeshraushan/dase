@@ -20,7 +20,6 @@ Dase.pageInitUser = function(eid) {
 		Dase.initAddMetadata();
 		Dase.initSetItemType();
 		Dase.initSetItemStatus();
-		Dase.initReindexItem();
 		Dase.initSaveItemTo();
 		Dase.initUploadMedia();
 	}
@@ -216,20 +215,6 @@ Dase.initSetItemStatus = function() {
 			h.attach(status_form);
 			Dase.initItemStatusForm();
 		}
-		return false;
-	};
-
-};
-
-Dase.initReindexItem = function() {
-	var link = Dase.$('reindexLink');
-	if (!link) return;
-	link.onclick = function() {
-		var orig = Dase.$('metadata').innerHTML;
-		Dase.$('metadata').innerHTML = '<h2 class="alert">reindexing item...</h2>';
-		Dase.ajax(this.href,'post',function(resp) { 
-			Dase.$('metadata').innerHTML = orig;
-		},null,Dase.user.eid,Dase.user.htpasswd);
 		return false;
 	};
 

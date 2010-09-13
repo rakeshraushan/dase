@@ -48,6 +48,11 @@ class Dase_Handler_Search extends Dase_Handler
 		} else {
 			$this->sort = '';
 		}
+		if ($r->has('uid')) {
+			$this->uid = $r->get('uid');
+		} else {
+			$this->uid = '';
+		}
 	}
 
 	public function getSearchMd5($r)
@@ -74,7 +79,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Solr($this->db,$this->config);
-		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort,$this->uid);
 		$atom_feed = $search->getResultsAsAtom();
 		$r->renderResponse($atom_feed);
 	}
@@ -88,7 +93,7 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Solr($this->db,$this->config);
-		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort,$this->uid);
 		$ids = $search->getResultsAsIds();
 		$uris = '';
 		foreach ($ids as $id) {
@@ -102,7 +107,7 @@ class Dase_Handler_Search extends Dase_Handler
 		//move OUT of controller
 		$r->checkCache();
 		$search = new Dase_Solr($this->db,$this->config);
-		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort,$this->uid);
 		$ids = $search->getResultsAsIds();
 		//$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
 		//missing total
@@ -130,8 +135,9 @@ class Dase_Handler_Search extends Dase_Handler
 	{
 		$r->checkCache();
 		$search = new Dase_Solr($this->db,$this->config);
-		$this->max =1;
-		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort);
+		//so we only get ONE record
+		//$this->max =1;
+		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort,$this->uid);
 		$atom_feed = $search->getResultsAsItemAtom();
 		$r->renderResponse($atom_feed);
 	}
@@ -162,13 +168,6 @@ class Dase_Handler_Search extends Dase_Handler
 		$tpl->assign('feed_url',$feed_url);
 
 		$feed = Dase_Atom_Feed::retrieve($feed_url);
-
-		/*
-		if (strlen($r->get('q')) > 252) {
-			$params['msg'] = 'query is too long';
-			$r->renderRedirect($r->app_root.'/collections',$params);
-		}
-		 */
 
 		//single hit goes directly to item
 		$count = $feed->getCount();
