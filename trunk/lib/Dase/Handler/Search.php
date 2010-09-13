@@ -109,9 +109,7 @@ class Dase_Handler_Search extends Dase_Handler
 		$search = new Dase_Solr($this->db,$this->config);
 		$search->prepareSearch($r,$this->start,$this->max,$this->num,$this->sort,$this->uid);
 		$ids = $search->getResultsAsIds();
-		//$json = "{\"app_root\":\"$app_root\",\"total\":\"$total\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
-		//missing total
-		$json = "{\"app_root\":\"$r->app_root\",\"start\":\"$this->start\",\"max\":\"$this->max\",\"items\":[";
+		$json = "{\"app_root\":\"$r->app_root\",\"start\":\"$this->start\",\"total\":\"$search->total\",\"max\":\"$this->max\",\"items\":[";
 		$items = array();
 		foreach ($ids as $id) {
 			$docs = new Dase_DBO_ItemJson($this->db);

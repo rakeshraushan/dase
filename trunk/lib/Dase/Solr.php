@@ -8,6 +8,7 @@ Class Dase_Solr
 	private $solr_version = '2.2';
 	private $start;
 	private $request;
+	public $total;
 	public static $specialchars = array(
 		'+','-','&&','||','!','(',')','{','}','[',']','^','"','~','*','?',':','\\'
 	); //note the last one is a single backslash!
@@ -349,6 +350,9 @@ EOD;
 					$reader->read();
 					$ids[] = $reader->value;
 				}
+			}
+			if ($reader->localName == "result" && $reader->nodeType == XMLReader::ELEMENT) {
+				$this->total = $reader->getAttribute('numFound');
 			}
 		}
 		$reader->close();
