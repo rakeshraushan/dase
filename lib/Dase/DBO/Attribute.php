@@ -90,7 +90,7 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			$att->is_public = 0;
 			$att->mapped_admin_att_id = 0;
 			$att->updated = date(DATE_ATOM);
-			$att->html_input_type = 'text';
+			$att->html_input_type = 'no_edit';
 			$att->insert();
 		}
 		return $att;

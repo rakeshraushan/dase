@@ -571,7 +571,7 @@ Dase.initGetInputForm = function(form) {
 Dase.buildEditMetadataForm = function(json) {
 	var html_form = '';
 	for (var i=0;i<json.length;i++) {
-		if (json[i].collection_id) { //filters out admin atts which have collection_id 0
+		if (json[i].collection_id || "0" != json[i].collection_id) { //filters out admin atts which have collection_id 0
 		html_form += '<form method="post" id="form_'+json[i].value_id+'" class="'+json[i].value_id+'" action="'+json[i].url+'">';
 		html_form += '<label id="label_'+json[i].value_id+'" for="'+json[i].att_ascii_id+'">'+json[i].attribute_name+'</label>';
 		html_form += '<p>'+Dase.getFormElement(json[i])+' <input type="submit" "value="update"> <input class="'+json[i].value_id+'" name="del" type="submit" value="delete"></p>';
