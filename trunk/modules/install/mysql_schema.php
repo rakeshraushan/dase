@@ -87,6 +87,7 @@ CREATE TABLE `{$table_prefix}defined_value` (
 `id` int(11) NOT NULL auto_increment,
 `attribute_id` integer default NULL,
 `value_text` varchar(200) default NULL,
+`sort_order` integer default NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -107,6 +108,20 @@ CREATE TABLE `{$table_prefix}item` (
 `collection_name` varchar(200) default NULL,
 `p_remote_media_host` varchar(200) default NULL,
 PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `{$table_prefix}item_atom` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`unique_id` VARCHAR( 201 ) NOT NULL ,
+`doc` TEXT NOT NULL ,
+`updated` VARCHAR( 50 ) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `{$table_prefix}item_json` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`unique_id` VARCHAR( 201 ) NOT NULL ,
+`doc` TEXT NOT NULL ,
+`updated` VARCHAR( 50 ) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE `{$table_prefix}item_type` (
