@@ -259,7 +259,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$r->renderError(401,'user cannot read this item');
 		}
 		$solr = new Dase_Solr($this->db,$this->config);
-		$r->renderResponse($solr->getItemSolrDoc($this->item));
+		$r->renderResponse($solr->buildItemSolrDoc($this->item));
 	}
 
 	public function getSolrResponseXml($r)

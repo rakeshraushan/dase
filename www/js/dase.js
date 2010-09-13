@@ -164,7 +164,17 @@ Dase.pageReload = function(msg) {
 	if (msg) {
 		alert(msg);
 	} 
-	window.location.reload();
+	var date = new Date();
+	var rand = date.getTime() + '';
+	rand = rand.substring(9);
+
+	var curr = window.location.href;
+	if (-1 == curr.indexOf('?')) {
+		curr = curr + '?cb=' + rand;
+	} else {
+		curr = curr + '&cb=' + rand;
+	}
+	window.location.href = curr;
 }
 
 Dase.truncate = function(str,len) {

@@ -102,9 +102,6 @@
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/status" 
 							id="setItemStatusLink">set status (<span id="itemStatus">{$item->entry->status}</span>)</a>
 						|
-						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}/indexer" 
-							id="reindexLink">reindex</a>
-						|
 						<a href="item/{$item->collectionAsciiId}/{$item->entry->serialNumber}">permalink</a> 
 					</div>
 				</div>
