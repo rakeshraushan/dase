@@ -383,6 +383,38 @@ EOD;
 		//solr escaped " fix
 		$query = stripslashes(htmlspecialchars($matches[2]));
 
+		$num = $this->num;
+
+		$previous = 0;
+		$next = 0;
+		if ($num < $total) {
+			$next = $num + 1;
+		}
+		if ($num > 1) {
+			$previous = $num - 1;
+		}
+
+		//todo: optimize!! no need to get results again
+		$ids = $this->getResultsAsIds();
+		if (!$this->uid && count($ids)) {
+			$this->uid = $ids[0];
+		}
+		$next_uid = '';
+		$prev_uid = '';
+		$key = array_search($this->uid,$ids);
+		if (false === $key) {
+			//this would be the case when the uid points to a record
+			//not actually in the search results.
+			$total = 0;
+		} else {
+			if ($key+1 < $total) {
+				$next_uid = $ids[$key+1];
+			}
+			if ($key > 0) {
+				$prev_uid = $ids[$key-1];
+			}
+		}
+
 		$feed = <<<EOD
 <feed xmlns="http://www.w3.org/2005/Atom"
 	  xmlns:thr="http://purl.org/syndication/thread/1.0">
@@ -401,32 +433,6 @@ EOD;
   <itemsPerPage xmlns="http://a9.com/-/spec/opensearch/1.1/">$this->max</itemsPerPage>
   <Query xmlns="http://a9.com/-/spec/opensearch/1.1/" role="request" searchTerms="$query"/>
 EOD;
-
-		$num = $this->num;
-
-		$previous = 0;
-		$next = 0;
-		if ($num < $total) {
-			$next = $num + 1;
-		}
-		if ($num > 1) {
-			$previous = $num - 1;
-		}
-
-		//todo: optimize!! no need to get results again
-		$ids = $this->getResultsAsIds();
-		if (!$this->uid) {
-			$this->uid = $ids[0];
-		}
-		$next_uid = '';
-		$prev_uid = '';
-		$key = array_search($this->uid,$ids);
-		if ($key+1 < $total) {
-			$next_uid = $ids[$key+1];
-		}
-		if ($key > 0) {
-			$prev_uid = $ids[$key-1];
-		}
 
 
 		//omit format param 
@@ -456,16 +462,18 @@ EOD;
 		$search_request_url = preg_replace('/(\?|&|&amp;)uid=[^&]*/i','',$search_request_url);
 		$search_request_url = htmlspecialchars($search_request_url);
 
-		$doc = new Dase_DBO_ItemAtom($this->db);
-		$doc->unique_id = $this->uid;
-		$doc->findOne();
-		$entry = $doc->doc;
-		$added = <<<EOD
+		if ($total) {
+			$doc = new Dase_DBO_ItemAtom($this->db);
+			$doc->unique_id = $this->uid;
+			$doc->findOne();
+			$entry = $doc->doc;
+			$added = <<<EOD
   <link rel="up" href="{$search_request_url}"/>
   <category term="$num" scheme="http://daseproject.org/category/position"/>
 EOD;
-		$entry = str_replace('<author>',$added."\n  <author>",$entry);
-		$feed .= $entry;
+			$entry = str_replace('<author>',$added."\n  <author>",$entry);
+			$feed .= $entry;
+		}
 		$feed .= "</feed>";
 		$feed = str_replace('{APP_ROOT}',$app_root,$feed);
 		return $feed;

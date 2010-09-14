@@ -509,7 +509,7 @@ Dase.initItemTypeForm = function(form) {
 		}
 		Dase.$('updateMsg').innerHTML = 'updating...';
 		Dase.ajax(this.action,'post',function(resp) { 
-			Dase.pageReload(resp);
+			Dase.pageReload();
 		},Dase.form.serialize(this),null,null,content_headers); 
 		return false;
 	}
