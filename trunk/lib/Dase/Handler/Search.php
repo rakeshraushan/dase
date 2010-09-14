@@ -145,10 +145,11 @@ class Dase_Handler_Search extends Dase_Handler
 		$r->checkCache();
 		$tpl = new Dase_Template($r);
 		$feed = Dase_Atom_Feed::retrieve($r->app_root.'/'.$r->url.'&format=atom');
-		//todo: figure this out
-		//if (!$feed->getOpensearchTotal()) {
-		//	$r->renderError(404,'no such item');
-		//}
+		if (!$feed->getOpensearchTotal()) {
+			$url = str_replace('search/item?','search?',$r->url);
+			$url = str_replace('uid=','x=',$url);
+			$r->renderRedirect($r->app_root.'/'.$url);
+		}
 		$tpl->assign('item',$feed);
 		$r->renderResponse($tpl->fetch('item/display.tpl'));
 	}

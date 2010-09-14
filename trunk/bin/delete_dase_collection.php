@@ -6,13 +6,13 @@ include 'config.php';
 $action = "count";
 $action = "delete";
 
-$coll = 'diia_image';
+$coll = 'keanepj';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
 print "$c->collection_name ($c->item_count)\n\n";
 
-
+print "script needs work to delete item_atom and item_json and SOLR\n";
 
 $dbh = $db->getDbh();
 
@@ -36,7 +36,6 @@ if ('delete' == $action) {
 		$v->delete();
 	}
 }
-
 
 if ('count' == $action) {
 	$sql = "SELECT count(v.id) from defined_value v, attribute a

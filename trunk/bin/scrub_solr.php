@@ -1,7 +1,7 @@
 <?php
 
 include 'config.php';
-$c = 'diia_image';
+$c = 'keanepj';
 $res = scrubIndex($c,$config,$db);
 
 function scrubIndex($collection_ascii_id,$config,$db,$display=true)
