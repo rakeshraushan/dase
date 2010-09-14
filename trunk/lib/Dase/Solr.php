@@ -415,6 +415,9 @@ EOD;
 
 		//todo: optimize!! no need to get results again
 		$ids = $this->getResultsAsIds();
+		if (!$this->uid) {
+			$this->uid = $ids[0];
+		}
 		$next_uid = '';
 		$prev_uid = '';
 		$key = array_search($this->uid,$ids);

@@ -170,9 +170,8 @@ class Dase_Handler_Search extends Dase_Handler
 		//single hit goes directly to item
 		$count = $feed->getCount();
 		if (1 == $count) {
-			$uid = str_replace($r->app_root.'/item/','',$feed->getEntry()->getId());
 			$url = str_replace('search?','search/item?',$r->url);
-			$r->renderRedirect($r->app_root.'/'.$url.'&num=1&uid='.$uid);
+			$r->renderRedirect($r->app_root.'/'.$url.'&num=1');
 		}
 		if (0 == $count) {
 			$coll = $r->get('collection_ascii_id');
