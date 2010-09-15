@@ -472,8 +472,8 @@ EOD;
 
 	function setValue($att_ascii_id,$value_text,$url='',$modifier='',$index=false)
 	{
-		if (!trim($att_ascii_id) || !trim($value_text)) {
-			return false;
+		if (!trim($att_ascii_id) || (!trim($value_text) && "0" !== $value_text)) {
+				return false;
 		}
 		//todo: this needs work -- no need to 'new' an att
 		$att = new Dase_DBO_Attribute($this->db);
