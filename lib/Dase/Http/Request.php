@@ -479,7 +479,11 @@ class Dase_Http_Request
 		$post = $this->_post;
 		if (!$as_array) {
 			//precedence is post,get,url_param,set member
-			$value = $this->_filterPost($key) ? $this->_filterPost($key) : $this->_filterGet($key);
+			if ($this->_filterPost($key) || '0' === $this->_filterPost($key)) {
+				$value = $this->_filterPost($key);
+			} else {
+				$value = $this->_filterGet($key);
+			}
 			if (trim($value) || '0' === substr($value,0,1)) {
 				return $value;
 			} else {
