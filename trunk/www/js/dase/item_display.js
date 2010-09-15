@@ -434,6 +434,7 @@ Dase.initInputTemplate = function(target) {
 	var url = Dase.getLinkByRel('http://daseproject.org/relation/input_template');
 	Dase.ajax(url,'get',function(resp) {
 		target.innerHTML += resp;
+		Dase.$('origin_url').value = window.location.href;
 		Dase.initTemplateTextWithMenu(target);
 	});
 };
