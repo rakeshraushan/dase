@@ -315,7 +315,8 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 		}
 		$this->item->buildSearchIndex();
-		$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
+		//$r->renderRedirect('item/'.$r->get('collection_ascii_id').'/'.$r->get('serial_number'));
+		$r->renderRedirect($r->get('origin_url'));
 	}
 
 	/** this is used to UPDATE an item's type */

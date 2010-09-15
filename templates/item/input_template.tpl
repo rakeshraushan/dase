@@ -1,5 +1,6 @@
 
 <form action="{$item_url}" method="post">
+	<input type="hidden" name="origin_url" id="origin_url">
 {foreach key=ascii item=a from=$atts}
 <p>
 <label for="{$asciii}">{$a->attribute_name}</label>
