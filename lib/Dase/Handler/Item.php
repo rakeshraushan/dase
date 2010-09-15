@@ -308,7 +308,7 @@ class Dase_Handler_Item extends Dase_Handler
 			$val_set = $r->get($att->ascii_id,true);
 			if (count($r->get($att->ascii_id,true)) && is_array($val_set)) {
 				foreach ($val_set as $val) {
-					if ($att->ascii_id && $val) {
+					if ($att->ascii_id && ($val || '0' === $val)) {
 						$this->item->setValue($att->ascii_id,$val);
 					}
 				}
@@ -369,7 +369,7 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 			$att_ascii = $r->get('ascii_id');
 			foreach ($r->get('value',true) as $val) {
-				if ($val) {
+				if ($val || '0' === $val) {
 					$this->item->setValue($att_ascii,$val);
 				}
 			}
