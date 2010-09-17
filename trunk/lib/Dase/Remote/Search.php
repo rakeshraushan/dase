@@ -38,6 +38,13 @@ class Dase_Remote_Search
 		$this->params[$key] = $val;
 	}
 
+	public function getParam($key) 
+	{
+		if (isset($this->params[$key])) {
+			return $this->params[$key];
+		}	
+	}
+
 	public function getUrl()
 	{
 		$url = trim($this->root,'/').'/';
@@ -49,11 +56,19 @@ class Dase_Remote_Search
 		return $url;
 	}
 
+	public function getAttVals($att_ascii)
+	{
+		$url = $this->root.'/attribute/'.$this->getParam('c').'/'.$att_ascii.'/values.json';
+		$res = Dase_Http::get($url);
+		return Dase_Json::toPhp($res[1]);
+
+	}
+
 	public function get()
 	{
 		$url = $this->getUrl();
-		$json = Dase_Http::get($url);
-		return Dase_Json::toPhp($json);
+		$res = Dase_Http::get($url);
+		return Dase_Json::toPhp($res[1]);
 	}
 
 }

@@ -520,7 +520,9 @@ class Dase_Handler_Item extends Dase_Handler
 			}
 		}
 		//just in case, save a copy in 'deleted' media dir
-		$this->item->saveCopy(MEDIA_DIR);
+		if ($this->item) {
+			$this->item->saveCopy(MEDIA_DIR);
+		}
 		$content_type = $r->getContentType();
 		if ('application/atom+xml;type=entry' == $content_type ||
 			'application/atom+xml' == $content_type
