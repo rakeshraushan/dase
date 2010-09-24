@@ -12,4 +12,6 @@ CREATE TABLE `user` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 ";
 
-print_r(Dase_DBO::query($db,$sql));
+$dbh = $db->getDbh();
+$sth = $dbh->prepare($sql);
+print_r($sth->execute());

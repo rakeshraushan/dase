@@ -588,6 +588,8 @@ Dase.getFormElement = function(set) {
 	var value_id = set.value_id;
 	var name = set.att_ascii_id;
 	var value = set.value_text;
+
+	value = value.replace(/"/g,'&quot;');
 	var values = set.values;
 	if (value.length > 50) {
 		type = 'textarea';
