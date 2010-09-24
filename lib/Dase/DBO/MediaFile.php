@@ -24,6 +24,11 @@ class Dase_DBO_MediaFile extends Dase_DBO_Autogen_MediaFile
 		$c = $this->getCollection();
 		$dest = $path_to_media.'/'.$c->ascii_id.'/deleted/'.$this->filename; 
 		$src = $this->getLocalPath($path_to_media);
+
+		//don't delete if it is a media icon
+		$icon_path = BASE_PATH.'/www/images/thumb_icons/'.$this->filename;
+		if (file_exists($icon_path)) { return; }
+
 		if (file_exists($src) && copy($src,$dest)) {
 			@unlink($src);
 		}
