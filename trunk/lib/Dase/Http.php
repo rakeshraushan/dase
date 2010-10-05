@@ -21,11 +21,8 @@ Class Dase_Http
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
-		if ('200' == $info['http_code']) {
-			return 'ok';
-		} else {
-			return $result;
-		}
+		// returns status code && response body
+		return array($info['http_code'],$result,$info);
 	}
 
 	public static function delete($url,$user,$pass)
