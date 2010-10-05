@@ -475,12 +475,8 @@ EOD;
 		if (!trim($att_ascii_id) || (!trim($value_text) && "0" !== $value_text)) {
 				return false;
 		}
-		//todo: this needs work -- no need to 'new' an att
-		$att = new Dase_DBO_Attribute($this->db);
-		$att->ascii_id = $att_ascii_id;
-		//allows for admin metadata, att_ascii for which
-		//always begins 'admin_'
-		//NOTE: we now create att if it does not exist
+		//allows for admin metadata, att_ascii for which always begins 'admin_'
+		//NOTE: we DO create att if it does not exist
 		if (false === strpos($att_ascii_id,'admin_')) {
 			$att = Dase_DBO_Attribute::findOrCreate($this->db,$this->p_collection_ascii_id,$att_ascii_id);
 		} else {
