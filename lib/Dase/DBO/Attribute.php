@@ -59,10 +59,12 @@ class Dase_DBO_Attribute extends Dase_DBO_Autogen_Attribute
 			throw new Exception('no such collection');
 		}
 		$att->collection_id = $coll->id;
+
+		$attribute_ascii_id = Dase_Util::dirify($attribute_ascii_id);
+		$attribute_ascii_id = array_pop(explode('#',$attribute_ascii_id)); //will use hashed value at end of URL
 		$att->ascii_id = $attribute_ascii_id;
+
 		if (!$att->findOne()) {
-			$attribute_ascii_id = Dase_Util::dirify($attribute_ascii_id);
-			$attribute_ascii_id = array_pop(explode('#',$attribute_ascii_id)); //will use hashed value at end of URL
 			$att->attribute_name = ucwords(str_replace('_',' ',strtolower($attribute_ascii_id)));
 			$att->sort_order = 9999;
 			$att->in_basic_search = 1;
