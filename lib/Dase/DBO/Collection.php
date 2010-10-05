@@ -501,7 +501,12 @@ class Dase_DBO_Collection extends Dase_DBO_Autogen_Collection
 			$item->p_remote_media_host = $this->remote_media_host;
 			$item->collection_name = $this->collection_name;
 			$item->insert();
-			$item->serial_number = sprintf("%09d",$item->id);
+			//after move to mysql to avoid collisions w/ old sernums
+			//replace first '0' w/ '1'
+			//todo: better way to generate unique sernum.
+			// (do NOT forget to enforce uniqueness in DB)
+			//$item->serial_number = sprintf("%09d",$item->id);
+			$item->serial_number = '1'.sprintf("%08d",$item->id);
 			$item->updated = date(DATE_ATOM);
 			$item->update();
 			$this->updateItemCount();
