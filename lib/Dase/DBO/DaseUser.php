@@ -10,6 +10,7 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 	public $is_serviceuser;
 	public $ppd_token;
 	public $token;
+	public $colls;
 
 	public static function get($db,$eid) {
 		$u = new Dase_DBO_DaseUser($db);
