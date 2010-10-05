@@ -41,7 +41,7 @@
 			<input type="submit" value="save"/>
 		</form>
 		<ul>
-			{foreach item=c from=$user->collections}
+			{foreach item=c from=$user->colls}
 			{if $c.auth_level && 'none' != $c.auth_level}
 			<li>{$c.collection_name} [{$c.auth_level}]</li>
 			{/if}

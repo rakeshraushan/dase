@@ -415,7 +415,7 @@ class Dase_Handler_User extends Dase_Handler
 	{
 		$u = $this->user;
 		$t = new Dase_Template($r);
-		$u->collections = $u->getCollections($r->app_root);
+		$u->colls = $u->getCollections($r->app_root);
 		$t->assign('user',$u);
 		$t->assign('http_password',$u->getHttpPassword());
 		$r->renderResponse($t->fetch('user/settings.tpl'),$r);
