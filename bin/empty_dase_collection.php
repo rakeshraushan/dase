@@ -2,7 +2,7 @@
 
 include 'config.php';
 
-$coll = 'india_images';
+$coll = 'images_of_india';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

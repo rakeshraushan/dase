@@ -21,7 +21,7 @@ class Dase_Atom_Entry_ItemType extends Dase_Atom_Entry
 	function insert($db,$r,$collection) 
 	{
 		//think about using Slug also
-		$ascii_id = $this->getAsciiId();
+		$ascii_id = Dase_Util::dirify($this->getAsciiId());
 		if (!$ascii_id) {
 			$ascii_id = Dase_Util::dirify($this->getTitle());
 		}

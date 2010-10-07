@@ -75,7 +75,7 @@ class Dase_Atom_Entry_Set extends Dase_Atom_Entry
 			$r->renderError(401,'users do not match');
 		}
 		$set = new Dase_DBO_Tag($db);
-		$set->ascii_id = $this->getAsciiId();
+		$set->ascii_id = Dase_Util::dirify($this->getAsciiId());
 		$set->eid = $user->eid;
 		if ($set->findOne()) { 
 			$r->renderError(409,'set with that name exists');

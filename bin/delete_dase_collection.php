@@ -6,7 +6,8 @@ include 'config.php';
 $action = "count";
 $action = "delete";
 
-$coll = 'keanepj';
+$coll = 'stuart';
+$coll = 'images_of_india';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

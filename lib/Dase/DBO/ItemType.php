@@ -27,7 +27,7 @@ class Dase_DBO_ItemType extends Dase_DBO_Autogen_ItemType
 			throw new Exception('no such collection');
 		}
 		$type->collection_id = $coll->id;
-		$type->ascii_id = $ascii_id;
+		$type->ascii_id = Dase_Util::dirify($ascii_id);
 		if (!$type->findOne()) {
 			$type->name = ucwords(str_replace('_',' ',$ascii_id));
 			$type->insert();
