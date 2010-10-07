@@ -28,7 +28,7 @@ class Dase_Handler_Home extends Dase_Handler
 
 	public function getThing($r) 
 	{
-		$r->renderResponse($r->get('id');
+		$r->renderResponse($r->get('id'));
 	}
 }
 

@@ -1,37 +1,43 @@
 #!/bin/sh
 
 echo "please set db username & password"
+echo "please set RewriteBase in .htaccess"
 exit
+
+ln -s ../lib/Dase/Handler ../handlers
+
+chgrp -R apache ../files/*
+chmod -R g+w ../files/*
 
 cp -r inc/* ../inc
 echo "copied in new local config"
 
-rm -irf ../lib/Dase/Handlers/*
+rm -rf ../lib/Dase/Handler/*
 echo "deleted existing handlers"
-cp -r handlers/* ../lib/Dase/Handlers
+cp -r handlers/* ../lib/Dase/Handler
 echo "copied in new handler"
 
-rm -irf ../www/css/*
+rm -rf ../www/css/*
 echo "deleted existing css"
 cp -r css/* ../www/css
 echo "copied in new css"
 
-rm -irf ../www/js/*
+rm -rf ../www/js/*
 echo "deleted existing js"
 cp -r js/* ../www/js
 echo "copied in new js"
 
-rm -irf ../www/images/*
+rm -rf ../www/images/*
 echo "deleted existing images"
 cp -r images/* ../www/images
 echo "copied in new images"
 
-rm -irf ../templates/*
+rm -rf ../templates/*
 echo "deleted existing templates"
 cp -r templates/* ../templates
 echo "copied in new templates"
 
-rm -irf ../lib/Dase/DBO/*
+rm -rf ../lib/Dase/DBO/*
 echo "deleted existing handlers"
 cp -r lib/* ../lib/Dase/DBO
 echo "copied in new handler"
