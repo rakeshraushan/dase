@@ -8,7 +8,7 @@
 		<title>{block name="title"}{/block}</title>
 
 		<link rel="stylesheet" href="www/css/base.css">
-		<link rel="stylesheet" href="www/css/sample_style.css">
+		<link rel="stylesheet" href="www/css/style.css">
 		{block name="head-links"}{/block}
 
 		{block name="head-js"}

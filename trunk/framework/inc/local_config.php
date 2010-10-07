@@ -11,6 +11,7 @@ $conf['app']['default_handler'] = 'home';
 $conf['request_handler']['login'] = 'uteid';
 $conf['app']['user_class'] = 'Dase_DBO_User';
 $conf['app']['log_level'] = 3;
+$conf['app']['init_global_data'] = false;
 
 $conf['auth']['superuser']['pkeane'] = 'ok';
 $conf['auth']['token'] = 'auth';
