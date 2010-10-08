@@ -6,6 +6,7 @@ class Dase_Handler_Admin extends Dase_Handler
 		'/' => 'admin',
 		'users' => 'users',
 		'add_user_form/{eid}' => 'add_user_form',
+		'user/{id}/is_admin' => 'is_admin',
 	);
 
 	protected function setup($r)
@@ -69,6 +70,24 @@ class Dase_Handler_Admin extends Dase_Handler
 		}
 		$r->renderRedirect('admin');
 
+	}
+
+	public function deleteIsAdmin($r) 
+	{
+		$user = new Dase_DBO_User($this->db);
+		$user->load($r->get('id'));
+		$user->is_instructor = 0;
+		$user->update();
+		$r->renderResponse('deleted privileges');
+	}
+
+	public function putIsAdmin($r) 
+	{
+		$user = new Dase_DBO_User($this->db);
+		$user->load($r->get('id'));
+		$user->is_instructor = 1;
+		$user->update();
+		$r->renderResponse('added privileges');
 	}
 
 
