@@ -3,6 +3,7 @@ var Dase = {};
 $(document).ready(function() {
 	Dase.initDelete('topMenu');
 	Dase.initToggle('target');
+	Dase.initToggle('email');
 	Dase.initSortable('target');
 	Dase.initUserPrivs();
 	Dase.initFormDelete();
