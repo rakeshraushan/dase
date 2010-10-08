@@ -2,14 +2,6 @@
 
 {block name="title"}title here{/block}
 
-{block name="head"}
-<script type="text/javascript" src="www/js/jquery.jplayer.js"></script>
-{/block}
-
-{block name="head-links"}
-<link rel="stylesheet" type="text/css" href="www/css/jplayer.blue.monday.css">
-{/block}
-
 {block name="wordmark"}
 <div id="universityWordMark">
 	<a href="http://www.utexas.edu/cola"><img alt="UT College of Liberal Arts Wordmark" src="www/images/UTCOLA.jpg"/></a>
@@ -21,7 +13,7 @@
 	<h1><a href="home">Main Title Here</a></h1>
 	<h4 id="topMenu">
 		<a href="home">home</a> |
-		{if $request->user->is_instructor or $request->user->is_admin}
+		{if $request->user->is_admin}
 		<a href="admin">admin</a> |
 		{/if}
 		<a href="login/{$request->user->eid}" class="delete">logout {$request->user->eid}</a> 

@@ -2,14 +2,6 @@
 
 {block name="title"}title here{/block}
 
-{block name="head"}
-<script type="text/javascript" src="www/js/jquery.jplayer.js"></script>
-{/block}
-
-{block name="head-links"}
-<link rel="stylesheet" type="text/css" href="www/css/jplayer.blue.monday.css">
-{/block}
-
 {block name="wordmark"}
 <div id="universityWordMark">
 	<a href="http://www.utexas.edu/cola"><img alt="UT College of Liberal Arts Wordmark" src="www/images/UTCOLA.jpg"/></a>
