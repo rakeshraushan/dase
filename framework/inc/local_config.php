@@ -7,6 +7,7 @@ $conf['db']['user'] = 'user';
 $conf['db']['pass'] = 'pass';
 $conf['db']['table_prefix'] = '';
 
+$conf['app']['main_title'] = 'my framework app';
 $conf['app']['default_handler'] = 'home';
 $conf['request_handler']['login'] = 'uteid';
 $conf['app']['user_class'] = 'Dase_DBO_User';
