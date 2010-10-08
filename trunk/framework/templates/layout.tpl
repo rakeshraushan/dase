@@ -1,6 +1,6 @@
 {extends file="base.tpl"}
 
-{block name="title"}title here{/block}
+{block name="title"}{$main_title}{/block}
 
 {block name="wordmark"}
 <div id="universityWordMark">
@@ -10,7 +10,7 @@
 
 {block name="header"}
 <div class="header-inner">
-	<h1><a href="home">Main Title Here</a></h1>
+	<h1><a href="home">{$main_title}</a></h1>
 	<h4 id="topMenu">
 		<a href="home">home</a> |
 		{if $request->user->is_admin}
