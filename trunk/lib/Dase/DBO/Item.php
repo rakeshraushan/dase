@@ -1027,6 +1027,9 @@ EOD;
 				if ($meta['url']) {
 					$value_set['url'] = $meta['url'];
 				}
+				if ($meta['modifier']) {
+					$value_set['modifier'] = $meta['modifier'];
+				}
 				if ($meta['edit-id']) {
 					$value_set['edit'] = $meta['edit-id'];
 				}

@@ -9,6 +9,7 @@ class Dase_Handler_Home extends Dase_Handler
 
 	protected function setup($r)
 	{
+		$this->user = $r->getUser();
 	}
 
 	public function getHome($r) 
