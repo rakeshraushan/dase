@@ -4,6 +4,7 @@ $(document).ready(function() {
 	Dase.initDelete('topMenu');
 	Dase.initToggle('target');
 	Dase.initSortable('target');
+	Dase.initUserPrivs();
 	Dase.initFormDelete();
 });
 
@@ -73,3 +74,23 @@ Dase.initSortable = function(id) {
 	});
 };
  
+Dase.initUserPrivs = function() {
+	$('#user_privs').find('a').click( function() {
+		var method = $(this).attr('class');
+		var url = $(this).attr('href');
+			var _o = {
+				'url': url,
+				'type':method,
+				'success': function(resp) {
+					alert(resp);
+					location.reload();
+				},
+				'error': function() {
+					alert('sorry, there was a problem');
+				}
+			};
+			$.ajax(_o);
+		return false;
+	});
+};
+

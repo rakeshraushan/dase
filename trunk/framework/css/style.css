@@ -115,7 +115,11 @@ div#main {
 	font-size: 40px;
 }
 
-ul li  {
+ul {
+	margin: 10px 0;
+}
+
+li  {
 	margin: 5px 0;
 }
 
