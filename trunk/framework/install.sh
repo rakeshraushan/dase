@@ -4,7 +4,8 @@ echo "please set db username & password"
 echo "please set RewriteBase in .htaccess"
 exit
 
-ln -s ../lib/Dase/Handler ../handlers
+#target relative to source!
+ln -s lib/Dase/Handler ../handlers
 
 chgrp -R apache ../files/*
 chmod -R g+w ../files/*
