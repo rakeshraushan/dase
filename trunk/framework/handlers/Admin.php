@@ -76,7 +76,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$user = new Dase_DBO_User($this->db);
 		$user->load($r->get('id'));
-		$user->is_instructor = 0;
+		$user->is_admin = 0;
 		$user->update();
 		$r->renderResponse('deleted privileges');
 	}
@@ -85,7 +85,7 @@ class Dase_Handler_Admin extends Dase_Handler
 	{
 		$user = new Dase_DBO_User($this->db);
 		$user->load($r->get('id'));
-		$user->is_instructor = 1;
+		$user->is_admin = 1;
 		$user->update();
 		$r->renderResponse('added privileges');
 	}

@@ -8,7 +8,6 @@
 		<dd>{$request->user->name}</dd>
 		<dt>eid</dt>
 		<dd>{$request->user->eid}</dd>
-		{if $request->user->is_instructor}
 		<dt>email</dt>
 		<dd id="email">
 		{$request->user->email} <a href="" id="toggleEmail" class="toggle">[update]</a>
@@ -18,13 +17,6 @@
 			<input type="submit" value="update">
 			</p>
 		</form>
-		</dd>
-		{/if}
-		<dt>default instructor</dt>
-		<dd>{$request->user->instructor->name}</dd>
-		<dt>is instructor</dt>
-		<dd>
-		{if $request->user->is_instructor}yes{else}no{/if}
 		</dd>
 		<dt>is admin</dt>
 		<dd>
