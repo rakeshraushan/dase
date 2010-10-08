@@ -1,45 +1,41 @@
 {extends file="base.tpl"}
 
-{block name="topline"}
-<a href="login/{$request->user->eid}" class="delete">logout {$request->user->eid}</a> 
+{block name="title"}title here{/block}
+
+{block name="head"}
+<script type="text/javascript" src="www/js/jquery.jplayer.js"></script>
 {/block}
 
-{block name="title"}AudioCat{/block}
+{block name="head-links"}
+<link rel="stylesheet" type="text/css" href="www/css/jplayer.blue.monday.css">
+{/block}
+
+{block name="wordmark"}
+<div id="universityWordMark">
+	<a href="http://www.utexas.edu/cola"><img alt="UT College of Liberal Arts Wordmark" src="www/images/UTCOLA.jpg"/></a>
+</div>
+{/block}
 
 {block name="header"}
 <div class="header-inner">
-	<h1><a href="home">LAITS AudioCat</a></h1>
-</div>
-<div class="header-form">
-	<form action="home/search" method="get">
-		<input type="text" name="q">
-		<select name="field">
-			<option value="">all fields</option>
-			<option value="title">Title</option>
-			<option value="author">Author</option>
-			<option value="language">Language</option>
-			<option value="number">Number</option>
-			<option value="level">Level</option>
-			<option value="class">Class</option>
-			<option value="description">Description</option>
-		</select>
-		<input type="submit" value="search">
-	</form>
+	<h1><a href="home">Main Title Here</a></h1>
 </div>
 <div class="clear"></div>
 {/block}
 
+{block name="sidebar"}
+<!--
+<ul class="menu">
+	<li><h2>header</h2></li>
+	<li>one</li>
+	<li>two</li>
+	<li>three</li>
+</ul>
+-->
+{/block}
 
 {block name="main"}
 {if $msg}<h3 class="msg">{$msg}</h3>{/if}
-{block name="new_item_link"}
-{if $request->user->can_edit}
-<div class="controls">
-	<a href="item/new">create a new item</a>
-</div>
-<div class="clear"></div>
-{/if}
-{/block}
 {block name="content"}default content{/block}
 {/block}
 
