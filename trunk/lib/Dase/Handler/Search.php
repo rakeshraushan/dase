@@ -171,6 +171,7 @@ class Dase_Handler_Search extends Dase_Handler
 		//single hit goes directly to item
 		$count = $feed->getCount();
 		if (1 == $count) {
+			//todo use preg_replace and guarentee only one replacement
 			$url = str_replace('search?','search/item?',$r->url);
 			$r->renderRedirect($r->app_root.'/'.$url.'&num=1');
 		}
