@@ -293,7 +293,7 @@ EOD;
 
 		//this prevents a 'search/item' becoming 'search/item/item':
 		$item_request_url = str_replace('search/item','search',$this->request->url);
-		$item_request_url = str_replace('search','search/item',$item_request_url);
+		$item_request_url = preg_replace('/search/','search/item',$item_request_url,1);
 
 		//omit format param 
 		$item_request_url = preg_replace('/(\?|&|&amp;)format=\w*/i','',$item_request_url);
