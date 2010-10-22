@@ -148,6 +148,7 @@ class Dase_Handler_Collection extends Dase_Handler
 		}	
 		$output .= "#items\n";
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			$output .= $item->getUrl($r->app_root).".atom\n";
 		}	
 		$r->renderResponse($output);
@@ -232,6 +233,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			$output .= $item->serial_number; 
 			//pass in 'display' params to view att value
 			foreach ($r->get('display',true) as $member) {
@@ -246,6 +248,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$output = '';
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			$output .= $item->getUrl($r->app_root); 
 			$output .= "\n";
 		}
@@ -256,6 +259,7 @@ class Dase_Handler_Collection extends Dase_Handler
 	{
 		$items = array();
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			$items[] = $item->asJson($r->app_root); 
 		}
 		$coll_url = $this->collection->getUrl($r->app_root);
@@ -284,6 +288,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$count = 0;
 		}
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			if ($item->getMediaCount() <= $count) {
 				$i++;
 				$output .= $item->serial_number; 
@@ -317,6 +322,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$count = 0;
 		}
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			if ($item->getMediaCount() <= $count) {
 				$i++;
 				//pass in 'display' params to view att value
@@ -355,6 +361,7 @@ class Dase_Handler_Collection extends Dase_Handler
 			$count = 0;
 		}
 		foreach ($this->collection->getItems() as $item) {
+			$item = clone($item);
 			if ($item->getMediaCount() <= $count) {
 				$i++;
 				$edit = $item->getUrl($r->app_root); 
