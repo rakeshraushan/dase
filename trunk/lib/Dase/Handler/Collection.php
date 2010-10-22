@@ -364,19 +364,17 @@ class Dase_Handler_Collection extends Dase_Handler
 			$item = clone($item);
 			if ($item->getMediaCount() <= $count) {
 				$i++;
-				$edit = $item->getUrl($r->app_root); 
-				$edit_media = $item->getEditMediaUrl($r->app_root); 
-				$items[$edit]['edit'] = $edit;
-				$items[$edit]['edit-media'] = $edit_media;
-				foreach ($item->getMetadata() as $row) {
-					$items[$edit][$row['ascii_id']] = $row['value_text'];
-				}
+				$items[] = $item->asJson($r->app_root); 
 			}
 			if ($limit && $i == $limit) {
 				break;
 			}
 		}
-		$r->renderResponse(Dase_Json::get($items));
+		$coll_url = $this->collection->getUrl($r->app_root);
+		$updated = $this->collection->updated;
+		$json = "{\"id\":\"$coll_url\",\"updated\":\"$updated\",\"items\":[";
+		$json .= join(',',$items).']}';
+		$r->renderResponse($json);
 	}
 
 	public function getItemsMarkedToBeDeleted($r) 
