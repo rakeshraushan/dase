@@ -13,11 +13,7 @@ class Dase_Atom_Entry_Item extends Dase_Atom_Entry
 
 	function getSerialNumber() 
 	{
-		if (!$this->serial_number) {
-			//serial numbers are modelled the same way as 
-			//ascii ids (last segment of id)
-			$this->serial_number = $this->getAsciiId();
-		}
+		$this->serial_number = $this->getAsciiId();
 		return $this->serial_number;
 	}
 

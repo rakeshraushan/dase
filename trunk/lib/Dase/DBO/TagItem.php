@@ -7,13 +7,19 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 	function getItem()
 	{
 		$item = new Dase_DBO_Item($this->db);
-		//todo: go with p_coll & p_sernum
 		if ($item->load($this->item_id)) {
 			$item->getCollection();
 			return $item;
 		} else {
-			return false;
+			if ($this->p_collection_ascii_id && $this->p_serial_number) {
+				$item = Dase_DBO_Item::get($this->db,$this->p_collection_ascii_id,$this->p_serial_number); 
+				if ($item) {
+					$item->getCollection();
+					return $item;
+				} 
+			}
 		}
+		return false;
 	}
 
 	public function setItemStatus($status) 
