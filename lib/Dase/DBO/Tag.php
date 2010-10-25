@@ -173,6 +173,13 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		return $app_root.'/tag/'.$u->eid.'/'.$this->ascii_id;
 	}
 
+	function getCount()
+	{
+		$tag_item = new Dase_DBO_TagItem($this->db);
+		$tag_item->tag_id = $this->id;
+		return $tag_item->findCount();
+	}
+
 	/** be careful w/ this -- we do not archive before deleting */
 	function expunge()
 	{
