@@ -976,6 +976,8 @@ Dase.initRemoveItems = function() {
 			Dase.ajax(url,'DELETE',function(resp) {
 				alert(resp);
 				remove_form.submit();
+			},null,null,null,null, function(resp) {
+				alert('ERROR: '+resp);
 			});
 		}
 		return false;

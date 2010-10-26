@@ -36,8 +36,11 @@ class Dase_DBO_TagItem extends Dase_DBO_Autogen_TagItem
 	function getTag()
 	{
 		$tag = new Dase_DBO_Tag($this->db);
-		$tag->load($this->tag_id);
-		return $tag;
+		if ($tag->load($this->tag_id)) {
+			return $tag;
+		} else {
+			return false;
+		}
 	}
 
 	function persist($no_auto_db_check=false)
