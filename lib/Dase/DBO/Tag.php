@@ -193,6 +193,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 			throw new Exception("dangerous-looking tag deletion (more than 50 tag items)");
 		} 
 		foreach ($tag_items->find() as $doomed_tag_item) {
+			$doomed_tag_item = clone ($doomed_tag_item);
 			$doomed_tag_item->delete();
 		}
 		$this->delete();
