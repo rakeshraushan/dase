@@ -128,7 +128,7 @@
 			<a href="manage" class="hide manage" id="manageLink"></a> |
 			<a href="help" id="helpModule">FAQ</a> | 
 			<a href="mailto:dase@mail.laits.utexas.edu">email</a> | 
-			<a href="copyright">Copyright/Usage Statement</a> | 
+			<a href="help">Copyright/Usage Statement</a> | 
 			<a href="resources">Resources</a> | 
 			<a href="admin" class="hide" id="adminLink"></a> |
 			{$request->elapsed} seconds |
