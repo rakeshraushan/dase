@@ -248,7 +248,7 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 		$tag_item = new Dase_DBO_TagItem($this->db);
 		$tag_item->tag_id = $this->id;
 		$tag_item->orderBy('sort_order');
-		return $tag_item->find();
+		return $tag_item->findAll(1);
 	}
 
 	public function setItemsStatus($status) 

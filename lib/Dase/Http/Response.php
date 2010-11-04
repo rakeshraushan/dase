@@ -94,6 +94,12 @@ class Dase_Http_Response
 			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($path)).' GMT', true, 200);
 			header('Content-Length: '.filesize($path));
 			header('Content-Type: '.$mime_type);
+
+			//hack to deal w/ iPad that only wants byte ranges
+			if ('video/mp4' == $mime_type) {
+				Dase_Util::rangeDownload($path);
+			}
+
 			if ($download) {
 				header("Content-Disposition: attachment; filename=$filename");
 				//from http://us.php.net/fread
