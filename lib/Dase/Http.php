@@ -43,7 +43,7 @@ Class Dase_Http
 		}
 	}
 
-	public static function post($url,$body,$user,$pass,$mime_type='')
+	public static function post($url,$body,$user,$pass,$mime_type='',$useragent='')
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -57,15 +57,14 @@ Class Dase_Http
 			);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		}
+		if ($useragent) {
+			curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		curl_close($ch);  
-		if ('200' == $info['http_code']) {
-			return 'ok';
-		} else {
-			return $result;
-		}
+		return array($info['http_code'],$result,$info);
 	}
 
 	public static function get($url,$user='',$pass='')
