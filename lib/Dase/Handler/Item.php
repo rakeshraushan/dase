@@ -10,6 +10,7 @@ class Dase_Handler_Item extends Dase_Handler
 		'{collection_ascii_id}/{serial_number}/ingester' => 'ingester',
 		'{collection_ascii_id}/{serial_number}/input_template' => 'input_template',
 		'{collection_ascii_id}/{serial_number}/ping' => 'ping',
+		'{collection_ascii_id}/{serial_number}/updater' => 'updater',
 		'{collection_ascii_id}/{serial_number}/media' => 'media',
 		'{collection_ascii_id}/{serial_number}/media/count' => 'media_count',
 		//used for get and post
@@ -42,6 +43,17 @@ class Dase_Handler_Item extends Dase_Handler
 
 		//all auth happens in individual methods
 	}	
+
+	public function postToUpdater($r) {
+		$user = $r->getUser('http');
+		if (!$user->can('write',$this->item)) {
+			$r->renderError(401,'cannot write to this item');
+		}
+		$this->item->updated = date(DATE_ATOM);
+		$this->item->update();
+		$this->item->buildSearchIndex();
+		$r->renderResponse('updated '.$this->item->getUnique());
+	}
 
 	public function postToKeyvalRemover($r) {
 		//cookie user, since not really a web service
