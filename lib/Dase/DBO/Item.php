@@ -1002,6 +1002,7 @@ EOD;
 		$json_doc['links']['media'] =  '/item/'.$this->getUnique().'/media';
 		$json_doc['links']['metadata'] =  '/item/'.$this->getUnique().'/metadata';
 		$json_doc['links']['status'] =  '/item/'.$this->getUnique().'/status';
+		$json_doc['links']['updater'] =  '/item/'.$this->getUnique().'/updater';
 		$json_doc['links']['profile'] = '/collection/'.$this->p_collection_ascii_id.'/profile.json';
 		$json_doc['alternate'] = array();
 		$json_doc['alternate']['html'] =  '/item/'.$this->getUnique().'.html';
