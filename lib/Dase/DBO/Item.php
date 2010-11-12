@@ -578,33 +578,39 @@ EOD;
 		file_put_contents($filename,$this->asJson('http://daseproject.org'));
 	}
 
-	function storeDoc($app_root="{APP_ROOT}")
+	function storeDoc($type="")
 	{
-		$doc = new Dase_DBO_ItemJson($this->db);
-		$doc->unique_id = $this->getUnique();
-		if ($doc->findOne()) {
-			$doc->updated = date(DATE_ATOM);
-			$doc->doc = $this->buildJson($app_root);
-			$doc->update();
-		} else {
-			$doc->updated = date(DATE_ATOM);
-			$doc->doc = $this->buildJson($app_root);
-			$doc->insert();
+		$app_root="{APP_ROOT}";
+
+		if (!$type || 'json' == $type) {
+			$doc = new Dase_DBO_ItemJson($this->db);
+			$doc->unique_id = $this->getUnique();
+			if ($doc->findOne()) {
+				$doc->updated = date(DATE_ATOM);
+				$doc->doc = $this->buildJson($app_root);
+				$doc->update();
+			} else {
+				$doc->updated = date(DATE_ATOM);
+				$doc->doc = $this->buildJson($app_root);
+				$doc->insert();
+			}
 		}
 
-		$entry = new Dase_Atom_Entry_Item;
-		$entry = $this->injectAtomEntryData($entry,$app_root);
-		$doc = new Dase_DBO_ItemAtom($this->db);
-		$doc->unique_id = $this->getUnique();
-		if ($doc->findOne()) {
-			$doc->updated = date(DATE_ATOM);
-			//passing in entry root prevent xml declaration
-			$doc->doc = $entry->asXml($entry->root);
-			$doc->update();
-		} else {
-			$doc->updated = date(DATE_ATOM);
-			$doc->doc = $entry->asXml($entry->root);
-			$doc->insert();
+		if (!$type || 'atom' == $type) {
+			$entry = new Dase_Atom_Entry_Item;
+			$entry = $this->injectAtomEntryData($entry,$app_root);
+			$doc = new Dase_DBO_ItemAtom($this->db);
+			$doc->unique_id = $this->getUnique();
+			if ($doc->findOne()) {
+				$doc->updated = date(DATE_ATOM);
+				//passing in entry root prevent xml declaration
+				$doc->doc = $entry->asXml($entry->root);
+				$doc->update();
+			} else {
+				$doc->updated = date(DATE_ATOM);
+				$doc->doc = $entry->asXml($entry->root);
+				$doc->insert();
+			}
 		}
 	}
 
