@@ -818,6 +818,11 @@ class Dase_Handler_Collection extends Dase_Handler
 		try {
 			$item = $this->collection->createNewItem($sernum,$user->eid);
 			$item_data = Dase_Json::toPhp($json);
+
+			//item type
+			if (isset($item_data['item_type'])) {
+					$item->setItemType($item_data['item_type']);
+			}
 			$metadata = $item_data['metadata'];
 			foreach ($metadata as $key => $vals) {
 				foreach ($vals as $val) {
