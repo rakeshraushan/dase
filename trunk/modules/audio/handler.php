@@ -9,6 +9,7 @@ class Dase_ModuleHandler_Audio extends Dase_Handler {
 
 	public function setup($r)
 	{
+			$r->getUser();
 	}
 
 	public function getIndex($r) 
