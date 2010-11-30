@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="js/javascript.js"></script>
 	</head>
 	<body>
+		<a href="{$app_root}login/{$request->user->eid}" class="delete" id="logoff-link">logout {$request->user->eid}</a>
 		<div class="container">
 
 			<div class="ss" id="jpId"></div>

@@ -1,10 +1,11 @@
 body {
 	color:#333;
 	background-color:white;
-	margin:30px 60px;
+	margin:20px 60px;
 	padding:0px;
 	font:13px verdana, arial, helvetica, sans-serif;
 	}
+
 h1 {
 	margin:0px 0px 15px 0px;
 	padding:0px;
@@ -222,3 +223,7 @@ ul#times li#play_time { width: 100px; }
 ul#times li#total_time { float: right; }
 
 div#title { background-color: #ccc; font-weight: bold; padding: 2px 18px; width: 380px; margin-bottom: 20px;}
+
+#logoff-link {
+	float: right;
+	}

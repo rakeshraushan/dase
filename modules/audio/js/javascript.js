@@ -1,5 +1,22 @@
 $(document).ready(function() {
 
+	$('#logoff-link').click(function() {
+		if (confirm('are you sure?')) {
+			var del_o = {
+				'url': $(this).attr('href'),
+				'type':'DELETE',
+				'success': function() {
+					location.reload();
+				},
+				'error': function() {
+					alert('sorry, cannot delete');
+				}
+			};
+			$.ajax(del_o);
+		}
+		return false;
+	});
+
 	$(document).bind("contextmenu",function(e){
 		alert('files cannot be downloaded');
 		return false;
