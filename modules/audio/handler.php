@@ -3,9 +3,8 @@
 class Dase_ModuleHandler_Audio extends Dase_Handler {
 
 	public $resource_map = array(
-		'/' => 'index',
-		'index' => 'index',
-		'list/{coll_ascii}' => 'list',
+		'/' => 'list',
+		'{coll_ascii}' => 'list',
 	);
 
 	public function setup($r)
