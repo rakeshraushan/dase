@@ -20,6 +20,9 @@ Class Dase_Util
 		while (!feof($handle)) {
 			$buffer = fread($handle, $chunksize);
 			print $buffer;
+			//added:
+			ob_flush();
+			flush();
 		}
 		return fclose($handle);
 	} 
