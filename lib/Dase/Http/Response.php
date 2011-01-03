@@ -98,6 +98,12 @@ class Dase_Http_Response
 			//hack to deal w/ iPad that only wants byte ranges
 			if ('video/mp4' == $mime_type) {
 				Dase_Util::rangeDownload($path);
+				exit;
+			}
+
+			if ('audio/mpeg' == $mime_type) {
+				Dase_Util::rangeDownload($path);
+				exit;
 			}
 
 			if ($download) {
