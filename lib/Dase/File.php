@@ -209,7 +209,7 @@ abstract class Dase_File
 			$headers = get_headers($file);
 			foreach ($headers as $hdr) {
 				$matches = array();
-				if (preg_match('@content-type:? ([a-zA-z/]*)@i',$hdr,$matches)) {
+				if (preg_match('@content-type:? ([a-zA-z0-9/]*)@i',$hdr,$matches)) {
 					return $matches[1];
 				}
 			}
@@ -217,7 +217,7 @@ abstract class Dase_File
 			$output = array();
 			exec("file -i -b \"$file\"",$output);
 			$matches = array();
-			if (preg_match('@([a-zA-z/]*);?@i',$output[0],$matches)) {
+			if (preg_match('@([a-zA-z0-9/]*);?@i',$output[0],$matches)) {
 				return $matches[1];
 			}
 		}
