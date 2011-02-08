@@ -30,6 +30,10 @@ Class Dase_Util
 	//from http://mobiforge.com/developing/story/content-delivery-mobile-devices
 	public static function rangeDownload($file) {
 		$fp = @fopen($file, 'rb');
+		if (!$fp) {
+				echo "no such file";
+				return;
+		}
 		$size   = filesize($file); // File size
 		$length = $size;           // Content length
 		$start  = 0;               // Start byte
