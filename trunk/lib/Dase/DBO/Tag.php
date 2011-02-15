@@ -339,6 +339,8 @@ class Dase_DBO_Tag extends Dase_DBO_Autogen_Tag
 
 		$tag_item->p_collection_ascii_id = $coll;
 		$tag_item->p_serial_number = $sernum;
+		$tag_item->updated = date(DATE_ATOM);
+		$tag_item->sort_order = 99999;
 
 		try {
 			$tag_item->insert();
