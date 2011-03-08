@@ -48,8 +48,9 @@ class Dase_ModuleHandler_Google extends Dase_Handler
 				} else {
 
 						$db_user = $r->getUser('none');
-						if (!$db_user->retrieveByEid($email)) {
-								$db_user->eid = strtolower($email); 
+						$eid = str_replace('@','_at_',$email);
+						if (!$db_user->retrieveByEid($eid)) {
+								$db_user->eid = strtolower($eid); 
 								$db_user->name = $first.' '.$last; 
 								$db_user->insert();
 						}
