@@ -89,9 +89,11 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 		setcookie('SC','',time()-86400,'/','.utexas.edu');
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
 		$r->clearCookies();
-		//redirect messes up safari!!
-		//$r->renderRedirect('login/form');
-		$r->renderOk();
+
+		$logout_url = $r->app_root . '/logini/form';
+		$json = Dase_Json::get(array('location' => $logout_url));
+		$r->response_mime_type = 'application/json';
+		$r->renderResponse($json);
 	}
 
 }

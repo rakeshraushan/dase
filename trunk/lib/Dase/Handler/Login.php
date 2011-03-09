@@ -63,7 +63,11 @@ class Dase_Handler_Login extends Dase_Handler
 	public function deleteLogin($r)
 	{
 		$r->clearCookies();
-		$r->renderRedirect('login/form');
+	//	$r->renderRedirect('login/form');
+		$logout_url = $r->app_root . '/logini/form';
+		$json = Dase_Json::get(array('location' => $logout_url));
+		$r->response_mime_type = 'application/json';
+		$r->renderResponse($json);
 	}
 }
 
