@@ -43,8 +43,12 @@ Dase.initDelete = function(id) {
 			var del_o = {
 				'url': $(this).attr('href'),
 				'type':'DELETE',
-				'success': function() {
-					location.reload();
+				'success': function(resp) {
+					if (resp.location) {
+						location.href = resp.location;
+					} else {
+						location.reload();
+					}
 				},
 				'error': function() {
 					alert('sorry, cannot delete');
