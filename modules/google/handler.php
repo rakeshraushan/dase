@@ -76,9 +76,12 @@ class Dase_ModuleHandler_Google extends Dase_Handler
 		public function deleteLogin($r)
 		{
 				$r->clearCookies();
-				//redirect messes up safari!!
-				//$r->renderRedirect('login/form');
-				$r->renderOk();
+				//$return_to = $r->app_root . '/login';
+				//$logout_url = 'http://www.google.com/accounts/Logout?continue='.$return_to;
+				$logout_url = 'http://www.google.com/accounts/Logout';
+				$r->response_mime_type = 'application/json';
+				$json = Dase_Json::get(array('location' => $logout_url));
+				$r->renderResponse($json);
 		}
 
 }

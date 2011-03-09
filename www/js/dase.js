@@ -190,7 +190,12 @@ Dase.logoff = function() {
 	if (Dase.user.eid) {
 		Dase.ajax(Dase.base_href + 'login/' + Dase.user.eid,'DELETE',
 		function(resp) { 
-			window.location.href = Dase.base_href+'login/form';
+			var jsonObj = JSON.parse(resp);
+			if ('location' in jsonObj) {
+				window.location.href = jsonObj.location;
+			} else {
+				window.location.href = Dase.base_href+'login/form';
+			}
 		});
 	} else {
 		window.location.href = Dase.base_href+'login/form';
