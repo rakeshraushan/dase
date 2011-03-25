@@ -2,7 +2,7 @@
 
 include 'config.php';
 
-$coll = 'ondas_indigenas';
+$coll = 'ut_publications';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

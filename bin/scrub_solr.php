@@ -1,7 +1,7 @@
 <?php
 
 include 'config.php';
-$c = 'keanepj';
+$c = 'ondas_indigenas';
 $res = scrubIndex($c,$config,$db);
 
 function scrubIndex($collection_ascii_id,$config,$db,$display=true)
