@@ -386,6 +386,7 @@ class Dase_Handler_Tag extends Dase_Handler
 		}
 		//also sets 'updated':
 		$this->tag->updateItemCount();
+		$this->tag->resortTagItems();
 		$r->response_mime_type = 'text/plain';
 		$r->renderResponse("added $num items to $tag->name");
 	}
