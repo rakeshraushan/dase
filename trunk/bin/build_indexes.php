@@ -4,7 +4,7 @@ include 'config.php';
 
 //this script rebuilds search indexes
 
-//$coll_ascii_id = 'keanepj';
+$coll_ascii_id = 'arabic_proficiency';
 
 $coll = new Dase_DBO_Collection($db);
 $coll->orderBy('item_count ASC');

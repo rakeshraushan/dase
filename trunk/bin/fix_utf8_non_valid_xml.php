@@ -5,7 +5,7 @@ include 'config.php';
 //this script replaces characters which are valid utf8
 //but invalid in XML (there are just a few)
 
-$ascii_id = 'vrc';
+$ascii_id = 'arabic_proficiency';
 
 $c = Dase_DBO_Collection::get($db,$ascii_id);
 

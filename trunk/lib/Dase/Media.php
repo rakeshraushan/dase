@@ -4,6 +4,7 @@ Class Dase_Media
 	public static $media_types = array(
 		'application/pdf',
 		'application/json',
+		'application/msword',
 		'application/atom+xml',
 		'application/vnd.google-earth.kml+xml',
 		'audio/*',

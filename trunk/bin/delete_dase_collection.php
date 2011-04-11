@@ -3,11 +3,12 @@
 include 'config.php';
 
 
-$action = "count";
 $action = "delete";
+$action = "count";
 
 $coll = 'stuart';
 $coll = 'images_of_india';
+$coll = 'tgdp_test';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
