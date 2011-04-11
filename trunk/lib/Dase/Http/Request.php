@@ -8,6 +8,7 @@ class Dase_Http_Request
 		'css' =>'text/css',
 		'csv' =>'text/csv',
 		'default' =>'text/html',
+		'doc' =>'application/msword',
 		'gif' =>'image/gif',
 		'html' =>'text/html',
 		'jpg' =>'image/jpeg',
