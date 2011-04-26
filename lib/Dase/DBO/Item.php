@@ -101,7 +101,7 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 						$doc->updated = date(DATE_ATOM);
 						$entry = new Dase_Atom_Entry_Item;
 						$entry = $this->injectAtomEntryData($entry,$app_root);
-						$doc->doc = $entry->asXml();
+						$doc->doc = $entry->asXml($entry->root);
 						$doc->insert();
 				}
 				$entry = str_replace('{APP_ROOT}',$app_root,$doc->doc);
