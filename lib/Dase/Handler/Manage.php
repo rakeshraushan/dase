@@ -452,6 +452,14 @@ class Dase_Handler_Manage extends Dase_Handler
 			}
 			Dase_Log::info(LOG_FILE,'uploading file '.$name.' type: '.$type);
 
+			try {
+					//this'll create thumbnail, viewitem, and any derivatives
+					$file = Dase_File::newFile($this->db,$path,$type,$name,BASE_PATH);
+			} catch(Exception $e) {
+					Dase_Log::debug(LOG_FILE,'add to collection error: '.$e->getMessage());
+					$r->renderError(409,$e->getMessage());
+			}
+		
 			$item = $this->collection->createNewItem(null,$this->user->eid);
 			if ($r->has('title')) {
 				$item->setValue('title',$r->get('title'));
@@ -459,8 +467,6 @@ class Dase_Handler_Manage extends Dase_Handler
 				$item->setValue('title',$name);
 			}
 
-			$file = Dase_File::newFile($this->db,$path,$type,$name,BASE_PATH);
-			//this'll create thumbnail, viewitem, and any derivatives
 			try {
 				$media_file = $file->addToCollection($item,true,MEDIA_DIR); //true means tets for dups
 			} catch(Exception $e) {

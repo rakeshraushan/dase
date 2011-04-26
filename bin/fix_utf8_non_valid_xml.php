@@ -5,16 +5,17 @@ include 'config.php';
 //this script replaces characters which are valid utf8
 //but invalid in XML (there are just a few)
 
-$ascii_id = 'arabic_proficiency';
+$ascii_id = 'what_jane_saw';
 
 $c = Dase_DBO_Collection::get($db,$ascii_id);
 
 foreach($c->getItems() as $item) {
 	foreach ($item->getValues() as $value) {
 		$str = $value->value_text;
+		print $str."\n";
 		if ($str != strip_invalid_xml_chars2($str)) {
 			$value->value_text = strip_invalid_xml_chars2($str);
-			$value->update();
+//			$value->update();
 			print "updated item $item->serial_number\n";
 		}
 	}
