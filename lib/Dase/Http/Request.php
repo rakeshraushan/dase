@@ -109,6 +109,10 @@ class Dase_Http_Request
 		if ( array_key_exists( $var, $this->members ) ) {
 			return $this->members[ $var ];
 		}
+		if ('user' == $var) {
+				//avoid auto-login if user referred to
+				return false;
+		}
 		//third getter
 		$classname = get_class($this);
 		$method = 'get'.ucfirst($var);
