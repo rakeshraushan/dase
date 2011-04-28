@@ -111,7 +111,7 @@ class Dase_Http_Request
 		}
 		if ('user' == $var) {
 				//avoid auto-login if user referred to
-				return false;
+				return $this->getUser('cookie',false);
 		}
 		//third getter
 		$classname = get_class($this);
