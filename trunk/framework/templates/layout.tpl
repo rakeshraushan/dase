@@ -12,11 +12,13 @@
 <div class="header-inner">
 	<h1><a href="home">{$main_title}</a></h1>
 	<h4 id="topMenu">
-		<a href="home">home</a> |
+		<a href="home">home</a>
+		{if $request->user}	|
 		{if $request->user->is_admin}
 		<a href="admin">admin</a> |
 		{/if}
 		<a href="login/{$request->user->eid}" class="delete">logout {$request->user->eid}</a> 
+		{/if}
 	</h4>
 </div>
 <div class="clear"></div>
