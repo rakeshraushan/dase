@@ -43,5 +43,10 @@ echo "deleted existing handlers"
 cp -r lib/* ../lib/Dase/DBO
 echo "copied in new handler"
 
+rm -rf ../bin/*
+echo "deleted existing bin scripts"
+cp -r *.php ../bin
+echo "copied in new bin scripts"
+
 php create_user_table.php
 php class_gen.php
