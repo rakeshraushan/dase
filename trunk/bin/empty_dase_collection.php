@@ -3,6 +3,7 @@
 include 'config.php';
 
 $coll = 'ut_publications';
+$coll = 'philosophy_reading_room';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 

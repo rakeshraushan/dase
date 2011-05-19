@@ -4,11 +4,12 @@ include 'config.php';
 
 
 $action = "delete";
-$action = "count";
+$action = "delete";
 
 $coll = 'stuart';
 $coll = 'images_of_india';
 $coll = 'tgdp_test';
+$coll = 'philosophy_reading_room';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
@@ -182,7 +183,7 @@ if ('count' == $action) {
 }
 
 if ('delete' == $action) {
-	$c->delete();
+	//$c->delete();
 	print "deleted collection\n";
 }
 
