@@ -90,7 +90,7 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 		setcookie('TF','',time()-86400,'/','.utexas.edu');
 		$r->clearCookies();
 
-		$logout_url = $r->app_root . '/logini/form';
+		$logout_url = $r->app_root . '/login/form';
 		$json = Dase_Json::get(array('location' => $logout_url));
 		$r->response_mime_type = 'application/json';
 		$r->renderResponse($json);

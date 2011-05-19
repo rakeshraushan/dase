@@ -3,6 +3,7 @@
 include 'config.php';
 $c = 'ondas_indigenas';
 $c = 'arabic_proficiency';
+$c = 'philosophy_reading_room';
 $res = scrubIndex($c,$config,$db);
 
 function scrubIndex($collection_ascii_id,$config,$db,$display=true)
