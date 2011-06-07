@@ -53,7 +53,8 @@ class Dase_Handler {
 				if (method_exists($this,$method)) {
 					$r->resource = $resource;
 					$this->setup($r);
-					$this->{$method}($r);
+					$this->{$method}($r); //should exit
+					$r->renderError(501,'empty method '.$method);
 				} else {
 					$r->renderError(404,'no handler method');
 				}
