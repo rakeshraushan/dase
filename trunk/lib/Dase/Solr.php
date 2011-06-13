@@ -127,7 +127,7 @@ Class Dase_Solr
 		}
 
 		if ($request->get('item_type') && 'none' != $request->get('item_type')) {
-			$query_string = preg_replace('/(^|\?|&|&amp;)q=/i','q=item_type:'.$request->get('item_type').'+',$query_string);
+			$query_string = preg_replace('/(^|\?|&|&amp;)q=/i','&q=item_type:'.$request->get('item_type').'+',$query_string);
 		} elseif 
 			//if there is no q param, use the collection 
 			//filter as q to get (all) by collection
