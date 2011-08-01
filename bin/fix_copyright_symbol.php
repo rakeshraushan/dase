@@ -12,8 +12,9 @@ foreach ($c->getItems() as $item) {
 						print $v->value_text."\n";
 						$v->value_text = str_replace( " \xA9", ' copyright', $v->value_text); 
 						$v->update();
-						$item->buildSearchIndex();
+						//$item->buildSearchIndex();
 				}
 		}
 }
 
+$c->buildSearchIndex('');
