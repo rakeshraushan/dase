@@ -71,13 +71,14 @@ class Dase_File_Image extends Dase_File
 		}            
 		foreach($iptc_metadata as $k => $v) {
 
-				//keep having copyright symbol crashes
-				if (strpos($v," \xA9")) {
-						$v = str_replace( " \xA9", ' copyright', $v); 
-				}
-
 			//collapse multiples into a csv
 			$this->metadata[$k] = join(',',$v);
+
+				//keep having copyright symbol crashes
+				if (strpos($this->metadata[$k]," \xA9")) {
+						$this->metadata[$k] = str_replace( " \xA9", ' copyright', $this->metadata[$k]); 
+				}
+
 		}
 		return $iptc_metadata;
 	}
