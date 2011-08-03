@@ -16,8 +16,21 @@ class Dase_Handler_Collections extends Dase_Handler
 
 	public function getTestJson($r) 
 	{
-		$res = Dase_Http::get($r->app_root.'/collections.json');
+		$url = $r->app_root.'/collections.json';
 		$r->renderResponse($res[1]);
+		//todo: error handling
+		$ch = curl_init();
+		if ($ch) {
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				$result = curl_exec($ch);
+				$info = curl_getinfo($ch);
+				curl_close($ch);  
+				print_r($info);
+		} else {
+				print "cannot init curl";
+		}
+		exit;
 	}
 
 	public function postToCollections($r) 
