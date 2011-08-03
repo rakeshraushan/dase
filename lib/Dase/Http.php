@@ -75,6 +75,8 @@ Class Dase_Http
 		if ($user && $pass) {
 			curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pass);
 		}
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
 		$info = curl_getinfo($ch);
