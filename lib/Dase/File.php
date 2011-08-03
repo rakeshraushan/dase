@@ -181,6 +181,7 @@ abstract class Dase_File
 			//will only insert item metadata when attribute name matches 'admin_'+att_name
 			foreach ($metadata as $term => $text) {
 				//catches UTF8 errors in exif/iptc data
+					//actually, no it doesn't :(
 				try {
 					$item->setValue('admin_'.$term,$text);
 				} catch (Exception $e) {
