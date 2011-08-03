@@ -3,6 +3,7 @@
 include 'config.php';
 
 $c= Dase_DBO_Collection::get($db,'cola_images');
+$c= Dase_DBO_Collection::get($db,'pkeane');
 
 foreach ($c->getItems() as $item) {
 		$item = clone($item);

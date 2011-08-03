@@ -7,11 +7,17 @@ class Dase_Handler_Collections extends Dase_Handler
 	public $resource_map = array(
 		'/' => 'collections',
 		'acl' => 'acl',
-		"pk/{id}/{ddd}" => 'test',
+		"pk/test" => 'test',
 	);
 
 	protected function setup($r)
 	{
+	}
+
+	public function getTestJson($r) 
+	{
+		$res = Dase_Http::get($r->app_root.'/collections.json');
+		$r->renderResponse($res[1]);
 	}
 
 	public function postToCollections($r) 
