@@ -97,7 +97,7 @@ class Dase_Cache_File extends Dase_Cache
 		}
 
 		$time_to_live = $ttl ? $ttl : $this->ttl;
-		$stat = stat($filepath);
+		$stat = @stat($filepath);
 		if(time() > $stat[9] + $time_to_live) {
 			//delete out of date files
 			//print time()."    ";
