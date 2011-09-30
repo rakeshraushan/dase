@@ -377,7 +377,7 @@ class Dase_DBO implements IteratorAggregate
 
 	public function asArray()
 	{
-		foreach ($this as $k => $v) {
+		foreach ($this->fields as $k => $v) {
 			$my_array[$k] = $v;
 		}
 		return $my_array;
@@ -385,6 +385,6 @@ class Dase_DBO implements IteratorAggregate
 
 	public function asJson()
 	{
-		Dase_Json::get($this->asArray());
+		return Dase_Json::get($this->asArray());
 	}
 }
