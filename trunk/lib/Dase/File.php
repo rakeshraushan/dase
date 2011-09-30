@@ -8,6 +8,7 @@ abstract class Dase_File
 		'application/vnd.google-earth.kml+xml' => array('size' => 'kml', 'ext' => 'kml','class'=>'Dase_File_Text'),
 		'application/xml' => array('size' => 'xml', 'ext' => 'xml','class'=>'Dase_File_Text'),
 		'application/xslt+xml' => array('size' => 'xslt', 'ext' => 'xsl','class'=>'Dase_File_Image'),
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => array('size' => 'doc','ext' => 'docx','class' => 'Dase_File_Doc'),
 		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/x-mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),

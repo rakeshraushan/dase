@@ -232,7 +232,10 @@ Class Dase_Util
 		public static function dirify($str)
 		{
 			$str = strtolower(preg_replace('/[^a-zA-Z0-9_-]/','_',trim($str)));
-			return preg_replace('/__*/','_',$str);
+			$str = preg_replace('/__*/','_',$str);
+			$str = preg_replace('/^_/','',$str);
+			$str = preg_replace('/_$/','',$str);
+			return $str;
 		}
 
 		public static function undirify($str)
