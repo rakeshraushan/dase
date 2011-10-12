@@ -10,7 +10,7 @@ CREATE TABLE `user` (
 	`email` varchar(200) collate utf8_unicode_ci default NULL,
 	`is_admin` tinyint(1) default NULL,
 	PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 ";
 
 $dbh = $db->getDbh();
