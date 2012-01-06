@@ -6,6 +6,8 @@ class Dase_Handler_Collection extends Dase_Handler
 	public $resource_map = array(
 		'{collection_ascii_id}' => 'collection',
 		'{collection_ascii_id}/commit' => 'commit',
+		//for json dump of all data
+		'{collection_ascii_id}/dump' => 'dump',
 		'{collection_ascii_id}/entry' => 'entry',
 		'{collection_ascii_id}/archive' => 'archive',
 		'{collection_ascii_id}/last_serial_number' => 'last_serial_number',
@@ -267,6 +269,24 @@ class Dase_Handler_Collection extends Dase_Handler
 		$json = "{\"id\":\"$coll_url\",\"updated\":\"$updated\",\"items\":[";
 		$json .= join(',',$items).']}';
 		$r->renderResponse($json);
+	}
+
+	public function getDumpJson($r) 
+	{
+			$item_json = new Dase_DBO_ItemJson($this->db);
+			$item_json->addWhere('unique_id',$this->collection->ascii_id.'/%','like');
+			$docs = array();
+			foreach ($item_json->find() as $ij) {
+					$ij = clone($ij);
+					$doc = str_replace('{APP_ROOT}',$r->app_root,$ij->doc);
+					$docs[] = $doc;
+			}
+			$coll_url = $this->collection->getUrl($r->app_root);
+			$updated = $this->collection->updated;
+			$name = $this->collection->collection_name;
+			$json = "{\"id\":\"$coll_url\",\"collection_name\":\"$name\",\"updated\":\"$updated\",\"items\":[";
+			$json .= join(',',$docs).']}';
+			$r->renderResponse($json);
 	}
 
 	public function getItemsByRangeAtom($r)
