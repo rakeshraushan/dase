@@ -59,19 +59,11 @@ class Dase_Handler_Admin extends Dase_Handler
 	public function postToUsers($r)
 	{
 		$record = Utlookup::getRecord($r->get('eid'));
-		$test_user = new Dase_DBO_User($this->db);
-		if (0 == $test_user->findCount()) {
-				$make_admin = true;
-		}
 		$user = new Dase_DBO_User($this->db);
 		$user->eid = $record['eid'];
 		if (!$user->findOne()) {
 			$user->name = $record['name'];
 			$user->email = $record['email'];
-			//make first user an admin
-			if ($make_admin) {
-					$user->is_admin = 1;
-			}
 			$user->insert();
 		} else {
 			//$user->update();
