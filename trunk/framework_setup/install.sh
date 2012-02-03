@@ -48,5 +48,13 @@ echo "deleted existing bin scripts"
 cp -r *.php ../bin
 echo "copied in new bin scripts"
 
+echo "creating user table"
 php create_user_table.php
+echo "creating item table"
+php create_item_table.php
+echo "creating set table"
+php create_set_table.php
+echo "creating set_item table"
+php create_set_item_table.php
+
 php class_gen.php
