@@ -16,7 +16,7 @@ function capFirst (&$item,$key) {
 	$item = ucfirst($item);
 }
 foreach ($db->listTables() as $table) {
-	$cols = '';
+	$cols = array();
 	foreach ($db->listColumns($table) as $col) {
 		if ('id' != $col) {
 			$cols[] = "'$col'";
