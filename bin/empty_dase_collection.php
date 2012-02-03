@@ -5,6 +5,7 @@ include 'config.php';
 $coll = 'ut_publications';
 $coll = 'philosophy_reading_room';
 $coll = 'chinese_flash_cards';
+$coll = 'itsprop';
 
 $c = Dase_DBO_Collection::get($db,$coll);
 
