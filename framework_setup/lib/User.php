@@ -15,7 +15,7 @@ class Dase_DBO_User extends Dase_DBO_Autogen_User
 
 	public function getUserCount()
 	{
-		$user = new Dase_DBO_User($db);
+		$user = new Dase_DBO_User($this->db);
 		return $user->findCount();
 	}
 
