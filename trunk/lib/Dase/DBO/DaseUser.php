@@ -39,6 +39,12 @@ class Dase_DBO_DaseUser extends Dase_DBO_Autogen_DaseUser
 		}
 	}
 
+	public function getUserCount()
+	{
+		$u = new Dase_DBO_DaseUser($this->db);
+		return $u->findCount();
+	}
+
 	public function getUrl($app_root)
 	{
 		return $app_root.'/user/'.$this->eid;
