@@ -48,6 +48,13 @@ echo "deleted existing bin scripts"
 cp -r *.php ../bin
 echo "copied in new bin scripts"
 
+rm -rf ../tests/*
+echo "deleted unused tests"
+
+rm ../solr_schema.xml
+rm ../INSTALL.txt
+echo "deleted unused files"
+
 echo "creating user table"
 php create_user_table.php
 echo "creating item table"
