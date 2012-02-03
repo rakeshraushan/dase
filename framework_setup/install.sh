@@ -48,7 +48,7 @@ echo "deleted existing bin scripts"
 cp -r *.php ../bin
 echo "copied in new bin scripts"
 
-rm -rf ../tests/*
+rm -rf ../tests
 echo "deleted unused tests"
 
 rm ../solr_schema.xml
