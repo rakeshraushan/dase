@@ -39,9 +39,9 @@ cp -r templates/* ../templates
 echo "copied in new templates"
 
 rm -rf ../lib/Dase/DBO/*
-echo "deleted existing handlers"
+echo "deleted existing DBOs"
 cp -r lib/* ../lib/Dase/DBO
-echo "copied in new handler"
+echo "copied in new DBOs"
 
 rm -rf ../bin/*
 echo "deleted existing bin scripts"
