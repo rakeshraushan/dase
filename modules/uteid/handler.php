@@ -61,6 +61,10 @@ class Dase_ModuleHandler_Uteid extends Dase_Handler
 			if (!$db_user->retrieveByEid($ut_user->eid)) {
 				$db_user->eid = strtolower($ut_user->eid); 
 				$db_user->name = $ut_user->name; 
+				//I thnk OK if not all db_user impl have this 'is_admin' column 
+				if (0 == $db_user->getUserCount()) {
+						$db_user->is_admin = 1;
+				}
 				$db_user->insert();
 			}
 

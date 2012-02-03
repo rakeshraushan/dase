@@ -36,6 +36,12 @@ Class Dase_User
 	}
 
 	//must be supplied by db user class:
+	public function getUserCount()
+	{  
+		return 1;
+	}
+
+	//must be supplied by db user class:
 	public function setHttpPassword($token)
 	{
 		return;

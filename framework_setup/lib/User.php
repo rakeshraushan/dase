@@ -13,6 +13,12 @@ class Dase_DBO_User extends Dase_DBO_Autogen_User
 		return $user;
 	}
 
+	public function getUserCount()
+	{
+		$user = new Dase_DBO_User($db);
+		return $user->findCount();
+	}
+
 	public function retrieveByEid($eid)
 	{
 		$prefix = $this->db->table_prefix;
