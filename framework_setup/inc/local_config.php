@@ -14,6 +14,8 @@ $conf['app']['user_class'] = 'Dase_DBO_User';
 $conf['app']['log_level'] = 3;
 $conf['app']['init_global_data'] = false;
 
+//$conf['app']['media_dir'] = '/var/www-data/dase/apps/<app_name>/'; 
+
 $conf['auth']['superuser']['pkeane'] = 'ok';
 $conf['auth']['token'] = 'auth';
 $conf['auth']['ppd_token'] = "ppd";
