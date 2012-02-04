@@ -25,6 +25,7 @@
 		<th>created</th>
 		<th>created by</th>
 		<th>edit</th>
+		<th>json</th>
 	</tr>
 	{foreach item=item from=$items}
 	<tr>
@@ -32,7 +33,7 @@
 			<a href="item/{$item->id}/edit"><img src="{$item->thumbnail_url}"></a>
 		</td>
 		<td>
-			<a href="file/{$item->name}">{$item->name|truncate:30:'..':true:true}</a>
+			<a href="{$item->file_url}">{$item->name|truncate:30:'..':true:true}</a>
 		</td>
 		<td>
 			{$item->title}
@@ -45,6 +46,9 @@
 		</td>
 		<td>
 			<a href="item/{$item->id}/edit">edit</a>
+		</td>
+		<td>
+			<a href="{$item->url}.json">json</a>
 		</td>
 	</tr>
 	{/foreach}
