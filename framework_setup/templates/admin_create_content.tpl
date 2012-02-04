@@ -32,7 +32,7 @@
 			<a href="item/{$item->id}/edit"><img src="{$item->thumbnail_url}"></a>
 		</td>
 		<td>
-			<a href="item/{$item->name}">{$item->name|truncate:30:'..':true:true}</a>
+			<a href="file/{$item->name}">{$item->name|truncate:30:'..':true:true}</a>
 		</td>
 		<td>
 			{$item->title}

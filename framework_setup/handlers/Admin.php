@@ -94,7 +94,7 @@ class Dase_Handler_Admin extends Dase_Handler
 								chmod($thumb_path,0775);
 								$newname = str_replace('.'.$ext,'.jpg',$newname);
 								$item->thumbnail_path = $thumb_path;
-								$item->thumbnail_url = 'node/thumb/'.$newname;
+								$item->thumbnail_url = 'file/thumb/'.$newname;
 						} else {
 								$item->thumbnail_url = 	'www/images/mime_icons/'.Dase_File::$types_map[$type]['size'].'.png';
 						}
