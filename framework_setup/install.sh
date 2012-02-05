@@ -61,8 +61,8 @@ php create_user_table.php
 echo "creating item table"
 php create_item_table.php
 echo "creating set table"
-php create_set_table.php
+php create_itemset_table.php
 echo "creating set_item table"
-php create_set_item_table.php
+php create_itemset_item_table.php
 
 php class_gen.php
