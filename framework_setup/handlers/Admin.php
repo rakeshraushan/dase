@@ -119,7 +119,7 @@ class Dase_Handler_Admin extends Dase_Handler
 				$item->updated_by = $this->user->eid;
 				$item->updated = date(DATE_ATOM);
 				$item->insert();
-				$item->url = 'item/'.$item->id;
+				$item->url = 'item/'.$item->name;
 				$item->update();
 
 				$r->renderRedirect('admin/create');

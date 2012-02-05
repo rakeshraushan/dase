@@ -7,8 +7,10 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 		public function asArray($r)
 		{
 				$set = array();
-				$set['id'] = $r->app_root.'/item/'.$this->id;
+				$set['id'] = $r->app_root.'/item/'.$this->name;
 				$set['title'] = $this->title;
+				$set['name'] = $this->name;
+				$set['item_id'] = $this->id;
 				if ($this->body) {
 						$set['body'] = $this->body;
 				}
