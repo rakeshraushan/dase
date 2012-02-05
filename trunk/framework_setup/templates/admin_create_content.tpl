@@ -24,6 +24,7 @@
 		<th>title</th>
 		<th>created</th>
 		<th>created by</th>
+		<th>file</th>
 		<th>edit</th>
 		<th>json</th>
 	</tr>
@@ -33,7 +34,7 @@
 			<a href="item/{$item->id}/edit"><img src="{$item->thumbnail_url}"></a>
 		</td>
 		<td>
-			<a href="{$item->file_url}">{$item->name|truncate:30:'..':true:true}</a>
+			{$item->name}
 		</td>
 		<td>
 			{$item->title}
@@ -43,6 +44,9 @@
 		</td>
 		<td>
 			{$item->created_by}
+		</td>
+		<td>
+			<a href="{$item->file_url}">{$item->file_url}</a>
 		</td>
 		<td>
 			<a href="item/{$item->id}/edit">edit</a>

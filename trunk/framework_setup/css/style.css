@@ -160,11 +160,11 @@ dd {
 	min-height: 20px;
 }
 
-form[action="admin/create"] input[type="text"] {
+form input[type="text"] {
 	width: 50%;
 }
 
-form[action="admin/create"] textarea {
+form textarea {
 	width: 90%;
 	height: 15em;
 }
