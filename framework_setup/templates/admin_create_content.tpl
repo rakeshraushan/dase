@@ -17,7 +17,7 @@
 </div>
 
 <h3>Content</h3>
-<table class="uploads">
+<table class="items">
 	<tr>
 		<th></th>
 		<th>name</th>
@@ -40,7 +40,7 @@
 			{$item->title}
 		</td>
 		<td>
-			{$item->created|date_format:'%Y-%m-%d %H:%M'}
+			{$item->created|date_format:'%D'}
 		</td>
 		<td>
 			{$item->created_by}

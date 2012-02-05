@@ -3,11 +3,11 @@
 include 'config.php';
 
 $sql = "
-CREATE TABLE IF NOT EXISTS `set_item` (
+CREATE TABLE IF NOT EXISTS `itemset_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `set_id` int(11) NOT NULL,
+  `itemset_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
-  `sort_order` int(11) DEFAULT NULL,
+  `created` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 ";

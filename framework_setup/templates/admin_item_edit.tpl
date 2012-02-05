@@ -15,15 +15,25 @@
 		<input type="submit" value="update"/>
 		</p>
 	</form>
+	{if $item->file_url}
 	<h1>Swap in File</h1>
+	{else}
+	<h1>Add a File</h1>
+	{/if}
 	<form action="item/{$item->id}/swap" method="post" enctype="multipart/form-data">
 		<p>
 		<label for="uploaded_file">select a file</label>
 		<input type="file" name="uploaded_file"/>
+		{if $item->file_url}
 		<input type="submit" value="swap in file"/>
+		{else}
+		<input type="submit" value="add file"/>
+		{/if}
 		</p>
 	</form>
+	{if $item->file_url}
 	<img src="{$item->thumbnail_url}">
+	{/if}
 </div>
 
 {/block}

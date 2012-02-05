@@ -14,9 +14,9 @@
 		<dd>{$item->name}</dd>
 		<dt>body</dt>
 		<dd>{$item->body}</dd>
+		{if $item->file_url}
 		<dt>thumbnail</dt>
 		<dd><img src="{$item->thumbnail_url}"></dd>
-		{if $item->file_url}
 		<dt>file</dt>
 		<dd><a href="{$item->file_url}">{$item->file_url}</a></dd>
 		<dt>file mime type</dt>
