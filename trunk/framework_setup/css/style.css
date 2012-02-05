@@ -176,19 +176,26 @@ label {
 	font-weight: bold;
 }
 
-table.uploads {
+table.items {
 	margin: 20px 0;
 	border-collapse: collapse;
+	width: 100%;
 }
 
-table.uploads th {
-	background-color: #eee;
+table.items th {
+	background-color: #ddd;
 	font-weight: bold;
 	padding: 5px;
-	border: 1px solid #999;
+	border: 1px solid #ccc;
 }
 
-table.uploads td {
+table.items td {
+	text-align: center;
 	padding: 5px;
-	border: 1px solid #999;
+	border: 1px solid #ccc;
+}
+
+table.items td img {
+	max-width: 50px;
+	max-height: 50px;
 }
