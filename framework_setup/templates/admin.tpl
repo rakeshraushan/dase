@@ -5,13 +5,13 @@
 	<h1>Administration</h1>
 	<ul class="operations">
 		<li><a href="user/settings">my user settings</a></li>
-		<li><a href="items">view items</a></li>
 		{if $request->user->is_admin}
 		<li><a href="directory">add a user</a></li>
 		<li><a href="admin/users">list users</a></li>
+		<li><a href="items">view items</a></li>
+		<li><a href="set/list">view sets</a></li>
 		<li><a href="admin/create">upload/create content</a></li>
 		<li><a href="set/form">create a set</a></li>
-		<li><a href="set/list">list sets</a></li>
 		{/if}
 	</ul>
 </div>
