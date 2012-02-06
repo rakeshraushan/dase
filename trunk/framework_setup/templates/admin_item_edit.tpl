@@ -35,5 +35,11 @@
 	<img src="{$item->thumbnail_url}">
 	{/if}
 </div>
+	<div class="controls">
+		<form action="item/{$item->id}" method="delete">
+			<input type="submit" value="delete item">
+		</form>
+	</div>
+	<div class="clear"></div>
 
 {/block}

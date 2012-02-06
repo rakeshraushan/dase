@@ -19,7 +19,8 @@ class Dase_Handler_Item extends Dase_Handler
 				$t = new Dase_Template($r);
 				$item = new Dase_DBO_Item($this->db);
 				if (!$item->load($r->get('id'))) {
-						$r->renderError(404);
+						$r->renderRedirect('items');
+						//$r->renderError(404);
 				}
 				$t->assign('item',$item);
 				$r->renderResponse($t->fetch('admin_item_edit.tpl'));
@@ -46,7 +47,8 @@ class Dase_Handler_Item extends Dase_Handler
 						$t->assign('item',$item);
 						$r->renderResponse($t->fetch('item.tpl'));
 				} else {
-						$r->renderError(404);
+						$r->renderRedirect('items');
+						//$r->renderError(404);
 				}
 		}
 
@@ -59,6 +61,27 @@ class Dase_Handler_Item extends Dase_Handler
 				} else {
 						$r->renderError(404);
 				}
+		}
+
+		public function deleteItem($r)
+		{
+				$item = new Dase_DBO_Item($this->db);
+				if (!$item->load($r->get('name'))) {
+						$r->renderError(404);
+				}
+				if (($this->user->eid != $item->created_by) && !$this->user->is_admin) {
+						$r->renderError(401);
+				}
+
+				if ($item->file_url) {
+						$base_dir = $this->config->getMediaDir();
+						$file_path = $base_dir.'/'.$item->name;
+						@unlink($file_path);
+				}
+
+				$item->removeFromSets();
+				$item->delete();
+				$r->renderResponse('deleted item');
 		}
 
 		public function postToEditForm($r)

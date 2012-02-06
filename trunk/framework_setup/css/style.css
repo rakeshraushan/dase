@@ -19,7 +19,9 @@ p {
 div#container {
 	margin: 0px auto;
 	width: 755px;
-	/* width: 956px; */
+	/*
+	width: 956px; 
+	*/
 
 }
 
@@ -198,4 +200,15 @@ table.items td {
 table.items td img {
 	max-width: 50px;
 	max-height: 50px;
+}
+
+form[method="delete"] input[type="submit"] {
+	font-weight: bold;
+	color: #c00;
+}
+
+form[method="delete"] input[type="submit"]:hover {
+	background-color: #c00;
+	color: white;
+	font-weight: bold;
 }

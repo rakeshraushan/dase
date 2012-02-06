@@ -4,6 +4,16 @@ require_once 'Dase/DBO/Autogen/Item.php';
 
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
+
+		public function removeFromSets()
+		{
+				$isi = new Dase_DBO_ItemsetItem($this->db);
+				$isi->item_id = $this->id;
+				foreach ($isi->findAll(1) as $doomed) {
+						$doomed->delete();
+				}
+		}
+
 		public function asArray($r)
 		{
 				$set = array();

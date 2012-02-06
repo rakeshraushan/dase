@@ -30,4 +30,13 @@ class Dase_DBO_Itemset extends Dase_DBO_Autogen_Itemset
 				return Dase_Json::get($result);
 		}
 
+		public function removeItems()
+		{
+				$isi = new Dase_DBO_ItemsetItem($this->db);
+				$isi->itemset_id = $this->id;
+				foreach ($isi->findAll(1) as $doomed) {
+						$doomed->delete();
+				}
+		}
+
 }
