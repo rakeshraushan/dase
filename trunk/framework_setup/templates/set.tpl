@@ -9,7 +9,6 @@
 <table class="items">
 	<tr>
 		<th></th>
-		<th>name</th>
 		<th>title</th>
 		<th>created</th>
 		<th>created by</th>
@@ -19,9 +18,6 @@
 	<tr>
 		<td class="thumb">
 			<a href="item/{$item->id}"><img src="{$item->thumbnail_url}"></a>
-		</td>
-		<td>
-			{$item->name}
 		</td>
 		<td>
 			{$item->title}
@@ -44,7 +40,6 @@
 <table class="items">
 	<tr>
 		<th></th>
-		<th>name</th>
 		<th>title</th>
 		<th>created</th>
 		<th>created by</th>
@@ -54,9 +49,6 @@
 	<tr>
 		<td class="thumb">
 			<a href="item/{$item->id}"><img src="{$item->thumbnail_url}"></a>
-		</td>
-		<td>
-			{$item->name}
 		</td>
 		<td>
 			{$item->title}
