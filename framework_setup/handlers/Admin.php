@@ -48,9 +48,14 @@ class Dase_Handler_Admin extends Dase_Handler
 						}
 
 						$base_dir = $this->config->getMediaDir();
+						$thumb_dir = $this->config->getMediaDir().'/thumb';
 
 						if (!file_exists($base_dir) || !is_writeable($base_dir)) {
-								$r->renderError(403,'not allowed');
+								$r->renderError(403,'media directory not writeable: '.$base_dir);
+						}
+
+						if (!file_exists($thumb_dir) || !is_writeable($thumb_dir)) {
+								$r->renderError(403,'thumbnail directory not writeable: '.$thumb_dir);
 						}
 
 						$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
@@ -83,7 +88,7 @@ class Dase_Handler_Admin extends Dase_Handler
 
 						$parts = explode('/',$type);
 						if (isset($parts[0]) && 'image' == $parts[0]) {
-								$thumb_path = $base_dir.'/thumb/'.$newname;
+								$thumb_path = $thumb_dir.'/'.$newname;
 								$thumb_path = str_replace('.'.$ext,'.jpg',$thumb_path);
 								$command = CONVERT." \"$new_path\" -format jpeg -resize '100x100 >' -colorspace RGB $thumb_path";
 								$exec_output = array();

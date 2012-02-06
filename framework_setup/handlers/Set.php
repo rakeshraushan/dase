@@ -6,6 +6,7 @@ class Dase_Handler_Set extends Dase_Handler
 				'list' => 'list', //list all sets
 				'form' => 'form', //create a set
 				'{name}' => 'set', //add/delete items (html) or view (json)
+				'{id}/edit' => 'edit_form', 
 				'{id}/remove' => 'remove', 
 		);
 
@@ -20,6 +21,47 @@ class Dase_Handler_Set extends Dase_Handler
 				$r->renderResponse($t->fetch('set_form.tpl'));
 		}
 
+		public function postToEditForm($r) 
+		{
+				$set = new Dase_DBO_Itemset($this->db);
+				if (!$set->load($r->get('id'))) {
+						$r->renderError(404);
+				}
+				$set->title = $r->get('title');
+				if (!$set->title) {
+						$set->title = dechex(time());
+				}
+				$set->name = $this->_findUniqueName(Dase_Util::dirify($set->title));
+				$set->update();
+				$r->renderRedirect('set/'.$set->name);
+		}
+
+		public function getEditForm($r) 
+		{
+				$t = new Dase_Template($r);
+				$set = new Dase_DBO_Itemset($this->db);
+				if (!$set->load($r->get('id'))) {
+						$r->renderRedirect('set/list');
+						//$r->renderError(404);
+				}
+				$t->assign('set',$set);
+				$r->renderResponse($t->fetch('set_edit.tpl'));
+		}
+
+		public function deleteSet($r)
+		{
+				$set = new Dase_DBO_Itemset($this->db);
+				if (!$set->load($r->get('name'))) {
+						$r->renderError(404);
+				}
+				if (!$this->user->is_admin) {
+						$r->renderError(401);
+				}
+
+				$set->removeItems();
+				$set->delete();
+				$r->renderResponse('deleted set');
+		}
 		public function postToRemove($r)
 		{
 				$set = new Dase_DBO_Itemset($this->db);

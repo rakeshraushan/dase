@@ -2,8 +2,9 @@
 
 {block name="content"}
 <div class="controls">
+	<a href="set/{$set->id}/edit">edit set</a> | 
 	<a href="set/{$set->name}.json">view json</a> | 
-	<a href="set/list">list sets</a>
+	<a href="set/list">view sets</a>
 </div>
 <h1>Set {$set->title}</h1>
 <table class="items">
