@@ -18,7 +18,7 @@
 	{foreach item=item from=$has_items}
 	<tr>
 		<td class="thumb">
-			<a href="item/{$item->id}/edit"><img src="{$item->thumbnail_url}"></a>
+			<a href="item/{$item->id}"><img src="{$item->thumbnail_url}"></a>
 		</td>
 		<td>
 			{$item->name}
@@ -53,7 +53,7 @@
 	{foreach item=item from=$not_items}
 	<tr>
 		<td class="thumb">
-			<a href="item/{$item->id}/edit"><img src="{$item->thumbnail_url}"></a>
+			<a href="item/{$item->id}"><img src="{$item->thumbnail_url}"></a>
 		</td>
 		<td>
 			{$item->name}

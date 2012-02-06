@@ -4,7 +4,8 @@
 <div>
 	<div class="controls">
 		<a href="item/{$item->id}/edit">edit item</a> |
-		<a href="item/{$item->name}.json">item json</a>
+		<a href="item/{$item->name}.json">item json</a> |
+		<a href="items">view items</a>
 	</div>
 	<h1>Item {$item->name}</h1>
 	<dl id="item">
