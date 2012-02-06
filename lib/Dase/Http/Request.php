@@ -9,6 +9,7 @@ class Dase_Http_Request
 		'csv' =>'text/csv',
 		'default' =>'text/html',
 		'doc' =>'application/msword',
+		'docx' =>'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 		'gif' =>'image/gif',
 		'html' =>'text/html',
 		'jpg' =>'image/jpeg',

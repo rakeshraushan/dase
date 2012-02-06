@@ -1,7 +1,8 @@
 #!/bin/sh
 
 echo "please set db username & password"
-echo "please set media_dir!"
+echo "please set superuser password"
+echo "please set media_dir"
 echo "please set RewriteBase in .htaccess"
 exit
 

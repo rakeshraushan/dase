@@ -149,8 +149,8 @@ class Dase_Handler_Item extends Dase_Handler
 								$command = CONVERT." \"$new_path\" -format jpeg -resize '100x100 >' -colorspace RGB $thumb_path";
 								$exec_output = array();
 								$results = exec($command,$exec_output);
-								if (!file_exists($thumbnail)) {
-										//Dase_Log::info(LOG_FILE,"failed to write $thumbnail");
+								if (!file_exists($thumb_path)) {
+										//Dase_Log::info(LOG_FILE,"failed to write $thumb_path");
 								}
 								chmod($thumb_path,0775);
 								$newname = str_replace('.'.$ext,'.jpg',$newname);
