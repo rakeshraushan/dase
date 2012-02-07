@@ -3,8 +3,14 @@
 {block name="content"}
 
 <h3>Items</h3>
-<table class="items">
+<form action="items" method="get">
+	<input type="text" name="filter" value="{$filter}">
+	<input type="submit" value="filter list">
+</form>
+<form action="admin/set" method="post">
+<table class="items" id="items">
 	<tr>
+		<th></th>
 		<th></th>
 		<!--
 		<th>name</th>
@@ -18,8 +24,12 @@
 		<th>edit</th>
 		<th>json</th>
 	</tr>
-	{foreach item=item from=$items}
+	{foreach name=foo item=item from=$items}
 	<tr>
+		<td>
+			<input type="checkbox" name="item[]" value="{$item->id}">
+			<span class="num">{$smarty.foreach.foo.iteration}.</span>
+		</td>
 		<td class="thumb">
 			<a href="item/{$item->id}"><img src="{$item->thumbnail_url}"></a>
 		</td>
@@ -51,4 +61,20 @@
 	</tr>
 	{/foreach}
 </table>
+<div id="toggle_check" class="toggle_check">
+<a href="#">check/uncheck all</a>
+</div>
+<div class="controls">
+	<a href="set/form">create a set</a>
+</div>
+	<select name="set_id">
+		<option value="">add checked items to set:</option>
+		{foreach item=s from=$sets}
+		<option value="{$s->id}">{$s->title}</option>
+		{/foreach}
+	</select>
+	<input type="submit" value="add all">
+</form>
+
+
 {/block}

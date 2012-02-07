@@ -11,6 +11,16 @@
 		<input type="text" name="title" value="{$item->title}"/>
 		<label for="body">body</label>
 		<textarea name="body">{$item->body}</textarea>
+
+		<label for="meta1">meta1</label>
+		<input type="text" name="meta1" value="{$item->meta1}"/>
+
+		<label for="meta2">meta2</label>
+		<input type="text" name="meta2" value="{$item->meta2}"/>
+
+		<label for="meta3">meta3</label>
+		<input type="text" name="meta3" value="{$item->meta3}"/>
+
 		<p>
 		<input type="submit" value="update"/>
 		</p>

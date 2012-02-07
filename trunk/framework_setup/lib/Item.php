@@ -5,6 +5,20 @@ require_once 'Dase/DBO/Autogen/Item.php';
 class Dase_DBO_Item extends Dase_DBO_Autogen_Item 
 {
 
+		public $sets = array();
+
+		public function getSets()
+		{
+				$isis = new Dase_DBO_ItemsetItem($this->db);
+				$isis->item_id = $this->id;
+				foreach ($isis->findAll(1) as $isi) {
+						$set = new Dase_DBO_Itemset($this->db);
+						$set->load($isi->itemset_id);
+						$this->sets[] = $set;
+				}
+				return $this->sets;
+		}
+
 		public function removeFromSets()
 		{
 				$isi = new Dase_DBO_ItemsetItem($this->db);
