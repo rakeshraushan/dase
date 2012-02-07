@@ -10,6 +10,14 @@ class Dase_DBO_Itemset extends Dase_DBO_Autogen_Itemset
 				return Dase_Json::toPhp(file_get_contents($url));
 		}
 
+		public static function getByName($db,$r,$name)
+		{
+				$set = new Dase_DBO_Itemset($db);
+				$set->name = $name;
+				$set->findOne();
+				return $set->asArray($r);
+		}
+
 		public function getItemIds()
 		{
 				$set_items = new Dase_DBO_ItemsetItem($this->db);
@@ -22,7 +30,7 @@ class Dase_DBO_Itemset extends Dase_DBO_Autogen_Itemset
 				return $item_ids_array;
 		}
 
-		public function asJson($r)
+		public function asArray($r)
 		{
 				$result =array();
 				$result['id'] = $r->app_root.'/set/'.$this->name;
@@ -33,7 +41,12 @@ class Dase_DBO_Itemset extends Dase_DBO_Autogen_Itemset
 						$item->load($item_id);
 						$result['items'][$item->name] = $item->asArray($r);
 				}
-				return Dase_Json::get($result);
+				return $result;
+		}
+
+		public function asJson($r)
+		{
+				return Dase_Json::get($this->asArray($r));
 		}
 
 		public function removeItems()
