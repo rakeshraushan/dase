@@ -7,11 +7,28 @@ class Dase_Handler_Item extends Dase_Handler
 				'{name}' => 'item',
 				'{id}/edit' => 'edit_form',
 				'{id}/swap' => 'swap_file',
+				'{id}/sets' => 'sets',
 		);
 
 		protected function setup($r)
 		{
 				$this->user = $r->getUser();
+		}
+
+		public function postToSets($r)
+		{
+				$item = new Dase_DBO_Item($this->db);
+				if (!$item->load($r->get('id'))) {
+						$r->renderError(404);
+				}
+				$isi = new Dase_DBO_ItemsetItem($this->db);
+				$isi->item_id = $item->id;
+				$isi->itemset_id = $r->get('set_id');
+				if (!$isi->findOne()) {
+						$isi->created = date(DATE_ATOM);
+						$isi->insert();
+				}
+				$r->renderRedirect('item/'.$item->id);
 		}
 
 		public function getEditForm($r) 
@@ -44,7 +61,10 @@ class Dase_Handler_Item extends Dase_Handler
 				//if no format, assume name is ID
 				$item = new Dase_DBO_Item($this->db);
 				if ($item->load($r->get('name'))) {
+						$item->getSets();
 						$t->assign('item',$item);
+						$sets = Dase_DBO_Itemset::getList($this->db);
+						$t->assign('sets',$sets);
 						$r->renderResponse($t->fetch('item.tpl'));
 				} else {
 						$r->renderRedirect('items');
@@ -94,6 +114,9 @@ class Dase_Handler_Item extends Dase_Handler
 						$r->renderError(401);
 				}
 				$item->title = $r->get('title');
+				$item->meta1 = $r->get('meta1');
+				$item->meta2 = $r->get('meta2');
+				$item->meta3 = $r->get('meta3');
 				$item->body = $r->get('body');
 				$item->updated_by = $this->user->eid;
 				$item->updated = date(DATE_ATOM);

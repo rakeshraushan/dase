@@ -33,6 +33,16 @@
 		<dt>height</dt>
 		<dd>{$item->height}</dd>
 		{/if}
+
+		<dt>meta1</dt>
+		<dd>{$item->meta1}</dd>
+
+		<dt>meta2</dt>
+		<dd>{$item->meta2}</dd>
+
+		<dt>meta3</dt>
+		<dd>{$item->meta3}</dd>
+
 		<dt>created</dt>
 		<dd>{$item->created|date_format:"%D"}</d>
 		<dt>created by</dt>
@@ -41,6 +51,24 @@
 		<dd>{$item->updated|date_format:"%D"}</d>
 		<dt>updated by</dt>
 		<dd>{$item->updated_by}</d>
+
+		<dt>sets</dt>
+		<dd class="sets">
+		<ul class="itemsets">
+			{foreach item=set from=$item->sets}
+			<li><a href="set/{$set->name}">{$set->title}</a></li>
+			{/foreach}
+		</ul>
+		<form action="item/{$item->id}/sets" method="post">
+			<select name="set_id">
+				<option value="">add to:</option>
+				{foreach item=s from=$sets}
+				<option value="{$s->id}">{$s->title}</option>
+				{/foreach}
+			</select>
+			<input type="submit" value="add">
+		</form>
+		</dd>
 	</dl>
 </div>
 

@@ -15,7 +15,36 @@ class Dase_Handler_Items extends Dase_Handler
 				$t = new Dase_Template($r);
 				$items = new Dase_DBO_Item($this->db);
 				$items->orderBy('updated DESC');
-				$t->assign('items',$items->findAll(1));
+				$items = $items->findAll(1);
+				$result = array();
+				if ($r->get('filter')) {
+						$filter = $r->get('filter');
+						$t->assign('filter',$filter);
+						$parts = explode(':',$filter);
+						//grab slice w/ format like 4:22
+						if (2 == count($parts) && is_int((int) $parts[0]) && is_int((int)$parts[1])) {
+								$result = array_slice($items,$parts[0]-1,$parts[1]-$parts[0]+1);
+								$t->assign('filter','');
+						} else {
+								foreach($items as $item) {
+										if (
+												false !== strpos($item->name,$filter) ||
+												false !== strpos($item->title,$filter) ||
+												false !== strpos($item->body,$filter) ||
+												false !== strpos($item->meta1,$filter) ||
+												false !== strpos($item->meta1,$filter) ||
+												false !== strpos($item->meta3,$filter)
+										) {
+												$result[] = $item;
+										}
+								}
+						}
+				} else {
+						$result = $items;
+				}
+				$sets = Dase_DBO_Itemset::getList($this->db);
+				$t->assign('sets',$sets);
+				$t->assign('items',$result);
 				$r->renderResponse($t->fetch('items.tpl'));
 		}
 

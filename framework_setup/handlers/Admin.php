@@ -4,10 +4,12 @@ class Dase_Handler_Admin extends Dase_Handler
 {
 		public $resource_map = array(
 				'/' => 'admin',
+				'set' => 'set',
 				'users' => 'users',
 				'add_user_form/{eid}' => 'add_user_form',
 				'user/{id}/is_admin' => 'is_admin',
 				'create' => 'content_form',
+				'cats' => 'cats',
 		);
 
 		protected function setup($r)
@@ -18,6 +20,33 @@ class Dase_Handler_Admin extends Dase_Handler
 				} else {
 						$r->renderError(401);
 				}
+		}
+
+		/* 
+		 * for adding multiple items to a set
+		 */
+		public function postToSet($r) 
+		{
+				$set = new Dase_DBO_Itemset($this->db);
+				if (!$set->load($r->get('set_id'))) {
+						$r->renderError(404);
+				} 
+				foreach ($r->get('item',true) as $item_id) {
+						$isi = new Dase_DBO_ItemsetItem($this->db);
+						$isi->item_id = $item_id;
+						$isi->itemset_id = $set->id;
+						$isi->created = date(DATE_ATOM);
+						$isi->insert();
+				}
+				$r->renderRedirect('set/'.$set->name);
+		}
+
+		public function getCats($r)
+		{
+				$t = new Dase_Template($r);
+				$item = new Dase_DBO_Item($this->db);
+				$t->assign('item',$item->load(115));
+				$r->renderResponse($t->fetch('cats.tpl'));
 		}
 
 		public function getContentForm($r) 

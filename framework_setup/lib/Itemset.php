@@ -4,6 +4,13 @@ require_once 'Dase/DBO/Autogen/Itemset.php';
 
 class Dase_DBO_Itemset extends Dase_DBO_Autogen_Itemset 
 {
+		public static function getList($db)
+		{
+				$sets = new Dase_DBO_Itemset($db);
+				$sets->orderBy('title');
+				return $sets->findAll(1);
+		}
+
 		public static function get($r,$name)
 		{
 				$url = $r->app_root.'/set/'.$name.'.json';
