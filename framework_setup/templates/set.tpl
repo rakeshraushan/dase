@@ -6,7 +6,7 @@
 	<a href="set/{$set->name}.json">view json</a> | 
 	<a href="set/list">view sets</a>
 </div>
-<h1>Set {$set->title}</h1>
+<h1>Set {$set->title} ({$set->name})</h1>
 <table class="items">
 	<tr>
 		<th></th>
