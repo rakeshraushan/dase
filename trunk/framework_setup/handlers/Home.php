@@ -13,13 +13,13 @@ class Dase_Handler_Home extends Dase_Handler
 		//orm
 		//$r->set('footer',Dase_DBO_Itemset::getByName($this->db,$r,'footer'));
 		//http
-		$r->set('footer',Dase_DBO_Itemset::get($r,'footer'));
+		//$r->set('footer',Dase_DBO_Itemset::get($r,'footer'));
 	}
 
 	public function getHome($r) 
 	{
 		$t = new Dase_Template($r);
-		$t->assign('lab_thumbs',Dase_DBO_Itemset::getByName($this->db,$r,'lab_thumbs'));
+		//$t->assign('lab_thumbs',Dase_DBO_Itemset::getByName($this->db,$r,'lab_thumbs'));
 		$r->renderResponse($t->fetch('home.tpl'));
 	}
 
