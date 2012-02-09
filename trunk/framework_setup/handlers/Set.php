@@ -7,12 +7,35 @@ class Dase_Handler_Set extends Dase_Handler
 				'form' => 'form', //create a set
 				'{name}' => 'set', //add/delete items (html) or view (json)
 				'{id}/edit' => 'edit_form', 
-				'{id}/remove' => 'remove', 
+				'{id}/item/{item_id}' => 'set_item', 
+				'{id}/order' => 'order', 
 		);
 
 		protected function setup($r)
 		{
-				$this->user = $r->getUser();
+		}
+
+		public function postToOrder($r)
+		{
+				$set = new Dase_DBO_Itemset($this->db);
+				if (!$set->load($r->get('id'))) {
+						$r->renderError(404);
+				}
+				$order_array = explode('|',$r->getBody());
+				$i = 0;
+				foreach ($order_array as $item_id) {
+						if ($item_id) {
+								$i++;
+								$isi = new Dase_DBO_ItemsetItem($this->db);
+								$isi->item_id = $item_id;
+								$isi->itemset_id = $set->id;
+								if ($isi->findOne()) {
+										$isi->sort_order = $i;
+										$isi->update();
+								}
+						}
+				}
+				$r->renderResponse('ordered!');
 		}
 
 		public function getForm($r) 
@@ -50,6 +73,7 @@ class Dase_Handler_Set extends Dase_Handler
 
 		public function deleteSet($r)
 		{
+				$this->user = $r->getUser();
 				$set = new Dase_DBO_Itemset($this->db);
 				if (!$set->load($r->get('name'))) {
 						$r->renderError(404);
@@ -62,18 +86,15 @@ class Dase_Handler_Set extends Dase_Handler
 				$set->delete();
 				$r->renderResponse('deleted set');
 		}
-		public function postToRemove($r)
+		public function deleteSetItem($r)
 		{
-				$set = new Dase_DBO_Itemset($this->db);
-				if ($set->load($r->get('id'))) {
-						$is_item = new Dase_DBO_ItemsetItem($this->db);
-						$is_item->itemset_id = $set->id;
-						$is_item->item_id = $r->get('item_id');
-						if ($is_item->findOne()) {
-								$is_item->delete();
-						}
+				$is_item = new Dase_DBO_ItemsetItem($this->db);
+				$is_item->itemset_id = $r->get('id');
+				$is_item->item_id = $r->get('item_id');
+				if ($is_item->findOne()) {
+						$is_item->delete();
 				}
-				$r->renderRedirect('set/'.$set->name);
+				$r->renderResponse('removed item');
 		}
 
 		public function getList($r) 
@@ -91,30 +112,8 @@ class Dase_Handler_Set extends Dase_Handler
 				$set = new Dase_DBO_Itemset($this->db);
 				$set->name = $r->get('name');
 				if ($set->findOne()) {
-						$item_ids_array = $set->getItemIds();
+						$set->getItems();
 						$t->assign('set',$set);
-						$items = new Dase_DBO_Item($this->db);
-						$items->orderBy('updated DESC');
-						$has_items = array();
-						$not_items = array();
-						foreach ($items->find() as $item) {
-								$item = clone($item);
-								if (in_array($item->id,$item_ids_array)) {
-										$has_items[] = $item;
-								} else {
-										$not_items[] = $item;
-								}
-						}	
-						$sorted_has = array();
-						foreach ($item_ids_array as $has_id) {
-								foreach ($has_items as $has) {
-										if ($has->id == $has_id) {
-												$sorted_has[] = $has;
-										}
-								}
-						}
-						$t->assign('not_items',$not_items);
-						$t->assign('has_items',$sorted_has);
 						$r->renderResponse($t->fetch('set.tpl'));
 				} else {
 						$r->renderError(404);
@@ -136,6 +135,7 @@ class Dase_Handler_Set extends Dase_Handler
 
 		public function getSetJson($r) 
 		{
+				//$r->checkCache(60);
 				$set = new Dase_DBO_Itemset($this->db);
 				$set->name = $r->get('name');
 				if ( $set->findOne()) {
@@ -147,6 +147,7 @@ class Dase_Handler_Set extends Dase_Handler
 
 		public function postToForm($r)
 		{
+				$this->user = $r->getUser();
 				$set = new Dase_DBO_Itemset($this->db);
 				$set->title = $r->get('title');
 				if (!$set->title) {

@@ -7,6 +7,17 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 
 		public $sets = array();
 
+		public static function getByTitle($db,$r,$title)
+		{
+				$item = new Dase_DBO_Item($db);
+				$item->title = $title;
+				if ($item->findOne()) {
+						return $item->asArray($r);
+				} else {
+						return false;
+				}
+		}
+
 		public function getSets()
 		{
 				$isis = new Dase_DBO_ItemsetItem($this->db);
@@ -59,6 +70,15 @@ class Dase_DBO_Item extends Dase_DBO_Autogen_Item
 				}
 				if ($this->height) {
 						$set['height'] = $this->height;
+				}
+				if ($this->meta1) {
+						$set['meta1'] = $this->meta1;
+				}
+				if ($this->meta2) {
+						$set['meta2'] = $this->meta2;
+				}
+				if ($this->meta3) {
+						$set['meta3'] = $this->meta3;
 				}
 				return $set;
 		}

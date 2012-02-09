@@ -61,7 +61,7 @@ div#header h4 {
 	margin-top: 10px;
 }
 
-div#header a.delete {
+a.delete {
 	color:#c00;
 }
 
@@ -141,6 +141,11 @@ input.delete:hover {
 div.controls {
 	float: right;
 	margin: 6px 0;
+	font-weight: bold;
+}
+
+div.controls  a {
+	font-weight: normal;
 }
 
 dl {

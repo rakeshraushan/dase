@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `itemset_item` (
   `itemset_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `created` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `sort_order` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 ";
