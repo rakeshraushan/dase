@@ -44,17 +44,44 @@ class Dase_Handler_Admin extends Dase_Handler
 		public function getCats($r)
 		{
 				$t = new Dase_Template($r);
-				$item = new Dase_DBO_Item($this->db);
-				$t->assign('item',$item->load(115));
-				$r->renderResponse($t->fetch('cats.tpl'));
+				$item = Dase_DBO_Item::getByTitle($this->db,$r,'Cats');
+				if (!$item) {
+						$user = $pass = '';
+						foreach($r->getSuperusers() as $eid => $pass) {
+								$user = $eid;
+								$pass = $pass;
+								break;
+						}
+						$image_url = $r->app_root.'/www/images/cats.jpg';
+						$body = file_get_contents($image_url);
+						$post_url = $r->app_root.'/items';
+						$ch = curl_init();
+						curl_setopt($ch, CURLOPT_URL, $post_url);
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+						curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+						curl_setopt($ch, CURLOPT_USERPWD,$user.':'.$pass);
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,false);
+						$headers  = array("Content-Type: image/jpeg","Title: Cats");
+						curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						$result = curl_exec($ch);
+						$info = curl_getinfo($ch);
+						curl_close($ch);  
+						$r->renderRedirect('admin/cats');
+				} else {
+						$t->assign('item',$item);
+						$r->renderResponse($t->fetch('cats.tpl'));
+				}
 		}
 
 		public function getContentForm($r) 
 		{
 				$t = new Dase_Template($r);
+				/*
 				$items = new Dase_DBO_Item($this->db);
 				$items->orderBy('updated DESC');
 				$t->assign('items',$items->findAll(1));
+				 */
 				$r->renderResponse($t->fetch('admin_create_content.tpl'));
 		}
 
@@ -155,7 +182,7 @@ class Dase_Handler_Admin extends Dase_Handler
 				$item->url = 'item/'.$item->name;
 				$item->insert();
 
-				$r->renderRedirect('admin/create');
+				$r->renderRedirect('items');
 		}
 
 		public function getAdmin($r) 

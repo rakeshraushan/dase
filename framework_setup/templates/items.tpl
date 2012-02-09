@@ -2,6 +2,12 @@
 
 {block name="content"}
 
+<div class="controls">
+	view items |
+	<a href="set/list">view sets</a> |
+	<a href="admin/create">create content</a> |
+	<a href="set/form">create a set</a>
+</div>
 <h3>Items</h3>
 <form action="items" method="get">
 	<input type="text" name="filter" value="{$filter}">
