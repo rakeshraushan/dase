@@ -441,10 +441,12 @@ class Dase_Handler_Manage extends Dase_Handler
 								$type = $r->_files[$input_name]['type'];
 								if (!Dase_Media::isAcceptable($type)) {
 										Dase_Log::debug(LOG_FILE,$type.' is not a supported media type');
-										$r->renderError(415,'unsupported media type: '.$type);
+										//$r->renderError(415,'unsupported media type: '.$type);
+										continue;
 								}
 								if (!is_uploaded_file($path)) {
-										$r->renderError(400,'no go upload');
+										//$r->renderError(400,'no go upload');
+										continue;
 								}
 								Dase_Log::info(LOG_FILE,'uploading file '.$name.' type: '.$type);
 
@@ -453,7 +455,8 @@ class Dase_Handler_Manage extends Dase_Handler
 										$file = Dase_File::newFile($this->db,$path,$type,$name,BASE_PATH);
 								} catch(Exception $e) {
 										Dase_Log::debug(LOG_FILE,'add to collection error: '.$e->getMessage());
-										$r->renderError(409,$e->getMessage());
+										//$r->renderError(409,$e->getMessage());
+										continue;
 								}
 
 								$item = $this->collection->createNewItem(null,$this->user->eid);
@@ -467,7 +470,8 @@ class Dase_Handler_Manage extends Dase_Handler
 										$media_file = $file->addToCollection($item,true,MEDIA_DIR); //true means tets for dups
 								} catch(Exception $e) {
 										Dase_Log::debug(LOG_FILE,'add to collection error: '.$e->getMessage());
-										$r->renderError(409,$e->getMessage());
+										//$r->renderError(409,$e->getMessage());
+										continue;
 								}
 								$item->setItemType($r->get('item_type'));
 								//here's where we map admin_att to real att
