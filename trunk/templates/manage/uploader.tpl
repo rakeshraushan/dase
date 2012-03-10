@@ -15,17 +15,18 @@
 </div>
 <div class="uploader">
 	<form action="manage/{$collection->ascii_id}" method="post" enctype="multipart/form-data">
+		<!--
 		<label for="title">title</label>
 		<p>
 		<input type="text" name="title"/>
 		</p>
-		<p>
 		<label for="uploaded_file">attach file(s)</label>
-		<!--
 		<input type="file" name="uploaded_file" size="50"/>
 		-->
+		<p>
 		<input id="multiple" type="file" size="50" multiple>
 		</p>
+		<!--
 		<p>
 		{if $item_types|@count}
 		<select name="item_type">
@@ -40,7 +41,9 @@
 		<p>
 		<input type="submit" value="Upload Files"/>
 		</p>
+		-->
 	</form>
+	<h3 class="hide" id="uploadMsg">uploading...</h3>
 	<ul id="fileList"></ul>
 </div>
 <ul id="recent"></ul>
