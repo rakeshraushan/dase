@@ -433,6 +433,7 @@ class Dase_Handler_Manage extends Dase_Handler
 		public function postToUploader($r)
 		{
 				//form can use any 'name' it wishes
+				$filecount = 0;
 				foreach ($r->_files as $k => $v) {
 						$input_name = $k;
 						if ($input_name && is_file($r->_files[$input_name]['tmp_name'])) {
@@ -476,10 +477,13 @@ class Dase_Handler_Manage extends Dase_Handler
 								$item->setItemType($r->get('item_type'));
 								//here's where we map admin_att to real att
 								$item->mapConfiguredAdminAtts();
+								//delay search building??
 								$item->buildSearchIndex();
+								$filecount++;
 						} 
 				}
-				$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
+				$r->renderResponse('uploaded '.$filecount.' files');
+				//$r->renderRedirect('manage/'.$this->collection->ascii_id.'/uploader');
 		}
 
 		public function postToIndexer($r) 
