@@ -24,6 +24,8 @@ Dase.pageInitUser = function(eid) {
 };
 
 Dase.makeFileList = function() {
+	var msg = document.getElementById("uploadMsg");
+	msg.className = '';
 	var input = document.getElementById("multiple");
 	var ul = document.getElementById("fileList");
 	while (ul.hasChildNodes()) {
