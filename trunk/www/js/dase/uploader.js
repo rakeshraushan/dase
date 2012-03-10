@@ -18,10 +18,17 @@ Dase.pageInitUser = function(eid) {
 	$("#dropbox, #multiple").html5Uploader({ 
 		name: "uploaded_file", 
 		postUrl: "manage/"+coll,
-		onClientLoadStart: Dase.makeFileList
+		onClientLoadStart: Dase.makeFileList,
+		onServerProgress: Dase.showTime,
+		onSuccess: Dase.pageReload
 	}); 
 
 };
+
+Dase.showTime = function() {
+	var msg = document.getElementById("uploadMsg");
+	msg.innerHTML = msg.innerHTML+'.';
+}
 
 Dase.makeFileList = function() {
 	var msg = document.getElementById("uploadMsg");

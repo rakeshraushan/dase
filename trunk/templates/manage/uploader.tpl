@@ -14,6 +14,7 @@
 	<h1>Create New Item</h1>
 </div>
 <div class="uploader">
+	<h2>Upload Files</h2>
 	<form action="manage/{$collection->ascii_id}" method="post" enctype="multipart/form-data">
 		<!--
 		<label for="title">title</label>
