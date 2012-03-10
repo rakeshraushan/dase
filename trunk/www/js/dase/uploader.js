@@ -19,7 +19,7 @@ Dase.pageInitUser = function(eid) {
 		name: "uploaded_file", 
 		postUrl: "manage/"+coll,
 		onClientLoadStart: Dase.makeFileList,
-		onServerProgress: Dase.showTime(),
+		onServerProgress: function() {Dase.showTime()},
 		onSuccess: Dase.refresh
 	}); 
 
@@ -31,7 +31,7 @@ Dase.showTime = function() {
 }
 
 Dase.refresh = function(e) {
-	alert(JSON.stringify(e));
+	//alert(JSON.stringify(e));
 	window.location.reload(true);
 };
 
