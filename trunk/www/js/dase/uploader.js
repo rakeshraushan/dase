@@ -19,8 +19,8 @@ Dase.pageInitUser = function(eid) {
 		name: "uploaded_file", 
 		postUrl: "manage/"+coll,
 		onClientLoadStart: Dase.makeFileList,
-		onServerProgress: function() {return Dase.showTime()},
-		onSuccess: Dase.pageReload
+		onServerProgress: Dase.showTime(),
+		onSuccess: Dase.refresh
 	}); 
 
 };
