@@ -104,7 +104,7 @@
 				</li>
 				<li class="uploader-tab">
 				<a href="manage/{$collection->ascii_id}/uploader">
-					<img alt="icon" src="www/images/tango-icons/list-add.png"><sup>Create Item</sup>
+					<img alt="icon" src="www/images/tango-icons/list-add.png"><sup>Create Item(s)</sup>
 				</a>
 				</li>
 				{if $module_menu}

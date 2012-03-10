@@ -11,7 +11,7 @@
 {block name="content"}
 <div id="contentHeader">
 	{if $msg}<h3 class="alert">{$msg}</h3>{/if}
-	<h1>Create New Item</h1>
+	<h1>Create New Item(s)</h1>
 </div>
 <div class="uploader">
 	<h2>Upload Files</h2>
