@@ -2,6 +2,19 @@
 
 {block name="head"}
 <script type="text/javascript" src="www/js/dase/uploader.js"></script>
+<script type="text/javascript" src="www/js/jquery.js"></script>
+<script type="text/javascript" src="www/js/jquery.html5uploader.js"></script>
+<script type="text/javascript">
+{literal}
+$(function() {
+		$("#dropbox, #multiple").html5Uploader({ 
+			{/literal}
+name: "uploaded_file", postUrl: "manage/{$collection->ascii_id}"	
+{literal}
+}); 
+		});
+{/literal}
+</script>
 {/block}
 
 {block name="title"}DASe: Create New Item{/block} 
@@ -38,4 +51,7 @@
 	</form>
 </div>
 <ul id="recent"></ul>
+<h2>experimental drag-n-drop upload</h2>
+<div id="dropbox"></div>
+<input id="multiple" type="file" multiple>
 {/block}
