@@ -1,20 +1,9 @@
 {extends file="manage/layout.tpl"}
 
 {block name="head"}
-<script type="text/javascript" src="www/js/dase/uploader.js"></script>
 <script type="text/javascript" src="www/js/jquery.js"></script>
 <script type="text/javascript" src="www/js/jquery.html5uploader.js"></script>
-<script type="text/javascript">
-{literal}
-$(function() {
-		$("#dropbox, #multiple").html5Uploader({ 
-			{/literal}
-name: "uploaded_file", postUrl: "manage/{$collection->ascii_id}"	
-{literal}
-}); 
-		});
-{/literal}
-</script>
+<script type="text/javascript" src="www/js/dase/uploader.js"></script>
 {/block}
 
 {block name="title"}DASe: Create New Item{/block} 

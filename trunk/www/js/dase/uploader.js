@@ -13,5 +13,10 @@ Dase.pageInitUser = function(eid) {
 		}
 		h.attach(Dase.$('recent'));
 	});
+
+	//requires jquery & jquery.html5uploader
+	$("#dropbox, #multiple").html5Uploader({ 
+		name: "uploaded_file", postUrl: "manage/"+coll	
+	}); 
 };
 
