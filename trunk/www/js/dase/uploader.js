@@ -30,6 +30,12 @@ Dase.showTime = function() {
 	msg.innerHTML = msg.innerHTML+'.';
 }
 
+Dase.refresh = function(e) {
+	alert(JSON.stringify(e));
+	window.location.reload(true);
+};
+
+
 Dase.makeFileList = function() {
 	var msg = document.getElementById("uploadMsg");
 	msg.className = '';
