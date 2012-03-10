@@ -16,7 +16,27 @@ Dase.pageInitUser = function(eid) {
 
 	//requires jquery & jquery.html5uploader
 	$("#dropbox, #multiple").html5Uploader({ 
-		name: "uploaded_file", postUrl: "manage/"+coll	
+		name: "uploaded_file", 
+		postUrl: "manage/"+coll,
+		onClientLoadStart: Dase.makeFileList
 	}); 
+
 };
 
+Dase.makeFileList = function() {
+	var input = document.getElementById("multiple");
+	var ul = document.getElementById("fileList");
+	while (ul.hasChildNodes()) {
+		ul.removeChild(ul.firstChild);
+	}
+	for (var i = 0; i < input.files.length; i++) {
+		var li = document.createElement("li");
+		li.innerHTML = input.files[i].name;
+		ul.appendChild(li);
+	}
+	if(!ul.hasChildNodes()) {
+		var li = document.createElement("li");
+		li.innerHTML = 'No Files Selected';
+		ul.appendChild(li);
+	}
+};

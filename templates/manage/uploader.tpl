@@ -20,8 +20,11 @@
 		<input type="text" name="title"/>
 		</p>
 		<p>
-		<label for="uploaded_file">attach a file</label>
+		<label for="uploaded_file">attach file(s)</label>
+		<!--
 		<input type="file" name="uploaded_file" size="50"/>
+		-->
+		<input id="multiple" type="file" size="50" multiple>
 		</p>
 		<p>
 		{if $item_types|@count}
@@ -35,12 +38,10 @@
 		{/if}
 		</p>
 		<p>
-		<input type="submit" value="Create New Item"/>
+		<input type="submit" value="Upload Files"/>
 		</p>
 	</form>
+	<ul id="fileList"></ul>
 </div>
 <ul id="recent"></ul>
-<h2>experimental drag-n-drop upload</h2>
-<div id="dropbox"></div>
-<input id="multiple" type="file" multiple>
 {/block}
