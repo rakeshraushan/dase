@@ -39,13 +39,15 @@ function slugify(text) {
 $("#multiple").html5Uploader({
 	name: "uploaded_file", 
 	postUrl: "manage/"+coll,
-	onSuccess: window.location.reload,
 	onClientLoadStart: function (e, file) {
 		var upload = $("#upload");
 		if (upload.is(":hidden")) {
 			upload.show();
 		}
 		upload.append(fileTemplate.replace(/{{id}}/g, slugify(file.name)).replace(/{{filename}}/g, file.name));
+	},
+	onSuccess: function (e, file) {
+		$("#" + slugify(file.name)).find(".preview").html("uploaded!");
 	},
 	onClientLoad: function (e, file) {
 		$("#" + slugify(file.name)).find(".preview").append("<img src=\""+Dase.base_href+"www/images/indicator.gif\" alt=\"\">");
