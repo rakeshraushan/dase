@@ -45,7 +45,7 @@
 		-->
 	</form>
 	<h3 class="hide" id="uploadMsg">uploading...</h3>
-	<ul id="fileList"></ul>
+	<ul id="upload"></ul>
 </div>
 <ul id="recent"></ul>
 {/block}
