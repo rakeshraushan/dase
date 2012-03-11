@@ -36,7 +36,7 @@ Dase.pageInitUser = function(eid) {
         text = text.replace(/\s/gi, "-");
         return text;
     }
-    $("#dropbox").html5Uploader({
+    $("#multiple").html5Uploader({
         onClientLoadStart: function (e, file) {
             var upload = $("#upload");
             if (upload.is(":hidden")) {
