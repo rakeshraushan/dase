@@ -48,7 +48,7 @@ $("#multiple").html5Uploader({
 		upload.append(fileTemplate.replace(/{{id}}/g, slugify(file.name)).replace(/{{filename}}/g, file.name));
 	},
 	onClientLoad: function (e, file) {
-		$("#" + slugify(file.name)).find(".preview").append("<img src=\"" + e.target.result + "\" alt=\"\">");
+		$("#" + slugify(file.name)).find(".preview").append("<img src=\"www/images/indicator.gif\" alt=\"\">");
 	},
 	onServerLoadStart: function (e, file) {
 		$("#" + slugify(file.name)).find(".progressbar").progressbar({
