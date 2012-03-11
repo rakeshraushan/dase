@@ -24,10 +24,10 @@ Dase.pageInitUser = function(eid) {
  }); 
  */
 
+//fileTemplate += "<div class=\"progressbar\"></div>";
 var fileTemplate = "<div id=\"{{id}}\">";
-fileTemplate += "<div class=\"progressbar\"></div>";
-fileTemplate += "<div class=\"preview\"></div>";
 fileTemplate += "<div class=\"filename\">{{filename}}</div>";
+fileTemplate += "<div class=\"preview\"></div>";
 fileTemplate += "</div>";
 
 function slugify(text) {
