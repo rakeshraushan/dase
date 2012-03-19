@@ -11,6 +11,8 @@ abstract class Dase_File
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => array('size' => 'doc','ext' => 'docx','class' => 'Dase_File_Doc'),
 		'audio/mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/x-mpeg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
+		'audio/wav' => array('size' => 'wav', 'ext' => 'wav','class'=>'Dase_File_Audio'),
+		'audio/x-wav' => array('size' => 'wav', 'ext' => 'wav','class'=>'Dase_File_Audio'),
 		'audio/mpg' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/mp3' => array('size' => 'mp3', 'ext' => 'mp3','class'=>'Dase_File_Audio'),
 		'audio/ogg' => array('size' => 'oga', 'ext' => 'oga','class'=>'Dase_File_Audio'),

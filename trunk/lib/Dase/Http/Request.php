@@ -25,6 +25,7 @@ class Dase_Http_Request
 		'txt' =>'text/plain',
 		'uris' =>'text/uri-list',
 		'uri' =>'text/uri-list',
+		'wav' =>'audio/wav',
 		'xhtml' =>'application/xhtml+xml',
 		'xml' =>'application/xml',
 	);
