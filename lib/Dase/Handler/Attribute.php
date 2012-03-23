@@ -62,7 +62,13 @@ class Dase_Handler_Attribute extends Dase_Handler
 		$result['att_ascii'] = $attr->ascii_id;
 		$result['coll'] = $r->get('collection_ascii_id');
 		$result['values'] = $values_array;
-		$r->renderResponse(Dase_Json::get($result));
+		$json_result = Dase_Json::get($result);
+		if($r->get('callback')){
+			$r->renderResponse($r->get('callback').'('.$json_result.');');
+		}
+		else{
+			$r->renderResponse($json_result);
+		}
 	}
 }
 
