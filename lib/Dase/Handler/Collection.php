@@ -952,7 +952,13 @@ class Dase_Handler_Collection extends Dase_Handler
 		}
 		$result['tallies'] = $tallies;
 		$result['is_admin'] = 0;
-		$r->renderResponse(Dase_Json::get($result));
+		$json_result = Dase_Json::get($result);
+		if($r->get('callback')){
+			$r->renderResponse($r->get('callback').'('.$json_result.');');
+		}
+		else{
+			$r->renderResponse($json_result);
+		}
 	}
 
 	public function getAdminAttributeTalliesJson($r) 
