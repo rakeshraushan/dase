@@ -567,6 +567,9 @@ class Dase_Handler_Item extends Dase_Handler
 								$r->renderError(500,'item not updated');
 						}
 				} elseif('application/json' == $content_type) {
+						if (!$this->item) {
+								$this->item = $collection->createNewItem($r->get('serial_number'));
+						}
 						//todo: this only updates metadata, does nothing to media (prob OK)
 						$item_data = Dase_Json::toPhp($r->getBody());
 						if  (isset($item_data['metadata']) && count($item_data['metadata'])) {
