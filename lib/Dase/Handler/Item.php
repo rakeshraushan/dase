@@ -575,7 +575,7 @@ class Dase_Handler_Item extends Dase_Handler
 								//todo WILL this mess up VRC module??
 								//metadata
 								if (isset($item_data['metadata_extended'])) {
-										foreach ($item_data['metadata'] as $key => $vals) {
+										foreach ($item_data['metadata_extended'] as $key => $vals) {
 												foreach ($vals['values'] as $val) {
 														$text = $val['text'];
 														if (isset($val['modifier'])) {
