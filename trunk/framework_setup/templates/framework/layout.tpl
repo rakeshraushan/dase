@@ -1,4 +1,4 @@
-{extends file="base.tpl"}
+{extends file="framework/base.tpl"}
 
 {block name="title"}{$main_title}{/block}
 

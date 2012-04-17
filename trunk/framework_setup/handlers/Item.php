@@ -40,7 +40,7 @@ class Dase_Handler_Item extends Dase_Handler
 						//$r->renderError(404);
 				}
 				$t->assign('item',$item);
-				$r->renderResponse($t->fetch('admin_item_edit.tpl'));
+				$r->renderResponse($t->fetch('framework/admin_item_edit.tpl'));
 		}
 
 		public function getListJson($r) 
@@ -65,7 +65,7 @@ class Dase_Handler_Item extends Dase_Handler
 						$t->assign('item',$item);
 						$sets = Dase_DBO_Itemset::getList($this->db);
 						$t->assign('sets',$sets);
-						$r->renderResponse($t->fetch('item.tpl'));
+						$r->renderResponse($t->fetch('framework/item.tpl'));
 				} else {
 						$r->renderRedirect('items');
 						//$r->renderError(404);
