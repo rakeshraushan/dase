@@ -69,3 +69,7 @@ echo "creating set_item table"
 php create_itemset_item_table.php
 
 php class_gen.php
+
+echo "removing framework setup directory"
+cd ..
+rm -rf framework_setup
