@@ -39,7 +39,7 @@ echo "copied in new images"
 
 rm -rf ../templates/*
 echo "deleted existing templates"
-cp -r templates/framework ../templates
+cp -r templates/* ../templates
 echo "copied in new templates"
 
 rm -rf ../lib/Dase/DBO/*

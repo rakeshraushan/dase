@@ -4,7 +4,7 @@
 
 {block name="wordmark"}
 <div id="universityWordMark">
-	<a href="http://www.utexas.edu/cola"><img alt="UT College of Liberal Arts Wordmark" src="www/images/UTCOLA.jpg"/></a>
+	<a href="http://www.utexas.edu/cola"><img alt="UT College of Liberal Arts Wordmark" src="www/img/UTCOLA.jpg"/></a>
 </div>
 {/block}
 
