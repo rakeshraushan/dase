@@ -1,4 +1,4 @@
-{extends file="framework/layout.tpl"}
+{extends file="framework/bootstrap.tpl"}
 
 {block name="content"}
 
@@ -14,7 +14,7 @@
 	<input type="submit" value="filter list">
 </form>
 <form action="admin/set" method="post">
-<table class="items" id="items">
+<table class="table table-striped" id="items">
 	<tr>
 		<th></th>
 		<th></th>

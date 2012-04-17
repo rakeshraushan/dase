@@ -1,4 +1,4 @@
-{extends file="framework/layout.tpl"}
+{extends file="framework/bootstrap.tpl"}
 
 {block name="content"}
 <h2>{$main_title}</h2>

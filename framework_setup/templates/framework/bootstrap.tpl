@@ -98,12 +98,14 @@
 				</div>
 			</div>
 
-			<hr>
 			{/block}
 
+			<hr>
 			<footer>
 			{block name="footer"}
-			<p>&copy; Company 2012</p>
+			<a href="http://www.utexas.edu">The University of Texas at Austin</a>
+			|
+			<a href="http://www.utexas.edu/cola/information-technology/">Liberal Arts ITS</a>
 			{/block}
 			</footer>
 

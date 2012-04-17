@@ -1,9 +1,9 @@
-{extends file="framework/layout.tpl"}
+{extends file="framework/bootstrap.tpl"}
 
 {block name="content"}
 <div>
 	<h1>User Settings for {$request->user->name}</h1>
-	<dl class="user">
+	<dl class="dl-horizontal">
 		<dt>name</dt>
 		<dd>{$request->user->name}</dd>
 		<dt>eid</dt>

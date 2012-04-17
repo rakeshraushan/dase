@@ -1,9 +1,9 @@
-{extends file="framework/layout.tpl"}
+{extends file="framework/bootstrap.tpl"}
 
 {block name="content"}
 <div>
 	<h1>Administration</h1>
-	<ul class="admin">
+	<ul class="unstyled">
 		<li><h2>Manage</h2></li>
 		<li><a href="user/settings">my user settings</a></li>
 		{if $request->user->is_admin}
