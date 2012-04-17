@@ -6,7 +6,7 @@
 		{block name="head-meta"}{/block}
 
 
-		<title>{block name="title"}{/block}</title>
+		<title>{block name="title"}{$main_title}{/block}</title>
 
 		<!-- Le styles -->
 		<link href="www/css/bootstrap.css" rel="stylesheet">
