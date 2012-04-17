@@ -101,11 +101,11 @@
 			<hr>
 			{/block}
 
-			{block name="footer"}
 			<footer>
+			{block name="footer"}
 			<p>&copy; Company 2012</p>
-			</footer>
 			{/block}
+			</footer>
 
 			{/block}
 		</div> <!-- /container -->
