@@ -122,7 +122,7 @@ class Dase_Handler_Items extends Dase_Handler
 						$newname = str_replace('.'.$ext,'.jpg',$newname);
 						$item->thumbnail_url = 'file/thumb/'.$newname;
 				} else {
-						$item->thumbnail_url = 	'www/images/mime_icons/'.Dase_File::$types_map[$mime_type]['size'].'.png';
+						$item->thumbnail_url = 	'www/img/mime_icons/'.Dase_File::$types_map[$mime_type]['size'].'.png';
 				}
 				if (isset($size[0]) && $size[0]) {
 						$item->width = $size[0];
@@ -202,7 +202,7 @@ class Dase_Handler_Items extends Dase_Handler
 								$newname = str_replace('.'.$ext,'.jpg',$newname);
 								$item->thumbnail_url = 'file/thumb/'.$newname;
 						} else {
-								$item->thumbnail_url = 	'www/images/mime_icons/'.Dase_File::$types_map[$mime_type]['size'].'.png';
+								$item->thumbnail_url = 	'www/img/mime_icons/'.Dase_File::$types_map[$mime_type]['size'].'.png';
 						}
 						if (isset($size[0]) && $size[0]) {
 								$item->width = $size[0];
@@ -215,7 +215,7 @@ class Dase_Handler_Items extends Dase_Handler
 								$item->title = substr($item->body,0,20);
 						}
 						$item->name = $this->_findUniqueName(Dase_Util::dirify($item->title));
-						$item->thumbnail_url = 	'www/images/mime_icons/content.png';
+						$item->thumbnail_url = 	'www/img/mime_icons/content.png';
 				}
 				$item->created_by = $this->user->eid;
 				$item->created = date(DATE_ATOM);

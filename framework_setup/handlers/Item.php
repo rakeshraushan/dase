@@ -202,7 +202,7 @@ class Dase_Handler_Item extends Dase_Handler
 								$newname = str_replace('.'.$ext,'.jpg',$newname);
 								$item->thumbnail_url = 'file/thumb/'.$newname;
 						} else {
-								$item->thumbnail_url = 	'www/images/mime_icons/'.Dase_File::$types_map[$type]['size'].'.png';
+								$item->thumbnail_url = 	'www/img/mime_icons/'.Dase_File::$types_map[$type]['size'].'.png';
 						}
 						if (isset($size[0]) && $size[0]) {
 								$item->width = $size[0];
