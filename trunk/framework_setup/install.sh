@@ -30,9 +30,11 @@ echo "deleted existing js"
 cp -r js/* ../www/js
 echo "copied in new js"
 
-rm -rf ../www/images/*
+rm -rf ../www/images
 echo "deleted existing images"
-cp -r images/* ../www/images
+
+#like bootstrap use img instead of images
+cp -r img ../www
 echo "copied in new images"
 
 rm -rf ../templates/*

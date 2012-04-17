@@ -52,7 +52,7 @@ class Dase_Handler_Admin extends Dase_Handler
 								$pass = $pass;
 								break;
 						}
-						$image_url = $r->app_root.'/www/images/cats.jpg';
+						$image_url = $r->app_root.'/www/img/cats.jpg';
 						$body = file_get_contents($image_url);
 						$post_url = $r->app_root.'/items';
 						$ch = curl_init();
@@ -156,7 +156,7 @@ class Dase_Handler_Admin extends Dase_Handler
 								$newname = str_replace('.'.$ext,'.jpg',$newname);
 								$item->thumbnail_url = 'file/thumb/'.$newname;
 						} else {
-								$item->thumbnail_url = 	'www/images/mime_icons/'.Dase_File::$types_map[$type]['size'].'.png';
+								$item->thumbnail_url = 	'www/img/mime_icons/'.Dase_File::$types_map[$type]['size'].'.png';
 						}
 						if (isset($size[0]) && $size[0]) {
 								$item->width = $size[0];
@@ -173,7 +173,7 @@ class Dase_Handler_Admin extends Dase_Handler
 								$r->renderRedirect('admin/upload',$params);
 						}
 						$item->name = $this->_findUniqueName(Dase_Util::dirify($item->title));
-						$item->thumbnail_url = 	'www/images/mime_icons/content.png';
+						$item->thumbnail_url = 	'www/img/mime_icons/content.png';
 				}
 				$item->created_by = $this->user->eid;
 				$item->created = date(DATE_ATOM);
