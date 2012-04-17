@@ -1,4 +1,4 @@
-{extends file="layout.tpl"}
+{extends file="framework/layout.tpl"}
 
 {block name="head-links}
 <link rel="items_order" href="set/{$set->id}/order">

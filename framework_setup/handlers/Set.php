@@ -41,7 +41,7 @@ class Dase_Handler_Set extends Dase_Handler
 		public function getForm($r) 
 		{
 				$t = new Dase_Template($r);
-				$r->renderResponse($t->fetch('set_form.tpl'));
+				$r->renderResponse($t->fetch('framework/set_form.tpl'));
 		}
 
 		public function postToEditForm($r) 
@@ -68,7 +68,7 @@ class Dase_Handler_Set extends Dase_Handler
 						//$r->renderError(404);
 				}
 				$t->assign('set',$set);
-				$r->renderResponse($t->fetch('set_edit.tpl'));
+				$r->renderResponse($t->fetch('framework/set_edit.tpl'));
 		}
 
 		public function deleteSet($r)
@@ -103,7 +103,7 @@ class Dase_Handler_Set extends Dase_Handler
 				$sets = new Dase_DBO_Itemset($this->db);
 				$sets->orderBy('created DESC');
 				$t->assign('sets',$sets->findAll(1));
-				$r->renderResponse($t->fetch('sets.tpl'));
+				$r->renderResponse($t->fetch('framework/sets.tpl'));
 		}
 
 		public function getSet($r) 
@@ -114,7 +114,7 @@ class Dase_Handler_Set extends Dase_Handler
 				if ($set->findOne()) {
 						$set->getItems();
 						$t->assign('set',$set);
-						$r->renderResponse($t->fetch('set.tpl'));
+						$r->renderResponse($t->fetch('framework/set.tpl'));
 				} else {
 						$r->renderError(404);
 				}

@@ -1,4 +1,4 @@
-{extends file="layout.tpl"}
+{extends file="framework/layout.tpl"}
 
 {block name="content"}
 <div class="controls">

@@ -45,7 +45,7 @@ class Dase_Handler_Items extends Dase_Handler
 				$sets = Dase_DBO_Itemset::getList($this->db);
 				$t->assign('sets',$sets);
 				$t->assign('items',$result);
-				$r->renderResponse($t->fetch('items.tpl'));
+				$r->renderResponse($t->fetch('framework/items.tpl'));
 		}
 
 		public function getItemsJson($r) 

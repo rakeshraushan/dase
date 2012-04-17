@@ -31,7 +31,7 @@ class Dase_Handler_Directory extends Dase_Handler
 			$t->assign('lastname',$r->get('lastname'));
 			$t->assign('results',$results);
 		}
-		$r->renderResponse($t->fetch('directory.tpl'));
+		$r->renderResponse($t->fetch('framework/directory.tpl'));
 	}
 }
 
